@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Fixed_Site_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Opportunity-DRD Fixed Site Opp Layout</members>
+		<members>Opportunity-Fixed Site Opp APS Layout</members>
+		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+		<name>Layout</name>
+	</types>
+	<version>64.0</version>
+</Package>
