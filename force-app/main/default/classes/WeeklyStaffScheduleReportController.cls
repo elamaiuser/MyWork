@@ -184,21 +184,22 @@ public without sharing class WeeklyStaffScheduleReportController {
             if(String.isNotBlank(act.sked__Activity__r.sked__Notes__c)){
                 notes = '-' + act.sked__Activity__r.sked__Notes__c;
             }
+            details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n';
+            Boolean isCountable = String.isBlank(act.sked__Activity__r.sked__Type__c) ||
+                            !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') ||
+                            act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'));
+            if (act.sked_Start_Date__c == act.sked_End_Date__c) {
                 if(act.sked_Start_Time__c != NULL && act.sked_End_Time__c != NULL){
                     timeDifference = getTimeDifference(act.sked_Start_Time__c,act.sked_End_Time__c);
-                    details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n'+
-                                        getFormattedTime(act.sked_Start_Time__c) + ' - ' + 
+                    details += getFormattedTime(act.sked_Start_Time__c) + ' - ' + 
                                         getFormattedTime(act.sked_End_Time__c)+'\n'+
                                         String.valueOf(timeDifference) +' hrs';
-                }
-                else{
+                }else{
                     timeDifference = getTimeDifference(act.sked__Activity__r.sked_Start_Time__c,act.sked__Activity__r.sked_End_Time__c);
-                     details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n'+
-                                getFormattedTime(act.sked__Activity__r.sked_Start_Time__c) + ' - ' + 
+                    details += getFormattedTime(act.sked__Activity__r.sked_Start_Time__c) + ' - ' + 
                                 getFormattedTime(act.sked__Activity__r.sked_End_Time__c)+'\n'+
                                 String.valueOf(timeDifference) +' hrs';
                 }
-            if (act.sked_Start_Date__c == act.sked_End_Date__c) {
                 if(!resourceDetailsMap.get(act.sked__Resource__c).containsKey(act.sked__Activity__r.sked_Start_Date__c)){
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,details);
                 }else{
@@ -206,29 +207,44 @@ public without sharing class WeeklyStaffScheduleReportController {
                     allDetails += '\n\n'+details;
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,allDetails);
                 }
-                timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
-                        !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
-                        || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
-                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
-                }          
+                if (isCountable) {
+                    timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
+                    resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                }       
         }else {
                 Date currentDate = act.sked_Start_Date__c;
                 while (currentDate <= act.sked_End_Date__c && currentDate <= endDate) {
+                    Decimal timeDiff = 0.0;
+                    String detailswithTime = details;
                     if (currentDate >= startDate) {
+                            if(act.sked_Start_Time__c != NULL && act.sked_End_Time__c != NULL){
+                                timeDiff = getTimeDifference(act.sked_Start_Date__c, act.sked_Start_Time__c,
+                                                        act.sked_End_Date__c, act.sked_End_Time__c, 
+                                                        currentDate);
+                                detailswithTime += getFormattedTime(act.sked_Start_Date__c,act.sked_Start_Time__c,currentDate,true) + ' - ' + 
+                                        getFormattedTime(act.sked_End_Date__c,act.sked_End_Time__c,currentDate,false)+'\n'+
+                                        String.valueOf(timeDiff) +' hrs';
+                                
+                            }else{
+                                timeDiff = getTimeDifference(act.sked_Start_Date__c, act.sked__Activity__r.sked_Start_Time__c,
+                                                        act.sked_End_Date__c, act.sked__Activity__r.sked_End_Time__c, 
+                                                        currentDate);
+                                detailswithTime += getFormattedTime(act.sked_Start_Date__c,act.sked__Activity__r.sked_Start_Time__c,currentDate,true) + ' - ' + 
+                                    getFormattedTime(act.sked_End_Date__c,act.sked__Activity__r.sked_End_Time__c,currentDate,false)+'\n'+
+                                    String.valueOf(timeDiff) +' hrs';
+                                
+                            }
                             if(!resourceDetailsMap.get(act.sked__Resource__c).containsKey(currentDate)){
-                                resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,details);
+                                resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,detailswithTime);
                             }else{
                                 String allDetails = resourceDetailsMap.get(act.sked__Resource__c).get(currentDate);
-                                allDetails += '\n\n'+details;
+                                allDetails += '\n\n'+detailswithTime;
                                 resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,allDetails);
                             }
-                            timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                            if(String.isBlank(act.sked__Activity__r.sked__Type__c)  || 
-                                    !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') 
-                                    || act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'))){
-                                        resourceHoursMap.put(act.sked__Resource__c,timeDifference);
-                            }
+                            if (isCountable) {
+                                timeDiff = timeDiff + resourceHoursMap.get(act.sked__Resource__c);
+                                resourceHoursMap.put(act.sked__Resource__c,timeDiff);
+                            } 
                     }
                     currentDate = currentDate.addDays(1);
                 }
@@ -245,30 +261,38 @@ public without sharing class WeeklyStaffScheduleReportController {
                 resourceHoursMap.put(avl.sked__Resource__c,0);
             }
              //HRP-12921 --> Continues
-            Decimal timeDifference = 0;
-            if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
-                timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
-            }else{
-                timeDifference = getTimeDifference(avl.sked_Start_Time__c,avl.sked_Finish_Time__c);
-            }
-            String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
-            if (avl.sked_Start_Date__c == avl.sked_Finish_Date__c) {
             
-            if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(avl.sked_Start_Date__c)){
-                resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,details);
-            }else{
-                String allDetails = resourceDetailsMap.get(avl.sked__Resource__c).get(avl.sked_Start_Date__c);
-                allDetails += '\n\n'+details;
-                resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,allDetails);
+            if (avl.sked_Start_Date__c == avl.sked_Finish_Date__c) {
+                Decimal timeDifference = 0;
+                if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
+                    timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
+                }else{
+                    timeDifference = getTimeDifference(avl.sked_Start_Time__c,avl.sked_Finish_Time__c);
+                }
+                String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
+                if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(avl.sked_Start_Date__c)){
+                    resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,details);
+                }else{
+                    String allDetails = resourceDetailsMap.get(avl.sked__Resource__c).get(avl.sked_Start_Date__c);
+                    allDetails += '\n\n'+details;
+                    resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,allDetails);
+                }
+                timeDifference = timeDifference + resourceHoursMap.get(avl.sked__Resource__c);
+                resourceHoursMap.put(avl.sked__Resource__c,timeDifference); 
             }
-            timeDifference = timeDifference + resourceHoursMap.get(avl.sked__Resource__c);
-            resourceHoursMap.put(avl.sked__Resource__c,timeDifference); 
-        }
             else {
                     // Create wrapper instances for all dates within the range
                     Date currentDate = avl.sked_Start_Date__c;
                     while (currentDate <= avl.sked_Finish_Date__c && currentDate <= endDate) {
                         if (currentDate >= startDate) {
+                            Decimal timeDifference = 0;
+                            if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
+                                timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
+                            }else{
+                                timeDifference = getTimeDifference(avl.sked_Start_Date__c,avl.sked_Start_Time__c,
+                                                avl.sked_Finish_Date__c,avl.sked_Finish_Time__c,currentDate);
+                            }
+                            String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
                             if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(currentDate)){
                                 resourceDetailsMap.get(avl.sked__Resource__c).put(currentDate,details);
                             }else{
@@ -488,4 +512,42 @@ public without sharing class WeeklyStaffScheduleReportController {
         }
         return result.trim();
     }
+    public static Decimal getTimeDifference( Date startDate, Time startTime, Date endDate, Time endTime, Date calculationDate) {
+        Decimal totalHours = 0;
+
+        if (calculationDate == null || startDate == null || endDate == null || startTime == null || endTime == null) {
+            return 0;
+        }
+        if (calculationDate < startDate || calculationDate > endDate) {
+            return 0;
+        }
+
+        if (startDate == endDate) {
+            totalHours = getTimeDifference(startTime, endTime);
+        } else if (calculationDate == startDate) {
+            totalHours = getTimeDifference(startTime, Time.newInstance(23, 59, 59, 999));
+        } else if (calculationDate == endDate) {
+            totalHours = getTimeDifference(Time.newInstance(0, 0, 0, 0), endTime);
+        } else {
+            totalHours = 24.0;
+        }
+
+        return totalHours.setScale(2, RoundingMode.HALF_UP);
+    }
+    public static String getFormattedTime(Date scheduledate, Time scheduletime, Date calculationDate, Boolean startDay) {
+        if (calculationDate == null || startDay == null) {
+            return '';
+        }
+
+        Time resolvedTime;
+
+        if (scheduledate != null && scheduledate.equals(calculationDate) && scheduletime != null) {
+            resolvedTime = scheduletime;
+        } else {
+            resolvedTime = startDay ? Time.newInstance(0, 0, 0, 0) : Time.newInstance(23, 59, 59, 999);
+        }
+
+        return getFormattedTime(resolvedTime);
+    }
+
 }
