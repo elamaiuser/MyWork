@@ -34,7 +34,7 @@
                                 </c-slwc-picklist>
                             </div>
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="quantity" label="Quantity" type="number" value={filters.quantity} onchange={handleOnFiltersChange} autocomplete="off" required></lightning-input>
+                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={filters.redcrossVolunteerQuantity} onchange={handleOnFiltersChange} autocomplete="off" required></lightning-input>
                             </div>
                         </div>
                         <div class="slds-section-title--divider">
@@ -60,6 +60,11 @@
                     </template>
 
                     <template if:true={showStep2}>
+                        <div class="slds-text-color_error slds-p-bottom_small slds-text-align_center slds-text-heading_small">
+                            <p>{appointmentAlertMessage}</p>
+                            <p>{appointmentAlertInstructionMessage}</p>
+                        </div>
+                        
                         <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
                             <div class="job-allocation-table">
                                 <div class="header">
