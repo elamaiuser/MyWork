@@ -55,6 +55,14 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         return 'Cancel'
     }
 
+    get appointmentAlertMessage() {
+        return "Volunteer updates will only be applied to drives with no issues.";
+    }
+
+    get appointmentAlertInstructionMessage() {
+        return "To update a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
+    }
+
     get showStep1() {
         return this.step === STEP.STEP_1;
     }
@@ -137,7 +145,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             this.errorMessages = [];
 
             this.filters.volunteerRole = this.job.volunteerRole;
-            this.filters.quantity = this.job.quantity;
+            this.filters.redcrossVolunteerQuantity = this.job.redcrossVolunteerQuantity;
 
             this.model.isLocked = !!this.job.isLocked;
             this.model.recurrenceDates = cloneDeep(this.job.bulkEditVolunteerJobsSelectedDays) ?? [];
@@ -158,9 +166,9 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 return validSoFar && inputCmp.checkValidity();
             }, true);
         
-        if (this.filters.quantity <= 0) {
+        if (this.filters.redcrossVolunteerQuantity <= 0) {
             this.errorMessages.push({
-                message: 'Quantity must be greater than 0.'
+                message: 'Red Cross Volunteer Quantity must be greater than 0.'
             })
         }
 
@@ -188,14 +196,14 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 jobs: (mapJobsByDate[dateIso] || []).map(job => {
                     const errorMessages = [];
                     const notMatchVolunteerRole = job.volunteerRole !== this.filters.volunteerRole;
-                    const notMatchVolunteerRoleQuantity = job.quantity !== this.filters.quantity;
+                    const notMatchVolunteerRoleQuantity = job.redcrossVolunteerQuantity !== this.filters.redcrossVolunteerQuantity;
 
                     if(notMatchVolunteerRole) {
                         errorMessages.push("Volunteer type does not match")
                     }
 
                     if(notMatchVolunteerRoleQuantity) {
-                        errorMessages.push("Quantity does not match")
+                        errorMessages.push("Red Cross Volunteer Quantity does not match")
                     }
 
                     return {
