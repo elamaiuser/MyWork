@@ -43,7 +43,7 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                         Id, sked_Setup_Time__c, sked_Lead_Time__c, sked_Travel_Time__c, sked_Site_Logistics_To__c,
                         sked_Wrap_Up_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked_Site_Logistics_Back__c,
                         sked__Start__c, sked_Start_Time__c, sked__Finish__c, sked_Finish_Time__c, sked_Start_Date__c, sked_Finish_Date__c,
-                        sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Volunteer_Role__c, sked_Drive_Shift__c
+                        sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Drive_Shift__c
                     FROM sked_Jobs__r
                 ),
                 (
@@ -68,7 +68,7 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
     global void execute(Database.BatchableContext BC, List<sked_Drive__c> drives) {
         Map<Id, sked__Job__c> map_id_jobToUpdate = new Map<Id, sked__Job__c>();
         List<sked_Drive_Shift__c> driveShiftsToUpdate = new List<sked_Drive_Shift__c>();
-        List<String> assetOrVolunteerJobIds = new List<String>();
+        List<String> assetJobIds = new List<String>();
 
         for (sked_Drive__c drive : drives) {
             Map<Id, List<sked__Job__c>> map_shiftId_jobs = getShiftIdJobsMap(drive.sked_Jobs__r);
@@ -81,13 +81,13 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                         if (checkAdjustmentDaysOfWeekAffectsDriveShift(rtvAdjustment, driveShift)) {
                             Set<String> affectedResourceRoles = getAffectedResourceRolesByResourceRoleGroup(rtvAdjustment.resourceRoleGroup);
                             for (sked__Job__c job : jobs) {
-                                if (job.sked_Asset_Type__c != null || job.sked_Volunteer_Role__c != null) {
-                                    assetOrVolunteerJobIds.add(job.Id);
+                                if (job.sked_Asset_Type__c != null) {
+                                    assetJobIds.add(job.Id);
                                 } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c) || affectedResourceRoles.contains(job.sked_Dual_Role__c)
                                     && job.sked_Start_Date__c >= rtvAdjustment.startDate && job.sked_Finish_Date__c <= rtvAdjustment.endDate
                                 ) {
                                     if(hasDrivingRoleAsPrimaryOrSecondaryRole(job.sked_Resource_Role__c, job.sked_Dual_Role__c) 
-                                        && !rtvAdjustment.resourceRoleGroup.split(';').contains(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES)) continue;
+                                        && !rtvAdjustment.resourceRoleGroup.split(',').contains(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES)) continue;
                                         
                                     List<String> affectedFields = getAffectedFields(rtvAdjustment.varianceApplyTo);
                                     Integer numAffectedStartFields = getNumAffectedFields(rtvAdjustment.varianceApplyTo, false);
@@ -146,26 +146,19 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
         update map_id_jobToUpdate.values();
         update driveShiftsToUpdate;
 
-        if (!assetOrVolunteerJobIds.isEmpty()) {
-            List<sked__Job__c> assetOrVolunteerJobsToUpdate = new List<sked__Job__c>();
-            for (sked__Job__c job : [
-                SELECT Id, sked_Asset_Type__c,
-                sked_Drive__r.sked_Min_Shift_Start__c, sked_Drive__r.sked_Max_Shift_End__c,
-                sked_Drive_Shift__r.sked_Start__c, sked_Drive_Shift__r.sked_Finish__c
+        if (!assetJobIds.isEmpty()) {
+            List<sked__Job__c> assetJobsToUpdate = new List<sked__Job__c>();
+            for (sked__Job__c assetJob : [
+                SELECT Id, sked_Drive__r.sked_Min_Shift_Start__c, sked_Drive__r.sked_Max_Shift_End__c
                 FROM sked__Job__c
-                WHERE Id IN :assetOrVolunteerJobIds
+                WHERE Id IN :assetJobIds
             ]) {
-                if(job.sked_Asset_Type__c != null) {
-                    job.sked__Start__c = job.sked_Drive__r.sked_Min_Shift_Start__c;
-                    job.sked__Finish__c = job.sked_Drive__r.sked_Max_Shift_End__c;
-                } else {
-                    job.sked__Start__c = job.sked_Drive_Shift__r.sked_Start__c;
-                    job.sked__Finish__c = job.sked_Drive_Shift__r.sked_Finish__c;
-                }
-                assetOrVolunteerJobsToUpdate.add(job);
+                assetJob.sked__Start__c = assetJob.sked_Drive__r.sked_Min_Shift_Start__c;
+                assetJob.sked__Finish__c = assetJob.sked_Drive__r.sked_Max_Shift_End__c;
+                assetJobsToUpdate.add(assetJob);
             }
 
-            update assetOrVolunteerJobsToUpdate;
+            update assetJobsToUpdate;
         }
     }
 

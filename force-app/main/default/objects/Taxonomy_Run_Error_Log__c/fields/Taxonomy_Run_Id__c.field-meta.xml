@@ -3,7 +3,6 @@
     <fullName>Taxonomy_Run_Id__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description>Lookup to the Taxo Run Record.</description>
-    <externalId>false</externalId>
     <label>Taxonomy Run Id</label>
     <referenceTo>Taxonomy_Run__c</referenceTo>
     <relationshipLabel>Taxonomy Run Error Log</relationshipLabel>

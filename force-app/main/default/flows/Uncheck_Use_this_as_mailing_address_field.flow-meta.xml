@@ -633,7 +633,7 @@
         <object>Account</object>
     </recordUpdates>
     <startElementReference>isChangedDecision2_myRule_1_ShippingStreet</startElementReference>
-    <status>Obsolete</status>
+    <status>Draft</status>
     <variables>
         <name>myVariable_current</name>
         <dataType>SObject</dataType>

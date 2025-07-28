@@ -133,7 +133,7 @@ global virtual class skedNotificationBatchBase {
         else if (this.notificationSetting.notificationType == NOTIFICATION_TYPE_ONEOFF) {
             skedUtils.concactString(fields, this.notificationSetting.oneoffProtocolField);
         }
-        skedUtils.concactSetString(fields, new Set<String>{'Id', 'LastModifiedById'});
+        skedUtils.concactString(fields, 'Id');
         
         Set<Id> idsParam = this.recordIds;
         string queryStatement = 'SELECT ' + string.join(fields, ', ') +
@@ -950,7 +950,7 @@ global virtual class skedNotificationBatchBase {
         public override void process(Set<Id> recordIds, List<sObject> newRecords) {
             mapTarget = new Map<Id, Set<Id>>();
             mapDestination = new Map<Id, Set<Id>>();
-            Map<Id, sObject> mapNewRecord = new Map<Id, sObject>(newRecords);
+
             Map<Id, Set<Id>> map_recordId_stepApprovers = new Map<Id, Set<Id>>();
             for (ProcessInstanceStep step : [
                 SELECT Id, Actor.Id, ProcessInstance.TargetObjectId
@@ -966,8 +966,6 @@ global virtual class skedNotificationBatchBase {
             
             for (Id recordId : recordIds) {
                 if (map_recordId_stepApprovers.containsKey(recordId)) {
-                    Id finalApproverId = ((sked_Site_Feedback__c)mapNewRecord.get(recordId)).LastModifiedById;
-                    map_recordId_stepApprovers.get(recordId).remove(finalApproverId);
                     this.mapTarget.put(recordId, map_recordId_stepApprovers.get(recordId));
                     this.mapDestination.put(recordId, map_recordId_stepApprovers.get(recordId));
                 }

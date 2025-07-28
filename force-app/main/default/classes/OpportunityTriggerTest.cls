@@ -2127,18 +2127,12 @@ public class OpportunityTriggerTest
         Map<string, sObject> mapTestData1 =  testDataSetup.createAndInsertCommonObjects(); 
         
         // insert Mobile Site 2
-        skedHubBase.BypassInsertTriggers = true;
-        TriggerHandler.bypass('SiteTriggerHandler');
         sked__Location__c testMobileSite2 = (sked__Location__c)mapTestData1.get('MOBILE_SITE2');
         insert testMobileSite2;
         
         Test.startTest();
+        skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
-        
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
 
@@ -2146,51 +2140,51 @@ public class OpportunityTriggerTest
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
         
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         try{
             GenerateMobileDrive.generateDrives(config);
         }catch(Exception ex){}
                            
-        //List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
+        List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
+        List<Opportunity> updateOppList = new List<Opportunity>();
         Opportunity oppRec = new Opportunity(
-            Id = mobileOpportunity.Id,
-            Drive_Site__c = testMobileSite2.Id, // new
-            Flow_Start_Time_Field__c = '1000', // new
-            Flow_End_Time_Field__c = '1530', // new
-            Anticipated_Registered_Donors__c = 11,
-            WB_Projected_Procedures__c = 11,
-            X2RBC_Projected_Procedures__c = 11,
-            Platelet_Projected_Procedures__c= 11,//HRP-10514
-            Plasma_Pheresis_Projected_Procedures__c = 11, // new
-            AnticipatedRegisterDonorChangeReason__c = 'test class',
-            WholeBloodProcedureProjectedChangeReason__c = 'test class',
-            DoubleRedProceduresProjectedChangeReason__c = 'test class',
-            Anticipated_Registered_Donors_Template__c = 30, // new
-            Apheresis_Projected_Units__c = 21,
-            Other_Projected_Units__c = 1,
-            Number_of_2RBC_Assets__c = 1,
-            Number_of_Plasma_Assets__c = 1,
-            Number_of_Platelet_Assets__c = 1,
-            Drive_Status__c = 'Tentative',
-            StageName = 'Committed',
-            Drive_Date__c = System.today().addDays(-5),
-            //Start_Time__c = Time.newInstance(12, 0, 0, 0),
-            //End_Time__c = Time.newInstance(21, 0, 0, 0),
-            Flow_Start_Time_Label_Text__c = Helper.getStartEndTimeLabelText('0000'),
-            Account_Manager__c = userinfo.getUserId(),
-            Is_Recursion_On__c = true,
-            sked_Cancellation_Reason__c = '',
-            Initiated_By__c = '',
-            Slot_Generator__c = 140,
-            Slot_Generator_Change_Reason__c = 'Test Change Reason',
-            APT_Required__c = true,
-            APT_Quantity__c = 1,
-            APT_Change_Reason__c = 'Test Change Reason',
-            Red_Cross_Volunteer_Required__c = false,
-            Red_Cross_Volunteer_Quantity__c = 0
-        ); 
+                Id = oppRecordList[0].Id,
+            	Drive_Site__c = testMobileSite2.Id, // new
+            	Flow_Start_Time_Field__c = '1000', // new
+        		Flow_End_Time_Field__c = '1530', // new
+                Anticipated_Registered_Donors__c = 11,
+                WB_Projected_Procedures__c = 11,
+                X2RBC_Projected_Procedures__c = 11,
+                Platelet_Projected_Procedures__c= 11,//HRP-10514
+            	Plasma_Pheresis_Projected_Procedures__c = 11, // new
+                AnticipatedRegisterDonorChangeReason__c = 'test class',
+                WholeBloodProcedureProjectedChangeReason__c = 'test class',
+                DoubleRedProceduresProjectedChangeReason__c = 'test class',
+            	Anticipated_Registered_Donors_Template__c = 30, // new
+                Apheresis_Projected_Units__c = 21,
+                Other_Projected_Units__c = 1,
+                Number_of_2RBC_Assets__c = 1,
+                Number_of_Plasma_Assets__c = 1,
+                Number_of_Platelet_Assets__c = 1,
+                Drive_Status__c = 'Tentative',
+                StageName = 'Committed',
+                Drive_Date__c = System.today().addDays(-5),
+                //Start_Time__c = Time.newInstance(12, 0, 0, 0),
+                //End_Time__c = Time.newInstance(21, 0, 0, 0),
+                Flow_Start_Time_Label_Text__c = Helper.getStartEndTimeLabelText('0000'),
+                Account_Manager__c = userinfo.getUserId(),
+                Is_Recursion_On__c = true,
+                sked_Cancellation_Reason__c = '',
+                Initiated_By__c = ''
+            ); 
+         updateOppList.add(oppRec);
+         if (!updateOppList.isEmpty())
+         {
+             opportunityService.syncOppsWithDrives(updateOppList);
+         } 
         
-        OpportunityService.syncOppsWithDrives(new List<Opportunity>{oppRec});
-      
         Test.stopTest();
         Assert.isTrue(config != null);
     }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Fixed_Site_Lock_Reason__c</fullName>
-    <externalId>false</externalId>
     <label>Fixed Site Lock Reason</label>
     <required>false</required>
     <trackHistory>true</trackHistory>
@@ -11,7 +10,7 @@
         <controllingField>sked_Type__c</controllingField>
         <restricted>true</restricted>
         <valueSetDefinition>
-            <sorted>false</sorted>
+            <sorted>true</sorted>
             <value>
                 <fullName>BSF</fullName>
                 <default>false</default>

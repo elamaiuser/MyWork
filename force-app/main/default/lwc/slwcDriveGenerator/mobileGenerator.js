@@ -2742,7 +2742,7 @@ class MobileGenerator extends BaseGenerator {
         }
       } else {
         this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
-        driveShiftJobs = [...(driveShiftJobs || []).filter(item => !item.isManuallyCreated), ...driveShift.jobs];
+        driveShiftJobs = [...driveShiftJobs, ...driveShift.jobs];
       }
       driveShift.jobs = driveShiftJobs;
       let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);

@@ -3,7 +3,6 @@
     <fullName>Is_Active__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Indicator to Denote whether the Metadata is active.</description>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Is Active</label>
     <type>Checkbox</type>

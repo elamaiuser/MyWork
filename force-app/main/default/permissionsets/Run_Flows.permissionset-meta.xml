@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Allows assigned users to run flows. System Permission  &quot;Run Flows&quot; allowed on this permission set.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Run Flows</label>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>RunFlow</name>
+    </userPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Event.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Lead_Stage_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Task.Drive_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+</PermissionSet>
