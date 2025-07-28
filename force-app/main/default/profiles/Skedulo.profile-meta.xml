@@ -7020,11 +7020,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>sked_Location_Account__c.sked_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>sked_Location_Availability__c.sked_Finish__c</field>
         <readable>true</readable>
     </fieldPermissions>

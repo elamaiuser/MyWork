@@ -235,9 +235,6 @@ global class skedSetting {
         public boolean workdayIntegration;
         public integer daysToValidateWorkDaysException;
         public integer rtvAPSApprovalWindow;
-        public boolean opRecordIntegrationWithCertificate;
-        public string opRecordCertificateName;
-        
 
         public skedAdminSetting() {
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
@@ -271,8 +268,6 @@ global class skedSetting {
             this.workdayIntegration = setting.sked_Admin_Workday_Integration__c;
             this.daysToValidateWorkDaysException = setting.sked_Admin_Days_To_Validate_Work_Days_Ex__c != NULL ? integer.valueOf(setting.sked_Admin_Days_To_Validate_Work_Days_Ex__c) : 7;
             this.rtvAPSApprovalWindow = setting.sked_RTV_APS_Approval_Window__c != NULL ? integer.valueOf(setting.sked_RTV_APS_Approval_Window__c) : 42;
-            this.opRecordIntegrationWithCertificate = setting.sked_Admin_OpRecord_Integration_CA_Cert__c;
-            this.opRecordCertificateName = setting.sked_Admin_Op_Record_CA_Cert_Name__c;
         }
     }
 

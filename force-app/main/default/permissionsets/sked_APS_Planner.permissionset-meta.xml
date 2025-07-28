@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>Utilized for APS Planners.</description>
     <hasActivationRequired>false</hasActivationRequired>
@@ -4192,11 +4192,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>sked_Location_Account__c.sked_Account__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>sked_Location_Account__c.sked_Location__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -15293,11 +15293,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>sked_Location_Account__c.sked_Location__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>sked_Location_Account__c.sked_MigrationID__c</field>
         <readable>true</readable>
     </fieldPermissions>
