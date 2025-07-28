@@ -160,6 +160,8 @@ public class skedConstants {
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_UNAVAILABLE_FOR_CO = 'Trading User is not available for Drive CO';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_MISSING_ROLE = 'Trading User Missing Role';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_MISSING_ROLE = 'Requesting User Missing Role';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_GUARDED = 'Req Staff Guarded';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_GUARDED = 'Trading Staff Guarded';
 
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CANCELLED = 'Denied (cancelled)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CUTOFF_DAYS = 'Denied (cutoff days)';
