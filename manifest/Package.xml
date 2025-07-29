@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>skedResourceHandler</members>
-		<members>skedResourceHandler_Test</members>
-		<name>ApexClass</name>
-	</types>
-    <types>
-		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
-		<name>CustomField</name>
-	</types>
-    <types>
-		<members>Custom_Messages.Asset_Validation_for_Dedicated_to_Site</members>
-		<name>CustomMetadata</name>
-	</types>
-	<types>
-		<members>slwcDriveStaffingDetails</members>
-		<members>slwcLinkedDrivesAvailator</members>
-		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcDriveGenerator</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>63.0</version>
