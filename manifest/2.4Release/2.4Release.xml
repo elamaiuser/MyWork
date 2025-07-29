@@ -19,6 +19,7 @@
 		<members>OpportunityTriggerTest</members>
 		<members>skedResourceHandler</members>
 		<members>skedResourceHandler_Test</members>
+		<members>skedTestDataFactory</members>
 		<members>slwcSetting</members>
 		<members>slwcDataService_Test</members>
         <name>ApexClass</name>
