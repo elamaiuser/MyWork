@@ -2256,8 +2256,8 @@ class DriveHelper {
       let driveShift = drive.driveShifts[i];
       let backupDriveShift = backupDrive.driveShifts[i];
       
-      let validJobs = driveShift.jobs.filter(job => !job.volunteerRole);
-      let validBackupJobs = backupDriveShift.jobs.filter(job => !job.volunteerRole);
+      let validJobs = (driveShift.jobs || []).filter(job => !job.volunteerRole);
+      let validBackupJobs = (backupDriveShift.jobs || []).filter(job => !job.volunteerRole);
 
       if (validJobs.length !== validBackupJobs.length) return true;
       for (let j = 0; j < validJobs.length; j++) {

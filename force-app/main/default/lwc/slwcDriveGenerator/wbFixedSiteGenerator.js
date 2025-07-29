@@ -1005,17 +1005,21 @@ class WbFixedSiteGenerator extends BaseGenerator {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity } = staffingComplement[resourceRole];
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
               aptQuantity: aptQuantity,
-              systemQuantity: systemQuantity
+              systemQuantity: systemQuantity,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           } else {
             resourceQuantityMap.set(resourceRole, {
               quantity: quantity,
-              systemQuantity: systemQuantity
+              systemQuantity: systemQuantity,
+              isManuallyCreated: isManuallyCreated,
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           }
         })
@@ -1307,7 +1311,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           jobsUpdatedViaDualRoleChangeMap[driveShiftIndex] = [];
         }
 
-        driveShift.jobs.forEach(job => {
+        driveShift.jobs?.forEach(job => {
           if(job.resourceRole && job.isCreatedOrUpdatedViaDualRoleChange) {
             jobsUpdatedViaDualRoleChangeMap[driveShiftIndex].push(cloneDeep(job));
           }
@@ -1463,19 +1467,23 @@ class WbFixedSiteGenerator extends BaseGenerator {
       job.resourceRole = resourceRole;
 
       if (resourceRole === 'VP/HH') {
-        let { vphhQuantity, aptQuantity, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { vphhQuantity, aptQuantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (vphhQuantity > 0 || aptQuantity > 0) {
           job.vphhQuantity = vphhQuantity;
           job.aptQuantity = aptQuantity;
           job.quantity = vphhQuantity + (aptQuantity || 0);
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       } else {
-        let { quantity, systemQuantity } = mapResourceQuantity.get(resourceRole);
+        let { quantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(resourceRole);
         if (quantity > 0) {
           job.quantity = quantity;
           job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
           if(!jobs.find(job => job.resourceRole === resourceRole)) jobs.push(job);
         }
       }
