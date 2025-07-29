@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+        <members>skedConstants</members>		
+		<members>skedDriveShiftHandler</members>
+		<members>skedExceptionLogService</members>
+		<members>skedHCExceptionHandler</members>
+		<members>skedTestDataFactory</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>skedHC__Exception__c.sked_Exception_Code__c</members>
+		<members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
+		<members>sked_Drive_Shift__c.sked_Drive_Type__c</members>		
+		<name>CustomField</name>
+	</types>
+	<types>
+        <members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcExceptionConsole</members>
+		<members>slwcExceptionList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>  
+        <members>Collection_Operation_Time_Block__c.End_Date_Should_Be_After_Start_Date</members>
+        <name>ValidationRule</name>
+    </types>
+	<version>60.0</version>
+</Package>

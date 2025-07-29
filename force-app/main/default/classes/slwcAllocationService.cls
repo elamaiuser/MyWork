@@ -351,7 +351,7 @@ global class slwcAllocationService {
                                               AND Id NOT IN :request.excludedActivityIds
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c, sked_Call_Out_Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
@@ -363,7 +363,7 @@ global class slwcAllocationService {
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
@@ -468,7 +468,7 @@ global class slwcAllocationService {
                                               AND sked__Type__c != :excludedActivityTypes
                                               ORDER BY sked__Start__c ASC),
                                              
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c, sked_Call_Out_Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
@@ -479,7 +479,7 @@ global class slwcAllocationService {
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
@@ -559,7 +559,7 @@ global class slwcAllocationService {
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),

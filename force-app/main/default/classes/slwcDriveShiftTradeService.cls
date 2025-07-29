@@ -189,7 +189,7 @@ global class slwcDriveShiftTradeService implements Callable {
         
         Map<Id, sked__Job_Allocation__c> mapAllocation = new Map<Id, sked__Job_Allocation__c>([SELECT Id, sked__Job__c, sked__Status__c,
                                                                                                sked__Resource__c, sked__Resource__r.sked_Min_Hours_Per_Week__c ,
-                                                                                               sked_Dual_Role__c, sked_Resource_Role__c,
+                                                                                               sked_Dual_Role__c, sked_Resource_Role__c, sked_Guarded__c,
                                                                                                sked_Additional_Roles__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Linked_Drives__c
                                                                                                FROM sked__Job_Allocation__c
                                                                                                WHERE Id IN :jobAllocationIds]);   
@@ -368,7 +368,11 @@ global class slwcDriveShiftTradeService implements Callable {
 
         List<string> completedStatuses = getCompletedStatuses();
         Map<Id, sked__Job_Allocation__c> mapJobAllocation = new Map<Id, sked__Job_Allocation__c>([
-            SELECT Id, sked__Job__c, sked_Geoservice_Travel_Distance_To__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c, sked__Duration__c, sked_Roles_Assignment_Str__c,
+            SELECT Id, sked__Job__c, sked_Geoservice_Travel_Distance_To__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c, 
+            sked__Duration__c, sked_Roles_Assignment_Str__c,
+            sked__Status__c, sked__Resource__c, sked__Resource__r.sked_Min_Hours_Per_Week__c ,
+            sked_Dual_Role__c, sked_Resource_Role__c, sked_Guarded__c,
+            sked_Additional_Roles__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Linked_Drives__c,
             (SELECT Id
              FROM sked_Drive_Shift_Trades__r
              WHERE sked_Status__c NOT IN :completedStatuses),
@@ -867,6 +871,7 @@ global class slwcDriveShiftTradeService implements Callable {
             validateGroupActivityApproval(shiftTrade);
             validateOvernightActivityApproval(shiftTrade);
             validateRelocationAndCOAvailability(shiftTrade);
+            validateGuarded(shiftTrade);
         }
     }
     
@@ -1302,6 +1307,18 @@ global class slwcDriveShiftTradeService implements Callable {
         }
 
         return resourceAssignedCOIds.contains(targetCOId);
+    }
+
+    private static void validateGuarded(driveShiftTradeModel request) {
+        boolean isRequestingStaffGuarded = request.requestingStaffJobAllocation != null && request.requestingStaffJobAllocation.sked_Guarded__c == true;
+        if (isRequestingStaffGuarded) {
+            request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_GUARDED);
+        }
+        
+        boolean isTradingStaffGuarded = request.tradingStaffJobAllocation != null && request.tradingStaffJobAllocation.sked_Guarded__c == true;
+        if (isTradingStaffGuarded) {
+            request.reasonApprovalRequired.add(skedConstants.DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_GUARDED);
+        }
     }
     
     public static List<string> getHardViolationContentions() {

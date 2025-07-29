@@ -37,6 +37,7 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Red_Cross_Volunteer_Required__c', 'redcrossVolunteerRequired', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Red_Cross_Volunteer_Quantity__c', 'redcrossVolunteerQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Slot_Generator__c', 'slotGenerator', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Special_Circumstances__c', 'specialCircumstances', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('StageName', 'stage', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Type', 'type', MAPPING_TYPE.direct);
