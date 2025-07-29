@@ -190,23 +190,71 @@ global class skedAvailabilityPatternService extends skedDataService {
         return resourceIds;
     }
     
-    public skedDataService.saveResult saveAvailabilityPattern(skedModels.availabilityPattern model) {
-        skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
-        skedSkeduloApiData.availabilityPatternPayload payload = generateAvailabilityPatternPayload(model);
-        skedSkeduloApiData.upsertAvailabilityPatternResult calloutResult = apiManager.upsertAvailabilityPattern(payload);
-        skedDataService.saveResult saveResullt = new skedDataService.saveResult();
-        saveResullt.success = calloutResult.error == NULL && calloutResult.errors == NULL;
-        if (!saveResullt.success) {
-            saveResullt.errorMessage = calloutResult.error != NULL ? Json.serialize(calloutResult.error) : Json.serialize(calloutResult.errors);
+    private void validatePreSave(skedModels.availabilityPattern model, skedDataService.saveResult saveResullt) {
+        string errorMessage = '';
+        
+        List<sked__Availability_Pattern__c> existingPatterns = [
+            SELECT Id, Name, sked__Pattern__c
+            FROM sked__Availability_Pattern__c
+        ];
+        
+        boolean patternNameRuleValid = true;
+        boolean patternDataRuleValid = true;
+        
+        skedAvailabilityPatternData modelPatternData = (skedAvailabilityPatternData)JSON.deserialize(model.pattern, skedAvailabilityPatternData.class);
+        string modelPatternStr = JSON.serialize(modelPatternData.days);
+        
+        for (sked__Availability_Pattern__c existingPattern : existingPatterns) {
+            if (patternNameRuleValid) {
+                patternNameRuleValid = existingPattern.Name != model.name;
+            }
+            if (patternDataRuleValid) {
+                skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData)JSON.deserialize(existingPattern.sked__Pattern__c, skedAvailabilityPatternData.class);
+                string existingPatternStr = JSON.serialize(existingPatternData.days);
+                
+                patternDataRuleValid = existingPatternStr != modelPatternStr || modelPatternData.repeatWeeks != existingPatternData.repeatWeeks;
+            }
+            if (!patternNameRuleValid && !patternDataRuleValid) {
+                break;
+            }
         }
-        else {
-            string availabilityPatternId = string.isNotBlank(calloutResult.created) ? calloutResult.created : calloutResult.result;
-            sked__Availability_Pattern__c newPattern = new sked__Availability_Pattern__c(
-                Id = availabilityPatternId,
-                sked_Validate_2CDO_Rule__c = model.validate2CDORule
-            );
-            system.debug('newPattern: ' + newPattern);
-            upsert newPattern;
+        
+        List<string> errorMessages = new List<string>();
+        if (!patternNameRuleValid) {
+            errorMessages.add('Availability Pattern Name already in use.');
+        }
+        if (!patternDataRuleValid) {
+            errorMessages.add('Availability Pattern days and hours already in use.');
+        }
+        
+        saveResullt.success = patternNameRuleValid && patternDataRuleValid;
+        if (!errorMessages.isEmpty()) {
+        	saveResullt.errorMessage = string.join(errorMessages, ' ');
+        }
+    }
+    
+    public skedDataService.saveResult saveAvailabilityPattern(skedModels.availabilityPattern model) {
+        skedDataService.saveResult saveResullt = new skedDataService.saveResult();
+        validatePreSave(model, saveResullt);
+        
+        if (saveResullt.success) {
+            skedSkeduloApiManager apiManager = new skedSkeduloApiManager();
+            skedSkeduloApiData.availabilityPatternPayload payload = generateAvailabilityPatternPayload(model);
+            skedSkeduloApiData.upsertAvailabilityPatternResult calloutResult = apiManager.upsertAvailabilityPattern(payload);
+            
+            
+            saveResullt.success = calloutResult.error == NULL && calloutResult.errors == NULL;
+            if (!saveResullt.success) {
+                saveResullt.errorMessage = calloutResult.error != NULL ? Json.serialize(calloutResult.error) : Json.serialize(calloutResult.errors);
+            }
+            else {
+                string availabilityPatternId = string.isNotBlank(calloutResult.created) ? calloutResult.created : calloutResult.result;
+                sked__Availability_Pattern__c newPattern = new sked__Availability_Pattern__c(
+                    Id = availabilityPatternId,
+                    sked_Validate_2CDO_Rule__c = model.validate2CDORule
+                );
+                upsert newPattern;
+            }
         }
         return saveResullt;
     }
