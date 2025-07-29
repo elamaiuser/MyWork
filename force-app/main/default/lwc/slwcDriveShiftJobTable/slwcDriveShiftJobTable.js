@@ -4,10 +4,13 @@ import { fireEvent } from 'c/pubsub';
 import * as slwcUtils from 'c/slwcUtils';
 import { ASSET_TYPE, RESOURCE_TYPE, DRIVE_TYPE, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
 import { find } from 'c/lodash';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 export default class SlwcDriveShiftJobTable extends LightningElement {
+    driveHelper = new DriveHelper()
     @wire(CurrentPageReference) pageRef;
     @api drive;
+    @api masterData;
     @api isReadonly;
     @api isCreatable = false;
     @api isEditable = false;
@@ -33,12 +36,15 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                 quantity: {fieldName: 'quantity'},
             }});
         }
-        if (this.resourceType == 'Volunteer') {
+        if (this.resourceType == RESOURCE_TYPE.VOLUNTEER) {
             columns.push({ label: 'Volunteer Role', fieldName: 'volunteerRole', type: 'text' });
             columns.push({ label: 'Tag Names', fieldName: 'tagNames', type: 'text', wrapText: true, cellAttributes: { alignment: 'left' } });
             columns.push({ label: 'Red Cross Volunteer Quantity', fieldName: 'redcrossVolunteerQuantity', type: 'number', cellAttributes: { alignment: 'left' } });
             columns.push({ label: 'Sponsor Volunteer Quantity', fieldName: 'sponsorVolunteerQuantity', type: 'number', cellAttributes: { alignment: 'left' } });
-            if (this.drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE) {
+            if(
+                this.driveHelper.isFixedSiteDrive(this.drive) ||
+                this.driveHelper.isWbFixedSiteDrive(this.drive)
+            ) {
                 columns.push({ label: 'Locked', fieldName: 'isLocked', type: 'boolean' });
             }
         }
@@ -71,6 +77,20 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
             let rowActions = [];
             if (this.isEditable) {
                 rowActions.push({ label: 'Edit', name: 'edit'});
+
+                if(
+                    this.resourceType == RESOURCE_TYPE.VOLUNTEER && (
+                        this.driveHelper.isFixedSiteDrive(this.drive) ||
+                        this.driveHelper.isWbFixedSiteDrive(this.drive)
+                    )
+                ) {
+                    if (
+                        this.driveHelper.isAPSUser(this.masterData.loginUser) || 
+                        this.driveHelper.isTelerecuiterUser(this.masterData.loginUser)
+                    ) {
+                        rowActions.push({ label: 'Bulk Edit', name: 'bulk-edit-volunteer-jobs'});
+                    }
+                }
             }
             if (this.isDeletable) {
                 rowActions.push({ label: 'Delete', name: 'delete'});
@@ -99,6 +119,11 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
         fireEvent(this.pageRef, 'showJobModal', eventValues);
     }
     
+    bulkEditVolunteerJobs(job) {
+        let eventValues = {action: "bulk-edit-volunteer-jobs", drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
+        fireEvent(this.pageRef, 'showBulkEditVolunteerJobsModal', eventValues);
+    }
+
     deleteJob(job) {
         let eventValues = {action: "deleteJob", driveShift: this.shift, resourceType: this.resourceType, job: job};
         fireEvent(this.pageRef, 'openDriveShiftConfirmModal', eventValues);
@@ -111,6 +136,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
         switch (actionName) {
             case 'edit':
                 this.editJob(row);
+                break;
+            case 'bulk-edit-volunteer-jobs':
+                this.bulkEditVolunteerJobs(row);
                 break;
             case 'delete':
                 this.deleteJob(row);
@@ -125,6 +153,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
         switch (actionName) {
             case 'edit':
                 this.editJob(row);
+                break;
+            case 'bulk-edit-volunteer-jobs':
+                this.bulkEditVolunteerJobs(row);
                 break;
             case 'delete':
                 this.deleteJob(row);
