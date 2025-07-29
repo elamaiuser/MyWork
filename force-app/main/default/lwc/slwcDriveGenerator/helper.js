@@ -3668,6 +3668,16 @@ class DriveHelper {
     const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
     return roleCapacity > 0;
   }
+
+  isResourceTagRestricted(resourceTag, {
+    startDate,
+    endDate
+  }) {
+    return slwcAvailator.isResourceTagRestricted(resourceTag, {
+      startDate,
+      endDate
+    })
+  }
 }
 
 export {
