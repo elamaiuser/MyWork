@@ -1265,7 +1265,7 @@ class MobileGenerator extends BaseGenerator {
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
 
-    let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
+      let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
       for (let [key, value] of  tempMapResourceQuantityForStaffCapacity.entries()) {
         if(value.has('VP/HH')){
             if(value.get('VP/HH').aptQuantity !== 0){
@@ -2760,13 +2760,13 @@ class MobileGenerator extends BaseGenerator {
         }
       } else {
         this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
-        driveShiftJobs = [...driveShiftJobs, ...driveShift.jobs];
+        driveShiftJobs = [...(driveShiftJobs || []).filter(item => !item.isManuallyCreated), ...driveShift.jobs];
       }
       driveShift.jobs = driveShiftJobs;
       let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);
       if(!isEmpty(volunteerJob)) this.correctJobTime(volunteerJob, driveShift);
       this.updateShiftMobileSetup(driveShift);
-    });   
+    });
   }
 
   onJobChanged(driveShift, job, originalJob) {
@@ -2793,7 +2793,7 @@ class MobileGenerator extends BaseGenerator {
       this.recalculateVphhQuantity(driveShift);
     }
     this.updateShiftMobileSetup(driveShift);
-    
+
     if(!job.volunteerRole) {
       this.populateLunchBreakTime(driveShift, { restoreLunchBreak: true });
       this.populateShiftTime(driveShift);
