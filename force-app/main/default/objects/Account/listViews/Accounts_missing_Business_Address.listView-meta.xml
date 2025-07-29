@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accounts_missing_Business_Address</fullName>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Account_Status__c</columns>
+    <columns>Contact_BPL__c</columns>
+    <columns>ACCOUNT.ADDRESS1_CITY</columns>
+    <columns>ACCOUNT.ADDRESS1_STATE_CODE</columns>
+    <columns>ACCOUNT.ADDRESS1_ZIP</columns>
+    <columns>Market__c</columns>
+    <columns>ACCOUNT.TYPE</columns>
+    <columns>Industry_Code__c</columns>
+    <columns>Account_Manager__c</columns>
+    <columns>Account_Manager_Portfolio__c</columns>
+    <columns>District_Manager__c</columns>
+    <columns>ACCOUNT.CREATED_DATE</columns>
+    <columns>Next_Scheduled_Drive_Updated__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ACCOUNT.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Account.Mobile_Account</value>
+    </filters>
+    <filters>
+        <field>ACCOUNT.ADDRESS1_ZIP</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Account_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Inactive,Defunct,Lost</value>
+    </filters>
+    <label>Accounts missing Business Address</label>
+</ListView>

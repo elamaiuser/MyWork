@@ -18,12 +18,12 @@
     <filters>
         <field>RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Taxonomy__c.Bio_Account_Portfolio</value>
+        <value>Taxonomy__c.Bio_Recruitment_Supervisor</value>
     </filters>
     <filters>
         <field>Version_Key__c</field>
         <operation>equals</operation>
-        <value>293</value>
+        <value>Texas</value>
     </filters>
     <filters>
         <field>Division_Code__c</field>

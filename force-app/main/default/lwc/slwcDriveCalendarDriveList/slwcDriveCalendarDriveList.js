@@ -347,7 +347,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     }
 
     saveDriveSideMenu() {
-        this.closeDriveSideMenu();
+        // this.closeDriveSideMenu();
         this.handleRefresh();
     }
 

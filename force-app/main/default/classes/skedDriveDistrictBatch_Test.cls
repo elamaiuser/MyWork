@@ -14,7 +14,7 @@ private class skedDriveDistrictBatch_Test {
         
         Test.startTest();
         
-        Database.executeBatch(new skedDriveDistrictBatch());
+        Database.executeBatch(new skedDriveDistrictBatch(256));
         
         Test.stopTest();
     }

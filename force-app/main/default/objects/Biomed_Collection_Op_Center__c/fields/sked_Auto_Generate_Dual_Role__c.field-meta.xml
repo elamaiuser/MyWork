@@ -3,6 +3,7 @@
     <fullName>sked_Auto_Generate_Dual_Role__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-13862</description>
+    <externalId>false</externalId>
     <label>Auto Generate Dual Role</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

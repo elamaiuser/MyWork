@@ -3,6 +3,7 @@
     <fullName>Service_Level_Agreement__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-12787</description>
+    <externalId>false</externalId>
     <label>Service Level Agreement</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

@@ -15,6 +15,7 @@
 * 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
 * 12/10/2024				 Priti Jana				 Logic for HRP-13190
 * 02/26/2025                 Krapy Tuli              HRP-14286 - logic update
+ *03/05/2025                 Harika  Bolisetti       Logic for  HRP-12481//Taxo Process 
  *********************************************************************************************************************************************************************
 */
 
@@ -650,4 +651,50 @@ public with sharing class BSF_Utilities {
     public static String getStringWithinLimit(String text, Integer charLimit) {
         return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
     }
+
+    //HRP-701 Utility Methods
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagRemoved(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            if(opp.Special_Circumstances__c == null) continue;
+
+            List<String> updatedSpecialCircumstances = new List<String>(); 
+            for(String value : opp.Special_Circumstances__c.split(';')) {
+                if(value != BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) {
+                    updatedSpecialCircumstances.add(value);
+                }
+            }
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagAdded(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            List<String> updatedSpecialCircumstances = 
+                opp.Special_Circumstances__c == null 
+                ? new List<String>() 
+                : new List<String>(opp.Special_Circumstances__c.split(';'));
+            updatedSpecialCircumstances.add(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE);
+            
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+
+     //Error log without exception
+     //HRP-12481
+    public static BSF_Error_Log__c createBsfErrorLogwithoutExceptions(String className,String methodName,String processName,String objectName,String error) {
+        String errorDescription = error;
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = className,
+            Method__c = methodName,
+            Type__c = 'Error',
+            Error_Description__c = errorDescription.length() > 255 ? errorDescription.subString(0, 255) : errorDescription,
+            Process_Name__c = processName,
+            Object_Name__c = objectName
+        );
+        return errorLog;
+    }
+    
 }

@@ -928,7 +928,7 @@
             <checkedByDefault>false</checkedByDefault>
             <field>Lead_Rating_Stars__c</field>
             <table>Account</table>
-        </columns>        
+        </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Last_Closed_Drive_New__c</field>

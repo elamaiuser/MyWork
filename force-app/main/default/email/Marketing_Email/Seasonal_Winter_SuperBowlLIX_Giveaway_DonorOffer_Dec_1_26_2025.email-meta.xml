@@ -8,14 +8,14 @@
     <description>Email to promote January 1-26, 2025 Donor Offer</description>
     <encodingKey>ISO-8859-1</encodingKey>
     <letterhead>ARC_Logo_Test</letterhead>
-    <name>Seasonal_Winter_SuperBowlLIX_Giveaway_DonorOffer_Dec. 1-26, 2025</name>
+    <name>Seasonal_Winter_SuperBowlLIX_Giveaway_DonorOffer_Jan. 1-26, 2025</name>
     <style>formalLetter</style>
     <subject>Exciting Chance for Donors to Win BIG!</subject>
     <textOnly>Hello {!Contact.FirstName},
 
 Your blood drive is coming up, and every donation is vital because hospital patients are counting on lifesaving blood products from your drive. We are grateful for your kindness and commitment to helping those in need.
 
-As a special thank you to donors for helping address the need for blood during the critical post-holiday time, those who come to give Jan. 1-26, 2025, will be automatically entered for a chance to win a trip for two to Super Bowl LIX in New Orleans.^
+As a special thank you to donors for helping address the need for blood during the critical post-holiday time, those who come to give Jan. 1-26, 2025, will be automatically entered for a chance to win a trip for two to Super Bowl LIX.^
 
 As you continue the work to make your drive a success – remember to use these tips:
 

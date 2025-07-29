@@ -3,5 +3,6 @@
     <fullName>Account_name_is_not_editable</fullName>
     <active>true</active>
     <errorConditionFormula>AND(NOT(ISNULL(PRIORVALUE(AccountId))),ISCHANGED(AccountId))</errorConditionFormula>
+    <errorDisplayField>Number_of_2RBC_Assets__c</errorDisplayField>
     <errorMessage>Can&#39;t Associating Opportunity to Different Account</errorMessage>
 </ValidationRule>

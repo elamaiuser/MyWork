@@ -13,9 +13,9 @@
     <columns>sked_Type_of_Drive__c</columns>
     <columns>Site_Building_Name__c</columns>
     <columns>sked_Drive_Has_Change_Request__c</columns>
-    <columns>sked_Staff_Allocated__c</columns>
     <columns>sked_Staff_Delta__c</columns>
     <columns>sked_Assigned_Staff_Count__c</columns>
+    <columns>sked_Zip_Code__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Drive_Date__c</field>

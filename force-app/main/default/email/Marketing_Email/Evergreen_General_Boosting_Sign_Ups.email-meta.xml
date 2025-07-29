@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to help BPLs increase sign ups at their drive.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Boosting Sign Ups</name>
+    <style>formalLetter</style>
+    <subject>Boosting Sign-ups for Blood Drives – Your Help Needed!</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+I hope this email finds you well. Unfortunately, we are currently facing a significant shortfall in sign-ups, and need to take immediate action to increase appointments to ensure the success of upcoming drives.
+
+Meeting your blood drive goal is critically important because patients are counting on the blood we have committed to collect.
+
+Given our contingency recruitment plan, let’s discuss what is and isn’t working. With your help and the support of our community, we can encourage more people to come forward and donate.
+
+Here are some strategies we can implement together to increase donor participation:
+
+1. Leverage the power of social media to spread the word. Infographics, videos and stories of how blood donations have saved lives can be emotionally compelling and serve as a motivating factor for others to participate. Encourage your friends, family and followers to share posts to reach a wider audience.
+
+2. Reach out to local businesses, schools and organizations to form partnerships. Collaborating with community partners extends the reach of our message and attracts potential donors from different walks of life. Organize community events to create awareness and build excitement for upcoming drives. And make sure to promote current donor incentives to get donors in the door!
+
+3. Encourage volunteers and staff to personally invite their friends and colleagues to participate in the blood drive. A direct invitation can have a powerful impact on someone&#39;s decision to donate.
+
+I genuinely believe that by working together and implementing these strategies, we can turn the tide and ensure a successful blood drive. Your support in spreading the word and encouraging others to donate is crucial.
+
+If you have any other ideas or suggestions, please don&#39;t hesitate to share them. Let&#39;s rally our community and help boost appointments to save lives.
+
+Thank you for your time and dedication to this cause. We are deeply grateful for your involvement.
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -3,6 +3,7 @@
     <fullName>Is_Hospital_Contract_Partner__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-12788</description>
+    <externalId>false</externalId>
     <label>Is Hospital Contract Partner</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

@@ -9,7 +9,7 @@
  * Date         Author              Brief Mod Description
  * 04/28/21     Fitsum Worku        Initial Code Creation 
  * 07/26/23     Fitsum Worku		Updates per HRP-10179 make the batch sizes configurable via a custom metadata type
- * 08/29/24     Priti Jana          Called Resource allocation batch directly after button click (HRP-12706)                                
+ * 08/29/24     Priti Jana          Called Resource allocation batch directly after button click (HRP-12706)       
  **************************************************************************************************************************************/
 
 public with sharing class CalendarBuildBatchOnDemandController {

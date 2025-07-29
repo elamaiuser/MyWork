@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Special_Circumstances__c</fullName>
+    <description>Created as part of HRP-701</description>
+    <externalId>false</externalId>
+    <label>Special Circumstances</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Competition Impact</fullName>
+                <default>false</default>
+                <label>Competition Impact</label>
+            </value>
+            <value>
+                <fullName>First Time Drive</fullName>
+                <default>false</default>
+                <label>First Time Drive</label>
+            </value>
+            <value>
+                <fullName>High Profile/Sensitive</fullName>
+                <default>false</default>
+                <label>High Profile/Sensitive</label>
+            </value>
+            <value>
+                <fullName>Risk for Removal</fullName>
+                <default>false</default>
+                <label>Risk for Removal</label>
+            </value>
+            <value>
+                <fullName>Strategic Stretch Booking</fullName>
+                <default>false</default>
+                <label>Strategic Stretch Booking</label>
+            </value>
+            <value>
+                <fullName>Strategic Stretch Booking - Diverse</fullName>
+                <default>false</default>
+                <label>Strategic Stretch Booking - Diverse</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

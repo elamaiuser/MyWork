@@ -381,4 +381,27 @@ private class skedResourceHandler_Test {
         Test.stopTest();
     }
     
+    /**
+     * Test method to verify that Dedicated to Site is NOT populated for Vehicle type assets (HRP-4075)
+     */
+    static testMethod void testAssetValidationForDedicatedToSite() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(1), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        sked__Location__c testLocation = (sked__Location__c) mapTestData.get('testLocation1');
+        sked__Resource__c testVehicleResource = [
+            SELECT Id, sked_Dedicated_to_Site__c
+            FROM sked__Resource__c 
+            WHERE sked_Asset_Type__c = :skedConstants.ASSET_TYPE_VEHICLE
+            LIMIT 1
+        ];
+        
+        Test.startTest();
+        try {
+            update new sked__Resource__c(Id = testVehicleResource.Id, sked_Dedicated_to_Site__c = testLocation.Id);
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains(Custom_Messages__mdt.getInstance('Asset_Validation_for_Dedicated_to_Site').Value__c));
+        }
+        Test.stopTest();
+    }
 }

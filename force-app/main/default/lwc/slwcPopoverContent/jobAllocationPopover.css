@@ -114,7 +114,3 @@
 .slds-popover__footer span + span {
   margin-left: 0.5rem;
 }
-
-.whitespace-nowrap {
-  white-space: nowrap;
-}

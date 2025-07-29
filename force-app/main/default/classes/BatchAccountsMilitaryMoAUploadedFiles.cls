@@ -276,7 +276,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         Date taskDueDate = (contentExpiryDate != null) ? contentExpiryDate.addDays(-taskSettings.Due_Date_Offset__c.intValue()) : null; 
         System.debug('contentExpiryDate ::'+contentExpiryDate+' taskDueDate:'+taskDueDate+' offset:'+taskSettings.Due_Date_Offset__c);
         String baseUrl = System.URL.getOrgDomainUrl().toExternalForm();
-        String fileUrl = baseUrl + '/lightning/r/ContentDocument/' + version.ContentDocumentId + '/view';
+        String fileUrl = baseUrl + '/lightning/r/ContentDocument/' + version.ContentDocumentId + '/view';        
 
         String description = String.format(taskSettings.Description__c, new List<String>{version.Title, version.FileType})
                              + '\n\n' + 'View file here: ' + fileUrl;

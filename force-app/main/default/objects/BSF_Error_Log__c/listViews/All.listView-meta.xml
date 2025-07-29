@@ -13,5 +13,15 @@
         <operation>equals</operation>
         <value>OrderCloningService</value>
     </filters>
+    <filters>
+        <field>Type__c</field>
+        <operation>equals</operation>
+        <value>Error</value>
+    </filters>
+    <filters>
+        <field>ApexClass__c</field>
+        <operation>equals</operation>
+        <value>DriveTriggerService</value>
+    </filters>
     <label>All</label>
 </ListView>
