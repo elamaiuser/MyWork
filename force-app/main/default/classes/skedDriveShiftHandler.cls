@@ -11,6 +11,7 @@ public class skedDriveShiftHandler extends skedTriggerHub {
         populateIdentifier(this.context.newRecords);
         if (!skedSetting.instance.Admin.migrationMode) {
             updateDriveShiftOrders(this.context.newRecords);
+            captureFSWBException(this.context.newRecords);
         }
     }
     
@@ -137,6 +138,19 @@ public class skedDriveShiftHandler extends skedTriggerHub {
                     }  
                 }   
             }
+        }
+    }
+    
+    private void captureFSWBException(List<sked_Drive_Shift__c> newRecords) {
+        Set<Id> driveIdsToValidate = new Set<Id>();
+        for (sked_Drive_Shift__c newRecord : newRecords) {
+            if (newRecord.sked_Drive_Type__c == skedConstants.DRIVE_TYPE_FIXED_SITE && newRecord.sked_Drive_Operation_Type__c == skedConstants.OPERATION_TYPE_WB) {
+                driveIdsToValidate.add(newRecord.sked_Drive__c);
+            }
+        }
+        if (!driveIdsToValidate.isEmpty()) {
+            skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
+			service.captureFSWBException(driveIdsToValidate);
         }
     }
     
