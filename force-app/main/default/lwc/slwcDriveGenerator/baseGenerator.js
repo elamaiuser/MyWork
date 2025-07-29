@@ -2,15 +2,13 @@ import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepU
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
-import { DRIVE_STATUS, ASSET_TYPE, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION } from 'c/slwcConstants';
+import { DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, JOB_ALLOCATION_STATUS, DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, MANUALLY_CREATED_FROM, OPERATION_TYPE, DRIVE_CONTENTION_RESOLUTION, DRIVE_CHANGE_REQUEST_TYPE, RESOURCE_ROLE_GROUP } from 'c/slwcConstants';
 import {
   sObjectType,
   driveQueryModel,
   driveService,
   slotQueryModel,
-  slotService,
-  jobService,
-  jobQueryModel,
+  slotService
 } from "c/dataService";
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
@@ -102,8 +100,7 @@ class BaseGenerator {
     activeDriveChangeRequest,
     territoryCollectionOperations = [],
     staffSetupExcludedRoles,
-    redcrossVolunteerMatrix,
-    collectionOperationTimeBlocks = []
+    redcrossVolunteerMatrix
   }) {
     let masterData = {...this.masterData, 
       loginUser,
@@ -122,8 +119,7 @@ class BaseGenerator {
       activeDriveChangeRequest,
       territoryCollectionOperations,
       staffSetupExcludedRoles,
-      redcrossVolunteerMatrix,
-      collectionOperationTimeBlocks
+      redcrossVolunteerMatrix
     };
 
     if (this.drive.driveSite) {
@@ -401,81 +397,6 @@ class BaseGenerator {
     }
   }
   
-  resolveTimeBlockContentions(driveTimeBlockContentions = []) {
-    return Promise.resolve()
-    .then(() => {
-      if(!driveTimeBlockContentions.length) return;
-
-      driveTimeBlockContentions.forEach(contention => {
-        const { driveShiftKey, timeBlockId, electNotUseTimeBlock, electOutOfTimeBlock} = contention;
-        const driveShift = this.drive.driveShifts?.find(driveShift => driveShift.key === driveShiftKey);
-
-        if(driveShift) {
-          driveShift.timeBlockId = timeBlockId;
-          let currentContentionResolutions = driveShift.contentionResolution ? driveShift.contentionResolution.split(';') : [];
-          remove(currentContentionResolutions, item => item === DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
-          remove(currentContentionResolutions, item => item === DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
-
-          if(electNotUseTimeBlock) {
-            currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK);
-            driveShift.timeBlockId = '';
-          }
-
-          if(electOutOfTimeBlock) {
-            currentContentionResolutions.push(DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION.ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK);
-          }
-
-          driveShift.contention = contention.contention;
-          driveShift.contentionResolution = currentContentionResolutions.join(';');
-        }
-      })
-
-      let currentDriveContentions = cloneDeep(this.drive.pendingActionReasonCode)
-      remove(currentDriveContentions, item => [
-        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
-        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
-        DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
-      ].includes(item));
-      this.drive.pendingActionReasonCodes = currentDriveContentions;
-      this.drive.pendingActionReasonCode = currentDriveContentions;
-
-      return this.drive;
-    })
-  }
-
-  populateDriveShiftTimeBlocks(driveShift) {
-    if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
-      return;
-    }
-
-    //reset timeblock
-    driveShift.timeBlockId = '';
-    driveShift.timeBlock = null;
-    
-    const availableTimeBlocks = this.helper.findAvailableTimeBlocks({
-      driveDate: this.drive.driveDate,
-      collectionOperation: this.drive.collectionOperation,
-      startTime: driveShift.startTime,
-      endTime: driveShift.endTime
-    }, this.masterData);
-    
-    if (availableTimeBlocks.length > 1) {
-      return;
-    }
-
-    if (availableTimeBlocks.length === 1) {
-      driveShift.timeBlockId = availableTimeBlocks[0].timeBlockId;
-    }
-
-    //availableTimeBlocks.length === 0
-    const availableCOTimeBlocks = this.helper.findAvailableCOTimeBlocks(this.drive, this.masterData);
-
-    if (availableCOTimeBlocks.length === 1) {
-      driveShift.timeBlockId = availableCOTimeBlocks[0].timeBlockId;
-      driveShift.timeBlock = availableCOTimeBlocks[0].timeBlock;
-    }
-  }
-
   populateShiftTime(driveShift) {
     if (!driveShift.driveDate || !driveShift.startTime || !driveShift.endTime) return;
 
@@ -708,7 +629,7 @@ class BaseGenerator {
     const equipmentJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.EQUIPMENT);
 
     compact([vehicleJob, equipmentJob]).forEach(job => {
-     let newJobAllocations = job.jobAllocations && job.jobAllocations.length ? [...job.jobAllocations] : [];
+     let newJobAllocations = [...job.jobAllocations];
      let jobAllocationKeysToRemove = [];
      newJobAllocations.forEach(jobAllocation => {
       if(jobAllocation.id) {
@@ -753,10 +674,6 @@ class BaseGenerator {
       if(currentDrive.driveDate !== backupDrive.driveDate || 
         currentDrive.collectionOperationId !== backupDrive.collectionOperationId) {
         currentContentionResolutions = [];
-
-        this.drive.driveShifts?.forEach(driveShift => {
-          driveShift.contentionResolution = ''
-        })
       }
 
       //Out of Operational Hours
@@ -1102,24 +1019,6 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
 
-  saveBulkEditVolunteerJob(shiftKey, job) {
-    if (!shiftKey || !job) return;
-
-    let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
-    let newList = this.helper.getDriveShiftJobs(shift);
-    const index = newList.findIndex((item) => item.key === job.key);
-    if (index == -1) {
-      return;
-    }
-
-    newList[index] = {
-      ...newList[index],
-      ...job
-    };
-    shift.jobs = newList;
-    return this.notifyDriveChanged();
-  }
-
   deleteJob(shiftKey, job) {
     if (!shiftKey || !job) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
@@ -1400,76 +1299,6 @@ class BaseGenerator {
     })
     
     return this.notifyDriveChanged();
-  }
-
-  calculateRecurrenceVolunteerJobs(drive) {
-    const recurrenceDates = [];
-    const recurrenceJobIds = [];
-    const mapRecurrenceJobIdsByJobId = {};
-    drive.driveShifts?.forEach(driveShift => {
-      driveShift.jobs?.forEach(job => {
-        job.bulkEditVolunteerJobsSelectedDays?.length && recurrenceDates.push(...job.bulkEditVolunteerJobsSelectedDays);
-        if(job.bulkEditVolunteerJobsSelectedJobIds?.length) {
-          mapRecurrenceJobIdsByJobId[job.id] = {
-            job: job,
-            recurrenceJobIds: job.bulkEditVolunteerJobsSelectedJobIds
-          }
-          recurrenceJobIds.push(...job.bulkEditVolunteerJobsSelectedJobIds);
-        }
-      })
-    })
-
-    const today = DateTime.fromObject({
-      zone: this.masterData.timezoneSidId
-    }).toISODate();
-
-    const validRecurrenceDates = uniq(recurrenceDates).filter(dateIso => dateIso >= today);
-    if(!validRecurrenceDates.length) {
-      return Promise.resolve([]);
-    }
-
-    return Promise.resolve()
-      .then(() => {
-        let jobQuery = new jobQueryModel();
-        jobQuery.recordIds = recurrenceJobIds;
-        jobQuery.selectedDates = validRecurrenceDates;
-        jobQuery.driveTypes = [DRIVE_TYPE.FIXED_SITE];
-        jobQuery.driveOperationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
-        jobQuery.collectionOperationIds = [this.drive.collectionOperationId];
-        jobQuery.driveLocationIds = [this.drive.driveSiteId];
-        jobQuery.driveStatuses = [
-            DRIVE_STATUS.SYSTEM_GENERATED,
-            DRIVE_STATUS.TENTATIVE,
-            DRIVE_STATUS.CONFIRMED,
-            DRIVE_STATUS.HOLD
-        ];
-        jobQuery.driveExcludedIds = [this.drive.id];
-        jobQuery.isVounteerRole = true;
-
-        const jobSvc = new jobService();
-
-        return jobSvc.query(jobQuery);
-      })
-      .then((jobs = []) => {
-        let mapJobsToSave = {};
-        Object.keys(mapRecurrenceJobIdsByJobId).forEach(jobId => {
-          const {job: sourceJob, recurrenceJobIds } = mapRecurrenceJobIdsByJobId[jobId];
-          const relatedJobs = jobs.filter(job => recurrenceJobIds.includes(job.id));
-
-          relatedJobs.forEach(job => {
-            mapJobsToSave[job.id] = {
-              id: job.id,
-              isLocked: !!sourceJob.isLocked
-            }
-          })
-        })
-  
-        return Object.values(mapJobsToSave);
-      })
-      .catch((error) => {
-        console.log('>>> calculateRecurrenceVolunteerJobs', error);
-        return [];
-      })
   }
 
   calculateRecurrenceSlots(drive) {

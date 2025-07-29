@@ -955,9 +955,7 @@ class SlwcLinkedDrivesAvailator {
     });
   }
 
-  buildScheduledAllocations({
-    ignoreDedicatedSiteRule = false
-  } = {}) {
+  buildScheduledAllocations() {
     return Promise.resolve()
     .then(() => {
       console.log('>>> Start building data', new Date());
@@ -1027,7 +1025,7 @@ class SlwcLinkedDrivesAvailator {
               }
 
               if(!isTemporaryCO) {
-                if(!ignoreDedicatedSiteRule && resource.dedicatedToSiteId && resource.dedicatedToSiteId !== drive.driveSiteId) {
+                if(resource.dedicatedToSiteId && resource.dedicatedToSiteId !== drive.driveSiteId) {
                   return;
                 }
               }

@@ -121,8 +121,8 @@
                             <visibilityRule>
                                 <criteria>
                                     <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
-                                    <operator>NE</operator>
-                                    <rightValue>Feeder Plus</rightValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Feeder Only</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>

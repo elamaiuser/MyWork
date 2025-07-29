@@ -261,8 +261,6 @@ public class slwcSetting {
                 model.minDonorValue = setting.Min_Anticipated_Registered_Donors__c;
                 model.maxDonorValue = setting.Max_Anticipated_Registered_Donors__c;
                 model.volunteerQuantity = setting.Volunteer_Quantity__c;
-                model.driveType = setting.Drive_Type__c;
-                model.operationType = setting.Operation_Type__c;
                 this.redcrossVolunteerMatrixSettings.add(model);
             }
         }
@@ -273,7 +271,5 @@ public class slwcSetting {
         @AuraEnabled public decimal minDonorValue {get;set;}
         @AuraEnabled public decimal maxDonorValue {get;set;}
         @AuraEnabled public decimal volunteerQuantity {get;set;}
-        @AuraEnabled public string driveType {get;set;}
-        @AuraEnabled public string operationType {get;set;}
     }
 }

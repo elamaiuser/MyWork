@@ -3,10 +3,6 @@
     <label>0-17</label>
     <protected>false</protected>
     <values>
-        <field>Drive_Type__c</field>
-        <value xsi:type="xsd:string">Mobile</value>
-    </values>
-    <values>
         <field>High_School_Drive__c</field>
         <value xsi:type="xsd:boolean">false</value>
     </values>
@@ -17,10 +13,6 @@
     <values>
         <field>Min_Anticipated_Registered_Donors__c</field>
         <value xsi:type="xsd:double">0.0</value>
-    </values>
-    <values>
-        <field>Operation_Type__c</field>
-        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Volunteer_Quantity__c</field>

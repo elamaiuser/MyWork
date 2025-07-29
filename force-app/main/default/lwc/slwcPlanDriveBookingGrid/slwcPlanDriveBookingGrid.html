@@ -125,169 +125,98 @@
                                         </lightning-formatted-date-time>
                                     </div>
                                     <div if:true={day.slot} class={day.slot.class} style={day.slot.slotStyle}>
-                                        <template if:false={day.slot.isNotMatchTimeBlock}>
-                                            <div class="bar" style={day.slot.barStyle}></div>
+                                        <div class="bar" style={day.slot.barStyle}></div>
 
-                                            <div class="info">
-                                                <template if:true={checkDriveLimit}>
-                                                    <div class="date-slot">
-                                                        <c-slwc-popover
-                                                                container="html"
-                                                                size="small"
-                                                                position="right"
-                                                                trigger="click">
-                                                            <div slot="reference" class="popover-placeholder">
-                                                            </div>
-                                                            <c-slwc-popover-content 
-                                                                name="driveDateDetailsPopover"
-                                                                popover-data={day.slot}
-                                                                slot="content">
-                                                            </c-slwc-popover-content>
-                                                        </c-slwc-popover>
-        
-                                                        <div class="date-slot_wrapper">
-                                                            <span
-                                                                class="date-slot_badge slds-p-horizontal_xx-small"
-                                                                style={day.slot.driveLimitIconStyle}
-                                                            >
-                                                                Drive
-                                                            </span>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.mobileDriveCount}
-                                                            </div>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.driveLimit}
-                                                            </div>
+                                        <div class="info">
+                                            <template if:true={checkDriveLimit}>
+                                                <div class="date-slot">
+                                                    <c-slwc-popover
+                                                            container="html"
+                                                            size="small"
+                                                            position="right"
+                                                            trigger="click">
+                                                        <div slot="reference" class="popover-placeholder">
                                                         </div>
-                                                        <div class="date-slot_wrapper">
-                                                            <span
-                                                                class="date-slot_badge slds-p-horizontal_xx-small"
-                                                                style={day.slot.drive2RBCLimitIconStyle}
-                                                            >
-                                                                2RBC
-                                                            </span>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.required2RBCDriveCount}
-                                                            </div>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.available2RBCDriveCount}
-                                                            </div>
+                                                        <c-slwc-popover-content 
+                                                            name="driveDateDetailsPopover"
+                                                            popover-data={day.slot}
+                                                            slot="content">
+                                                        </c-slwc-popover-content>
+                                                    </c-slwc-popover>
+    
+                                                    <div class="date-slot_wrapper">
+                                                        <span
+                                                            class="date-slot_badge slds-p-horizontal_xx-small"
+                                                            style={day.slot.driveLimitIconStyle}
+                                                        >
+                                                            Drive
+                                                        </span>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.mobileDriveCount}
                                                         </div>
-                                                        <div class="date-slot_wrapper">
-                                                            <span
-                                                                class="date-slot_badge slds-p-horizontal_xx-small"
-                                                                style={day.slot.driveDOTLimitIconStyle}
-                                                            >
-                                                                DOT
-                                                            </span>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.requiredDOTDriveCount}
-                                                            </div>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.availableDOTDriveCount}
-                                                            </div>
-                                                        </div>
-                                                        <div class="date-slot_wrapper">
-                                                            <span
-                                                                class="date-slot_badge slds-p-horizontal_xx-small"
-                                                                style={day.slot.driveCDLLimitIconStyle}
-                                                            >
-                                                                CDL
-                                                            </span>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.requiredCDLDriveCount}
-                                                            </div>
-                                                            <div class="date-slot_info">
-                                                                {day.slot.availableCDLDriveCount}
-                                                            </div>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.driveLimit}
                                                         </div>
                                                     </div>
-
-                                                    <div class="date-slot">
-                                                        <div class="date-slot_icon" style={day.slot.resourceIconStyle}>
-                                                            <lightning-icon icon-name="utility:user" variant="inverse" size="xx-small"></lightning-icon>
-                                                            <!-- {day.slot.isEnoughResources} -->
+                                                    <div class="date-slot_wrapper">
+                                                        <span
+                                                            class="date-slot_badge slds-p-horizontal_xx-small"
+                                                            style={day.slot.drive2RBCLimitIconStyle}
+                                                        >
+                                                            2RBC
+                                                        </span>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.required2RBCDriveCount}
                                                         </div>
                                                         <div class="date-slot_info">
-                                                            {day.slot.requiredResources}
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.availableResources}
+                                                            {day.slot.available2RBCDriveCount}
                                                         </div>
                                                     </div>
-                                                </template>
-                                                
-                                                <template if:false={checkDriveLimit}>
-                                                    <div class="date-slot">
-                                                        <c-slwc-popover
-                                                                container="html"
-                                                                size="small"
-                                                                position="right"
-                                                                trigger="click">
-                                                            <div slot="reference" class="popover-placeholder">
-                                                            </div>
-                                                            <c-slwc-popover-content 
-                                                                name="driveDateDetailsPopover"
-                                                                popover-data={day.slot}
-                                                                slot="content">
-                                                            </c-slwc-popover-content>
-                                                        </c-slwc-popover>
-
-                                                        <div class="date-slot_icon" style={day.slot.resourceIconStyle}>
-                                                            <lightning-icon icon-name="utility:user" variant="inverse" size="xx-small"></lightning-icon>
-                                                            <!-- {day.slot.isEnoughResources} -->
+                                                    <div class="date-slot_wrapper">
+                                                        <span
+                                                            class="date-slot_badge slds-p-horizontal_xx-small"
+                                                            style={day.slot.driveDOTLimitIconStyle}
+                                                        >
+                                                            DOT
+                                                        </span>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.requiredDOTDriveCount}
                                                         </div>
                                                         <div class="date-slot_info">
-                                                            {day.slot.requiredResources}
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.availableResources}
+                                                            {day.slot.availableDOTDriveCount}
                                                         </div>
                                                     </div>
-                                                </template>
+                                                    <div class="date-slot_wrapper">
+                                                        <span
+                                                            class="date-slot_badge slds-p-horizontal_xx-small"
+                                                            style={day.slot.driveCDLLimitIconStyle}
+                                                        >
+                                                            CDL
+                                                        </span>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.requiredCDLDriveCount}
+                                                        </div>
+                                                        <div class="date-slot_info">
+                                                            {day.slot.availableCDLDriveCount}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="date-slot">
+                                                    <div class="date-slot_icon" style={day.slot.resourceIconStyle}>
+                                                        <lightning-icon icon-name="utility:user" variant="inverse" size="xx-small"></lightning-icon>
+                                                        <!-- {day.slot.isEnoughResources} -->
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.requiredResources}
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.availableResources}
+                                                    </div>
+                                                </div>
+                                            </template>
                                             
-                                                <template if:true={showMobileVehicles}>
-                                                    <div class="date-slot">
-                                                        <div class="date-slot_icon" style={day.slot.mobileIconStyle}>
-                                                            <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="xx-small"></lightning-icon>
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.requiredMobiles}
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.availableMobiles}
-                                                        </div>
-                                                    </div>
-                                                </template>
-
-                                                <template if:true={showBusVehicles}>
-                                                    <div class="date-slot">
-                                                        <div class="date-slot_icon" style={day.slot.busIconStyle}>
-                                                            <svg style="height: 1.75rem; width: 1.75rem; fill: #fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g><path d="M38.7 72h-4.1c-.7 0-1.4.4-1.7 1l-1.4 2.4c-.8 1.4-.5 3.2.8 4.1.5.4 1.1.5 1.7.5 1 0 2-.5 2.6-1.5l3-5c.4-.7-.1-1.5-.9-1.5zM67.1 73c-.399-.6-1-1-1.699-1H61.3c-.8 0-1.3.8-.899 1.5l3 5C64 79.5 65 80 66 80c.6 0 1.2-.2 1.7-.5 1.3-.9 1.6-2.8.8-4.1L67.1 73zM67 20H33c-3.3 0-6 2.7-6 6v34c0 3.3 2.7 6 6 6h34c3.3 0 6-2.7 6-6V26c0-3.3-2.7-6-6-6zM36 62c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm28 0c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm3-12c0 1.1-.9 2-2 2H35c-1.1 0-2-.9-2-2V30c0-1.1.9-2 2-2h30c1.1 0 2 .9 2 2v20z"></path></g></svg>
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.requiredBuses}
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.availableBuses}
-                                                        </div>
-                                                    </div>
-                                                </template>
-                                                
-                                                <template if:true={showBothVehicles}>
-                                                    <div class="date-slot">
-                                                        <div class="date-slot_icon" style={day.slot.vehicleIconStyle}>
-                                                            <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="xx-small"></lightning-icon>
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.requiredVehicles}
-                                                        </div>
-                                                        <div class="date-slot_info">
-                                                            {day.slot.availableVehicles}
-                                                        </div>
-                                                    </div>
-                                                </template>
-
+                                            <template if:false={checkDriveLimit}>
                                                 <div class="date-slot">
                                                     <c-slwc-popover
                                                             container="html"
@@ -303,18 +232,87 @@
                                                         </c-slwc-popover-content>
                                                     </c-slwc-popover>
 
-                                                    <div class="date-slot_icon" style={day.slot.equipmentIconStyle}>
-                                                        <lightning-icon icon-name="utility:settings" variant="inverse" size="xx-small"></lightning-icon>
+                                                    <div class="date-slot_icon" style={day.slot.resourceIconStyle}>
+                                                        <lightning-icon icon-name="utility:user" variant="inverse" size="xx-small"></lightning-icon>
+                                                        <!-- {day.slot.isEnoughResources} -->
                                                     </div>
                                                     <div class="date-slot_info">
-                                                        {day.slot.requiredEquipments}
+                                                        {day.slot.requiredResources}
                                                     </div>
                                                     <div class="date-slot_info">
-                                                        {day.slot.availableEquipments}
+                                                        {day.slot.availableResources}
                                                     </div>
                                                 </div>
+                                            </template>
+                                        
+                                            <template if:true={showMobileVehicles}>
+                                                <div class="date-slot">
+                                                    <div class="date-slot_icon" style={day.slot.mobileIconStyle}>
+                                                        <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="xx-small"></lightning-icon>
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.requiredMobiles}
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.availableMobiles}
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template if:true={showBusVehicles}>
+                                                <div class="date-slot">
+                                                    <div class="date-slot_icon" style={day.slot.busIconStyle}>
+                                                        <svg style="height: 1.75rem; width: 1.75rem; fill: #fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g><path d="M38.7 72h-4.1c-.7 0-1.4.4-1.7 1l-1.4 2.4c-.8 1.4-.5 3.2.8 4.1.5.4 1.1.5 1.7.5 1 0 2-.5 2.6-1.5l3-5c.4-.7-.1-1.5-.9-1.5zM67.1 73c-.399-.6-1-1-1.699-1H61.3c-.8 0-1.3.8-.899 1.5l3 5C64 79.5 65 80 66 80c.6 0 1.2-.2 1.7-.5 1.3-.9 1.6-2.8.8-4.1L67.1 73zM67 20H33c-3.3 0-6 2.7-6 6v34c0 3.3 2.7 6 6 6h34c3.3 0 6-2.7 6-6V26c0-3.3-2.7-6-6-6zM36 62c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm28 0c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm3-12c0 1.1-.9 2-2 2H35c-1.1 0-2-.9-2-2V30c0-1.1.9-2 2-2h30c1.1 0 2 .9 2 2v20z"></path></g></svg>
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.requiredBuses}
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.availableBuses}
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            
+                                            <template if:true={showBothVehicles}>
+                                                <div class="date-slot">
+                                                    <div class="date-slot_icon" style={day.slot.vehicleIconStyle}>
+                                                        <lightning-icon icon-name="utility:travel_and_places" variant="inverse" size="xx-small"></lightning-icon>
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.requiredVehicles}
+                                                    </div>
+                                                    <div class="date-slot_info">
+                                                        {day.slot.availableVehicles}
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <div class="date-slot">
+                                                <c-slwc-popover
+                                                        container="html"
+                                                        size="small"
+                                                        position="right"
+                                                        trigger="click">
+                                                    <div slot="reference" class="popover-placeholder">
+                                                    </div>
+                                                    <c-slwc-popover-content 
+                                                        name="driveDateDetailsPopover"
+                                                        popover-data={day.slot}
+                                                        slot="content">
+                                                    </c-slwc-popover-content>
+                                                </c-slwc-popover>
+
+                                                <div class="date-slot_icon" style={day.slot.equipmentIconStyle}>
+                                                    <lightning-icon icon-name="utility:settings" variant="inverse" size="xx-small"></lightning-icon>
+                                                </div>
+                                                <div class="date-slot_info">
+                                                    {day.slot.requiredEquipments}
+                                                </div>
+                                                <div class="date-slot_info">
+                                                    {day.slot.availableEquipments}
+                                                </div>
                                             </div>
-                                        </template>
+                                        </div>
                                     </div>
                                     <div class="selected-slot" data-value={day.dateIso} onclick={handleSelectDate}>
                                         <lightning-icon icon-name="action:approval" class="selected-icon" size="xx-small"></lightning-icon>

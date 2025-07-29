@@ -1,8 +1,0 @@
-.scroll-wrapper {
-    overflow-x: auto;
-    max-height: 500px;
-}
-
-.scroll-inner {
-    min-width: 1500px; /* or wider if needed */
-}

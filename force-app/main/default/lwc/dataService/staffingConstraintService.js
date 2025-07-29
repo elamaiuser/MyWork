@@ -11,9 +11,6 @@ class staffingConstraintService extends dataService {
         if (query.collectionOpIds) {
             queryBuilder.addCondition({template: "sked_Collection_Operation__c IN {0}", value: query.collectionOpIds, type: "array_string"});
         }
-        if (query.timeBlockIds) {
-            queryBuilder.addCondition({template: "sked_Time_Block__c IN {0}", value: query.timeBlockIds, type: "array_string"});
-        }
         if (query.driveTypes && query.driveTypes.length) {
             queryBuilder.addCondition({template: "sked_Drive_Type__c IN {0}", value: query.driveTypes, type: "array_string"});
         }
@@ -33,7 +30,6 @@ class staffingConstraintQueryModel extends queryModelBase {
     endDate;
     startDate;
     selectedDates;
-    timeBlockIds;
 }
 
 export {

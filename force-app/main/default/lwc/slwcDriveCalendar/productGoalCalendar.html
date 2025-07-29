@@ -82,12 +82,7 @@
                                                 <div class="staff-info" if:true={showFixedSiteStaffingDetails}>
                                                     <div>
                                                         <div>F</div>
-                                                        <template if:true={isTimeBlockApplied}>
-                                                            <span>NA</span>
-                                                        </template>
-                                                        <template if:false={isTimeBlockApplied}>
-                                                            <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRequested}></lightning-formatted-number>
-                                                        </template>
+                                                        <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRequested}></lightning-formatted-number>
                                                     </div>
                                                 </div>
                                                 <div class="staff-info" if:true={showMobileStaffingDetails}>
@@ -101,12 +96,7 @@
                                                 <div class="staff-info" if:true={showFixedSiteStaffingDetails}>
                                                     <div>
                                                         <div>F</div>
-                                                        <template if:true={isTimeBlockApplied}>
-                                                            <span>NA</span>
-                                                        </template>
-                                                        <template if:false={isTimeBlockApplied}>
-                                                            <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRemaining}></lightning-formatted-number>
-                                                        </template>
+                                                        <lightning-formatted-number value={day.slot.noOfFixedSiteStaffRemaining}></lightning-formatted-number>
                                                     </div>
                                                 </div>
                                                 <div class="staff-info" if:true={showMobileStaffingDetails}>

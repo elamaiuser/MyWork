@@ -9,7 +9,6 @@ import {
   driveChangeRequestService, driveChangeRequestQueryModel,
   operationDriveLimitQueryModel, operationDriveLimitService,
   collectionOperationStagingLocationService, collectionOperationStagingLocationQueryModel,
-  collectionOperationTimeBlockQueryModel, collectionOperationTimeBlockService,
   roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
@@ -270,7 +269,6 @@ class Fetch {
           query.startDate = driveDate;
           query.endDate = driveDate;
           query.collectionOpId = collectionOperationId;
-          query.subQueryIndicator = sObjectType.DRIVE_SHIFT;
 
           let service = new driveService();
           return service.query(query)
@@ -358,27 +356,6 @@ class Fetch {
             return driveChangeRequest;
           });
       })
-  }
-  
-  retrieveCollectionOperationTimeBlocks({
-    driveDate,
-    collectionOperationId
-  }) {
-    return Promise.resolve()
-      .then(() => {
-        if (driveDate && collectionOperationId) {
-          let service = new collectionOperationTimeBlockService();
-          let queryModel = new collectionOperationTimeBlockQueryModel();
-          queryModel.collectionOperationIds = [collectionOperationId];
-          queryModel.effectiveStartDate = driveDate;
-          queryModel.effectiveEndDate = driveDate;
-
-          return service.query(queryModel)
-            .then((result) => {
-              return result
-            })
-        }
-      });
   }
   
   getDriveDetails(driveId) {

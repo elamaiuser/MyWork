@@ -56,7 +56,6 @@ export class CollectionOpMappingConfigFactory {
 
       mappingConfig.addFieldConfigWithRelatedList('sked_Regions__r', 'regions', 'sked__Region__c', 'sked_Biomed_Collection_Op_Center__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Collection_Op_Staging_Locations__r', 'collectionOpStagingLocations', 'sked_Collection_Op_Staging_Location__c', 'sked_Collection_Operation__c');
-      mappingConfig.addFieldConfigWithRelatedList('Collection_Operation_Time_Blocks__r', 'collectionOperationTimeBlocks', 'Collection_Operation_Time_Block__c', 'Collection_Operation__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_CollectionOpOptimizerSettings__r', 'collectionOpOptimizerSettings', 'sked_CollectionOperationOptimizerSetting__c', 'sked_Collection_Operation__c');
 
       return mappingConfig;

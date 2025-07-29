@@ -10,14 +10,12 @@
         </div>
         <div class="slds-col slds-scrollable_y slds-p-left_small">
             <div class="slds-grid">
-                <div class="slds-no-flex slds-col_bump-left slds-p-right_small">
+                <div class="slds-no-flex slds-col_bump-left slds-p-right_small" style="width: 300px;">
                     <c-slwc-new-collection-operation-multi-picklist
                         division-single-select
                         date-range={collectionOperationDateRange}
                         default-values={filters.collectionOperationValues}
-                        onchange={handleCollectionOperationChanged}
-                        ontimeblockchange={handleTimeBlockChanged}
-                        time-block-enabled={timeBlockEnabled}>
+                        onchange={handleCollectionOperationChanged}>
                     </c-slwc-new-collection-operation-multi-picklist>
                 </div>
 

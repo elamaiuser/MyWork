@@ -7,7 +7,7 @@ import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, difference, uniqueId, extend, orderBy } from 'c/lodash';
 import { Fetch } from './fetch';
-import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM, VOLUNTEER_TYPE } from 'c/slwcConstants';
+import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -16,7 +16,7 @@ const DEFAULT_CALENDAR_SETTINGS = {
 
 const DRIVE_ACTION_GROUPS_ORDER = [
   ['retrieveDriveSiteAndPopulateCollectionOperation', 'populateSiteCollectionOperation', 'populateDriveCollectionOperation', 'populateCollectionOperationData'],
-  ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'],
+  ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'],
   ['calculateNumberOf2rbcAssets', 'calculate2rbcProjectedProcedures', 'splitScheduledDonors', 'split2rbcProjectedProcedures', 'calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata',
     'applyStaffingComplementAndProposeDriveShifts', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
     'handleEquipmentRequestedChanged', 'handleDriveShiftsMetadataChanged', 'correctJobAllocationTimes']
@@ -26,7 +26,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveDate': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
@@ -66,7 +66,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveSiteId': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -74,7 +74,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'siteCollectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -82,7 +82,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'collectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -316,8 +316,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
                     resourceRoleGroups,
                     lunchBreakSettings,
                     adminSetting,
-                    staffSetupExcludedRoles,
-                    redcrossVolunteerMatrix
+                    staffSetupExcludedRoles
                   }]) => {
                     this.populateDriveCollectionOperation();
 
@@ -327,18 +326,16 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       lunchBreakSettings,
                       adminSetting,
                       staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix,
                       this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
                       this.fetch.retrieveSameDateDrives(this.drive),
                       this.fetch.retrieveSameDateActivities(this.drive),
                       this.fetch.retrieveCollectionOperationSDM(this.drive),
                       this.fetch.retrieveRoleTimeData(this.drive),
                       this.fetch.retrieveDefaultTags(this.drive),
-                      this.fetch.retrieveTerritoryCollectionOperations(this.drive),
-                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+                      this.fetch.retrieveTerritoryCollectionOperations(this.drive)
                     ])
                   })
-                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks]) => {
+                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations]) => {
                     this.initMasterData({
                       loginUser,
                       driveSite,
@@ -352,9 +349,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       roleTimeData,
                       driveTags,
                       territoryCollectionOperations,
-                      staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix,
-                      collectionOperationTimeBlocks
+                      staffSetupExcludedRoles
                     })
 
                     this.populateCollectionOperationData();
@@ -423,8 +418,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           resourceRoleGroups,
           lunchBreakSettings,
           adminSetting,
-          staffSetupExcludedRoles,
-          redcrossVolunteerMatrix
+          staffSetupExcludedRoles
         }]) => {
 
           return Promise.all([
@@ -433,18 +427,16 @@ class WbFixedSiteGenerator extends BaseGenerator {
             lunchBreakSettings,
             adminSetting,
             staffSetupExcludedRoles,
-            redcrossVolunteerMatrix,
             this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
             this.fetch.retrieveSameDateDrives(this.drive),
             this.fetch.retrieveSameDateActivities(this.drive),
             this.fetch.retrieveCollectionOperationSDM(this.drive),
             this.fetch.retrieveRoleTimeData(this.drive),
             this.fetch.retrieveDefaultTags(this.drive),
-            this.fetch.retrieveActiveDriveChangeRequest(this.drive),
-            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+            this.fetch.retrieveActiveDriveChangeRequest(this.drive)
           ]);
         })
-        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks]) => {
+        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest]) => {
           this.initMasterData({
             loginUser,
             driveSite,
@@ -458,9 +450,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
             roleTimeData,
             driveTags,
             activeDriveChangeRequest,
-            staffSetupExcludedRoles,
-            redcrossVolunteerMatrix,
-            collectionOperationTimeBlocks
+            staffSetupExcludedRoles
           })
           
           this.populateCollectionOperationData();
@@ -1036,8 +1026,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
       this.calculateChargeQuantity();
     }
    
-    // HRP-15041
-    this.calculateVolunteerDonorAmbassadors();    
+    // HRP-10652: WB Fixed Site Drive Generation Code - Volunteer Jobs Generated
+    // this.calculateVolunteerDonorAmbassadors();    
 
     if(jobsUpdatedViaDualRoleChangeMap) {
       this.restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap);
@@ -1273,24 +1263,28 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   calculateVolunteerDonorAmbassadors() {
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    if (!this.masterData.redcrossVolunteerMatrix) return;
-
-    const sortedVolunteerMatrixRecords = orderBy(this.masterData.redcrossVolunteerMatrix, [item => item.driveType, item => item.minDonorValue], ['asc', 'desc']);
-
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       let volunteerQuantityMap = this.mapVolunteerQuantity.get(driveShift.key);
-      const driveProjectedRegisteredDonors = this.drive.projectedRegisteredDonors;
+      let drawHours = this.helper.calculateDrawHours(driveShift, this.masterData);
+      if(drawHours <= 0) return;
+      if (!this.masterData.staffingDecisionMatrix) return;
+
+      let totalProceduresProjected = driveShift.totalProceduresProjected;
+      let nrVolunteerFixedSiteBandLower = this.masterData.staffingDecisionMatrix.nrVolunteerFixedSiteBandLower;
+      let nrVolunteerFixedSiteBandUpper = this.masterData.staffingDecisionMatrix.nrVolunteerFixedSiteBandUpper;
       let noOfVolunteerDonorAmbassadors = 0;
 
-      const redcrossVolunteerMatrixRecord = (sortedVolunteerMatrixRecords || []).find(matrix => {
-        return matrix.driveType === this.drive.typeOfDrive && 
-        matrix.operationType === this.drive.driveSite.operationType &&
-        matrix.minDonorValue <= driveProjectedRegisteredDonors
-      });
+      if (totalProceduresProjected < nrVolunteerFixedSiteBandLower) {
+        noOfVolunteerDonorAmbassadors = 0;
+      }
+      else if (nrVolunteerFixedSiteBandLower <= totalProceduresProjected && totalProceduresProjected <= nrVolunteerFixedSiteBandUpper) {
+        noOfVolunteerDonorAmbassadors = 1;
+      }
+      else {
+        noOfVolunteerDonorAmbassadors = 2;
+      }
 
-      if(!isNullOrEmpty(redcrossVolunteerMatrixRecord)) noOfVolunteerDonorAmbassadors = redcrossVolunteerMatrixRecord.volunteerQuantity;
-
-      volunteerQuantityMap.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, noOfVolunteerDonorAmbassadors);
+      volunteerQuantityMap.set('Donor Ambassador', noOfVolunteerDonorAmbassadors);
     });
   }
 
@@ -1365,7 +1359,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled
       };
 
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -1505,13 +1498,13 @@ class WbFixedSiteGenerator extends BaseGenerator {
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
-      if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {
+      if (volunteerRole === 'Donor Ambassador') {
         job.redcrossVolunteerQuantity = quantity || 0;
         job.sponsorVolunteerQuantity = job.sponsorVolunteerQuantity || 0;
         job.quantity = (job.redcrossVolunteerQuantity || 0) + (job.sponsorVolunteerQuantity || 0);
       }
       if (quantity > 0) {
-        if(!jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR)) jobs.push(job);
+        if(!jobs.find(job => job.volunteerRole === 'Donor Ambassador')) jobs.push(job);
       }
     });
 
@@ -1549,7 +1542,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
+      return job.resourceRole !== 'VP/HH' && (
         this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
         this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
       )
@@ -2133,13 +2126,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
     })
   }
 
-  retrieveCollectionOperationTimeBlocksData() {
-    return this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
-    .then((collectionOperationTimeBlocks) => {
-      this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || []; 
-    })
-  }
-  
   retrieveDefaultTags() {
     return this.fetch.retrieveDefaultTags(this.drive)
     .then((driveTags) => {

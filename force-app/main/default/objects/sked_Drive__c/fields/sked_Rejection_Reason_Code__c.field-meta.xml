@@ -10,21 +10,26 @@
     <valueSet>
         <restricted>true</restricted>
         <valueSetDefinition>
-            <sorted>true</sorted>
-            <value>
-                <fullName>Calendar Culture</fullName>
-                <default>false</default>
-                <label>Calendar Culture</label>
-            </value>
-            <value>
-                <fullName>Critical role unavailable</fullName>
-                <default>false</default>
-                <label>Critical role unavailable</label>
-            </value>
+            <sorted>false</sorted>
             <value>
                 <fullName>Insufficient staffing</fullName>
                 <default>false</default>
                 <label>Insufficient staffing</label>
+            </value>
+            <value>
+                <fullName>Union requirements conflict</fullName>
+                <default>false</default>
+                <label>Union requirements conflict</label>
+            </value>
+            <value>
+                <fullName>Turnaround time</fullName>
+                <default>false</default>
+                <label>Turnaround time</label>
+            </value>
+            <value>
+                <fullName>Overtime</fullName>
+                <default>false</default>
+                <label>Overtime</label>
             </value>
             <value>
                 <fullName>No vehicles</fullName>
@@ -32,9 +37,14 @@
                 <label>No vehicles</label>
             </value>
             <value>
-                <fullName>Overtime</fullName>
+                <fullName>Critical role unavailable</fullName>
                 <default>false</default>
-                <label>Overtime</label>
+                <label>Critical role unavailable</label>
+            </value>
+            <value>
+                <fullName>Calendar Culture</fullName>
+                <default>false</default>
+                <label>Calendar Culture</label>
             </value>
             <value>
                 <fullName>Reason 1</fullName>
@@ -71,16 +81,6 @@
                 <default>false</default>
                 <isActive>false</isActive>
                 <label>Reason 6</label>
-            </value>
-            <value>
-                <fullName>Turnaround time</fullName>
-                <default>false</default>
-                <label>Turnaround time</label>
-            </value>
-            <value>
-                <fullName>Union requirements conflict</fullName>
-                <default>false</default>
-                <label>Union requirements conflict</label>
             </value>
         </valueSetDefinition>
     </valueSet>

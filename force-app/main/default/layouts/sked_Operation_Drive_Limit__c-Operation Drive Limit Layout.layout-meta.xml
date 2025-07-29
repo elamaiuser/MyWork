@@ -23,10 +23,6 @@
                 <behavior>Edit</behavior>
                 <field>sked_Type__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Time_Block__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

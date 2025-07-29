@@ -18,14 +18,16 @@
                         onchange={handleCollectionOperationChanged}>
                     </c-slwc-new-collection-operation-multi-picklist>
                 </div>
-                
+
                 <div class="slds-p-right_small">
-                    <c-slwc-date-range-picker
+                    <c-slwc-week-date-picker
+                        includes-additional-days={includesAdditionalDays}
+                        first-day={collectionOperationFirstDay}
                         unique-key="driveOptimizer"
-                        ondaterangechange={handleOnChange}
+                        onweekdatechange={handleOnChange}
                         default-start-date={filters.startDate}
                         default-end-date={filters.endDate}>
-                    </c-slwc-date-range-picker>
+                    </c-slwc-week-date-picker>
                 </div>
             </div>
 
@@ -33,18 +35,11 @@
                 <template if:true={showSpinner}>
                     <lightning-spinner class="spins" size="medium"></lightning-spinner>
                 </template>
-                
-                <template if:true={showNoDrive}>
+
+                <template if:false={hasRecords}>
                     <div class="slds-align_absolute-center slds-p-around_large" style="height: 60vh;">
                         <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning"></lightning-icon>
-                        <span class="slds-m-left--small slds-text-color_weak">No Drives found.</span>
-                    </div>
-                </template>
-
-                <template if:true={showMarkerLimitExceeded}>
-                    <div class="slds-align_absolute-center slds-p-around_large" style="height: 60vh;">
-                        <lightning-icon icon-name="utility:error" size="x-small" alternative-text="Error!" title="Error"></lightning-icon>
-                        <span class="slds-m-left--small slds-text-color_error">You can see up to 100 pins on the map view. To see missing pins, adjust your filters to reduce the number of drives populating.</span>
+                        <span class="slds-m-left--small">No Drives found.</span>
                     </div>
                 </template>
 

@@ -72,7 +72,11 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
                 sked_Drive__c = testDrive.Id,
                 sked_Drive_Shift__c = driveShiftList[0].Id,
-                sked_Volunteer_Role__c = 'Donor Ambassador'
+                sked_Resource_Role__c = '2RBC',
+                sked_Volunteer_Role__c = 'Donor Ambassador',
+                sked_Setup_Time__c = 60,
+                sked_Breakdown_Time__c = 45,
+                sked_Travel_Time2__c = 60
             );
         	sked__Job__c testJob2 = new sked__Job__c(
                 sked__Location__c = testDriveSite.Id,
@@ -84,23 +88,10 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 sked_Drive__c = testDrive.Id,
                 sked_Drive_Shift__c = driveShiftList[1].Id,
                 sked_Resource_Role__c = '2RBC',
+                sked_Volunteer_Role__c = 'Donor Ambassador',
                 sked_Setup_Time__c = 60,
                 sked_Breakdown_Time__c = 45,
                 sked_Travel_Time2__c = 60
-            );
-        	sked__Job__c testJob3 = new sked__Job__c(
-                sked__Location__c = testDriveSite.Id,
-                sked__Region__c = testRegion.Id,
-                sked__Start__c = DateTime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(17,0,0,0)),
-                sked__Finish__c = DateTime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(20,0,0,0)),
-                sked__Duration__c = 180,
-                sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
-                sked_Drive__c = testDrive.Id,
-                sked_Drive_Shift__c = driveShiftList[0].Id,
-                sked_Resource_Role__c = 'Driver',
-                sked_Setup_Time__c = 10,
-                sked_Breakdown_Time__c = 45,
-                sked_Travel_Time2__c = 45
             );
             sked__Job__c testAssetJob = new sked__Job__c(
                 sked__Location__c = testDriveSite.Id,
@@ -113,7 +104,7 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                 sked_Drive_Shift__c = driveShiftList[0].Id,
                 sked_Asset_Type__c = skedConstants.ASSET_TYPE_VEHICLE
             );
-            insert new List<sObject>{testJob, testJob2, testJob3, testAssetJob};
+            insert new List<sObject>{testJob, testJob2, testAssetJob};
 
             DateTime driveDate = DateTime.newInstance(testDrive.sked_Drive_Date__c, testDrive.sked_Start_Time__c);
             driveDate = skedDateTimeUtils.toTimezone(driveDate, testDriveSite.sked_Timezone__c);
@@ -124,7 +115,7 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                     System.today().addDays(100),
                     skedConstants.ROLE_TIME_VARIANCE_APPLIES_TO_SETUP_TIME,
                     15,
-                    'Driving roles;Staff roles',
+                    'Staff roles',
                     testDriveSite.Id,
                     driveWeekday
                 ),
@@ -142,7 +133,7 @@ private class skedUpdateJobTimeVarianceBatch_Test {
                     System.today().addDays(100),
                     skedConstants.ROLE_TIME_VARIANCE_APPLIES_TO_TRAVEL_TIME_FROM,
                     -30,
-                    'Driving roles;Staff roles',
+                    'Staff roles',
                     testDriveSite.Id,
                     driveWeekday
                 )
@@ -151,12 +142,12 @@ private class skedUpdateJobTimeVarianceBatch_Test {
         Database.executeBatch(new skedUpdateJobTimeVarianceBatch(adjustments));
         Test.stopTest();
 
-        testJob = [SELECT Id, sked_Setup_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked__Start__c, sked__Finish__c FROM sked__Job__c WHERE sked_Resource_Role__c = 'Driver' LIMIT 1][0];
+        testJob = [SELECT Id, sked_Setup_Time__c, sked_Breakdown_Time__c, sked_Travel_Time2__c, sked__Start__c, sked__Finish__c FROM sked__Job__c LIMIT 1][0];
         testAssetJob = [SELECT Id, sked__Start__c, sked__Finish__c, sked_Drive__r.sked_Min_Shift_Start__c, sked_Drive__r.sked_Max_Shift_End__c FROM sked__Job__c WHERE Id = :testAssetJob.Id][0];
-        System.assertEquals(25, testJob.sked_Setup_Time__c);
-        System.assertEquals(15, testJob.sked_Travel_Time2__c);
-        System.assertEquals(45, testJob.sked_Breakdown_Time__c); //Considering CO breakdown time threshold for shift1 Job
-        System.assertEquals(165, skedDateTimeUtils.getDifferentMinutes(testJob.sked__Start__c, testJob.sked__Finish__c));
+        System.assertEquals(75, testJob.sked_Setup_Time__c);
+        System.assertEquals(0, testJob.sked_Breakdown_Time__c); //Considering CO breakdown time threshold for shift1 Job
+        System.assertEquals(30, testJob.sked_Travel_Time2__c);
+        System.assertEquals(180, skedDateTimeUtils.getDifferentMinutes(testJob.sked__Start__c, testJob.sked__Finish__c));
         System.assertEquals(testAssetJob.sked_Drive__r.sked_Min_Shift_Start__c, testAssetJob.sked__Start__c);
         System.assertEquals(testAssetJob.sked_Drive__r.sked_Max_Shift_End__c, testAssetJob.sked__Finish__c);
     }

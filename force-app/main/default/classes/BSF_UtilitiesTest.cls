@@ -1,5 +1,5 @@
 /* The following test class covers the below mentioned apex class
- * BSF_Utilities (82%)
+ * BSF_Utilities (81%)
  
  /* Modification Log 
  * Date					     Developer Name			             Comments
@@ -332,19 +332,13 @@
          testMobileOpp2.AccountId = testMobileAccount.Id;
          testMobileOpp2.Drive_Site__c = testMobileSite.Id;
          testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
-         TriggerHandler.bypass('OpportunityTriggerHandler');
          insert testMobileOpp2;
          
          Boolean isWbFsDrive = BSF_Utilities.isWbFixedSiteOpportunity(testMobileOpp2, testMobileSite);
          Boolean isMobileFsDrive = BSF_Utilities.isMobileOpportunity(testMobileOpp2);
-         List<Opportunity> testUpdatedOpportunityWithFlagAdded = BSF_Utilities.getOpportunitiesWithFirstTimeFlagAdded(new List<Opportunity>{testMobileOpp2});
-         List<Opportunity> testUpdatedOpportunityWithFlagRemoved = BSF_Utilities.getOpportunitiesWithFirstTimeFlagRemoved(testUpdatedOpportunityWithFlagAdded);
-         TriggerHandler.clearBypass('OpportunityTriggerHandler');
          Test.stopTest();
          Assert.isTrue(isWbFsDrive == FALSE);
          Assert.isTrue(isMobileFsDrive == TRUE);
-         Assert.isTrue(testUpdatedOpportunityWithFlagAdded[0].Special_Circumstances__c != null);
-         Assert.isTrue(testUpdatedOpportunityWithFlagRemoved[0].Special_Circumstances__c == '');
      }
      
      static testMethod void findSkedRegion_Test() {
@@ -422,5 +416,16 @@
         Test.stopTest();
     }
      
-    
+     /*static testMethod void createBsfErrorLogwithoutExceptions_Test() {
+         Test.startTest();
+         BSF_Error_Log__c testLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
+         	'Test_Class',
+         	'testMethod',
+         	'Test Process',
+         	'Test Object',
+         	'Test Error'
+         );
+         Test.stopTest();
+         Assert.isTrue(testLog != NULL);
+     }*/
 }

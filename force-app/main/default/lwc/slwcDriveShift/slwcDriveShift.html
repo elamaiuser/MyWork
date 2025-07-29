@@ -19,23 +19,6 @@
                     </template>
                 </div>
                 <template if:false={isFixedSiteDrive}>
-                    <template if:true={shift.timeBlock}>
-                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
-                            <template if:false={masterData.fieldReadonlyMap.driveShifts}>
-                                <lightning-input type="text" name="timeBlock" label="Time Block" value={shift.timeBlock.name} readonly>
-                                </lightning-input>
-                            </template>
-                            <template if:true={masterData.fieldReadonlyMap.driveShifts}>
-                                <div class="slds-form-element slds-form-element_readonly">
-                                    <span class="slds-form-element__label">Time Block</span>
-                                    <div class="slds-form-element__control">
-                                        <div class="slds-form-element__static slds-truncate">{shift.timeBlock.name}</div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-
                     <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
                         <template if:false={masterData.fieldReadonlyMap.driveShifts}>
                             <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} onchange={handleOnChange} readonly={masterData.fieldReadonlyMap.aptQuantity}>
@@ -413,7 +396,7 @@
         <div class="slds-p-bottom_medium">
             <h3 class="slds-section-title--divider">Staff Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={personJobs} resource-type="Person"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={personJobs} resource-type="Person"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -460,7 +443,7 @@
                     </div>
                 </template>
                 
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} master-data={masterData} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -468,7 +451,7 @@
         <div class="slds-p-bottom_medium" if:true={vehicleEnabled}>
             <h3 class="slds-section-title--divider">Vehicle Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
                                         is-editable={equipmentComplementEditable} style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -476,7 +459,7 @@
         <div class="slds-p-bottom_medium" if:true={equipmentEnabled}>
             <h3 class="slds-section-title--divider">Equipment Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs  drive={drive}  master-data={masterData} is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
+                <c-slwc-shift-jobs  drive={drive}  is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
         </div>

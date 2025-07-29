@@ -770,9 +770,6 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   saveDrive(drive, scope) {
     return Promise.resolve()
       .then(()=> {
-          if(drive.status === DRIVE_STATUS.DRAFT) {
-            drive = driveGeneratorInstance.releaseAllAssetAllocations();
-          }
           let drivesToSave = [];
           let model = { ...drive };
           drivesToSave.push(model);

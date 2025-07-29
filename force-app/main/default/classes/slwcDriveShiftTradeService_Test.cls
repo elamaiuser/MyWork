@@ -75,15 +75,13 @@ private class slwcDriveShiftTradeService_Test {
         sked__Job_Allocation__c testResource1_job1 = new sked__Job_Allocation__c(
         	sked__Job__c = job1.Id,
             sked__Resource__c = testResource1.Id,
-            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH,
-            sked_Guarded__c = true
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH
         );
         jobAllocations.add(testResource1_job1);
         sked__Job_Allocation__c testResource2_job2 = new sked__Job_Allocation__c(
         	sked__Job__c = job2.Id,
             sked__Resource__c = testResource2.Id,
-            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH,
-            sked_Guarded__c = true
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH
         );
         jobAllocations.add(testResource2_job2);
         insert jobAllocations;

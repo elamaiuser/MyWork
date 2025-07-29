@@ -84,14 +84,14 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
                                 WHERE ApexClass.Name IN: portfolioAssignmentBatches
                                 AND Status IN: batch_Status];
         }
-        
-        List<Portfolio_Accounts_Processing__c> portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
-                                                                               Records_Processed__c, Portfolio_Assignment_Updated__c 
-                                                                               FROM Portfolio_Accounts_Processing__c];
-        if((Test.isRunningTest() || runningJobCount == 0) && portfolioAccProcessingRecord != NULL && !portfolioAccProcessingRecord.isEmpty()) {
+        Portfolio_Accounts_Processing__c portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
+                                                                        Records_Processed__c, Portfolio_Assignment_Updated__c 
+                                                                        FROM Portfolio_Accounts_Processing__c 
+                                                                        LIMIT 1];
+        if((Test.isRunningTest() || runningJobCount == 0) && portfolioAccProcessingRecord != NULL) {
             update new Portfolio_Accounts_Processing__c(
-                Id = portfolioAccProcessingRecord[0].Id,
-                Records_Processed__c = portfolioAccProcessingRecord[0].Records_Processed__c ?? 0 + Trigger.New.size()
+                Id = portfolioAccProcessingRecord.Id,
+                Records_Processed__c = portfolioAccProcessingRecord.Records_Processed__c ?? 0 + Trigger.New.size()
             );
         }
     }

@@ -21,27 +21,32 @@ public inherited sharing class CollectionOperationService {
         }
     }
     //method to execute BSF_UpdateCollectionOperationsBatch when Collection Operation name changed.
-    public static void updateUserCollectionOpPicklist(List<Collection_Op_Update_Event__e> eventList) {
-        String opType;
-        Map<Id, Biomed_Collection_Op_Center__c> collectionOpMap = new Map<Id, Biomed_Collection_Op_Center__c>();
+    public static void updateUserCollectionOpPicklist(Map<Id, Biomed_Collection_Op_Center__c> newMap, Map<Id, Biomed_Collection_Op_Center__c> oldMap){
+        String opType = getTriggerOperationType();
         BSF_UpdateCollectionOperationsBatch batchObj;
 
-        if(eventList != null && !eventList.isEmpty()){
-            for(Collection_Op_Update_Event__e event : eventList){
-                opType = event.Operation_Type__c;
-                collectionOpMap.put(event.Collection_Operation_Id__c, new Biomed_Collection_Op_Center__c(Id = event.Collection_Operation_Id__c, Name = event.Collection_Operation_Name__c));
+        if(opType.equals('INSERT')){
+            batchObj = new BSF_UpdateCollectionOperationsBatch(newMap,opType);
+        }else if(opType.equals('DELETE')){
+            batchObj = new BSF_UpdateCollectionOperationsBatch(oldMap,opType);
+        }else if(opType.equals('UPDATE')){
+            Map<Id, Biomed_Collection_Op_Center__c> collectionOpMap = new Map<Id, Biomed_Collection_Op_Center__c>();
+            for(Id coid : newMap.keySet()){
+                if(oldMap != null && oldMap.containsKey(coid) 
+                        && !newMap.get(coid).Name.equals(oldMap.get(coid).Name)){
+                            collectionOpMap.put(coid,oldMap.get(coid)); 
+                }
+            }
+            if(!collectionOpMap.isEmpty()){
+                batchObj = new BSF_UpdateCollectionOperationsBatch(collectionOpMap,opType);
             }
         }
-        if(!collectionOpMap.isEmpty()){
-            batchObj = new BSF_UpdateCollectionOperationsBatch(collectionOpMap,opType);
-        }
-
         try{
             if(batchObj != null && !Test.isRunningTest()){
                 Database.executeBatch(batchObj,200);
             }
         }catch(Exception ex){
-            insert BSF_Utilities.createBsfErrorLogForExceptions(ex,'CollectionOperationService','updateUserCollectionOpPicklist','Error in updating collection operation custom picklist','Pubish Collection Operation Update Event','Collection_Op_Queue_Event__e','');
+            System.debug('Failed to execute BSF_UpdateCollectionOperationsBatch : '+ex.getMessage());
         }
     }
     //this method is called from Collection_Op_Queue_Event__e event trigger.
@@ -113,47 +118,5 @@ public inherited sharing class CollectionOperationService {
                 return 'INVALID';
             }
         } 
-    }
-    
-    public static void updateUserCollectionOpPicklist(Map<Id, Biomed_Collection_Op_Center__c> newMap, Map<Id, Biomed_Collection_Op_Center__c> oldMap){
-        String opType = getTriggerOperationType();
-        List<Biomed_Collection_Op_Center__c> collectionOperationList = new List<Biomed_Collection_Op_Center__c>();
-        List<Collection_Op_Update_Event__e> eventList = new List<Collection_Op_Update_Event__e>();
-
-        if(opType.equals('INSERT') && newMap != null && !newMap.isEmpty()){
-            collectionOperationList = newMap.values();
-        }
-        if(opType.equals('DELETE') && oldMap != null && !oldMap.isEmpty()){
-            collectionOperationList = oldMap.values();
-        }
-
-        if(!collectionOperationList.isEmpty()){
-            for(Biomed_Collection_Op_Center__c coop : collectionOperationList){
-                Collection_Op_Update_Event__e event = new Collection_Op_Update_Event__e();
-                event.Collection_Operation_Id__c = coop.Id;
-                event.Collection_Operation_Name__c = coop.Name;
-                event.Operation_Type__c = opType;
-                eventList.add(event);
-            }
-        }
-
-        if(opType.equals('UPDATE') && newMap != null && !newMap.isEmpty()){
-            for(Id coid : newMap.keySet()){
-                if(oldMap != null && oldMap.containsKey(coid) 
-                        && !newMap.get(coid).Name.equals(oldMap.get(coid).Name)){
-                            Collection_Op_Update_Event__e event = new Collection_Op_Update_Event__e();
-                            event.Collection_Operation_Id__c = coid;
-                            event.Collection_Operation_Name__c = oldMap.get(coid).Name;
-                            event.Operation_Type__c = opType;
-                            eventList.add(event);
-                }
-            }
-        }
-
-        if(!eventList.isEmpty()){
-            List<Database.SaveResult> srList = EventBus.publish(eventList);
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'Pubish Collection Operation Update Event','CollectionOperationService','updateUserCollectionOpPicklist','Error','Error in publishing Collection Operation Update Platform Event');
-            InsertBsfErrorLog.insertBsfErrors(logList);
-        }
     }
 }

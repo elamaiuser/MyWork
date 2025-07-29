@@ -1,4 +1,4 @@
-import { MAPPING_TYPE, fieldConfigModel, mappingConfigModel } from './_base.js';
+import { MAPPING_TYPE, fieldConfigModel, mappingConfigModel }  from './_base.js';
 
 export class DriveShiftMappingConfigFactory {
   constructor() {}
@@ -12,8 +12,6 @@ export class DriveShiftMappingConfigFactory {
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_APT_Setup__c', 'APTSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_2RBC_Projected_Procedures__c', 'x2rbcProjectedProcedures', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Contention__c', 'contention', MAPPING_TYPE.multiPicklist);
-      mappingConfig.addFieldConfig('sked_Contention_Resolution__c', 'contentionResolution', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Donors_Scheduled__c', 'donorsScheduled', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__c', 'driveId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
@@ -38,13 +36,11 @@ export class DriveShiftMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Staff_Setup__c', 'staffSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('sked_Start__c', 'start', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Time_Block__c', 'timeBlockId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Total_Procedures_Projected__c', 'totalProceduresProjected', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Total_Products_Projected__c', 'totalProductsProjected', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Vehicles_Needed__c', 'vehiclesNeeded', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Volunteer_Setup__c', 'volunteerSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_WB_Projected_Procedures__c', 'wbProjectedProcedures', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Time_Block__r', 'timeBlock', MAPPING_TYPE.related, 'Time_Block__c');
 
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Shift_Tags__r', 'driveShiftTags', 'sked_Drive_Shift_Tag__c', 'sked_Drive_Shift__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Jobs__r', 'jobs', 'sked__Job__c', 'sked_Drive_Shift__c');

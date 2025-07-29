@@ -91,12 +91,10 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             unavailability.recordId = activity.Id;
             unavailabilityList.add(unavailability);
 		}
-        skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
 		if (!unavailabilityList.isEmpty()) {
+            skedExceptionLogService service = (skedExceptionLogService)skedServiceFactory.instance.resolve('skedHC__Exception__c');
 			service.captureExceptionLogs(unavailabilityList);
 		}
-        
-        service.captureAPExceptionLogs(newRecords);
     }
 
     private void doDateTimeConversion(List<sked__Activity_Resource__c> newRecords) {

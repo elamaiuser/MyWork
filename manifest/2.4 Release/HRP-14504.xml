@@ -3,7 +3,6 @@
     <types>
 		<members>Set_Contact_UFID</members>
 		<members>Contact_Before_Insert_Update_Flow</members>
-		<members>Handle_Do_Not_Contact_Updates_On_Contact</members>
 		<name>Flow</name>
 	</types>
 	<types>

@@ -31,10 +31,6 @@
                 <behavior>Edit</behavior>
                 <field>sked_Decrease_Indicator__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Time_Block__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

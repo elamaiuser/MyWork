@@ -1,21 +1,21 @@
 import TIME_ZONE from '@salesforce/i18n/timeZone';
+import * as autoMapper from 'c/autoMapper';
 import {
-  operationDriveLimitQueryModel, operationDriveLimitService,
-  staffingConstraintQueryModel, staffingConstraintService,
-  collectionOperationTimeBlockService, collectionOperationTimeBlockQueryModel
+  operationDriveLimitQueryModel, operationDriveLimitService, resourceQueryModel, resourceService, roleTimeDetailService,
+  staffingConstraintQueryModel, staffingConstraintService
 } from 'c/dataService';
-import { groupBy, uniqueId } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
-import * as slwcAvailator from 'c/slwcAvailator';
-import { ASSET_TYPE, DRIVE_TYPE, PLAN_DRIVE_SLOT_BACKGROUND_COLOR_SETTING, PLAN_DRIVE_SLOT_COLOR_SETTING } from 'c/slwcConstants';
-import * as slwcDateUtils from 'c/slwcDateUtils';
-import { DriveHelper } from 'c/slwcDriveGenerator';
+import { ASSET_TYPE, DRIVE_TYPE, RESOURCE_TYPE, PLAN_DRIVE_SLOT_BACKGROUND_COLOR_SETTING, PLAN_DRIVE_SLOT_COLOR_SETTING } from 'c/slwcConstants';
 import { calendarMonthHelper, planDriveDateHelper } from 'c/slwcHelpers';
 import { classNames } from 'c/slwcUtils';
 import { CurrentPageReference } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { api, LightningElement, track, wire } from 'lwc';
+import { groupBy, uniqueId } from 'c/lodash';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { DriveHelper } from 'c/slwcDriveGenerator';
+import * as slwcAvailator from 'c/slwcAvailator';
+import * as slwcDateUtils from 'c/slwcDateUtils';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -36,19 +36,6 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
   }
   set selectedMonth(value) {
     this._selectedMonth = value;
-
-    if (this.initialized) {
-      this.rebuildCalendar();
-    }
-  }
-
-  _selectedTimeBlockId = null;
-  @api
-  get selectedTimeBlockId() {
-    return this._selectedTimeBlockId;
-  }
-  set selectedTimeBlockId(value) {
-    this._selectedTimeBlockId = value;
 
     if (this.initialized) {
       this.rebuildCalendar();
@@ -214,20 +201,6 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
     
     if(!dayStatus) return;
     
-    if(dayStatus.isNotMatchTimeBlock) {
-      day.slot = {
-        ...dayStatus,
-        class: classNames('slot', {
-          'selected': day.dateIso === this.defaultDate
-        }),
-        slotStyle: [
-          `background-color: ${PLAN_DRIVE_SLOT_BACKGROUND_COLOR_SETTING.NOT_MATCH_TIME_BLOCK}`
-        ].join(';')
-      }
-      
-      return;
-    }
-
     day.slot = {
       ...dayStatus,
       class: classNames('slot', {
@@ -291,23 +264,20 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
         return Promise.all([
           this.retrieveDriveLimits(),
           this.retrieveStaffingConstraintData(),
-          this.retrieveAssets(),
-          this.retrieveCollectionOperationTimeBlocksData()
+          this.retrieveAssets()
         ])
       })
-      .then(([driveLimitResult, staffingConstraints, assetsData, collectionOperationTimeBlocks]) => {
+      .then(([driveLimitResult, staffingConstraints, assetsData]) => {
         const { mapEquipmentsByDate, mapVehiclesByDate } = assetsData;
         return this.planDriveHelper.initialize({
           opportunity: this.opportunity,
           collectionOperations: this.collectionOperations,
           startDate: startDate,
           endDate: endDate,
-          timeBlockIds: this.selectedTimeBlockId ? [this.selectedTimeBlockId] : [],
           driveLimits: driveLimitResult,
           staffingConstraints: staffingConstraints,
           mapEquipmentsByDate,
           mapVehiclesByDate,
-          collectionOperationTimeBlocks,
           accountAvailabilityPreferences: (this.opportunity && this.opportunity.account) ? this.opportunity.account.accountAvailabilityPreferences : [],
         })
       })
@@ -454,25 +424,5 @@ export default class SlwcPlanDriveBookingGrid extends LightningElement {
       })
       .catch(error => this.exceptionHandler(error, true))
       .finally(this.hideLoading);
-  }
-
-  retrieveCollectionOperationTimeBlocksData() {
-    if (!this.collectionOperationIds.length) {
-      return Promise.resolve();
-    }
-
-    const selectedMonth = this.selectedMonth || DateTime.local().toISODate()
-    const { startDate, endDate } = this.planDriveHelper.getDateRange(selectedMonth);
-
-    let service = new collectionOperationTimeBlockService();
-    let queryModel = new collectionOperationTimeBlockQueryModel();
-    queryModel.collectionOperationIds = this.collectionOperationIds;
-    queryModel.effectiveStartDate = startDate;
-    queryModel.effectiveEndDate = endDate;
-
-    return service.query(queryModel)
-      .then((result) => {
-        return result
-      })
   }
 }

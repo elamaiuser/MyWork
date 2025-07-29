@@ -10,9 +10,6 @@
  * 07/23/2024				  Priti Jana			 Corrected the test class, 
  													 increased code coverage
  * 09/26/2024				  Priti Jana			 Increased code coverage for JobTriggerHandler (HRP-13522)
- * 07/10/2025				  Priti Jana			 Added new test method to cover 
-  													 Non Integrated WB FS Drive generation logic 
-
 -------------------------
 Current Code Coverage :  
 -------------------------
@@ -142,14 +139,13 @@ public class GenerateMobileDriveTest {
         
     }
     
-    @istest
-    public static void conditionForNonIntWbFsDriveTest() {        
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForNonIntWbFsDrives();
-        Opportunity nonIntWbFsOpportunity = (Opportunity)mapTestData.get('nonItegratedWBFixedSiteOpportunity');
-        
+    /*@istest
+    public static void conditionForErrorMessageMobileTest(){        
+        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForErrorMsgMobileDrive();
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
-        config.oppIds.add(nonIntWbFsOpportunity.Id);
+        config.oppIds.add(mobileOpportunity.Id);
         
         Test.startTest();
         
@@ -164,7 +160,10 @@ public class GenerateMobileDriveTest {
         AccountTeamMemberHelper.skipAccountTrigger = false;
         
         Test.stopTest();
-    }
+        
+        Assert.isTrue(config!=null); // NEW Assert Class
+        
+    }*/
     
     @istest
     public static void conditionForDriveGeneratorServiceTestForFixed() {
@@ -214,119 +213,4 @@ public class GenerateMobileDriveTest {
         
     }
     
-    @isTest
-    static void testAssociateTimeBlocksToDriveShifts() {
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');//Opp start time is 5AM and end time is 6PM
-        Biomed_Collection_Op_Center__c collectionOperation = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
-        
-        List<Time_Block__c> timeBlocks = new List<Time_Block__c>();
-        
-        // Full match time block (5 AM - 6 PM)
-        timeBlocks.add(new Time_Block__c(
-            Name = 'Exact Match Time Block',
-            Start_Time__c = Time.newInstance(5, 0, 0, 0),
-            End_Time__c = Time.newInstance(18, 0, 0, 0),
-            Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-        ));
-        
-        //  Day-only match time block (4 AM - 5 AM)
-        timeBlocks.add(new Time_Block__c(
-            Name = 'Day Only Match Time Block',
-            Start_Time__c = Time.newInstance(4, 0, 0, 0),
-            End_Time__c = Time.newInstance(5, 0, 0, 0),
-            Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-        ));
-        
-         //  Day-only match time block (1 AM - 2 AM)
-        timeBlocks.add(new Time_Block__c(
-            Name = 'Day Only Match Time Block2',
-            Start_Time__c = Time.newInstance(1, 0, 0, 0),
-            End_Time__c = Time.newInstance(2, 0, 0, 0),
-            Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
-        ));
-        
-        
-        insert timeBlocks;
-        
-        // Create collection operation time blocks
-        List<Collection_Operation_Time_Block__c> coTimeBlocks = new List<Collection_Operation_Time_Block__c>();
-        for(Time_Block__c tb : timeBlocks) {
-            coTimeBlocks.add(new Collection_Operation_Time_Block__c(
-                Collection_Operation__c = collectionOperation.Id,
-                Time_Block__c = tb.Id,
-                Effective_Start_Date__c = Date.today().addDays(-1000),
-                Effective_End_Date__c = Date.today().addDays(1000)
-            ));
-        }
-        insert coTimeBlocks;
-        
-        Test.startTest();
-        
-        // Generate drive
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-        
-     	skedHubBase.BypassUpdateTriggers = TRUE;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
-        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        
-        GenerateMobileDrive.generateDrives(config);
-        
-        
-        // Query created drive and drive shifts once
-        List<sked_Drive__c> drives = [
-            SELECT Id, sked_Drive_Date__c, sked_Collection_Operation__c, sked_Pending_Action_Reason_Code__c,
-                   (SELECT Id, sked_Time_Block__c, sked_Start_Time__c, sked_End_Time__c, 
-                           sked_Contention__c 
-                    FROM sked_Drive_Shifts__r)
-            FROM sked_Drive__c 
-            WHERE sked_Opportunity__c = :mobileOpportunity.Id
-        ];
-        
-        Map<Id, Time_Block__c> timeBlockMap = new Map<Id, Time_Block__c>(timeBlocks);
-        System.debug('Drive shifts size'+ drives[0].sked_Drive_Shifts__r.size());
-        
-        // Verify results
-        System.assertEquals(1, drives.size(), 'Should have created one drive');
-        System.assertEquals(collectionOperation.Id, drives[0].sked_Collection_Operation__c, 'Drive should be associated with the test collection operation');
-        System.assertNotEquals(0, drives[0].sked_Drive_Shifts__r.size(), 'Drive should have drive shifts');
-        
-        // Verify time block associations and violations for each scenario
-        for(sked_Drive_Shift__c shift : drives[0].sked_Drive_Shifts__r) {
-            Time_Block__c associatedBlock = shift.sked_Time_Block__c != null ? timeBlockMap.get(shift.sked_Time_Block__c) : null;
-            
-            // Scenario 1: Full match
-            if(shift.sked_Start_Time__c >= Time.newInstance(5, 0, 0, 0) && 
-               shift.sked_End_Time__c <= Time.newInstance(18, 0, 0, 0)) {
-                System.assert (shift.sked_Contention__c == null , 
-                    'Drive shift within exact match time block should not have violation');
-                System.assert( shift.sked_Time_Block__c !=null, 
-                    'Drive shift should be associated with exact match time block');
-            }
-            
-            // Scenario 2: Day-only match or no match
-            else {
-                System.assert(shift.sked_Contention__c != null, 
-                    'Drive shift with day-only match or no match should have violation');
-                if(shift.sked_Start_Time__c >= Time.newInstance(4, 0, 0, 0) && 
-                   shift.sked_End_Time__c <= Time.newInstance(22, 0, 0, 0)) {
-                    System.assertEquals(skedConstants.CONTENTION_CODE_OUT_OF_TIME_BLOCK, 
-                        shift.sked_Contention__c, 
-                        'Drive shift should have out of time block violation message');
-                } else {
-                    System.assertEquals(skedConstants.CONTENTION_CODE_MISSING_TIME_BLOCK, 
-                        shift.sked_Contention__c, 
-                        'Drive shift should have missing time block violation message');
-                }
-            }
-        }             
-        Triggerhandler.clearAllBypasses();
-        Test.stopTest();    
-    }    
 }
