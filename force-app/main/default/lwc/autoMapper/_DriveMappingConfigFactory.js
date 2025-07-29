@@ -144,7 +144,6 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('CreatedDate', 'createdDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('LastModifiedBy', 'lastModifiedBy', MAPPING_TYPE.related, 'User');
       mappingConfig.addFieldConfig('LastModifiedDate', 'lastModifiedDate', MAPPING_TYPE.direct);
-
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Delivery_Jobs__r', 'driveDeliveryJobs', 'sked_Drive_Delivery_Job__c', 'sked_Drive__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Shifts__r', 'driveShifts', 'sked_Drive_Shift__c', 'sked_Drive__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Jobs__r', 'jobs', 'sked__Job__c', 'sked_Drive__c');

@@ -160,6 +160,8 @@ public class skedConstants {
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_UNAVAILABLE_FOR_CO = 'Trading User is not available for Drive CO';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_MISSING_ROLE = 'Trading User Missing Role';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_MISSING_ROLE = 'Requesting User Missing Role';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_GUARDED = 'Req Staff Guarded';
+    public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_TRADING_STAFF_GUARDED = 'Trading Staff Guarded';
 
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CANCELLED = 'Denied (cancelled)';
     public static final string DRIVE_SHIFT_TRADE_DENIED_REASON_CUTOFF_DAYS = 'Denied (cutoff days)';
@@ -213,6 +215,11 @@ public class skedConstants {
     public static final string EXCEPTION_CODE_MISSING_TIME_BLOCK = 'MISSING_TIME_BLOCK';
     public static final string EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS = 'FITS_MULTIPLE_TIME_BLOCKS';
     public static final string EXCEPTION_CODE_OUT_OF_TIME_BLOCK = 'OUT_OF_TIME_BLOCK';
+
+    public static final string CONTENTION_CODE_MISSING_TIME_BLOCK = 'Missing Time Block';
+    public static final string CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS = 'Fits Multiple Time Block';
+    public static final string CONTENTION_CODE_OUT_OF_TIME_BLOCK = 'Out Of Time Block';
+
     public static final string EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS = 'OUT_OF_OPERATIONAL_HOURS';
 
     public static final Map<String, String> MAP_EXCEPTION_CODE_TO_DEFAULT_EXCEPTION_MESSAGE = new Map<String, String> {
