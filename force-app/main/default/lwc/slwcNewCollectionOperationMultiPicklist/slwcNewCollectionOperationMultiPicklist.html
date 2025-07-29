@@ -9,7 +9,8 @@
                 selected-by-default
                 pick-list-values={timeBlockState.timeBlockOptions}
                 default-values={timeBlockState.selectedTimeBlocks}
-                onpicklistchange={handleTimeBlockChanged}>
+                onpicklistchange={handleTimeBlockChanged}
+                disabled={timeBlockState.disabled}>
             </c-slwc-multi-picklist>
         </template>
 
