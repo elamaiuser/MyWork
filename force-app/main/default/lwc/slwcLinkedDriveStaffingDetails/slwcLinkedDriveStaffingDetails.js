@@ -310,7 +310,9 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     ])
                     .then(() => {
                         this.availator.setupDriverJobs();
-                        return this.availator.buildScheduledAllocations()
+                        return this.availator.buildScheduledAllocations({
+                            ignoreDedicatedSiteRule: true
+                        });
                     })
                     .then((result) => {
                         if (result.resources) {
@@ -2296,7 +2298,9 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                 this.availator.updateData(job, indexDriveShift);
                 this.availator.setupDriverJobs();
 
-                return this.availator.buildScheduledAllocations()
+                return this.availator.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         const { possibleAllocations, mapResourceJobPossibleAllocations } = this.buildPossibleAllocations(result.possibleAllocations);
