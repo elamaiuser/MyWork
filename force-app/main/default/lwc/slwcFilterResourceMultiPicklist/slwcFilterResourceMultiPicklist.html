@@ -75,14 +75,18 @@
                         </c-slwc-multi-picklist>
                     </div>
                     <div class="slds-form-element__row slds-m-top_x-small">
+                        <lightning-input type="checkbox" label="Weekly Hours" name="weeklyHours" onchange={handleChange} checked={clonedFilterPopverState.weeklyHours}></lightning-input>
+                        <span class="slds-slider-label__range slds-col_bump-left">{showWeeklyHoursMinMaxRangeText}</span>
+                    </div>
+                    <div class="slds-form-element__row slds-m-top_x-small" if:true={clonedFilterPopverState.weeklyHours}>
                         <c-slwc-slider
-                            label="Weekly Hours"
                             min="0"
                             max="100"
                             start={clonedFilterPopverState.weeklyHoursRange.start}
                             end={clonedFilterPopverState.weeklyHoursRange.end}
                             step="1"
-                            onchange={handleWeeklyHoursRangeChanged}>
+                            onchange={handleWeeklyHoursRangeChanged}
+                            label-not-needed>
                         </c-slwc-slider>
                     </div>
                     <div class="slds-form-element__row slds-m-top_x-small" if:true={showCallOutFilter}>

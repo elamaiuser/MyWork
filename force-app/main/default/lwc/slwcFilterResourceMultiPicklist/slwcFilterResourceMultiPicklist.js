@@ -32,6 +32,7 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
         callOut: false,
         onCall: false,
         assignedToLinkedDrives: false,
+        weeklyHours: false,
         selectedResourcesTag: [],
         selectedResourceRoles: [],
         selectedResourceEmploymentTypes: [],
@@ -194,6 +195,10 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
     get showAssignedLinkedDrivesFilter() {
         return this.variant !== VARIANT.LINKED_DRIVE;
     }
+
+    get showWeeklyHoursMinMaxRangeText() {
+        return this.clonedFilterPopverState.weeklyHours ? '0-100' : '';
+    }
     
     initDefaultValues = () => {
         this.filterPopverState.selectedResourcesTag = cloneDeep(this.resourceTagsOption.filter(item => {
@@ -207,6 +212,7 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
         this.filterPopverState.callOut = !!this.defaultValues.callOut;
         this.filterPopverState.onCall = !!this.defaultValues.onCall;
         this.filterPopverState.assignedToLinkedDrives = !!this.defaultValues.assignedToLinkedDrives;
+        this.filterPopverState.weeklyHours = !!this.defaultValues.weeklyHours;
     }
 
     initDefaultSortValues = () => {
