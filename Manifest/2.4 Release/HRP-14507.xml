@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>Aggregate_TimeStamp</members>
-		<members>Lead_Status_Timestamp</members>
-		<members>Lead_Management</members>
+		<members>Skedulo_Resource_Termination_Rule</members>
 		<name>Flow</name>
 	</types>
 	<types>
-		<members>Lead</members>
+		<members>sked__Resource__c</members>
 		<name>Workflow</name>
 	</types>
 	<version>64.0</version>
