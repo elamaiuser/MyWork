@@ -2726,7 +2726,7 @@ class DriveHelper {
       const timeBlockIds = [];
 
       drive.driveShifts.forEach((driveShift) => {
-        f(driveShift.timeBlockId) {
+        if(driveShift.timeBlockId) {
           if(!timeBlockIds.includes(driveShift.timeBlockId)) {
             timeBlockIds.push(driveShift.timeBlockId);
           }
