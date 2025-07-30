@@ -705,6 +705,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             WeeklyStaffingRTReportWrapper wrapper = new WeeklyStaffingRTReportWrapper();
             wrapper.eventDate = dateFormat2(dt);
             wrapper.eventDetails = new List<EventDetails>();
+            wrapper.hasLunchBreak = false;
 
             for(Id sobjectId : dateMap.get(dt)){
                 EventDetails evDetails = new EventDetails();
@@ -785,8 +786,10 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
 
                         rsDetails.staffArrivalTime = getFormattedTime(arrivalTime.hour(),arrivalTime.minute());
 
-                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true){
+                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break__c == true && 
+                           jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true){
                             rsDetails.staffArrivalTime += '*';
+                            wrapper.hasLunchBreak = true;
                         }
                         
                         resourceDistricts.add(resourceDistrictMap.get(jba.sked__Resource__c));
@@ -1019,6 +1022,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         @AuraEnabled public String eventDate {get; set;}
         @AuraEnabled public Integer rowspan {get; set;}
         @AuraEnabled public List<EventDetails> eventDetails {get; set;}
+        @AuraEnabled public Boolean hasLunchBreak {get; set;}
     }
     public class EventDetails{
         @AuraEnabled public String eventName {get; set;}
