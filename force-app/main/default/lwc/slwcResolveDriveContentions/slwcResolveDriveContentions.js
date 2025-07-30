@@ -1289,7 +1289,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   validateDriveTimeBlockContentions = () => {
     let allPassed = true;
     this.driveTimeBlockContentions.forEach(contention => {
-      contention.passed = this.validateTimeBlockContention(contention);
+      contention.passed = this.validateTimeBlockContention(contention, this.masterData);
       if(!contention.passed) {
         allPassed = false;
       }
