@@ -3,7 +3,7 @@
     <fieldUpdates>
         <fullName>sked_Optimization_Run_Description</fullName>
         <field>sked_Message__c</field>
-        <formula>sked_Message__c &amp; &#39; -- &#39; &amp; &#39;Timeout&#39;</formula>
+        <formula>sked_Message__c &amp; &apos; -- &apos; &amp; &apos;Timeout&apos;</formula>
         <name>Optimization Run Description</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
