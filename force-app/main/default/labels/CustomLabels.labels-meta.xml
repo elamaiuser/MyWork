@@ -860,6 +860,15 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>System Administrator</value>
     </labels>
     <labels>
+        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
+        <categories>Validation Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
+        <value>Effective Start/End Dates must fall within the associated Time Block&apos;s effective
+            date range.</value>
+    </labels>
+    <labels>
         <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
         <categories>Validation Message</categories>
         <language>en_US</language>

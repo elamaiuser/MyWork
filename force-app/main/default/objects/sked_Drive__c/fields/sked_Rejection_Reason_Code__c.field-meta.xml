@@ -37,11 +37,6 @@
                 <label>Overtime</label>
             </value>
             <value>
-                <fullName>Calendar Culture</fullName>
-                <default>false</default>
-                <label>Calendar Culture</label>
-            </value>
-            <value>
                 <fullName>Reason 1</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
