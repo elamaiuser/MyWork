@@ -586,6 +586,8 @@
         <fields>sked__Tag__c.NAME</fields>
         <fields>sked__Tag__c.sked__Type__c</fields>
         <fields>sked_Start_Date__c</fields>
+        <fields>sked_Restriction_Start_Date__c</fields>
+        <fields>sked_Restriction_End_Date__c</fields>
         <fields>sked_Role_Status__c</fields>
         <fields>sked__Tag__c.sked_Priority__c</fields>
         <fields>sked_Premium_Pay__c</fields>
