@@ -60,7 +60,6 @@
             </value>
         </inputParameters>
         <nameSegment>MarketingExceptionInvokable</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -332,7 +331,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -391,7 +389,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -663,7 +660,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -722,7 +718,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
     <decisions>
@@ -1099,12 +1094,12 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue> [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;</stringValue>
+                <stringValue> [Task].LastModifiedBy.FirstName + &apos; &apos; + [Task].LastModifiedBy.LastName + &apos;. &apos;</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_10_myRule_7_A1_7687380549</name>
         <dataType>String</dataType>
-        <expression> {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
+        <expression> {!myVariable_current.LastModifiedBy.FirstName} + &apos; &apos; + {!myVariable_current.LastModifiedBy.LastName} + &apos;. &apos;</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
@@ -1121,26 +1116,26 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>&#39;Hi &#39; + [Task].CreatedBy.FirstName + &#39; &#39; + [Task].CreatedBy.LastName + &#39;, &#39; +
-&#39;Your Request has been approved by &#39; + [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;
+                <stringValue>&apos;Hi &apos; + [Task].CreatedBy.FirstName + &apos; &apos; + [Task].CreatedBy.LastName + &apos;, &apos; +
+&apos;Your Request has been approved by &apos; + [Task].LastModifiedBy.FirstName + &apos; &apos; + [Task].LastModifiedBy.LastName + &apos;. &apos;
 </stringValue>
             </value>
         </processMetadataValues>
         <name>formula_3_myRule_1_A3_7255039343</name>
         <dataType>String</dataType>
-        <expression>&#39;Hi &#39; + {!myVariable_current.CreatedBy.FirstName} + &#39; &#39; + {!myVariable_current.CreatedBy.LastName} + &#39;, &#39; +
-&#39;Your Request has been approved by &#39; + {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
+        <expression>&apos;Hi &apos; + {!myVariable_current.CreatedBy.FirstName} + &apos; &apos; + {!myVariable_current.CreatedBy.LastName} + &apos;, &apos; +
+&apos;Your Request has been approved by &apos; + {!myVariable_current.LastModifiedBy.FirstName} + &apos; &apos; + {!myVariable_current.LastModifiedBy.LastName} + &apos;. &apos;</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue> [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;</stringValue>
+                <stringValue> [Task].LastModifiedBy.FirstName + &apos; &apos; + [Task].LastModifiedBy.LastName + &apos;. &apos;</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_4_myRule_1_A1_9340429779</name>
         <dataType>String</dataType>
-        <expression> {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
+        <expression> {!myVariable_current.LastModifiedBy.FirstName} + &apos; &apos; + {!myVariable_current.LastModifiedBy.LastName} + &apos;. &apos;</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
@@ -1157,15 +1152,15 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>&#39;Hi &#39; + [Task].CreatedBy.FirstName + &#39; &#39; + [Task].CreatedBy.LastName + &#39;, &#39; +
-&#39;Your Request has been rejected by &#39; + [Task].LastModifiedBy.FirstName + &#39; &#39; + [Task].LastModifiedBy.LastName + &#39;. &#39;
+                <stringValue>&apos;Hi &apos; + [Task].CreatedBy.FirstName + &apos; &apos; + [Task].CreatedBy.LastName + &apos;, &apos; +
+&apos;Your Request has been rejected by &apos; + [Task].LastModifiedBy.FirstName + &apos; &apos; + [Task].LastModifiedBy.LastName + &apos;. &apos;
 </stringValue>
             </value>
         </processMetadataValues>
         <name>formula_9_myRule_7_A3_4706564536</name>
         <dataType>String</dataType>
-        <expression>&#39;Hi &#39; + {!myVariable_current.CreatedBy.FirstName} + &#39; &#39; + {!myVariable_current.CreatedBy.LastName} + &#39;, &#39; +
-&#39;Your Request has been rejected by &#39; + {!myVariable_current.LastModifiedBy.FirstName} + &#39; &#39; + {!myVariable_current.LastModifiedBy.LastName} + &#39;. &#39;</expression>
+        <expression>&apos;Hi &apos; + {!myVariable_current.CreatedBy.FirstName} + &apos; &apos; + {!myVariable_current.CreatedBy.LastName} + &apos;, &apos; +
+&apos;Your Request has been rejected by &apos; + {!myVariable_current.LastModifiedBy.FirstName} + &apos; &apos; + {!myVariable_current.LastModifiedBy.LastName} + &apos;. &apos;</expression>
     </formulas>
     <interviewLabel>Send_Bell_Notification_to_AM_for_approval_status-6_InterviewLabel</interviewLabel>
     <label>Send Bell Notification to AM for approval status</label>
