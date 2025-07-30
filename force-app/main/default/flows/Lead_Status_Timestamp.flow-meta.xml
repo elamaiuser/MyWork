@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>51.0</apiVersion>
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>myVariable_waitStartTimeAssignment</name>
+        <label>myVariable_waitStartTimeAssignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>myVariable_waitStartTimeVariable</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>isChangedDecision2_myRule_1_Status</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <name>isChangedDecision16_myRule_15_Status</name>
         <label>isChangedDecision16_myRule_15_Status</label>
@@ -680,7 +696,6 @@
             <label>Contacted Lead Status</label>
         </rules>
     </decisions>
-    <description>Sets Lead time stamp fields with NOW() when the Lead Status field changes to a new value</description>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
@@ -688,7 +703,7 @@
                 <stringValue>NOW()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_10_myRule_8_A1_8296929720</name>
+        <name>formula_10_myRule_8_A1_1294603609</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -699,9 +714,9 @@
                 <stringValue> IF( ISBLANK ( PRIORVALUE([Lead].CONTACTED_Status_Agr_Days__c)),0,PRIORVALUE([Lead].CONTACTED_Status_Agr_Days__c))+  (NOW() - [Lead].Lead_Status_CONTACTED__c )</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_13_myRule_12_A1_8636220929</name>
+        <name>formula_13_myRule_12_A1_5161744139</name>
         <dataType>Number</dataType>
-        <expression> IF( ISBLANK ( PRIORVALUE({!myVariable_current.CONTACTED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.CONTACTED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_CONTACTED__c} )</expression>
+        <expression>IF( ISBLANK ( PRIORVALUE({!myVariable_current.CONTACTED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.CONTACTED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_CONTACTED__c} )</expression>
         <scale>18</scale>
     </formulas>
     <formulas>
@@ -711,7 +726,7 @@
                 <stringValue>NOW()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_17_myRule_15_A1_7523397941</name>
+        <name>formula_17_myRule_15_A1_2433913820</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -722,9 +737,9 @@
                 <stringValue> IF( ISBLANK ( PRIORVALUE( [Lead].QUALIFIED_Status_Agr_Days__c)),0,PRIORVALUE([Lead].QUALIFIED_Status_Agr_Days__c))+  (NOW() - [Lead].Lead_Status_qualified__c)</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_20_myRule_19_A1_2283182227</name>
+        <name>formula_20_myRule_19_A1_3740919106</name>
         <dataType>Number</dataType>
-        <expression> IF( ISBLANK ( PRIORVALUE( {!myVariable_current.QUALIFIED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.QUALIFIED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_qualified__c})</expression>
+        <expression>IF( ISBLANK ( PRIORVALUE( {!myVariable_current.QUALIFIED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.QUALIFIED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_qualified__c})</expression>
         <scale>18</scale>
     </formulas>
     <formulas>
@@ -734,7 +749,7 @@
                 <stringValue>NOW()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_24_myRule_22_A1_3696831379</name>
+        <name>formula_24_myRule_22_A1_9269576988</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -745,9 +760,9 @@
                 <stringValue> IF( ISBLANK ( PRIORVALUE( [Lead].UNQUALIFIED_Status_Agr_Days__c)),0,PRIORVALUE([Lead].UNQUALIFIED_Status_Agr_Days__c))+  (NOW() - [Lead].Lead_Status_UNQUALIFIED__c)</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_27_myRule_26_A1_2493836555</name>
+        <name>formula_27_myRule_26_A1_9945197901</name>
         <dataType>Number</dataType>
-        <expression> IF( ISBLANK ( PRIORVALUE( {!myVariable_current.UNQUALIFIED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.UNQUALIFIED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_UNQUALIFIED__c})</expression>
+        <expression>IF( ISBLANK ( PRIORVALUE( {!myVariable_current.UNQUALIFIED_Status_Agr_Days__c})),0,PRIORVALUE({!myVariable_current.UNQUALIFIED_Status_Agr_Days__c}))+  (NOW() - {!myVariable_current.Lead_Status_UNQUALIFIED__c})</expression>
         <scale>18</scale>
     </formulas>
     <formulas>
@@ -757,7 +772,7 @@
                 <stringValue>NOW()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_30_myRule_29_A1_3215938858</name>
+        <name>formula_30_myRule_29_A1_8963402888</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -768,7 +783,7 @@
                 <stringValue>NOW()</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_3_myRule_1_A1_6297930400</name>
+        <name>formula_3_myRule_1_A1_1954672531</name>
         <dataType>DateTime</dataType>
         <expression>NOW()</expression>
     </formulas>
@@ -780,7 +795,7 @@
 [Lead].Lead_Status_NEW__c )</stringValue>
             </value>
         </processMetadataValues>
-        <name>formula_6_myRule_5_A1_8546015617</name>
+        <name>formula_6_myRule_5_A1_2825065502</name>
         <dataType>Number</dataType>
         <expression>IF( ISBLANK ( PRIORVALUE( {!myVariable_current.New_Status_Agr_Days__c}  )),0,PRIORVALUE({!myVariable_current.New_Status_Agr_Days__c} ))+  (NOW() - 
 {!myVariable_current.Lead_Status_NEW__c} )</expression>
@@ -790,47 +805,47 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Contacted&#39;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Contacted&apos;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_12</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Contacted&#39;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Contacted&apos;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Qualified&#39;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Qualified&apos;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_19</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Qualified&#39;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Qualified&apos;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Unqualified&#39;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Unqualified&apos;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_26</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Unqualified&#39;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Unqualified&apos;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;New&#39;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;New&apos;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_5</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;New&#39;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;New&apos;))</expression>
     </formulas>
-    <interviewLabel>Lead_Status_Timestamp-2_InterviewLabel</interviewLabel>
+    <interviewLabel>Lead_Status_Timestamp-20_InterviewLabel</interviewLabel>
     <label>Lead Status Timestamp</label>
     <processMetadataValues>
         <name>ObjectType</name>
@@ -865,9 +880,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -878,9 +890,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_12_A1</name>
         <label>Contacted Status Agr Days</label>
@@ -930,7 +939,7 @@
             </processMetadataValues>
             <field>CONTACTED_Status_Agr_Days__c</field>
             <value>
-                <elementReference>formula_13_myRule_12_A1_8636220929</elementReference>
+                <elementReference>formula_13_myRule_12_A1_5161744139</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -943,9 +952,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -956,9 +962,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_15_A1</name>
         <label>Set Lead Status Qualified</label>
@@ -1008,7 +1011,7 @@
             </processMetadataValues>
             <field>Lead_Status_qualified__c</field>
             <value>
-                <elementReference>formula_17_myRule_15_A1_7523397941</elementReference>
+                <elementReference>formula_17_myRule_15_A1_2433913820</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1021,9 +1024,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1034,9 +1034,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_19_A1</name>
         <label>Qualified Status Agr Days</label>
@@ -1086,7 +1083,7 @@
             </processMetadataValues>
             <field>QUALIFIED_Status_Agr_Days__c</field>
             <value>
-                <elementReference>formula_20_myRule_19_A1_2283182227</elementReference>
+                <elementReference>formula_20_myRule_19_A1_3740919106</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1099,9 +1096,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1112,9 +1106,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_1_A1</name>
         <label>Set Lead Status New</label>
@@ -1164,7 +1155,7 @@
             </processMetadataValues>
             <field>Lead_Status_NEW__c</field>
             <value>
-                <elementReference>formula_3_myRule_1_A1_6297930400</elementReference>
+                <elementReference>formula_3_myRule_1_A1_1954672531</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1177,9 +1168,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1190,9 +1178,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_22_A1</name>
         <label>Set Lead Status Unqualified</label>
@@ -1242,7 +1227,7 @@
             </processMetadataValues>
             <field>Lead_Status_UNQUALIFIED__c</field>
             <value>
-                <elementReference>formula_24_myRule_22_A1_3696831379</elementReference>
+                <elementReference>formula_24_myRule_22_A1_9269576988</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1255,9 +1240,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1268,9 +1250,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_26_A1</name>
         <label>Unqualified Status Agr Days</label>
@@ -1320,7 +1299,7 @@
             </processMetadataValues>
             <field>UNQUALIFIED_Status_Agr_Days__c</field>
             <value>
-                <elementReference>formula_27_myRule_26_A1_2493836555</elementReference>
+                <elementReference>formula_27_myRule_26_A1_9945197901</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1333,9 +1312,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1346,9 +1322,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_29_A1</name>
         <label>Set Lead Status Converted</label>
@@ -1395,7 +1368,7 @@
             </processMetadataValues>
             <field>lead_Status_CONVERTED__c</field>
             <value>
-                <elementReference>formula_30_myRule_29_A1_3215938858</elementReference>
+                <elementReference>formula_30_myRule_29_A1_8963402888</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1408,9 +1381,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1421,9 +1391,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_5_A1</name>
         <label>New Status Agr Days</label>
@@ -1473,7 +1440,7 @@
             </processMetadataValues>
             <field>New_Status_Agr_Days__c</field>
             <value>
-                <elementReference>formula_6_myRule_5_A1_8546015617</elementReference>
+                <elementReference>formula_6_myRule_5_A1_2825065502</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -1486,9 +1453,6 @@
             </value>
         </processMetadataValues>
         <processMetadataValues>
-            <name>extraTypeInfo</name>
-        </processMetadataValues>
-        <processMetadataValues>
             <name>isChildRelationship</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -1499,9 +1463,6 @@
             <value>
                 <stringValue>[Lead]</stringValue>
             </value>
-        </processMetadataValues>
-        <processMetadataValues>
-            <name>referenceTargetField</name>
         </processMetadataValues>
         <name>myRule_8_A1</name>
         <label>Set Lead Status Contacted</label>
@@ -1551,13 +1512,13 @@
             </processMetadataValues>
             <field>Lead_Status_CONTACTED__c</field>
             <value>
-                <elementReference>formula_10_myRule_8_A1_8296929720</elementReference>
+                <elementReference>formula_10_myRule_8_A1_1294603609</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
     </recordUpdates>
-    <startElementReference>isChangedDecision2_myRule_1_Status</startElementReference>
-    <status>Draft</status>
+    <startElementReference>myVariable_waitStartTimeAssignment</startElementReference>
+    <status>Active</status>
     <variables>
         <name>myVariable_current</name>
         <dataType>SObject</dataType>
@@ -1573,5 +1534,15 @@
         <isInput>true</isInput>
         <isOutput>false</isOutput>
         <objectType>Lead</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_waitStartTimeVariable</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Flow.CurrentDateTime</elementReference>
+        </value>
     </variables>
 </Flow>
