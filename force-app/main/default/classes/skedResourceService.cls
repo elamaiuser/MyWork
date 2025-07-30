@@ -437,6 +437,13 @@ global class skedResourceService extends skedDataService {
                 customAvailabilityBuilder.addCondition('sked_Status__c IN {0}', query.customAvailabilityStatuses);
             }
         }
+        if(query.includes(skedSObjectType.LOCATION_RESOURCE_SCORE)) {
+            system.debug('here');
+            skedQueryBuilder locationResourceScoreBuilder = query.getQueryBuilder('sked__Location_Resource_Score__c');
+            if(query.locationResourceRelationShip != NULL) {
+                locationResourceScoreBuilder.addCondition('sked_Location_Resource_Relationship__c = {0}', query.locationResourceRelationShip);
+            }
+        }
     }
 
     /*********************************************************** Public ***********************************************************/
@@ -584,6 +591,7 @@ global class skedResourceService extends skedDataService {
         public Date tagExpiry;
         public List<string> tagIds;
         public List<string> templateIds;
+        public String locationResourceRelationShip;
     }
 
 }
