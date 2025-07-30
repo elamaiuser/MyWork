@@ -52,6 +52,11 @@
                 <default>false</default>
                 <label>Weather</label>
             </value>
+            <value>
+                <fullName>Manufacturing Constraint</fullName>
+                <default>false</default>
+                <label>Manufacturing Constraint</label>
+            </value>
         </valueSetDefinition>
         <valueSettings>
             <controllingFieldValue>2RBC</controllingFieldValue>

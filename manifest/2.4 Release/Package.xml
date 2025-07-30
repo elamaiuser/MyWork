@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Optimization_Run_Timeout</members>
+		<members>Set_UFID_for_User</members>
+		<members>Set_User_UFID</members>
+		<members>Sync_ASR_with_Contact_Changes</members>
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+		<members>Set_Contact_UFID</members>
+		<members>Contact_Before_Insert_Update_Flow</members>
+		<members>Send_Bell_Notification_To_Task</members>
+		<members>Send_Bell_Notification_to_AM_for_approval_status</members>
+		<members>Send_Bell_and_Email_Notifications_for_Task</members>
+		<members>Skedulo_Resource_Termination_Rule</members>
+		<members>Aggregate_TimeStamp</members>
+		<members>Lead_Status_Timestamp</members>
+		<members>Lead_Management</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
+	</types>
+	<types>
+		<members>sked_Optimization_Run__c</members>
+		<members>sked__Resource__c</members>
+		<members>Lead</members>
+		<name>Workflow</name>
+	</types>
+	<types>
+		<members>Contact.Do Not Contact is Selected</members>
+		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Mailing Address Flag Checked Populated Secondary Address</members>
+		<members>Contact.Update Preferred Phone Number Field</members>
+		<name>WorkflowRule</name>
+	</types>
+	<types>
+		<members>LeadService</members>
+        <!--LeadServiceTests test class is not modified, only kept for tracking pupose  -->
+		<members>LeadServiceTests</members>
+		<members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
+		<members>PublicityReportNewPortfoliosController</members>
+		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
+		<members>publicityReportNewPortfoliosTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSlider</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked__Resource__c-Asset Layout</members>
+		<members>sked__Resource__c-Staff Layout</members>
+		<members>Account-APS Planner Mobile Account Layout</members>
+		<members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
+        <members>sked__Resource__c-sked__Resource Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Account.CFY_Drives1__c</members>
+		<members>Account.CY_Drives1__c</members>
+        <members>Account.CFY_Drives__c</members>
+		<members>Account.CY_Drives__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+        <members>Obsolete/Copy_of_Fixed_Site_Accounts_buW</members>
+        <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
+        <name>Report</name>
+    </types>
+	<types>
+		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked__Resource__c.Staff_MaxHours_Validation</members>
+		<members>sked__Resource__c.Staff_MinHours_Validation</members>
+		<members>sked__Resource__c.Staff_MobileType_Validation</members>
+		<members>sked__Resource__c.Staff_PrimaryPhone_Validation</members>
+		<members>sked__Resource__c.Staff_TurnaroundTime_Validation</members>
+		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>63.0</version>
+</Package>

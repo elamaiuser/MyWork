@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Rejection_Reason_Code__c</fullName>
-    <externalId>false</externalId>
     <label>Rejection Reason Code</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
@@ -36,6 +35,11 @@
                 <fullName>Overtime</fullName>
                 <default>false</default>
                 <label>Overtime</label>
+            </value>
+            <value>
+                <fullName>Calendar Culture</fullName>
+                <default>false</default>
+                <label>Calendar Culture</label>
             </value>
             <value>
                 <fullName>Reason 1</fullName>

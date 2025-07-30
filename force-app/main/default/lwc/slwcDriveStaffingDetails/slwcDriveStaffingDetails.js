@@ -1375,6 +1375,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 each(itemDriveShifts.jobs, jobItem => {
                     let exceptionLogList = []
                     let jobAllocations = this.getJobAllocations(jobItem);
+
                     each(jobAllocations, jaItem => {
                         exceptionLogList = exceptionLogList.concat((jaItem.exceptionLog || []).filter(ex => ex.status != 'Resolved').map(exception => ({
                             exception: exception.exception,
