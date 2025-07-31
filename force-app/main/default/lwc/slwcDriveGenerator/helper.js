@@ -2649,7 +2649,7 @@ class DriveHelper {
           };
         }
         const sameDateCDLAllocated = mapSameDateCDLAllocateddByTimeBlockId.get(timeBlockId) ?? 0;
-        const passed = noOfDOTRequested > 0 && sameDateCDLAllocated + noOfCDLRequested > operationalLimit;
+        const passed = noOfCDLRequested > 0 && sameDateCDLAllocated + noOfCDLRequested > operationalLimit;
 
         return {
           timeBlockId,
