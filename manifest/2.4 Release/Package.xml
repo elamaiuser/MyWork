@@ -68,6 +68,8 @@
 		<members>skedDriveHandler</members>
 		<members>BSF_ClosePastDriveExceptionsBatch</members>
 		<members>BSF_ClosePastDriveExceptionsBatch_Test</members>
+		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
