@@ -2352,21 +2352,69 @@ class DriveHelper {
         return result;
       }
 
-      let driveLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits);
+      let mapSameDateConfirmedDrivesByTimeBlockId = new Map();
+      let mapDriveLimitByTimeBlockId = new Map();
+      const timeBlockIds = [];
+      drive.driveShifts.forEach((driveShift) => {
+        if(driveShift.timeBlockId) {
+          if(!timeBlockIds.includes(driveShift.timeBlockId)) {
+            timeBlockIds.push(driveShift.timeBlockId);
+          }
+          mapSameDateConfirmedDrivesByTimeBlockId.set(driveShift.timeBlockId, 0);
+          mapDriveLimitByTimeBlockId.set(driveShift.timeBlockId, 0);
+        }
+      });
+      
+      let driveLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId));
       let noOfConfirmedDrives = 0;
       sameDateDrives.forEach((sameDateDrive) => {
         if ([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status)) {
           if(!this.isFixedSiteDrive(sameDateDrive)) {
             noOfConfirmedDrives++;
+
+            sameDateDrive.driveShifts?.forEach(driveShift => {
+              const timeBlockId = driveShift.timeBlockId;
+              if(timeBlockIds.includes(timeBlockId)) {
+                mapSameDateConfirmedDrivesByTimeBlockId.set(timeBlockId, (mapSameDateConfirmedDrivesByTimeBlockId.get(timeBlockId) || 0) + 1);
+              }
+            });
           }
         }
       });
 
+      const timeBlockValidations = timeBlockIds.map(timeBlockId => {
+        const sameDateConfirmedDrives = mapSameDateConfirmedDrivesByTimeBlockId.get(timeBlockId) ?? 0;
+        const driveLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => driveLimit.timeBlockId === timeBlockId));
+        if(isNullOrEmpty(driveLimit)) {
+          return {
+            passed: true,
+            data: {
+              timeBlockId,
+              driveLimit: '∞',
+              noOfCurrentDrives: sameDateConfirmedDrives
+            }
+          };
+        }
+        const passed = driveLimit <= sameDateConfirmedDrives;
+        return {
+          timeBlockId,
+          data: {
+            noOfCurrentDrives: sameDateConfirmedDrives,
+            driveLimit
+          },
+          passed
+        }
+      });
+      
       result.data = {
         driveLimit: isNullOrEmpty(driveLimit) ? '∞' : driveLimit,
         noOfCurrentDrives: noOfConfirmedDrives
       }
-      result.violated = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
+
+      const isDriveLimitValid = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
+      const isTimeBlockDriveLimitValid = timeBlockValidations.every(validation => validation.passed);
+
+      result.violated = isDriveLimitValid && isTimeBlockDriveLimitValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DRIVE_LIMIT);
       return result;
     }
@@ -2409,7 +2457,6 @@ class DriveHelper {
             sameDateDrive.driveShifts?.forEach(driveShift => {
               const timeBlockId = driveShift.timeBlockId;
               if(timeBlockIds.includes(timeBlockId)) {
-                //TODO: need to confirm requirement
                 mapSameDate2RBCRequestedByTimeBlockId.set(timeBlockId, (mapSameDate2RBCRequestedByTimeBlockId.get(timeBlockId) || 0) + (sameDateDrive.totalEquipmentRequested || 0));
               }
             });
@@ -2470,12 +2517,32 @@ class DriveHelper {
         return result;
       }
 
-      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits, OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
+      let mapSameDateDOTAllocateddByTimeBlockId = new Map();
+      let mapDOTLimitByTimeBlockId = new Map();
+      const timeBlockIds = [];
+      drive.driveShifts.forEach((driveShift) => {
+        if(driveShift.timeBlockId) {
+          if(!timeBlockIds.includes(driveShift.timeBlockId)) {
+            timeBlockIds.push(driveShift.timeBlockId);
+          }
+          mapSameDateDOTAllocateddByTimeBlockId.set(driveShift.timeBlockId, 0);
+          mapDOTLimitByTimeBlockId.set(driveShift.timeBlockId, 0);
+        }
+      });
+
+      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
       let sameDateMobileDrivesDOTAllocated = 0;
       sameDateDrives.forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
-          sameDateMobileDrivesDOTAllocated += sameDateDrive.noOfAllocatedDOTVehicles || 0;
+            sameDateMobileDrivesDOTAllocated += sameDateDrive.noOfAllocatedDOTVehicles || 0;
+
+            sameDateDrive.driveShifts?.forEach(driveShift => {
+              const timeBlockId = driveShift.timeBlockId;
+              if(timeBlockIds.includes(timeBlockId)) {
+                mapSameDateDOTAllocateddByTimeBlockId.set(timeBlockId, (mapSameDateDOTAllocateddByTimeBlockId.get(timeBlockId) || 0) + (sameDateDrive.noOfAllocatedDOTVehicles || 0));
+              }
+            });
           }
         }
       });
@@ -2483,12 +2550,40 @@ class DriveHelper {
       const { assignedVehicles } = this.getCurrentAssignedVehicles(drive);
       const noOfDOTRequested = assignedVehicles?.filter((vehicle) => vehicle.DOT)?.length || 0;
 
+      const timeBlockValidations = timeBlockIds.map(timeBlockId => {
+        const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => driveLimit.timeBlockId === timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
+        if(isNullOrEmpty(operationalLimit)) {
+          return {
+            passed: true,
+            data: {
+              timeBlockId,
+              operationalLimit: '∞',
+              noOfDOTRequested
+            }
+          };
+        }
+        const sameDateDOTAllocated = mapSameDateDOTAllocateddByTimeBlockId.get(timeBlockId) ?? 0;
+        const passed = noOfDOTRequested > 0 && sameDateDOTAllocated + noOfDOTRequested > operationalLimit;
+
+        return {
+          timeBlockId,
+          data: {
+            noOfDOTRequested,
+            operationalLimit
+          },
+          passed
+        }
+      });
+
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfDOTRequested,
       }
 
-      result.violated = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit;
+      const isDOTequestedValid = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit
+      const isTimeBlockDOTRequestedValid = timeBlockValidations.every(validation => validation.passed);
+
+      result.violated = isDOTequestedValid && isTimeBlockDOTRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DOT_LIMIT);
       return result;
     }
@@ -2508,12 +2603,32 @@ class DriveHelper {
         return result;
       }
 
-      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits, OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
+      let mapSameDateCDLAllocateddByTimeBlockId = new Map();
+      let mapCDLLimitByTimeBlockId = new Map();
+      const timeBlockIds = [];
+      drive.driveShifts.forEach((driveShift) => {
+        if(driveShift.timeBlockId) {
+          if(!timeBlockIds.includes(driveShift.timeBlockId)) {
+            timeBlockIds.push(driveShift.timeBlockId);
+          }
+          mapSameDateCDLAllocateddByTimeBlockId.set(driveShift.timeBlockId, 0);
+          mapCDLLimitByTimeBlockId.set(driveShift.timeBlockId, 0);
+        }
+      });
+
+      const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
       let sameDateMobileDrivesCDLAllocated = 0;
       sameDateDrives.forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
-          sameDateMobileDrivesCDLAllocated += sameDateDrive.noOfAllocatedCDLVehicles || 0;
+            sameDateMobileDrivesCDLAllocated += sameDateDrive.noOfAllocatedCDLVehicles || 0;
+
+            sameDateDrive.driveShifts?.forEach(driveShift => {
+              const timeBlockId = driveShift.timeBlockId;
+              if(timeBlockIds.includes(timeBlockId)) {
+                mapSameDateCDLAllocateddByTimeBlockId.set(timeBlockId, (mapSameDateCDLAllocateddByTimeBlockId.get(timeBlockId) || 0) + (sameDateDrive.noOfAllocatedCDLVehicles || 0));
+              }
+            });
           }
         }
       });
@@ -2521,11 +2636,40 @@ class DriveHelper {
       const { assignedVehicles } = this.getCurrentAssignedVehicles(drive);
       const noOfCDLRequested = assignedVehicles?.filter((vehicle) => vehicle.CDL)?.length || 0;
 
+      const timeBlockValidations = timeBlockIds.map(timeBlockId => {
+        const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => driveLimit.timeBlockId === timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
+        if(isNullOrEmpty(operationalLimit)) {
+          return {
+            passed: true,
+            data: {
+              timeBlockId,
+              operationalLimit: '∞',
+              noOfCDLRequested
+            }
+          };
+        }
+        const sameDateCDLAllocated = mapSameDateCDLAllocateddByTimeBlockId.get(timeBlockId) ?? 0;
+        const passed = noOfDOTRequested > 0 && sameDateCDLAllocated + noOfCDLRequested > operationalLimit;
+
+        return {
+          timeBlockId,
+          data: {
+            noOfCDLRequested,
+            operationalLimit
+          },
+          passed
+        }
+      });
+      
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfCDLRequested,
       }
-      result.violated = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit;
+
+      const isCDLequestedValid = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
+      const isTimeBlockCDLRequestedValid = timeBlockValidations.every(validation => validation.passed);
+
+      result.violated = isCDLequestedValid && isTimeBlockCDLRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.CDL_LIMIT);
       return result;
     }
