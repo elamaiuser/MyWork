@@ -2395,14 +2395,14 @@ class DriveHelper {
             }
           };
         }
-        const passed = driveLimit <= sameDateConfirmedDrives;
+        const violated = driveLimit <= sameDateConfirmedDrives;
         return {
           timeBlockId,
           data: {
             noOfCurrentDrives: sameDateConfirmedDrives,
             driveLimit
           },
-          passed
+          passed: !violated
         }
       });
       
@@ -2411,10 +2411,10 @@ class DriveHelper {
         noOfCurrentDrives: noOfConfirmedDrives
       }
 
-      const isDriveLimitValid = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
-      const isTimeBlockDriveLimitValid = timeBlockValidations.every(validation => validation.passed);
+      const isDriveLimitViolated = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
+      const isTimeBlockDriveLimitViolated = timeBlockValidations.find(validation => !validation.passed);
 
-      result.violated = !isDriveLimitValid || !isTimeBlockDriveLimitValid;
+      result.violated = isDriveLimitViolated || isTimeBlockDriveLimitViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DRIVE_LIMIT);
       return result;
     }
@@ -2478,7 +2478,7 @@ class DriveHelper {
           };
         }
         const sameDate2RBCRequested = mapSameDate2RBCRequestedByTimeBlockId.get(timeBlockId) ?? 0;
-        const passed = noOf2RBCRequested > 0 && sameDate2RBCRequested + noOf2RBCRequested > operationalLimit;
+        const violated = noOf2RBCRequested > 0 && sameDate2RBCRequested + noOf2RBCRequested > operationalLimit;
 
         return {
           timeBlockId,
@@ -2486,7 +2486,7 @@ class DriveHelper {
             noOf2RBCRequested,
             operationalLimit
           },
-          passed
+          passed: !violated
         }
       });
 
@@ -2494,10 +2494,10 @@ class DriveHelper {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOf2RBCRequested,
       }
-      const is2RBCRequestedValid = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit
-      const isTimeBlock2RBCRequestedValid = timeBlockValidations.every(validation => validation.passed);
+      const is2RBCRequestedViolated = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit
+      const isTimeBlock2RBCRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
 
-      result.violated = !is2RBCRequestedValid || !isTimeBlock2RBCRequestedValid;
+      result.violated = is2RBCRequestedViolated || isTimeBlock2RBCRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.x2RBC_LIMIT);
       return result;
     }
@@ -2563,7 +2563,7 @@ class DriveHelper {
           };
         }
         const sameDateDOTAllocated = mapSameDateDOTAllocateddByTimeBlockId.get(timeBlockId) ?? 0;
-        const passed = noOfDOTRequested > 0 && sameDateDOTAllocated + noOfDOTRequested > operationalLimit;
+        const violated = noOfDOTRequested > 0 && sameDateDOTAllocated + noOfDOTRequested > operationalLimit;
 
         return {
           timeBlockId,
@@ -2571,7 +2571,7 @@ class DriveHelper {
             noOfDOTRequested,
             operationalLimit
           },
-          passed
+          passed: !violated
         }
       });
 
@@ -2580,10 +2580,10 @@ class DriveHelper {
         noOfDOTRequested,
       }
 
-      const isDOTequestedValid = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit
-      const isTimeBlockDOTRequestedValid = timeBlockValidations.every(validation => validation.passed);
+      const isDOTequestedViolated = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit
+      const isTimeBlockDOTRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
 
-      result.violated = !isDOTequestedValid || !isTimeBlockDOTRequestedValid;
+      result.violated = isDOTequestedViolated || isTimeBlockDOTRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DOT_LIMIT);
       return result;
     }
@@ -2649,7 +2649,7 @@ class DriveHelper {
           };
         }
         const sameDateCDLAllocated = mapSameDateCDLAllocateddByTimeBlockId.get(timeBlockId) ?? 0;
-        const passed = noOfCDLRequested > 0 && sameDateCDLAllocated + noOfCDLRequested > operationalLimit;
+        const violated = noOfCDLRequested > 0 && sameDateCDLAllocated + noOfCDLRequested > operationalLimit;
 
         return {
           timeBlockId,
@@ -2657,7 +2657,7 @@ class DriveHelper {
             noOfCDLRequested,
             operationalLimit
           },
-          passed
+          passed: !violated
         }
       });
       
@@ -2666,10 +2666,10 @@ class DriveHelper {
         noOfCDLRequested,
       }
 
-      const isCDLequestedValid = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
-      const isTimeBlockCDLRequestedValid = timeBlockValidations.every(validation => validation.passed);
+      const isCDLequestedViolated = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
+      const isTimeBlockCDLRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
 
-      result.violated = !isCDLequestedValid || !isTimeBlockCDLRequestedValid;
+      result.violated = isCDLequestedViolated || isTimeBlockCDLRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.CDL_LIMIT);
       return result;
     }
@@ -2932,7 +2932,6 @@ class DriveHelper {
         })
       }
 
-      const isStaffRequestedValid = sameDateDrivesStaffRequested + sameDateNceStaffRequested + totalStaffRequested > totalStaffConstraints;
       const timeBlockValidations = timeBlockIds.map(timeBlockId => {
         const totalStaffRequested = mapStaffRequestedByTimeBlockId.get(timeBlockId) ?? 0;
         const sameDateStaffRequested = mapSameDateStaffRequestedByTimeBlockId.get(timeBlockId) ?? 0;
@@ -2945,18 +2944,19 @@ class DriveHelper {
           };
         }
 
-        const staffAvailable = totalStaffConstraints - sameDateStaffRequested;
-
+        const violated = sameDateStaffRequested + totalStaffRequested > totalStaffConstraints;
         return {
           timeBlockId,
           data: {
             staffRequested: totalStaffRequested,
-            staffAvailable: staffAvailable
+            staffAvailable: totalStaffConstraints - sameDateStaffRequested
           },
-          passed: staffAvailable >= totalStaffRequested
+          passed: !violated
         }
       });
-      const isTimeBlockStaffRequestedValid = timeBlockValidations.every(validation => validation.passed);
+
+      const isStaffRequestedViolated = sameDateDrivesStaffRequested + sameDateNceStaffRequested + totalStaffRequested > totalStaffConstraints;
+      const isTimeBlockStaffRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
 
       result.data = {
         staffRequested: totalStaffRequested,
@@ -2964,7 +2964,7 @@ class DriveHelper {
         staffAvailable: totalStaffConstraints - sameDateDrivesStaffRequested - sameDateNceStaffRequested,
         timeBlockValidations
       }
-      result.violated = !isStaffRequestedValid || !isTimeBlockStaffRequestedValid;
+      result.violated = isStaffRequestedViolated || isTimeBlockStaffRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
       return result;
     }
