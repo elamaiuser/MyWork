@@ -2414,7 +2414,7 @@ class DriveHelper {
       const isDriveLimitValid = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
       const isTimeBlockDriveLimitValid = timeBlockValidations.every(validation => validation.passed);
 
-      result.violated = isDriveLimitValid && isTimeBlockDriveLimitValid;
+      result.violated = !isDriveLimitValid || !isTimeBlockDriveLimitValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DRIVE_LIMIT);
       return result;
     }
@@ -2497,7 +2497,7 @@ class DriveHelper {
       const is2RBCRequestedValid = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit
       const isTimeBlock2RBCRequestedValid = timeBlockValidations.every(validation => validation.passed);
 
-      result.violated = is2RBCRequestedValid && isTimeBlock2RBCRequestedValid;
+      result.violated = !is2RBCRequestedValid || !isTimeBlock2RBCRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.x2RBC_LIMIT);
       return result;
     }
@@ -2583,7 +2583,7 @@ class DriveHelper {
       const isDOTequestedValid = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit
       const isTimeBlockDOTRequestedValid = timeBlockValidations.every(validation => validation.passed);
 
-      result.violated = isDOTequestedValid && isTimeBlockDOTRequestedValid;
+      result.violated = !isDOTequestedValid || !isTimeBlockDOTRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.DOT_LIMIT);
       return result;
     }
@@ -2669,7 +2669,7 @@ class DriveHelper {
       const isCDLequestedValid = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
       const isTimeBlockCDLRequestedValid = timeBlockValidations.every(validation => validation.passed);
 
-      result.violated = isCDLequestedValid && isTimeBlockCDLRequestedValid;
+      result.violated = !isCDLequestedValid || !isTimeBlockCDLRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.CDL_LIMIT);
       return result;
     }
@@ -2964,7 +2964,7 @@ class DriveHelper {
         staffAvailable: totalStaffConstraints - sameDateDrivesStaffRequested - sameDateNceStaffRequested,
         timeBlockValidations
       }
-      result.violated = isStaffRequestedValid && isTimeBlockStaffRequestedValid;
+      result.violated = !isStaffRequestedValid || !isTimeBlockStaffRequestedValid;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
       return result;
     }
