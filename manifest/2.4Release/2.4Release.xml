@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
+		<members>BSF_Constants</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>DriveTriggerService</members>
+		<members>DriveTriggerHandler</members>
+        <members>DriveTriggerServiceTest</members>
+        <members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
+		<members>GenerateDriveTestData</members>
+		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+		<members>OpportunityTriggerTest</members>
+		<members>skedResourceHandler</members>
+		<members>skedResourceHandler_Test</members>
+		<members>skedTestDataFactory</members>
+		<members>slwcSetting</members>
+		<members>slwcDataService_Test</members>
+        <name>ApexClass</name>
+	</types>
+	<types>
+		<members>Opportunity.Special_Circumstances_Notes__c</members>
+		<members>Opportunity.Special_Circumstances__c</members>
+		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
+		<members>Volunteer_Staffing_Matrix__mdt.Drive_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>Custom_Messages.Asset_Validation_for_Dedicated_to_Site</members>
+		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<members>Custom_Messages.SSB_First_Time_Badge_Modification_Msg</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_0_17</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_18_69</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_70_Above</members>
+		<members>Volunteer_Staffing_Matrix.High_School_0_70</members>
+		<members>Volunteer_Staffing_Matrix.High_School_121_170</members>
+		<members>Volunteer_Staffing_Matrix.High_School_171_210</members>
+		<members>Volunteer_Staffing_Matrix.High_School_211_265</members>
+		<members>Volunteer_Staffing_Matrix.High_School_71_120</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_0_17</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_121_160</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_18_40</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_41_80</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_81_120</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSlider</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveCalendarDriveList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<members>Volunteer_Staffing_Matrix__mdt-Volunteer Staffing Matrix Layout</members>
+		<name>Layout</name>
+	</types>
+    <types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDrivesAvailator</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSlider</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Account.Upgrade_Account</members>
+		<name>QuickAction</name>
+	</types>
+	<types>
+		<members>Special_Circumstances_Badge_Logo</members>
+		<name>StaticResource</name>
+	</types>
+    <version>59.0</version>
+</Package>

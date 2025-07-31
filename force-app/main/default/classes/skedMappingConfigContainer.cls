@@ -170,6 +170,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', 'direct');
             mappingConfig.addFieldConfig('sked_ARC_Region__c', 'arcRegionId', 'direct');
             mappingConfig.addFieldConfig('sked_ARC_Region__r', 'arcRegion', 'related', skedModels.territory.class, 'sked_Territory__c');
+            mappingConfig.addFieldConfig('sked_Time_Block__c', 'timeBlockId', 'direct');
             mappingConfig.addFieldConfig('activity', 'objectType', 'value');
             
             
@@ -484,6 +485,27 @@ public class skedMappingConfigContainer {
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
+            return mappingConfig;
+        }
+    }
+    
+    public class collectionOperationTimeBlockMappingConfigFactory extends mappingConfigFactory {
+        public override mappingConfigModel process() {
+            mappingConfigModel mappingConfig = new mappingConfigModel();
+            mappingConfig.sObjectName = 'Collection_Operation_Time_Block__c';
+            mappingConfig.objectType = 'collectionOperationTimeBlock';
+            
+            mappingConfig.addFieldConfig('Id', 'id', 'direct');
+            mappingConfig.addFieldConfig('Name', 'name', 'direct');
+            mappingConfig.addFieldConfig('Collection_Operation__c', 'collectionOperationId', 'direct');
+            mappingConfig.addFieldConfig('Effective_End_Date__c', 'effectiveEndDate', 'direct');
+            mappingConfig.addFieldConfig('Effective_Start_Date__c', 'effectiveStartDate', 'direct');
+            mappingConfig.addFieldConfig('Time_Block__c', 'timeBlockId', 'direct');
+            mappingConfig.addFieldConfig('Time_Block__r', 'timeBlock', 'related', skedModels.timeBlock.class, 'Time_Block__c');
+            
+            mappingConfig.readonlyFields = new Set<string>();
+            mappingConfig.readonlyFields.add('Name');
+            
             return mappingConfig;
         }
     }
@@ -1048,6 +1070,8 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Expiry_Date__c', 'expiry', 'datetime');
             mappingConfig.addFieldConfig('sked_Expiry_Date__c', 'expiryDate', 'date');
             mappingConfig.addFieldConfig('sked__Tag__r', 'tag', 'related', skedModels.tag.class, 'sked__Tag__c');
+            mappingConfig.addFieldConfig('sked_Restriction_Start_Date__c', 'restrictionStartDate', 'date');
+            mappingConfig.addFieldConfig('sked_Restriction_End_Date__c', 'restrictionEndDate', 'date');
             mappingConfig.addFieldConfig('sked_Role_Status__c', 'roleStatus', 'direct');
             mappingConfig.addFieldConfig('sked_Start__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', 'date');

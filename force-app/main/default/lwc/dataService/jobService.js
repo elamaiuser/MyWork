@@ -33,6 +33,24 @@ class jobService extends dataService {
           queryBuilder.addCondition({template: "sked_Drive__r.sked_Drive_Date__c >= {0}", value: query.startDate});
           queryBuilder.addCondition({template: "sked_Drive__r.sked_Drive_Date__c <= {0}", value: query.endDate});
       }
+       if (query.selectedDates && query.selectedDates.length) {
+        queryBuilder.addCondition({ template: "sked_Drive__r.sked_Drive_Date__c IN {0}", value: query.selectedDates, type: "array" });
+      }
+      if (query.driveTypes && query.driveTypes.length) {
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Type_of_Drive__c IN {0}", value: query.driveTypes, type: "array_string"});
+      }
+      if (query.driveOperationTypes && query.driveOperationTypes.length) {
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Operation_Type__c IN {0}", value: query.driveOperationTypes, type: "array_string"});
+      }
+      if (query.driveLocationIds && query.driveLocationIds.length) {
+        queryBuilder.addCondition({template: "sked_Drive__r.sked_Drive_Site__c IN {0}", value: query.driveLocationIds, type: "array_string"});
+      }
+      if (query.driveExcludedIds && query.driveExcludedIds.length) {
+        queryBuilder.addCondition({ template: 'sked_Drive__c NOT IN {0}', value: query.driveExcludedIds, type: "array_string" });
+      }
+      if (query.isVounteerRole) {
+        queryBuilder.addCondition({ template: 'sked_Volunteer_Role__c != NULL'});
+      }
       queryBuilder.addCondition({template: "sked__Job_Status__c != 'Cancelled'"});
       
       if (query.includes(sObjectType.JOB_ALLOCATION)) {
@@ -61,7 +79,14 @@ class jobQueryModel extends queryModelBase {
   startDate;
   assetTypes;
 
+  selectedDates;
+  driveTypes;
+  driveOperationTypes;
+  driveLocationIds;
+  driveExcludedIds;
+
   isSubDriveQuery;
+  isVounteerRole;
   includeDeletedJobAllocs;
 }
 

@@ -72,11 +72,16 @@
                 </div>
             </div>
 
-            <footer class="slds-modal__footer">
-                <lightning-button if:true={isConfirmStep} label="Back" title="Back" onclick={handleBack} class="slds-m-right_xx-small"></lightning-button>
-                <lightning-button if:true={isSelectDatesStep} class="slds-m-top_small" onclick={handleNext} variant="brand" type="submit" name="next" label="Next"></lightning-button>
-                <lightning-button if:true={isSelectDatesStep} label="Cancel" title="Cancel" onclick={closeModal} class="slds-m-right_xx-small"></lightning-button>
-                <lightning-button if:true={isConfirmStep} class="slds-m-top_small" onclick={handleSave} variant="brand" type="submit" name="update" label="Confirm"></lightning-button>
+            <footer if:false={selectDatesOnly} class="slds-modal__footer">
+                <lightning-button if:true={isConfirmStep} class="slds-m-right_xx-small" label="Back" title="Back" onclick={handleBack}></lightning-button>
+                <lightning-button if:true={isSelectDatesStep} class="slds-m-right_xx-small" onclick={handleNext} variant="brand" type="submit" name="next" label="Next"></lightning-button>
+                <lightning-button if:true={isSelectDatesStep} class="slds-m-right_xx-small" label="Cancel" title="Cancel" onclick={closeModal}></lightning-button>
+                <lightning-button if:true={isConfirmStep} onclick={handleSave} variant="brand" type="submit" name="update" label="Confirm"></lightning-button>
+            </footer>
+
+             <footer if:true={selectDatesOnly} class="slds-modal__footer">
+                <lightning-button label="Cancel" title="Cancel" class="slds-m-right_xx-small" onclick={closeModal}></lightning-button>
+                <lightning-button onclick={handleSave} variant="brand" type="submit" name="update" label="Confirm"></lightning-button>
             </footer>
         </div>
         </section>
