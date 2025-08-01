@@ -275,7 +275,7 @@ public with sharing class APComplianceReportController {
         row.put('status', status != null ? status : '');
         row.put('startTime', startTime != null ? formatTime(startTime) : '');
         row.put('endTime', endTime != null ? formatTime(endTime) : '');
-        row.put('apName', apName);
+        row.put('apName',  apName != null ? apName : '');
         row.put('violation', String.valueOf(violation));
         row.put('violationIcon', violation ? 'utility:error' : 'utility:check');
         row.put('driveName', driveName != null ? driveName : '');
