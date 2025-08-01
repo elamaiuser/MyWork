@@ -7,8 +7,10 @@ export class CollectionOperationTimeBlockMappingConfigFactory {
       mappingConfig.objectType = 'collectionOperationTimeBlock';
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Effective_Start_Date__c', 'effectiveStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Effective_End_Date__c', 'effectiveEndDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Time_Block__c', 'timeBlockId', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfig('Collection_Operation__r', 'collectionOperation', MAPPING_TYPE.related, 'Biomed_Collection_Op_Center__c');
       mappingConfig.addFieldConfig('Time_Block__r', 'timeBlock', MAPPING_TYPE.related, 'Time_Block__c');
