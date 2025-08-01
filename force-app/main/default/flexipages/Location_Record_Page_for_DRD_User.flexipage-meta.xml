@@ -1401,16 +1401,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.sked_On_Site_Food_Conditions__c</fieldItem>
-                <identifier>Recordsked_On_Site_Food_Conditions_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.sked_On_Site_Food_Canteen_Other__c</fieldItem>
                 <identifier>Recordsked_On_Site_Food_Canteen_Other_cField</identifier>
             </fieldInstance>
