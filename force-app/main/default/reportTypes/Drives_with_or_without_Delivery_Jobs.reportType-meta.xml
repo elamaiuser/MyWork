@@ -1017,11 +1017,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Drive_Site__c.sked_On_Site_Food_Conditions__c</field>
-            <table>sked_Drive__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Drive_Site__c.sked_Outside_stairs__c</field>
             <table>sked_Drive__c</table>
         </columns>
