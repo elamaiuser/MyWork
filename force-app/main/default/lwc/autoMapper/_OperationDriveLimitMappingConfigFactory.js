@@ -16,6 +16,7 @@ export class OperationDriveLimitMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Effective_Start_Date__c', 'effectiveStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Quantity__c', 'quantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Type__c', 'type', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Time_Block__c', 'timeBlockId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfigWithRelatedList('sked_Operation_Drive_Limit_Overrides__r', 'operationDriveLimitOverrides', 'sked_Operation_Drive_Limit_Override__c', 'sked_Operation_Drive_Limit__c');
 
       return mappingConfig;

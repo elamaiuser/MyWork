@@ -1,0 +1,80 @@
+<apex:page controller="TimeBlockComplianceReportController" contentType="application/vnd.ms-excel" cache="true" showHeader="false" sidebar="false">
+
+    <!-- Summary Table -->
+    <table border="1" style="width: 100%; border-collapse: collapse; font-family: Arial; font-size: 12px;">
+        <tr style="background-color: #d9d9d9; font-weight: bold;">
+            <td>Total Records</td>
+            <td>Total Violations</td>
+            <td>Violation %</td>
+        </tr>
+        <tr style="font-weight: bold; text-align: center;">
+            <td>{!summary['totalRecords']}</td>
+            <td>{!summary['totalViolations']}</td>
+            <td>{!summary['violationPercentage']}%</td>
+        </tr>
+    </table>
+
+    <br/><br/>
+
+    <!-- Data Table -->
+    <apex:repeat value="{!paginatedData}" var="page">
+        <table border="1" style="width: 100%; border-collapse: collapse; font-family: Arial; font-size: 11px;">
+            <thead style="background-color: #f2f2f2; font-weight: bold;">
+                <tr>
+                    <th>Division</th>
+                    <th>Region</th>
+                    <th>CO</th>
+                    <th>District</th>
+                    <th>Drive Name</th>
+                    <th>Drive Status</th>
+                    <th>Drive Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>TB Name</th>
+                    <th>TB Start</th>
+                    <th>TB End</th>
+                    <th>TB Eff. Start</th>
+                    <th>TB Eff. End</th>
+                    <th>Account Manager</th>
+                    <th>Staff Requested</th>
+                    <th>Projection</th>
+                    <th>Site Name</th>
+                    <th>Address</th>
+                    <th>Zip</th>
+                    <th>Type</th>
+                    <th>Violation</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!page}" var="row">
+                    <tr>
+                        <td>{!row['division']}</td>
+                        <td>{!row['region']}</td>
+                        <td>{!row['co']}</td>
+                        <td>{!row['district']}</td>
+                        <td>{!row['driveName']}</td>
+                        <td>{!row['status']}</td>
+                        <td>{!row['driveDate']}</td>
+                        <td>{!row['shiftStartTime']}</td>
+                        <td>{!row['shiftEndTime']}</td>
+                        <td>{!row['tbName']}</td>
+                        <td>{!row['tbStartTime']}</td>
+                        <td>{!row['tbEndTime']}</td>
+                        <td>{!row['tbEffStart']}</td>
+                        <td>{!row['tbEffEnd']}</td>
+                        <td>{!row['accountManager']}</td>
+                        <td>{!row['staffRequested']}</td>
+                        <td>{!row['projection']}</td>
+                        <td>{!row['siteName']}</td>
+                        <td>{!row['siteAddress']}</td>
+                        <td>{!row['siteZip']}</td>
+                        <td>{!row['type']}</td>
+                        <td>{!row['violation']}</td>
+                        <td>{!row['contentionResolution']}</td>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:repeat>
+</apex:page>

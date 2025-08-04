@@ -189,6 +189,7 @@ global class skedModels {
         public string resourceOverrideId;
         public boolean showOnCalendar;
         public string subtype;
+        public string timeBlockId;
         public string timezoneSidId;
         public string timezone;
         public List<String> biomedCollectionOpIds;
@@ -623,6 +624,14 @@ global class skedModels {
             }
         }
     }
+
+    global virtual class collectionOperationTimeBlock extends modelBase {
+        public string collectionOperationId;
+        public string effectiveEndDate;
+        public string effectiveStartDate;
+        public string timeBlockId;
+        public timeBlock timeBlock;
+    }
     
     global virtual class displaySetting extends modelBase {
         public integer availableEnd;
@@ -820,5 +829,11 @@ global class skedModels {
         public string endDate;
         public string startDate;
         public string territoryId;
+    }
+
+    global virtual class timeBlock extends modelBase {
+        public string daysOfWeek;
+        public string endTime;
+        public string startTime;
     }
 }

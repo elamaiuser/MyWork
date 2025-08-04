@@ -2,7 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
         <members>skedConstants</members>
-        <members>skedLocationTagHandler</members>        
+        <members>skedLocationTagHandler</members>
+		<members>skedLocationTagTrigger_Test</members>
         <name>ApexClass</name>
     </types>
 	<types>

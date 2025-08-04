@@ -16,8 +16,13 @@ const STEP = {
     CONFIRM: 2
 } 
 
+const MODE = {
+    DEFAULT: 'default',
+    DATES_ONLY: 'datesOnly'
+}
 export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
     @track _isOpen = false;
+    @api mode = MODE.DEFAULT;
     @api
     get isOpen() {
         return this._isOpen;
@@ -58,6 +63,10 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
         return "To update an appointment on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
     }
 
+    get selectDatesOnly() {
+        return this.mode === MODE.DATES_ONLY
+    }
+    
     connectedCallback() {
     }
 
@@ -195,17 +204,27 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
     }
 
     handleSave() {
-        this.dispatchEvent(new CustomEvent('save', {
-            detail: {
-                selectedDays: this.model.daysWithDrives.filter(day => {
-                    return day.drives.length && !!day.drives.find(drive => !drive.errorMessages.length)
-                }).map(day => day.dateIso),
-                selectedDriveIds: this.model.daysWithDrives.reduce((driveIds, day) => {
-                    driveIds.push(...day.drives.filter(drive => !drive.errorMessages.length).map(drive => drive.id))
-                    return driveIds;
-                }, [])
-            }
-        }));
+        if (this.selectDatesOnly) {
+            this.dispatchEvent(new CustomEvent('save', {
+                detail: {
+                    selectedDays: this.model.selectedDays,
+                    selectedDriveIds: []
+                }
+            }));
+        } else {
+            this.dispatchEvent(new CustomEvent('save', {
+                detail: {
+                    selectedDays: this.model.daysWithDrives.filter(day => {
+                        return day.drives.length && !!day.drives.find(drive => !drive.errorMessages.length)
+                    }).map(day => day.dateIso),
+                    selectedDriveIds: this.model.daysWithDrives.reduce((driveIds, day) => {
+                        driveIds.push(...day.drives.filter(drive => !drive.errorMessages.length).map(drive => drive.id))
+                        return driveIds;
+                    }, [])
+                }
+            }));
+        }
+        
         this.closeModal();
     }
     closeModal() {

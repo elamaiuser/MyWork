@@ -5,6 +5,7 @@
         <members>BSF_Batch_DriveStatusCorrection</members>
         <members>skedDriveHandler</members>
         <members>skedDriveChangeRequestHandler</members>
+        <members>skedDriveChangeRequestHandler_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>59.0</version>
