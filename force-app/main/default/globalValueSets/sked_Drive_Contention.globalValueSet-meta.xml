@@ -91,16 +91,31 @@
         <label>Excess Staff Capacity</label>
     </customValue>
     <customValue>
-        <fullName>Cancel In Process</fullName>
+        <fullName>Missing Time Block</fullName>
         <default>false</default>
-        <isActive>false</isActive>
-        <label>Cancel In Process</label>
+        <label>Missing Time Block</label>
+    </customValue>
+    <customValue>
+        <fullName>Out Of Time Block</fullName>
+        <default>false</default>
+        <label>Out Of Time Block</label>
+    </customValue>
+    <customValue>
+        <fullName>Fits Multiple Time Block</fullName>
+        <default>false</default>
+        <label>Fits Multiple Time Block</label>
     </customValue>
     <customValue>
         <fullName>Role Time Variant Changed</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>Role Time Variant Changed</label>
+    </customValue>
+    <customValue>
+        <fullName>Cancel In Process</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Cancel In Process</label>
     </customValue>
     <masterLabel>Drive Contention</masterLabel>
     <sorted>false</sorted>
