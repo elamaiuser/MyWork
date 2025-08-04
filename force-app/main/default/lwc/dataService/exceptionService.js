@@ -29,6 +29,12 @@ class exceptionService extends dataService {
       if (query.driveTypes && query.driveTypes.length) {
         queryBuilder.addCondition({template: "sked_Drive__r.sked_Type_of_Drive__c IN {0}", value: query.driveTypes, type: "array_string"});
       }
+      if (query.activityTypes && query.activityTypes.length) {
+        queryBuilder.addCondition({template: "skedHC__Activity__r.sked__Type__c IN {0}", value: query.activityTypes, type: "array_string"});
+      }
+      if (query.activitySubTypes && query.activitySubTypes.length) {
+        queryBuilder.addCondition({template: "skedHC__Activity__r.sked_Subtype__c IN {0}", value: query.activitySubTypes, type: "array_string"});
+      }
       if (query.operationTypes && query.operationTypes.length) {
         // HRP-15052 - If Mobile drivetype is selected, add null to operation types to include Mobile drives
         let operationTypes = query.operationTypes; 
@@ -61,16 +67,27 @@ class exceptionService extends dataService {
           queryBuilder.addCondition({ template: `( 
             sked_Linked_Drive__r.sked_Earliest_Drive_Date__c <= ${query.endDate} AND sked_Linked_Drive__r.sked_Latest_Drive_Date__c >= ${query.startDate}
           )` });
+        } else if (query.exceptionType == "tbs") {
+          queryBuilder.addCondition({ template: `( 
+            sked_Drive__r.sked_Drive_Date__c <= ${query.endDate} AND sked_Drive__r.sked_Drive_Date__c >= ${query.startDate}
+          )` });
+        } else if (query.exceptionType == "activity") {
+          queryBuilder.addCondition({ template: `( 
+            skedHC__Activity__r.sked_Start_Date__c <= ${query.endDate} AND skedHC__Activity__r.sked_End_Date__c >= ${query.startDate}
+          )` });
         }
       }
       
       if (query.exceptionType == "drive") {
         queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, skedHC__Job__r.Name ASC NULLS LAST'
-      }
-      else if (query.exceptionType == "resource") {
+      } else if (query.exceptionType == "tbs") {
+        queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, sked_Drive_Shift__r.Name ASC NULLS LAST'
+      } else if (query.exceptionType == "resource") {
         queryBuilder.orderClause = 'ORDER BY CreatedDate ASC';
       } else  if (query.exceptionType == "linkedDrive") {
         queryBuilder.orderClause = 'ORDER BY sked_Linked_Drive__r.sked_Earliest_Drive_Date__c ASC, sked_Linked_Drive__r.sked_Latest_Drive_Date__c ASC, sked_Linked_Drive__r.Name ASC NULLS LAST'
+      } else  if (query.exceptionType == "activity") {
+        queryBuilder.orderClause = 'ORDER BY skedHC__Activity__r.sked_Start_Date__c ASC, skedHC__Activity__r.sked_End_Date__c ASC, skedHC__Activity__r.sked_Activity_Title__c ASC NULLS LAST'
       }
   }
 }
