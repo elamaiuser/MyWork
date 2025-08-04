@@ -624,6 +624,14 @@ global class skedModels {
             }
         }
     }
+
+    global virtual class collectionOperationTimeBlock extends modelBase {
+        public string collectionOperationId;
+        public string effectiveEndDate;
+        public string effectiveStartDate;
+        public string timeBlockId;
+        public timeBlock timeBlock;
+    }
     
     global virtual class collectionOperationTimeBlock extends modelBase {
         public string collectionOperationId;
