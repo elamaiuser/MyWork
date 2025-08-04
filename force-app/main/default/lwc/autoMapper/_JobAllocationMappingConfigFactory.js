@@ -22,10 +22,10 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);        
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Start_Time__c', 'driveStartTime', MAPPING_TYPE.time);        
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_End_Time__c', 'driveEndTime', MAPPING_TYPE.time);        
-      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive_Shift__r.Name', 'driveShiftName', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked__Job__r.sked__Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_UFID__c', 'driveUfid', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive_Shift__r.Name', 'driveShiftName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked__Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Job__r.sked_Resource_Role__c', 'resourceRole', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource__c', 'resourceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource__r.Name', 'resourceName', MAPPING_TYPE.direct);
