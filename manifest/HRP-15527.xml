@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>AccountAffiliationService</members>
+		<members>AccountAffiliationTriggerHandler</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Account.Has_Marketing_Program__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>FixedSiteDashboard/ABRDORxFDlQNpDINUCiRWiBvSQCfST621112</members>
+		<name>Dashboard</name>
+	</types>
+	<types>
+		<members>unfiled$public/Costly_low_productivity_drives_roq</members>
+		<members>unfiled$public/Feeder_Only_and_Feeder_Plus_Accounts_5Fx</members>
+		<members>unfiled$public/Lead_conversion_to_Feeders_vp9</members>
+		<members>unfiled$public/New_Blood_Drive_Opportunities_Report_UL5</members>
+		<members>unfiled$public/New_firsttime_drives_Report_jA5</members>
+		<members>unfiled$public/Type_B_drives_aid</members>
+		<name>Report</name>
+	</types>
+	<version>64.0</version>
+</Package>
