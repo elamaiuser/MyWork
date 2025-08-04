@@ -176,6 +176,14 @@ global class slwcAllocationService {
                                               FROM sked_Resource_Hours_Record_Detail__c
                                               WHERE sked_Resource_Hours_Record__c IN :resourceHoursRecordIds];
         }
+        if (!request.allDates.isEmpty()) {
+            data.prevCancelledJobAllocations = [SELECT Id, sked__Job__c, sked__Resource__c, sked__Job__r.sked_Drive__c, 
+                                                sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked__Job__r.sked_Drive__r.Name,
+                                                sked__Job__r.sked_Drive__r.sked_UFID__c
+                                                FROM sked__Job_Allocation__c
+                                                WHERE sked__Job__r.sked_Drive__r.sked_Drive_Date__c IN :request.allDates
+                                                AND sked__Job__r.sked_Drive__r.sked_Status__c = :skedConstants.DRIVE_STATUS_CANCEL];
+        }
 
         if (request.pageNo == 1) {
             data.totalRecords = request.recordIds != NULL ? request.recordIds.size() : (request.getAssetsOnly == TRUE ? numberOfAssets(request) : numberOfResources(request));
@@ -675,6 +683,7 @@ global class slwcAllocationService {
         @AuraEnabled public object totalRecords {get;set;}
         @AuraEnabled public object resourceHoursRecordDetails {get;set;}
         @AuraEnabled public object tradedJobAllocations {get;set;}
+        @AuraEnabled public object prevCancelledJobAllocations {get;set;}
     }
     
 }
