@@ -14,5 +14,9 @@
 		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
 		<name>ValidationRule</name>
 	</types>
+	<types>
+		<members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
+		<name>CustomField</name>
+	</types>
 	<version>64.0</version>
 </Package>
