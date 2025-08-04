@@ -1936,6 +1936,10 @@ class SlwcAvailator {
                     if (event.objectType == OBJECT_TYPE.AVAILABILITY && !event.isAvailable) {
                       exception.availabilityId = event.id;
                       exception.exception = event.eventType;
+
+                      if(event.eventType === 'Call Out') {
+                        exception.exception = event.callOutType; 
+                      }
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
                       exception.exception = "Conflict with " + event.activityTitle;
