@@ -487,7 +487,7 @@ public class skedMappingConfigContainer {
             mappingConfig.readonlyFields.add('Name');
             return mappingConfig;
         }
-    }
+    }    
     
     public class collectionOperationTimeBlockMappingConfigFactory extends mappingConfigFactory {
         public override mappingConfigModel process() {
@@ -1287,6 +1287,22 @@ public class skedMappingConfigContainer {
             
             mappingConfig.readonlyFields = new Set<string>();
             mappingConfig.readonlyFields.add('Name');
+            
+            return mappingConfig;
+        }
+    }
+
+    public class timeBlockMappingConfigFactory extends mappingConfigFactory {
+        public override mappingConfigModel process() {
+            mappingConfigModel mappingConfig = new mappingConfigModel();
+            mappingConfig.sObjectName = 'Time_Block__c';
+            mappingConfig.objectType = 'timeBlock';
+            
+            mappingConfig.addFieldConfig('Id', 'id', 'direct');
+            mappingConfig.addFieldConfig('Name', 'name', 'direct');
+            mappingConfig.addFieldConfig('Days_of_Week__c', 'daysOfWeek', 'direct');
+            mappingConfig.addFieldConfig('End_Time__c', 'endTime', 'direct');
+            mappingConfig.addFieldConfig('Start_Time__c', 'startTime', 'direct');
             
             return mappingConfig;
         }
