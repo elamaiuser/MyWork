@@ -79,6 +79,7 @@
 		<members>Account.CY_Drives1__c</members>
         <members>Account.CFY_Drives__c</members>
 		<members>Account.CY_Drives__c</members>
+		<members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
