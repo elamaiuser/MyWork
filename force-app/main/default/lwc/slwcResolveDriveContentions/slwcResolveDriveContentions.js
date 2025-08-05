@@ -287,6 +287,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftTimeBlockId
         });
       }
+
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+      }
     });
   }
 
@@ -439,6 +444,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftContentionResolution,
           backupDriveShiftTimeBlockId
         });
+      }
+
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
