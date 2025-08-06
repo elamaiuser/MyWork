@@ -99,11 +99,11 @@
                         <lightning-input type="checkbox" label="Show only Assigned to Linked Drives" name="assignedToLinkedDrives" onchange={handleChange} checked={clonedFilterPopverState.assignedToLinkedDrives}></lightning-input>
                     </div>
                     <div class="slds-form-element__row slds-m-top_x-small">
-                        <lightning-input type="checkbox" label="Show only Prev Cancelled" name="prevCancelled" onchange={handleChange} checked={clonedFilterPopverState.prevCancelled}></lightning-input>
+                        <lightning-input type="checkbox" label="Show only prev. assigned to cancelled drives" name="prevCancelled" onchange={handleChange} checked={clonedFilterPopverState.prevCancelled}></lightning-input>
                     </div>
                     <div class="slds-form-element__row slds-m-top_x-small">
                         <lightning-input type="search" onchange={handleSearchText_CancelledDriveDebounce} value={clonedFilterPopverState.cancelledDriveQueryText}
-                            max-length="255" label="Filter by Cancelled Drive" 
+                            max-length="255" label="Search by Cancelled Drive UFID" 
                             placeholder="Filter by Drive" class="search-textbox"></lightning-input>
                     </div>
                 </div>
