@@ -2065,10 +2065,17 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
             if (filter.cancelledDriveQueryText) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
-                    const result = (item.prevCancelledJobAllocations || []).filter(ja => (ja.job.driveName && ja.job.driveName.includes(filter.cancelledDriveQueryText)) 
-                                                                                        || (ja.job.driveUfid && ja.job.driveUfid.includes(filter.cancelledDriveQueryText)));
+                    const result = (item.prevCancelledJobAllocations || []).filter(ja => (ja.job.driveUfid && ja.job.driveUfid.includes(filter.cancelledDriveQueryText)));
                     return result?.length;
                 });
+
+                if (!this.resourcesFilterList?.length) {
+                    this.dispatchEvent(new ShowToastEvent({
+                        message: 'UFID does not belong to cancelled drive, please search with a cancelled drive UFID.',
+                        variant: 'error',
+                        mode: 'dismissable',
+                    }));
+                }
             }
 
             if (filter.selectedResourcesTag.length > 0) {
