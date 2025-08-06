@@ -623,7 +623,7 @@ global class skedModels {
                 this.preferredEndTime = integer.valueOf(this.preferredEnd.format('Hmm', inputTimezoneSidId));
             }
         }
-    }    
+    }
     
     global virtual class collectionOperationTimeBlock extends modelBase {
         public string collectionOperationId;
