@@ -135,7 +135,8 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                     AND sked__Job__r.sked_Drive__r.sked_Status__c != 'Cancel'
                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c != null
                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c >= :startDate
-                    AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= :endDate];
+                    AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= :endDate 
+                    AND sked__Job__r.sked__Job_Status__c != 'Cancelled'];
     }
 	
     //HRP-13121 -> Updated Method structure to consider territory keys for fetching activity/activity COs
