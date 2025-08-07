@@ -4,7 +4,7 @@
     <assignments>
         <name>Copy_1_of_End_ASR_with_Non_Common_Reason</name>
         <label>Copy 1 of End ASR with Non-Common Reason</label>
-        <locationX>3714</locationX>
+        <locationX>3450</locationX>
         <locationY>863</locationY>
         <assignmentItems>
             <assignToReference>Loop_Through_ASR_Records.End_Date__c</assignToReference>
@@ -41,7 +41,7 @@
     <assignments>
         <name>Copy_1_of_Mark_Contact_As_In_Active</name>
         <label>Copy 1 of Mark Contact As In Active</label>
-        <locationX>3626</locationX>
+        <locationX>3362</locationX>
         <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>$Record.Active__c</assignToReference>
@@ -64,7 +64,7 @@
     <assignments>
         <name>End_ASR_with_Common_Reason</name>
         <label>End ASR with Common Reason</label>
-        <locationX>3410</locationX>
+        <locationX>3146</locationX>
         <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>Loop_Through_ASR_Records.End_Date__c</assignToReference>
@@ -101,7 +101,7 @@
     <assignments>
         <name>End_ASR_with_Non_Common_Reason</name>
         <label>End ASR with Non-Common Reason</label>
-        <locationX>3674</locationX>
+        <locationX>3410</locationX>
         <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>Loop_Through_ASR_Records.End_Date__c</assignToReference>
@@ -138,7 +138,7 @@
     <assignments>
         <name>Mark_Contact_As_In_Active</name>
         <label>Mark Contact As In Active</label>
-        <locationX>3586</locationX>
+        <locationX>3322</locationX>
         <locationY>1487</locationY>
         <assignmentItems>
             <assignToReference>$Record.Active__c</assignToReference>
@@ -162,7 +162,7 @@
         <description>If Do Not Contact reason is Deceased then mark the Contact as InActive.</description>
         <name>Check_Do_Not_Contact_Reason</name>
         <label>Check Do Not Contact Reason</label>
-        <locationX>3674</locationX>
+        <locationX>3410</locationX>
         <locationY>1271</locationY>
         <defaultConnector>
             <targetReference>Loop_over_Matching_Reasons</targetReference>
@@ -186,31 +186,9 @@
         </rules>
     </decisions>
     <decisions>
-        <name>Check_For_Existing_ASR</name>
-        <label>Check For Existing ASR</label>
-        <locationX>182</locationX>
-        <locationY>647</locationY>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Not_Found</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Existing_ASR</leftValueReference>
-                <operator>IsEmpty</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Create_Account_Service_Role</targetReference>
-            </connector>
-            <label>Not Found</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Contact_Action_Insert_Or_Update</name>
         <label>Contact Action Insert Or Update</label>
-        <locationX>1532</locationX>
+        <locationX>1334</locationX>
         <locationY>431</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -223,8 +201,15 @@
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
             <connector>
-                <targetReference>Existing_ASR</targetReference>
+                <targetReference>Create_Account_Service_Role</targetReference>
             </connector>
             <label>Contact Insert</label>
         </rules>
@@ -245,6 +230,13 @@
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>Read_End_Reason_From_MetaData</targetReference>
             </connector>
@@ -255,7 +247,7 @@
         <description>If Do Not Contact reason is Deceased then mark the Contact as InActive.</description>
         <name>Copy_1_of_Check_Do_Not_Contact_Reason</name>
         <label>Copy 1 of Check Do Not Contact Reason</label>
-        <locationX>3714</locationX>
+        <locationX>3450</locationX>
         <locationY>971</locationY>
         <defaultConnector>
             <targetReference>Loop_Through_ASR_Records</targetReference>
@@ -281,7 +273,7 @@
     <decisions>
         <name>Copy_1_of_Ignore_Duplicate</name>
         <label>Copy 1 of Ignore Duplicate</label>
-        <locationX>3538</locationX>
+        <locationX>3274</locationX>
         <locationY>1079</locationY>
         <defaultConnector>
             <targetReference>Copy_1_of_Mark_Contact_As_In_Active</targetReference>
@@ -306,7 +298,7 @@
     <decisions>
         <name>Ignore_Duplicate</name>
         <label>Ignore Duplicate</label>
-        <locationX>3498</locationX>
+        <locationX>3234</locationX>
         <locationY>1379</locationY>
         <defaultConnector>
             <targetReference>Mark_Contact_As_In_Active</targetReference>
@@ -331,7 +323,7 @@
     <decisions>
         <name>Is_Do_Not_Contact_Reason_Picklist_Value_Matching</name>
         <label>Is Do Not Contact Reason Picklist Value Matching</label>
-        <locationX>3674</locationX>
+        <locationX>3410</locationX>
         <locationY>971</locationY>
         <defaultConnector>
             <targetReference>Check_Do_Not_Contact_Reason</targetReference>
@@ -371,7 +363,7 @@
     <decisions>
         <name>Is_Matching_Reason_Exists</name>
         <label>Is Matching Reason Exists</label>
-        <locationX>3682</locationX>
+        <locationX>3418</locationX>
         <locationY>755</locationY>
         <defaultConnector>
             <targetReference>Loop_Through_ASR_Records</targetReference>
@@ -424,7 +416,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
     <loops>
         <name>Loop_over_Matching_Reasons</name>
         <label>Loop over Matching Reasons</label>
-        <locationX>3322</locationX>
+        <locationX>3058</locationX>
         <locationY>863</locationY>
         <collectionReference>Read_End_Reason_From_MetaData</collectionReference>
         <iterationOrder>Asc</iterationOrder>
@@ -438,7 +430,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
     <loops>
         <name>Loop_Through_ASR_Records</name>
         <label>Loop Through ASR Records</label>
-        <locationX>2618</locationX>
+        <locationX>2354</locationX>
         <locationY>647</locationY>
         <collectionReference>Fetch_Active_Account_Service_Roles</collectionReference>
         <iterationOrder>Asc</iterationOrder>
@@ -472,7 +464,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <name>Create_Account_Service_Role</name>
         <label>Create Account Service Role</label>
         <locationX>50</locationX>
-        <locationY>755</locationY>
+        <locationY>539</locationY>
         <inputAssignments>
             <field>Account_Service_Role__c</field>
             <value>
@@ -501,30 +493,9 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
     <recordLookups>
-        <name>Existing_ASR</name>
-        <label>Check For Existing ASR</label>
-        <locationX>182</locationX>
-        <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Check_For_Existing_ASR</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Contact__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>false</getFirstRecordOnly>
-        <object>Account_Service_Role__c</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
         <name>Fetch_Active_Account_Service_Roles</name>
         <label>Fetch Active Account Service Roles</label>
-        <locationX>1532</locationX>
+        <locationX>1334</locationX>
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -560,7 +531,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <description>Read From Account_Service_Role_End_Reason__mdt</description>
         <name>Read_End_Reason_From_MetaData</name>
         <label>Read End Reason From MetaData</label>
-        <locationX>2618</locationX>
+        <locationX>2354</locationX>
         <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -573,14 +544,14 @@ The flow ensures ASR records stay in sync with the Contact.</description>
     <recordUpdates>
         <name>Mark_Deceased_Contact_As_In_Active</name>
         <label>Mark Deceased  Contact As In Active</label>
-        <locationX>2618</locationX>
+        <locationX>2354</locationX>
         <locationY>2123</locationY>
         <inputReference>ListOfContactToSetAsInActive</inputReference>
     </recordUpdates>
     <recordUpdates>
         <name>Update_ASRs_With_End_Info</name>
         <label>Update ASRs With End Info</label>
-        <locationX>2618</locationX>
+        <locationX>2354</locationX>
         <locationY>2015</locationY>
         <connector>
             <targetReference>Mark_Deceased_Contact_As_In_Active</targetReference>
@@ -588,7 +559,7 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <inputReference>UpdatedASRs</inputReference>
     </recordUpdates>
     <start>
-        <locationX>1406</locationX>
+        <locationX>1208</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Fetch_Active_Account_Service_Roles</targetReference>
