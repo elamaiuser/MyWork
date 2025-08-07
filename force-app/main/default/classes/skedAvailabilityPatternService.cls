@@ -196,6 +196,7 @@ global class skedAvailabilityPatternService extends skedDataService {
         List<sked__Availability_Pattern__c> existingPatterns = [
             SELECT Id, Name, sked__Pattern__c
             FROM sked__Availability_Pattern__c
+            WHERE Id != :model.id
         ];
         
         boolean patternNameRuleValid = true;
@@ -209,10 +210,12 @@ global class skedAvailabilityPatternService extends skedDataService {
                 patternNameRuleValid = existingPattern.Name != model.name;
             }
             if (patternDataRuleValid) {
-                skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData)JSON.deserialize(existingPattern.sked__Pattern__c, skedAvailabilityPatternData.class);
-                string existingPatternStr = JSON.serialize(existingPatternData.days);
-                
-                patternDataRuleValid = existingPatternStr != modelPatternStr || modelPatternData.repeatWeeks != existingPatternData.repeatWeeks;
+                if (existingPattern.sked__Pattern__c != NULL) {
+                    skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData)JSON.deserialize(existingPattern.sked__Pattern__c, skedAvailabilityPatternData.class);
+                    string existingPatternStr = JSON.serialize(existingPatternData.days);
+                    
+                    patternDataRuleValid = existingPatternStr != modelPatternStr || modelPatternData.repeatWeeks != existingPatternData.repeatWeeks;
+                }
             }
             if (!patternNameRuleValid && !patternDataRuleValid) {
                 break;
