@@ -887,4 +887,18 @@
         <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
         <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
+        <value>17</value>
+    </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
+        <value>10</value>
+    </labels>
 </CustomLabels>
