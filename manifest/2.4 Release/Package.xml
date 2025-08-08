@@ -44,6 +44,30 @@
 		<!--publicityReportNewPortfoliosTest test class is not modified, only kept for tracking pupose  -->
 		<members>publicityReportNewPortfoliosTest</members>
 		<members>AccountService</members>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
+		<members>BSF_Constants</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>DriveTriggerService</members>
+		<members>DriveTriggerHandler</members>
+        <members>DriveTriggerServiceTest</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
+		<members>skedRacController</members>
+		<members>skedActivityService</members>
+		<members>skedActivityService_Test</members>
+		<members>skedResourceHandler_Test</members>
+        <members>skedResourceHandler</members>
+        <members>skedTestDataFactory</members>
+		<members>slwcSetting</members>
+		<members>slwcDataService_Test</members>
+		<members>skedDriveHandler</members>
+		<members>BSF_ClosePastDriveExceptionsBatch</members>
+		<members>BSF_ClosePastDriveExceptionsBatch_Test</members>
+		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
