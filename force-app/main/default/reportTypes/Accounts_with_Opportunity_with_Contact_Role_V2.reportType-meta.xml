@@ -1073,11 +1073,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_On_Site_Food_Conditions__c</field>
-            <table>Account.sked__Locations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Outside_stairs__c</field>
             <table>Account.sked__Locations__r</table>
         </columns>
