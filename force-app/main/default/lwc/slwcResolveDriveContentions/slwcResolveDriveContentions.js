@@ -1318,6 +1318,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         variant: 'error',
         mode: 'dismissable',
       }));
+      return;
     }
 
     this.showLoading();
