@@ -55,11 +55,7 @@
         <default>false</default>
         <label>Driver</label>
     </customValue>
-    <customValue>
-        <fullName>Driver CDL A</fullName>
-        <default>false</default>
-        <label>Driver CDL A</label>
-    </customValue>
+
     <customValue>
         <fullName>Driver CDL B</fullName>
         <default>false</default>
@@ -85,11 +81,7 @@
         <default>false</default>
         <label>Driver Tech Trainee</label>
     </customValue>
-    <customValue>
-        <fullName>Float</fullName>
-        <default>false</default>
-        <label>Float</label>
-    </customValue>
+
     <customValue>
         <fullName>FS Supplies</fullName>
         <default>false</default>
@@ -200,11 +192,7 @@
         <default>false</default>
         <label>VOL Limited HH</label>
     </customValue>
-    <customValue>
-        <fullName>Volunteer Donor Ambassador</fullName>
-        <default>false</default>
-        <label>Volunteer Donor Ambassador</label>
-    </customValue>
+
     <customValue>
         <fullName>VP</fullName>
         <default>false</default>
@@ -215,11 +203,7 @@
         <default>false</default>
         <label>VP/HH</label>
     </customValue>
-    <customValue>
-        <fullName>Work Restriction</fullName>
-        <default>false</default>
-        <label>Work Restriction</label>
-    </customValue>
+
     <customValue>
         <fullName>Redcross Volunteer Donor Ambassador</fullName>
         <default>false</default>
