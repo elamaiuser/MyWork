@@ -6,6 +6,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
     @track loaded = false;
     @track hasError = false;
     @track hasRecords = false;
+    @track hasLunchBreak = false;
     @track showPopup = false;
     @track errorMessageToDisplay = '';
     @track prepopulatevalues=false;
@@ -56,6 +57,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
         this.loaded = false;
         this.hasRecords = false;
         this.hasError = false;
+        this.hasLunchBreak = false;
     }
 
     handleViewPdf(){
@@ -79,6 +81,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
         this.wrapper.drivedispatchno= false;
         this.hasError = false;
         this.hasRecords = false;
+        this.hasLunchBreak = false;
     }
 
     handleSelectedValues (event) {
@@ -94,6 +97,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
       this.wrapper.drivedispatchno= event.detail.drivedispatchno;
       this.hasError = false;
       this.hasRecords = false;
+      this.hasLunchBreak = false;
   }
 
     handleSearch (event) {
@@ -163,6 +167,7 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
     search () {
       this.loaded = true;
       this.hasRecords = false;
+      this.hasLunchBreak = false;
       this.dataArry = [];
       console.log(JSON.stringify(this.wrapper));
       const start = this.wrapper.startDate ? this.wrapper.startDate : this.getDate ();        
@@ -185,6 +190,8 @@ export default class BSFWeeklyStaffingRoleTimeReport extends LightningElement {
                   this.hasRecords = true;
                   this.hasError = false;
                   this.dataArry = result;
+                  // Check if any records have lunch breaks
+                  this.hasLunchBreak = result.some(wrapper => wrapper.hasLunchBreak === true);
                   console.log('dataArry:-'+JSON.stringify(this.dataArry));
               }else{
                 this.hasRecords = false;
