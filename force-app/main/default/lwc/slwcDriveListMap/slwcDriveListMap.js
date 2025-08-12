@@ -32,30 +32,6 @@ export default class SlwcDriveListMap extends LightningElement {
   }
 
   @track includesAdditionalDays = 0;
-
-  colorPalette = [
-    '#2CA02C', // green
-    '#17BECF', // cyan
-    '#BD9E39', // mustard
-    '#9467BD', // purple
-    '#CEDB9C', // light green
-    '#393B79', // dark blue
-    '#8C6D31', // gold brown
-    '#7B4173', // violet
-    '#9C9EDE', // light lavender
-    '#1F77B4', // blue
-    '#637939', // dark olive
-    '#7F7F7F', // gray
-    '#BCBD22', // olive
-    '#5254A3', // blue-gray
-    '#8C564B', // brown
-    '#E7CB94', // pale gold 
-    '#9E3F3F', // dark red
-    '#AEDA74', // dark yellow
-    '#C4B08C', // tan
-    '#FF7F0E', // orange
-    '#F781BF', // pink
-    ];
   
   get pageName() {
     return 'schedulingConsole:driveListMap';
@@ -196,7 +172,6 @@ export default class SlwcDriveListMap extends LightningElement {
     }
 
     const linkDriveColorMap = new Map();
-    let colorIndex = 0;
 
     const queryModel = new driveQueryModel();
     queryModel.territoryKeys = territoryKeys;
@@ -221,16 +196,14 @@ export default class SlwcDriveListMap extends LightningElement {
     this.linkedDrives = [];
 
     if (linkedResult?.length) {
+      const uniqueLinkedIds = [...new Set(linkedResult.map(d => d.linkedDriveId).filter(Boolean))];
+      const generatedColors = slwcUtils.generateColors(uniqueLinkedIds.length);
+      uniqueLinkedIds.forEach((linkedId, idx) => {
+          linkDriveColorMap.set(linkedId, generatedColors[idx % generatedColors.length]);
+      });
       linkedResult.forEach(drive => {
         drive.recordPageUrl = '/' + drive.id;
         drives.push(drive);
-        if (drive.linkedDriveId && !linkDriveColorMap.has(drive.linkedDriveId)) {
-          linkDriveColorMap.set(
-            drive.linkedDriveId,
-            this.colorPalette[colorIndex % this.colorPalette.length]
-          );
-          colorIndex++;
-        }
       });
     }
 
@@ -378,16 +351,6 @@ export default class SlwcDriveListMap extends LightningElement {
     }
 
     this.handleSearch();
-  }
-
-  validateFilters() {
-    if (this.filters.startDate) {
-      const firstDay = this.dateUtils.getFirstDayValue(this.collectionOperationFirstDay);
-      this.filters.startDate = this.dateUtils.startOfWeek(this.filters.startDate, firstDay).toISODate();
-      this.filters.endDate = DateTime.fromISO(this.filters.startDate).plus({
-        day: 6
-      }).toISODate()
-    }
   }
 
   handleSearch(event = {
