@@ -151,6 +151,7 @@
                                         onchange={handleTimeBlockChanged}></c-slwc-select>
                                     <template if:false={isReadonly}>
                                         <lightning-input 
+                                            if:true={item.showAcknowledgeDriveShiftOutOfTimeBlock}
                                             type="checkbox" 
                                             class="slds-m-top_xx-small"
                                             data-value={item.driveShiftKey}
