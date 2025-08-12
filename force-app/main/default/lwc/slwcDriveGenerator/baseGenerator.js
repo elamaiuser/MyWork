@@ -465,6 +465,7 @@ class BaseGenerator {
 
     if (availableTimeBlocks.length === 1) {
       driveShift.timeBlockId = availableTimeBlocks[0].timeBlockId;
+      driveShift.timeBlock = availableTimeBlocks[0].timeBlock;
     }
 
     //availableTimeBlocks.length === 0
