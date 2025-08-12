@@ -574,9 +574,33 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     const data = item.data;
     if(contention === DRIVE_CONTENTION.INSUFFICIENT_RESOURCES) {
       return {
-        requested: `Staff Requested: ${data.staffRequested}`,
-        current: `Current Staff Allocated: ${data.staffAllocated}`,
-        calendarOverview: `Staff Available: ${data.staffAvailable}`
+        requested: `
+          Staff Requested: ${data.staffRequested}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `Staff Requested (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffRequested}\n`
+            })
+          }
+        `,
+        current: `
+          Staff Allocated: ${data.staffAllocated}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `Staff Allocated (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAllocated}\n`
+            })
+          }
+        `,
+        calendarOverview: `
+          Staff Available: ${data.staffAvailable}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `Staff Available (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAvailable}\n`
+            })
+          }
+        `
       }
     }
 
@@ -1111,7 +1135,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             contention.driveShiftTime = `${this.formatTime(contention.driveShift.startTime)} - ${this.formatTime(contention.driveShift.endTime)}`;
             contention.timeBlockId = timeBlockOptions.find(option => option.value === contention.driveShift.timeBlockId)?.value ?? '';
             contention.timeBlockOptions = timeBlockOptions;
-
+            contention.showAcknowledgeDriveShiftOutOfTimeBlock = contention.contention !== DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS;
             return contention
           })
 
