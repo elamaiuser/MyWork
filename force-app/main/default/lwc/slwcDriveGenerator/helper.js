@@ -2868,10 +2868,12 @@ class DriveHelper {
       let mapSameDateStaffRequestedByTimeBlockId = new Map();
       let mapStaffingConstraintByTimeBlockId = new Map();
       const timeBlockIds = [];
+      const mapTimeBlockById = new Map();
       drive.driveShifts.forEach((driveShift) => {
         if(driveShift.timeBlockId) {
           if(!timeBlockIds.includes(driveShift.timeBlockId)) {
             timeBlockIds.push(driveShift.timeBlockId);
+            mapTimeBlockById.set(driveShift.timeBlockId, driveShift.timeBlock);
           }
           mapSameDateStaffRequestedByTimeBlockId.set(driveShift.timeBlockId, 0);
           mapStaffingConstraintByTimeBlockId.set(driveShift.timeBlockId, 0);
@@ -2948,7 +2950,9 @@ class DriveHelper {
         return {
           timeBlockId,
           data: {
+            timeBlock: mapTimeBlockById.get(timeBlockId),
             staffRequested: totalStaffRequested,
+            staffAllocated: sameDateStaffRequested,
             staffAvailable: totalStaffConstraints - sameDateStaffRequested
           },
           passed: !violated
