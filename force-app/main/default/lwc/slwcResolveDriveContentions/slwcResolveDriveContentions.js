@@ -1135,7 +1135,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             contention.driveShiftTime = `${this.formatTime(contention.driveShift.startTime)} - ${this.formatTime(contention.driveShift.endTime)}`;
             contention.timeBlockId = timeBlockOptions.find(option => option.value === contention.driveShift.timeBlockId)?.value ?? '';
             contention.timeBlockOptions = timeBlockOptions;
-
+            contention.showAcknowledgeDriveShiftOutOfTimeBlock = contention.contention !== DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS;
             return contention
           })
 
