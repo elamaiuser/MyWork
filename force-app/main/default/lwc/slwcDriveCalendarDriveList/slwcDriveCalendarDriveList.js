@@ -226,7 +226,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             return districtManagerPortfolio.id;
         })
         driveQuery.subQueryIndicator = sObjectType.JOB;
-        driveQuery.operationTypes = this.filters.operationTypes;
+        //driveQuery.operationTypes = this.filters.operationTypes;
         driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
         // driveQuery.daysOfWeek = this.filters.daysOfWeek;
         
