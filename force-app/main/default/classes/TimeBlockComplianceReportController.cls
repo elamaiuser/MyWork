@@ -203,7 +203,7 @@ public with sharing class TimeBlockComplianceReportController {
             }
 
             if (shift.sked_Contention_Resolution__c != null) {
-                isViolation = false;
+                isViolation = true;
                 violationReason = shift.sked_Contention_Resolution__c;
             }
 
@@ -228,7 +228,7 @@ public with sharing class TimeBlockComplianceReportController {
     
     private static Map<String, String> buildRow(sked_Drive_Shift__c shift, Boolean matched, String tbStart, String tbEnd, String effStart, String effEnd, string tbName, String contentionResolution) {
         Map<String, String> row = new Map<String, String>();
-        row.put('driveName', shift.sked_Drive__r.Id);
+        row.put('driveName', shift.sked_Drive__r.Name);
         row.put('status', shift.sked_Drive__r.sked_Status__c);
         row.put('driveDate', String.valueOf(shift.sked_Drive__r.sked_Drive_Date__c));
         row.put('shiftStartTime', formatTime(shift.sked_Start_Time__c));
