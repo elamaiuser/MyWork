@@ -438,6 +438,43 @@ class SlwcAvailator {
       });
     });
   }
+
+//HRP-14118
+
+fetchJobTags(driveId){
+  let service = new driveService();
+  return service.getDriveById(driveId)
+      .then((result) => {
+          if (!result) {
+              throw new Error('Cannot fetch jobs');
+          }
+          //Getting the jobTags
+          result.driveShifts.forEach(driveShift => {
+            driveShift.jobs.forEach(job => {
+                if (job.jobTags && job.jobTags.length > 0) {
+                    job.jobTags.forEach(tag => {
+                      // Find matching job in this.jobs by ID
+                        let matchingJob = this.jobs.find(j => j.id === tag.jobId);
+                        if (matchingJob) {
+                            
+                            if (!matchingJob.jobTags) {
+                                matchingJob.jobTags = [];
+                            }
+                            // Avoid duplicate tags
+                            if (!matchingJob.jobTags.some(t => t.id === tag.id)) {
+                                matchingJob.jobTags.push(tag);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+}
+
+
+
   fetchResources(pageNo = 1, totalRecords, getAssetsOnly, additionalFilters) {
     let inputDates = [];
     this.jobs.forEach((item) => {
