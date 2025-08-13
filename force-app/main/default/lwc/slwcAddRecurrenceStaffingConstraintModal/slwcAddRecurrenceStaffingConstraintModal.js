@@ -314,7 +314,7 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
       })
       .then(([staffingConstraintResult, driveResult, activityResult]) => {
         const { timeBlocks: selectedTimeBlockIds } = this.model.STEP1;
-        const validStaffingConstraints = staffingConstraintResult.filter(item => !item.timeBlockId || selectedTimeBlockIds.includes(item.timeBlockId));
+        const validStaffingConstraints = staffingConstraintResult.filter(item => !item.timeBlockId || selectedTimeBlockIds?.includes(item.timeBlockId));
 
         this.mappedStaffingConstraint = keyBy(validStaffingConstraints, 
           (item) => `${item.collectionOperationId}${item.timeBlockId ? '-'+item.timeBlockId : '' }-${item.driveType}-${item.dateOfConstraint}`
@@ -532,7 +532,7 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
         if (driveType !== DRIVE_TYPE.FIXED_SITE) {
           if (coTimeBlocks.length) {
             coTimeBlocks.forEach(coTb => {
-              if (coTb.timeBlock.daysOfWeek.includes(weekdayLong)) {
+              if (coTb.timeBlock.daysOfWeek?.includes(weekdayLong)) {
                 const newRecord = {
                   key: uniqueId(`staffing_constraint_${coTb.timeBlock.id}`),
                   ...originalModel,
@@ -563,14 +563,16 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
   getStep3TimeBlockOptions = () => {
     const { timeBlocks: selectedTimeBlockIds } = this.model.STEP1;
     let options = [];
-    this.timeBlockOptions.forEach(timeBlock => {
-      if (selectedTimeBlockIds.includes(timeBlock.value)) {
-        options.push({
-          ...timeBlock,
-          selected: false
-        })
-      }
-    });
+    if (this.timeBlockOptions?.length) {
+      this.timeBlockOptions.forEach(timeBlock => {
+        if (selectedTimeBlockIds?.includes(timeBlock.value)) {
+          options.push({
+            ...timeBlock,
+            selected: false
+          })
+        }
+      });
+    }
     this.model.STEP3.timeBlockOptions = options;
   }
 

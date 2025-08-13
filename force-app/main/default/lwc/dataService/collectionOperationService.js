@@ -38,11 +38,6 @@ class collectionOperationService extends dataService {
 
       if (query.includes(sObjectType.COLLECTION_OPERATION_TIME_BLOCK)) {
         let subQueryBuilder = query.getQueryBuilder("Collection_Operation_Time_Block__c");
-
-        if (query.startDate && query.endDate) {
-          subQueryBuilder.addCondition({ template: "Effective_Start_Date__c <= {0}", value: query.endDate });
-          subQueryBuilder.addCondition({ template: "Effective_End_Date__c >= {0}", value: query.startDate });
-        }
       }
   }
 

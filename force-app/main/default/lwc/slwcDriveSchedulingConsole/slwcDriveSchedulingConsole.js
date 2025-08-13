@@ -4,6 +4,7 @@ import { DateTime } from 'c/luxon';
 import { fireEvent } from 'c/pubsub';
 import { CurrentPageReference } from 'lightning/navigation';
 import * as slwcUtils from 'c/slwcUtils';
+import * as slwcDateUtils from 'c/slwcDateUtils';
 import { calendarMonthHelper } from "c/slwcHelpers";
 import { cloneDeep, pick } from 'c/lodash';
 
@@ -21,6 +22,12 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             this._calendarHelper = new calendarMonthHelper(DEFAULT_CALENDAR_SETTINGS);
         }
         return this._calendarHelper;
+    }
+
+    get dateUtils() {
+        return slwcDateUtils.getInstance({
+          timezone: TIME_ZONE
+        })
     }
 
     get pageName() {
@@ -50,8 +57,8 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
     
         const selectedMonth = this.filters.selectedMonth || DateTime.local().toISODate()
         let { startDate, endDate } = this.calendarHelper.getDateRange(selectedMonth);
-        startDate = DateTime.fromFormat(startDate, 'yyyy-MM-dd').startOf('week').toISODate();
-        endDate = DateTime.fromFormat(endDate, 'yyyy-MM-dd').endOf('week').toISODate();
+        startDate = this.dateUtils.startOf(startDate, 'week');
+        endDate = this.dateUtils.endOf(endDate, 'week');
 
         return {
             startDate: startDate,
