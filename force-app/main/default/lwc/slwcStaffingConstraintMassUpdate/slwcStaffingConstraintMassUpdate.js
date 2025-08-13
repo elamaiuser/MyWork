@@ -149,7 +149,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
 
         if (driveType !== DRIVE_TYPE.FIXED_SITE) {
           collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
-            if (selectedTimeBlockIds.includes(coTb.timeBlock.id)) {
+            if (selectedTimeBlockIds?.includes(coTb.timeBlock.id)) {
               let coTbItem = {
                 key: `${collectionOperation.name}_${coTb.timeBlock.name}_${driveType}`,
                 collectionOperationId: collectionOperation.id,
