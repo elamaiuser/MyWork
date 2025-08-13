@@ -75,6 +75,7 @@
                             <th>Supervisor</th>
                             <th>Drive Name</th>
                             <th>Division</th>
+                            <th>Job/Activity Name</th>
                             <th>Region</th>
                             <th>CO</th>
                             <th>Work Date</th>
@@ -97,6 +98,7 @@
                                 <td>{!row['supervisor']}</td>
                                 <td>{!row['driveName']}</td>
                                 <td>{!row['division']}</td>
+                                <td>{!row['JName']}</td>
                                 <td>{!row['region']}</td>
                                 <td>{!row['co']}</td>
                                 <td>{!row['workDate']}</td>
