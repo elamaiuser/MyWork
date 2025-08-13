@@ -3,7 +3,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DateTime } from 'c/luxon';
 import { driveQueryModel, driveService, sObjectType } from 'c/dataService';
-import { DRIVE_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, DRIVE_OPERATION_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveCalendarDayModal extends LightningElement {
     @track showModal = false;
@@ -35,8 +35,7 @@ export default class SlwcDriveCalendarDayModal extends LightningElement {
         return {
             ...this.filters,
             territoryKeys: this.territoryKeys,
-            driveTypes: [DRIVE_TYPE.MOBILE],
-            operationTypes: ['Non Integrated WB']
+            driveOperationTypes: [DRIVE_OPERATION_TYPE.NIFS]
         }
     }
 
