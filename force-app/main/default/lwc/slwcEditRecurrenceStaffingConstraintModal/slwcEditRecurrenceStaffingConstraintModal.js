@@ -254,14 +254,16 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
   getTimeBlockOptions = () => {
     const timeBlockIds = uniq(this.model.STEP2.records.map(item => item.timeBlockId).filter(item => item));
     let options = [];
-    this.timeBlocks.forEach(timeBlock => {
-      if (timeBlockIds.includes(timeBlock.value)) {
-        options.push({
-          ...timeBlock,
-          selected: false
-        })
-      }
-    });
+    if (this.timeBlocks?.length) {
+      this.timeBlocks.forEach(timeBlock => {
+        if (timeBlockIds?.includes(timeBlock.value)) {
+          options.push({
+            ...timeBlock,
+            selected: false
+          })
+        }
+      });
+    }
     this.timeBlockOptions = options;
   }
 
