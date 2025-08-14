@@ -77,6 +77,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     return this.mode !== MODE.UPDATE_DRIVE;
   }
 
+  get timeBlocksMap() {
+    return keyBy(this.masterData?.collectionOperationTimeBlocks?.map(COTimeBlock => COTimeBlock.timeBlock), 'id');
+  }
+
   get vehicleAndDriverMismatchedWarning() {
     if(!this.drive || !this.drive.driveShifts || !this.drive.driveShifts.length) return null;
 
@@ -570,8 +574,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     availableEquipments = [],
     availableVehicles = []
   }) => {
-    const contention = item.contention;
-    const data = item.data;
+    const { contention, data } = item;
+    
     if(contention === DRIVE_CONTENTION.INSUFFICIENT_RESOURCES) {
       return {
         requested: `
@@ -579,7 +583,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Requested (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffRequested}\n`
+              return `Staff Requested (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffRequested}\n`
             })
           }
         `,
@@ -588,7 +592,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Allocated (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAllocated}\n`
+              return `Staff Allocated (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffAllocated}\n`
             })
           }
         `,
@@ -597,7 +601,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Available (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAvailable}\n`
+              return `Staff Available (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffAvailable}\n`
             })
           }
         `
