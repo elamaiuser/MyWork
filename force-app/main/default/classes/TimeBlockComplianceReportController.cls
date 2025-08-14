@@ -70,8 +70,7 @@ public with sharing class TimeBlockComplianceReportController {
             new Map<String, Object>{ 'label' => 'TB Effective Start', 'fieldName' => 'tbEffStart', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'TB Effective End', 'fieldName' => 'tbEffEnd', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'Account Manager', 'fieldName' => 'accountManager', 'type' => 'text' },
-            new Map<String, Object>{ 'label' => 'Staff Requested', 'fieldName' => 'staffRequested', 'type' => 'text' },
-            new Map<String, Object>{ 'label' => 'Projection', 'fieldName' => 'projection', 'type' => 'text' },
+            new Map<String, Object>{ 'label' => 'Staff Requested', 'fieldName' => 'staffRequested', 'type' => 'text' },            
             new Map<String, Object>{ 'label' => 'Site Name', 'fieldName' => 'siteName', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'Site Address', 'fieldName' => 'siteAddress', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'Site Zip', 'fieldName' => 'siteZip', 'type' => 'text' },
@@ -239,8 +238,7 @@ public with sharing class TimeBlockComplianceReportController {
         row.put('tbEffEnd', effEnd);
         row.put('tbName',tbName);
         row.put('accountManager', shift.sked_Drive__r.Account_Manager__r != null ? shift.sked_Drive__r.Account_Manager__r.Name : '');
-        row.put('staffRequested', String.valueOf(shift.sked_Drive__r.sked_Total_Staff_Requested__c));
-        row.put('projection', String.valueOf(shift.sked_Drive__r.Projection__c));
+        row.put('staffRequested', String.valueOf(shift.sked_Drive__r.sked_Total_Staff_Requested__c));        
         row.put('siteName', shift.sked_Drive__r.sked_Drive_Site__r?.Name);
         row.put('siteAddress', shift.sked_Drive__r.sked_Drive_Site__r?.sked_Address_1__c);
         row.put('siteZip', shift.sked_Drive__r.sked_Drive_Site__r?.sked_Zip_Code__c);
