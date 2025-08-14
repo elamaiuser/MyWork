@@ -36,8 +36,7 @@
                     <th>TB Eff. Start</th>
                     <th>TB Eff. End</th>
                     <th>Account Manager</th>
-                    <th>Staff Requested</th>
-                    <th>Projection</th>
+                    <th>Staff Requested</th>                    
                     <th>Site Name</th>
                     <th>Address</th>
                     <th>Zip</th>
@@ -64,8 +63,7 @@
                         <td>{!row['tbEffStart']}</td>
                         <td>{!row['tbEffEnd']}</td>
                         <td>{!row['accountManager']}</td>
-                        <td>{!row['staffRequested']}</td>
-                        <td>{!row['projection']}</td>
+                        <td>{!row['staffRequested']}</td>                        
                         <td>{!row['siteName']}</td>
                         <td>{!row['siteAddress']}</td>
                         <td>{!row['siteZip']}</td>
