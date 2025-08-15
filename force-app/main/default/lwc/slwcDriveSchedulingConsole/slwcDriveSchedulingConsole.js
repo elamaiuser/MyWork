@@ -6,7 +6,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { calendarMonthHelper } from "c/slwcHelpers";
-import { cloneDeep, pick } from 'c/lodash';
+import { cloneDeep, pick, omit } from 'c/lodash';
 
 const DEFAULT_CALENDAR_SETTINGS = {
     timezone: TIME_ZONE,
@@ -70,6 +70,17 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
         return this.displayMode === 'productGoalCalendar';
     }
 
+		get driveCalendarFilter() {
+			let result = this.filters;
+			if (this.displayMode == "productGoalCalendar") {
+				result = omit(this.filters, ['driveTypes']);
+			}
+			else if (this.displayMode == "productivityCalendar") {
+				result = omit(this.filters, ['driveOperationTypes']);
+			}
+			return result;
+		}
+
     initialized = false;
     @wire(CurrentPageReference) pageRef;
 
@@ -114,7 +125,7 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
 
     handleSelectDate(event) {
         const selectedDateIso = event.detail.selectedDate;
-        let filters = cloneDeep(event.detail.filters);
+        let filters = cloneDeep(this.driveCalendarFilter);
         
         if (this.displayMode == "productGoalCalendar") {
             fireEvent(this.pageRef, 'driveCalendar:showDayModal', {startDate: selectedDateIso, endDate: selectedDateIso, filters: filters});
@@ -127,7 +138,7 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
     handleSelectWeek(event) {
         const startDateIso = event.detail.weekStartDate;
         let endDateIso = DateTime.fromFormat(startDateIso, 'yyyy-MM-dd').plus({day: 6}).toISODate();
-        let filters = cloneDeep(event.detail.filters);
+        let filters = cloneDeep(this.driveCalendarFilter);
 
         if (this.displayMode == "productGoalCalendar") {
             fireEvent(this.pageRef, 'driveCalendar:showDayModal', {startDate: startDateIso, endDate: endDateIso, filters: filters});
