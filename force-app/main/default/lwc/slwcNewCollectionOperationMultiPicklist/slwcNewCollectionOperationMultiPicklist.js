@@ -22,6 +22,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   @api variant;
   @api dropdownPosition = 'left';
   @api timeBlockEnabled;
+  @api sharedTimeBlockDisabled = false;
 
   @track _defaultValues = {
     divisions: [],
@@ -440,7 +441,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations?.forEach(territoryCo => {
       territoryCo.collectionOperation.collectionOperationTimeBlocks?.forEach(coTb => {
         if (this.dateRange) {
-          if (sharedTimeBlockIds.includes(coTb.timeBlock.id) && coTb.effectiveStartDate <= this.dateRange.endDate && coTb.effectiveEndDate >= this.dateRange.startDate) {
+          const sharedTimeBlockRuleValid = this.sharedTimeBlockDisabled || sharedTimeBlockIds.includes(coTb.timeBlock.id);
+          if (sharedTimeBlockRuleValid && coTb.effectiveStartDate <= this.dateRange.endDate && coTb.effectiveEndDate >= this.dateRange.startDate) {
             mapTimeBlockById.set(coTb.timeBlock.id, coTb.timeBlock)
           }
         }
