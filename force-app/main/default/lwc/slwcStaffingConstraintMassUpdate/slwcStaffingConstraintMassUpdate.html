@@ -58,7 +58,8 @@
               default-values={filters.collectionOperationValues}
               onchange={handleCollectionOperationChanged}
               ontimeblockchange={handleTimeBlockChanged}
-              time-block-enabled>
+              time-block-enabled
+              shared-time-block-disabled>
             </c-slwc-new-collection-operation-multi-picklist>
           </div>
 
@@ -143,12 +144,10 @@
                     <div
                       class="slds-staffing-constrain-mass-update__grid-left-row slds-text-align_left"
                     >
-                      <div class="slds-p-around_x-small slds-truncate">
+                      <div class="slds-p-around_x-small">
                         {row.name}
                       </div>
-                      <div
-                        class="slds-p-around_x-small slds-border_left slds-truncate"
-                      >
+                      <div class="slds-p-around_x-small slds-border_left slds-truncate">
                         {row.driveType}
                       </div>
                     </div>
