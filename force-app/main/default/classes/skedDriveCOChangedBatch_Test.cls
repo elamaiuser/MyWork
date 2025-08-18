@@ -21,7 +21,10 @@ public class skedDriveCOChangedBatch_Test {
             );
             insert testSCO;
 
-            Database.executeBatch(new skedDriveCOChangedBatch(new Set<Id>{testSCO.Id}));
+           Database.executeBatch(new skedDriveCOChangedBatch(new Set<Id>{testSCO.Id}));
+        
+         Database.executeBatch(new skedDriveCOChangedBatch('',new Set<Id>{testSCO.Id}));
+          Database.executeBatch(new skedDriveCOChangedBatch(null,286));
         Test.stopTest();
     }
 }

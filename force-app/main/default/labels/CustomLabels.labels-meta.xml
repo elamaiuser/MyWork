@@ -786,6 +786,13 @@
         <value>Other</value>
     </labels>
     <labels>
+        <fullName>Taxonomy_Custom_Notification_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
+        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
+    </labels>
+    <labels>
         <fullName>Team_Supervisor_Job_Code</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -900,5 +907,5 @@
         <protected>false</protected>
         <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
         <value>10</value>
-    </labels>
+    </labels>   
 </CustomLabels>
