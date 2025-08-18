@@ -405,11 +405,7 @@
             <fullName>HH</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>Lead Donor Ambassador</fullName>
-            <default>false</default>
-        </values>
-        <values>
+         <values>
             <fullName>Licensed Nurse</fullName>
             <default>false</default>
         </values>
