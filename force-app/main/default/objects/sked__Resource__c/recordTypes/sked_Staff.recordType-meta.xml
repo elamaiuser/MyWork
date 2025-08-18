@@ -419,10 +419,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Driver CDL A</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Driver CDL B</fullName>
             <default>false</default>
         </values>
@@ -440,10 +436,6 @@
         </values>
         <values>
             <fullName>FS Supplies</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Float</fullName>
             <default>false</default>
         </values>
         <values>
@@ -540,14 +532,6 @@
         </values>
         <values>
             <fullName>VP%2FHH</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Volunteer Donor Ambassador</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Work Restriction</fullName>
             <default>false</default>
         </values>
     </picklistValues>
