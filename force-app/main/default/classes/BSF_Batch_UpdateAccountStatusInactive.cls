@@ -69,11 +69,14 @@ global class BSF_Batch_UpdateAccountStatusInactive implements Database.Batchable
             }
         }
         /* HRP-10413 [Start]--> */
-       List<Account> listOfAcctsStatus = [select Id,Account_status__c from Account where Id NOT IN (SELECT AccountId FROM opportunity where Is_Template__c = FALSE) AND Account_status__c = 'Active' AND ID IN :setOfAccts];
+       List<Account> listOfAcctsStatus = [select Id,Account_status__c,CreatedDate from Account where Id NOT IN (SELECT AccountId FROM opportunity where Is_Template__c = FALSE) AND Account_status__c = 'Active' AND ID IN :setOfAccts];
           for(Account accRecord:listOfAcctsStatus)
           {  
+            Integer daysOld = Date.today().daysBetween(accRecord.CreatedDate.date());
+            if(daysOld > 366 && daysOld < 732) {
                         accRecord.Account_Status__c='Inactive';
                         listOfAcctsToUpdate.add(accRecord);
+            }
               
           }
         
