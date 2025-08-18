@@ -38,8 +38,9 @@
         <!-- Buttons -->
         <div class="slds-m-top_medium slds-p-horizontal_medium">
             <lightning-button label="Search" variant="brand" onclick={handleSearch}></lightning-button>
+            <template if:false={alwaysHide}>
             <lightning-button label="View PDF" variant="brand-outline" onclick={handleViewPdf} disabled={disablePdfButton} class="slds-m-left_small"></lightning-button>
-            <lightning-button label="Download PDF" variant="neutral" onclick={exportToPdf} disabled={disablePdfButton} class="slds-m-left_small"></lightning-button>
+            <lightning-button label="Download PDF" variant="neutral" onclick={exportToPdf} disabled={disablePdfButton} class="slds-m-left_small"></lightning-button></template>
             <lightning-button label="Download Excel" variant="neutral" onclick={exportToExcel} disabled={disablePdfButton} class="slds-m-left_small"></lightning-button>
         </div>
 
