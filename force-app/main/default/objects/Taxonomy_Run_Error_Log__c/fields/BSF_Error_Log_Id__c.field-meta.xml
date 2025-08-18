@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BSF_Error_Log_Id__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Lookup to the BSF Error Log.</description>
+    <label>BSF Error Log Id</label>
+    <referenceTo>BSF_Error_Log__c</referenceTo>
+    <relationshipLabel>Taxonomy Run Error Log</relationshipLabel>
+    <relationshipName>Taxonomy_Run_Error_Log</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
