@@ -212,10 +212,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Driver CDL A</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Driver CDL B</fullName>
             <default>false</default>
         </values>
@@ -232,15 +228,7 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Float</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>HH</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Lead Donor Ambassador</fullName>
             <default>false</default>
         </values>
         <values>
@@ -323,14 +311,6 @@
             <fullName>VP%2FHH</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>Volunteer Donor Ambassador</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Work Restriction</fullName>
-            <default>false</default>
-        </values>
     </picklistValues>
     <picklistValues>
         <picklist>sked_Primary_Phone_Type__c</picklist>
@@ -386,6 +366,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>CT1</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Drive Lead</fullName>
             <default>false</default>
         </values>
@@ -395,10 +379,6 @@
         </values>
         <values>
             <fullName>Driver - DOT</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Driver CDL A</fullName>
             <default>false</default>
         </values>
         <values>
@@ -422,18 +402,10 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Float</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>HH</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>Lead Donor Ambassador</fullName>
-            <default>false</default>
-        </values>
-        <values>
+         <values>
             <fullName>Licensed Nurse</fullName>
             <default>false</default>
         </values>
@@ -519,14 +491,6 @@
         </values>
         <values>
             <fullName>VP%2FHH</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Volunteer Donor Ambassador</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Work Restriction</fullName>
             <default>false</default>
         </values>
     </picklistValues>
