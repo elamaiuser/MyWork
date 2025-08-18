@@ -37,6 +37,7 @@
         <members>skedDriveShiftTradeDistrictBatch_Test</members>
         <members>skedResourceOverrideDistrictBatch</members>
         <members>skedResourceOverrideDistrictBatch_Test</members>
+        <members>BSF_Sched_DeleteExpiredTaxoVersionBatch</members>
         <name>ApexClass</name>
     </types>
     <types>
