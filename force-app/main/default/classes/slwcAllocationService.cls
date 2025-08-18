@@ -182,7 +182,8 @@ global class slwcAllocationService {
                                                 sked__Job__r.sked_Drive__r.sked_UFID__c
                                                 FROM sked__Job_Allocation__c
                                                 WHERE sked__Job__r.sked_Drive__r.sked_Drive_Date__c IN :request.allDates
-                                                AND sked__Job__r.sked_Drive__r.sked_Status__c = :skedConstants.DRIVE_STATUS_CANCEL];
+                                                AND sked__Job__r.sked_Drive__r.sked_Status__c = :skedConstants.DRIVE_STATUS_CANCEL
+                                                AND sked_Time_Cancelled__c != NULL];
         }
 
         if (request.pageNo == 1) {
