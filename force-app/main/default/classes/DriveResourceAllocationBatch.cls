@@ -199,83 +199,20 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 jobAllocationList = Database.Query(createJobAllocationsQuery(driveJobIds)); 
             }
 
-              // Check ODL to get limits
-              map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>(
-                [SELECT Id, Name, sked_Collection_Operation__c, sked_Days_of_Week__c, sked_Effective_End_Date__c, 
-                        sked_Effective_Start_Date__c, sked_Quantity__c, sked_Type__c, sked_MigrationID__c,
-                        Time_Block__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c, Time_Block__r.Days_of_Week__c
-                FROM sked_Operation_Drive_Limit__c
-                WHERE sked_Type__c IN (:Constants.OPERATION_DRIVE_2RBC_LIMIT, : Constants.OPERATION_DRIVE_DOT_LIMIT, : Constants.OPERATION_DRIVE_CDL_LIMIT) 
-                AND sked_Collection_Operation__c = :driveCO
-                AND sked_Days_of_Week__c INCLUDES (:dayOfWeek)
-                AND ((sked_Effective_Start_Date__c <= :driveDate 
-                AND (sked_Effective_End_Date__c = NULL
-                    OR sked_Effective_End_Date__c >= :driveDate)) 
-                    OR ((sked_Effective_Start_Date__c = NULL
-                    OR sked_Effective_Start_Date__c <= :driveDate) 
-                AND sked_Effective_End_Date__c >= :driveDate)))]);
-
-              // Get drive shifts to check time blocks
-            List<sked_Drive_Shift__c> driveShifts = getDriveShifts(drive.Id);    
-            if(map_operationDriveLimitId_operationDriveLimit != NULL && !map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                // Filter ODL records based on time block applicability
-                Map<Id, sked_Operation_Drive_Limit__c> filteredOperationDriveLimits = new Map<Id, sked_Operation_Drive_Limit__c>();                
-                             
-                // Group ODL records by type
-                Map<String, List<sked_Operation_Drive_Limit__c>> odlByType = new Map<String, List<sked_Operation_Drive_Limit__c>>();
-                for(sked_Operation_Drive_Limit__c odl : map_operationDriveLimitId_operationDriveLimit.values()) {
-                    String odlType = odl.sked_Type__c;
-                    if(!odlByType.containsKey(odlType)) {
-                        odlByType.put(odlType, new List<sked_Operation_Drive_Limit__c>());
-                    }
-                    odlByType.get(odlType).add(odl);
-                }
-                
-                // Process each type separately
-                for(String odlType : odlByType.keySet()) {
-                    List<sked_Operation_Drive_Limit__c> odlRecords = odlByType.get(odlType);
-                    List<sked_Operation_Drive_Limit__c> applicableTimeBlockRecords = new List<sked_Operation_Drive_Limit__c>();
-                    List<sked_Operation_Drive_Limit__c> noTimeBlockRecords = new List<sked_Operation_Drive_Limit__c>();
-                    
-                    // Separate records with time blocks 
-                    for(sked_Operation_Drive_Limit__c odl : odlRecords) {
-                        if(odl.Time_Block__c != null) {
-                            // Check if this time block is applicable for the drive
-                            Boolean isApplicable = false;
-                           // Check if any drive shift matches the time block
-                                for(sked_Drive_Shift__c shift : driveShifts) {
-                                    if(shift.sked_Time_Block__c == odl.Time_Block__c) {
-                                        // Time block matches, check if it's applicable for the day
-                                        if(odl.Time_Block__r.Days_of_Week__c != null && 
-                                        odl.Time_Block__r.Days_of_Week__c.includes(dayOfWeek)) {
-                                            isApplicable = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            if(isApplicable) {
-                                applicableTimeBlockRecords.add(odl);
-                            }
-                        } else {
-                            noTimeBlockRecords.add(odl);
-                        }
-                    }
-                    
-                    //For each type
-                    if(!applicableTimeBlockRecords.isEmpty()) {
-                        // If there are applicable time block records, keep only the first one
-                        filteredOperationDriveLimits.put(applicableTimeBlockRecords[0].Id, applicableTimeBlockRecords[0]);
-                    } else {
-                        // If no applicable time block records, keep all records without time blocks (existing behavior)
-                        for(sked_Operation_Drive_Limit__c odl : noTimeBlockRecords) {
-                            filteredOperationDriveLimits.put(odl.Id, odl);
-                        }
-                    }
-                }
-    
-            // Replace the original map with filtered results
-            map_operationDriveLimitId_operationDriveLimit = filteredOperationDriveLimits;
-
+            // Check ODL to get limits
+            map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>(
+                                                                                                    [SELECT Id, Name, sked_Collection_Operation__c, sked_Days_of_Week__c, sked_Effective_End_Date__c, 
+                                                                                                    sked_Effective_Start_Date__c, sked_Quantity__c, sked_Type__c, sked_MigrationID__c 
+                                                                                                    FROM sked_Operation_Drive_Limit__c
+                                                                                                    WHERE sked_Type__c IN (:Constants.OPERATION_DRIVE_2RBC_LIMIT, : Constants.OPERATION_DRIVE_DOT_LIMIT, : Constants.OPERATION_DRIVE_CDL_LIMIT) 
+                                                                                                    AND sked_Collection_Operation__c = :driveCO
+                                                                                                    AND sked_Days_of_Week__c INCLUDES (:dayOfWeek)
+                                                                                                    AND ((sked_Effective_Start_Date__c <= :driveDate 
+                                                                                                    AND (sked_Effective_End_Date__c = NULL
+                                                                                                        OR sked_Effective_End_Date__c >= :driveDate)) 
+                                                                                                        OR ((sked_Effective_Start_Date__c = NULL
+                                                                                                        OR sked_Effective_Start_Date__c <= :driveDate) 
+                                                                                                    AND sked_Effective_End_Date__c >= :driveDate))]);
             if(map_operationDriveLimitId_operationDriveLimit != NULL && !map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
                 Map<Id,Decimal> map_operationDriveLimit_odlOverrideQuantity = new Map<Id,Decimal>();
                 List<sked_Operation_Drive_Limit_Override__c> operationDriveLimitOverride = [SELECT Id, sked_Operation_Drive_Limit__c, 
