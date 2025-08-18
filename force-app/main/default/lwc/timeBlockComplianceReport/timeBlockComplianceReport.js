@@ -47,16 +47,31 @@ export default class TimeBlockComplianceReport extends LightningElement {
         return false;
     }
 
-    handleSelectedValues(event) {
-        this.wrapper.startDate = event.detail.startDate;
-        this.wrapper.endDate = event.detail.endDate;
-        this.wrapper.division = event.detail.division || '';
-        this.wrapper.region = event.detail.region || '';
-        this.wrapper.co = event.detail.collectionop || [];
-        if (this.wrapper.co && this.wrapper.co.length > 0) {
-            this.fetchTimeBlockOptions(this.wrapper.co);
-        }
+handleSelectedValues(event) {
+    this.wrapper.startDate = event.detail.startDate;
+    this.wrapper.endDate = event.detail.endDate;
+    this.wrapper.division = event.detail.division || '';
+    this.wrapper.region = event.detail.region || '';
+    this.wrapper.co = event.detail.collectionop || [];
+
+    if (this.wrapper.co && this.wrapper.co.length > 0) {
+        this.fetchTimeBlockOptions(this.wrapper.co);
+    } else {
+        this.timeBlockOptions = [];
+        this.wrapper.timeBlockIds = [];
+
+        this.template.querySelectorAll('c-bsf-multi-select-combobox').forEach(element => {
+            if (element.name === 'timeBlock') {
+                element.selectedItems = '-Select-';
+                element.options = [];
+                element.showOptions = false;
+                element.overritecurrent();
+            }
+        });
     }
+}
+
+
 
     fetchTimeBlockOptions(coIds) {
         console.log('Calling getTimeBlockPicklistByCO with coIds:', coIds);
@@ -191,4 +206,7 @@ export default class TimeBlockComplianceReport extends LightningElement {
     get disablePdfButton() {
         return !this.hasRecords;
     }
+    get Hide() {
+    return true;  
+}
 }
