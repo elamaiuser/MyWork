@@ -184,4 +184,7 @@ export default class ApComplianceReport extends LightningElement {
     get disablePdfButton() {
         return !this.hasRecords;
     }
+    get Hide() {
+    return true;  
+}
 }

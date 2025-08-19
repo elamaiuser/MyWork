@@ -2408,7 +2408,8 @@ class DriveHelper {
 
       result.data = {
         driveLimit: isNullOrEmpty(driveLimit) ? '∞' : driveLimit,
-        noOfCurrentDrives: noOfConfirmedDrives
+        noOfCurrentDrives: noOfConfirmedDrives,
+        timeBlockValidations
       }
       const isDriveLimitViolated = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
       const isTimeBlockDriveLimitViolated = timeBlockValidations.find(validation => !validation.passed);
@@ -2492,6 +2493,7 @@ class DriveHelper {
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOf2RBCRequested,
+        timeBlockValidations
       }
       const is2RBCRequestedViolated = noOf2RBCRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrives2RBCRequested + noOf2RBCRequested > operationalLimit
       const isTimeBlock2RBCRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
@@ -2577,6 +2579,7 @@ class DriveHelper {
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfDOTRequested,
+        timeBlockValidations
       }
 
       const isDOTequestedViolated = noOfDOTRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesDOTAllocated + noOfDOTRequested > operationalLimit
@@ -2663,6 +2666,7 @@ class DriveHelper {
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfCDLRequested,
+        timeBlockValidations
       }
       const isCDLequestedViolated = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
       const isTimeBlockCDLRequestedViolated = timeBlockValidations.find(validation => !validation.passed);

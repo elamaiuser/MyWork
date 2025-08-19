@@ -77,6 +77,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     return this.mode !== MODE.UPDATE_DRIVE;
   }
 
+  get timeBlocksMap() {
+    return keyBy(this.masterData?.collectionOperationTimeBlocks?.map(COTimeBlock => COTimeBlock.timeBlock), 'id');
+  }
+
   get vehicleAndDriverMismatchedWarning() {
     if(!this.drive || !this.drive.driveShifts || !this.drive.driveShifts.length) return null;
 
@@ -570,8 +574,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     availableEquipments = [],
     availableVehicles = []
   }) => {
-    const contention = item.contention;
-    const data = item.data;
+    const { contention, data } = item;
+    
     if(contention === DRIVE_CONTENTION.INSUFFICIENT_RESOURCES) {
       return {
         requested: `
@@ -579,7 +583,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Requested (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffRequested}\n`
+              return `Staff Requested (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffRequested}\n`
             })
           }
         `,
@@ -588,7 +592,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Allocated (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAllocated}\n`
+              return `Staff Allocated (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffAllocated}\n`
             })
           }
         `,
@@ -597,7 +601,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           ${
             data.timeBlockValidations?.map(timeBlockValidation => {
               const { data: timeBlockValidationData } = timeBlockValidation;
-              return `Staff Available (${timeBlockValidationData.timeBlock.name}): ${timeBlockValidationData.staffAvailable}\n`
+              return `Staff Available (${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}): ${timeBlockValidationData.staffAvailable}\n`
             })
           }
         `
@@ -657,7 +661,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return {
         requested: ``,
         current: ``,
-        calendarOverview: `Operational Drive Limit: ${data.driveLimit}\nCurrent number of Drives: ${data.noOfCurrentDrives}`
+        calendarOverview: `
+          Operational Drive Limit: ${data.driveLimit}
+          Current number of Drives: ${data.noOfCurrentDrives}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `
+                \n${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}
+                Operational Drive Limit: ${timeBlockValidationData.driveLimit}
+                Current number of Drives: ${timeBlockValidationData.noOfCurrentDrives}
+              `
+            })
+          }
+        `
       }
     }
 
@@ -665,7 +682,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return {
         requested: ``,
         current: ``,
-        calendarOverview: `2RBC Operational Limit: ${data.operationalLimit}\nCurrent number of 2RBC: ${data.noOf2RBCRequested}`
+        calendarOverview: `
+          2RBC Operational Limit: ${data.operationalLimit}
+          Current number of 2RBC: ${data.noOf2RBCRequested}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `
+                \n${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}
+                2RBC Operational Limit: ${timeBlockValidationData.operationalLimit}
+                Current number of 2RBC: ${timeBlockValidationData.noOf2RBCRequested}
+              `
+            })
+          }
+        `
       }
     }
 
@@ -673,7 +703,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return {
         requested: ``,
         current: ``,
-        calendarOverview: `DOT Operational Limit: ${data.operationalLimit}\nCurrent number of DOT: ${data.noOfDOTRequested}`
+        calendarOverview: `
+          DOT Operational Limit: ${data.operationalLimit}
+          Current number of DOT: ${data.noOfDOTRequested}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `
+                \n${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}
+                DOT Operational Limit: ${timeBlockValidationData.operationalLimit}
+                Current number of DOT: ${timeBlockValidationData.noOfDOTRequested}
+              `
+            })
+          }
+        `
       }
     }
 
@@ -681,7 +724,20 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return {
         requested: ``,
         current: ``,
-        calendarOverview: `CDL Operational Limit: ${data.operationalLimit}\nCurrent number of CDL: ${data.noOfCDLRequested}`
+        calendarOverview: `
+          CDL Operational Limit: ${data.operationalLimit}
+          Current number of CDL: ${data.noOfCDLRequested}
+          ${
+            data.timeBlockValidations?.map(timeBlockValidation => {
+              const { data: timeBlockValidationData } = timeBlockValidation;
+              return `
+                \n${this.timeBlocksMap[timeBlockValidation.timeBlockId]?.name}
+                CDL Operational Limit: ${timeBlockValidationData.operationalLimit}
+                Current number of CDL: ${timeBlockValidationData.noOfCDLRequested}
+              `
+            })
+          }
+        `
       }
     }
 

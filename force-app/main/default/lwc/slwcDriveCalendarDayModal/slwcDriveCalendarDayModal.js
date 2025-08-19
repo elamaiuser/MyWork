@@ -3,7 +3,8 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DateTime } from 'c/luxon';
 import { driveQueryModel, driveService, sObjectType } from 'c/dataService';
-import { DRIVE_TYPE, DRIVE_OPERATION_TYPE } from 'c/slwcConstants';
+import { DRIVE_OPERATION_TYPE } from 'c/slwcConstants';
+import { omit } from 'c/lodash';
 
 export default class SlwcDriveCalendarDayModal extends LightningElement {
     @track showModal = false;
@@ -52,7 +53,7 @@ export default class SlwcDriveCalendarDayModal extends LightningElement {
     }
 
     handleShowDayModal(detail) {
-        this.filters = detail.filters;
+        this.filters = omit(detail.filters, ['driveTypes']);
         this.filters.startDate = detail.startDate;
         this.filters.endDate = detail.endDate;
         this.showModal = true;
@@ -69,17 +70,15 @@ export default class SlwcDriveCalendarDayModal extends LightningElement {
         driveQuery.territoryKeys = this.nonIntegratedDrivesTabFilters.territoryKeys;
         driveQuery.startDate = this.nonIntegratedDrivesTabFilters.startDate;
         driveQuery.endDate = this.nonIntegratedDrivesTabFilters.endDate;
-        driveQuery.eventTypes = this.nonIntegratedDrivesTabFilters.driveTypes;
         driveQuery.statuses = ["Tentative", "Confirmed", "Complete", "Hold", "Cancel"];
         driveQuery.stages = this.nonIntegratedDrivesTabFilters.stages;
         driveQuery.accountTypes = this.nonIntegratedDrivesTabFilters.accountTypes;
         driveQuery.accountIndustryCodes = this.filters.accountIndustryCodes;
-        // driveQuery.recruitedBys = this.nonIntegratedDrivesTabFilters.recruitedBys;
         driveQuery.markets = (this.nonIntegratedDrivesTabFilters.markets || []).map(market => {
             return market.id;
         });
         driveQuery.subQueryIndicator = sObjectType.JOB;
-        driveQuery.operationTypes = this.nonIntegratedDrivesTabFilters.operationTypes;
+        driveQuery.driveOperationTypes = this.nonIntegratedDrivesTabFilters.driveOperationTypes;
         
         let service = new driveService();
         service.query(driveQuery)
