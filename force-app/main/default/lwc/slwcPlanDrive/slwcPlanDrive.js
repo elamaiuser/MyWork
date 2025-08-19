@@ -43,7 +43,7 @@ export default class SlwcPlanDrive extends LightningElement {
   @track driveMissingFields = [];
   @track filter = {
     selectedMonth: null,
-    selectedTimeBlockId: ''
+    selectedTimeBlockId: NO_TIME_BLOCK
   }
   @track confirmModalData = {};
   @track timeBlockOptions = [];
