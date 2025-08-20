@@ -31,6 +31,7 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
     @track _defaultValues = {
         callOut: false,
         onCall: false,
+        prevCancelled: false,
         assignedToLinkedDrives: false,
         weeklyHours: false,
         selectedResourcesTag: [],
@@ -40,7 +41,8 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
             start: 0,
             end: 40
         },
-        queryText: ''
+        queryText: '',
+        cancelledDriveQueryText: ''
     };
     @api
     get defaultValues() {
@@ -122,12 +124,13 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
 
     get isFiltered() {
         return true;
-        return this.filterPopverState.selectedResourcesTag.length > 0 ||
-            this.filterPopverState.selectedResourceRoles.length > 0 ||
-            this.filterPopverState.selectedResourceEmploymentTypes.length > 0 ||
-            this.filterPopverState.callOut ||
-            this.filterPopverState.onCall ||
-            this.filterPopverState.assignedToLinkedDrives
+        // return this.filterPopverState.selectedResourcesTag.length > 0 ||
+        //     this.filterPopverState.selectedResourceRoles.length > 0 ||
+        //     this.filterPopverState.selectedResourceEmploymentTypes.length > 0 ||
+        //     this.filterPopverState.callOut ||
+        //     this.filterPopverState.onCall ||
+        //     this.filterPopverState.prevCancelled ||
+        //     this.filterPopverState.assignedToLinkedDrives
     }
 
     get isSorted() {
@@ -211,6 +214,7 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
 
         this.filterPopverState.callOut = !!this.defaultValues.callOut;
         this.filterPopverState.onCall = !!this.defaultValues.onCall;
+        this.filterPopverState.prevCancelled = !!this.defaultValues.prevCancelled;
         this.filterPopverState.assignedToLinkedDrives = !!this.defaultValues.assignedToLinkedDrives;
         this.filterPopverState.weeklyHours = !!this.defaultValues.weeklyHours;
     }
@@ -296,6 +300,13 @@ export default class SlwcFilterResourceMultiPicklist extends LightningElement {
         this.sendData()
     }
     handleSearchTextDebounce = debounce(this.handleSearchText, 500);
+
+    handleSearchText_CancelledDrive(event) {
+        const value = slwcUtils.getValueFromEvent(event);
+        this.clonedFilterPopverState.cancelledDriveQueryText = value;
+        this.sendData()
+    }
+    handleSearchText_CancelledDriveDebounce = debounce(this.handleSearchText_CancelledDrive, 500);
 
     handleChange(event) {
         event.stopPropagation();
