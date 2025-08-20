@@ -139,6 +139,7 @@
         <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
 		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
+		<members>sked_Drive__c.sked_Is_Logistic_Different__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
