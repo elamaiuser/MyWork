@@ -1502,6 +1502,7 @@ class MobileGenerator extends BaseGenerator {
 
   calculateDraftDriveGhostVehicleQuantity(skipVehicleCalculation = false) {
     if (skipVehicleCalculation) {
+      if (!this.drive.totalVehicleRequestedChanged) return;
       let totalVehicleRequested = this.drive.totalVehicleRequestedChanged.totalVehicleRequested;
       if (isNullOrEmpty(totalVehicleRequested) || totalVehicleRequested < 1) {
         if(this.drive.numberOfVehicles > 0) {
