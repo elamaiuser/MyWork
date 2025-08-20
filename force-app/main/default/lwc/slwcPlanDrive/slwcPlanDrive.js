@@ -1,3 +1,4 @@
+import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { LightningElement, track, wire, api } from 'lwc';
 import { subscribe, unsubscribe, onError, setDebugFlag, isEmpEnabled } from 'lightning/empApi';
 import { DateTime } from 'c/luxon';
@@ -11,6 +12,7 @@ import { sObjectType, dataService, collectionOperationTimeBlockService, collecti
 import { PLAN_DRIVE_ERROR_MESSAGE_MAP, DRIVE_STATUS } from 'c/slwcConstants';
 import * as slwcUtils from 'c/slwcUtils';
 import { DriveHelper } from 'c/slwcDriveGenerator';
+import { calendarMonthHelper, planDriveDateHelper } from 'c/slwcHelpers';
 
 const DRIVE_ERRORS = {
   MISSING_REQUIRED_FIELDS: 'MISSING_REQUIRED_FIELDS'
@@ -18,9 +20,16 @@ const DRIVE_ERRORS = {
 
 const NO_TIME_BLOCK = 'no-timeblock';
 
+
+const DEFAULT_CALENDAR_SETTINGS = {
+  timezone: TIME_ZONE,
+  firstDay: 0
+}
+
 export default class SlwcPlanDrive extends LightningElement {
   driveHelper = new DriveHelper();
-
+  planDriveHelper = new planDriveDateHelper(DEFAULT_CALENDAR_SETTINGS);
+  
   @api recordId;
   // @api recordId = '0062i000008JSa7AAG';
 
@@ -34,7 +43,7 @@ export default class SlwcPlanDrive extends LightningElement {
   @track driveMissingFields = [];
   @track filter = {
     selectedMonth: null,
-    selectedTimeBlockId: ''
+    selectedTimeBlockId: NO_TIME_BLOCK
   }
   @track confirmModalData = {};
   @track timeBlockOptions = [];
@@ -172,6 +181,18 @@ export default class SlwcPlanDrive extends LightningElement {
     return missingFields;
   }
 
+  collectCollectionOperations = (opportunity) => {
+    if(!opportunity?.driveSite || !this.filter?.selectedMonth || !this.next2Month) return [];
+
+    const { startDate: startDateOfFirstMonth } = this.planDriveHelper.getDateRange(this.filter.selectedMonth);
+    const { endDate: endDateOfLastMonth } = this.planDriveHelper.getDateRange(this.next2Month);
+    return this.planDriveHelper.getCollectionOperations(
+      this.opportunity.driveSite, 
+      startDateOfFirstMonth,
+      endDateOfLastMonth
+    );
+  }
+
   retrieveOpportunity = (oppId) => {
     let opportunityQuery = new opportunityQueryModel();
     opportunityQuery.recordIds = [oppId];
@@ -199,28 +220,40 @@ export default class SlwcPlanDrive extends LightningElement {
     .finally(this.hideLoading);
   }
 
-  retrieveTimeBlocks = ({
-    collectionOperationId
-  }) => {
-    if (collectionOperationId) {
-      let service = new collectionOperationTimeBlockService();
-      let queryModel = new collectionOperationTimeBlockQueryModel();
-      queryModel.collectionOperationIds = [collectionOperationId];
+  retrieveTimeBlocks = (opportunity) => {
+    const collectionOperations = this.collectCollectionOperations(opportunity);
+    if (!collectionOperations.length) {
+      this.timeBlockOptions = [];
+      return;
+    };
 
-      return service.query(queryModel)
-        .then((result = []) => {
-           this.timeBlockOptions = [{
-            label: 'No Time Block',
-            value: NO_TIME_BLOCK
-           }, ...uniqBy(result.map(COTimeBlock => {
-              return {
-                label: `${COTimeBlock.timeBlock.name} (${this.formatTime(COTimeBlock.timeBlock.startTime)} - ${this.formatTime(COTimeBlock.timeBlock.endTime)})`,
-                value: COTimeBlock.timeBlock.id
-              };
-           }), item => item.value)
-         ]
-        })
-    }
+    let service = new collectionOperationTimeBlockService();
+    let queryModel = new collectionOperationTimeBlockQueryModel();
+    queryModel.collectionOperationIds = collectionOperations.map(item => item.id);
+    this.showLoading();
+    return service.query(queryModel)
+      .then((result = []) => {
+        this.timeBlockOptions = [{
+          label: 'No Time Block',
+          value: NO_TIME_BLOCK
+          }, ...uniqBy(result.map(COTimeBlock => {
+            return {
+              label: `${COTimeBlock.timeBlock.name} (${this.formatTime(COTimeBlock.timeBlock.startTime)} - ${this.formatTime(COTimeBlock.timeBlock.endTime)})`,
+              value: COTimeBlock.timeBlock.id
+            };
+          }), item => item.value)
+        ];
+
+        if (this.filter.selectedTimeBlockId) {
+          const noLongerValid = !this.timeBlockOptions.find(option => option.value === this.filter.selectedTimeBlockId);
+          if(noLongerValid) {
+            this.filter.selectedTimeBlockId = null;
+          }
+        }
+          
+      })
+      .catch(error => this.exceptionHandler(error, true))
+      .finally(this.hideLoading);
   }
 
   retrieveCustomSettings() {
@@ -275,9 +308,6 @@ export default class SlwcPlanDrive extends LightningElement {
         ]);
       })
       .then(() => {
-        return this.retrieveTimeBlocks(this.drive)
-      })
-      .then(() => {
         this.driveMissingFields = this.checkDriveMissingFields(this.opportunity);
         if(this.driveMissingFields.length > 0) {
           throw {
@@ -294,6 +324,7 @@ export default class SlwcPlanDrive extends LightningElement {
         if(this.driveDate) {
           this.filter.selectedMonth = this.driveDate;
         }
+        return this.retrieveTimeBlocks(this.opportunity);
       })  
       .catch((error) => this.exceptionHandler(error, false))
       .finally(this.hideLoading)
@@ -301,6 +332,8 @@ export default class SlwcPlanDrive extends LightningElement {
 
   handleOnMonthChanged(event) {
     this.filter.selectedMonth = event.detail.selectedDate;
+
+    this.retrieveTimeBlocks(this.opportunity);
   }
 
   handleTimeBlockChanged = (event) => {
@@ -324,6 +357,9 @@ export default class SlwcPlanDrive extends LightningElement {
           this.filter.selectedMonth = this.driveDate;
         }
 
+        return this.retrieveTimeBlocks(this.opportunity);
+      })
+      .then(() => {    
         fireEvent(this.pageRef, 'planDrive:forceRefresh');
       })  
       .catch((error) => this.exceptionHandler(error, false))
