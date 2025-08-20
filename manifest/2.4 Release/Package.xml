@@ -103,7 +103,15 @@
 		<members>Account.CY_Drives1__c</members>
         <members>Account.CFY_Drives__c</members>
 		<members>Account.CY_Drives__c</members>
+		<members>Opportunity.Special_Circumstances_Notes__c</members>
+		<members>Opportunity.Special_Circumstances__c</members>
+		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
+		<members>Volunteer_Staffing_Matrix__mdt.Drive_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
+		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
 		<members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
+		<members>sked_Drive__c.sked_Is_Logistic_Different__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
