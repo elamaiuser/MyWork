@@ -4,5 +4,9 @@
 		<members>skedDriveHandler</members>
 		<name>ApexClass</name>
 	</types>
+	<types>
+		<members>sked_Drive__c.sked_Is_Logistic_Different__c</members>
+		<name>CustomField</name>
+	</types>
 	<version>64.0</version>
 </Package>
