@@ -1964,6 +1964,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this.resourceFilters = {
             callOut: false,
             onCall: false,
+            prevCancelled: false,
             assignedToLinkedDrives: false,
             weeklyHours: false,
             selectedResourcesTag: [],
@@ -2062,6 +2063,21 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 });
             }
 
+            if (filter.cancelledDriveQueryText) {
+                this.resourcesFilterList = this.resourcesFilterList.filter(item => {
+                    const result = (item.prevCancelledJobAllocations || []).filter(ja => (ja.job.driveUfid && ja.job.driveUfid.includes(filter.cancelledDriveQueryText)));
+                    return result?.length;
+                });
+
+                if (!this.resourcesFilterList?.length) {
+                    this.dispatchEvent(new ShowToastEvent({
+                        message: 'UFID does not belong to cancelled drive, please search with a cancelled drive UFID.',
+                        variant: 'error',
+                        mode: 'dismissable',
+                    }));
+                }
+            }
+
             if (filter.selectedResourcesTag.length > 0) {
                 const selectedResourcesTag = filter.selectedResourcesTag.map(item => item.selected && item.value);
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
@@ -2093,6 +2109,12 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             if (filter.onCall) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
                     return item.isOnCall;
+                });
+            }
+
+            if (filter.prevCancelled) {
+                this.resourcesFilterList = this.resourcesFilterList.filter(item => {
+                    return item.isPrevCancelled;
                 });
             }
 
