@@ -932,7 +932,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
 * HRP-5487 :CR: Adding Account Team to Blood Drive Team  == End
 */    
    public static void addAcctTeamMembers_To_BloodDriveOpptyMembers(Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers,List<Opportunity> listofOppties,List<OpportunityTeamMember> listOfOpptyTeamMembersTodelete,List<OpportunityTeamMember> optyTeamMemberNotExistListToInsert){
-        system.debug('addAcctTeamMembers_To_BloodDriveOpptyMembers '+mapOfAcctsWithTeamMembers);
+        system.debug('HRP-D addAcctTeamMembers_To_BloodDriveOpptyMembers '+mapOfAcctsWithTeamMembers+' listofOppties:'+listofOppties);
         insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='mapOfAcctsWithTeamMembers '+String.valueOf(mapOfAcctsWithTeamMembers.size()));
         list<OpportunityTeamMember> optyTeamMemberListToInsert = new list<OpportunityTeamMember>();
         Map<Id,List<AccountTeamMember>> mapOfOpptyWithAcctTeamsToDelete=new Map<Id,List<AccountTeamMember>>();
@@ -944,27 +944,27 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
         Map<Id,Id> oppWithAccMangrIdMap = new Map<Id,Id>();
         Map<Id,Opportunity> oppIdVsAMDMPortfoliodMap = new Map<Id,Opportunity>(); //HRP-10359
         /*Date leastStartDate = null;
-Date maxEndDate = null;
-for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
-for(AccountTeamMember actTeamMember :mapOfAcctsWithTeamMembers.get(acctId)){
-if(leastStartDate == null || leastStartDate > actTeamMember.Start_Date__c){
-leastStartDate = actTeamMember.Start_Date__c;
-}
-if(maxEndDate == null || maxEndDate < actTeamMember.End_Date__c){
-maxEndDate = actTeamMember.End_Date__c;
-}
-}
-}
-
-List<Opportunity> listofOppties =[SELECT Id,ownerId,AccountId, Drive_Date__c, Account_Manager__c,Covering_Recruiter__c FROM Opportunity WHERE AccountId IN:mapOfAcctsWithTeamMembers.keySet() AND Drive_Date__c != null AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate];
-*/
+            Date maxEndDate = null;
+            for(Id acctId : mapOfAcctsWithTeamMembers.keySet()){
+            for(AccountTeamMember actTeamMember :mapOfAcctsWithTeamMembers.get(acctId)){
+            if(leastStartDate == null || leastStartDate > actTeamMember.Start_Date__c){
+            leastStartDate = actTeamMember.Start_Date__c;
+            }
+            if(maxEndDate == null || maxEndDate < actTeamMember.End_Date__c){
+            maxEndDate = actTeamMember.End_Date__c;
+            }
+            }
+            }
+            
+            List<Opportunity> listofOppties =[SELECT Id,ownerId,AccountId, Drive_Date__c, Account_Manager__c,Covering_Recruiter__c FROM Opportunity WHERE AccountId IN:mapOfAcctsWithTeamMembers.keySet() AND Drive_Date__c != null AND Drive_Date__c >= :leastStartDate AND Drive_Date__c <= :maxEndDate];
+            */
         List<Account> accList = [select id,Account_Manager__c,District_manager__c from Account Where Id IN:mapOfAcctsWithTeamMembers.keySet()];
         //populateAmDMLookuponDelete(mapOfAcctsWithTeamMembers,accList);//HRP-11234
         /*if(listofOppties.isEmpty()){
-insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='listofOppties empty');
-Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
-return;
-}*/
+        insert new BSF_Error_Log__c(Process_Name__c ='Run Logs',ApexClass__c='AccountTeamMemeberService',Method__c='addAcctTeamMembers_To_BloodDriveOpptyMembers',Type__c='Success',Error_Description__c='listofOppties empty');
+        Database.executeBatch(new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(),new List<OpportunityTeamMember>(),'Delete',true,countAccounts),100);
+        return;
+        }*/
         
         //HRP-8050
         Map<id,AccountTeamMember> oppIdCoverageAmMap = new  Map<id,AccountTeamMember>();
@@ -982,6 +982,7 @@ return;
         OpportunitySplitType overlaySplitType = [SELECT DeveloperName,Id FROM OpportunitySplitType WHERE DeveloperName='Overlay' ];//HRP-13340
         for(Opportunity opRecord:listofOppties)
         {
+            System.debug('HRP-D opRecord:'+opRecord);
             oppIdOpportunityMap.put(opRecord.Id,opRecord);
             setOfOpptyIds.add(opRecord.Id);
             if(mapOfAcctsWithTeamMembers.containsKey(opRecord.AccountId))	
@@ -999,13 +1000,16 @@ return;
                     //-----------------------------------------------------------------//
                     if(opRecord.Drive_Date__c>=atmRecords.Start_Date__c && opRecord.Drive_Date__c<=atmRecords.End_Date__c && ((opRecord.Drive_Date__c < System.today() && atmRecords.is_Covering_recruiter__c) || opRecord.Drive_Date__c >= System.today())) //HRP-13340
                     { //HRP-10359 start
+                        System.debug('HRP-D line 1003 atmRecords.TeamMemberRole:'+atmRecords.TeamMemberRole);
                         if(atmRecords.TeamMemberRole == 'Account Manager')
                         {
+                            System.debug('HRP-D line 1003 atmRecords.Is_Covering_Recruiter__c:'+atmRecords.Is_Covering_Recruiter__c);
                             if(atmRecords.Is_Covering_Recruiter__c==false)
                             {
                                 opRecord.OwnerId=atmRecords.UserId; //HRP-10359
                                 if(atmRecords.BSF_Portfolio__c != NULL)
                                 { //HRP-10359 start
+                                    System.debug('HRP-D Line 1012 atmRecords.BSF_Portfolio__c:'+atmRecords.BSF_Portfolio__c);
                                     opRecord.Account_Manager_Portfolio__c = atmRecords.BSF_Portfolio__c;
                                 } // HRP-10359 end
                                 oppWithOwnerIdMap.put(opRecord.id,opRecord.OwnerId);
@@ -1615,4 +1619,58 @@ insert optyTeamMemberListToInsert;
             }
         }
     }
+    //HRP-14849 starts here adding covering recruiter
+   public static void assignCoveringRecruiterFromATM(List<AccountTeamMember> atmList) {
+        if (atmList == null || atmList.isEmpty()) return;
+
+        Map<Id, List<AccountTeamMember>> accIdToCoveringATMMap = new Map<Id, List<AccountTeamMember>>();
+
+        // Group relevant ATM records by AccountId
+        for (AccountTeamMember atm : atmList) {
+            if (atm.AccountId == null || atm.Is_Covering_Recruiter__c != true ||
+                atm.Start_Date__c == null || atm.End_Date__c == null) {
+                continue;
+            }
+
+            if (!accIdToCoveringATMMap.containsKey(atm.AccountId)) {
+                accIdToCoveringATMMap.put(atm.AccountId, new List<AccountTeamMember>());
+            }
+            accIdToCoveringATMMap.get(atm.AccountId).add(atm);
+        }
+
+        if (accIdToCoveringATMMap.isEmpty()) return;
+
+        // Query Opportunities for those Accounts
+        List<Opportunity> oppsToUpdate = [
+            SELECT Id, AccountId, Drive_Date__c, Covering_Recruiter__c
+            FROM Opportunity
+            WHERE AccountId IN :accIdToCoveringATMMap.keySet()
+            AND Drive_Date__c != null
+        ];
+
+        for (Opportunity opp : oppsToUpdate) {
+            List<AccountTeamMember> coveringTeam = accIdToCoveringATMMap.get(opp.AccountId);
+            if (coveringTeam == null || coveringTeam.isEmpty()) continue;
+
+            // Find the one with latest Start_Date__c where Drive_Date__c is within the date range
+            AccountTeamMember selected = null;
+            for (AccountTeamMember atm : coveringTeam) {
+                if (opp.Drive_Date__c >= atm.Start_Date__c && opp.Drive_Date__c <= atm.End_Date__c) {
+                    if (selected == null || atm.Start_Date__c > selected.Start_Date__c) {
+                        selected = atm;
+                    }
+                }
+            }
+
+            if (selected != null) {
+                opp.Covering_Recruiter__c = selected.UserId;
+            } else {
+                opp.Covering_Recruiter__c = null;
+            }
+        }
+
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+}
 }
