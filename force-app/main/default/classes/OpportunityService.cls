@@ -2295,6 +2295,7 @@ if(ds.isDeletable()){}*/
         
         map<id,list<String>> oppIdLookupPopulatedListMap = new map<id,list<String>>();//HRP-11234
         map<id,AccountTeamMember> oppIdCoverageAmMap = new  map<id,AccountTeamMember>();//HRP-11234
+        AccountTeamMember chosenCoveringRec;//HRP-14849
         oppIdCoverageAmMap = AccountTeamMemberService.isCoverageAmPresent(mapOfAcctsWithTeamMembers,newOppsList);//HRP-11234
         set<id> accIdSet = new set<id>();//HRP-11234
         for(Opportunity opRecord:newOppsList){
@@ -2338,6 +2339,16 @@ if(ds.isDeletable()){}*/
                             }
                             j++;
                         }  //HRP-10359 end
+                        
+                        /* ── //HRP-14849 - COVERING-RECRUITER LOGIC ────────────────────────────── */
+                        if (atmRecords.Is_Covering_Recruiter__c && opRecord.Drive_Date__c != null && atmRecords.Start_Date__c != null
+    						&& atmRecords.End_Date__c != null && atmRecords.Start_Date__c <= opRecord.Drive_Date__c && atmRecords.End_Date__c   >= opRecord.Drive_Date__c) {
+                                if (chosenCoveringRec == null ||
+                                    atmRecords.Start_Date__c > chosenCoveringRec.Start_Date__c) {
+                            
+                                    chosenCoveringRec = atmRecords;
+                                }
+                            }
                         if(addOpptyTeam == true){
                             OpportunityTeamMember optyTeamMemeberToAdd = new OpportunityTeamMember();
                             optyTeamMemeberToAdd.OpportunityId = opRecord.Id;
@@ -2370,6 +2381,15 @@ if(ds.isDeletable()){}*/
                     }
                 }
             }
+             /* COVERING-RECRUITER //HRP-14849*/
+                if (updateOpptyOwner == true) {
+                    if (chosenCoveringRec != null) {
+                        opRecord.Covering_Recruiter__c = chosenCoveringRec.UserId;
+                    } else {
+                        opRecord.Covering_Recruiter__c = null;
+                    }
+                }
+
             //HRP-11849 starts
             if (!accIdVsaccPortfolioAssignmentMap.isEmpty() && accIdVsaccPortfolioAssignmentMap.containsKey(opRecord.AccountId)) {
                 for(Account_Portfolio_Assignment__c pfa : accIdVsaccPortfolioAssignmentMap.get(opRecord.AccountId)){
