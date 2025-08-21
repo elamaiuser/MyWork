@@ -271,7 +271,7 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         System.debug('Batch ==>  createTask record:'+acc.id+' taskWhatId:'+taskWhatId+' version:'+version);
         Id accountId = acc.id;
         Id ownerId = acc.Account_Manager__c != null ? acc.Account_Manager__c : acc.OwnerId;
-        Id taskOwnerId = AccountTeamMemberHelper.determineTaskOwner(accountId, ownerId);
+        Id taskOwnerId = AccountTeamMemberHelper.determineTaskOwner(acc, ownerId);
         Date contentExpiryDate = version.Expiry_Date__c;
         Date taskDueDate = (contentExpiryDate != null) ? contentExpiryDate.addDays(-taskSettings.Due_Date_Offset__c.intValue()) : null; 
         System.debug('contentExpiryDate ::'+contentExpiryDate+' taskDueDate:'+taskDueDate+' offset:'+taskSettings.Due_Date_Offset__c);
