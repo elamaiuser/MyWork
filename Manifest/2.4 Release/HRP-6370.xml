@@ -5,6 +5,7 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>skedJobHandler</members>
         <members>slwcAllocationService</members>
 		<name>ApexClass</name>
 	</types>
