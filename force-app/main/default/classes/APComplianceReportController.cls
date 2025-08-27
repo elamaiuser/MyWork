@@ -98,7 +98,7 @@ public with sharing class APComplianceReportController {
         };
             
         Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>(
-            [SELECT Id, Name, sked_Supervisor__r.Name,
+            [SELECT Id, Name, sked_Supervisor__r.Name,sked_Supervisor_Name__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Name,
                 sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.Name,
                 sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__r.Name
@@ -203,7 +203,7 @@ public with sharing class APComplianceReportController {
             ));
         }
         String activityQuery = 
-            'SELECT Id, sked_Drive_Shift_Trade__c, sked__Activity__r.Name,sked__Resource__r.Name, sked__Resource__c, ' +
+            'SELECT Id, sked_Drive_Shift_Trade__c, sked__Activity__r.Name,sked__Activity__r.sked_Activity_Title__c,sked__Resource__r.Name, sked__Resource__c, ' +
             'sked_Start_Date__c, sked_Start_Time__c, sked_End_Time__c ' +
             'FROM sked__Activity_Resource__c ' +
             'WHERE sked_Start_Date__c >= :startDt AND sked_Start_Date__c <= :endDt ' +
@@ -238,7 +238,7 @@ public with sharing class APComplianceReportController {
                 resourceApMap.get(act.sked__Resource__c)?.get(day),
                 apNameMap.get(act.sked__Resource__c),
                 null,
-                act.sked__Activity__r.Name,
+                act.sked__Activity__r.sked_Activity_Title__c,
                 '',
                 calloutTradeVal
             ));
@@ -266,7 +266,7 @@ public with sharing class APComplianceReportController {
     private static Map<String, String> buildRow(sked__Resource__c res, Date workDate, String type, String status, Boolean violation, Time startTime, Time endTime, List<TimeRange> apRanges, String apName,String driveName,string JName,string Role,String calloutTradeVal) {
         Map<String, String> row = new Map<String, String>();
         row.put('name', res?.Name);
-        row.put('supervisor', res?.sked_Supervisor__r != null ? res.sked_Supervisor__r.Name : '');
+        row.put('supervisor', res?.sked_Supervisor__r != null ? res.sked_Supervisor__r.Name : res.sked_Supervisor_Name__c);
         row.put('division', res?.sked__Primary_Region__r?.sked_Territory__r?.sked_Parent__r?.sked_Parent__r?.Name);
         row.put('region', res?.sked__Primary_Region__r?.sked_Territory__r?.sked_Parent__r?.Name);
         row.put('co', res?.sked__Primary_Region__r?.sked_Biomed_Collection_Op_Center__r?.Name);
