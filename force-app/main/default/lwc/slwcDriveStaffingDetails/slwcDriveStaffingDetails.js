@@ -2071,7 +2071,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
                 if (!this.resourcesFilterList?.length) {
                     this.dispatchEvent(new ShowToastEvent({
-                        message: 'UFID does not belong to cancelled drive, please search with a cancelled drive UFID.',
+                        message: 'UFID does not belong to a cancelled drive. Please search with a cancelled drive UFID.',
                         variant: 'error',
                         mode: 'dismissable',
                     }));
