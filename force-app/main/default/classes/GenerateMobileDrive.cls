@@ -351,7 +351,7 @@ public with sharing class GenerateMobileDrive {
             
                 for(MobileDriveGeneratorDMLService.DMLJob driveShiftJob : driveShift.jobs) {
                     Boolean isJobNeedsToGetGenerated = false;
-                    if(!String.isBlank(driveShiftJob.assetType)) isJobNeedsToGetGenerated = true;
+                    if(!String.isBlank(driveShiftJob.assetType) || !String.isBlank(driveShiftJob.volunteerRole)) isJobNeedsToGetGenerated = true;
                     else if(staffingComplement.map_role_resourceQuantity.containsKey(driveShiftJob.resourceRole)) {
                         driveShiftJob.quantity = staffingComplement.map_role_resourceQuantity.get(driveShiftJob.resourceRole);
                         if(driveShiftJob.quantity > 0) isJobNeedsToGetGenerated = true;
