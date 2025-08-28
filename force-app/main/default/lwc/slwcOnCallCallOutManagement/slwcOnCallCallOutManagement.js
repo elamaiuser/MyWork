@@ -646,6 +646,11 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
         collectionOperationIds: collectionOperationIds,
       })
     })
+    //HRP-14118
+  .then(() => {
+      return availator.fetchJobTags(this.selectedAllocationData.job.driveId);
+    })
+
     .then(() => {
       return availator.buildScheduledAllocations({
         ignoreDedicatedSiteRule: true
@@ -655,8 +660,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       let validPossibleAllocations = (result.possibleAllocations || []).filter(posAl => {
         const anyInvalidException = (posAl.exceptionLog || []).find(exception => {
           const hasConflictToPTOException = exception.exceptionCode === 'RESOURCE_TIME_CONFLICT' && !!exception.availabilityId;
-          const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
-          return hasConflictToPTOException || invalidTagException;
+        // const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
+          return hasConflictToPTOException; /*|| invalidTagException;*/
         })
         return !anyInvalidException;
       })
