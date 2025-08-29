@@ -396,19 +396,18 @@
     <formulas>
         <name>CurrentPrimaryPhone</name>
         <dataType>String</dataType>
-        <expression>If(
-ISPICKVAL( {!$Record.Primary_Phone__c} ,&quot;Home Phone&quot;),{!$Record.HomePhone},
-if(
-ISPICKVAL({!$Record.Primary_Phone__c},&quot;Mobile Phone&quot;), {!$Record.MobilePhone},
-if(
-ISPICKVAL({!$Record.Primary_Phone__c},&quot;Work Phone&quot;), {!$Record.OtherPhone},
-if(
-ISPICKVAL({!$Record.Primary_Phone__c},&quot;&quot;), &quot;&quot;,
-
-NULL
-)
-)
-)
+        <expression>BLANKVALUE(
+  IF(
+    ISPICKVAL({!$Record.Primary_Phone__c}, &quot;Home Phone&quot;),   {!$Record.HomePhone},
+    IF(
+      ISPICKVAL({!$Record.Primary_Phone__c}, &quot;Mobile Phone&quot;), {!$Record.MobilePhone},
+      IF(
+        ISPICKVAL({!$Record.Primary_Phone__c}, &quot;Work Phone&quot;), {!$Record.OtherPhone},
+        &quot;&quot;
+      )
+    )
+  ),
+  {!$Record.Phone}
 )</expression>
     </formulas>
     <formulas>
