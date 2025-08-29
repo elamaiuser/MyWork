@@ -417,6 +417,8 @@ export default class SlwcDriveCalendar extends LightningElement {
             staffingConstraintId: null,
             hasActivities: false
         };
+        
+        let linkedDriveSet  = new Set();
 
         if (this.assetMapByDateAndType[day.dateIso]?.["Equipment"]) {
             let equipment = this.assetMapByDateAndType[day.dateIso]["Equipment"];
@@ -482,10 +484,15 @@ export default class SlwcDriveCalendar extends LightningElement {
             }
 
             if (drive.totalStaffRequested) {
-                if(this.driveHelper.isFixedSiteDrive(drive)) {
-                    day.slot.noOfFixedSiteStaffRequested += drive.totalStaffRequested;
-                } else {
-                    day.slot.noOfMobileStaffRequested += drive.totalStaffRequested;
+                if (!linkedDriveSet.has(drive.linkedDriveId)){
+                    if(this.driveHelper.isFixedSiteDrive(drive)) {
+                        day.slot.noOfFixedSiteStaffRequested += drive.totalStaffRequested;
+                    } else {
+                        day.slot.noOfMobileStaffRequested += drive.totalStaffRequested;
+                    }
+                    if (drive.linkedDriveId) {
+                        linkedDriveSet.add(drive.linkedDriveId);
+                    }
                 }
                 day.slot.noOfStaffRequested += drive.totalStaffRequested;
             }
