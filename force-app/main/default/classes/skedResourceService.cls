@@ -208,6 +208,7 @@ global class skedResourceService extends skedDataService {
             resourceOverrideQueryBuilder.addField('COUNT(Id) numOverrides');
 
             resourceOverrideQueryBuilder.addCondition('sked_End_Date__c >= {0}', additionalFilterOnDate);
+            resourceOverrideQueryBuilder.addCondition('sked_Start_Date__c <= {0}', additionalFilterOnDate);
 
             if (!matchingTagResourceIds.isEmpty()) {
                 resourceOverrideQueryBuilder.addCondition('sked__Resource__c IN {0}', matchingTagResourceIds);
