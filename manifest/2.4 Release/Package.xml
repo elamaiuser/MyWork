@@ -70,6 +70,11 @@
 		<members>BSF_ClosePastDriveExceptionsBatch_Test</members>
 		<members>DriveResourceAllocationBatch</members>
 		<members>DriveResourceAllocationBatchTest</members>
+		<members>BSF_Batch_BSFPortfolioScheduler</members>
+		<members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+        <members>DelayedTaxonomyBatchScheduler</members>
+        <members>Taxo_Utilities</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -139,6 +144,7 @@
         <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
         <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
 		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -162,6 +168,10 @@
 	<types>
 		<members>Account.Upgrade_Account</members>
 		<name>QuickAction</name>
+	</types>
+	<types>
+		<members>Add_Update_OpptyTeamMembers</members>
+		<name>ApexTrigger</name>
 	</types>
     <version>63.0</version>
 </Package>
