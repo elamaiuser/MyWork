@@ -4,10 +4,16 @@
 * 2. Lists Jobs and Activities scheduled outside assigned Availability Patterns by CO, region, date, drive status, etc.
 * 3. Supports export to Excel and Visualforce PDF generation
 *
-* ***************************************************************************************************
+* *********************************************************************************************************************
 * Modification Log 
 * Date          Developer Name        Comments
-* ***************************************************************************************************
+* *********************************************************************************************************************
+* 08/29/2025    Elam Pandian          Corrected AP Compliance logic for date-specific patterns.
+*                                     - Fixed a bug where the query incorrectly used future-dated or expired 
+*                                       Availability Patterns for violation checks.
+*                                     - The logic now fetches only patterns active within the report's date range.
+*                                     - For each job/activity, it performs a lookup to find the single, correct
+*                                       pattern that was effective on the specific date the work was performed.
 * 06/03/2025    Shubham Tiwari        Initial version - HRP-14511: AP Compliance Report logic
 */
 
@@ -62,7 +68,7 @@ public with sharing class APComplianceReportController {
         @AuraEnabled public List<Map<String, Object>> columnsInfo { get; set; }
         @AuraEnabled public Map<String, String> summary { get; set; }
     }
-    
+
     @AuraEnabled(cacheable=true)
     public static DatableConfigWrapper searchReport(Date startDt, Date endDt, String division, String region, List<String> coList, List<String> driveStatusFilter, Boolean violationOnly, Boolean includeTrades) {
         System.debug('--- searchReport Method Input ---');
@@ -113,8 +119,7 @@ public with sharing class APComplianceReportController {
             return wrapper;
         }
         
-        Map<Id, Map<String, List<TimeRange>>> resourceApMap = new Map<Id, Map<String, List<TimeRange>>>();
-        Map<Id, String> apNameMap = new Map<Id, String>();
+        Map<Id, List<PatternWithDateRange>> resourcePatternsMap = new Map<Id, List<PatternWithDateRange>>();
         Set<Id> resourceIds = resMap.keySet();
         
         Set<String> idStrings = new Set<String>();
@@ -123,19 +128,26 @@ public with sharing class APComplianceReportController {
         }
         String idClause = '(' + String.join(idStrings, ',') + ')';
         
-        for (sked__Availability_Pattern_Resource__c apr : [SELECT sked__Resource__c, sked__Availability_Pattern__r.Name, sked__Availability_Pattern__r.sked__Pattern__c
-                                                           FROM sked__Availability_Pattern_Resource__c
-                                                           WHERE sked__Resource__c IN :resMap.keySet()]) {
+        for (sked__Availability_Pattern_Resource__c apr : [
+            SELECT sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
+                   sked__Availability_Pattern__r.Name, sked__Availability_Pattern__r.sked__Pattern__c
+            FROM sked__Availability_Pattern_Resource__c
+            WHERE sked__Resource__c IN :resourceIds
+            AND sked_Start_Date__c <= :endDt
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :startDt)
+        ]) {
             String jsonPattern = apr.sked__Availability_Pattern__r.sked__Pattern__c;
-            apNameMap.put(apr.sked__Resource__c, apr.sked__Availability_Pattern__r.Name);
             if (String.isBlank(jsonPattern)) continue;
-            
-            Map<String, Object> pattern = (Map<String, Object>) JSON.deserializeUntyped(jsonPattern);
+
             Map<String, List<TimeRange>> weeklyMap = new Map<String, List<TimeRange>>();
+            Map<String, Object> pattern = (Map<String, Object>) JSON.deserializeUntyped(jsonPattern);
+            if (pattern.get('days') == null) continue;
+
             for (Object dayObj : (List<Object>) pattern.get('days')) {
                 Map<String, Object> day = (Map<String, Object>) dayObj;
                 String weekday = ((String) day.get('weekday')).toUpperCase();
                 List<TimeRange> ranges = new List<TimeRange>();
+                if (day.get('intervals') == null) continue;
                 for (Object i : (List<Object>) day.get('intervals')) {
                     Map<String, Object> range = (Map<String, Object>) i;
                     Time s = parseTime((String) range.get('startTime'));
@@ -146,7 +158,16 @@ public with sharing class APComplianceReportController {
                 }
                 weeklyMap.put(weekday, ranges);
             }
-            resourceApMap.put(apr.sked__Resource__c, weeklyMap);
+            
+            PatternWithDateRange datedPattern = new PatternWithDateRange(
+                apr.sked_Start_Date__c, apr.sked_End_Date__c, 
+                apr.sked__Availability_Pattern__r.Name, weeklyMap
+            );
+
+            if (!resourcePatternsMap.containsKey(apr.sked__Resource__c)) {
+                resourcePatternsMap.put(apr.sked__Resource__c, new List<PatternWithDateRange>());
+            }
+            resourcePatternsMap.get(apr.sked__Resource__c).add(datedPattern);
         }
         
         Integer jobViolations = 0;
@@ -172,20 +193,32 @@ public with sharing class APComplianceReportController {
         List<sked__Job_Allocation__c> jobAllocList = Database.query(jobSOQL);
         for (sked__Job_Allocation__c job : jobAllocList) {
             String day = getWeekday(job.sked_Start_Date__c);
-            Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, resourceApMap.get(job.sked__Resource__c));
-            String calloutTradeVal = '';
-                if (includeTrades) {
-                        if (job.sked_Drive_Shift_Trade__c != null) {
-                            calloutTradeVal = 'Job - Trade';
-                        } else if (job.sked_Call_Out_Type__c != null) {
-                            calloutTradeVal = 'Job - Callout';
-                        } else {
-                            calloutTradeVal = '';
-                        }
+
+            PatternWithDateRange activePattern = null;
+            if (resourcePatternsMap.containsKey(job.sked__Resource__c)) {
+                for (PatternWithDateRange p : resourcePatternsMap.get(job.sked__Resource__c)) {
+                    if (job.sked_Start_Date__c >= p.startDate && job.sked_Start_Date__c <= p.endDate) {
+                        activePattern = p;
+                        break;
                     }
+                }
+            }
+            
+            Map<String, List<TimeRange>> patternForDay = (activePattern != null) ? activePattern.weeklySchedule : null;
+            Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, patternForDay);
+            
+            String calloutTradeVal = '';
+            if (includeTrades) {
+                if (job.sked_Drive_Shift_Trade__c != null) {
+                    calloutTradeVal = 'Job - Trade';
+                } else if (job.sked_Call_Out_Type__c != null) {
+                    calloutTradeVal = 'Job - Callout';
+                }
+            }
 
             if (violationOnly && !isViolation) continue;
             if (isViolation) jobViolations++;
+            
             wrapper.dataWrapper.add(buildRow(
                 resMap.get(job.sked__Resource__c),
                 job.sked_Start_Date__c,
@@ -194,14 +227,15 @@ public with sharing class APComplianceReportController {
                 isViolation,
                 job.sked_Start_Time__c,
                 job.sked_Set_End_Time__c,
-                resourceApMap.get(job.sked__Resource__c)?.get(day),
-                apNameMap.get(job.sked__Resource__c),
+                (activePattern != null) ? activePattern.weeklySchedule?.get(day) : null,
+                (activePattern != null) ? activePattern.patternName : 'No Availability Pattern',
                 job.sked__Job__r.sked_Drive__r.Name,
                 job.sked__Job__r.Name,
                 job.sked__Job__r.sked__Type__c,
                 calloutTradeVal
             ));
         }
+        
         String activityQuery = 
             'SELECT Id, sked_Drive_Shift_Trade__c, sked__Activity__r.Name,sked__Activity__r.sked_Activity_Title__c,sked__Resource__r.Name, sked__Resource__c, ' +
             'sked_Start_Date__c, sked_Start_Time__c, sked_End_Time__c ' +
@@ -218,15 +252,30 @@ public with sharing class APComplianceReportController {
         
         for (sked__Activity_Resource__c act : Lact) {
             String day = getWeekday(act.sked_Start_Date__c);
-            Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, resourceApMap.get(act.sked__Resource__c));
+
+            PatternWithDateRange activePattern = null;
+            if (resourcePatternsMap.containsKey(act.sked__Resource__c)) {
+                for (PatternWithDateRange p : resourcePatternsMap.get(act.sked__Resource__c)) {
+                    if (act.sked_Start_Date__c >= p.startDate && act.sked_Start_Date__c <= p.endDate) {
+                        activePattern = p;
+                        break;
+                    }
+                }
+            }
+            
+            Map<String, List<TimeRange>> patternForDay = (activePattern != null) ? activePattern.weeklySchedule : null;
+            Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, patternForDay);
+            
             string calloutTradeVal = '';
             if (includeTrades) {
                 if (act.sked_Drive_Shift_Trade__c != null) {
                     calloutTradeVal = 'Activity - Trade';
                 }
             }
+
             if (violationOnly && !isViolation) continue;
             if (isViolation) activityViolations++;
+            
             wrapper.dataWrapper.add(buildRow(
                 resMap.get(act.sked__Resource__c),
                 act.sked_Start_Date__c,
@@ -235,8 +284,8 @@ public with sharing class APComplianceReportController {
                 isViolation,
                 act.sked_Start_Time__c,
                 act.sked_End_Time__c,
-                resourceApMap.get(act.sked__Resource__c)?.get(day),
-                apNameMap.get(act.sked__Resource__c),
+                (activePattern != null) ? activePattern.weeklySchedule?.get(day) : null,
+                (activePattern != null) ? activePattern.patternName : 'No Active Pattern',
                 null,
                 act.sked__Activity__r.sked_Activity_Title__c,
                 '',
@@ -250,18 +299,19 @@ public with sharing class APComplianceReportController {
         
         wrapper.summary = new Map<String, String>{
             'totalRecords' => String.valueOf(totalRecords),
-                'jobViolations' => String.valueOf(jobViolations),
-                'activityViolations' => String.valueOf(activityViolations),
-                'totalViolations' => String.valueOf(totalViolations),
-                'violationPercentage' => String.valueOf(violationPercentage)
-                };
-                    if (includeTrades) {
-                        wrapper.columnsInfo.add(new Map<String, Object>{
-                            'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text'
-                                });
-                    }        
+            'jobViolations' => String.valueOf(jobViolations),
+            'activityViolations' => String.valueOf(activityViolations),
+            'totalViolations' => String.valueOf(totalViolations),
+            'violationPercentage' => String.valueOf(violationPercentage)
+        };
+        
+        if (includeTrades) {
+            wrapper.columnsInfo.add(new Map<String, Object>{
+                'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text'
+            });
+        }        
         return wrapper;
-    }    
+    }
     
     private static Map<String, String> buildRow(sked__Resource__c res, Date workDate, String type, String status, Boolean violation, Time startTime, Time endTime, List<TimeRange> apRanges, String apName,String driveName,string JName,string Role,String calloutTradeVal) {
         Map<String, String> row = new Map<String, String>();
@@ -341,15 +391,7 @@ public with sharing class APComplianceReportController {
         }        
         return false;
     }
-    
-    private class TimeRange {
-        public Time startTime;
-        public Time endTime;
-        public TimeRange(Time s, Time e) {
-            startTime = s;
-            endTime = e;
-        }
-    }
+
     public List<List<Map<String, String>>> getPaginatedData() {
         List<List<Map<String, String>>> pages = new List<List<Map<String, String>>>();
         
@@ -372,5 +414,28 @@ public with sharing class APComplianceReportController {
             pages.add(page);
         }        
         return pages;
-    }    
+    }
+    
+    private class TimeRange {
+        public Time startTime;
+        public Time endTime;
+        public TimeRange(Time s, Time e) {
+            startTime = s;
+            endTime = e;
+        }
+    }
+
+    private class PatternWithDateRange {
+        public Date startDate { get; set; }
+        public Date endDate { get; set; }
+        public String patternName { get; set; }
+        public Map<String, List<TimeRange>> weeklySchedule { get; set; }
+
+        public PatternWithDateRange(Date sDate, Date eDate, String name, Map<String, List<TimeRange>> schedule) {
+            this.startDate = sDate;            
+            this.endDate = (eDate == null) ? Date.newInstance(4000, 1, 1) : eDate;
+            this.patternName = name;
+            this.weeklySchedule = schedule;
+        }
+    }        
 }
