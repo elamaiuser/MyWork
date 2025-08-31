@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>SkeduloDistanceMatrix</members>
+		<name>ExternalCredential</name>
+	</types>
+	<types>
+		<members>PostDistanceMatrix</members>
+		<name>ExternalServiceRegistration</name>
+	</types>
+	<types>
+		<members>sked_Travel_Index_Refresh_Request_Run_ID_populated</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>SkeduloConnectedFunction</members>
+		<name>NamedCredential</name>
+	</types>
+	<version>64.0</version>
+</Package>
