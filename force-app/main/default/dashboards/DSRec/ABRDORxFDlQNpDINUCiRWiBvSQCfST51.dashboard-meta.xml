@@ -472,7 +472,8 @@
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
-                <sortBy>RowLabelAscending</sortBy>                
+                <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -522,7 +523,8 @@
                 <report>BSFRecruitment/Type_B_drives_aid</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
-                <sortBy>RowLabelAscending</sortBy>                
+                <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -572,7 +574,8 @@
                 <report>BSFRecruitment/New_firsttime_drives_Report_jA5</report>
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
-                <sortBy>RowLabelAscending</sortBy>                
+                <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>First Time Drives indicate growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -652,7 +655,8 @@
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
-                <sortBy>RowLabelAscending</sortBy>                
+                <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -702,7 +706,8 @@
                 <report>BSFRecruitment/Blood_Link_Drives_2R8</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
-                <sortBy>RowLabelAscending</sortBy>                
+                <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Chances to engage virtually</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -801,7 +806,7 @@
     <owner>shubham.tiwari@redcross.org</owner>
     <runningUser>shubham.tiwari@redcross.org</runningUser>
     <textColor>#000000</textColor>
-    <title>Fixed Site Dashboard: Northwest Division</title>
+    <title>Fixed Site Insights Dashboard: Northwest Division</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>

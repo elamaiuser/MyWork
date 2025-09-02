@@ -145,6 +145,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -195,6 +196,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -245,6 +247,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>First Time Drives indicate growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -325,6 +328,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -375,6 +379,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                <sortLegendValues>true</sortLegendValues>
                 <title>Chances to engage virtually</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -473,7 +478,7 @@
     <owner>shubham.tiwari@redcross.org</owner>
     <runningUser>shubham.tiwari@redcross.org</runningUser>
     <textColor>#000000</textColor>
-    <title>Fixed Site Dashboard: Pacific Division</title>
+    <title>Fixed Site Insights Dashboard: Pacific Division</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>
