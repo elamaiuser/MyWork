@@ -19,6 +19,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @api mode;
   @api recordId;
   @api isReadonly = false;
+  @api disabled = false;
   @api driveGeneratorInstance = {
     drive: null,
     masterData: {
@@ -54,11 +55,30 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @track staffingComplementModalData = {};
 
   get driveContentionsGroup1() {
-    return this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : [];
+    return (
+      this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : []
+    ).map((contention) => ({
+        ...contention,
+        actions: contention.actions?.map((actionObj) => ({
+          ...actionObj,
+          disabled: actionObj.disabled || this.disabled
+        }))
+      }));
   }
 
   get driveContentionsGroup2() {
-    return this.driveContentions.filter(item => item.contention !== DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED);
+    return this.driveContentions
+      .filter(
+        (item) =>
+          item.contention !== DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED
+      )
+      .map((contention) => ({
+        ...contention,
+        actions: contention.actions?.map((actionObj) => ({
+          ...actionObj,
+          disabled: actionObj.disabled || this.disabled
+        }))
+      }));
   }
 
   get showSpinner() {
