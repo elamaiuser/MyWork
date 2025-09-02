@@ -4,6 +4,9 @@
         <field>Lead$Name</field>
     </columns>
     <columns>
+        <field>Lead$ConvertedAccount.Name</field>
+    </columns>
+    <columns>
         <field>Lead$City</field>
     </columns>
     <columns>
@@ -53,13 +56,6 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>Lead$ConvertedAccount.Division__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>Central Atlantic</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>Lead$ConvertedAccount.Market__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
@@ -95,7 +91,7 @@
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
-        <dateColumn>Lead$ConvertedAccount.Business_Planning_Completed_Date__c</dateColumn>
+        <dateColumn>Lead$ConvertedDate</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>
