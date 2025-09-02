@@ -43,7 +43,17 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>ConvertedDate</field>
+            <table>Lead</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>ConvertedAccount.Account_Manager_Email__c</field>
+            <table>Lead</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Lead_Converted_Date__c</field>
             <table>Lead</table>
         </columns>
         <columns>
