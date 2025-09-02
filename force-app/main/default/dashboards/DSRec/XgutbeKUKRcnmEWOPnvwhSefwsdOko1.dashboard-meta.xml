@@ -169,7 +169,6 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -220,7 +219,6 @@
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
                 <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -271,7 +269,6 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
                 <title>First Time Drives indicate growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -352,7 +349,6 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -403,7 +399,6 @@
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
                 <title>Chances to engage virtually</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
