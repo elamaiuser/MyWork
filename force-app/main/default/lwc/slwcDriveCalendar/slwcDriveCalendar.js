@@ -20,6 +20,7 @@ import {
     operationDriveLimitService,
     operationDriveLimitQueryModel,
     sObjectType,
+    userService
 } from 'c/dataService';
 import productGoalCalendar from './productGoalCalendar.html';
 import productivityCalendar from './productivityCalendar.html';
@@ -65,6 +66,7 @@ export default class SlwcDriveCalendar extends LightningElement {
     @track monthSummary = null;
     @track calendarWeeks = [];
     @track driveLimits;
+    @track loginUser;
     @track isTimeBlockApplied;
 
     @track confirmModalData = {};
@@ -138,6 +140,7 @@ export default class SlwcDriveCalendar extends LightningElement {
     }
 
     connectedCallback() {
+        this.retrieveLoginUser();
         this.calendarWeeks = this.buildCalendarWeeks();
     }
     
@@ -166,6 +169,18 @@ export default class SlwcDriveCalendar extends LightningElement {
         } else if (this.displayMode == "productivityCalendar") {
             return this.drivesMapByDate;
         }
+    }
+
+    retrieveLoginUser() {
+        let service = new userService();
+        return service.getLoginUser()
+        .then((result) => {
+            this.loginUser = result.returnedData;
+        })
+    }
+
+    hasAccess(){
+        return this.driveHelper.isAdminUser(this.loginUser) || this.driveHelper.isOnlyAPSUser(this.loginUser);
     }
 
     handleRefreshCalendar() {
@@ -1013,22 +1028,24 @@ export default class SlwcDriveCalendar extends LightningElement {
     }
 
     handleAcknowledgeDecrease(event) {
-        event.stopPropagation();
+        if (this.hasAccess) {
+            event.stopPropagation();
 
-        let staffingConstraintId = event.currentTarget.dataset['staffingConstraint'];
+            let staffingConstraintId = event.currentTarget.dataset['staffingConstraint'];
 
-        this.showConfirmModal({
-            title: 'Acknowledge Staffing Constraint Decrease',
-            message: 'Do you want to clear staffing constraint decrease indicator?',
-            onClose: (result) => {
-                this.hideConfirmModal();
-                if (result) {
-                    this.doAcknowledgeDecrease(staffingConstraintId);
-                }
-            },
-            confirmBtnLabel: 'Yes',
-            cancelBtnLabel: 'No'
-        });
+            this.showConfirmModal({
+                title: 'Acknowledge Staffing Constraint Decrease',
+                message: 'Do you want to clear staffing constraint decrease indicator?',
+                onClose: (result) => {
+                    this.hideConfirmModal();
+                    if (result) {
+                        this.doAcknowledgeDecrease(staffingConstraintId);
+                    }
+                },
+                confirmBtnLabel: 'Yes',
+                cancelBtnLabel: 'No'
+            });
+        }
     }
 
     doAcknowledgeDecrease(staffingConstraintId) {
