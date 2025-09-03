@@ -1028,7 +1028,7 @@ export default class SlwcDriveCalendar extends LightningElement {
     }
 
     handleAcknowledgeDecrease(event) {
-        if (this.hasAccess) {
+        if (this.hasAccess()) {
             event.stopPropagation();
 
             let staffingConstraintId = event.currentTarget.dataset['staffingConstraint'];
