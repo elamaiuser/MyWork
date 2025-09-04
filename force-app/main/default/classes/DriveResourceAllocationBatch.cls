@@ -69,6 +69,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public Decimal fsSysGenCount = 0;
     public Decimal mobileSysGenCount = 0;
     private DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper;
+   
     
    	/*HRP-12706 --> Starts Here
     * @Reference : 
@@ -415,7 +416,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {	
                     vehicleTypeJob.add(job);
                     driveJobIds.add(job.Id);
-                } else if(job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {	      
+                } else if(job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {	     
                     equipmentTypeJob.add(job);	
                     driveJobIds.add(job.Id);
                 } else if(job.sked__Type__c == Constants.PROCEDURE_TYPE_2RBC) {	      
@@ -550,8 +551,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             
                 ResourceModel resourceModelDriveLevel = getResourceModelPopulatedFromODLRecords(getApplicableODLsForEntireDriveDay(drive));
                 resourceModelDriveLevel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModelDriveLevel);
-
-                Boolean allShiftsPassedChecks = processDriveAtShiftLevel(drive, noOfStaffsAllocated,  noOfRBCAllocated, 
+				//Shift level validation does not apply for Fixed site Drives
+                Boolean allShiftsPassedChecks = isFixedSiteDrive(drive) ||  processDriveAtShiftLevel(drive, noOfStaffsAllocated,  noOfRBCAllocated, 
                                                 noOfCDLAllocated, noOfDOTAllocated,resourceModelDriveLevel);
                 System.debug('All shifts passed checks: ' + allShiftsPassedChecks);
                 if(allShiftsPassedChecks == false) {
