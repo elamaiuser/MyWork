@@ -203,6 +203,9 @@ public with sharing class APComplianceReportController {
                     }
                 }
             }
+            if (activePattern == null) {
+                        continue; // Skip jobs without an availability pattern
+                    }
             
             Map<String, List<TimeRange>> patternForDay = (activePattern != null) ? activePattern.weeklySchedule : null;
             Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, patternForDay);
@@ -262,6 +265,9 @@ public with sharing class APComplianceReportController {
                     }
                 }
             }
+            if (activePattern == null) {
+                        continue; // Skip Activity without an availability pattern
+                    }
             
             Map<String, List<TimeRange>> patternForDay = (activePattern != null) ? activePattern.weeklySchedule : null;
             Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, patternForDay);
