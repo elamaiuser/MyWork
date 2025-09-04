@@ -17,8 +17,7 @@
                 <booleanValue>true</booleanValue>
             </value>
         </inputParameters>
-        <nameSegment>BSFBypassFlowValidationService</nameSegment>
-        <offset>0</offset>
+        <nameSegment>BSFBypassFlowValidationService</nameSegment>        
     </actionCalls>
     <actionCalls>
         <name>Clear_Bypass_Profile_Validation</name>
@@ -34,8 +33,7 @@
                 <booleanValue>false</booleanValue>
             </value>
         </inputParameters>
-        <nameSegment>BSFBypassFlowValidationService</nameSegment>
-        <offset>0</offset>
+        <nameSegment>BSFBypassFlowValidationService</nameSegment>        
     </actionCalls>
     <apiVersion>63.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
