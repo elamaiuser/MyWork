@@ -28,6 +28,7 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Number_of_2RBC_Assets__c' => 'Number_of_2RBC_Assets__c',
         'sked_Number_of_Plasma_Assets__c' => 'Number_of_Plasma_Assets__c',
         'sked_Number_of_Platelet_Assets__c' => 'Number_of_Platelet_Assets__c',
+        'sked_Cancellation_Detail__c' => 'Cancellation_Detail__c',
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
         'sked_Initiated_By__c' => 'Initiated_By__c',
         'sked_APT_Required__c' => 'APT_Required__c',
