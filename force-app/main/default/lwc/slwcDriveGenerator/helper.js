@@ -213,7 +213,8 @@ class DriveHelper {
     timezoneSidId,
     cancellationReason,
     initiatedBy,
-    replacementDriveId
+    replacementDriveId,
+    cancellationDetail
   }) {
     if(!drive) return null;
 
@@ -234,7 +235,8 @@ class DriveHelper {
         pendingActionReasonCode: DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
         cancellationReason: cancellationReason,
         initiatedBy: initiatedBy,
-        replacementDriveId: replacementDriveId
+        replacementDriveId: replacementDriveId,
+        cancellationDetail: cancellationDetail
       }
     } else {
       if(needToCheckForApproval && diff <= 42) {
@@ -245,7 +247,8 @@ class DriveHelper {
           pendingActionReasonCode: '',
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       } else {
         return {
@@ -254,7 +257,8 @@ class DriveHelper {
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
           pendingActionReasonCode: '',
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       }
     }

@@ -56,6 +56,9 @@ global class FieldIdentifiers {
     
     @AuraEnabled
     global String Account_Manager;
+
+    @AuraEnabled
+    global String Cancellation_Detail; //HRP-11431
     
     @AuraEnabled
     global String Cancellation_Reason;
