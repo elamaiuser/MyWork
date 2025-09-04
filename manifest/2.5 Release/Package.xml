@@ -41,6 +41,14 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcApprovalHistoryConsole</members>
+		<members>slwcDriveCalendarDriveList</members>		
+		<members>slwcDriveSchedulingFilters</members>		
+		<members>slwcSchedulingConsoleDriveList</members>
+		<name>LightningComponentBundle</name>		
+	</types>
+	<types>
+		<members>skedLWCCustomStyle</members>
+		<name>StaticResource</name>
 	</types>
     <version>59.0</version>
 </Package>
