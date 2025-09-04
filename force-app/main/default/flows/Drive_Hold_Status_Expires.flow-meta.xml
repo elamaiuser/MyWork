@@ -35,8 +35,7 @@
         </inputParameters>
         <nameSegment>BSFBypassFlowValidationService</nameSegment>        
     </actionCalls>
-    <apiVersion>63.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <apiVersion>63.0</apiVersion>    
     <environments>Default</environments>
     <interviewLabel>Drive Hold Status Expires {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Drive Hold Status Expires</label>
