@@ -64,6 +64,9 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 if(oppFields.updatedDataKeys.contains('sked_Cancellation_Reason__c')) { //HRP-10312
                     recOpp.sked_Cancellation_Reason__c = oppFields.Sked_Cancellation_Reason;
                 }
+                if(oppFields.updatedDataKeys.contains('Cancellation_Detail__c')) { //HRP-11431
+                    recOpp.Cancellation_Detail__c = oppFields.Cancellation_Detail;
+                }
                 if(oppFields.updatedDataKeys.contains('Initiated_By__c')) { //HRP-10312
                     recOpp.Initiated_By__c = oppFields.Initiated_By;
                 }
