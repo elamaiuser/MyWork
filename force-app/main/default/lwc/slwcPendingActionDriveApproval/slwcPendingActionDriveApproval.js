@@ -10,6 +10,7 @@ export default class SlwcPendingActionDriveApproval extends LightningElement {
   @track drive;
   @track loginUser;
   @track canApproveReject = false;
+  @track actionsDisabled = false;
   @track showSpinner = false;
 
   @track rejectAdditionalFields = [
@@ -27,19 +28,22 @@ export default class SlwcPendingActionDriveApproval extends LightningElement {
     }
   ];
 
-  @track approveAdditionalFields = [
-  ];
+  @track approveAdditionalFields = [];
 
   get showResolveContentions() {
-    return this.canApproveReject && this.drive && this.drive.pendingAction === PENDING_ACTION.DRIVE_SUBMISSION;
+    return this.drive && this.drive.pendingAction === PENDING_ACTION.DRIVE_SUBMISSION;
   }
 
   get resolveContentionsReadonly() {
     if(!this.showResolveContentions) return true;
     const driveHelper = new DriveHelper();
     const isAPSUser = driveHelper.isAPSUser(this.loginUser); 
-    const waitingForAPSApproval = [DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK].includes(this.drive?.approvalStatus); 
+    const waitingForAPSApproval = [DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK, DRIVE_APPROVAL_STATUS.APPROVED, DRIVE_APPROVAL_STATUS.REJECTED].includes(this.drive?.approvalStatus); 
     return !isAPSUser || !waitingForAPSApproval;
+  }
+
+  get resolveContentionActionsReadOnly() {
+    return this.actionsDisabled;
   }
   
   exceptionHandler = (error) => {
@@ -86,6 +90,7 @@ export default class SlwcPendingActionDriveApproval extends LightningElement {
   }
 
   handleActionDone = () => {
+    this.actionsDisabled = true;
     this.init();
   }
   
