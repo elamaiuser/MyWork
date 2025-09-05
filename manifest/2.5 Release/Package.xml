@@ -6,6 +6,7 @@
         <members>OpportunityTriggerTest</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>skedResourceTagHandler</members>
         <members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
 		<name>ApexClass</name>
