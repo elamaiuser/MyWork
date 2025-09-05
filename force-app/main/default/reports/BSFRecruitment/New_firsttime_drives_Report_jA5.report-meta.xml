@@ -85,13 +85,6 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>Account.Division__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>Central Atlantic</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>Opportunity.Drive_Date__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>

@@ -28,6 +28,9 @@
             key-field="id"
             data={filteredList}
             columns={columns}
+            onsort={handleSort}
+            sorted-by={sortedBy}
+            sorted-direction={sortedDirection}
             onrowselection={handleRowSelection}
             onrowaction={handleRowAction}
             hide-checkbox-column={hideCheckboxColumn}

@@ -47,13 +47,6 @@
             <operator>contains</operator>
             <value></value>
         </criteriaItems>
-        <criteriaItems>
-            <column>Account.Division__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>Central Atlantic</value>
-        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>
