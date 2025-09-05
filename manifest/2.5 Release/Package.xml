@@ -45,6 +45,7 @@
 		<members>slwcDriveCalendarDriveList</members>		
 		<members>slwcDriveSchedulingFilters</members>		
 		<members>slwcSchedulingConsoleDriveList</members>
+		<members>slwcPendingActionDriveApproval</members>
 		<name>LightningComponentBundle</name>		
 	</types>
 	<types>

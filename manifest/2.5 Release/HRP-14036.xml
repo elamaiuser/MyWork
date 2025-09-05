@@ -3,6 +3,7 @@
     <types>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcDriveChangeRequestApproval</members>
+		<members>slwcPendingActionDriveApproval</members>
 		<members>slwcApprovalHistoryConsole</members>
 	</types>
     <version>59.0</version>
