@@ -15,18 +15,12 @@
 		<name>Dashboard</name>
 	</types>
 	<types>
-		<members>BSFRecruitment/Blood_Link_Drives_2R8</members>
 		<members>BSFRecruitment/Costly_low_productivity_drives_roq</members>
 		<members>BSFRecruitment/FS_Opps_for_Dashboard_snr</members>
 		<members>BSFRecruitment/Feeder_Only_and_Feeder_Plus_Accounts_5Fx</members>
-		<members>BSFRecruitment/Lead_conversion_to_Feeders_vp9</members>
-		<members>BSFRecruitment/New_firsttime_drives_Report_jA5</members>
 		<members>BSFRecruitment/Type_B_drives_aid</members>
+		<members>BSFRecruitment/Low_Projection_Drives</members>
 		<name>Report</name>
-	</types>
-	<types>
-		<members>Leads_with_Converted_Account_Details</members>
-		<name>ReportType</name>
 	</types>
 	<types>
 		<members>Account.Has_Marketing_Program__c</members>
