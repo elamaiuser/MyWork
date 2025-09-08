@@ -4,9 +4,6 @@
         <field>Opportunity.Drive_Date__c</field>
     </columns>
     <columns>
-        <field>FULL_NAME</field>
-    </columns>
-    <columns>
         <field>ACCOUNT_NAME</field>
     </columns>
     <columns>
