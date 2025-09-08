@@ -476,18 +476,28 @@ export default class SlwcDriveCalendar extends LightningElement {
         });
 
         this.drivesMapByDate?.[day.dateIso]?.forEach((drive) => {
-            day.slot.noOfDriveRequested += 1;
-
             const isFixedSiteDrive = drive.driveOperationType === DRIVE_OPERATION_TYPE.FIXED_SITE;
-            if (!isFixedSiteDrive && drive.totalEquipmentRequested) {
-                day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
+
+            if (!isFixedSiteDrive) {
+                if(selectedTimeBlockIds?.length) {
+                    drive.driveShifts?.forEach(driveShift => {
+                        if (selectedTimeBlockIds.includes(driveShift.timeBlockId)) {
+                            day.slot.noOfDriveRequested += 1;
+                            day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
+                            day.slot.noOfDOTRequested += drive.noOfAllocatedDOTVehicles || 0;
+                            day.slot.noOfCDLRequested += drive.noOfAllocatedCDLVehicles || 0;
+                        }
+                    })
+                } else {
+                    day.slot.noOfDriveRequested += 1;
+                    day.slot.noOf2RBCRequested += drive.totalEquipmentRequested || 0;
+                    day.slot.noOfDOTRequested += drive.noOfAllocatedDOTVehicles || 0;
+                    day.slot.noOfCDLRequested += drive.noOfAllocatedCDLVehicles || 0;
+                }
+            } else {
+                day.slot.noOfDriveRequested += 1;
             }
-            if (!isFixedSiteDrive && drive.noOfAllocatedDOTVehicles) {
-                day.slot.noOfDOTRequested += drive.noOfAllocatedDOTVehicles || 0;
-            }
-            if (!isFixedSiteDrive && drive.noOfAllocatedCDLVehicles) {
-                day.slot.noOfCDLRequested += drive.noOfAllocatedCDLVehicles || 0;
-            }
+           
             if (drive.totalStaffRequested) {
                 let totalStaffRequested = drive.totalStaffRequested;
                 if (!isFixedSiteDrive && selectedTimeBlockIds?.length) {
