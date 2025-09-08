@@ -139,7 +139,7 @@
                     <axisBinding>y</axisBinding>
                     <column>RowCount</column>
                 </chartSummary>
-                <componentType>Donut</componentType>
+                <componentType>BarStacked</componentType>
                 <dashboardFilterColumns>
                     <column>FK_$Account.Division__c</column>
                 </dashboardFilterColumns>
@@ -155,10 +155,15 @@
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
                 <expandOthers>false</expandOthers>
-                <groupingColumn>FK_$Account.Division__c</groupingColumn>
+                <groupingColumn>FK_$Account.ARC_Region__c</groupingColumn>
+                <groupingColumn>sked_Drive__c.sked_District__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
+                        <sortOrder>a</sortOrder>
+                    </groupingSorts>
+                    <groupingSorts>
+                        <groupingLevel>g2</groupingLevel>
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
@@ -166,9 +171,9 @@
                 <legendPosition>Right</legendPosition>
                 <report>BSFRecruitment/Costly_low_productivity_drives_roq</report>
                 <showPercentage>false</showPercentage>
-                <showTotal>true</showTotal>
-                <showValues>true</showValues>
+                <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -185,7 +190,7 @@
                     <axisBinding>y</axisBinding>
                     <column>RowCount</column>
                 </chartSummary>
-                <componentType>ColumnGrouped</componentType>
+                <componentType>Donut</componentType>
                 <dashboardFilterColumns>
                     <column>Account.Division__c</column>
                 </dashboardFilterColumns>
@@ -200,26 +205,23 @@
                 <drillEnabled>false</drillEnabled>
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
-                <expandOthers>false</expandOthers>
-                <groupingColumn>Account.Division__c</groupingColumn>
-                <groupingColumn>Account.ARC_Region__c</groupingColumn>
+                <expandOthers>true</expandOthers>
+                <groupingColumn>Account.District__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
-                    <groupingSorts>
-                        <groupingLevel>g2</groupingLevel>
-                        <sortOrder>a</sortOrder>
-                    </groupingSorts>
                 </groupingSortProperties>
-                <header>Type B Drives</header>
+                <header>Drives with Projection &lt;20</header>
                 <legendPosition>Right</legendPosition>
-                <report>BSFRecruitment/Type_B_drives_aid</report>
+                <report>DSRecruitmentProcessandPlanning/Low_Projection_Drives</report>
                 <showPercentage>false</showPercentage>
+                <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <title>Minimal BPL support favors FS growth</title>
+                
+                <title>Increase APO or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>0</rowIndex>
@@ -251,8 +253,8 @@
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
                 <expandOthers>false</expandOthers>
-                <groupingColumn>Account.Division__c</groupingColumn>
                 <groupingColumn>Account.ARC_Region__c</groupingColumn>
+                <groupingColumn>Account.District__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
@@ -263,13 +265,14 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>First Time Drives</header>
+                <header>Type B Drives</header>
                 <legendPosition>Right</legendPosition>
-                <report>BSFRecruitment/New_firsttime_drives_Report_jA5</report>
+                <report>BSFRecruitment/Type_B_drives_aid</report>
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                <title>First Time Drives indicate growth</title>
+                
+                <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>0</rowIndex>
@@ -278,40 +281,6 @@
         <dashboardGridComponents>
             <colSpan>4</colSpan>
             <columnIndex>0</columnIndex>
-            <dashboardComponent>
-                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
-                <chartSummary>
-                    <column>RowCount</column>
-                </chartSummary>
-                <componentType>Metric</componentType>
-                <dashboardFilterColumns>
-                    <column>Lead$ConvertedAccount.Division__c</column>
-                </dashboardFilterColumns>
-                <dashboardFilterColumns>
-                    <column>Lead$ConvertedAccount.ARC_Region__c</column>
-                </dashboardFilterColumns>
-                <dashboardFilterColumns>
-                    <column>Lead$ConvertedAccount.District__c</column>
-                </dashboardFilterColumns>
-                <decimalPrecision>-1</decimalPrecision>
-                <displayUnits>Auto</displayUnits>
-                <groupingSortProperties/>
-                <header>Lead conversion to Feeders</header>
-                <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
-                <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
-                <indicatorHighColor>#00716B</indicatorHighColor>
-                <indicatorLowColor>#C23934</indicatorLowColor>
-                <indicatorMiddleColor>#CA8501</indicatorMiddleColor>
-                <metricLabel>Newly created Feeder Accounts</metricLabel>
-                <report>BSFRecruitment/Lead_conversion_to_Feeders_vp9</report>
-                <showRange>false</showRange>
-            </dashboardComponent>
-            <rowIndex>8</rowIndex>
-            <rowSpan>8</rowSpan>
-        </dashboardGridComponents>
-        <dashboardGridComponents>
-            <colSpan>4</colSpan>
-            <columnIndex>4</columnIndex>
             <dashboardComponent>
                 <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
                 <chartAxisRange>Auto</chartAxisRange>
@@ -334,8 +303,8 @@
                 <drillEnabled>false</drillEnabled>
                 <drillToDetailEnabled>false</drillToDetailEnabled>
                 <enableHover>false</enableHover>
-                <expandOthers>false</expandOthers>
-                <groupingColumn>Account.Division__c</groupingColumn>
+                <expandOthers>true</expandOthers>
+                <groupingColumn>Account.District__c</groupingColumn>
                 <groupingSortProperties>
                     <groupingSorts>
                         <groupingLevel>g1</groupingLevel>
@@ -349,6 +318,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
+                
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -356,58 +326,8 @@
             <rowSpan>8</rowSpan>
         </dashboardGridComponents>
         <dashboardGridComponents>
-            <colSpan>4</colSpan>
-            <columnIndex>8</columnIndex>
-            <dashboardComponent>
-                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
-                <chartAxisRange>Auto</chartAxisRange>
-                <chartSummary>
-                    <axisBinding>y</axisBinding>
-                    <column>RowCount</column>
-                </chartSummary>
-                <componentType>ColumnGrouped</componentType>
-                <dashboardFilterColumns>
-                    <column>Account.Division__c</column>
-                </dashboardFilterColumns>
-                <dashboardFilterColumns>
-                    <column>Account.ARC_Region__c</column>
-                </dashboardFilterColumns>
-                <dashboardFilterColumns>
-                    <column>Account.District__c</column>
-                </dashboardFilterColumns>
-                <decimalPrecision>-1</decimalPrecision>
-                <displayUnits>Auto</displayUnits>
-                <drillEnabled>false</drillEnabled>
-                <drillToDetailEnabled>false</drillToDetailEnabled>
-                <enableHover>false</enableHover>
-                <expandOthers>false</expandOthers>
-                <groupingColumn>Account.Division__c</groupingColumn>
-                <groupingColumn>Account.ARC_Region__c</groupingColumn>
-                <groupingSortProperties>
-                    <groupingSorts>
-                        <groupingLevel>g1</groupingLevel>
-                        <sortOrder>a</sortOrder>
-                    </groupingSorts>
-                    <groupingSorts>
-                        <groupingLevel>g2</groupingLevel>
-                        <sortOrder>a</sortOrder>
-                    </groupingSorts>
-                </groupingSortProperties>
-                <header>Blood Link Drives</header>
-                <legendPosition>Right</legendPosition>
-                <report>BSFRecruitment/Blood_Link_Drives_2R8</report>
-                <showPercentage>false</showPercentage>
-                <showValues>true</showValues>
-                <sortBy>RowLabelAscending</sortBy>
-                <title>Chances to engage virtually</title>
-                <useReportChart>false</useReportChart>
-            </dashboardComponent>
-            <rowIndex>8</rowIndex>
-            <rowSpan>8</rowSpan>
-        </dashboardGridComponents>
-        <dashboardGridComponents>
-            <colSpan>12</colSpan>
-            <columnIndex>0</columnIndex>
+            <colSpan>8</colSpan>
+            <columnIndex>4</columnIndex>
             <dashboardComponent>
                 <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
                 <componentType>FlexTable</componentType>
@@ -423,7 +343,7 @@
                 <flexComponentProperties>
                     <decimalPrecision>-1</decimalPrecision>
                     <flexTableColumn>
-                        <reportColumn>FULL_NAME</reportColumn>
+                        <reportColumn>Opportunity.Drive_Date__c</reportColumn>
                         <showSubTotal>false</showSubTotal>
                         <showTotal>false</showTotal>
                         <type>detail</type>
@@ -435,19 +355,13 @@
                         <type>detail</type>
                     </flexTableColumn>
                     <flexTableColumn>
-                        <reportColumn>Opportunity.Day_of_Week__c</reportColumn>
-                        <showSubTotal>false</showSubTotal>
-                        <showTotal>false</showTotal>
-                        <type>detail</type>
-                    </flexTableColumn>
-                    <flexTableColumn>
-                        <reportColumn>Opportunity.Drive_Date__c</reportColumn>
-                        <showSubTotal>false</showSubTotal>
-                        <showTotal>false</showTotal>
-                        <type>detail</type>
-                    </flexTableColumn>
-                    <flexTableColumn>
                         <reportColumn>OPPORTUNITY_NAME</reportColumn>
+                        <showSubTotal>false</showSubTotal>
+                        <showTotal>false</showTotal>
+                        <type>detail</type>
+                    </flexTableColumn>
+                    <flexTableColumn>
+                        <reportColumn>Account.Combined_City_and_State__c</reportColumn>
                         <showSubTotal>false</showSubTotal>
                         <showTotal>false</showTotal>
                         <type>detail</type>
@@ -459,7 +373,7 @@
                         <type>detail</type>
                     </flexTableColumn>
                     <flexTableColumn>
-                        <reportColumn>Account.Combined_City_and_State__c</reportColumn>
+                        <reportColumn>Opportunity.Day_of_Week__c</reportColumn>
                         <showSubTotal>false</showSubTotal>
                         <showTotal>false</showTotal>
                         <type>detail</type>
@@ -477,7 +391,7 @@
                         <type>detail</type>
                     </flexTableColumn>
                     <flexTableSortInfo>
-                        <sortColumn>FULL_NAME</sortColumn>
+                        <sortColumn>Opportunity.Day_of_Week__c</sortColumn>
                         <sortOrder>1</sortOrder>
                     </flexTableSortInfo>
                     <hideChatterPhotos>true</hideChatterPhotos>
@@ -486,7 +400,7 @@
                 <header>Fixed Site Opportunities</header>
                 <report>BSFRecruitment/FS_Opps_for_Dashboard_snr</report>
             </dashboardComponent>
-            <rowIndex>16</rowIndex>
+            <rowIndex>8</rowIndex>
             <rowSpan>8</rowSpan>
         </dashboardGridComponents>
         <numberOfColumns>12</numberOfColumns>
@@ -494,8 +408,8 @@
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
     <isGridLayout>true</isGridLayout>
-    <owner>shubham.tiwari@redcross.org</owner>
-    <runningUser>shubham.tiwari@redcross.org</runningUser>
+    <owner>deploymentuser@redcross.org.biomed</owner>
+    <runningUser>deploymentuser@redcross.org.biomed</runningUser>
     <textColor>#000000</textColor>
     <title>Fixed Site Insights Dashboard:  Southeast and Caribbean Division</title>
     <titleColor>#000000</titleColor>
