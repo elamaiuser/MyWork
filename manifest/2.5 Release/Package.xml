@@ -42,5 +42,10 @@
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcApprovalHistoryConsole</members>
 	</types>
+	<types>
+		<members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
+		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
+		<name>ValidationRule</name>
+	</types>
     <version>59.0</version>
 </Package>

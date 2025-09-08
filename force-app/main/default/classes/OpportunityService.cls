@@ -2767,7 +2767,6 @@ if(ds.isDeletable()){}*/
                 system.debug('###FWO: Inside updateDrivesOnCalendarStatus '+driveRec);
                 if(driveRec != null && (
                     invalidStageOppIds.contains(newOpportunity.Id)==false)) {//HRP 10959- Only pass opportunities that do not have error
-                    system.debug('###FWO: Inside updateDrivesOnCalendarStatus 2 stage is' + newOpportunity.StageName);
                     if (newOpportunity.StageName != oldOpportunity.StageName) {
                         if(newOpportunity.stageName == 'Committed' && driveRec.sked_Status__c != 'Draft') // Adding a check on status so that required validation on opp shows up
                         { 
@@ -5270,4 +5269,42 @@ opp.StageName = 'Closed';
         }
     } 
     //HRP-701 --> Ends Here
+
+    public static void syncCancellationDetailPostDriveCancellation(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        Set<Id> oppIds = new Set<Id>();
+        List<sked_Drive__c> drivesNeedToBeUpdated = new List<sked_Drive__c>();
+
+        if(newOppList != null && !newOppList.isEmpty()) {
+            for(Opportunity newOpp : newOppList) {
+                Opportunity oldOpp = oldOppMap.get(opp.Id);
+                if(newOpp.Cancellation_Detail__c != oldOpp.Cancellation_Detail__c && oldOpp.StageName.equalsIgnoreCase(BSF_Constants.STAGE_CANCELLED)) {
+                    oppIds.add(newOpp.Id);
+                }
+            }
+        }
+
+        List<sked_Drive__c> drivesList = [SELECT Id, sked_Cancellation_Detail__c, sked_Opportunity__c,
+                                          sked_Opportunity__r.Cancellation_Detail__c 
+                                          FROM sked_Drive__c
+                                          WHERE Id IN :oppIds
+                                          AND sked_Status__c = :BSF_Constants.DOC_STATUS_CANCEL];
+        if(drivesList != null && !drivesList.isEmpty()) {
+            for(sked_Drive__c drive : drivesList) {
+                if(!oppIds.contains(drive.sked_Opportunity__c)) continue;
+                drive.sked_Cancellation_Detail__c = sked_Opportunity__r.Cancellation_Detail__c ?? '';
+                drivesNeedToBeUpdated.add(drive);
+            }
+        }
+        if(!drivesNeedToBeUpdated.isEmpty()) {
+            Database.SaveResult[] results = Database.update(drivesNeedToBeUpdated, false);
+            insert BSF_Utilities.createErrorLogWithObjectId(
+                results,
+                'Sync Cancellation Detail',
+                'OpportunityService',
+                'syncCancellationDetailPostDriveCancellation',
+                'Error',
+                'DOC Sync'
+            );
+        }
+    }
 }

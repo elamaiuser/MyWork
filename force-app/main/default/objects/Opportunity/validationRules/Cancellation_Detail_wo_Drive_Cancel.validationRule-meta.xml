@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cancellation_Detail_wo_Drive_Cancel</fullName>
+    <active>true</active>
+    <description>User should not be able to populate cancellation detail on a non-cancelled drive (HRP-11431)</description>
+    <errorConditionFormula>AND( NOT( ISPICKVAL( StageName , &apos;Cancelled&apos; )) , NOT( ISBLANK( Cancellation_Detail__c )))</errorConditionFormula>
+    <errorDisplayField>Cancellation_Detail__c</errorDisplayField>
+    <errorMessage>Cancellation Detail cannot be populated for a non-cancelled drive</errorMessage>
+</ValidationRule>
