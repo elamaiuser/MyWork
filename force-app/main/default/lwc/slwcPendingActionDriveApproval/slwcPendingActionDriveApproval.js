@@ -38,7 +38,7 @@ export default class SlwcPendingActionDriveApproval extends LightningElement {
     if(!this.showResolveContentions) return true;
     const driveHelper = new DriveHelper();
     const isAPSUser = driveHelper.isAPSUser(this.loginUser); 
-    const waitingForAPSApproval = [DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK, DRIVE_APPROVAL_STATUS.APPROVED, DRIVE_APPROVAL_STATUS.REJECTED].includes(this.drive?.approvalStatus); 
+    const waitingForAPSApproval = [DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_APPROVAL_STATUS.APS_WAITING_FOR_DRD_FEEDBACK].includes(this.drive?.approvalStatus); 
     return !isAPSUser || !waitingForAPSApproval;
   }
 
@@ -91,7 +91,6 @@ export default class SlwcPendingActionDriveApproval extends LightningElement {
 
   handleActionDone = () => {
     this.actionsDisabled = true;
-    this.init();
   }
   
   beforeApproveHook = () => {
