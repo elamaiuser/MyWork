@@ -2767,6 +2767,7 @@ if(ds.isDeletable()){}*/
                 system.debug('###FWO: Inside updateDrivesOnCalendarStatus '+driveRec);
                 if(driveRec != null && (
                     invalidStageOppIds.contains(newOpportunity.Id)==false)) {//HRP 10959- Only pass opportunities that do not have error
+                    system.debug('###FWO: Inside updateDrivesOnCalendarStatus 2 stage is' + newOpportunity.StageName);
                     if (newOpportunity.StageName != oldOpportunity.StageName) {
                         if(newOpportunity.stageName == 'Committed' && driveRec.sked_Status__c != 'Draft') // Adding a check on status so that required validation on opp shows up
                         { 
