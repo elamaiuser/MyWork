@@ -6,8 +6,8 @@ global class BSF_BatchUpdateAccountForZipCode implements Database.Batchable<sObj
         this.reevaluateZip = false;
     }
     
-    global BSF_BatchUpdateAccountForZipCode(Date startDate, Date endDate) {
-        this.reevaluateZip = true;
+    global BSF_BatchUpdateAccountForZipCode(Boolean reevaluateZip) {
+        this.reevaluateZip = reevaluateZip;
     }
     
     global Database.QueryLocator start(Database.BatchableContext bc) {
