@@ -330,6 +330,7 @@ class SlwcAvailator {
       resource.jobAllocations = (resource.jobAllocations || []).map((item) => {
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
+        item.driveName = item.job.driveName;
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
