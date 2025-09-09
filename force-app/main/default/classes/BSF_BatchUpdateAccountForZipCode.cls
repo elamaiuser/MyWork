@@ -1,52 +1,72 @@
-global class BSF_BatchUpdateAccountForZipCode implements Database.Batchable<sObject>{
-   
-    global Database.QueryLocator start(Database.BatchableContext BC){
-        
-        String query = 'select Id,Zip__c,name,sked_Start_Date__c,sked_End_Date__c from Collections_Territory__c WHERE LastModifiedDate >= YESTERDAY AND LastModifiedDate <= TODAY';
-        system.debug('entered1');
-        return Database.getQueryLocator(query); 
-        
+global class BSF_BatchUpdateAccountForZipCode implements Database.Batchable<sObject> {
+    
+    private Boolean reevaluateZip;
+    
+    global BSF_BatchUpdateAccountForZipCode() {
+        this.reevaluateZip = false;
     }
     
-    global void execute(Database.BatchableContext bc, List<Collections_Territory__c> listOfCollectionTerrritory){
-        Map<String,List<Collections_Territory__c>> mapOfCollectionTerritory = new Map<String,List<Collections_Territory__c>>(); //mapOfCollectionTerritory
+    global BSF_BatchUpdateAccountForZipCode(Date startDate, Date endDate) {
+        this.reevaluateZip = true;
+    }
+    
+    global Database.QueryLocator start(Database.BatchableContext bc) {
+        String query;
         
-        for(Collections_Territory__c czipCodeRecord : listOfCollectionTerrritory){
-            system.debug('entered2'+czipCodeRecord.Zip__c);
-            if( !mapOfCollectionTerritory.containsKey( czipCodeRecord.Zip__c ) ){
-                mapOfCollectionTerritory.put( czipCodeRecord.Zip__c, new List<Collections_Territory__c>() ) ;
-            }
-            mapOfCollectionTerritory.get( czipCodeRecord.Zip__c ).add( czipCodeRecord ); 
+        if(reevaluateZip){
+            query = 'SELECT Id, Zip__c, Name, sked_Start_Date__c, sked_End_Date__c ' +
+                    'FROM Collections_Territory__c ' +
+                    'WHERE sked_Start_Date__c <= TODAY AND sked_End_Date__c >= TODAY';
+        }else{
+            query = 'SELECT Id, Zip__c, Name, sked_Start_Date__c, sked_End_Date__c ' +
+                    'FROM Collections_Territory__c ' +
+                    'WHERE LastModifiedDate >= YESTERDAY AND LastModifiedDate <= TODAY';
         }
-        List<Account> listOfAccountsToUpdate =new List<Account>();  
-        Set<id> updatedAcctids=new Set<Id>();
         
-        List<Account> listofAccounts=[select id,createdDate,Collections_Territory__c,BillingPostalCode from Account where BillingPostalCode IN:mapOfCollectionTerritory.KeySet()];
-        system.debug('entered2.1'+listofAccounts);
-        for(Account accRecord : listofAccounts){
-            system.debug('entered3'+accRecord);
-            if(mapOfCollectionTerritory.containsKey(accRecord.BillingPostalCode)){
-                for(Collections_Territory__c ctr : mapOfCollectionTerritory.get(accRecord.BillingPostalCode) ){
-                    system.debug('entered4'+ctr);
-                    if( System.today() >= ctr.sked_Start_Date__c && ctr.sked_End_Date__c >= System.today()){//system.today
-                        system.debug('entered4.0'+ctr.name+' '+ctr.Zip__c);
-                        accRecord.Collections_Territory__c = ctr.Id ;
-                        updatedAcctids.add(accRecord.id);
-                        listOfAccountsToUpdate.add(accRecord);
-                        system.debug('entered4.1'+listOfAccountsToUpdate);
-                        break;
+        return Database.getQueryLocator(query);
+    }
+    
+    global void execute(Database.BatchableContext bc, List<Collections_Territory__c> listOfCollectionTerrritory) {
+        Map<String, List<Collections_Territory__c>> mapOfCollectionTerritory = new Map<String, List<Collections_Territory__c>>();
+        
+        for (Collections_Territory__c czipCodeRecord : listOfCollectionTerrritory) {
+            if (!mapOfCollectionTerritory.containsKey(czipCodeRecord.Zip__c)) {
+                mapOfCollectionTerritory.put(czipCodeRecord.Zip__c, new List<Collections_Territory__c>());
+            }
+            mapOfCollectionTerritory.get(czipCodeRecord.Zip__c).add(czipCodeRecord);
+        }
+        
+        List<Account> listOfAccountsToUpdate = new List<Account>();
+
+        if(!mapOfCollectionTerritory.isEmpty()){
+            List<Account> listOfAccounts = [SELECT Id, 
+                                                    CreatedDate, 
+                                                    Collections_Territory__c, 
+                                                    BillingPostalCode
+                                            FROM Account
+                                            WHERE BillingPostalCode IN :mapOfCollectionTerritory.keySet()];
+            
+            for (Account accRecord : listOfAccounts) {
+                if (mapOfCollectionTerritory.containsKey(accRecord.BillingPostalCode)) {
+                    for (Collections_Territory__c ctr : mapOfCollectionTerritory.get(accRecord.BillingPostalCode)) {
+                        if (System.today() >= ctr.sked_Start_Date__c 
+                                && ctr.sked_End_Date__c >= System.today() 
+                                && accRecord.Collections_Territory__c != ctr.Id) {
+                                    accRecord.Collections_Territory__c = ctr.Id;
+                                    listOfAccountsToUpdate.add(accRecord);
+                                    break;
+                        }
                     }
                 }
             }
-            
-        }  
-        if(!listOfAccountsToUpdate.isEmpty()){
-            update listOfAccountsToUpdate;   
         }
-    }   
-    
-    
-    global void finish(Database.BatchableContext BC){
         
+        if (!listOfAccountsToUpdate.isEmpty()) {
+            Database.SaveResult[] srList = Database.update (listOfAccountsToUpdate,false);
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'updating Account Collections Territory','BSF_BatchUpdateAccountForZipCode','updateAcc','Error','updating Account Collections Territory(ZIP Codes)');
+            InsertBsfErrorLog.insertBsfErrors(logList);
+        }
     }
+    
+    global void finish(Database.BatchableContext bc) {}
 }
