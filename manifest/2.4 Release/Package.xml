@@ -164,5 +164,10 @@
 		<members>Account.Upgrade_Account</members>
 		<name>QuickAction</name>
 	</types>
+	<types>
+        <!-- Aura components -->
+        <members>LightningOutContainerApp</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
     <version>63.0</version>
 </Package>
