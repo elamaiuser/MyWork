@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>AccountAffiliationService</members>
-		<members>AccountAffiliationTriggerHandler</members>
-		<name>ApexClass</name>
-	</types>
-	<types>
-		<members>DSRec/ABRDORxFDlQNpDINUCiRWiBvSQCfST51</members>
 		<members>DSRec/ABRDORxFDlQNpDINUCiRWiBvSQCfST6211111</members>
 		<members>DSRec/ABRDORxFDlQNpDINUCiRWiBvSQCfST621112</members>
 		<members>DSRec/JOpuztwSZtXRfxEAdjaogrmqNjJmcY</members>
@@ -22,10 +16,6 @@
 		<members>BSFRecruitment/Type_B_drives_aid</members>
 		<members>BSFRecruitment/Low_Projection_Drives</members>
 		<name>Report</name>
-	</types>
-	<types>
-		<members>Account.Has_Marketing_Program__c</members>
-		<name>CustomField</name>
 	</types>
 	<version>64.0</version>
 </Package>

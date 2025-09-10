@@ -353,39 +353,4 @@ public with sharing class AccountAffiliationService {
             createHistoryOnAccAffiliation(updatedAffList, 'Update'); 
         }
     }
-    public static void updateMarketingProgramFlagOnAccounts(List<Account_Marketing_Program__c> ampList, String triggerContext) {
-    Set<Id> accountIds = new Set<Id>();
-    for (Account_Marketing_Program__c amp : ampList) {
-        if (amp.Account__c != null) {
-            accountIds.add(amp.Account__c);
-        }
-    }
-
-    if (accountIds.isEmpty()) return;
-    Set<Id> accountsWithProgram = new Set<Id>();
-    for (AggregateResult ar : [
-        SELECT Account__c accId
-        FROM Account_Marketing_Program__c
-        WHERE Account__c IN :accountIds
-          AND Marketing_Program__r.RecordType.Name = 'Marketing Program'
-        GROUP BY Account__c
-    ]) {
-        accountsWithProgram.add((Id) ar.get('accId'));
-    }
-
-    List<Account> accountsToUpdate = new List<Account>();
-    for (Id accId : accountIds) {
-        Boolean shouldFlag = accountsWithProgram.contains(accId);
-        accountsToUpdate.add(new Account(
-            Id = accId,
-            Has_Marketing_Program__c = shouldFlag
-        ));
-    }
-
-    if (!accountsToUpdate.isEmpty()) {
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        update accountsToUpdate;
-        AccountTeamMemberHelper.skipAccountTrigger = false;
-    }
-}
 }
