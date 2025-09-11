@@ -1855,6 +1855,9 @@ class DriveHelper {
       let dualRole = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
+        if (resourceRole === 'VP/HH') {
+          noOfResources = data.vphhQuantity || 0;
+        }
         dualRole = data.dualRole;
       }
 
