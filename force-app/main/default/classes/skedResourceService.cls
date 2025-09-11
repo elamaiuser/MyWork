@@ -59,7 +59,7 @@ global class skedResourceService extends skedDataService {
                 biomedCollectionOpCondition = '(' + biomedCollectionOpCondition + ' OR ' + additionalResourceIdsCondition + ')';
 
                 string additionalResourceIdsConditionForAssignment = queryBuilder.generateCondition('sked__Resource__c IN {0}', predefinedResourceIds);
-                assignmentResourceCoCondition = '(' + assignmentResourceCoCondition + ' OR ' + additionalResourceIdsCondition + ')';
+                assignmentResourceCoCondition = '(' + assignmentResourceCoCondition + ' OR ' + additionalResourceIdsConditionForAssignment + ')';
             }
             queryBuilder.conditions.add(biomedCollectionOpCondition);
         }
