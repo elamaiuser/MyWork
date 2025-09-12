@@ -59,7 +59,7 @@ global class skedResourceService extends skedDataService {
                 biomedCollectionOpCondition = '(' + biomedCollectionOpCondition + ' OR ' + additionalResourceIdsCondition + ')';
 
                 string additionalResourceIdsConditionForAssignment = queryBuilder.generateCondition('sked__Resource__c IN {0}', predefinedResourceIds);
-                assignmentResourceCoCondition = '(' + assignmentResourceCoCondition + ' OR ' + additionalResourceIdsCondition + ')';
+                assignmentResourceCoCondition = '(' + assignmentResourceCoCondition + ' OR ' + additionalResourceIdsConditionForAssignment + ')';
             }
             queryBuilder.conditions.add(biomedCollectionOpCondition);
         }
@@ -252,7 +252,8 @@ global class skedResourceService extends skedDataService {
             jobAllocationQueryBuilder.addField('sked__Resource__c resourceId');
             jobAllocationQueryBuilder.addField('COUNT(Id) numAllocations');
 
-            jobAllocationQueryBuilder.addCondition('sked_Start_Date__c = {0}', additionalFilterOnDate);
+            jobAllocationQueryBuilder.addCondition('sked_Start_Date__c <= {0}', additionalFilterOnDate);
+            jobAllocationQueryBuilder.addCondition('sked_Set_End_Date__c >= {0}', additionalFilterOnDate);
             jobAllocationQueryBuilder.addCondition('sked__Status__c != {0}', skedConstants.JOB_ALLOCATION_STATUS_DELETED);
 
             if (query.predefinedRecordIds != null && !query.predefinedRecordIds.isEmpty()) {
@@ -278,7 +279,8 @@ global class skedResourceService extends skedDataService {
             activityResourceQueryBuilder.addField('sked__Resource__c resourceId');
             activityResourceQueryBuilder.addField('COUNT(Id) numActivity');
 
-            activityResourceQueryBuilder.addCondition('sked_Start_Date__c = {0}', additionalFilterOnDate);
+            activityResourceQueryBuilder.addCondition('sked_Start_Date__c <= {0}', additionalFilterOnDate);
+            activityResourceQueryBuilder.addCondition('sked_End_Date__c >= {0}', additionalFilterOnDate);
 
             if (query.predefinedRecordIds != null && !query.predefinedRecordIds.isEmpty()) {
                 activityResourceQueryBuilder.addCondition('sked__Resource__c IN {0}', query.predefinedRecordIds);
