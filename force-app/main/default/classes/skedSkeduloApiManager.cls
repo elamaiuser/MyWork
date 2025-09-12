@@ -3,7 +3,7 @@ global virtual class skedSkeduloApiManager {
     public static final string AVAILABILITY_PATTERN_ENDPOINT = 'https://api.skedulo.com/availability/patterns';
     public static final string AVAILABILITY_SIMPLE_ENDPOINT = 'https://api.skedulo.com/availability/simple';
     public static final string DISTANCE_MATRIX_ENDPOINT = 'https://api.skedulo.com/geoservices/distanceMatrix';
-    public static final string DISTANCE_MATRIX_ASYNC_ENDPOINT = 'https://api.skedulo.com/geoservices/distanceMatrix/async?vendor=anymap';
+    public static final string DISTANCE_MATRIX_ASYNC_ENDPOINT = 'https://api.skedulo.com/function/arc-function/arc-function/postPreProcessDistanceMatrix';
     public static final string FIND_DIRECTIONS_ENDPOINT = 'https://api.skedulo.com/geoservices/directions';
     public static final string GEOCODE_ENDPOINT = 'https://api.skedulo.com/geoservices/geocode';
     public static final string NOTIFY_CANCEL_ENDPOINT = 'https://api.skedulo.com/notifications/notify_cancel';
@@ -206,7 +206,10 @@ global virtual class skedSkeduloApiManager {
         Map<string, string> mapHeader = getDefaultHeader();
         mapHeader.put('Content-Type', 'application/x-www-form-urlencoded');
         string token = mapHeader.get('Authorization');
-        return (skedSkeduloApiData.distanceMatrixAsyncResult)action.execute(skedSkeduloApiData.distanceMatrixAsyncResult.class, DISTANCE_MATRIX_ASYNC_ENDPOINT, 'POST', mapHeader, jsonBody, TRUE);
+        
+        string endpoint = skedSetting.instance.TravelTime.travelTimeRefreshEndpoint;
+        
+        return (skedSkeduloApiData.distanceMatrixAsyncResult)action.execute(skedSkeduloApiData.distanceMatrixAsyncResult.class, endpoint, 'POST', mapHeader, jsonBody, TRUE);
     }
     
     public List<string> getTravelTimeSetting(string timezoneSidId) {
