@@ -428,54 +428,58 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
 
-            totalNoOfStaffRequired = staffJobCount;
-            
-            // Check for existing Job Allocation for Current Drive Shift
-            if(!driveJobIds.isEmpty()) {
-                jobAllocationList = Database.Query(createJobAllocationsQuery(driveJobIds)); 
-            }
+            if(isFixedSiteDrive(drive)) {
+                allShiftsPassedChecks = true; //Shift level validation does not apply for Fixed site Drives
+            } else {
+                totalNoOfStaffRequired = staffJobCount;
+                
+                // Check for existing Job Allocation for Current Drive Shift
+                if(!driveJobIds.isEmpty()) {
+                    jobAllocationList = Database.Query(createJobAllocationsQuery(driveJobIds)); 
+                }
 
-            // Check Applicable Shift ODL records to get shift limits
-            map_operationDriveLimitId_operationDriveLimit = getApplicableODLsForDriveShift(drive, driveShift);
-            ResourceModel resourceModel = getResourceModelPopulatedFromODLRecords(map_operationDriveLimitId_operationDriveLimit.values());
-            resourceModel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModel);
-            if(driveShiftCount == 0) calculatedResourceModel = resourceModel; //Get the limits from 1st shift only
+                // Check Applicable Shift ODL records to get shift limits
+                map_operationDriveLimitId_operationDriveLimit = getApplicableODLsForDriveShift(drive, driveShift);
+                ResourceModel resourceModel = getResourceModelPopulatedFromODLRecords(map_operationDriveLimitId_operationDriveLimit.values());
+                resourceModel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModel);
+                if(driveShiftCount == 0) calculatedResourceModel = resourceModel; //Get the limits from 1st shift only
 
-            staffConstraintList = getStaffingConstraints(drive, driveShift);
-            Decimal remainingStaffShiftLevel = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
-            remainingStaff = remainingStaff + remainingStaffShiftLevel;//Keep the total remaining staff updated at instance level variable, this is used inside allocateResourceToJob
-            
-            Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
-            Boolean passingSubRuleTwo = remainingStaffShiftLevel >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
-            Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || drive.sked_Total_Equipment_Requested__c == 0 || drive.sked_Total_Equipment_Requested__c <= resourceModel.remainingNoOf2RBC);    
-            Boolean hasSufficientResourceBut2rbcLimitExceeded = !passingRuleOne && !passingRuleTwo;
-            
-            // Check if staffing constraint has sufficient resource 
-            if(!passingRuleOne && !passingSubRuleTwo) {
-                map_driveId_noAllocationReason.put(drive.Id, 
-                    'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaffShiftLevel);
-                allShiftsPassedChecks =false;
-                break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
-            }
-
-            // Check if staffing constraint has sufficient resource but 2RBC limit is reached for that day
-            if(hasSufficientResourceBut2rbcLimitExceeded) {
-                map_driveId_noAllocationReason.put(drive.Id, 
-                    '2RBC Limit Exceeded\n\nTotal Limit: '+resourceModel.total2RBCLimit+'\nRemaining Limit: '+resourceModel.remainingNoOf2RBC+'\nCurrent number of 2RBC: '+drive.sked_Total_Equipment_Requested__c);
-                allShiftsPassedChecks =false;
-                break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
-            }
-
-            //check if any of the shift level limits exceeding per day drive level limit
-            if(!passingRuleOne && resourceModelDriveLevel.totalDOTLimit != null && resourceModel.totalDOTLimit != null && resourceModelDriveLevel.totalDOTLimit < resourceModel.totalDOTLimit
-               || (resourceModelDriveLevel.totalCDLLimit != null && resourceModel.totalCDLLimit!= null && resourceModelDriveLevel.totalCDLLimit<resourceModel.totalCDLLimit)
-               || (resourceModelDriveLevel.total2RBCLimit != null && resourceModel.total2RBCLimit != null && resourceModelDriveLevel.total2RBCLimit<resourceModel.total2RBCLimit)) {
+                staffConstraintList = getStaffingConstraints(drive, driveShift);
+                Decimal remainingStaffShiftLevel = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
+                remainingStaff = remainingStaff + remainingStaffShiftLevel;//Keep the total remaining staff updated at instance level variable, this is used inside allocateResourceToJob
+                
+                Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
+                Boolean passingSubRuleTwo = remainingStaffShiftLevel >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
+                Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || drive.sked_Total_Equipment_Requested__c == 0 || drive.sked_Total_Equipment_Requested__c <= resourceModel.remainingNoOf2RBC);    
+                Boolean hasSufficientResourceBut2rbcLimitExceeded = !passingRuleOne && !passingRuleTwo;
+                
+                // Check if staffing constraint has sufficient resource 
+                if(!passingRuleOne && !passingSubRuleTwo) {
                     map_driveId_noAllocationReason.put(drive.Id, 
-                    'Shift level Limits exceeding Per Day Limits');
+                        'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaffShiftLevel);
                     allShiftsPassedChecks =false;
                     break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
-            } 
-           driveShiftCount++;
+                }
+
+                // Check if staffing constraint has sufficient resource but 2RBC limit is reached for that day
+                if(hasSufficientResourceBut2rbcLimitExceeded) {
+                    map_driveId_noAllocationReason.put(drive.Id, 
+                        '2RBC Limit Exceeded\n\nTotal Limit: '+resourceModel.total2RBCLimit+'\nRemaining Limit: '+resourceModel.remainingNoOf2RBC+'\nCurrent number of 2RBC: '+drive.sked_Total_Equipment_Requested__c);
+                    allShiftsPassedChecks =false;
+                    break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
+                }
+
+                //check if any of the shift level limits exceeding per day drive level limit
+                if(!passingRuleOne && resourceModelDriveLevel.totalDOTLimit != null && resourceModel.totalDOTLimit != null && resourceModelDriveLevel.totalDOTLimit < resourceModel.totalDOTLimit
+                || (resourceModelDriveLevel.totalCDLLimit != null && resourceModel.totalCDLLimit!= null && resourceModelDriveLevel.totalCDLLimit<resourceModel.totalCDLLimit)
+                || (resourceModelDriveLevel.total2RBCLimit != null && resourceModel.total2RBCLimit != null && resourceModelDriveLevel.total2RBCLimit<resourceModel.total2RBCLimit)) {
+                        map_driveId_noAllocationReason.put(drive.Id, 
+                        'Shift level Limits exceeding Per Day Limits');
+                        allShiftsPassedChecks =false;
+                        break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
+                } 
+                driveShiftCount++;
+            }
         } //end of drive shifts loop
         return allShiftsPassedChecks;
     }
@@ -552,7 +556,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 ResourceModel resourceModelDriveLevel = getResourceModelPopulatedFromODLRecords(getApplicableODLsForEntireDriveDay(drive));
                 resourceModelDriveLevel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModelDriveLevel);
 				//Shift level validation does not apply for Fixed site Drives
-                Boolean allShiftsPassedChecks = isFixedSiteDrive(drive) ||  processDriveAtShiftLevel(drive, noOfStaffsAllocated,  noOfRBCAllocated, 
+                Boolean allShiftsPassedChecks = processDriveAtShiftLevel(drive, noOfStaffsAllocated,  noOfRBCAllocated, 
                                                 noOfCDLAllocated, noOfDOTAllocated,resourceModelDriveLevel);
                 System.debug('All shifts passed checks: ' + allShiftsPassedChecks);
                 if(allShiftsPassedChecks == false) {
