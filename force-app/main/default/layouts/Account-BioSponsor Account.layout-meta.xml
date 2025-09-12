@@ -174,10 +174,6 @@
                 <behavior>Readonly</behavior>
                 <field>Division__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Special_Partnership_Level__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -197,8 +193,12 @@
                 <field>Website</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Relationship_Manager__c</field>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager_Notes__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -554,7 +554,7 @@
         <relatedList>RelatedNoteList</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
+        <fields>sked_Location__c</fields>
         <relatedList>sked_Location_Account__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -571,7 +571,6 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
-        <excludeButtons>New</excludeButtons>
         <fields>Contact__c</fields>
         <fields>Account_Service_Role__c</fields>
         <fields>Start_Date__c</fields>

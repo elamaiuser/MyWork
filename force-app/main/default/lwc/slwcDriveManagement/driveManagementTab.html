@@ -139,14 +139,14 @@
                 Please wait until Travel Time Calculation completes prior to modifying Drive.
             </h2>
         </div> 
-    
+
         <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-top_large" role="alert" style="margin-bottom: var(--lwc-cardSpacingMargin);" if:true={showPendingUserChangeWarning}>
             <h2>
                 <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
                 Please process the Pending [User Change] Drive Change Request prior to updating the Drive.
             </h2>
         </div>
-
+    
         <div class="slds-grid slds-wrap slds-col slds-size_1-of-1" style="display:block; margin-bottom: var(--lwc-cardSpacingMargin); margin-top: 1rem;">
             <div class="slds-col slds-size_1-of-1 slds-tabs_card">
                 <lightning-tabset ondrivedatachanged={onDriveDataChanged} active-tab-value={currentTab}>

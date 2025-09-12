@@ -144,7 +144,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                     recOpp.Slot_Generator_Change_Reason__c = oppFields.Slot_Generator_Change_Reason;
                 }
                 // HRP-12011 --> Ends here
-                
+
                 // HRP-13190 --> Starts here
                 if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
                     recOpp.APT_Required__c = oppFields.APT_Required;
@@ -181,9 +181,8 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
             }
         }
     }
-    system.debug('###FWO inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
+    system.debug('###FWO checkRecursive.skipAptRecalculation '+checkRecursive.skipAptRecalculation+' and inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
     if(!mapOfOppToUpdate.isEmpty()) {//HRP-12422 start
-        system.debug('checkRecursive.skipAptRecalculation '+checkRecursive.skipAptRecalculation); 
         Database.SaveResult[] lsOpp = Database.update(mapOfOppToUpdate.values(), false);//HRP-12422 end
         System.debug('mapOfOppToUpdate being updated->'+mapOfOppToUpdate);
         //HRP-11296-Begin-Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions

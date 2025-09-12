@@ -39,7 +39,7 @@
 			* CreatedFor : HRP-11368
     * @Description : 
      		* This constructor will be used for running Adhoc CB Batch by Sys Admin/ Global Admin/ Specific Users
-            * It can be used for both the type of drives
+            * It can be used only for mobile drives
     *  @Parameters : 
             * CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput : User inputs containing booking strategy, list of opps and Source as Adhoc Calendar Build
     *   @Error Handling : 
@@ -55,29 +55,14 @@
             this.opportunitySource = input.opportunitySource; //Adhoc Calendar Build
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(NULL, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
             cbLogWrapper.opportunitySource = this.opportunitySource;
-            Map<Id, Opportunity> map_eligibleOppsId_oppDetails = new Map<Id, Opportunity>(input.selectedOpportunities);
-            List<Opportunity> lstOppsWithParentCB = new List<Opportunity>([SELECT Id, Calendar_Build_Parent_Opportunity__c 
-                                                                            FROM Opportunity 
-                                                                            WHERE Calendar_Build_Parent_Opportunity__c IN :map_eligibleOppsId_oppDetails.keySet()
-                                                                            AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)
-                                                                        ]);
-            Set<Id> parentCbIds = new Set<Id>();
-            if(lstOppsWithParentCB != null && lstOppsWithParentCB.size() > 0) {
-                for(Opportunity oppWithParentCB : lstOppsWithParentCB) {
-                    parentCbIds.add(oppWithParentCB.Calendar_Build_Parent_Opportunity__c);
-                }
-            }
+            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>(CalendarBuildBatchHandler.filterOpportunitiesToCloneForAdhocRun(input.selectedOpportunities));
 
-            cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
             cbLogWrapper.map_driveType_eligibleOppList = new Map<String, List<Opportunity>>();
-            for(Opportunity opp : map_eligibleOppsId_oppDetails.values()) {
-                if(!parentCbIds.contains(opp.Id)) { 
-                    cbLogWrapper.eligibleOpportunityForCbList.add(opp);
-                    if(!cbLogWrapper.map_driveType_eligibleOppList.containsKey(opp.Type_of_Drive__c)) {
-                        cbLogWrapper.map_driveType_eligibleOppList.put(opp.Type_of_Drive__c, new List<Opportunity>());
-                    }
-                    cbLogWrapper.map_driveType_eligibleOppList.get(opp.Type_of_Drive__c).add(opp);
+            for(Opportunity opp : cbLogWrapper.eligibleOpportunityForCbList) {
+                if(!cbLogWrapper.map_driveType_eligibleOppList.containsKey(opp.Type_of_Drive__c)) {
+                    cbLogWrapper.map_driveType_eligibleOppList.put(opp.Type_of_Drive__c, new List<Opportunity>());
                 }
+                cbLogWrapper.map_driveType_eligibleOppList.get(opp.Type_of_Drive__c).add(opp);
             }
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
@@ -87,7 +72,7 @@
                 BSF_Constants.RUN_TYPE_MANUAL
             );
             cbLogWrapper.apexMethodName = 'Constructor Call for Manual Adhoc CB Run';
-            cbLogWrapper.opportunitySource = input.opportunitySource;
+            cbLogWrapper.opportunitySource = BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD;
             cbLogWrapper.eligibleOpportunityForCbList = new List<Opportunity>();
             DriveGenerationUtil.captureErrorLoggingForException(ex, cbLogWrapper);    
         }
@@ -116,6 +101,9 @@
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(manualRunDate, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
             cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
+                throw new CBBatchCustomException('This is custom exception during manual run');
+            }
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -146,6 +134,7 @@
 	*/
     
     global CalendarBuildEvaluateDrivesBatch() {
+        System.debug('Entered CalendarBuildEvaluateDrivesBatch');
         try {
             Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
             Decimal daysAfterDriveCompletion = cbMetadata?.No_of_Days_for_Calendar_Build_Batch__c;
@@ -160,6 +149,9 @@
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(this.driveDateToEval, BSF_Constants.BATCH_CALENDAR_BUILD, this.runType);
             cbLogWrapper.opportunitySource = this.opportunitySource;
             cbLogWrapper = CalendarBuildBatchHandler.getEligibleOppsToRunCb(cbLogWrapper);
+            if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
+                throw new CBBatchCustomException('This is custom exception during scheduled run');
+            }
         } catch(Exception ex) {
             sendErrorNotification(new Map<Exception, String>{ex => ''}, new Map<Id, String>());
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
@@ -265,8 +257,8 @@
                     DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
                 }
                 if(cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) {
-                    DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
-                    driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
+                driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
                 }
                 
                 if(!this.byPassDriveGeneration) {
@@ -310,4 +302,6 @@
             Helper.sendEmail(commonExMap, dmlErrMap, emailIds, owea[0].Id, true, 'Error in CB Drive Creation');
         }
     }
+
+    private class CBBatchCustomException extends Exception {}
 }

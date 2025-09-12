@@ -12,7 +12,6 @@ class collectionOperationStagingLocationService extends dataService {
     if (query.collectionOperationIds && query.collectionOperationIds.length) {
       queryBuilder.addCondition({ template: 'sked_Collection_Operation__c IN {0}', value: query.collectionOperationIds, type: "array_string" });
     }
-    queryBuilder.orderClause = 'ORDER BY sked_Start_Date__c ASC';
   }
 }
 

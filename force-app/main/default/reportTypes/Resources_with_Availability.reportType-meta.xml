@@ -165,6 +165,11 @@
             <field>sked_Anticipated_Leave_Return_Date__c</field>
             <table>sked__Resource__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_REAL_ID_Compliant_indicator__c</field>
+            <table>sked__Resource__c</table>
+        </columns>
         <masterLabel>Resources</masterLabel>
     </sections>
     <sections>
@@ -260,12 +265,97 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_Time_Call_Out_Received__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Date_ISO_Format__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked_Resource_Type__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_DateTime_Call_Out_Received__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dispositioned_By_User__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Disposition_Date__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Unique_Key__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Call_Out_Created_By_Resource__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_SBA_Count__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Recurring_Schedule__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Waitlist_Confirmed__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Ranking__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_MigrationID__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Approved_Via_Automation__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Date_Call_Out_Received__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Approval_Reason__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Employee_Id__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked_Staffing_Budget__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Bypass_Auto_Approval_Process__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
@@ -550,42 +640,27 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Activity_Resource__c</field>
+            <field>CreatedBy.Profile</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_WID__c</field>
+            <field>CreatedBy.Profile.Name</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Workday_Manual_Steps__c</field>
+            <field>CreatedBy.Profile.UsageType</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Is_Reason_Code_Null__c</field>
+            <field>CreatedBy.Profile.UserLicense</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Is_Reason_Code_Not_Null__c</field>
-            <table>sked__Resource__c.sked__Availabilities1__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Is_Reason_Code_Blank__c</field>
-            <table>sked__Resource__c.sked__Availabilities1__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Dispositioned_By_User__c</field>
-            <table>sked__Resource__c.sked__Availabilities1__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Disposition_Date__c</field>
+            <field>CreatedBy.Profile.UserType</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <masterLabel>Availabilities</masterLabel>

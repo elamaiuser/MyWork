@@ -484,7 +484,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     estimatedTravelTime: (posAl || {}).estimatedTravelTime,
                     DOT: false,
                     CDL: false,
-                    additionalRoles: job.dualRole ? [job.dualRole] : [],
+                    additionalRoles: job.dualRole,
                     additionalRolesString: job.dualRole
                 };
                 job.jobAllocations.push(newJobAllocation);
@@ -601,7 +601,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
         let groupResourceTag;
         if(item.assetType === TYPE_RESOURCE.VEHICLE) {
             groupResourceTag = {
-                'Mobile Type': (item.mobileType || []).map(item => {
+                'Mobile Type': item.mobileType ? item.mobileType.split(';').map(item => {
                     return {
                         key: item,
                         tag: {
@@ -609,7 +609,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                             name: item
                         }
                     } 
-                }),
+                }) : [],
                 'Certification': (item.resourceTags || []).filter(tagItem => tagItem.tag.type === 'Certification')
             }
         } else {
@@ -817,7 +817,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     ...itemJa,
                     id: itemJa.id,
                     jobId: itemJa.jobId,
-                    additionalRolesString: (itemJa.additionalRoles || []).join(', '),
+                    additionalRolesString: itemJa.additionalRoles ? itemJa.additionalRoles.split(';').join(', ') : null,
                     isDeleted: itemJa.status === JOB_ALLOCATION_STATUS.DELETED,
                     icon: this.getResourceIcon(itemJa.resource),
                     timezoneSidId: this.timezoneSidId,
@@ -2247,21 +2247,6 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
         }
     }
 
-    handleShowCallOutModal(detail) {
-        const [ job ] = this.getJobById(detail.jobId);
-        const resourceDetail = this.getResourceById(detail.resourceId);
-        let durationHours = (detail.duration/60).toFixed(2);
-        let callOutDuration = durationHours > resourceDetail.dailyTimeOffHours ? resourceDetail.dailyTimeOffHours : durationHours;
-        this.callOutModalData = {
-            isOpen: true,
-            jobId: detail.jobId,
-            jobAllocationId: detail.id,
-            driveDate: job.driveDate,
-            resourceId: detail.resourceId,
-            duration: callOutDuration
-        }
-    }
-
     handleCloseCallOutModal() {
         this.callOutModalData = {};
     }
@@ -2386,7 +2371,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
         let [ job ] = this.getJobById(jobId);
         let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
         ja.additionalRoles = event.detail.roles
-        ja.additionalRolesString = (ja.additionalRoles || []).join(', ');
+        ja.additionalRolesString = ja.additionalRoles ? ja.additionalRoles.split(';').join(', ') : null;
     }
 
     /** Confirm Modal **/

@@ -12,7 +12,7 @@
  * 10/26/2023			Barnojit Sharma			Add Military Fields & Additional Drive Logistics to the Drive Worksheet(Logic for HRP-9954)
  * 11/28/2023			Barnojit Sharma			Drive Worksheet has the Incorrect Account and Site ID populated(Logic for HRP-11561)
  * 01/02/2024			Barnojit Sharma			Drive Worksheet is not populating the Account Manager field(Logic for HRP-11777)
- * 14/03/2024			Kishore Das				Logic for HRP-12306 (Deleted Vehicle Jobs Reflecting on the Drive Worksheet)
+ * 14/03/2024			Ankit Kundu				Logic for HRP-12306 (Deleted Vehicle Jobs Reflecting on the Drive Worksheet)
  * 10/04/2024			Barnojit Sharma			New Lookup field on Site to Lookup to Chapter and limit the chapter name to 57 charecters.(Logic for HRP-12045)
  * 04/30/2024			Venkat					HRP-12505 - Pull account Manager from Opportunity
  * 07/16/2024			Apurba Bhattacharjee	HRP-12166 - Add Dropdown for EAP Map Available and AED Dropdown to Site/Details/Security and Drive Worksheet-Additional Site Information.

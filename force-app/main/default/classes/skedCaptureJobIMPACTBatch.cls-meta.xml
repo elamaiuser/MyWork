@@ -3,7 +3,7 @@
     <apiVersion>56.0</apiVersion>
     <packageVersions>
         <majorNumber>102</majorNumber>
-        <minorNumber>58</minorNumber>
+        <minorNumber>56</minorNumber>
         <namespace>sked</namespace>
     </packageVersions>
     <status>Active</status>

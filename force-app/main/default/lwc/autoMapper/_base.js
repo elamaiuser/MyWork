@@ -2,7 +2,6 @@ export const MAPPING_TYPE = {
   direct: 'direct',
   related: 'related',
   relatedList: 'relatedList',
-  multiPicklist: 'multiPicklist',
   time: 'time'
 }
 

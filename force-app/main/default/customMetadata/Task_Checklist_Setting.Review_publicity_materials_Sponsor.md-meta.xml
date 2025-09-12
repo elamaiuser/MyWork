@@ -60,7 +60,7 @@ Recommended completion time is no later than 9 weeks.</value>
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Review publicity materials promotional items and incentive with BPL</value>
+        <value xsi:type="xsd:string">Review publicity materials, promotional items, and incentives with BPL</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

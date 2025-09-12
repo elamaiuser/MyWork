@@ -16,7 +16,6 @@ export class DriveShiftTradeMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Contact_Method__c', 'contactMethod', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Contention_Acknowledge__c', 'contentionAcknowledge', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Date_Trade_Approved__c', 'dateTradeApproved', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Denied_Reason__c', 'deniedReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__c', 'designatedApproverId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Designated_Approver__r.Name', 'designatedApproverName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Reason_Approval_Required__c', 'reasonApprovalRequired', MAPPING_TYPE.direct);

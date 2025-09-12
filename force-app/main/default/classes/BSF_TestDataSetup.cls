@@ -670,6 +670,27 @@ public class BSF_TestDataSetup {
         }
         mapTestData.put('FIXED_SITE_COLLECTION_OPERATION', fixedSiteCollectionOperation); 
         
+        sked_Territory__c territory = new sked_Territory__c(
+        Name = 'Test one',
+        Start_Date__c = Date.Today().addDays(-20),
+        End_Date__c = Date.Today().addDays(10)    
+        );
+         if(doInsert) {
+       		
+            insert territory;
+        }
+        mapTestData.put('TERRITORY', territory);
+        
+        sked_Territory_Collection_Operation__c territoryCollectionOperation = new sked_Territory_Collection_Operation__c(
+             sked_Collection_Operation__c = collectionOperation.Id
+             
+        );
+         if(doInsert) {
+       		territoryCollectionOperation.sked_Territory__c = territory.Id;
+            insert territoryCollectionOperation;
+        }
+        mapTestData.put('TERRITORY_COLLECTION_OPERATION', territoryCollectionOperation);
+        
 		/* Mobile Opportunity */
         Opportunity mobileOpp = new Opportunity(
             Name = 'Test Opportunity',
@@ -693,6 +714,7 @@ public class BSF_TestDataSetup {
         if(doInsert) {
             mobileOpp.AccountId = mobileAcc.Id;
             mobileOpp.Drive_Site__c = mobileSite.id;
+            //mobileOpp.Drive_Date__c = system.today().addDays(55);
 			insert mobileOpp;        
         }
         mapTestData.put('MOBILE_OPP', mobileOpp);   

@@ -5,7 +5,7 @@ import { DRIVE_STATUS, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { DateTime } from 'c/luxon';
 import { getValueFromEvent } from 'c/slwcUtils';
-import { remove, keyBy, cloneDeep, compact } from 'c/lodash';
+import { remove, keyBy, cloneDeep, cloneDeepWith, isMap, compact } from 'c/lodash';
 
 const MODE = {
   DRIVE_SUBMISSION: 'driveSubmission',
@@ -50,6 +50,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @track holdDrivesSummaryData = {};
   @track driveContentions = [];
   @track driveStaffingDetailsData = {};
+  @track staffingComplementModalData = {};
 
   get driveContentionsGroup1() {
     return this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : [];
@@ -101,7 +102,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       return {
         drive: this.drive,
-        contentionResolution: [...this.drive.contentionResolutions],
+        contentionResolution: this.drive.contentionResolutions.join(';'),
         driveContentions: this.driveContentions,
         equipmentJob,
         vehicleJob
@@ -152,7 +153,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         
         this.drive.contentionResolutions = [];
         if(this.drive.contentionResolution) {
-          this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+          this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
         }
       }
     })
@@ -172,7 +173,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       driveType: null
     });
 
-    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
+    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
     let equipmentJob = null;
     let vehicleJob = null;
     if (this.drive && this.drive.driveShifts && this.drive.driveShifts.length) {
@@ -277,18 +278,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
 
       if(restoreContentionResolution) {
-        this.drive.contentionResolution = [...backupContentionResolution];
+        this.drive.contentionResolution = backupContentionResolution;
       }
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
 
   fetchDriveChangeRequestAndDrive = (recordId, restoreContentionResolution = false, validateAssets = false) => {
-    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
+    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
     
     let equipmentJob = null;
     let vehicleJob = null;
@@ -417,12 +418,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       this.drive = this.driveGeneratorInstance.drive;
 
       if(restoreContentionResolution) {
-        this.drive.contentionResolution = [...backupContentionResolution];
+        this.drive.contentionResolution = backupContentionResolution;
       }
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
@@ -665,7 +666,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       }
     }
 
-    if(contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
+    /*if(contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
       const { mapDualRoleJobsRemovedByDriveShiftId } = data;
       return {
         requested: ``,
@@ -698,7 +699,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           }
         `
       }
-    }
+    }*/
 
     if(contention === DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED) {
       const { mapSystemGeneratedRoleJobsRemovedByDriveShiftId } = data;
@@ -785,6 +786,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       return [{
         label: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY)
+      }, {
+        isLink: true,
+        label: 'Staffing Complement',
+        onclick: () => {
+          this.openStaffingComplementModal(this.drive);
+        }
       }]
     }
 
@@ -846,12 +853,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       }]
     }
 
-    if (contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
+    /*if (contention === DRIVE_CONTENTION.DUAL_ROLE_REMOVAL) {
       return [{
         label: DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL,
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL)
       }]
-    }
+    }*/
 
     if (contention === DRIVE_CONTENTION.PART_OF_LINKED_DRIVE) {
       return [{
@@ -975,10 +982,10 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         ];
         
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
-          originalContentions = this.drive.pendingActionReasonCode || [];
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
+          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
         } else {
-          originalContentions = this.driveChangeRequest?.driveContention || [];
+          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
         }
         
         let {
@@ -986,7 +993,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = this.driveHelper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions
+          contentionResolution: this.drive.contentionResolutions.join(';')
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive
@@ -1030,16 +1037,16 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         ];
         if(this.drive.typeOfDrive === DRIVE_TYPE.MOBILE) {
           contentionsToValidate.push(DRIVE_CONTENTION.LACKING_VEHICLE);
-          contentionsToValidate.push(DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
+          //contentionsToValidate.push(DRIVE_CONTENTION.DUAL_ROLE_REMOVAL);
           contentionsToValidate.push(DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS);
           contentionsToValidate.push(DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO);
         }
 
         let originalContentions = [];
-        if(this.mode === MODE.DRIVE_SUBMISSION) {
-          originalContentions = this.drive.pendingActionReasonCode || [];
+        if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
+          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
         } else {
-          originalContentions = this.driveChangeRequest?.driveContention || [];
+          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
         }
         
         let {
@@ -1047,7 +1054,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = this.driveHelper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions
+          contentionResolution: this.drive.contentionResolutions.join(';')
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
@@ -1165,7 +1172,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
       return this.validateDriveContentions();
     })
@@ -1185,7 +1192,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   handleValidateBtn = () => {
-    const backupContentionResolution = this.drive ? this.drive.contentionResolutions : [];
+    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
 
     this.showLoading()
     return Promise.resolve()
@@ -1282,11 +1289,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
-      this.drive.contentionResolution = [...backupContentionResolution];
+      this.drive.contentionResolution = backupContentionResolution;
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
       return this.validateDriveContentions()
     })
@@ -1345,6 +1352,79 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .then(() => {
       return this.handleValidateBtn();
+    })
+    .catch(error => this.exceptionHandler(error))
+    .finally(this.hideLoading);
+  }
+
+  //staffing complement modal
+  cloneDeepWithMaps(value) {
+    return cloneDeepWith(value, (val) => {
+      if (isMap(val)) {
+        return new Map(Array.from(val.entries()));
+      }
+    });
+  }
+
+  openStaffingComplementModal() {
+    this.staffingComplementModalData = {
+      driveGeneratorInstance: this.cloneDeepWithMaps(this.driveGeneratorInstance),
+      isOpen: true,
+    }
+  }
+
+  closeStaffingComplementModal() {
+    this.staffingComplementModalData = {
+      isOpen: false,
+    } 
+  }
+
+  saveStaffingComplementModal(event) {
+    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
+    const { driveGeneratorInstance } = event.detail;
+
+    this.showLoading()
+    Promise.resolve()
+    .then(() => {
+      const newDrive = driveGeneratorInstance.drive;
+      return this.driveGeneratorInstance.onDriveDataChanged([{
+        targetName: 'staffingComplementChanged',
+        targetValue: newDrive.driveShifts.map(driveShift => {
+          return driveShift.jobs.reduce((staffingComplement, job) => {
+            if(job.resourceRole) {
+              return {
+                ...staffingComplement,
+                [this.driveHelper.generateJobKey(job)]: job
+              }
+            }
+
+            return staffingComplement;
+          }, {});
+        })
+      }])
+    })
+    .then(() => {
+      this.drive = this.driveGeneratorInstance.drive;
+      this.drive.contentionResolution = backupContentionResolution;
+
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+      }
+
+      this.handleActionChanged({
+        target: {
+          name: DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY,
+          type: 'checkbox',
+          checked: true,
+          dataset: {
+            contention: DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
+          }
+        }
+      })
+      
+      this.closeStaffingComplementModal();
+      return this.validateDriveContentions();
     })
     .catch(error => this.exceptionHandler(error))
     .finally(this.hideLoading);

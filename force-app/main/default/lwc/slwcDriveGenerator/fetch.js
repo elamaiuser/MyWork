@@ -12,7 +12,7 @@ import {
   roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
-import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS } from 'c/slwcConstants';
+import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import { keyBy, groupBy, uniq } from 'c/lodash';
 import { getTravelTimeIndexKey } from 'c/slwcUtils';
 class Fetch {

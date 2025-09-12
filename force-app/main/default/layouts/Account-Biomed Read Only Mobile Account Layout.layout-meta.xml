@@ -74,10 +74,6 @@
                 <behavior>Edit</behavior>
                 <field>Next_Scheduled_Drive_Updated__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Special_Partnership_Level__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -113,8 +109,12 @@
                 <field>UFID_AN__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Relationship_Manager__c</field>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager_Notes__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

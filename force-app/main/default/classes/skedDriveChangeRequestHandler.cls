@@ -100,7 +100,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == 'Submitted') {
                 mapSubmittedDcr.put(newRecord.Id, newRecord);
-                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c) {
+                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c || (newRecord.sked_Status__c == 'Submitted' && oldData.sked_Status__c == 'Waiting for APS Approval')) {//HRP-14627
                     hasRouteApprovalRequestChanged = true;
                 }
             }
@@ -125,7 +125,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             for (ProcessInstanceWorkitem workItem : activeWorkItems) {
                 Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
                 req.setWorkitemId(workItem.Id);
-                req.setAction('Removed');  // Action to remove or recall the approval
+                req.setAction('Removed');  // Remove the existing pending approval process
                 activeApprovalProcesses.add(req);
             }
         }
@@ -187,6 +187,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                 ? submittedDcr.sked_New_Collection_Operation__r.Name : skedDrive.sked_Collection_Operation__r.Name;
             
             String approvalQueueName;
+            
             if (submittedDcr.sked_Route_Approval_Request_To__c == 'Request DM evaluation')  {
                 request.setProcessDefinitionNameOrId('sked_DCR_DM_APS_Approval');
                 approvalQueueName = coName + ': ' + skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS;
@@ -199,6 +200,9 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                 
                 submittedDcr.sked_Status__c = 'Waiting for APS Approval';
             }
+            
+            system.debug('#mapQueueByName#' + mapQueueByName);
+            system.debug('#approvalQueueName#' + approvalQueueName);
             
             if (approvalQueueName != null && mapQueueByName.containsKey(approvalQueueName)) {
                 Group approvalQueue = mapQueueByName.get(approvalQueueName);
@@ -265,7 +269,6 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
 
     private void onCancelledRejected(List<sked_Drive_Change_Request__c> newRecords, Map<Id, sked_Drive_Change_Request__c> oldMap) {
         Set<Id> rejectedDriveChangeRequestIds = new Set<Id>();
-        List<String> aptQuantityRevertNeededFor = new List<String>{'X2RBC_Projected_Procedures__c', 'WB_Projected_Procedures__c', 'APT_Required__c'};
         for (sked_Drive_Change_Request__c newRecord : newRecords) {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c) {
@@ -275,7 +278,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             }
         }
         if (!rejectedDriveChangeRequestIds.isEmpty()) {
-            List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c, sked_Drive__r.sked_APT_Quantity__c,
+            List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c,
                                                                (SELECT Id, sked_Field_API_Name__c, sked_Field_Type__c, 
                                                                 sked_Old_Value__c
                                                                 FROM sked_Drive_Change_Request_Items__r
@@ -295,12 +298,6 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                         object fieldVal = skedUtils.getFieldValue(item.sked_Old_Value__c, item.sked_Field_Type__c);
                         
 						oppRec.put(oppDataField, fieldVal);
-
-                        if(aptQuantityRevertNeededFor.contains(item.sked_Field_API_Name__c)) {
-                            object newFieldVal = skedUtils.getFieldValue(String.valueOf(rejectedDCR.sked_Drive__r.sked_APT_Quantity__c), 'double');
-                            oppRec.put('APT_Quantity__c', newFieldVal);
-                            oppRec.put('APT_Change_Reason__c', 'Drive Change Requested is rejected. ' + system.now());
-                        }
                         
                         if (skedDriveHandler.mapReasonFields.containsKey(oppDataField)) {
                             string reasonField = skedDriveHandler.mapReasonFields.get(oppDataField);

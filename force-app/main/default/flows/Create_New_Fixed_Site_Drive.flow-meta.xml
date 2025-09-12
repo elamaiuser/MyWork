@@ -18,9 +18,9 @@
             </value>
         </inputParameters>
         <nameSegment>NewFixedSiteDrive</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Add_Fixed_Site_Opportunity_to_Collection</name>
         <label>Add Fixed Site Opportunity to Collection</label>
@@ -394,6 +394,13 @@
             <stringValue>true</stringValue>
         </value>
     </choices>
+    <constants>
+        <name>DRIVE_TYPE_FIXED_SITE</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Fixed Site</stringValue>
+        </value>
+    </constants>
     <constants>
         <name>TBD</name>
         <dataType>String</dataType>
@@ -1195,6 +1202,14 @@
             <name>AccountClosedText</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;The &lt;/span&gt;&lt;b style=&quot;font-size: 14px;&quot;&gt;{!Get_Account.Name} &lt;/b&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Account is closed  and is no longer available for Drives. Click Finish to return to the Account.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1211,6 +1226,14 @@
             <name>ARDIsRequired</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 9, 9);&quot;&gt;The site&#39;s operation type is &quot;Non Integrated WB&quot;.  Please go back and enter a non zero value for Anticipated Registered Donors.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1236,6 +1259,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Select_Site</name>
@@ -1245,6 +1276,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Drive_Date</name>
@@ -1253,6 +1292,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 12px; font-family: Arial, Helvetica, sans-serif; color: rgb(244, 0, 0);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>({!allowedProfilesToEnterPastDriveDate} == true &amp;&amp; {!Drive_Date} &lt; TODAY()) ||{!Drive_Date} &gt;= TODAY()&amp;&amp;{!Drive_Date} &lt; {!varSiteEndDate}</formulaExpression>
@@ -1276,6 +1323,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>FlowEndTimePicklist</name>
@@ -1285,6 +1340,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Anticipated_Registered_Donors</name>
@@ -1294,6 +1357,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Whole_Blood_Procedures1</name>
@@ -1303,6 +1374,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Double_Red_Procedures</name>
@@ -1312,6 +1391,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -1331,6 +1418,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Platelet_Procedures</name>
@@ -1340,6 +1435,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>of_2RBC_Assets</name>
@@ -1349,6 +1452,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>of_Platelet_Assets</name>
@@ -1358,6 +1469,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>of_Plasma_Assets</name>
@@ -1367,6 +1486,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Online_Scheduling_Enabled</name>
@@ -1378,6 +1505,14 @@
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Open_to_Public</name>
@@ -1389,6 +1524,14 @@
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Drive_Keyword_Not_Required</name>
@@ -1401,6 +1544,14 @@
             <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 11.36px;&quot;&gt;Keywords are recommended to be 50 letters or less.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 11.36px;&quot;&gt;Keywords should begin by being letter based. They may have numbers after words; i.e. Bulldog2018, not 2018Bulldog&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 11.36px;&quot;&gt;Keywords should not allow special characters (*&amp;?%)&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>LEN({!Drive_Keyword_Not_Required}) &lt; 51 &amp;&amp;
@@ -1435,6 +1586,14 @@ REGEX( {!Drive_Keyword_Not_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpress
             <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords are recommended to be 50 letters or less.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should begin by being letter based. They may have numbers after words; i.e. Bulldog2018, not 2018Bulldog&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should not allow special characters (*&amp;amp;?%)&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>LEN({!Drive_Keyword_Required}) &lt; 51 &amp;&amp;
@@ -1459,6 +1618,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <helpText>&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</helpText>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>CalendarDescriptionPickList</name>
@@ -1471,6 +1638,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Source</name>
@@ -1484,6 +1659,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Accept_56_Days_Violation</name>
@@ -1495,6 +1678,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1569,15 +1760,21 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 </value>
             </inputParameters>
             <inputParameters>
-                <name>OutputDonorEligibilityNeededFor</name>
-                <value>
-                    <elementReference>outputDonorEligibilityNeededFor</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
                 <name>OutputDonorEligibilityDay</name>
                 <value>
                     <elementReference>outputDonorEligibilityDay</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>OutputDonorEligibilityType</name>
+                <value>
+                    <elementReference>OutputEligibilityNeededFor</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>InputDriveType</name>
+                <value>
+                    <elementReference>DRIVE_TYPE_FIXED_SITE</elementReference>
                 </value>
             </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
@@ -1627,13 +1824,21 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 <name>OutputWeeklyFrequencyValue</name>
             </outputParameters>
             <outputParameters>
-                <assignToReference>outputDonorEligibilityNeededFor</assignToReference>
-                <name>OutputDonorEligibilityNeededFor</name>
-            </outputParameters>
-            <outputParameters>
                 <assignToReference>outputDonorEligibilityDay</assignToReference>
                 <name>OutputDonorEligibilityDay</name>
             </outputParameters>
+            <outputParameters>
+                <assignToReference>OutputEligibilityNeededFor</assignToReference>
+                <name>OutputDonorEligibilityType</name>
+            </outputParameters>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>false</showFooter>
         <showHeader>true</showHeader>
@@ -1650,6 +1855,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>EndTimeCannotBeLessThanStartTime</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;You selected an End Time &lt;/span&gt;&lt;b style=&quot;color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;({!FlowEndTimePicklist}) &lt;/b&gt;&lt;span style=&quot;color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;that is prior or equal to the Start Time &lt;/span&gt;&lt;b style=&quot;color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;({!FlowStartTimePicklist}).&lt;/b&gt;&lt;span style=&quot;color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;  Please make sure the End Time is always after the Start Time.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1669,6 +1882,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>ShowConfirmation</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;The following Opportunity Record(s) will be created:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255)); font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;Account:&lt;/b&gt;&lt;span style=&quot;background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255)); font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); font-size: 14px; color: rgb(36, 73, 211);&quot;&gt; {!Get_Account.Name}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255)); font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); font-size: 14px; color: rgb(36, 73, 211);&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;Drive/Series Start Date: {!outStartDate}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;Drive/Series End Date:&lt;/b&gt;&lt;span style=&quot;font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;  {!outEndDate}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;font-size: 14px; color: rgb(36, 73, 211);&quot;&gt;Total Number Of Drives Being Created In This Series: {!TotalNumberOfDrivesInSeries}&lt;/b&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1685,6 +1906,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>InvalidDriveDateMessage</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(68, 68, 68); background-color: rgb(255, 255, 255);&quot;&gt;Your choice of recurring series end date {!SeriesEndDate} is greater than site end date {!Get_Location_Account.Site_End_Date__c}. Please choose dates less than site end date&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1701,6 +1930,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>InvalidSiteAddressMessage</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(176, 24, 24); background-color: rgb(255, 255, 255);&quot;&gt;This selected site is missing address (Please check to make sure Address, City, State and Zip code fields are all populated) . Please update with valid address and try again.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1717,6 +1954,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>more_than_Recurring_limit</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);&quot;&gt;Exceeding the maximum number of recurring drives that can be created in a single invocation. Modify the recurring dates such that the total drive count is lesser or equal to the limit of {!RecurrinDriveLimit}. Once you have added the first {!RecurrinDriveLimit} drives, you can use the same plan a drive button again to create the remaining {!remainingOverTheLimit} drives&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1733,6 +1978,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>NonCollectionAreaOpRecordsText</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255); color: rgb(51, 51, 51);&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1749,6 +2002,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>NonCollectionAreaOpSite</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; color: rgb(51, 51, 51); background-color: rgb(255, 255, 255);&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1774,6 +2035,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1790,6 +2059,14 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>CreatedSuccessfully</name>
             <fieldText>&lt;p&gt;The Opportunities are submitted for creation.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -1862,9 +2139,9 @@ REGEX( {!Drive_Keyword_Required}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         <isOutput>false</isOutput>
     </variables>
     <variables>
-        <name>outputDonorEligibilityNeededFor</name>
+        <name>OutputEligibilityNeededFor</name>
         <dataType>String</dataType>
-        <isCollection>true</isCollection>
+        <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>

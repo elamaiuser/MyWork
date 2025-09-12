@@ -3,7 +3,6 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     public override void onBeforeInsert() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC);
         populateData(this.context.newRecords);
-        system.debug('skedSetting.instance.Admin.dateTimeConversion '+skedSetting.instance.Admin.dateTimeConversion);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords);
         }
@@ -69,7 +68,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             activityIds.add(newRecord.sked__Activity__c);
         }
         Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([
-            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c
+            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c,sked_Activity_Title__c
             FROM sked__Activity__c
             WHERE Id IN :activityIds
         ]);
@@ -82,7 +81,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             unavailability.startTime = newRecord.sked_Start1__c;
             unavailability.endTime = newRecord.sked_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + activity.Name;
+            unavailability.exceptionText = 'Conflict with ' + activity.sked_Activity_Title__c;
             unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
             unavailability.recordId = activity.Id;
             unavailabilityList.add(unavailability);
@@ -97,9 +96,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
         for (sked__Activity_Resource__c newRecord : newRecords) {
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_End__c', 'sked_End_Date__c', 'sked_End_Time__c', 'sked_Timezone__c');
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_Start1__c', 'sked_Start_Date__c', 'sked_Start_Time__c', 'sked_Timezone__c');
-            system.debug('newRecord '+newRecord.sked_Start_Time__c+' and end '+newRecord.sked_End_Time__c);
         }
-        
     }
     
     private void doDateTimeConversion(List<sked__Activity_Resource__c> newRecords, Map<Id, sked__Activity_Resource__c> updatedRecords) {
@@ -121,7 +118,6 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([SELECT Id, sked__Start__c, sked__End__c
                                                                                      FROM sked__Activity__c
                                                                                      WHERE Id IN :activityIdsToPopulateDateTime]);
-            system.debug('mapActivity '+mapActivity);
             for (sked__Activity_Resource__c newRecord : newRecords) {
                 sked__Activity__c skedActivity = mapActivity.get(newRecord.sked__Activity__c);
                 if (newRecord.sked_Start1__c == NULL) {
@@ -456,25 +452,25 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
                                                           FROM sked__Availability__c
                                                           WHERE sked_Activity_Resource__c IN :mapActivityResource.keySet()];
             List<sked__Availability__c> availabilitiesToUpdate = new List<sked__Availability__c>();
-            for (sked__Availability__c availability : availabilities) {
+                for (sked__Availability__c availability : availabilities) {
                 if (mapActivityResource.containsKey(availability.sked_Activity_Resource__c)) {
                     sked__Activity_Resource__c activityResource = mapActivityResource.get(availability.sked_Activity_Resource__c);
                     availability.sked__Start__c = activityResource.sked_Start1__c;
                     availability.sked__Finish__c = activityResource.sked_End__c;
                     availabilitiesToUpdate.add(availability);
+                    }
                 }
-            }
             if (!availabilitiesToUpdate.isEmpty()) {
                 update availabilitiesToUpdate;
             }
         }
     }
-    
+
     private static void deleteAvailabilityForOnCallResources(Set<Id> recordIds) {
         List<sked__Availability__c> availabilities = [SELECT Id
                                                       FROM sked__Availability__c
                                                       WHERE sked_Activity_Resource__c IN :recordIds];
-        
+
         if (!availabilities.isEmpty()) {
             delete availabilities;
         }

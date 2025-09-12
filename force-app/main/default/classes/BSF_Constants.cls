@@ -339,8 +339,18 @@ public class BSF_Constants {
     public static final String ACCOUNT_TYPE_EDUCATION = 'Education';
     public static final String ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL = 'Middle School';
     public static final String ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL = 'Elementary School';   
+    public static final String ACCOUNT_INDUSTRY_CODE_COLLEGE_OR_UNIVERSITY = 'College / University';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_COMMUNITY_OR_JUNIOR_COLLEGE = 'Community / Junior College';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL = 'High School';//HRP-14286
     public static final String APT_CHANGE_VIA_TEMPLATE = 'Apply Changes to Future Drive';  
 
     public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
     public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
+
+    public static final String SYSTEM_TTBD_OVERRIDE_COMMENT = 'As of {0} System has failed to return valid Travel Time values. Manual override values are required. Re-attempt refresh by unchecking User Override checkbox and selecting banner option to manually refresh.';
+
+    //HRP-13426 --> 
+    public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
+    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
 }

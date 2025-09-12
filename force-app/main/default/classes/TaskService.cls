@@ -6,6 +6,7 @@
 * 08/30/2024			         Barnojit Sharma		  Within the Sponsor Planning Report task, populate the referencing Opp/Drive Sponsor Planning Report. (Logic for HRP-5337)
 * 10/07/2024					 Balaji N				  HRP-12583 new method stopPublicityOrderTaskCompletionWithoutOrder
 * 11/07/2024			         Barnojit Sharma		  Update Task: 72 Hour Check in - System Generated/Details/Checklist. (Logic for HRP-12627)
+* 13/02/2025			         Barnojit Sharma		  Checklist for Post Drive Analysis task Enhancements. (Logic for HRP-13426)
 ************************************************************************************************************************************************
 */ 
 
@@ -67,22 +68,32 @@ public with sharing class TaskService {
     public static List<Map<String,String>> getReportLinks(Id taskId) {
         System.debug('getReportLinks taskId : '+taskId);
         List<Map<String,String>> result = new List<Map<String,String>>();
+        String opportunityId = '';
+        String driveId = '';
+        String driveExternalId = '';
+        String driveUFID = '';
         if(taskId != null){
             List<Task> taskList = [SELECT Subject,
                                             WhatId
                                         FROM Task 
                                         WHERE Id = :taskId];
             if(!taskList.isEmpty() && taskList[0].Subject != null){
-                Map<Id,Id> oppVsDocMap = new Map<Id,Id>();
+                Map<Id,Sked_Drive__c> oppVsDocMap = new Map<Id,Sked_Drive__c>();
                 //HRP-12627 changes starts
                 if(taskList[0].WhatId != null){
+                    opportunityId = taskList[0].WhatId;
                     List<Sked_Drive__c> docList = [SELECT Id,
-                                                            sked_Opportunity__c
+                                                            sked_Opportunity__c,
+                                                            sked_Drive_External_Id__c,
+                                                            sked_UFID__c
                                                     FROM Sked_Drive__c 
                                                     WHERE sked_Opportunity__c = :taskList[0].WhatId
-                                                    AND sked_Is_Surrogate__c = false];
-                    for(Sked_Drive__c drv : docList){
-                        oppVsDocMap.put(drv.sked_Opportunity__c, drv.Id);
+                                                    AND sked_Is_Surrogate__c = false
+                                                    ORDER BY createdDate DESC];
+                    if(!docList.isEmpty()){
+                        driveId = docList[0].Id;
+                        driveExternalId = docList[0].sked_Drive_External_Id__c != null ? docList[0].sked_Drive_External_Id__c : '';
+                        driveUFID = docList[0].sked_UFID__c != null ? docList[0].sked_UFID__c : '';
                     }
                 }
                 //HRP-12627 changes ends
@@ -98,10 +109,10 @@ public with sharing class TaskService {
                     tempMap.put('name', metadata.Report_Name__c);
                     //HRP-12627 changes starts
                     String reportLink = metadata.Report_Link__c;
-                    reportLink = reportLink.replace('{{opportunityId}}',taskList[0].WhatId);
-                    if(!oppVsDocMap.isEmpty() && oppVsDocMap.containsKey(taskList[0].WhatId)){
-                        reportLink = reportLink.replace('{{driveId}}',oppVsDocMap.get(taskList[0].WhatId));
-                    }
+                    reportLink = reportLink.replace('{{opportunityId}}',opportunityId);
+                    reportLink = reportLink.replace('{{driveId}}',driveId);
+                    reportLink = reportLink.replace('{{driveExternalId}}',driveExternalId);
+                    reportLink = reportLink.replace('{{driveUFID}}',driveUFID);
                     tempMap.put('link', reportLink);
                     //HRP-12627 changes ends
                     tempMap.put('id', metadata.DeveloperName);
@@ -235,17 +246,17 @@ public with sharing class TaskService {
     }
     //HRP-12583 End
     public static void updateRelatedAccountAndOpportunity(List<Task> newList, Map<Id, Task> oldMap){
-        System.debug('updateRelatedAccountAndOpportunity entrie');
+        final List<String> subjectList = new List<String>{BSF_Constants.POST_DRIVE_ANALYSIS_TASK,BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,BSF_Constants.RECRUITMENT_PLANNING_TASK};
         Map<String, Map<String,String>> taskVsFieldVsObjectMap = BSFTaskChecklistTriggerHandler.taskVsFieldVsObjectMap;
         Map<String,String> fieldVsObjectMap = new Map<String,String>();
-        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
-            fieldVsObjectMap = taskVsFieldVsObjectMap.get(BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        if(taskVsFieldVsObjectMap != null){
+            for(String subject : subjectList){
+                if(taskVsFieldVsObjectMap.containsKey(subject)){
+                    fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(subject));
+                }
+            }
         }
-        if(!taskVsFieldVsObjectMap.isEmpty() && taskVsFieldVsObjectMap.containsKey(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
-            fieldVsObjectMap.putAll(taskVsFieldVsObjectMap.get(BSF_Constants.RECRUITMENT_PLANNING_TASK));
-        }
-        List<BSF_Task_Checklist__c> postDriveAnalysisTaskchecklists = new List<BSF_Task_Checklist__c>();
-        List<BSF_Task_Checklist__c> RecruitmentTaskchecklists = new List<BSF_Task_Checklist__c>();
+        Map<String,List<BSF_Task_Checklist__c>> taskSubjectVsChecklistMap = new Map<String,List<BSF_Task_Checklist__c>>();
         Map<Id,String> taskVsSubjectMap = new Map<Id,String>();
         
         List<BSF_Task_Checklist__c> checklists = new List<BSF_Task_Checklist__c>();
@@ -254,11 +265,8 @@ public with sharing class TaskService {
         Map<String,Account> taskVsAccountMap = new Map<String,Account>();
         if(newList != null && !newList.isEmpty()){
             for(Task tsk : newList){
-                //System.debug('String.valueOf(task.WhatId).startsWith(BSFTaskChecklistTriggerHandler.oppPrefix) : '+String.valueOf(task.WhatId).startsWith(BSFTaskChecklistTriggerHandler.oppPrefix));
-                System.debug('tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) : '+tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK));
-                 System.debug('oldMap.get(tsk.Id).Status != tsk.Status : '+ (oldMap.get(tsk.Id).Status != tsk.Status));
                 if(tsk.Id != null && tsk.WhatId != null //&& String.valueOf(task.WhatId).startsWith(BSFTaskChecklistTriggerHandler.oppPrefix)
-                        && String.isNotBlank(tsk.Subject) && (tsk.Subject.equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK) || tsk.Subject.equals(BSF_Constants.RECRUITMENT_PLANNING_TASK))
+                        && String.isNotBlank(tsk.Subject) && subjectList.contains(tsk.Subject)
                         && String.isNotBlank(tsk.Status) && tsk.Status.equals(BSF_Constants.STATUS_COMPLETED)
                         && (oldMap == null || oldMap.isEmpty() || (oldMap.containsKey(tsk.Id) && oldMap.get(tsk.Id).Status != tsk.Status))){
                             taskVsOppMap.put(tsk.Id,tsk.WhatId);
@@ -289,11 +297,11 @@ public with sharing class TaskService {
             if(!checklists.isEmpty()){
                 for(BSF_Task_Checklist__c taskChecklist : checklists){
                     if(taskVsSubjectMap.containsKey(taskChecklist.TaskLookup__c) 
-                            && taskVsSubjectMap.get(taskChecklist.TaskLookup__c).equals(BSF_Constants.POST_DRIVE_ANALYSIS_TASK)){
-                                postDriveAnalysisTaskchecklists.add(taskChecklist);
-                    }else if(taskVsSubjectMap.containsKey(taskChecklist.TaskLookup__c) 
-                            && taskVsSubjectMap.get(taskChecklist.TaskLookup__c).equals(BSF_Constants.RECRUITMENT_PLANNING_TASK)){
-                                RecruitmentTaskchecklists.add(taskChecklist);
+                            && subjectList.contains(taskVsSubjectMap.get(taskChecklist.TaskLookup__c))){
+                                if(taskSubjectVsChecklistMap.isEmpty() || !taskSubjectVsChecklistMap.containsKey(taskVsSubjectMap.get(taskChecklist.TaskLookup__c))){
+                                    taskSubjectVsChecklistMap.put(taskVsSubjectMap.get(taskChecklist.TaskLookup__c),new List<BSF_Task_Checklist__c>());
+                                }
+                                taskSubjectVsChecklistMap.get(taskVsSubjectMap.get(taskChecklist.TaskLookup__c)).add(taskChecklist);
                     }
                 }
             }
@@ -354,11 +362,10 @@ public with sharing class TaskService {
             }
             System.debug('taskVsOpportunityMap : '+taskVsOpportunityMap);
             System.debug('taskVsAccountMap : '+taskVsAccountMap);
-            if(!postDriveAnalysisTaskchecklists.isEmpty()){
-                BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(postDriveAnalysisTaskchecklists,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
-            }
-            if(!RecruitmentTaskchecklists.isEmpty()){
-                BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(RecruitmentTaskchecklists,taskVsOpportunityMap,taskVsAccountMap,BSF_Constants.RECRUITMENT_PLANNING_TASK);
+            if(!taskSubjectVsChecklistMap.isEmpty()){
+                for(String subject : taskSubjectVsChecklistMap.keySet()){
+                    BSFTaskChecklistTriggerHandler.updateAccountAndOpportunity(taskSubjectVsChecklistMap.get(subject),taskVsOpportunityMap,taskVsAccountMap,subject);
+                }
             }
         }
     }
@@ -455,4 +462,112 @@ public with sharing class TaskService {
         }
     }
     // HRP-12627 --> end
+    /*
+    * This is for ticket HRP-13426 to decide who will be the owner of the tasks.
+    */
+    public static void assignDefaultTaskOwner(List<Task> newList){
+        final List<String> subjectList = new List<String>{BSF_Constants.POST_DRIVE_ANALYSIS_TASK_AM,BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM};
+        final Map<String, Id> dataSet = new Map<String,Id>{BSF_Constants.AREA_BOOKING_MANAGER => null, BSF_Constants.ACCOUNT_MANAGER => null, BSF_Constants.ACCOUNT_SPECIALIST => null, BSF_Constants.DISTRICT_MANAGER => null, 
+                                                            BSF_Constants.OPPORTUNITY_OWNER => null, BSF_Constants.DRD_SYSTEM_USER => getDRDSystemUser()};
+        final List<String> hierarchy = new List<String>{BSF_Constants.AREA_BOOKING_MANAGER, BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER,BSF_Constants.DRD_SYSTEM_USER};
+        Map<Id, Map<String, Id>> opportunityRolesMap =  new Map<Id, Map<String, Id>>();
+        Map<String, String> metadataMap = new Map<String, String>();
+        Map<Id, Id> accountSpecialistMap = new Map<Id, Id>();
+        for(Task_Reassignment_Matrix__mdt mtdt : Task_Reassignment_Matrix__mdt.getAll().values()){
+            if(String.isNotBlank(mtdt.Task_Subject__c) && subjectList.contains(mtdt.Task_Subject__c)
+                    && String.isNotBlank(mtdt.Assigned_To__c) && hierarchy.contains(mtdt.Assigned_To__c.trim())){
+                        metadataMap.put(mtdt.Task_Subject__c, mtdt.Assigned_To__c.trim());
+            }  
+        }
+        for(Task tsk : newList){
+            if(String.isNotBlank(tsk.Subject) && metadataMap.containsKey(tsk.Subject)
+                && tsk.WhatId != null //&& tsk.OwnerId == null 
+                && tsk.WhatId.getSObjectType() == Schema.Opportunity.SObjectType){
+                    opportunityRolesMap.put(tsk.WhatId,new Map<String,Id>(dataSet));
+            }
+        }
+        if(!opportunityRolesMap.isEmpty()){
+            List<Opportunity> oppList = [SELECT Id,
+                                                AccountId, 
+                                                Account_Manager__c, 
+                                                OwnerId,
+                                                (SELECT Id,
+                                                        OpportunityId,
+                                                        UserId,
+                                                        TeamMemberRole 
+                                                    FROM OpportunityTeamMembers) 
+                                            FROM Opportunity 
+                                            WHERE Id IN: opportunityRolesMap.keySet()];
+            for(Opportunity opp : oppList){
+                if(opp.AccountId != null){
+                    accountSpecialistMap.put(opp.AccountId,null);
+                }
+            }
+            if(!accountSpecialistMap.isEmpty()){
+                List<AccountTeamMember> accountteamList = [SELECT Id,
+                                                                    AccountId,
+                                                                    UserId,
+                                                                    Is_Covering_Recruiter__c 
+                                                            FROM AccountTeamMember 
+                                                            WHERE AccountId IN: accountSpecialistMap.keySet()
+                                                            AND TeamMemberRole =: BSF_Constants.ACCOUNT_SPECIALIST
+                                                            ORDER BY CreatedDate DESC];
+                for(AccountTeamMember acctm : accountteamList){
+                    if(accountSpecialistMap.get(acctm.AccountId) == null){
+                        accountSpecialistMap.put(acctm.AccountId,acctm.UserId);
+                    }else if(acctm.Is_Covering_Recruiter__c == true){
+                        accountSpecialistMap.put(acctm.AccountId,acctm.UserId);
+                    }
+                }
+            }
+            for(Opportunity opp : oppList){
+                if(opp.Account_Manager__c != null){
+                    opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_MANAGER,opp.Account_Manager__c);
+                }
+                if(opp.OwnerId != null){
+                    opportunityRolesMap.get(opp.Id).put(BSF_Constants.OPPORTUNITY_OWNER,opp.OwnerId);
+                }
+                if(opp.OpportunityTeamMembers != null && !opp.OpportunityTeamMembers.isEmpty()){
+                    for(OpportunityTeamMember oppTeam : opp.OpportunityTeamMembers){
+                        if(String.isNotBlank(oppTeam.TeamMemberRole) && oppTeam.TeamMemberRole.equals(BSF_Constants.ACCOUNT_SPECIALIST)){
+                                opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_SPECIALIST,oppTeam.UserId);
+                        }else if(String.isNotBlank(oppTeam.TeamMemberRole) && oppTeam.TeamMemberRole.equals(BSF_Constants.DISTRICT_MANAGER)){
+                                opportunityRolesMap.get(opp.Id).put(BSF_Constants.DISTRICT_MANAGER,oppTeam.UserId);
+                        }else if(String.isNotBlank(oppTeam.TeamMemberRole) && oppTeam.TeamMemberRole.equals(BSF_Constants.AREA_BOOKING_MANAGER)){
+                                opportunityRolesMap.get(opp.Id).put(BSF_Constants.AREA_BOOKING_MANAGER,oppTeam.UserId);
+                        }
+                    }
+                }
+                if(opp.AccountId != null && accountSpecialistMap.containsKey(opp.AccountId) && accountSpecialistMap.get(opp.AccountId) != null){
+                    opportunityRolesMap.get(opp.Id).put(BSF_Constants.ACCOUNT_SPECIALIST,accountSpecialistMap.get(opp.AccountId));
+                }
+            }
+            for(Task tsk : newList){
+                if(String.isNotBlank(tsk.Subject) && metadataMap.containsKey(tsk.Subject)
+                    && tsk.WhatId != null //&& tsk.OwnerId == null 
+                    && opportunityRolesMap.containsKey(tsk.WhatId)){
+                        Boolean cascade = false;
+                        for(String role : hierarchy){
+                            if(role.equals(metadataMap.get(tsk.Subject))){
+                                cascade = true;
+                            }
+                            if(cascade && opportunityRolesMap.get(tsk.WhatId).get(role) != null){
+                                tsk.OwnerId = opportunityRolesMap.get(tsk.WhatId).get(role);
+                                break;
+                            }
+                        } 
+                }
+            }
+        }
+    }
+    public static Id getDRDSystemUser(){
+        Id drdSystemUserId;
+        if(String.isNotBlank(System.label.DRD_System_User_Name)){
+            for(User u : [SELECT Id FROM User WHERE Name = :System.label.DRD_System_User_Name LIMIT 1]){
+                drdSystemUserId = u.Id;
+            }
+        }
+        return drdSystemUserId;
+    }
+    // HRP-13426 --> end
 }

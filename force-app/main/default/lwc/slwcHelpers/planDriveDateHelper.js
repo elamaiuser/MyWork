@@ -133,7 +133,7 @@ export default class slwcPlanDriveHelper {
 
       return collectionOperationValid && item.type === type;
     }).forEach(item => {
-      const daysOfWeek = item.daysOfWeek || [];
+      const daysOfWeek = (item.daysOfWeek || '').split(';');
       const isDateRangeValid = (!item.effectiveStartDate || item.effectiveStartDate <= driveDate) && (!item.effectiveEndDate || driveDate <= item.effectiveEndDate);
       const isDayOfWeekValid = daysOfWeek.includes(dayOfWeek);
       const isOverrided = (item.operationDriveLimitOverrides || []).find(item => item.date == driveDate);

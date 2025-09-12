@@ -361,9 +361,6 @@
                     <value>Custom Date Format</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>fieldwithOrderBy</name>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>headerName</name>
                     <value>Related Account</value>
                 </componentInstanceProperties>

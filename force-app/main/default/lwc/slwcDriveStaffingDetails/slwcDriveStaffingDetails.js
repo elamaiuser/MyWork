@@ -1202,7 +1202,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 isRelocatedResource: posAl?.isTemporaryCO || false,
                 DOT: false,
                 CDL: false,
-                additionalRoles: job.dualRole ? [job.dualRole] : [],
+                additionalRoles: job.dualRole,
                 additionalRolesString: job.dualRole
             };
             job.jobAllocations.push(newJobAllocation);
@@ -1371,6 +1371,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         exceptionLogList = exceptionLogList.concat((jaItem.exceptionLog || []).filter(ex => ex.status != 'Resolved').map(exception => ({
                             exception: exception.exception,
                             exceptionCode: exception.exceptionCode,
+                            eventURL: exception.eventURL,
                             id: exception.id,
                             key: uniqueId('exception_ja'),
                             resource: jaItem.resource,
@@ -1557,7 +1558,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let groupResourceTag;
         if(item.assetType === TYPE_RESOURCE.VEHICLE) {
             groupResourceTag = {
-                'Mobile Type': (item.mobileType || []).map(item => {
+                'Mobile Type': item.mobileType ? item.mobileType.split(';').map(item => {
                     return {
                         key: item,
                         tag: {
@@ -1565,7 +1566,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             name: item
                         }
                     } 
-                }),
+                }) : [],
                 'Certification': (item.resourceTags || []).filter(tagItem => tagItem.tag.type === 'Certification')
             }
         } else {
@@ -1723,7 +1724,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         return JSON.parse(JSON.stringify(drive));
     };
     buildDrive(drive) {
-        console.log('drive in buildDrive ', drive);
+        console.log('drive', drive);
         this.timezoneSidId = drive && drive.driveSite && drive.driveSite.timezoneSidId;
 
         let driveDetail = {
@@ -1769,7 +1770,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             ...itemJa,
                             id: itemJa.id,
                             jobId: itemJa.jobId,
-                            additionalRolesString: (itemJa.additionalRoles || []).join(', '),
+                            additionalRolesString: itemJa.additionalRoles ? itemJa.additionalRoles.split(';').join(', ') : null,
                             isDeleted: itemJa.status === JOB_ALLOCATION_STATUS.DELETED,
                             icon: this.getResourceIcon(itemJa.resource),
                             timezoneSidId: this.timezoneSidId,
@@ -2870,7 +2871,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let [ job ] = this.getJobById(jobId);
         let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
         ja.additionalRoles = event.detail.roles
-        ja.additionalRolesString = (ja.additionalRoles || []).join(', ');
+        ja.additionalRolesString = ja.additionalRoles ? ja.additionalRoles.split(';').join(', ') : null;
     }
 
     /** Confirm Modal **/

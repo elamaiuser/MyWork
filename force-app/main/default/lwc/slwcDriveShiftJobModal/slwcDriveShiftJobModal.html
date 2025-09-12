@@ -37,7 +37,19 @@
                         </div>
                         <div if:true={isPersonResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
                             <template if:true={isEditMode}>
-                                <lightning-input type="text" label="Dual Role" value={job.dualRole} readonly></lightning-input>
+                                <template if:false={isDualRoleEditMode}>
+                                    <lightning-input type="text" label="Dual Role" value={job.dualRole} readonly></lightning-input>
+                                </template>
+                            </template>
+
+                            <template if:true={isDualRoleEditMode}>
+                                <lightning-combobox
+                                    name="dualRole"
+                                    label="Dual Role" 
+                                    value={job.dualRole}
+                                    options={secondaryRoleOptions}
+                                    onchange={handleDualRoleChange}>
+                                </lightning-combobox>
                             </template>
                         </div>
                         <div if:true={isVehicleResource} class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
@@ -114,35 +126,35 @@
                         </div>
                     </template>
                     <template if:true={isVolunteerResource}>
-                    <div class="slds-grid slds-wrap slds-gutters">
-                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                            <lightning-input name="redcrossVolunteerQuantity" label="Redcross Volunteer Quantity" type="number" value={job.redcrossVolunteerQuantity} onchange={handleOnChange} readonly={job.isLocked} autocomplete="off"></lightning-input>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="redcrossVolunteerQuantity" label="Redcross Volunteer Quantity" type="number" value={job.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="sponsorVolunteerQuantity" label="Sponsor Volunteer Quantity" type="number" value={job.sponsorVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <template if:true={isFixedSiteDrive}>
+                                <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                    <c-slwc-picklist
+                                        required={isVolunteerQuantityChanged}
+                                        name="volunteerAdjustmentReason"
+                                        label="Volunteer Adjustment Reason"
+                                        unique-key={job.volunteerAdjustmentReason} 
+                                        object-api-name="sked__Job__c" 
+                                        selected-value={job.volunteerAdjustmentReason}  
+                                        pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
+                                        onpicklistchange={handleOnChange}
+                                        dropdown-alignment="auto">
+                                    </c-slwc-picklist>
+                                </div>
+                                <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                    <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={job.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required={isOtherVolunteerAdjustmentReasonNeeded}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                    <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={job.isLocked} autocomplete="off"></lightning-input>
+                                </div>
+                            </template>
                         </div>
-                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                            <lightning-input name="sponsorVolunteerQuantity" label="Sponsor Volunteer Quantity" type="number" value={job.sponsorVolunteerQuantity} onchange={handleOnChange} readonly={job.isLocked} autocomplete="off"></lightning-input>
-                        </div>
-                        <template if:true={isFixedSiteDrive}>
-                            <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
-                                <c-slwc-picklist
-                                    required={isVolunteerQuantityChanged}
-                                    name="volunteerAdjustmentReason"
-                                    label="Volunteer Adjustment Reason"
-                                    unique-key={job.volunteerAdjustmentReason} 
-                                    object-api-name="sked__Job__c" 
-                                    selected-value={job.volunteerAdjustmentReason}  
-                                    pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
-                                    onpicklistchange={handleOnChange}
-                                    dropdown-alignment="auto">
-                                </c-slwc-picklist>
-                            </div>
-                            <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={job.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required={isOtherVolunteerAdjustmentReasonNeeded}></lightning-input>
-                            </div>
-                            <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={job.isLocked} autocomplete="off"></lightning-input>
-                            </div>
-                        </template>
-                    </div>
                     </template>
                 </div>
             </div>

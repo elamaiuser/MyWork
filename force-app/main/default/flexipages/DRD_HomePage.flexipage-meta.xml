@@ -90,6 +90,9 @@
                     <value>1440</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>label</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>reportName</name>
                     <value>My_Upcoming_Drives_Directions_Missing_qXB</value>
                 </componentInstanceProperties>

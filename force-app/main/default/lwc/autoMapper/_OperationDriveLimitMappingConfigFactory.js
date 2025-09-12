@@ -11,7 +11,7 @@ export class OperationDriveLimitMappingConfigFactory {
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Days_of_Week__c', 'daysOfWeek', MAPPING_TYPE.multiPicklist);
+      mappingConfig.addFieldConfig('sked_Days_of_Week__c', 'daysOfWeek', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Effective_End_Date__c', 'effectiveEndDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Effective_Start_Date__c', 'effectiveStartDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Quantity__c', 'quantity', MAPPING_TYPE.direct);

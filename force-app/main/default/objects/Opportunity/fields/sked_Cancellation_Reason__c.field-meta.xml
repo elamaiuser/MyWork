@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Cancellation_Reason__c</fullName>
-    <externalId>false</externalId>
     <label>Cancellation Reason</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
@@ -26,6 +25,11 @@
                 <fullName>ARC Staff Strike</fullName>
                 <default>false</default>
                 <label>ARC Staff Strike</label>
+            </value>
+            <value>
+                <fullName>Block Scheduling-Deny</fullName>
+                <default>false</default>
+                <label>Block Scheduling-Deny</label>
             </value>
             <value>
                 <fullName>Budgeted FTE Reduction</fullName>
@@ -136,7 +140,13 @@
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>ARC Staff Strike</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>Sponsor_Initiated_Mobile</controllingFieldValue>
+            <valueName>Block Scheduling-Deny</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>

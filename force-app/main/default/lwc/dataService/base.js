@@ -1,7 +1,7 @@
 import * as autoMapper from 'c/autoMapper';
 import queryBuilder from './queryBuilder';
 import { DateTime } from 'c/luxon';
-import { orderBy, differenceBy, get, isString } from 'c/lodash';
+import { orderBy, differenceBy, get } from 'c/lodash';
 import * as slwcUtils from 'c/slwcUtils';
 import dataStorageInstance from './dataStorage';
 import auraProxy from 'c/auraProxy';
@@ -11,12 +11,6 @@ class dataService {
 
   constructor(sObjectApiName) {
     this.sObjectApiName = sObjectApiName;
-  }
-
-  compareMultiPicklistValues(value1, value2) {
-    const parsedValue1 = isString(value1) ? value1 : value1.sort().join(';');
-    const parsedValue2 = isString(value2) ? value2 : value2.sort().join(';');
-    return parsedValue1 === parsedValue2;
   }
 
   compareRecords(sObjectApiName, newRecord, oldRecord) {
@@ -38,12 +32,6 @@ class dataService {
         case autoMapper.MAPPING_TYPE.time:
           if (newRecord[element.domainFieldName] !== oldRecord[element.domainFieldName]) {
             changes[element.domainFieldName] = slwcUtils.convertTimeStrToTime(newRecord[element.domainFieldName]);
-          }
-          break;
-
-        case autoMapper.MAPPING_TYPE.multiPicklist:
-            if (!this.compareMultiPicklistValues(newRecord[element.domainFieldName], oldRecord[element.domainFieldName])) {
-              changes[element.domainFieldName] = newRecord[element.domainFieldName].join(';');
           }
           break;
 
@@ -384,7 +372,7 @@ class dataService {
   addRelatedObjectFields(objQueryBuilder, relatedSObjectName, relatedFieldAnchor) {
     let relatedObjectMappingConfig = autoMapper.mappingConfigContainerInstance.getMappingConfig(relatedSObjectName);
     relatedObjectMappingConfig.fieldConfigs.forEach(mapping => {
-      if (mapping.mappingType == autoMapper.MAPPING_TYPE.direct || mapping.mappingType == autoMapper.MAPPING_TYPE.time || mapping.mappingType == autoMapper.MAPPING_TYPE.multiPicklist) {
+      if (mapping.mappingType == autoMapper.MAPPING_TYPE.direct || mapping.mappingType == autoMapper.MAPPING_TYPE.time) {
         objQueryBuilder.addField(relatedFieldAnchor + '.' + mapping.sObjectFieldPath);
       }
     });

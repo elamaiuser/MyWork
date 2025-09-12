@@ -45,8 +45,6 @@ class siteFeedbackService extends dataService {
             queryBuilder.addCondition({ template: "(sked_Effective_End_Date__c = NULL OR sked_Effective_End_Date__c >= TODAY)" });
         }
         queryBuilder.orderClause = 'ORDER BY CreatedDate DESC';
-        console.log('queryBuilder :: ',queryBuilder);
-        
     }
 }
 

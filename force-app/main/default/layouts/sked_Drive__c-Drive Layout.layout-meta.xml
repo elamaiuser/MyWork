@@ -351,10 +351,6 @@
                 <behavior>Readonly</behavior>
                 <field>sked_IMPACT__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Max_Role_Capacity__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

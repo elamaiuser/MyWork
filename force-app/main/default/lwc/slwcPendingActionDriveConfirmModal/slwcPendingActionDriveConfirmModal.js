@@ -37,7 +37,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
   }
 
   get pendingActionReasonCodes() {
-    return this.drive?.pendingActionReasonCode?.split(';') || []
+    return (this.drive && this.drive.pendingActionReasonCode) ? this.drive.pendingActionReasonCode.split(';') : []
   }
 
   get submissionNotesRequired() {
@@ -101,7 +101,6 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
   }
 
   init() {
-    console.log('this.drive?.pendingActionReasonCode ',this.drive?.pendingActionReasonCode);
     this.model = {
       submissionNotes: null
     };
@@ -137,7 +136,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       const closeEvent = new CustomEvent('save', {
         detail: {
           submissionNotes: this.model.submissionNotes,
-          contentionResolution: []
+          contentionResolution: ''
         }
       });
       this.dispatchEvent(closeEvent);

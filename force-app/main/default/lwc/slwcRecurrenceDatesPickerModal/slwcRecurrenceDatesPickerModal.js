@@ -36,7 +36,7 @@ export default class SlwcRecurrenceDatesPickerModal extends LightningElement {
         };
         
         if(this.jobAllocation && this.jobAllocation.additionalRoles) {
-            this.model.rolesSelected = (this.jobAllocation.additionalRoles || []).map(this.buildOption);
+            this.model.rolesSelected = (this.jobAllocation.additionalRoles.split(";") || []).map(this.buildOption);
         }
     }
 

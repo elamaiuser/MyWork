@@ -1,56 +1,42 @@
-global class skedJobAllocationPostProcessBatch implements Schedulable, Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
+global class skedJobAllocationPostProcessBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
     
     public static final string TAG_DRIVER = 'Driver';
     public static final string TAG_DRIVER_DOT = 'Driver - DOT';
     public static final string TAG_DRIVER_CDL = 'Driver CDL B';
-
+    
     public batchSetting setting;
+    public Set<Id> jobAllocationIds;
     
     protected Set<Id> newExceptionIds;
 
-    global skedJobAllocationPostProcessBatch(batchSetting setting) {
+    global skedJobAllocationPostProcessBatch(batchSetting setting, Set<Id> jobAllocationIds) {
         this.setting = setting;
+        this.jobAllocationIds = jobAllocationIds;
         this.newExceptionIds = new Set<Id>();
-    }
-
-    global static void schedule() {
-        skedUtils.scheduleUniqueJobInSeconds('skedJobAllocationPostProcessBatch', new skedJobAllocationPostProcessBatch(new batchSetting()), 15, true);
-    }
-
-    global void execute(SchedulableContext SC) {
-        Integer existingBatchCount = [
-            SELECT COUNT() 
-            FROM AsyncApexJob 
-            WHERE ApexClass.Name = 'skedJobAllocationPostProcessBatch' 
-            AND JobType = 'BatchApex' 
-            AND Status IN ('Holding', 'Queued', 'Preparing', 'Processing')
-        ];
-        if (existingBatchCount == 0) {
-            Database.executeBatch(new skedJobAllocationPostProcessBatch(new batchSetting()), 100);
-        }
     }
 
     global List<sObject> start(Database.BatchableContext BC) {
         skedJobAllocationHandler.isRunningPostProcess = TRUE;
-        return this.queryJobAllocations();
+        return [
+            SELECT Id, Name, sked__Job__c, sked__Resource__c, sked__Travel_Distance__c, sked__Status__c,
+                sked__Start__c, sked__Duration__c, sked__Set_End__c, sked_Job_Timezone__c,
+                sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
+                sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
+                sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked__Job__r.sked_Drive__r.Name, sked_Premium_Pay__c,
+                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c
+            FROM sked__Job_Allocation__c
+            WHERE Id IN :this.jobAllocationIds
+        ];
     }
 
     global void execute(Database.BatchableContext BC, List<sked__Job_Allocation__c> skedAllocations) {
-        try {
-            if (!skedSetting.instance.Admin.migrationMode) {
-                captureExceptionLog(skedAllocations);
-                updateResourceForLinkedActivities(skedAllocations);
-                syncToResourceHoursRecord(skedAllocations);
-            }
-                
-            syncOperationRecordStaff(skedAllocations);
-        } finally {
-            for (sked__Job_Allocation__c skedAllocation : skedAllocations) {
-                skedAllocation.sked_Completed_Post_Processes__c = skedUtils.addNewItemToMultiPicklist(skedAllocation.sked_Completed_Post_Processes__c, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
-            }
-
-            update skedAllocations;
+        if (!skedSetting.instance.Admin.migrationMode) {
+            captureExceptionLog(skedAllocations);
+            updateResourceForLinkedActivities(skedAllocations);
+            syncToResourceHoursRecord(skedAllocations);
         }
+            
+        syncOperationRecordStaff(skedAllocations);
     }
 
     global void finish(Database.BatchableContext BC) {
@@ -64,11 +50,6 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
 
             skedNotificationService notificationService = new skedTriggerActionNotificationService('Insert', 'skedHC__Exception__c');
             notificationService.generateNotifications(newExceptions);
-        }
-
-        List<sked__Job_Allocation__c> remainingJobAllocations = this.queryJobAllocations();
-        if (!remainingJobAllocations.isEmpty()) {
-            Database.executeBatch(new skedJobAllocationPostProcessBatch(new batchSetting()), 100);
         }
     }
 
@@ -460,7 +441,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
             SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
             sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
             sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
-            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,
+            sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,
             (SELECT Id, sked__Tag__c, sked__Tag__r.Name
             FROM sked__JobTags__r)
             FROM sked__Job__c
@@ -839,7 +820,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
             unavailability.startTime = skedAllocation.sked__Start__c;
             unavailability.endTime = skedAllocation.sked__Set_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + skedAllocation.Name;
+            unavailability.exceptionText = 'Conflict with ' +  skedAllocation.sked__Job__r.sked_Drive__r.name; 
             unavailability.relatedEventFieldApi = 'skedHC__Job_Allocation__c';
             unavailability.recordId = skedAllocation.Id;
             unavailability.jobId = skedAllocation.sked__Job__c;
@@ -983,7 +964,7 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
         return exceptionLog;
     }
 
-    public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExceptionLog(skedExceptionMasterModel master) {
+public static List<skedHC__Exception__c> captureLinkedDriveMismatchedAssetExceptionLog(skedExceptionMasterModel master) {
         Set<Id> linkedDriveIds = new Set<Id>();
         for (sked__Job_Allocation__c ja : master.jobAllocations) {
             sked__Job__c skedJob = master.mapJob.get(ja.sked__Job__c);
@@ -1080,23 +1061,6 @@ global class skedJobAllocationPostProcessBatch implements Schedulable, Database.
         }
 
         return exceptionLogs;
-    }
-
-    private List<sked__Job_Allocation__c> queryJobAllocations() {
-        return [
-            SELECT Id, Name, sked__Job__c, sked__Resource__c, sked__Travel_Distance__c, sked__Status__c,
-                sked__Start__c, sked__Duration__c, sked__Set_End__c, sked_Job_Timezone__c,
-                sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
-                sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
-                sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked_Premium_Pay__c,
-                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c, sked_Completed_Post_Processes__c
-            FROM sked__Job_Allocation__c
-            WHERE sked__Status__c NOT IN ('Deleted', 'Declined', 'Complete')
-            AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c  >= TODAY
-            AND sked__Job__r.sked_Drive__r.sked_Status__c NOT IN ('Cancel', 'Complete')
-            AND sked_Completed_Post_Processes__c EXCLUDES ('Main Process')
-            LIMIT 50000
-        ];
     }
 
     /**************************************** NESTED CLASS ********************************************/

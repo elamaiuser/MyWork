@@ -34,7 +34,7 @@ public class skedUpdateJobAddressBatch implements Database.Batchable<sked__Job__
                 jobsToUpdate.add(impactedJob);
             } 
         }
-        if (jobsToUpdate.size()>0) {
+        if (jobsToUpdate.size() > 0) {
             skedHubBase.BypassUpdateTriggers = TRUE;
             update jobsToUpdate;
             skedHubBase.BypassUpdateTriggers = FALSE;

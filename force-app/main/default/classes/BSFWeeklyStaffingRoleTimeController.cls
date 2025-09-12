@@ -1,8 +1,9 @@
 /*
-*    Date					Developer Name			          Comments
+* Date					Developer Name			Comments
  * ***************************************************************************************************************************************************************************
- * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
- * 12/30/2024				Priti Jana					Logic for HRP-13121
+ * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 12/30/2024			Priti Jana					Logic for HRP-13121
+ * 02/04/2025           Krapy Tuli                  Displaying incorrect arrival time bug fix for HRP-14197
  *****************************************************************************************************************************************************************************
 */
 public without sharing class BSFWeeklyStaffingRoleTimeController {
@@ -111,6 +112,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         sked__Job__r.sked_Drive_Shift__r.sked_Max_Shift_End_Time__c,
                         sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c,
                         sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c,
+                 		sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break__c,//HRP-14197
                         sked__Resource__c,
                         sked__Resource__r.Name,
                         sked__Resource__r.sked__Resource_Type__c,
@@ -135,7 +137,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c >= :startDate
                     AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c <= :endDate];
     }
-
+	
     //HRP-13121 -> Updated Method structure to consider territory keys for fetching activity/activity COs
     public static List<sked__Activity_Resource__c> getActivities(Date startDate, Date endDate, List<String> territoryKeys) {
         List<sked__Activity_Resource__c> activityResources = new List<sked__Activity_Resource__c>();
@@ -264,7 +266,6 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             regionList.sort();
             regionList = renameDuplicates(regionList);
         }
-        System.debug('regionList : '+JSON.serialize(regionList));
         return regionList;
     }
 
@@ -326,7 +327,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         return result;
     }
     
-    public static WeeklyStaffScheduleReportController.StaffInfoWrapper validateInputsAndGetStaffInfo(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    public static WeeklyStaffScheduleReportController.StaffInfoWrapper validateInputsAndGetStaffInfo(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType) {
 
         Map<String,String> driveDispatchedMap = new Map<String,String>();
         driveDispatchedMap.put('Yes',Custom_Report_Config__mdt.getInstance('DriveDispatchedYes').Value__c);
@@ -403,6 +404,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             driveDispatchedCheckBox.add(true);
             driveDispatchedCheckBox.add(false);
         }
+                                                                    
 
         List<String> driveDispatchedStatus= driveDispatchedMap.get(drivedispatch).split(',');
         WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
@@ -473,7 +475,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_No_data').Value__c);
         }
         
-        /*Integer jobAllocationsCount =  [SELECT Count()
+            /*[SELECT Count()
                                         FROM sked__Job_Allocation__c
                                         WHERE sked__Status__c != 'Deleted' 
                                         AND sked__Status__c IN :driveDispatchedStatus 
@@ -507,21 +509,8 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                                         AND sked__Type__c IN :availabilityType
                                         AND sked__Status__c = 'Approved'
                                         AND sked_Start_Date__c >= :startDate 
-                                        AND sked_Start_Date__c <= :endDate];
-        
-        System.debug('jobAllocationsCount : '+ jobAllocationsCount);
-        System.debug('activitiesCount : '+ activitiesCount);
-        System.debug('availabilitiesCount : '+ availabilitiesCount);
-        System.debug('(jobAllocationsCount + activitiesCount + availabilitiesCount) : '+(jobAllocationsCount + activitiesCount + availabilitiesCount));
-
-        if((jobAllocationsCount + activitiesCount + availabilitiesCount) >= 50000){
-            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_Large_data').Value__c);
-        }
-        
-        if((jobAllocationsCount + activitiesCount + availabilitiesCount) == 0){
-            throw new AuraHandledException(Custom_Report_Config__mdt.getInstance('Report_ErrMsg_No_data').Value__c);
-        }*/
-        
+                                        AND sked_Start_Date__c <= :endDate];*/
+  
         staffInfoWrapper.jobAllocationList = jobAllocationsRetrieved;
         staffInfoWrapper.activityList = activityResourcesRetrieved;
         staffInfoWrapper.availabilityList = availabilitiessRetrieved;
@@ -546,7 +535,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
         Map<Id, String> driveEquipmentMap = new Map<Id, String>();
         Map<Id, List<sked__Activity_Resource__c>> activityMap = new Map<Id, List<sked__Activity_Resource__c>>();
         List<WeeklyStaffingRTReportWrapper> data = new List<WeeklyStaffingRTReportWrapper>();
-		
+
         WeeklyStaffScheduleReportController.StaffInfoWrapper staffInfoWrapper = new WeeklyStaffScheduleReportController.StaffInfoWrapper();
         staffInfoWrapper = validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
 
@@ -584,6 +573,8 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             driveDispatchedCheckBox.add(true);
             driveDispatchedCheckBox.add(false);
         }
+
+        //List<sked__Job_Allocation__c> jobAllocations =  getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
         
         for(sked__Job_Allocation__c jba : staffInfoWrapper.jobAllocationList) { //HRP-13121: Using wrapper class info
             if(!driveAllocationMap.containsKey(jba.sked__Job__r.sked_Drive__c)){
@@ -639,7 +630,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                 }
                 driveEquipmentMap.put(jba.sked__Job__r.sked_Drive__c,equipment);
             }
-        }      
+        }
 
         //List<sked__Activity_Resource__c> activityList = getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
         
@@ -679,7 +670,7 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
             availabilityMap = new Map<Id, sked__Availability__c>(staffInfoWrapper.availabilityList);
         }
         
-        for(Id avlId : availabilityMap.keySet()) {
+        for(Id avlId : availabilityMap.keySet()){
             
             //HRP-12921 --> Continues
             if (availabilityMap.get(avlId).sked_Start_Date__c == availabilityMap.get(avlId).sked_Finish_Date__c) {
@@ -784,8 +775,9 @@ public without sharing class BSFWeeklyStaffingRoleTimeController {
                         if(jba.sked__Job__r.sked_Setup_Time__c != null){
                             arrivalTimeInMinutes += Integer.valueOf(jba.sked__Job__r.sked_Setup_Time__c);
                         }
-                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true
-                                &&jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
+                        if(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break__c && //HRP-14197
+                           jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Before_Draw_Hours__c == true &&
+                           jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c != null){
                                     arrivalTimeInMinutes += Integer.valueOf(jba.sked__Job__r.sked_Drive_Shift__r.sked_Lunch_Break_Duration__c);
                         }
 

@@ -112,9 +112,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             
                 if(daysAfterCbRollDate != NULL) {
-                    this.targetCreatedDate = BSF_Constants.CURRENT_DATE.addDays(-daysAfterCbRollDate.intValue()); 
+                    this.targetCreatedDate = DateTime.now().addDays(-daysAfterCbRollDate.intValue()).dateGMT(); 
                 } else {
-                    this.targetCreatedDate = typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) ? BSF_Constants.CURRENT_DATE.addDays(-0) : NULL; 
+                    this.targetCreatedDate = typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE) ? DateTime.now().addDays(-0).dateGMT() : NULL; 
                 }
                 if(targetCreatedDate != NULL) {
                     targetCreatedDateTo = datetime.newInstanceGMT(this.targetCreatedDate, Time.newInstance(23,59,59,59));
@@ -408,7 +408,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
         //HRP-12706 --> Starts Here
         if(driveIdSet != NULL && !driveIdSet.isEmpty()) {
-            system.debug('driveIdSet '+driveIdSet.size());
 			queryString += ' AND Id IN: driveIdSet';            
         }
         if(driveSource != NULL && !String.isBlank(driveSource)) {
@@ -698,7 +697,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 }
             }
         }
-		system.debug('jobVsJobTagMap '+jobVsJobTagMap);
+
         // Separate Out Vehicle and Equipment Type resources from successfully evaluated resource map
         if(resourceMap!= NULL && !resourceMap.isEmpty()) {
             for(sked__Resource__c res : resourceMap.values()) {  
@@ -949,7 +948,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             drive.sked_Status__c = drive.sked_Type_of_Drive__c == Constants.FIX_SITE_OPP ? (drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD ? Constants.DRIVE_STATUS_CONFIRMED : Constants.DRIVE_STATUS_TENTATIVE) : Constants.DRIVE_STATUS_SYSTEM_GENERATED; //HRP-10009
             Boolean recalculationFlag = false;
             if (!jobAllocations.vehicleAllocations.isEmpty() && drive.sked_Type_of_Drive__c != Constants.FIX_SITE_OPP) {
-                system.debug('here ');
                 Decimal shiftTotalStaffCapacity = 0;
                 Decimal shiftStaffCapacity = 0;
                 Decimal shiftMaxRoleCapacity = 0; //HRP-13864
@@ -1008,8 +1006,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     );
                     MobileDriveGeneratorDMLService.DMLDrive dmlDrive = reCalculateDriveAverageStaffCapacity(drive, staffPrimaryCount);
                     drive.Average_Staff_Capacity__c = dmlDrive?.averageStaffCapacity;
+                    dmlDrive.maxRoleCapacityWithDrawHours = drive.Max_Role_Capacity_With_Draw_Hours__c;
                     drive.Excess_Staff_Capacity__c = reCalculateDriveExcessStaffCapacity(dmlDrive);
                 }
+
                 //HRP-11634 --> Ends Here
                 if (remainingStaff >= reCalTotalNoOfStaffRequired) { // HRP-11001 start
                     if(recalculationFlag) {
@@ -1064,7 +1064,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 	typeOfDriveVsdriveIDSet.put(drive.sked_Type_of_Drive__c, new Set<ID>());
             	}
             	typeOfDriveVsdriveIDSet.get(drive.sked_Type_of_Drive__c).add(drive.ID);
-                //HRP-12706 --> Ends Here
+            	//HRP-12706 --> Ends Here
             } // HRP-11001 end
            	
         }//HRP-10009 Start 
@@ -1271,7 +1271,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     
     //getDriveShifts for the Drive
     @testVisible private static List<sked_Drive_Shift__c> getDriveShifts(Id driveId) {
-        return [Select Id, sked_Lunch_Break_Before_Draw_Hours__c, sked_Max_Donor_Capacity__c, Name, sked_Vehicles_Needed__c, sked_Lunch_Break__c, sked_2RBC_Projected_Procedures__c, sked_WB_Projected_Procedures__c, sked_Total_Products_Projected__c, sked_Total_Procedures_Projected__c, sked_Start_Time__c,sked_Drive_Date__c, sked_End_Time__c,sked_Timezone__c, sked_Staff_Setup__c, (SELECT Id,sked_VPHH_Quantity__c, sked_Site_Logistics_Back__c,sked_Site_Logistics_To__c,sked_Redcross_Volunteer_Quantity__c, sked_Sponsor_Volunteer_Quantity__c, sked__Location__c, sked_Drive__c,sked_Procedure_Type__c,sked_Drive_Shift__c,sked_Equipment_Subtype__c,sked_APT_Quantity__c,sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,sked__Quantity__c, sked_Resource_Role__c, sked_Asset_Type__c, sked_Volunteer_Role__c, sked__Duration__c, sked__Finish__c, sked__Start__c FROM sked_Jobs__r) From sked_Drive_Shift__c Where sked_Drive__c =: driveId]; //HRP-11793
+        return [Select Id, sked_Lunch_Break_Before_Draw_Hours__c, sked_Max_Donor_Capacity__c, Name, sked_Vehicles_Needed__c, sked_Lunch_Break__c, sked_2RBC_Projected_Procedures__c, sked_WB_Projected_Procedures__c, sked_Total_Products_Projected__c, sked_Total_Procedures_Projected__c, sked_Start_Time__c,sked_Drive_Date__c, sked_End_Time__c,sked_Timezone__c, sked_Staff_Setup__c, (SELECT Id,sked_VPHH_Quantity__c, sked_Site_Logistics_Back__c,sked_Site_Logistics_To__c,sked_Redcross_Volunteer_Quantity__c, sked_Sponsor_Volunteer_Quantity__c, sked__Location__c, sked_Drive__c,sked_Procedure_Type__c,sked_Drive_Shift__c,sked_Equipment_Subtype__c,sked_APT_Quantity__c,sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,sked__Quantity__c, sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Volunteer_Role__c, sked__Duration__c, sked__Finish__c, sked__Start__c FROM sked_Jobs__r) From sked_Drive_Shift__c Where sked_Drive__c =: driveId]; //HRP-11793
     }
 
     //getLunchBreakSettings for the Drive

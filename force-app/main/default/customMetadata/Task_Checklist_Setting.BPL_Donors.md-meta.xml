@@ -57,7 +57,7 @@ Discuss use of Book Now app or continued need for a paper schedule for the futur
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online.</value>
+        <value xsi:type="xsd:string">If BPL declines to add donors online, provide paper schedule (pulled from BDMP) for donor appointments, including donors already scheduled online</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

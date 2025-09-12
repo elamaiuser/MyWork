@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Subject__c</fullName>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Subject</label>
     <required>false</required>
@@ -17,12 +16,22 @@
             </value>
             <value>
                 <fullName>Post Drive Analysis</fullName>
-                <default>true</default>
+                <default>false</default>
                 <label>Post Drive Analysis</label>
             </value>
             <value>
-                <fullName>Post Drive FollowUp</fullName>
+                <fullName>Post Drive Analysis AM</fullName>
                 <default>false</default>
+                <label>Post Drive Analysis AM</label>
+            </value>
+            <value>
+                <fullName>Post Drive Analysis SBPM</fullName>
+                <default>false</default>
+                <label>Post Drive Analysis SBPM</label>
+            </value>
+            <value>
+                <fullName>Post Drive FollowUp</fullName>
+                <default>true</default>
                 <label>Post Drive FollowUp</label>
             </value>
             <value>

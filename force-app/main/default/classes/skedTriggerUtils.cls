@@ -74,8 +74,17 @@ public class skedTriggerUtils {
                 }
             ];
                 
-            removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
-            skedJobAllocationPostProcessBatch.schedule();
+            Set<Id> jobAllocationIds = new Set<Id>();
+            for (sked__Job_Allocation__c ja : jobAllocations) {
+                jobAllocationIds.add(ja.Id);
+            }
+    
+            if (!Test.isRunningTest()) {
+                Database.executeBatch(new skedJobAllocationPostProcessBatch(
+                    new skedJobAllocationPostProcessBatch.batchSetting(),
+                    jobAllocationIds
+                ));
+            }
         }
     }
 
@@ -170,18 +179,8 @@ public class skedTriggerUtils {
 
         if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !isPermittedUsage) {
             for (SObject newRecord : newRecords) {
-                newRecord.addError(errorMessage);
+            newRecord.addError(errorMessage);
             }
         }
-    }
-
-    public static void removePostProcessFromJobAllocations(List<sked__Job_Allocation__c> jobAllocations, string postProcess) {
-        for (sked__Job_Allocation__c jobAllocation : jobAllocations) {
-            jobAllocation.sked_Completed_Post_Processes__c = skedUtils.removeItemFromMultiPicklist(jobAllocation.sked_Completed_Post_Processes__c, postProcess);
-        }
-
-        skedHubBase.setBypassAllTriggers(true);
-        update jobAllocations;
-        skedHubBase.setBypassAllTriggers(false);
     }
 }

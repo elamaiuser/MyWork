@@ -5,7 +5,7 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
     Set<Id> driveIds;
     List<String> inputKeys;
     Set<string> processedKey;
-    String driveSource ;
+    String driveSource = '';
     String runType;
     Date driveDate;
 
@@ -116,11 +116,13 @@ global class skedDriveRankingBatch implements Database.Batchable<sked_Drive__c>,
                 Database.executeBatch(new skedDriveRankingBatch(inputKeySet), 1);
             }
         }
-        Database.executeBatch(new DriveResourceAllocationBatch(runType, 
-                                                                driveSource, 
-                                                                skedConstants.DRIVE_TYPE_FIXED_SITE,
-                                                                this.driveDate,  
-                                                                driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : skedFixedSiteDrives), 1); 
+        if(this.driveSource != NULL && !this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)) {
+            Database.executeBatch(new DriveResourceAllocationBatch(runType, 
+                                                                    driveSource, 
+                                                                    skedConstants.DRIVE_TYPE_FIXED_SITE,
+                                                                    this.driveDate,  
+                                                                    driveSource.equalsIgnoreCase('Calendar Build') ? new Set<Id>() : skedFixedSiteDrives), 1);
+        } 
     }
     
     /*********************************************************** Nested Classes ***********************************************************/

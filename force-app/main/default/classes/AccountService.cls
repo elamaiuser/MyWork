@@ -543,7 +543,7 @@ Commented Out for HRP - 10016 --> End */
                            // system.debug('entered123');
                            //continue;
                        }
-					HRP-12485*/
+                    HRP-12485*/
                     //system.debug('entered234');
                     List<AccountTeamMember> amList = new List<AccountTeamMember>();
                     List<AccountTeamMember> dmList = new List<AccountTeamMember>();
@@ -1325,16 +1325,10 @@ member1.BSF_Portfolio__c = userAssignment.BSF_Portfolio__c;
             if(acc.BillingPostalCode!=null && acc.BillingPostalCode != oldMap.get(acc.id).BillingPostalCode)
             {
                 acc.Zipcode_change__c=oldMap.get(acc.id).BillingPostalCode;
-                if(acc.Zipcode_change__c == NULL){//HRP-13898 start
-                    acc.Zipcode_change__c = '000000';
-                }//HRP-13898 end
             }
             else if(acc.ShippingPostalCode!=null && acc.ShippingPostalCode != oldMap.get(acc.id).ShippingPostalCode)
             {
                 acc.Zipcode_change__c=oldMap.get(acc.id).ShippingPostalCode;
-                if(acc.Zipcode_change__c == NULL){//HRP-13898 start
-                    acc.Zipcode_change__c = '000000';
-                }//HRP-13898 end
             }
         }
     }

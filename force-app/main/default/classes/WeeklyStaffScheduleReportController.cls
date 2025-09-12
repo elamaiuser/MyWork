@@ -1,8 +1,8 @@
 /*
-*    Date					Developer Name			          Comments
+*    Date					Developer Name			             Comments
  * ***************************************************************************************************************************************************************************
  * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
- * 12/30/2024				Priti Jana					Logic for HRP-13121
+ * 12/31/2024				Priti Jana					Logic for HRP-13121
  *****************************************************************************************************************************************************************************
 */
 public without sharing class WeeklyStaffScheduleReportController {
@@ -65,7 +65,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         List<String> driveDispatchedStatus= new List<String>();
         List<Boolean> driveDispatchedCheckBox= new List<Boolean>();
         
-        //HRP-13121 -> Starts Here
+       //HRP-13121 -> Starts Here
         StaffInfoWrapper staffInfoWrapper = new StaffInfoWrapper();
         staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
         //HRP-13121 -> Ends Here
@@ -168,8 +168,8 @@ public without sharing class WeeklyStaffScheduleReportController {
             timeDifference = timeDifference + resourceHoursMap.get(jba.sked__Resource__c);
             resourceHoursMap.put(jba.sked__Resource__c,timeDifference);                 
         }
- 
-        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter */
+        
+        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter
         
         for(sked__Activity_Resource__c act : staffInfoWrapper.activityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(act.sked__Resource__c,act.sked__Resource__r);

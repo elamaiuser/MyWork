@@ -40,7 +40,7 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Geoservice_Travel_Distance_Back__c', 'geoServiceTravelDistanceBack', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Geoservice_Travel_Distance_To__c', 'geoServiceTravelDistanceTo', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Is_Relocated_Resource__c', 'isRelocatedResource', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Additional_Roles__c', 'additionalRoles', MAPPING_TYPE.multiPicklist);
+      mappingConfig.addFieldConfig('sked_Additional_Roles__c', 'additionalRoles', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__c', 'driveShiftTradeId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Locked__c', 'locked', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Call_Out_Reported__c', 'callOutReported', MAPPING_TYPE.direct);

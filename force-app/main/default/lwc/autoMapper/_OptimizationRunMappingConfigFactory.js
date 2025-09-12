@@ -17,7 +17,7 @@ export class OptimizationRunMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_End_Date__c', 'endDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', MAPPING_TYPE.direct);            
       mappingConfig.addFieldConfig('sked_Status__c', 'status', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', MAPPING_TYPE.direct);      
+      mappingConfig.addFieldConfig('sked_Territory_Key__c', 'territoryKey', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Opt_Stat_Total_Planned_Allocations__c', 'totalPlannedAllocations', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Opt_Stat_Total_Sched_Allocations__c', 'totalSchedAllocations', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Opt_Stat_Total_Unsched_Allocations__c', 'totalUnSchedAllocations', MAPPING_TYPE.direct);

@@ -25,7 +25,8 @@
         ),
         AND(
             (sked_Virtual_WFH__c != true),
-            ($Profile.Name != &#39;System Administrator&#39;)
+            ($Profile.Name != &#39;System Administrator&#39;),
+            ($Profile.Name != &#39;Global Admin&#39;)
         )
     )
 )</errorConditionFormula>

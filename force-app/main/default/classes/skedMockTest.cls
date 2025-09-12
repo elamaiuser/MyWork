@@ -53,26 +53,7 @@ global class skedMockTest implements HttpCalloutMock {
         else if (urlString.startsWith(skedSkeduloApiManager.OPTIMIZATION_RUN_ARC_ENDPOINT)) {
             res = mockDataFactory.triggerOptimizationRun(req);
         }
-        // HRP-12511
-        else if(replaceRunId(urlString).startsWith(skedSkeduloApiManager.OPTIMIZAION_RUN_STATISTICS_ENDPOINT)){
-            res = mockDataFactory.getOptimizerRunStatistics(req);
-        }
-        // HRP-12511
-        else if(replaceRunId(urlString).startsWith(skedSkeduloApiManager.OPTIMIZAION_RUN_PARAMETERS_ENDPOINT)){
-            res = mockDataFactory.getOptimizerRunParameters(req);
-        }
-        else if(replaceRunId(urlString).startsWith(skedSkeduloApiManager.GET_OPTIMIZATION_RUN_META_END_POINT)){
-            res = mockDataFactory.getOptimizerRunMetaResult(req);
-        }
-        else if(replaceRunId(urlString).startsWith(skedSkeduloApiManager.GET_OPTIMIZATION_RUN_DIFF_END_POINT)){
-            res = mockDataFactory.getOptimizerRunDiffResult(req);
-        }
-        
         return res;
-    }
-
-    private String replaceRunId(string url) {
-        return url.replaceAll('/[0-9A-Fa-f-]+/', '/{{runId}}/');
     }
     
     /************************************************ Nested classes ****************************************************/
@@ -307,51 +288,6 @@ global class skedMockTest implements HttpCalloutMock {
             res.setHeader('Content-Type', 'application/json');
 
             skedSkeduloApiData.optimizationRunResult result = new skedSkeduloApiData.optimizationRunResult();
-            result.success = true;
-
-            res.setBody(JSON.serialize(result));
-            return res;
-        }
-
-        // HRP-12511
-        public HttpResponse getOptimizerRunStatistics(HttpRequest req) {
-            HttpResponse res = new HttpResponse();
-            res.setHeader('Content-Type', 'application/json');
-
-            skedSkeduloApiData.OptimizationRunStatisticsResult result = new skedSkeduloApiData.OptimizationRunStatisticsResult();
-            result.success = true;
-
-            res.setBody(JSON.serialize(result));
-            return res;
-        }
-
-        public HttpResponse getOptimizerRunParameters(HttpRequest req) {
-            HttpResponse res = new HttpResponse();
-            res.setHeader('Content-Type', 'application/json');
-
-            skedSkeduloApiData.OptimizationRunParametersResult result = new skedSkeduloApiData.OptimizationRunParametersResult();
-            result.success = true;
-
-            res.setBody(JSON.serialize(result));
-            return res;
-        }
-
-        public HttpResponse getOptimizerRunMetaResult(HttpRequest req) {
-            HttpResponse res = new HttpResponse();
-            res.setHeader('Content-Type', 'application/json');
-
-            skedSkeduloApiData.optimizationRunMetaResult result = new skedSkeduloApiData.optimizationRunMetaResult();
-            result.success = true;
-
-            res.setBody(JSON.serialize(result));
-            return res;
-        }
-
-        public HttpResponse getOptimizerRunDiffResult(HttpRequest req) {
-            HttpResponse res = new HttpResponse();
-            res.setHeader('Content-Type', 'application/json');
-
-            skedSkeduloApiData.optimizationRunDiffResult result = new skedSkeduloApiData.optimizationRunDiffResult();
             result.success = true;
 
             res.setBody(JSON.serialize(result));

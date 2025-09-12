@@ -129,4 +129,12 @@ private class skedNightlyRefreshTTIndexBatch_Test {
             }
         }
     }
+    
+    static testMethod void testScheduleBatch() {
+        Test.startTest();
+        SchedulableContext scon;
+        skedNightlyRefreshTravelTimeIndexBatch batchInstance = new skedNightlyRefreshTravelTimeIndexBatch();
+        batchInstance.execute(scon);
+        Test.stopTest();
+    }
 }

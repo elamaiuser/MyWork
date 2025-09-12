@@ -14,6 +14,7 @@
 * 09/24/2024				 Fitsum Worku			 Fix for HRP-13435
 * 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
 * 12/10/2024				 Priti Jana				 Logic for HRP-13190
+* 02/26/2025                 Krapy Tuli              HRP-14286 - logic update
  *********************************************************************************************************************************************************************
 */
 
@@ -569,7 +570,7 @@ public with sharing class BSF_Utilities {
     */
     
     public static List<Opportunity> getAPTQuantity(List<Opportunity> oppList, String action) {
-        Set<String> excludedAccindustryCodes = new Set<String>{BSF_Constants.ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL, BSF_Constants.ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL};
+        Set<String> includedAccindustryCodes = new Set<String>{BSF_Constants.ACCOUNT_INDUSTRY_CODE_COLLEGE_OR_UNIVERSITY, BSF_Constants.ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL};//HRP-14286
         Set<Id> accountIds = new Set<Id>();
         
         for(Opportunity opp : oppList) {
@@ -580,13 +581,15 @@ public with sharing class BSF_Utilities {
         
         for(Opportunity opp : oppList) {
             Boolean isAptNotNeededRule1 = !String.isBlank(opp.Type_of_Drive__c) && opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE);
-            Boolean isAptNotNeededRule2 = !String.isBlank(opp.Source__c) && opp.Source__c.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD);
-            if (isAptNotNeededRule1 || isAptNotNeededRule2) continue;
-            Decimal aptQuantity = 0;
+            Boolean isAptNotNeededRule2 = !String.isBlank(opp.Source__c) && opp.Source__c.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && action == 'Insert';//HRP-14286
+            Boolean isAptNotNeededRule3 = opp.APT_Required__c == FALSE ? TRUE : FALSE;//HRP-14286
+            if (isAptNotNeededRule1 || isAptNotNeededRule2 || isAptNotNeededRule3) continue;//HRP-14286
+            Decimal aptQuantity = 1;//HRP-14286
             if(!String.isBlank(opp.Account_Type__c) && opp.Account_Type__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_TYPE_EDUCATION)) {
                 if(map_accountId_accountInfo.get(opp.AccountId) != NULL && !String.isBlank(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {
-                    if(!excludedAccindustryCodes.contains(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {
+                    if(includedAccindustryCodes.contains(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {//HRP-14286
                         aptQuantity = Math.floor(opp.Total_Projected_Procedures__c / 40);
+                        aptQuantity = aptQuantity == 0 ? 1 : aptQuantity;//HRP-14286
                     }
                 }
             } else {
@@ -594,11 +597,8 @@ public with sharing class BSF_Utilities {
                     aptQuantity = 1;
                 }
             }
-            if(action == 'Insert') {
-                if(opp.Is_Template__c || opp.Site_TBD__c) {
-                    opp.APT_Quantity__c = aptQuantity;
-                    opp.APT_Required__c = aptQuantity > 0 ? TRUE : FALSE;
-                }
+            if(action == 'Insert' && opp.APT_Required__c) { // HRP-14286
+                opp.APT_Quantity__c = aptQuantity;
             } else {
                 opp.APT_Quantity__c = aptQuantity == 0 && opp.APT_Required__c ? 1 : aptQuantity;
                 opp.APT_Required__c = opp.APT_Required__c || aptQuantity > 0;
@@ -645,5 +645,9 @@ public with sharing class BSF_Utilities {
             parts.add(text.substring(i, Math.min(len, i + partitionSize)));
         }
         return parts;
+    }
+
+    public static String getStringWithinLimit(String text, Integer charLimit) {
+        return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
     }
 }
