@@ -92,11 +92,11 @@
             <value>Cancel,Complete</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Opportunity.Market__c</column>
+            <column>STAGE_NAME</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value>Fixed</value>
+            <operator>notEqual</operator>
+            <value>Cancelled</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>

@@ -20,7 +20,6 @@ public class AccountAffiliationTriggerHandler extends TriggerHandler {
     public override void afterInsert() {
         if (super.getTriggerMethodsToBypass().indexOf('createHistoryOnAccAffiliation') == -1) {
             AccountAffiliationService.createHistoryOnAccAffiliation((list<Account_Marketing_Program__c>) Trigger.new, 'Insert');
-            AccountAffiliationService.updateMarketingProgramFlagOnAccounts((list<Account_Marketing_Program__c>) Trigger.new, 'Insert');
         }
         
         if (super.getTriggerMethodsToBypass().indexOf('AccountFlagForAffiliationList') == -1) {  
@@ -35,7 +34,6 @@ public class AccountAffiliationTriggerHandler extends TriggerHandler {
     public override void afterDelete() {
         if (super.getTriggerMethodsToBypass().indexOf('createHistoryOnAccAffiliation') == -1) {
             AccountAffiliationService.createHistoryOnAccAffiliation((list<Account_Marketing_Program__c> )Trigger.old, 'Delete' );
-            AccountAffiliationService.updateMarketingProgramFlagOnAccounts((list<Account_Marketing_Program__c>) Trigger.old, 'Delete');
         }
     }
     
