@@ -6,6 +6,7 @@
         <members>OpportunityTriggerTest</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>skedResourceTagHandler</members>
         <members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
 		<name>ApexClass</name>
@@ -41,6 +42,15 @@
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcDriveChangeRequestApproval</members>
 		<members>slwcApprovalHistoryConsole</members>
+		<members>slwcDriveCalendarDriveList</members>		
+		<members>slwcDriveSchedulingFilters</members>		
+		<members>slwcSchedulingConsoleDriveList</members>
+		<members>slwcPendingActionDriveApproval</members>
+		<name>LightningComponentBundle</name>		
+	</types>
+	<types>
+		<members>skedLWCCustomStyle</members>
+		<name>StaticResource</name>
 	</types>
 	<types>
 		<members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
