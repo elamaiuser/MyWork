@@ -1,26 +1,24 @@
-import { LightningElement, track, wire, api } from 'lwc';
-import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
-import { driveValidator } from 'c/slwcValidator';
 import * as slwcUtils from 'c/slwcUtils';
-import skedGoogleMapApis from '@salesforce/resourceUrl/skedGoogleMapApis'
+import { driveValidator } from 'c/slwcValidator';
+import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import {
-    loadStyle,
     loadScript
 } from 'lightning/platformResourceLoader';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { api, LightningElement, track, wire } from 'lwc';
 
 import driveManagementTabTemplate from './driveManagementTab.html';
 import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
-import { driveService, driveChangeRequestService, driveQueryModel, approvalService, slotService, debugLogService } from 'c/dataService';
-import { DateTime } from 'c/luxon';
-import { chunk, isEqual } from 'c/lodash';
-import { DRIVE_STATUS, DRIVE_APPROVAL_STATUS, PENDING_ACTION, ASSET_TYPE, OPPORTUNITY_STAGE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { slwcDriveGeneratorHelper, DriveHelper } from 'c/slwcDriveGenerator';
-import { autoMapperInstance } from 'c/autoMapper';
+import { approvalService, dataService, debugLogService, driveQueryModel, driveService, jobService, slotService } from 'c/dataService';
+import { chunk } from 'c/lodash';
+import { DateTime } from 'c/luxon';
+import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
+import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -93,6 +91,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     @track isDriveNotScheduled = false;
     @track driveSideMenuData = {};
     @track driveShiftsMetadataModalData = {};
+    @track adminSettings = {};
 
     tabDetailsValidationFields = [];
     driveHelper = new DriveHelper();
@@ -101,7 +100,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     bindHandleDriveChanged;
     
     get driveHasGenerated() {
-        if(!this.recordId) return false;
+        if (!this.recordId) return false;
         return this.drive && this.drive.id;
     }
     
@@ -141,8 +140,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         return this.drive && this.drive.isSurrogate;
     }
     
-    get surrogateDrive () {
-        if(!this.isSurrogateDrive) return null;
+    get surrogateDrive() {
+        if (!this.isSurrogateDrive) return null;
         return {
             id: this.drive.surrogateDriveForId,
             name: this.drive.surrogateDriveForName
@@ -150,7 +149,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get showCreateSurrogateDriveButton() {
-        if(!this.isEditMode) return false;
+        if (!this.isEditMode) return false;
         const statusValid = [DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.COMPLETE].includes(this.drive.status);
         const today = DateTime.local().setZone(TIME_ZONE).toISODate();
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
@@ -169,7 +168,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get showSaveButtons() {
-        if(!this.masterData.isReadonly) return true;
+        if (!this.masterData.isReadonly) return true;
         const anyFieldEditable = Object.keys(this.masterData.fieldReadonlyMap).find(field => {
             return !this.masterData.fieldReadonlyMap[field]
         });
@@ -258,11 +257,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get showNoTravelDataWarning() {
-        if(!this.initialized) {
+        if (!this.initialized) {
             return false;
         }
 
-        const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo} = this.driveHelper.getTravelTimeBreakdownData(this.drive, this.masterData);
+        const { travelTimeBreakdownsCoToSite, travelTimeBreakdownsSiteToCo } = this.driveHelper.getTravelTimeBreakdownData(this.drive, this.masterData);
         return this.drive && (
             !travelTimeBreakdownsCoToSite?.length || 
             !travelTimeBreakdownsSiteToCo?.length
@@ -270,7 +269,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get showPendingUserChangeWarning() {
-        if(!this.drive || !driveGeneratorInstance.masterData.pendingDriveChangeRequest) return false;
+        if (!this.drive || !driveGeneratorInstance.masterData.pendingDriveChangeRequest) return false;
         return driveGeneratorInstance.masterData.pendingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING && driveGeneratorInstance.masterData.pendingDriveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
     }
 
@@ -279,7 +278,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     get driveDateOfWeek() {
-        if(!this.drive || !this.drive.driveDate) return null;
+        if (!this.drive || !this.drive.driveDate) return null;
         return DateTime.fromFormat(this.drive.driveDate, 'yyyy-MM-dd').toFormat('EEEE');
     }
 
@@ -299,6 +298,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         }
 
         this.tabDetailsValidationFields = ['driveDate', 'projectedRegisteredDonors', 'name', 'startTime'];
+        //this.tabDetailsValidationFields = ['driveDate', 'projectedRegisteredDonors', 'name', 'startTime','accountType','militaryAuthorityName','militaryAuthorityPhone','industryCode','acceptsAutomation','internalName','physicalLocationType','roomName','siteBuildingName','directionsFromCollectionOperation','floorDescription','automationSuitability','siteContactId','operationType'];
         
         this.bindHandleDriveChanged = this.handleDriveChanged.bind(this);
         
@@ -316,6 +316,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         registerListener('saveJob', this.handleSaveJob, this);
         registerListener('deleteJob', this.handleDeleteJob, this);
 
+        registerListener('saveBulkEditVolunteerJobModal', this.handleSaveBulkEditVolunteerJobModal, this);
         registerListener('saveDualRoleAssignmentModal', this.handleSaveDualRoleAssignmentModal, this);
 
         registerListener('saveDriveShiftTag', this.handleSaveDriveShiftTag, this);
@@ -348,15 +349,16 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     render() {
-        if(this.isSurrogateDrive) {
+        if (this.isSurrogateDrive) {
             return surrogateDriveTemplate;
         }
         return driveManagementTabTemplate;
     }
     
     exceptionHandler = (error) => {
+        console.log('error :: ', error);
         new debugLogService().captureDebugLog(error, this.drive?.id);
-        if(error && error.message) {
+        if (error && error.message) {
             this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error',
@@ -371,7 +373,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     hideLoading = () => {
         this.showSpinnerCount--;
-        if(this.showSpinnerCount < 0) {
+        if (this.showSpinnerCount < 0) {
             this.showSpinnerCount = 0;
         } 
     }
@@ -385,14 +387,14 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     initialize(recordId) {
-        if(!recordId) return;
+        if (!recordId) return;
         
         this.showLoading();
         Promise.resolve()
         .then(() => {
             if (!window.google) {
                 return loadScript(this, skedGoogleMapApis)
-                    .catch((e) => {})
+                    .catch((e) => { })
             }
         })
         .then(() => {
@@ -405,14 +407,16 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     this.drive = drive;
                     this.originalDrive = drive;
 
-                    if(!drive) {
+                    if (!drive) {
                         throw 'Drive has not been generated';
                     }
 
-                    if(drive.isSurrogate) {
+                    if (drive.isSurrogate) {
                         throw 'Surrogate drive';
                     }
+                    console.log('this.drive ', this.drive);
                 })
+
             } else {
                 let _driveService = new driveService();
                 let query = new driveQueryModel();
@@ -421,11 +425,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 .then(([drive]) => {
                     this.drive = drive;
 
-                    if(!drive) {
+                    if (!drive) {
                         throw 'Drive has not been generated';
                     }
                     
-                    if(drive.isSurrogate) {
+                    if (drive.isSurrogate) {
                         throw 'Surrogate drive';
                     }
                 })
@@ -442,10 +446,15 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return driveGeneratorInstance.checkAndApplyDriveChangeRequest();
         })
         .then(() => {
+            return Promise.all([
+                this.retrieveCustomSettings()
+            ]);
+        })
+        .then(() => {
             this.initialized = true;
         })
         .catch(error => {
-            if(typeof error !== 'string') {
+            if (typeof error !== 'string') {
                 this.exceptionHandler(error);
             }
         })
@@ -457,9 +466,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleDriveChanged(event) {
-        if(!event.detail.drive || !this.drive) return;
+        if (!event.detail.drive || !this.drive) return;
 
-        if(event.detail.drive.id === this.drive.id) {
+        if (event.detail.drive.id === this.drive.id) {
             this.drive = {
                 ...this.drive,
                 ...event.detail.drive
@@ -522,7 +531,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     btnAllocateClicked() {
-        let eventValues = {drive: this.drive};
+        let eventValues = { drive: this.drive };
         fireEvent(this.pageRef, 'openDriveStaffingDetails', eventValues);
     }
 
@@ -603,7 +612,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
             onClose: (result) => {
                 this.hideConfirmModal();
-                if(result) {
+                if (result) {
                    this.handleRemoveHold();
                 }
             }
@@ -619,7 +628,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     
                 onClose: (result) => {
                     this.hideConfirmModal();
-                    if(result) {
+                    if (result) {
                        this.handleHoldDrive();
                     }
                 }
@@ -632,9 +641,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     btnApproveDriveSubmissionClicked() {
-        if(!this.showApproveDriveSubmissionBtn) return;
+        if (!this.showApproveDriveSubmissionBtn) return;
 
-        if([DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL, 
+        if ([DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL,
             DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK].includes(this.drive.approvalStatus)) {
             //save draft & approve
             this.btnSaveDraftClicked(null, true);
@@ -669,11 +678,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return Promise.resolve()
                 .then(() => {
                     return driveGeneratorInstance.validateCurrentAssignedAssets([], this.showApproveDriveSubmissionBtn)
-                    .then(({allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors}) => {
+                        .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
                         //equipments
                         return Promise.resolve()
                         .then(() => {
-                            if(!allAssignedEquipmentsValid) {
+                            if (!allAssignedEquipmentsValid) {
                                 return driveGeneratorInstance.onDriveDataChanged([{
                                     targetName: 'totalEquipmentRequestedChanged',
                                     targetValue: {
@@ -692,9 +701,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             }
                         })
                     })
-                    .then(({allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors}) => {
+                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
                         //vehicles
-                        if(!canHandleDriveProjectedRegisteredDonors) {
+                        if (!canHandleDriveProjectedRegisteredDonors) {
                             Promise.resolve()
                             .then(() => {
                                 return driveGeneratorInstance.onDriveDataChanged([{
@@ -713,9 +722,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             throw "break";
                         }
 
-                        if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
+                        if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
-                            if(!this.drive.preferSystemGeneratedVehicles) {
+                            if (!this.drive.preferSystemGeneratedVehicles) {
                                 driveGeneratorInstance.onDriveDataChanged([{
                                     targetName: 'totalVehicleRequestedChanged',
                                     targetValue: {
@@ -728,10 +737,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                     return this.handleValidate();
                                 })
 
+
                                 throw 'break';
                             }
                             
-                            if(currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
+                            if (currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
                                 this.showConfirmModal({
                                     title: 'Drive Confirmation',
                                     message: 'Number of Vehicles changes. Please review again.',
@@ -777,7 +787,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     return this.handleValidate();
                 })
                 .catch(error => {
-                    if(error !== 'break') {
+                    if (error !== 'break') {
                         this.exceptionHandler(error);
                     }
                 })
@@ -796,10 +806,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         .then(() => {
             return driveGeneratorInstance.submitDrive();
         })
-        .then(({showReviewDriveMessage, drive: newDrive }) => {
+        .then(({ showReviewDriveMessage, drive: newDrive }) => {
             this.drive = newDrive;
 
-           if(showReviewDriveMessage) {
+           if (showReviewDriveMessage) {
                 this.showConfirmModal({
                     title: 'Drive Changed',
                     message: `The drive has changed. Please review and submit again.`,
@@ -823,7 +833,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         .then((newDrive) => {
             this.drive = newDrive;
             let pendingActionReasonCodes = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
-            if(pendingActionReasonCodes.length > 0) {
+            if (pendingActionReasonCodes.length > 0) {
                 this.showPendingActionDriveConfirmModal();
             } else {
                 this.drive.status = [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status;
@@ -840,12 +850,12 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
         const needToApproveApprovalIfAny = saveAndApproveApprovalIfAny && isAPSUser;
 
-        if(this.drive.status === DRIVE_STATUS.DRAFT) {
+        if (this.drive.status === DRIVE_STATUS.DRAFT) {
             this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
         }
         
         let drivesToSave = [];
-        let model = {...this.drive};
+        let model = { ...this.drive };
         drivesToSave.push(model);
 
         let newDriveId = null;
@@ -857,8 +867,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             })
             .then(() => {
                 //approve drive submission if needed
-                if(!needToApproveApprovalIfAny) return;
-                if(!this.driveHelper.isDriveSubmittedForSubmissionApproval(this.drive)) return;
+                if (!needToApproveApprovalIfAny) return;
+                if (!this.driveHelper.isDriveSubmittedForSubmissionApproval(this.drive)) return;
 
                 const request = {
                     recordId: this.drive.id,
@@ -866,18 +876,18 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 };
                 
                 const _approvalService = new approvalService();
-                return _approvalService.approveReject({request: request})
+                return _approvalService.approveReject({ request: request })
                 .then(() => {
-                    if(isAPSUser && (this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL || 
+                    if (isAPSUser && (this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL ||
                         this.drive.approvalStatus === DRIVE_APPROVAL_STATUS.DM_WAITING_FOR_DRD_FEEDBACK)) {
-                        return _approvalService.approveReject({request: request})
+                        return _approvalService.approveReject({ request: request })
                     }
                 });
             })
             .then(() => {
                 //approve DCR if needed
-                if(!needToApproveApprovalIfAny) return;
-                if(!this.showDCRWarning || !(driveGeneratorInstance.masterData.waitingDriveChangeRequest)) {
+                if (!needToApproveApprovalIfAny) return;
+                if (!this.showDCRWarning || !(driveGeneratorInstance.masterData.waitingDriveChangeRequest)) {
                     return;
                 }
                 
@@ -887,19 +897,19 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 };
                 
                 const _approvalService = new approvalService();
-                return _approvalService.approveReject({request: request})
+                return _approvalService.approveReject({ request: request })
                 .then(() => {
-                    if(isAPSUser && (driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL || 
-                        driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK )) {
-                            return _approvalService.approveReject({request: request})
+                    if (isAPSUser && (driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_DM_APPROVAL || 
+                        driveGeneratorInstance.masterData.waitingDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.DM_WAITING_FOR_DRD_FEEDBACK)) {
+                        return _approvalService.approveReject({ request: request })
                         }
                 });
             })
             .then(() => {
-                if(!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
+                if (!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
                 return driveGeneratorInstance.calculateRecurrenceSlots(model)
                 .then((drivesToSave = []) => {
-                    if(!drivesToSave.length) return;
+                    if (!drivesToSave.length) return;
 
                     const driveSvc = new driveService();
                     const slotSvc = new slotService();
@@ -919,17 +929,17 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
                             return Promise.resolve()
                             .then(() => {
-                                if(slotsToDelete.length > 0) {
+                                if (slotsToDelete.length > 0) {
                                     return slotSvc.deleteList(slotsToDelete);
                                 }
                             })
                             .then(() => {
-                                if(slotsToSave.length > 0) {
+                                if (slotsToSave.length > 0) {
                                     return slotSvc.saveList(slotsToSave);
                                 }
                             })
                             .then(() => {
-                                if(drives.length > 0) {
+                                if (drives.length > 0) {
                                     return driveSvc.saveList(drives);
                                 }
                             });
@@ -938,6 +948,21 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 
                     return slwcUtils.serial(promises);
                 })
+            })
+            .then(() => {
+                if (!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
+                return driveGeneratorInstance.calculateRecurrenceVolunteerJobs(model)
+                    .then((jobsToSave = []) => {
+                        if (!jobsToSave.length) return;
+
+                        const jobSvc = new jobService();
+                        const promises = chunk(jobsToSave, 50).map(chunkJobs => {
+                            return () => {
+                                return jobSvc.saveList(chunkJobs);
+                            }
+                        });
+                        return slwcUtils.serial(promises);
+                    })
             })
             .then(() => {
                 let message = `Drive ${this.drive.name} was ${this.drive.id ? 'saved' : 'created'}.`;
@@ -959,7 +984,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     handleHoldDrive() {
         this.showLoading();
         driveGeneratorInstance.submitDrive()
-        .then(({showReviewDriveMessage, drive: newDrive }) => {
+            .then(({ showReviewDriveMessage, drive: newDrive }) => {
             this.drive = newDrive;
 
             return driveGeneratorInstance.validateDrive()
@@ -972,13 +997,16 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     'Lacking of equipment',
                     'Exceeds Operational Drive Limit',
                     'Exceeds 2RBC Operational Limit',
-                    'Excess Staff Capacity'
+                    'Excess Staff Capacity',
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
+                    DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
                 ];
                 const anyContentionsPreventHold = pendingActionReasonCodes.filter(pendingActionReasonCode => {
                     return contentionsPreventHold.includes(pendingActionReasonCode);
                 })
 
-                if(anyContentionsPreventHold.length > 0) {
+                if (anyContentionsPreventHold.length > 0) {
                     this.showConfirmModal({
                         title: 'Cannot Hold Drive',
                         message: `Cannot hold this Drive due to below contentions:
@@ -1027,7 +1055,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         this.handleDirtyStateChanged(false);
         this.isSetUnsavedChangesDone = false;
         this.isDirty = false;
-        if(this.showCloseButton) return;
+        if (this.showCloseButton) return;
 
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
@@ -1039,7 +1067,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     onDriveDataChanged(event) {
-        if(event.stopPropagation) {
+        if (event.stopPropagation) {
             event.stopPropagation();
         }
         const detail = event.detail;
@@ -1077,11 +1105,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return Promise.resolve()
                 .then(() => {
                     return driveGeneratorInstance.validateCurrentAssignedAssets(driveChanges)
-                    .then(({allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors}) => {
+                    .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
                         //equipments
                         return Promise.resolve()
                         .then(() => {
-                            if(!allAssignedEquipmentsValid) {
+                            if (!allAssignedEquipmentsValid) {
                                 return driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
                                     targetName: 'totalEquipmentRequestedChanged',
                                     targetValue: {
@@ -1100,9 +1128,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             }
                         })
                     })
-                    .then(({allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors}) => {
+                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
                         //vehicles
-                        if(!canHandleDriveProjectedRegisteredDonors) {
+                        if (!canHandleDriveProjectedRegisteredDonors) {
                             driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
                                 targetName: 'totalVehicleRequestedChanged',
                                 targetValue: {
@@ -1115,9 +1143,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             throw "break";
                         }
 
-                        if(!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
+                        if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
                             let currentNoOfVehicles = this.drive.totalVehicleRequested;
-                            if(!this.drive.preferSystemGeneratedVehicles) {
+                            if (!this.drive.preferSystemGeneratedVehicles) {
                                 driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
                                     targetName: 'totalVehicleRequestedChanged',
                                     targetValue: {
@@ -1130,7 +1158,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 throw 'break';
                             }
 
-                            if(currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
+                            if (currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
                                 this.showConfirmModal({
                                     title: 'Drive Confirmation',
                                     message: 'Number of Vehicles changes. Please review again.',
@@ -1170,7 +1198,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     return driveGeneratorInstance.onDriveDataChanged(driveChanges);
                 })
                 .catch(error => {
-                    if(error !== 'break') {
+                    if (error !== 'break') {
                         this.exceptionHandler(error);
                     }
                 })
@@ -1214,7 +1242,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleSaveDriveStaffingDetails() {
-        this.handleCloseDriveStaffingDetails();
+        // this.handleCloseDriveStaffingDetails();
         this.initialize(this.recordId);
     }
 
@@ -1223,7 +1251,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     /** Drive Delivery Jobs **/
-    handleSaveDeliveryJob(detail){
+    handleSaveDeliveryJob(detail) {
         driveGeneratorInstance.saveDriveDeliveryJob(detail.driveDeliveryJobs);
     }
 
@@ -1233,21 +1261,21 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     /** Drive Shift Slots **/
     handleResetAppointments(event) {
-        if(!event.detail.driveShift) return;
+        if (!event.detail.driveShift) return;
         
         driveGeneratorInstance.resetSlots(event.detail.driveShift.key);
     }
 
     handleRegenerateAppointments(event) {
-        if(!event.detail.driveShift) return;
+        if (!event.detail.driveShift) return;
         
         driveGeneratorInstance.regenerateSlots(event.detail.driveShift.key);
     }
 
     handleSaveAppointment(event) {
-        if(!event.detail.driveShift || !event.detail.slotKey) return;
+        if (!event.detail.driveShift || !event.detail.slotKey) return;
         
-        if(event.detail.action === 'delete') {
+        if (event.detail.action === 'delete') {
             driveGeneratorInstance.deleteSlot(event.detail.driveShift.key, {
                 ...event.detail.newSlot,
                 key: event.detail.slotKey
@@ -1269,7 +1297,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleDeleteAppointment(event) {
-        if(!event.detail.driveShift || !event.detail.slotKey) return;
+        if (!event.detail.driveShift || !event.detail.slotKey) return;
         
         driveGeneratorInstance.deleteSlot(event.detail.driveShift.key, {
             key: event.detail.slotKey
@@ -1278,13 +1306,13 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     /** Drive Shift Tags **/
     handleSaveDriveShiftTag(detail) {
-        if(!detail.driveShift || !detail.driveShiftTag) return;
+        if (!detail.driveShift || !detail.driveShiftTag) return;
         
         driveGeneratorInstance.saveDriveShiftTag(detail.driveShift.key, detail.driveShiftTag)
     }
 
     handleDeleteDriveShiftTag(detail) {
-        if(!detail.driveShift || !detail.driveShiftTag) return;
+        if (!detail.driveShift || !detail.driveShiftTag) return;
         
         driveGeneratorInstance.deleteDriveShiftTag(detail.driveShift.key, detail.driveShiftTag)
     }
@@ -1298,9 +1326,14 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         driveGeneratorInstance.saveJob(detail.shiftKey, detail.job);
     }
 
+    handleSaveBulkEditVolunteerJobModal(detail) {
+        driveGeneratorInstance.saveBulkEditVolunteerJob(detail.shiftKey, detail.job);
+    }
+
     /** Confirm Modal **/
     showConfirmModal(confirmModalData) {
-        this.confirmModalData = {...confirmModalData,
+        this.confirmModalData = {
+            ...confirmModalData,
             isOpen: true,
             confirmBtnLabel: confirmModalData.confirmBtnLabel || 'Yes',
             cancelBtnLabel: confirmModalData.cancelBtnLabel || 'No',
@@ -1313,7 +1346,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     /** Pending Action Drive Confirm Modal **/
     showPendingActionDriveConfirmModal(pendingActionDriveConfirmModalData) {
-        this.pendingActionDriveConfirmModalData = {...pendingActionDriveConfirmModalData,
+        this.pendingActionDriveConfirmModalData = {
+            ...pendingActionDriveConfirmModalData,
             isOpen: true
         }
     }
@@ -1325,24 +1359,42 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     savePendingActionDriveConfirmModal(event) {
         this.hidePendingActionDriveConfirmModal();
 
-        const { submissionNotes, contentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
+        const { submissionNotes, contentionResolution, driveShiftContention, driveShiftTimeBlockId, driveShiftContentionResolution, status, equipmentAllocations, vehicleAllocations } = event.detail;
         this.drive.submissionNotes = submissionNotes || this.drive.submissionNotes;
-        if(status) {
+        if (status) {
             this.drive.status = status;
         }
         this.drive.contentionResolution = contentionResolution;
 
-        if(this.drive.status === DRIVE_STATUS.DRAFT) {
+        if(driveShiftContentionResolution?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contentionResolution = driveShiftContentionResolution[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftContention?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.contention = driveShiftContention[driveShiftIndex] ?? '';
+            })
+        }
+
+        if(driveShiftTimeBlockId?.length) {
+            this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
+                driveShift.timeBlockId = driveShiftTimeBlockId[driveShiftIndex] ?? '';
+            })
+        }
+        
+        if (this.drive.status === DRIVE_STATUS.DRAFT) {
             this.drive = driveGeneratorInstance.releaseAllAssetAllocations();
         }
 
-        if(this.drive.status !== DRIVE_STATUS.DRAFT) {
-            if(equipmentAllocations) {
+        if (this.drive.status !== DRIVE_STATUS.DRAFT) {
+            if (equipmentAllocations) {
                 let equipmentJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.EQUIPMENT);
                 equipmentJob.jobAllocations = [...equipmentAllocations];
             }
 
-            if(vehicleAllocations) {
+            if (vehicleAllocations) {
                 let vehicleJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.VEHICLE);
                 vehicleJob.jobAllocations = [...vehicleAllocations];
             }
@@ -1383,5 +1435,17 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             return '';
         }
         return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
+    }
+
+    retrieveCustomSettings() {
+        let settingKeys = ["adminSetting"];
+        return Promise.resolve()
+            .then(() => {
+                let service = new dataService();
+                return service.getCustomSettings({ settingKeys: settingKeys })
+                    .then((result) => {
+                        this.adminSettings = result.returnedData.adminSetting;
+                    })
+            });
     }
 }

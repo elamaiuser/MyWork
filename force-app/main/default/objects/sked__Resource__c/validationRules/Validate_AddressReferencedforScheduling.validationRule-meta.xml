@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validate_AddressReferencedforScheduling</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+(RecordType.Name =&apos;Staff&apos;),
+ISPICKVAL(sked_Address_Referenced_for_Scheduling__c, &apos;&apos;) ,
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;,
+$Profile.Name &lt;&gt; &quot;Global Admin&quot;,
+$Profile.Name &lt;&gt; &quot;Informatica Integration Users&quot;
+)</errorConditionFormula>
+    <errorDisplayField>sked_Address_Referenced_for_Scheduling__c</errorDisplayField>
+    <errorMessage>&apos;Address Referenced for Scheduling&apos; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
+</ValidationRule>

@@ -150,14 +150,16 @@ public class skedJobHandler extends skedTriggerHub {
             }
         }
         if (!cancelledJobIds.isEmpty()) {
-            List<sked__Job_Allocation__c> allocationsToDelete = [SELECT Id, sked__Status__c
+            List<sked__Job_Allocation__c> allocationsToDelete = [SELECT Id, sked__Status__c, sked_Time_Cancelled__c
                                                                  FROM sked__Job_Allocation__c
                                                                  WHERE sked__Job__c IN :cancelledJobIds
                                                                  AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                                                  AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DECLINED];
             if (!allocationsToDelete.isEmpty()) {
+                DateTime timeCancelled = system.now();
                 for (sked__Job_Allocation__c skedAllocation : allocationsToDelete) {
                     skedAllocation.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
+                    skedAllocation.sked_Time_Cancelled__c = timeCancelled;
                 }
                 update allocationsToDelete;
             }

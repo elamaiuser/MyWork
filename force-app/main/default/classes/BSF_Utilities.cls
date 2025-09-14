@@ -652,6 +652,35 @@ public with sharing class BSF_Utilities {
         return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
     }
 
+    //HRP-701 Utility Methods
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagRemoved(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            if(opp.Special_Circumstances__c == null) continue;
+
+            List<String> updatedSpecialCircumstances = new List<String>(); 
+            for(String value : opp.Special_Circumstances__c.split(';')) {
+                if(value != BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) {
+                    updatedSpecialCircumstances.add(value);
+                }
+            }
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagAdded(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            List<String> updatedSpecialCircumstances = 
+                opp.Special_Circumstances__c == null 
+                ? new List<String>() 
+                : new List<String>(opp.Special_Circumstances__c.split(';'));
+            updatedSpecialCircumstances.add(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE);
+            
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
 
      //Error log without exception
      //HRP-12481

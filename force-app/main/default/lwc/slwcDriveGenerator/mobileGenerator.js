@@ -15,7 +15,7 @@ const DEFAULT_CALENDAR_SETTINGS = {
 
 const DRIVE_ACTION_GROUPS_ORDER = [
   ['retrieveDriveSiteAndPopulateCollectionOperation', 'populateSiteCollectionOperation', 'populateDriveCollectionOperation', 'populateCollectionOperationData'],
-  ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'],
+  ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'],
   ['calculateNumberOf2rbcAssets', 'calculate2rbcProjectedProcedures', 'splitScheduledDonors', 'split2rbcProjectedProcedures', 'calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata',
      'applyStaffingComplementAndProposeDriveShifts', 'handlePreferSystemGeneratedVehiclesChanged', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
     'handleTotalVehicleRequestedChanged', 'handleEquipmentRequestedChanged', 'handleDriveShiftsMetadataChanged', 'correctJobAllocationTimes']
@@ -25,7 +25,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveDate': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData'] },
+      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
@@ -65,7 +65,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveSiteId': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -73,7 +73,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'siteCollectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'] },
+      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -81,7 +81,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'collectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveTerritoryCollectionOperations'] },
+      { actions: ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveTerritoryCollectionOperations', 'retrieveCollectionOperationTimeBlocksData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -398,10 +398,11 @@ class MobileGenerator extends BaseGenerator {
                       this.fetch.retrieveCollectionOperationSDM(this.drive),
                       this.fetch.retrieveRoleTimeData(this.drive),
                       this.fetch.retrieveDefaultTags(this.drive),
-                      this.fetch.retrieveTerritoryCollectionOperations(this.drive)
+                      this.fetch.retrieveTerritoryCollectionOperations(this.drive),
+                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive),
                     ])
                   })
-                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations]) => {
+                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks]) => {
                     this.initMasterData({
                       loginUser,
                       driveSite,
@@ -417,7 +418,8 @@ class MobileGenerator extends BaseGenerator {
                       driveTags,
                       territoryCollectionOperations,
                       staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix
+                      redcrossVolunteerMatrix,
+                      collectionOperationTimeBlocks
                     })
 
                     this.populateCollectionOperationData();
@@ -505,10 +507,11 @@ class MobileGenerator extends BaseGenerator {
             this.fetch.retrieveCollectionOperationSDM(this.drive),
             this.fetch.retrieveRoleTimeData(this.drive),
             this.fetch.retrieveDefaultTags(this.drive),
-            this.fetch.retrieveActiveDriveChangeRequest(this.drive)
+            this.fetch.retrieveActiveDriveChangeRequest(this.drive),
+            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
           ]);
         })
-        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap , vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest]) => {
+        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap , vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks]) => {
           this.initMasterData({
             loginUser,
             driveSite,
@@ -524,7 +527,8 @@ class MobileGenerator extends BaseGenerator {
             driveTags,
             activeDriveChangeRequest,
             staffSetupExcludedRoles,
-            redcrossVolunteerMatrix
+            redcrossVolunteerMatrix,
+            collectionOperationTimeBlocks
           })
           
           this.populateCollectionOperationData();
@@ -640,11 +644,20 @@ class MobileGenerator extends BaseGenerator {
         return availableVehicleIds.includes(assignedVehicle.id) || (availableButNotSharedAssetIds.includes(assignedVehicle.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
       })
 
-      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
+      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity !== maxRegisteredDonors) {
         let { maxRegisteredDonorsToAllocate, availableVehiclesCanBeUsed, remainingMaxDOT, remainingMaxCDL } = this.helper.preProcessSuggestVehicles(maxRegisteredDonors, availableVehicles, lockedVehicles, {
           maxDOT,
           maxCDL
         });
+
+        if(maxRegisteredDonorsToAllocate <= 0) {
+            return {
+            allAssignedVehiclesValid: false,
+            canHandleDriveProjectedRegisteredDonors: true,
+            newVehicles: [],
+            lockedVehicles: lockedVehicles
+          }
+        }
 
         //try to assign new vehicles 
         let drivesWithVehicles = this.helper.calculateNumberOfVehiclesForDrive(drive, availableVehiclesCanBeUsed, {
@@ -1174,11 +1187,14 @@ class MobileGenerator extends BaseGenerator {
 
     //resources
     if(skipCalculateResourceRoles) {
+      console.log('skipCalculateResourceRoles')
       const staffingComplementChanged = this.drive.staffingComplementChanged || {};
+      console.log('staffingComplementChanged ',staffingComplementChanged);
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
       driveShiftsMetadata.driveShifts.forEach((driveShift, driveShiftIndex) => {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
+        console.log('staffingComplement ',staffingComplement);
         Object.keys(staffingComplement).forEach(jobKey => {
           const { resourceRole } = this.helper.parseJobKey(jobKey);
           const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = staffingComplement[jobKey]; //preserve properties for manually created jobs
@@ -1217,6 +1233,8 @@ class MobileGenerator extends BaseGenerator {
     this.calculateVolunteerDonorAmbassadors();
     this.drive.redcrossVolunteerQuantity = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR) || 0;
 
+    console.log('backupDualRolesMap ',this.backupDualRolesMap);
+    console.log('this.mapResourceQuantity ',this.mapResourceQuantity);
     if(backupAndRestoreDualRoles && this.backupDualRolesMap) {
       this.restoreDualRoles(this.backupDualRolesMap);
     }
@@ -1249,6 +1267,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   generateDualRoles() {
+    console.log('generateDualRoles');
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
       let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
@@ -1380,9 +1399,11 @@ class MobileGenerator extends BaseGenerator {
         this.mapResourceQuantity = tempMapResourceQuantity;
       }
     }
+    console.log('this.mapResourceQuantity after dual roles ',this.mapResourceQuantity );
   }
 
   restoreDualRoles(backupDualRolesMap = {}) {
+    console.log('restoreDualRoles ');
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     Object.keys(backupDualRolesMap).forEach(driveShiftIndex => {
       const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
@@ -1606,6 +1627,7 @@ class MobileGenerator extends BaseGenerator {
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     const noOfEquipments = this.mapAssetQuantity.get('Equipment');
     const noOf2rbcStaffs = Math.ceil(noOfEquipments / 2);
+    console.log('noOf2rbcStaffs ',noOf2rbcStaffs);
 
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
@@ -1785,7 +1807,9 @@ class MobileGenerator extends BaseGenerator {
     let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity || 0;
 
     const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
-    const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
+    const redcrossVolunteerMatrix = (this.masterData.redcrossVolunteerMatrix || []).filter(item => {
+      return item.driveType === this.drive.typeOfDrive && item.isHighSchoolDrive === isHighSchoolDrive
+    });
 
     if(isNullOrEmpty(this.drive.id)) noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity; //In case of drive generation, get quantity from opp
     else if(!this.masterData.skipVolunteerRecalculation && redcrossVolunteerMatrix) {
@@ -1847,6 +1871,7 @@ class MobileGenerator extends BaseGenerator {
 
           driveShift.jobs.forEach(job => {
             if(!job.resourceRole) return;
+            if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
             
             if(this.helper.isManuallyCreatedJob(job, this.drive)) {
               this.backupDualRolesMap[driveShiftIndex].push({
@@ -1921,6 +1946,7 @@ class MobileGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled,
         APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
+      this.populateDriveShiftTimeBlocks(proposedDriveShift);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -1954,6 +1980,7 @@ class MobileGenerator extends BaseGenerator {
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {
           driveShift.jobs.forEach((job) => {
+            //if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
             let originalJob = this.helper.findJob(job, originalDriveShift.jobs);
             if (originalJob) {
               job.id = originalJob.id;
@@ -1978,7 +2005,7 @@ class MobileGenerator extends BaseGenerator {
           });
         }
       }
-
+      console.log('driveShift.jobs last ',driveShift.jobs);
       this.buildJobTagNames(driveShift);
       this.updateShiftMobileSetup(driveShift);
     })
@@ -2006,6 +2033,7 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
+    console.log('mapResourceQuantity ',mapResourceQuantity);
     Array.from(mapResourceQuantity.keys()).forEach((jobKey) => {
       const {
         resourceRole,
@@ -2021,6 +2049,7 @@ class MobileGenerator extends BaseGenerator {
       }
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.resourceRole = resourceRole;
+      console.log('job ',job);
 
         if (resourceRole === 'VP/HH') {
           let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
@@ -2089,6 +2118,7 @@ class MobileGenerator extends BaseGenerator {
         jobs.push(job);
       }
     });
+    console.log('jobs ',jobs);
 
     //manually created jobs
     let manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
@@ -2105,9 +2135,12 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
+    console.log('driveShift.jobs ',driveShift.jobs);
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
+      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && 
+      job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL &&
+      (
         this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
         this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
       )
@@ -2116,6 +2149,7 @@ class MobileGenerator extends BaseGenerator {
     if(anyManuallyCreatedJobsHoldCapacity) {
       this.recalculateVphhQuantity(driveShift);
     }
+    console.log('driveShift.jobs after ',driveShift.jobs);
   }
 
   // To create new jobs /update existing jobs after dual role modification
@@ -2884,6 +2918,13 @@ class MobileGenerator extends BaseGenerator {
       this.masterData.roleTimeVarianceMap = roleTimeVarianceMap;
       this.masterData.roleGroupTimeDetailMap = roleGroupTimeDetailMap;
       this.masterData.roleGroupTimeVarianceMap = roleGroupTimeVarianceMap;
+    })
+  }
+
+  retrieveCollectionOperationTimeBlocksData() {
+    return this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+    .then((collectionOperationTimeBlocks) => {
+      this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || []; 
     })
   }
 }

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
+        <categories>Validation Message</categories>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
-        <value>17</value>
+        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
+        <value>Effective Start/End Dates must fall within the associated Time Block&apos;s effective
+            date range.</value>
     </labels>
     <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
+        <categories>Validation Message</categories>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
-        <value>10</value>
+        <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
+        <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
 </CustomLabels>
