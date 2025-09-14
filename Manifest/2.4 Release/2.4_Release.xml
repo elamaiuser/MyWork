@@ -161,6 +161,7 @@
         <members>sked_Operation_Drive_Limit__c.Time_Block__c</members>
         <members>sked_Staffing_Constraint__c.sked_Time_Block__c</members>
         <members>sked__Activity__c.sked_Time_Block__c</members>
+        <members>sked__Job_Allocation__c.sked_Time_Cancelled__c</members>
         <members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
         <members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
         <name>CustomField</name>
