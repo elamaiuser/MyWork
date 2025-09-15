@@ -19,8 +19,7 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
             SELECT Id, sked_Run_Id__c, sked_Status__c, sked_Error_Message__c,
             sked_Stuck_Retry_Count__c, sked_Last_Stuck_Detection_Time__c
             FROM sked_Travel_Time_Index_Refresh_Request__c
-            WHERE sked_Run_Id__c = NULL
-            AND sked_Status__c = :skedConstants.TTIRR_STATUS_IN_PROGRESS
+            WHERE sked_Status__c = :skedConstants.TTIRR_STATUS_IN_PROGRESS
             AND LastModifiedDate <= :thresholdTime
         ]);
     }
@@ -39,6 +38,7 @@ global with sharing class skedReprocessStuckTTIRequestBatch implements Database.
             else {
                 ttirr.sked_Status__c = skedConstants.TTIRR_STATUS_PENDING;
                 ttirr.sked_Error_Message__c = '';
+                ttirr.sked_Run_Id__c = '';
                 ttirr.sked_Stuck_Retry_Count__c = currentRetry;
                 ttirr.sked_Last_Stuck_Detection_Time__c = System.now();
                 this.idsToResubmit.add(ttirr.Id);
