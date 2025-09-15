@@ -77,6 +77,13 @@
             <operator>notEqual</operator>
             <value>Cancelled</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>Opportunity.Type_of_Drive__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>equals</operator>
+            <value>Mobile,RSMO</value>
+        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>
