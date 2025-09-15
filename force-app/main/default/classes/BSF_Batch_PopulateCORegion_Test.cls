@@ -126,4 +126,68 @@ BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion();
         
         
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+       @isTest
+    Public static void TestMethod3()
+    {
+        List<Taxonomy__c> taxonomies = PortfolioTestDataFactory.createTaxonomies('48420','48421');
+        insert taxonomies;
+        
+       // Fetch a RecordType
+        RecordType rt = [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Taxonomy__c' and Name=:BSF_Constants.BIO_COLLECTION_RECORD_TYPE LIMIT 1];
+
+        // Insert one expired taxonomy record
+        Taxonomy__c taxn = new Taxonomy__c(
+            Version_Key__c = 1.0,
+            End_Date__c = Date.today().addDays(-5),
+            RecordTypeId = rt.Id
+        );
+        insert taxn;
+
+        // Insert corresponding Taxonomy_Run__c
+        Taxonomy_Run__c taxoRun = new Taxonomy_Run__c(
+            External_Id__c = rt.Name + '_' + taxn.Version_Key__c,
+            Status__c = 'Pending',
+            Future_Version_Number__c = taxn.Version_Key__c,
+            Taxo_Record_Type__c = rt.Name
+        );
+        insert taxoRun;
+
+        // Create scope for the batch (simulate execution context)
+        List<Taxonomy__c> scope = new List<Taxonomy__c>{taxn};
+
+      
+
+        // Assert: Check if status changed to 'Processing'
+        Taxonomy_Run__c updatedRun = [SELECT Status__c, Processing_Start__c FROM Taxonomy_Run__c WHERE Id = :taxoRun.Id];
+       // System.assertEquals('Processing', updatedRun.Status__c);
+       // System.assertNotEquals(null, updatedRun.Processing_Start__c);
+       
+        
+        Date stDate = system.today()-100;
+        Date enDate = system.today()+365;
+        
+     
+        BSF_Batch_PopulateCORegion batch = new BSF_Batch_PopulateCORegion(null,taxn.version_Key__c,true);
+        id jobid = database.executeBatch(batch,200);
+          BSF_Batch_PopulateCORegion batch1 = new BSF_Batch_PopulateCORegion(null,null,true);
+        id jobid1 = database.executeBatch(batch1,200);
+        BSF_Batch_PopulateCORegion batch2 = new BSF_Batch_PopulateCORegion(System.today(),taxn.version_Key__c,true);
+        id jobid2 = database.executeBatch(batch2,200);
+          BSF_Batch_PopulateCORegion batch3 = new BSF_Batch_PopulateCORegion(System.today(),null,true);
+        id jobid3 = database.executeBatch(batch3,200);
+         BSF_Batch_PopulateCORegion batch4 = new BSF_Batch_PopulateCORegion();
+        id jobid4 = database.executeBatch(batch4,200);
+       
+    }
 }

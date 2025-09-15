@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Reason_Approval_Required__c</fullName>
-    <externalId>false</externalId>
     <label>Reason Approval Required</label>
     <required>false</required>
     <trackHistory>true</trackHistory>
@@ -12,9 +11,9 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Shift Trade doesn&#39;t meet cutoff requirements</fullName>
+                <fullName>Shift Trade doesn&apos;t meet cutoff requirements</fullName>
                 <default>false</default>
-                <label>Shift Trade doesn&#39;t meet cutoff requirements</label>
+                <label>Shift Trade doesn&apos;t meet cutoff requirements</label>
             </value>
             <value>
                 <fullName>Requesting User exceeds Max Hours per week</fullName>
@@ -130,6 +129,16 @@
                 <fullName>Requesting User Missing Role</fullName>
                 <default>false</default>
                 <label>Requesting User Missing Role</label>
+            </value>
+            <value>
+                <fullName>Req Staff Guarded</fullName>
+                <default>false</default>
+                <label>Req Staff Guarded</label>
+            </value>
+            <value>
+                <fullName>Trading Staff Guarded</fullName>
+                <default>false</default>
+                <label>Trading Staff Guarded</label>
             </value>
         </valueSetDefinition>
     </valueSet>

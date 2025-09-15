@@ -54,10 +54,6 @@
                 <behavior>Readonly</behavior>
                 <field>sked_External_ID__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>User_Override__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

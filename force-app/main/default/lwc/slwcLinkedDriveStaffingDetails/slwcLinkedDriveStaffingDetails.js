@@ -310,7 +310,9 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                     ])
                     .then(() => {
                         this.availator.setupDriverJobs();
-                        return this.availator.buildScheduledAllocations()
+                        return this.availator.buildScheduledAllocations({
+                            ignoreDedicatedSiteRule: true
+                        });
                     })
                     .then((result) => {
                         if (result.resources) {
@@ -350,6 +352,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
             callOut: false,
             onCall: false,
             assignedToLinkedDrives: false,
+            weeklyHours: false,
             selectedResourcesTag: [],
             selectedResourceRoles: [],
             selectedResourceEmploymentTypes: [],
@@ -1791,7 +1794,7 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                 });
             }
 
-            if (filter.weeklyHoursRange) {
+            if (filter.weeklyHours && filter.weeklyHoursRange) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
                     if(item.resourceType !== TYPE_RESOURCE.RESOURCE) return true;
 
@@ -2310,7 +2313,9 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
                 this.availator.updateData(job, indexDriveShift);
                 this.availator.setupDriverJobs();
 
-                return this.availator.buildScheduledAllocations()
+                return this.availator.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         const { possibleAllocations, mapResourceJobPossibleAllocations } = this.buildPossibleAllocations(result.possibleAllocations);

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
+		<members>BSF_Constants</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>DriveTriggerService</members>
+		<members>DriveTriggerHandler</members>
+        <members>DriveTriggerServiceTest</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Opportunity.Special_Circumstances_Notes__c</members>
+		<members>Opportunity.Special_Circumstances__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Custom_Messages.SSB_First_Time_Badge_Modification_Msg</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Special_Circumstances_Badge_Logo</members>
+		<name>StaticResource</name>
+	</types>
+    <version>59.0</version>
+</Package>

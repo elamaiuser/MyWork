@@ -28,6 +28,7 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Number_of_2RBC_Assets__c' => 'Number_of_2RBC_Assets__c',
         'sked_Number_of_Plasma_Assets__c' => 'Number_of_Plasma_Assets__c',
         'sked_Number_of_Platelet_Assets__c' => 'Number_of_Platelet_Assets__c',
+        'sked_Cancellation_Detail__c' => 'Cancellation_Detail__c',
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
         'sked_Initiated_By__c' => 'Initiated_By__c',
         'sked_APT_Required__c' => 'APT_Required__c',
@@ -51,7 +52,7 @@ public class skedDriveHandler extends skedTriggerHub {
         
         if (!skedSetting.instance.Admin.migrationMode) {
             rankDrives();
-            syncDriveStatusToOpportunity(newRecords);
+            syncDriveFieldsToOpportunity(newRecords);
         }
     }
     
@@ -1055,13 +1056,14 @@ public class skedDriveHandler extends skedTriggerHub {
         }
     }
     
-    public void syncDriveStatusToOpportunity(List<sked_Drive__c> newRecords) {
+    public void syncDriveFieldsToOpportunity(List<sked_Drive__c> newRecords) {
         List<Opportunity> oppList = new List<Opportunity>();
         for (sked_Drive__c newRecord : newRecords) {
             Opportunity oppRec = new Opportunity(
                 Id = newRecord.sked_Opportunity__c,
                 Drive_Status__c = newRecord.sked_Status__c,
-                Is_Recursion_On__c = TRUE
+                Is_Recursion_On__c = TRUE,
+                Number_of_2RBC_Assets__c = newRecord.sked_Number_of_2RBC_Assets__c
             );
             oppList.add(oppRec);
         }

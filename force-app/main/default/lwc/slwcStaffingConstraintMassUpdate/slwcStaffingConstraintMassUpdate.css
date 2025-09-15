@@ -26,16 +26,11 @@
   text-align: center;
   cursor: pointer;
   background-color: #f4f6f9;
-  height: 2.25rem;
 }
 
 .slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td .slds-staffing-constrain-mass-update__grid-left-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-}
-
-.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td .slds-staffing-constrain-mass-update__grid-left-row > div {
-  height: 2.25rem;
 }
 
 .slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell--active {

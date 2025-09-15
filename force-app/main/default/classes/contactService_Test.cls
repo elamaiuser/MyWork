@@ -33,7 +33,7 @@ public class contactService_Test
         contact2.MailingPostalCode = '48093';
         contact2.AccountId = acc1.id;
         contact2.Primary_Phone__c='Mobile Phone';
-        contact2.Email='avs1@dfh.com';
+        contact2.Email='avs2@dfh.com';
         contact2.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         cList.add( contact2);
 		insert cList;
@@ -56,23 +56,24 @@ public class contactService_Test
         testMobileOpp.CloseDate = system.today().addDays(-20);
         insert testMobileOpp;
     }
+    @isTest
     public static void testContactService()
     {
-        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='TestContactLast 3');
+        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='ContactLast3');
         contact1.Active__c = TRUE;
-        contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
+        contact1.MailingStreet = '2204 Henry ln, Apt 213'; 
         contact1.MailingCity = 'Herndon';
         contact1.MailingStateCode = 'MI';
-        contact1.MailingPostalCode = '48093';
+        contact1.MailingPostalCode = '48095';
         contact1.AccountId = [select id from Account where Name ='Test Account 2'].id;
         contact1.Primary_Phone__c='Mobile Phone';
-        contact1.Email='avs2@dfh.com';
+        contact1.Email='avs3@dfh.com';
         contact1.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         
         insert contact1;
         
         
-        system.assertEquals(1, [select count() from contact where Email='avs2@dfh.com']);
+        system.assertEquals(1, [select count() from contact where Email='avs3@dfh.com']);
         
        
     }
@@ -158,7 +159,9 @@ public class contactService_Test
         conObj.Active__c = false;
         
         try{
+            test.startTest();
             update conObj;
+            test.stopTest();
         }Catch(Exception ex)
         {
             String errormsg = ex.getMessage();
@@ -203,9 +206,9 @@ public class contactService_Test
         Contact con = [select id, HomePhone, MobilePhone, OtherPhone, Phone,Primary_Phone__c, Primary_Phone_Number_New__c from contact where lastname='TestContactLast2' limit 1];
         con.MobilePhone = '1234567890';
         con.Primary_Phone__c='Mobile Phone';
-
+		test.startTest();
         update con;
-
+		test.stopTest();
         // Fetch the inserted contact to get the formula value populated
         con = [SELECT Id, MobilePhone, HomePhone, Phone, 
                       Primary_Phone_Number_New__c

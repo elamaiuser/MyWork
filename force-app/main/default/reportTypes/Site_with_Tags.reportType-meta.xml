@@ -352,11 +352,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_On_Site_Food_Conditions__c</field>
-            <table>sked__Location__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_On_Site_Food_Canteen_Requirements__c</field>
             <table>sked__Location__c</table>
         </columns>
@@ -623,11 +618,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Unloading_Directions_Details__c</field>
-            <table>sked__Location__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>User_Override__c</field>
             <table>sked__Location__c</table>
         </columns>
         <columns>

@@ -974,6 +974,9 @@
                                         <div if:true={resource.isTraded}
                                             class="slds-badge slds-theme_warning  color-white size65rem bg-orange slds-m-top--small">
                                             Traded</div>
+                                        <div if:true={resource.isPrevCancelled}
+                                            class="slds-badge slds-theme_warning  color-white size65rem bg-amber slds-m-top--small">
+                                            Prev Cancelled</div>
                                     </div>
 
                                 </li>
@@ -1172,6 +1175,7 @@
 
     <c-slwc-drive-shift-job-modal></c-slwc-drive-shift-job-modal>
     <c-slwc-drive-shift-tag-modal></c-slwc-drive-shift-tag-modal>
+    <c-slwc-drive-shift-bulk-edit-volunteer-jobs-modal></c-slwc-drive-shift-bulk-edit-volunteer-jobs-modal>
 
     <c-slwc-confirm-modal
         if:true={confirmModalData.isOpen}

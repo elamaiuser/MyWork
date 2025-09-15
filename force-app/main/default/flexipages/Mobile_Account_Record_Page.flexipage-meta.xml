@@ -121,8 +121,8 @@
                             <visibilityRule>
                                 <criteria>
                                     <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Feeder Only</rightValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Feeder Plus</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -1607,6 +1607,15 @@
                     <valueList>
                         <valueListItems>
                             <value>sked_Location__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Site_Building_Name__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Site_Name__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Room_Name__c</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

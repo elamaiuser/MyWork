@@ -75,7 +75,7 @@ global class slwcResourceService {
                                               WHERE DAY_ONLY(sked_Start__c) <= :maxDate AND DAY_ONLY(sked_Finish__c) >= :minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.name
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE DAY_ONLY(sked__Start__c) <= :maxDate
                                               AND (sked__End__c = NULL OR DAY_ONLY(sked__End__c) >= :minDate)),
@@ -210,7 +210,7 @@ global class slwcResourceService {
                 if (!orsToUpdate.isEmpty()) {
                     update orsToUpdate;
                 }
-                
+
                 unavailabilityStart = jobAllocation.sked__Start__c;
                 unavailabilityEnd = jobAllocation.sked__Set_End__c;
                 unavailabilityTimezone = jobAllocation.sked__Resource__r.sked_Timezone__c;
@@ -260,7 +260,7 @@ global class slwcResourceService {
             sked_DateTime_Call_Out_Received__c = request.callOutReceivedDateTime,
             sked_DateTime_of_Call_Out__c = currentTime,
             sked_Time_Off_Plan__c = request.timeOffPlan,
-            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode
+            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode            
         );
 
         if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
@@ -294,10 +294,10 @@ global class slwcResourceService {
     private static void editCallOut(saveCallOutRequestModel request) {
         update new sked__Availability__c(
         	Id = request.id,
-            sked_Call_Out_Notes__c = request.callOutNotes,
-            sked_Call_Out_Reason_Code__c = request.callOutReason,
-            sked_Call_Out_Type__c = request.callOutType
-        );
+                sked_Call_Out_Notes__c = request.callOutNotes,
+                sked_Call_Out_Reason_Code__c = request.callOutReason,
+                sked_Call_Out_Type__c = request.callOutType
+            );
     }
     
     /*********************************************************** Nested Classes ***********************************************************/

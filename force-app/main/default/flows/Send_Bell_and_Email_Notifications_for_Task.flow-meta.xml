@@ -261,6 +261,13 @@
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.Subject</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Label.Task_Subject_Marketing_Exception</elementReference>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>Notify_Task_Owner</targetReference>
             </connector>
