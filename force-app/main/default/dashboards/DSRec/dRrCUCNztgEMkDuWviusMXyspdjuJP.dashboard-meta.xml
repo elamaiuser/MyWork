@@ -153,7 +153,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -200,7 +200,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Increase APO or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -251,7 +251,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -298,7 +298,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -388,10 +388,10 @@
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
     <isGridLayout>true</isGridLayout>
-    <owner>shubham.tiwari@redcross.org</owner>
-    <runningUser>shubham.tiwari@redcross.org</runningUser>
+    <owner>deploymentuser@redcross.org.biomed</owner>
+    <runningUser>deploymentuser@redcross.org.biomed</runningUser>
     <textColor>#000000</textColor>
-    <title>Fixed Site Insights Dashboard: Southwest &amp; Rocky Mountains Division</title>
+    <title>Fixed Site Dashboard: Southwest &amp; Rocky Mountains Division</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>
