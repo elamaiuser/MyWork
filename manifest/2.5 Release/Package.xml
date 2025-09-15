@@ -9,15 +9,22 @@
 		<members>skedResourceTagHandler</members>
         <members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
+		<members>BSF_Batch_BSFPortfolioScheduler</members>
+		<members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+        <members>DelayedTaxonomyBatchScheduler</members>
+        <members>Taxo_Utilities</members>
 		<name>ApexClass</name>
 	</types>
     <types>
 		<members>updateEventTrigger</members>
+		<members>Add_Update_OpptyTeamMembers</members>
 		<name>ApexTrigger</name>
 	</types>
     <types>
 		<members>Opportunity.Cancellation_Detail__c</members>
 		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
