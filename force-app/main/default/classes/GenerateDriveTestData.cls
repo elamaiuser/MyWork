@@ -581,7 +581,7 @@ public class GenerateDriveTestData {
         
         sked_Resource_Role_Group__c fixSiteRoleGrp3 = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Driving roles',
-            sked_Resource_Roles__c	= 'Driver CDL B'
+            sked_Resource_Roles__c	= 'CT1'
         );
         forthList.add(fixSiteRoleGrp3);
         
