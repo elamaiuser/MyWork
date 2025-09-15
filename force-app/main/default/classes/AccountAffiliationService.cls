@@ -352,5 +352,5 @@ public with sharing class AccountAffiliationService {
         {
             createHistoryOnAccAffiliation(updatedAffList, 'Update'); 
         }
-    }    
+    }
 }

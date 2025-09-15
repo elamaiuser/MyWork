@@ -1187,14 +1187,11 @@ class MobileGenerator extends BaseGenerator {
 
     //resources
     if(skipCalculateResourceRoles) {
-      console.log('skipCalculateResourceRoles')
       const staffingComplementChanged = this.drive.staffingComplementChanged || {};
-      console.log('staffingComplementChanged ',staffingComplementChanged);
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
       driveShiftsMetadata.driveShifts.forEach((driveShift, driveShiftIndex) => {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
-        console.log('staffingComplement ',staffingComplement);
         Object.keys(staffingComplement).forEach(jobKey => {
           const { resourceRole } = this.helper.parseJobKey(jobKey);
           const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = staffingComplement[jobKey]; //preserve properties for manually created jobs
@@ -1233,8 +1230,6 @@ class MobileGenerator extends BaseGenerator {
     this.calculateVolunteerDonorAmbassadors();
     this.drive.redcrossVolunteerQuantity = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR) || 0;
 
-    console.log('backupDualRolesMap ',this.backupDualRolesMap);
-    console.log('this.mapResourceQuantity ',this.mapResourceQuantity);
     if(backupAndRestoreDualRoles && this.backupDualRolesMap) {
       this.restoreDualRoles(this.backupDualRolesMap);
     }
@@ -1267,7 +1262,6 @@ class MobileGenerator extends BaseGenerator {
   }
 
   generateDualRoles() {
-    console.log('generateDualRoles');
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
       let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
@@ -1399,11 +1393,9 @@ class MobileGenerator extends BaseGenerator {
         this.mapResourceQuantity = tempMapResourceQuantity;
       }
     }
-    console.log('this.mapResourceQuantity after dual roles ',this.mapResourceQuantity );
   }
 
   restoreDualRoles(backupDualRolesMap = {}) {
-    console.log('restoreDualRoles ');
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     Object.keys(backupDualRolesMap).forEach(driveShiftIndex => {
       const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
@@ -1627,7 +1619,6 @@ class MobileGenerator extends BaseGenerator {
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     const noOfEquipments = this.mapAssetQuantity.get('Equipment');
     const noOf2rbcStaffs = Math.ceil(noOfEquipments / 2);
-    console.log('noOf2rbcStaffs ',noOf2rbcStaffs);
 
     driveShiftsMetadata.driveShifts.forEach(driveShift => {
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
@@ -1980,7 +1971,6 @@ class MobileGenerator extends BaseGenerator {
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {
           driveShift.jobs.forEach((job) => {
-            //if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
             let originalJob = this.helper.findJob(job, originalDriveShift.jobs);
             if (originalJob) {
               job.id = originalJob.id;
@@ -2005,7 +1995,7 @@ class MobileGenerator extends BaseGenerator {
           });
         }
       }
-      console.log('driveShift.jobs last ',driveShift.jobs);
+
       this.buildJobTagNames(driveShift);
       this.updateShiftMobileSetup(driveShift);
     })
@@ -2033,7 +2023,6 @@ class MobileGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
-    console.log('mapResourceQuantity ',mapResourceQuantity);
     Array.from(mapResourceQuantity.keys()).forEach((jobKey) => {
       const {
         resourceRole,
@@ -2049,7 +2038,6 @@ class MobileGenerator extends BaseGenerator {
       }
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.resourceRole = resourceRole;
-      console.log('job ',job);
 
         if (resourceRole === 'VP/HH') {
           let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
@@ -2118,7 +2106,6 @@ class MobileGenerator extends BaseGenerator {
         jobs.push(job);
       }
     });
-    console.log('jobs ',jobs);
 
     //manually created jobs
     let manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
@@ -2135,7 +2122,6 @@ class MobileGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
-    console.log('driveShift.jobs ',driveShift.jobs);
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
       return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && 
@@ -2149,7 +2135,6 @@ class MobileGenerator extends BaseGenerator {
     if(anyManuallyCreatedJobsHoldCapacity) {
       this.recalculateVphhQuantity(driveShift);
     }
-    console.log('driveShift.jobs after ',driveShift.jobs);
   }
 
   // To create new jobs /update existing jobs after dual role modification
