@@ -1101,6 +1101,7 @@ public class OpportunityTriggerTest
         // insert mobile opp
         TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
         
         List<Opportunity> oppList = new List<Opportunity>();
     
@@ -1139,33 +1140,6 @@ public class OpportunityTriggerTest
         task1.Status = 'Not Started';
         task1.Priority = 'High';
         taskList.add(task1);
-        
-        /*Task task2 = new Task();
-        task2.whatId = oppList[0].Id;
-        task2.subject = '72 Hour Check in - System Generated';
-        task2.OwnerId = userInfo.getUserId();
-        task2.ActivityDate = oppList[0].Drive_Date__c;
-        task2.Status = 'Not Started';
-        task2.Priority = 'High';
-        taskList.add(task2);
-        
-        Task task3 = new Task();
-        task3.whatId = oppList[0].Id;
-        task3.subject = 'Recruitment Task - System Generated';
-        task3.OwnerId = userInfo.getUserId();
-        task3.ActivityDate = oppList[0].Drive_Date__c;
-        task3.Status = 'Not Started';
-        task3.Priority = 'High';
-        taskList.add(task3);
-        
-        Task task4 = new Task();
-        task4.whatId = oppList[0].Id;
-        task4.subject = 'Security Information Completion';
-        task4.OwnerId = userInfo.getUserId();
-        task4.ActivityDate = oppList[0].Drive_Date__c;
-        task4.Status = 'Not Started';
-        task4.Priority = 'High';
-        taskList.add(task4);*/
         
         insert taskList;
         Test.startTest();
@@ -2198,23 +2172,23 @@ public class OpportunityTriggerTest
     @isTest
     //HRP-10312- Addressed issues for opportunities being out of sync when drive change request is rejected 
     public static void testSyncOppWithDrivesGivenNullValues() {
-        Test.startTest();
-        Triggerhandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        AccountTeamMemberHelper.skipAccountTrigger = true;
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-       
+         
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);           
-            
-        try{
-             GenerateMobileDrive.generateDrives(config);
-        }catch(Exception ex){}
+        config.oppIds.add(mobileOpportunity.Id);
+
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
+        GenerateMobileDrive.generateDrives(config);
                          
         List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
         List<Opportunity> updateOppList = new List<Opportunity>();
@@ -2257,32 +2231,31 @@ public class OpportunityTriggerTest
        Opportunity opp = [select id,Anticipated_Registered_Donors__c,WB_Projected_Procedures__c,Platelet_Projected_Procedures__c from opportunity where id=:oppRecordList[0].id limit 1];
        
        Assert.isTrue(opp.Anticipated_Registered_Donors__c == null);
-       //Assert.isTrue(opp.WB_Projected_Procedures__c == null);
-       //Assert.isTrue(opp.Platelet_Projected_Procedures__c == null);
-   
+
     }
      //HRP-10312 Ends   
      
      static testMethod void testSyncOppWithDrives2()
      {
-        Test.startTest();
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-    
+         
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-       
-            AccountTeamMemberHelper.skipAccountTrigger = true;
-            TriggerHandler.bypass('AccountTriggerHandler');
-            TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-         try{
-            GenerateMobileDrive.generateDrives(config);
-         }catch(Exception ex){}
+
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
+        GenerateMobileDrive.generateDrives(config);
                     	
-        	List<sked_Drive__c> drivesList = [SELECT Id FROM sked_Drive__c];
+        List<sked_Drive__c> drivesList = [SELECT Id FROM sked_Drive__c];
 
         if(drivesList != null && drivesList.size() > 0)
         {
@@ -2321,24 +2294,24 @@ public class OpportunityTriggerTest
     // New Version
     static testMethod void testSyncOppWithDrives3()
     {
-        Test.startTest();
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-               
         Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+         
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);        
+        config.oppIds.add(mobileOpportunity.Id);
+
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
+        GenerateMobileDrive.generateDrives(config);
         
-        try{
-            GenerateMobileDrive.generateDrives(config);
-        }catch(Exception ex){}
-                           
         //List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
         List<Opportunity> updateOppList = new List<Opportunity>();
         Opportunity oppRec = new Opportunity(
