@@ -577,13 +577,13 @@ public class GenerateDriveTestData {
             sked_Resource_Role_Group__c = 'Staff roles',
             sked_Resource_Roles__c	= 'Apheresis;2RBC;2RBC Sign-off;Post Collections'
         );
-        forthList.add(fixSiteRoleGrp2);*/
+        forthList.add(fixSiteRoleGrp2);
         
         sked_Resource_Role_Group__c fixSiteRoleGrp3 = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Driving roles',
-            sked_Resource_Roles__c	= 'Driver CDL A'
+            sked_Resource_Roles__c	= 'Driver CDL B'
         );
-        forthList.add(fixSiteRoleGrp3);
+        forthList.add(fixSiteRoleGrp3);*/
         
         insert forthList;
         
