@@ -121,11 +121,13 @@ private class DriveResourceAllocationBatchTest {
         );
         insert activity;
         
+        skedHubBase.BypassInsertTriggers = true;
         sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
             sked__Activity__c = activity.Id,
             sked__Resource__c = testResourceList[2].Id
         );
         insert skedActivityResource; 
+        skedHubBase.BypassInsertTriggers = false;
         
         sked__Resource_Override__c resOverride = new sked__Resource_Override__c(
             sked_Collection_Operation__c= fsDrive.sked_Collection_Operation__c,
