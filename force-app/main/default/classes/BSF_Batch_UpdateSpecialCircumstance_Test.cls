@@ -84,6 +84,7 @@ private class BSF_Batch_UpdateSpecialCircumstance_Test {
         testMobileOpp.Special_Circumstances__c = 'First Time Drive';
         
         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
         update testMobileOpp;
         
         //insert DOC
@@ -108,7 +109,7 @@ private class BSF_Batch_UpdateSpecialCircumstance_Test {
         testDrive1.sked_Status__c = 'Complete';
         update testDrive1;
         
-        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        TriggerHandler.clearAllBypasses();
         
         Test.stopTest();
     }
