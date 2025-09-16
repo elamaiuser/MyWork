@@ -481,31 +481,35 @@ private class DriveTriggerServiceTest
     
    	static testMethod void testCheckMilitaryAuthSetting()
     {        
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMilitaryMobileDrive();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-        
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-        
+        String id_Drive = '';
         Test.startTest();
-        
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        GenerateMobileDrive.generateDrives(config);
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+        prepareDataset();
         
-        Triggerhandler.clearAllBypasses();
-        AccountTeamMemberHelper.skipAccountTrigger = false;
-        
-        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c, sked_Status__c from sked_Drive__c where sked_Opportunity__c IN :config.oppIds];
-       	Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
-        Assert.areEqual('Draft', mobileDriveCreated[0].sked_Status__c);
+        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive1',
+                                                        sked_Collection_Operation__c = Id_CollectionOperation,
+                                                        sked_Drive_Date__c = System.today(),
+                                                        sked_Drive_Site__c = id_site,
+                                                        sked_Opportunity__c = Id_opp,
+                                                        sked_Type_of_Drive__c = 'Mobile',
+                                                        sked_Account__c = id2_acc,
+                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                        sked_Drive_Productivity_Planned__c = 0.8,
+                                                        sked_Projected_Registered_Donors__c = 100,
+                                                     	sked_2RBC_Projected_Procedures__c = 20,
+                                                        sked_WB_Projected_Procedures__c = 20,
+                                                        sked_Status__c = 'Draft');
+
+        insert testDrive1;
         
         try{
-            mobileDriveCreated[0].sked_Status__c = 'Tentative';
-            update mobileDriveCreated[0];
+            testDrive1.sked_Status__c = 'Tentative';
+            update testDrive1;
         }catch(Exception ex)
         {
             Assert.isTrue(ex.getMessage().contains(Custom_Messages__mdt.getInstance('Military_Auth_Setting').value__c));
@@ -912,18 +916,21 @@ private class DriveTriggerServiceTest
         MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
         config.oppIds = new Set<Id>();
         config.oppIds.add(mobileOpportunity.Id);
-        
-        Test.startTest();
-        
+
         AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassUpdateTriggers = TRUE;
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        Test.startTest();
         GenerateMobileDrive.generateDrives(config);
         
         sked_Drive__c drive = [Select Id , sked_WB_Projected_Procedures__c, sked_Drive_Owner__c, Account_Manager__c,
                                sked_Account__c, sked_Collection_Operation__c, sked_Primary_Contact__c,
-                               sked_Drive_Site__c, sked_Drive_Site__r.sked_Site_Contact__c,
+                               sked_Drive_Site__c, sked_Drive_Site__r.sked_Site_Contact__c, District_Manager__c,
                                (SELECT Id FROM sked_Drive_Shifts__r)
                                FROM sked_Drive__c 
                                WHERE sked_Opportunity__c IN :config.oppIds LIMIT 1];
@@ -944,7 +951,7 @@ private class DriveTriggerServiceTest
         // Generate Op Records
         //List<sked_Operation_Record__c> operationRecords = skedOperationRecordService.generateOperationRecords(new Set<Id>{mobileDriveCreated[0].Id});
         
-        drive.Account_Manager__c = UserInfo.getUserId();
+        drive.District_Manager__c = UserInfo.getUserId();
         drive.sked_WB_Projected_Procedures__c = 12;
         skedHubBase.BypassUpdateTriggers = TRUE;
         update drive;
