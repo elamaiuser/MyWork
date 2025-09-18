@@ -148,7 +148,7 @@ public  with sharing  class AccountTeamMemberHelper {
     }
 
 
-    private static Id determineTaskOwnerBulk(Id accountId, Id fallbackOwnerId, Map<Id, List<AccountTeamMember>> teamMap) {
+    /*private static Id determineTaskOwnerBulk(Id accountId, Id fallbackOwnerId, Map<Id, List<AccountTeamMember>> teamMap) {
         List<AccountTeamMember> teamMembers = teamMap.get(accountId);
         if (teamMembers == null || teamMembers.isEmpty()) {
             return fallbackOwnerId;
@@ -181,7 +181,7 @@ public  with sharing  class AccountTeamMemberHelper {
         }
 
         return fallbackOwnerId;
-    }
+    }*/
 
 
     
