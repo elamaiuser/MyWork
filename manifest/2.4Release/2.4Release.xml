@@ -94,6 +94,8 @@
         <members>slwcDriveShiftTradeService_Test</members>
         <members>slwcResourceService</members>
         <members>slwcSetting</members>
+        <members>SObjectUtils_Test</members>
+		<members>skedCollectionOpTimeBlockService_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
