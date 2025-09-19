@@ -10,6 +10,7 @@
         <members>AccountTeamMemberHelper</members>
         <members>AccountTeamMemberService</members>
         <members>AccountTeamMemberTriggerHandler</members>
+        <members>BSF_Batch_ResetBusinessPlanningStatus</members>        
         <members>BSF_Batch_UpdateAccountStatusInactive</members>
         <members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
         <members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
@@ -54,6 +55,8 @@
         <members>PrepareMySandbox</members>
         <members>PrepareMySandboxTest</members>
         <members>PublicityReportNewPortfoliosController</members>
+        <members>ResetBusinessPlanningStatusHelper</members>
+        <members>ResetBusinessPlanningStatusHelperTest</members>
         <members>SObjectUtils</members>
         <members>SiteLoginController</members>
         <members>SiteLoginControllerTest</members>
