@@ -10,6 +10,7 @@
         <members>AccountTeamMemberHelper</members>
         <members>AccountTeamMemberService</members>
         <members>AccountTeamMemberTriggerHandler</members>
+        <members>BSF_Batch_ResetBusinessPlanningStatus</members>
         <members>BSF_Batch_UpdateAccountStatusInactive</members>
         <members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
         <members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
@@ -54,6 +55,8 @@
         <members>PrepareMySandbox</members>
         <members>PrepareMySandboxTest</members>
         <members>PublicityReportNewPortfoliosController</members>
+        <members>ResetBusinessPlanningStatusHelper</members>
+		<members>ResetBusinessPlanningStatusHelperTest</members>
         <members>SObjectUtils</members>
         <members>SiteLoginController</members>
         <members>SiteLoginControllerTest</members>
@@ -233,6 +236,7 @@
         <members>Lead_Management</members>
         <members>Lead_Status_Timestamp</members>
         <members>Optimization_Run_Timeout</members>
+        <members>Reset_Business_Planning_Status</members>
         <members>Send_Bell_Notification_To_Task</members>
         <members>Send_Bell_Notification_to_AM_for_approval_status</members>
         <members>Send_Bell_and_Email_Notifications_for_Task</members>
