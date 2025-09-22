@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>BSF_Constants</members>
         <members>FieldIdentifiers</members>
         <members>OpportunityService</members>
+        <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
 		<members>skedResourceTagHandler</members>
         <members>slwcDriveService</members>
 		<members>slwcDriveService_Test</members>
+		<members>TemplateService</members>
+        <members>TemplateService_Test</members>
 		<members>BSF_Batch_BSFPortfolioScheduler</members>
 		<members>BSF_Batch_PopulateCORegionScheduler</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
@@ -64,5 +68,5 @@
 		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
 		<name>ValidationRule</name>
 	</types>
-    <version>59.0</version>
+    <version>64.0</version>
 </Package>
