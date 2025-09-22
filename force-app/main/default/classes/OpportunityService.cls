@@ -5270,4 +5270,15 @@ opp.StageName = 'Closed';
         }
     } 
     //HRP-701 --> Ends Here
+
+    //HRP-7470
+    public static void populatePrimaryContactAfterTemplateCreation(List<Opportunity> newOppList) {
+        List<Opportunity> templates = new List<Opportunity>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c) templates.add(opp);
+        }
+
+        if(!templates.isEmpty()) TemplateService.populatePrimaryContact(templates);
+    }
 }
