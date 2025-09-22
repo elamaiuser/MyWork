@@ -173,5 +173,42 @@ public class Taxo_Utilities {
         // Return the batch size if found; otherwise, return the default value
         return (config != null && config.Batch_Size__c !=null) ? Integer.valueOf(config.Batch_Size__c) : defaultBatchSize;
     }
+    // Read per-record-type delay; fall back to 5 minutes if not set/found.
+    public static Integer getScheduleDelayMinutes(String recordTypeName) {
+        try {
+            Taxonomy_Run_Config__mdt cfg = [
+                SELECT Schedule_Delay_Minutes__c
+                FROM Taxonomy_Run_Config__mdt
+                WHERE Is_Active__c = true
+                  AND Category__c = 'Taxo Run Sequence'
+                  AND Taxo_Record_Type_Name__c = :recordTypeName
+                LIMIT 1
+            ];
+            return (cfg.Schedule_Delay_Minutes__c == null) ? 5 : Integer.valueOf(cfg.Schedule_Delay_Minutes__c);  // falls back to 5
+        } catch (Exception e) {
+            System.debug('Exception at getScheduleDelayMinutes :'+e.getMessage());
+            return 5;
+        }
+    }
+    
+    public static void scheduleAfterDelay(
+        Schedulable job,
+        String recordTypeName,
+        String jobNamePrefix
+    ){
+        Integer delay = getScheduleDelayMinutes(recordTypeName);
+        Datetime dt = Datetime.now().addMinutes(delay);
+        String cron = String.format('{0} {1} {2} {3} {4} ? {5}',
+            new String[]{
+                String.valueOf(dt.second()),
+                String.valueOf(dt.minute()),
+                String.valueOf(dt.hour()),
+                String.valueOf(dt.day()),
+                String.valueOf(dt.month()),
+                String.valueOf(dt.year())
+            }
+        );
+        System.schedule(jobNamePrefix + '-' + recordTypeName + '-' + Datetime.now().getTime(), cron, job);
+    }
     
 }
