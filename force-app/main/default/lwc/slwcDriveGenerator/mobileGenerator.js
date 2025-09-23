@@ -1864,6 +1864,7 @@ class MobileGenerator extends BaseGenerator {
 
           driveShift.jobs.forEach(job => {
             if(!job.resourceRole) return;
+            if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
             
             if(this.helper.isManuallyCreatedJob(job, this.drive)) {
               this.backupDualRolesMap[driveShiftIndex].push({
@@ -2126,7 +2127,9 @@ class MobileGenerator extends BaseGenerator {
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
+      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && 
+      job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL &&
+      (
         this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
         this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
       )

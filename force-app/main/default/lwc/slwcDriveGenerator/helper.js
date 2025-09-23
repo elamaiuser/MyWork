@@ -3405,6 +3405,7 @@ class DriveHelper {
 
     currentDrive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.jobs?.forEach(job => {
+        if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
         const isSystemGenerated = this.isSystemRole(job, currentDrive);
         if(!isSystemGenerated || !job.resourceRole) return;
 
@@ -3448,6 +3449,7 @@ class DriveHelper {
 
     backupDrive.driveShifts?.forEach((backupDriveShift, backupDriveShiftIndex) => {
       backupDriveShift.jobs?.forEach(backupJob => {
+        if(backupJob.isManuallyCreated && backupJob.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
         const isSystemGenerated = this.isSystemRole(backupJob, backupDrive);
         if(!isSystemGenerated || !backupJob.resourceRole) return;
 
@@ -3611,7 +3613,12 @@ class DriveHelper {
         jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.procedureType === job.procedureType);
       }
       else {
-        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
+        //jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
+        if(job.isManuallyCreated) {
+          jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.isManuallyCreated && item.manuallyCreatedFrom === job.manuallyCreatedFrom);
+        } else {
+          jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && !item.isManuallyCreated);
+        }
       }
     } else if (job.assetType) {
       if (job.assetType === ASSET_TYPE.EQUIPMENT) {
