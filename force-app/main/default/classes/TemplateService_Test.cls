@@ -164,4 +164,20 @@ private class TemplateService_Test {
         
         Assert.isTrue(result[0] == testServiceRoles[0].Contact__c);
     }
+    
+    static testMethod void getDefaultPrimaryDriveContactNoBPLDiffCreatedDate_Test() {
+        Id testAccountId = [SELECT Id FROM Account WHERE Internal_Name__c = 'TEST ACCOUNT 2' LIMIT 1].Id;
+        
+        List<Account_Service_Role__c> testServiceRoles = [SELECT Id, Contact__c, CreatedDate FROM Account_Service_Role__c WHERE Account__c = :testAccountId];
+        Test.setCreatedDate(testServiceRoles[0].Id, System.today().addDays(-3));
+        
+        Test.startTest();
+        TemplateService.TemplateWrapper wrapper = new TemplateService.TemplateWrapper();
+        wrapper.accountId = testAccountId;
+        
+        List<String> result = TemplateService.getDefaultPrimaryDriveContact(new List<TemplateService.TemplateWrapper>{wrapper});
+        Test.stopTest();
+        
+        Assert.isTrue(result[0] == testServiceRoles[0].Contact__c);
+    }
 }
