@@ -98,6 +98,8 @@
         <members>SObjectUtils_Test</members>
 		<members>skedCollectionOpTimeBlockService_Test</members>
         <members>skedRacStory_Test</members>
+        <members>TaskInvokable</members>
+        <members>TaskInvokableTest</members>
         <name>ApexClass</name>
     </types>
     <types>
