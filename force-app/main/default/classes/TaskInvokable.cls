@@ -6,7 +6,7 @@
  * 09/05/2023			    Barnojit Sharma			Centralized apex class to send Notifications from Process Builder (HRP-10482)
  * *****************************************************************************************************************************************************************************************
  **/
-public with sharing class TaskInvokable {
+public without sharing class TaskInvokable {
     
     @InvocableMethod
     public static void sendNotificationToTaskOwner(List<Id> taskId)
