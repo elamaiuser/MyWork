@@ -156,10 +156,10 @@ public without sharing class TemplateService implements Callable {
                 returnValue = 1;
             }
             else {
-                if (serviceRole.CreatedDate < compareTo.serviceRole.CreatedDate) {
+                if (serviceRole.CreatedDate.date() < compareTo.serviceRole.CreatedDate.date()) {
                     returnValue = -1;
                 }
-                else if (serviceRole.CreatedDate > compareTo.serviceRole.CreatedDate) {
+                else if (serviceRole.CreatedDate.date() > compareTo.serviceRole.CreatedDate.date()) {
                     returnValue = 1;
                 }
                 else {
