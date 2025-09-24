@@ -474,7 +474,7 @@
         <protected>false</protected>
         <shortDescription>OpportunitySplitService</shortDescription>
         <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS
-            Scheduler;Recruitment Admin;APS Management</value>
+            Scheduler;Recruitment Admin;APS Management;DRD Manager;Global Admin</value>
     </labels>
     <labels>
         <fullName>OpportunityStageAllowedProfile</fullName>
