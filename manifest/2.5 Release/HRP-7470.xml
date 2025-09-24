@@ -9,5 +9,13 @@
         <members>TemplateService_Test</members>
 		<name>ApexClass</name>
 	</types>
+    <types>
+		<members>Opportunity.Primary_Drive_Contact__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>Create_New_Template</members>
+		<name>Flow</name>
+	</types>
     <version>64.0</version>
 </Package>

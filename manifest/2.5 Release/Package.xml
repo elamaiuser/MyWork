@@ -27,9 +27,14 @@
 	</types>
     <types>
 		<members>Opportunity.Cancellation_Detail__c</members>
+		<members>Opportunity.Primary_Drive_Contact__c</members>
 		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
 		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
 		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Create_New_Template</members>
+		<name>Flow</name>
 	</types>
     <types>
 		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>

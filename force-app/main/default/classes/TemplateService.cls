@@ -7,7 +7,7 @@
     
 *******************************************************************************/
 
-public with sharing class TemplateService implements Callable {
+public without sharing class TemplateService implements Callable {
 
     /**************************************** CALLABLE INTERFACE  ***************************************/
 
@@ -15,8 +15,8 @@ public with sharing class TemplateService implements Callable {
         skedProcessEventResult result = new skedProcessEventResult();
         try {
             switch on methodName {
-                when 'performTemplatePrimaryContactSync' {
-                    performTemplatePrimaryContactSync((Map<Id, Id>) JSON.deserialize((String) params.get('param1'), Map<Id, Id>.class));
+                when 'createPrimaryContactObj' {
+                    createPrimaryContactObj((Map<Id, Id>) JSON.deserialize((String) params.get('param1'), Map<Id, Id>.class));
                 }
             }
         } catch (skedException ex) {
@@ -28,32 +28,43 @@ public with sharing class TemplateService implements Callable {
 
     /***************************************************************************************************/
 
-    public static void populatePrimaryContact(List<Opportunity> templates) {
-        Map<Id, Id> map_templateId_accountId = new Map<Id, Id>();
+    public static void createPrimaryContactDriveServiceRole(List<Opportunity> templates) {
+        Map<Id, Id> map_templateId_primaryContactId = new Map<Id, Id>();
 
         for (Opportunity template : templates) {
-            map_templateId_accountId.put(template.Id, template.AccountId);
+            if(String.isBlank(template.Primary_Drive_Contact__c)) continue;
+
+            map_templateId_primaryContactId.put(template.Id, template.Primary_Drive_Contact__c);
         }
 
-        if (!map_templateId_accountId.isEmpty()) {
+        if (!map_templateId_primaryContactId.isEmpty()) {
             if (!System.isBatch()) {
                 skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
                     TemplateService.class.getName(),
-                    'performTemplatePrimaryContactSync',
-                    map_templateId_accountId
+                    'createPrimaryContactObj',
+                    map_templateId_primaryContactId
                 );
             } else {
-                performTemplatePrimaryContactSync(map_templateId_accountId);
+                createPrimaryContactObj(map_templateId_primaryContactId);
             }
         }
     }
 
-    /**************************************** PRIVATE METHODS ********************************************/
-
-    @testVisible
-    private static void performTemplatePrimaryContactSync(Map<Id, Id> map_templateId_accountId) {
+    @InvocableMethod(label='Get Default Primary Contact' description='Get default primary contact for templates.')
+    public static List<String> getDefaultPrimaryDriveContact(List<TemplateWrapper> templateWrapper) {
+        Set<String> templateAccountIds = new Set<String>();
+        List<String> result = new List<String>();
         Map<Id, Account_Service_Role__c> map_accountId_bplServiceRole = new Map<Id, Account_Service_Role__c>();
-        List<OpportunityContactRole> driveContactRolesToInsert = new List<OpportunityContactRole>();
+
+        if(templateWrapper == null || templateWrapper.isEmpty()) {
+            return result;
+        }
+
+        for(TemplateWrapper data : templateWrapper) {
+            if(String.isBlank(data.accountId)) continue;
+
+            templateAccountIds.add(data.accountId);
+        }
 
         List<Account_Service_Role__c> serviceRoles = [
             SELECT Id, Account__c, Contact__c, 
@@ -61,7 +72,7 @@ public with sharing class TemplateService implements Callable {
             Start_Date__c, Account_Service_Role__c
             FROM Account_Service_Role__c
             WHERE Account_Service_Role__c IN (:BSF_Constants.BLOOD_PROGRAM_LEADER_ROLE, :BSF_Constants.ACCOUNT_CONTACT_ROLE)
-            AND Account__c IN :map_templateId_accountId.values()
+            AND Account__c IN :templateAccountIds
             ORDER BY Account_Service_Role__c DESC
         ];
 
@@ -89,37 +100,45 @@ public with sharing class TemplateService implements Callable {
 
         for(AccountServiceRoleWrapperModel wrapper : accountContacts) serviceRoles.add(wrapper.serviceRole);
 
-        for (Id templateId : map_templateId_accountId.keySet()) {
-            Id accountId = map_templateId_accountId.get(templateId);
-
+        for (String accountId : templateAccountIds) {
             for (Account_Service_Role__c accountContact : serviceRoles) {
                 if(accountId == accountContact.Account__c) {
-                    driveContactRolesToInsert.add(createPrimaryContactObj(templateId, accountContact.Contact__c));
+                    result.add((String)accountContact.Contact__c);
                     break;
                 }
             }
         }  
 
-        if(driveContactRolesToInsert != null && !driveContactRolesToInsert.isEmpty()) {
-            Database.SaveResult[] srList = Database.insert(driveContactRolesToInsert, false);
+        return result;
+    }
+
+    /**************************************** PRIVATE METHODS ********************************************/
+
+    @testVisible
+    private static void createPrimaryContactObj(Map<Id, Id> map_templateId_primaryContactId) {
+        List<OpportunityContactRole> driveServiceRolesToInsert = new List<OpportunityContactRole>();
+
+        for(Id templateId : map_templateId_primaryContactId.keySet()) {
+            Id serviceRoleContactId = map_templateId_primaryContactId.get(templateId);
+            
+            driveServiceRolesToInsert.add(new OpportunityContactRole(
+                OpportunityId = templateId,
+                ContactId = serviceRoleContactId,
+                Role = BSF_Constants.PRIMARY_CONTACT_ROLE
+            ));
+        }
+
+        if(driveServiceRolesToInsert != null && !driveServiceRolesToInsert.isEmpty()) {
+            Database.SaveResult[] srList = Database.insert(driveServiceRolesToInsert, false);
             insert (BSF_Utilities.createErrorLog(
                 srList,
                 'Template Drive Contact',
                 'TemplateService',
-                'populatePrimaryContact',
+                'createPrimaryContactObj',
                 'Error',
-                'Error in populating template primary contact'
+                'Error in creating template primary contact role'
             ));
         }
-    }
-
-    @testVisible
-    private static OpportunityContactRole createPrimaryContactObj(Id templateId, Id serviceRoleContactId) {
-        return new OpportunityContactRole(
-            OpportunityId = templateId,
-            ContactId = serviceRoleContactId,
-            Role = BSF_Constants.PRIMARY_CONTACT_ROLE
-        );
     }
 
     /*********************************************************** Nested Classes ***********************************************************/
@@ -154,5 +173,10 @@ public with sharing class TemplateService implements Callable {
             }
             return returnValue;
         }
+    }
+
+    public class TemplateWrapper{
+        @InvocableVariable (label='Account Record Id' required = true)
+        public String accountId;
     }
 }
