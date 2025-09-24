@@ -120,7 +120,7 @@ public without sharing class TemplateService implements Callable {
 
         for(Id templateId : map_templateId_primaryContactId.keySet()) {
             Id serviceRoleContactId = map_templateId_primaryContactId.get(templateId);
-            
+
             driveServiceRolesToInsert.add(new OpportunityContactRole(
                 OpportunityId = templateId,
                 ContactId = serviceRoleContactId,
@@ -175,7 +175,7 @@ public without sharing class TemplateService implements Callable {
         }
     }
 
-    public class TemplateWrapper{
+    public class TemplateWrapper {
         @InvocableVariable (label='Account Record Id' required = true)
         public String accountId;
     }
