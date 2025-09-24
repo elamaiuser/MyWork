@@ -53,7 +53,7 @@
     <types>
 		<members>autoMapper</members>
         <members>slwcCancelDriveModal</members>
-        <members>slwcDriveCompactView</members>
+        <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcDriveChangeRequestApproval</members>
