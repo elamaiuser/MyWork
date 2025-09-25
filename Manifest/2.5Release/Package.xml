@@ -62,6 +62,7 @@
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveSchedulingFilters</members>
+		<members>slwcDriveShiftJobTable</members>
 		<members>slwcPendingActionDriveApproval</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcSchedulingConsoleDriveList</members>
