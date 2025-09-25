@@ -19,6 +19,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @api mode;
   @api recordId;
   @api isReadonly = false;
+  @api disabled = false;
   @api driveGeneratorInstance = {
     drive: null,
     masterData: {
@@ -54,11 +55,30 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   @track staffingComplementModalData = {};
 
   get driveContentionsGroup1() {
-    return this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : [];
+    return (
+      this.driveStaffingChangedContention ? [this.driveStaffingChangedContention] : []
+    ).map((contention) => ({
+        ...contention,
+        actions: contention.actions?.map((actionObj) => ({
+          ...actionObj,
+          disabled: actionObj.disabled || this.disabled
+        }))
+      }));
   }
 
   get driveContentionsGroup2() {
-    return this.driveContentions.filter(item => item.contention !== DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED);
+    return this.driveContentions
+      .filter(
+        (item) =>
+          item.contention !== DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED
+      )
+      .map((contention) => ({
+        ...contention,
+        actions: contention.actions?.map((actionObj) => ({
+          ...actionObj,
+          disabled: actionObj.disabled || this.disabled
+        }))
+      }));
   }
 
   get showSpinner() {
@@ -111,7 +131,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       return {
         drive: this.drive,
-        contentionResolution: this.drive.contentionResolutions.join(';'),
+        contentionResolution: [...this.drive.contentionResolutions],
         driveContentions: this.driveContentions,
         driveTimeBlockContentions: this.driveTimeBlockContentions,
         equipmentJob,
@@ -163,7 +183,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         
         this.drive.contentionResolutions = [];
         if(this.drive.contentionResolution) {
-          this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+          this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
         }
       }
     })
@@ -290,11 +310,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftContentionResolution,
           backupDriveShiftTimeBlockId
         });
-      }
-
-      this.drive.contentionResolutions = [];
-      if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
@@ -448,11 +463,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftContentionResolution,
           backupDriveShiftTimeBlockId
         });
-      }
-
-      this.drive.contentionResolutions = [];
-      if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
@@ -1090,9 +1100,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         
         let originalContentions = [];
         if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
-          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+          originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
-          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
+          originalContentions = this.driveChangeRequest?.driveContention || [];
         }
         
         let {
@@ -1100,7 +1110,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = this.driveHelper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions.join(';')
+          contentionResolution: this.drive.contentionResolutions
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive
@@ -1163,9 +1173,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
         let originalContentions = [];
         if(this.mode === MODE.DRIVE_SUBMISSION || this.mode === MODE.UPDATE_DRIVE) {
-          originalContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
+          originalContentions = this.drive.pendingActionReasonCode || [];
         } else {
-          originalContentions = this.driveChangeRequest ? this.driveChangeRequest.driveContention.split(';') : [];
+          originalContentions = this.driveChangeRequest?.driveContention || [];
         }
         
         let {
@@ -1173,7 +1183,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           contentions,
         } = this.driveHelper.validateDrive({
           ...this.drive,
-          contentionResolution: this.drive.contentionResolutions.join(';')
+          contentionResolution: this.drive.contentionResolutions
         }, {
           ...this.masterData,
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
@@ -1192,6 +1202,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             contention.timeBlockId = timeBlockOptions.find(option => option.value === contention.driveShift.timeBlockId)?.value ?? '';
             contention.timeBlockOptions = timeBlockOptions;
             contention.showAcknowledgeDriveShiftOutOfTimeBlock = contention.contention !== DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS;
+
             return contention
           })
 
@@ -1357,7 +1368,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
       return this.validateDriveContentions();
     })
@@ -1389,8 +1400,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   handleConfirmTimeBlockBtn = () => {
-    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
-
+    const backupContentionResolution = this.drive.contentionResolutions ?? [];
+    
     let allPassed = this.validateDriveTimeBlockContentions();
     if(!allPassed) {
       this.dispatchEvent(new ShowToastEvent({
@@ -1405,11 +1416,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     this.driveGeneratorInstance.resolveTimeBlockContentions(this.driveTimeBlockContentions)
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
-      this.drive.contentionResolution = backupContentionResolution;
+      this.drive.contentionResolution = [...backupContentionResolution];
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
       }
 
       return Promise.all([
@@ -1423,13 +1434,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   backupContentionResolutions = () => {
     if(!this.drive) {
       return {
-        backupContentionResolution: '',
+        backupContentionResolution: [],
         backupDriveShiftContention: [],
         backupDriveShiftContentionResolution: [],
         backupDriveShiftTimeBlockId: []
       }
     }
-    const backupContentionResolution = (this.drive.contentionResolutions || []).join(';');
+    const backupContentionResolution = this.drive.contentionResolutions ?? [];
     const backupDriveShiftContention = this.drive.driveShifts?.map(driveShift => driveShift.contention) ?? [];
     const backupDriveShiftContentionResolution = this.drive.driveShifts?.map(driveShift => driveShift.contentionResolution) ?? [];
     const backupDriveShiftTimeBlockId = this.drive.driveShifts?.map(driveShift => driveShift.timeBlockId) ?? [];
@@ -1443,12 +1454,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   restoreContentionResolutions = (drive, {
-    backupContentionResolution,
+    backupContentionResolution = [],
     backupDriveShiftContention = [],
     backupDriveShiftContentionResolution = [],
     backupDriveShiftTimeBlockId = []
   }) => {
-    drive.contentionResolution = backupContentionResolution;
+    drive.contentionResolution = [...backupContentionResolution];
 
     drive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.contention = backupDriveShiftContention[driveShiftIndex] ?? '';
@@ -1458,12 +1469,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
     drive.contentionResolutions = [];
     if(drive.contentionResolution) {
-      drive.contentionResolutions = drive.contentionResolution.split(';');
+      drive.contentionResolutions = cloneDeep(drive.contentionResolution);
     }
 
     return drive;
   }
-
+  
   handleValidateBtn = () => {
     const { backupContentionResolution, backupDriveShiftContention, backupDriveShiftContentionResolution, backupDriveShiftTimeBlockId} = this.backupContentionResolutions();
 

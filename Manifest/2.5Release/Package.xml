@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_BatchUpdateAccountForZipCode</members>
+		<members>BSF_Batch_BSFPortfolioScheduler</members>
+		<members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+		<members>BSF_Constants</members>
+        <members>DelayedTaxonomyBatchScheduler</members>
+        <members>FieldIdentifiers</members>
+        <members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
+		<members>OrderCloningService</members>
+		<members>Taxo_Utilities</members>
+		<members>TemplateService</members>
+        <members>TemplateService_Test</members>
+		<members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
+		<members>skedResourceTagHandler</members>
+        <members>slwcDriveService</members>
+        <members>slwcDriveService_Test</members>				
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>Add_Update_OpptyTeamMembers</members>
+		<members>updateEventTrigger</members>
+		<name>ApexTrigger</name>
+	</types>
+    <types>
+		<members>Opportunity.Cancellation_Detail__c</members>
+		<members>Opportunity.Primary_Drive_Contact__c</members>
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
+		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Create_New_Template</members>
+		<name>Flow</name>
+	</types>
+    <types>
+		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Fixed Site Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Fixed Site Opp APS Layout</members>
+		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
+    <types>
+		<members>autoMapper</members>
+		<members>slwcApprovalHistoryConsole</members>
+        <members>slwcCancelDriveModal</members>
+		<members>slwcDriveCalendarActivityList</members>
+		<members>slwcDriveCalendarDriveList</members>
+		<members>slwcDriveChangeRequestApproval</members>
+        <members>slwcDriveDetails</members>
+        <members>slwcDriveGenerator</members>
+        <members>slwcDriveSchedulingFilters</members>
+		<members>slwcPendingActionDriveApproval</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSchedulingConsoleDriveList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked_HLT_Dist</members>
+		<members>skedLWCCustomStyle</members>
+		<name>StaticResource</name>
+	</types>
+	<types>
+		<members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
+		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>64.0</version>
+</Package>
