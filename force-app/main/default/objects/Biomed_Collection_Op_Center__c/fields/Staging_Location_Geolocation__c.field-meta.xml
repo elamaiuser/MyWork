@@ -2,6 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Staging_Location_Geolocation__c</fullName>
     <displayLocationInDecimal>true</displayLocationInDecimal>
+    <externalId>false</externalId>
     <label>Staging Location Geolocation</label>
     <required>false</required>
     <scale>6</scale>
