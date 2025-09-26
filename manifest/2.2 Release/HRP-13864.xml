@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
+		<members>MobileDriveGeneratorDMLService</members>
+		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>sked_Drive__c.Max_Role_Capacity__c</members>
+		<members>sked_Drive__c.Max_Role_Capacity_With_Draw_Hours__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>slwcDriveCompactView</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>General_Reports/Excess_Staff_Capacity_Audit_6N2</members>
+		<name>Report</name>
+	</types>
+	<types>
+		<members>Drives_with_Account_and_Site</members>
+		<name>ReportType</name>
+	</types>
+	<version>60.0</version>
+</Package>

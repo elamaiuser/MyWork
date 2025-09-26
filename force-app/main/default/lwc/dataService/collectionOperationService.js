@@ -35,6 +35,10 @@ class collectionOperationService extends dataService {
       if (query.includes(sObjectType.COLLECTION_OPERATION_OPTIMIZER_SETTING)) {
         let subQueryBuilder = query.getQueryBuilder("sked_CollectionOperationOptimizerSetting__c");
       }
+
+      if (query.includes(sObjectType.COLLECTION_OPERATION_TIME_BLOCK)) {
+        let subQueryBuilder = query.getQueryBuilder("Collection_Operation_Time_Block__c");
+      }
   }
 
   getCollectionOperationData(query) {
@@ -90,6 +94,9 @@ class collectionOperationService extends dataService {
     const { startDate, endDate } = query;
 
     let collectionOpQuery = new collectionOperationQueryModel();
+    collectionOpQuery.startDate = startDate;
+    collectionOpQuery.endDate = endDate;
+    collectionOpQuery.subQueryIndicator = sObjectType.COLLECTION_OPERATION_TIME_BLOCK;
     let collectionOpQueryStr = this.buildQuery(collectionOpQuery);
 
     let territoryQuery = new territoryQueryModel();
@@ -145,6 +152,8 @@ class collectionOperationService extends dataService {
 class collectionOperationQueryModel extends queryModelBase { 
   userId;
   recordIds;
+  startDate;
+  endDate;
 }
 
 export {

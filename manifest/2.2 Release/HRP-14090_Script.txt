@@ -1,0 +1,61 @@
+
+DateTime targetDate = DateTime.newInstanceGmt(4000, 12, 30, 0, 0, 0);
+
+List<sked_Travel_Time_Index_Item__c> recordsToUpdate = new List<sked_Travel_Time_Index_Item__c>();
+
+DateTime extractDateFromComment(String comment) {
+    if(comment == null) return null;
+    
+    // Extract the date part using regex
+    Pattern p = Pattern.compile('\\[TT MANUALLY OVERRIDDEN ON (\\d{1,2}/\\d{1,2}/\\d{4})\\]');
+    Matcher m = p.matcher(comment);
+    
+    if(m.find()) {
+        String dateStr = m.group(1);
+        try {
+            // Split the date string
+            List<String> dateParts = dateStr.split('/');
+            if(dateParts.size() == 3) {
+                Integer month = Integer.valueOf(dateParts[0]);
+                Integer day = Integer.valueOf(dateParts[1]);
+                Integer year = Integer.valueOf(dateParts[2]);
+                
+                // Create a DateTime object with the extracted date (using noon to avoid timezone issues)
+                return DateTime.newInstance(year, month, day, 12, 0, 0);
+            }
+        } catch(Exception e) {
+            System.debug('Error parsing date: ' + e.getMessage());
+        }
+    }
+    
+    return null;
+}
+
+
+for(sked_Travel_Time_Index_Item__c record : [
+    SELECT Id, sked_Last_Refresh_Date__c, Override_Comment__c
+    FROM sked_Travel_Time_Index_Item__c
+    WHERE sked_Last_Refresh_Date__c >= :targetDate
+    AND Override_Comment__c LIKE '%TT MANUALLY OVERRIDDEN ON%'
+]) {
+    // Extract date from the comment
+    DateTime newDate = extractDateFromComment(record.Override_Comment__c);
+    
+    if(newDate != null) {
+        record.sked_Last_Refresh_Date__c = newDate;
+        recordsToUpdate.add(record);
+        System.debug('Record ' + record.Id + ' will be updated with date: ' + newDate);
+    }
+}
+
+// Update records if any found
+if(!recordsToUpdate.isEmpty()) {
+    try {
+        update recordsToUpdate;
+        System.debug('Updated ' + recordsToUpdate.size() + ' travel time index records.');
+    } catch(Exception e) {
+        System.debug('Error updating records: ' + e.getMessage());
+    }
+} else {
+    System.debug('No records found matching the criteria.');
+}

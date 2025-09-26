@@ -45,6 +45,8 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
         }, cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, wrapText: true });
         results.push({label: '# of Resources', fieldName: 'quantityText', type: 'text', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
+        results.push({label: '# Req. Mobile Staff', fieldName: 'mobileStaffQuantity', initialWidth: 120, type: 'text', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
+        results.push({label: '# Req. Fixed Site Staff', fieldName: 'fixedSiteStaffQuantity', initialWidth: 120, type: 'text', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: 'Resources/Assets', fieldName: 'resources', type: 'resources', initialWidth: 250, hideDefaultActions: true } );
         results.push({label: 'MDL Drives', fieldName: 'linkedDrivesUrl', type: 'url', initialWidth: 160, typeAttributes: {label: { fieldName: 'linkedDrivesName' }, target: '_blank' }, cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: 'Linked Drive', fieldName: 'driveUrl', type: 'url', initialWidth: 200, typeAttributes: {label: { fieldName: 'driveName' }, target: '_blank' }, cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );

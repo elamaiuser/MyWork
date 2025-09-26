@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSF_Batch_BSFPortfolioScheduler</members>
+		<members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+        <members>DelayedTaxonomyBatchScheduler</members>
+        <members>Taxo_Utilities</members>
+        <!--Test Classes which didn't modified there for tracking -->
+        <members>BSFBatchPortfolio_Test</members>
+        <members>BSF_Batch_TaxonomyEndDate_Test</members>
+        <members>DeleteExpiredTaxoVersionBatchTest</members>
+        <!--End -->
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>Add_Update_OpptyTeamMembers</members>
+		<name>ApexTrigger</name>
+	</types>
+    <types>
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
+		<name>CustomField</name>
+	</types>
+	<version>64.0</version>
+</Package>

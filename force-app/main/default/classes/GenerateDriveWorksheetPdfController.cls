@@ -198,10 +198,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                         sked_Drive_Account__c,
                                                         sked_Drive_Shift_Name__c,
                                                         sked_Start_Time__c,
-                                                        sked_End_Time__c,
-                                                        sked_Lunch_Break_Before_Draw_Hours__c,
-                                                        sked_Lunch_Break__c,
-                                                        sked_Lunch_Break_Duration__c 
+                                                        sked_End_Time__c 
                                             FROM sked_Drive_Shift__c 
                                             WHERE Id IN: shiftidList
                                             AND sked_Drive__c != null
@@ -748,11 +745,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                     }
                                     //NEW Logic: Setup Time = Shift Start Time - Job Setup Time
                                     if(shift.sked_Start_Time__c != null && jjball.sked__Job__r.sked_Setup_Time__c != null){
-                                        Integer lunchBreakDuration = 0;
-                                        if(shift.sked_Lunch_Break__c && shift.sked_Lunch_Break_Before_Draw_Hours__c && shift.sked_Lunch_Break_Duration__c != null){
-                                            lunchBreakDuration = Integer.valueOf(shift.sked_Lunch_Break_Duration__c);
-                                        }
-                                        Integer ms = 0 - Integer.valueOf(jjball.sked__Job__r.sked_Setup_Time__c) - lunchBreakDuration;
+                                        Integer ms = 0 - Integer.valueOf(jjball.sked__Job__r.sked_Setup_Time__c);
                                         emp.setup = getFormattedTime(shift.sked_Start_Time__c.addMinutes(ms).hour(),shift.sked_Start_Time__c.addMinutes(ms).minute());
                                     }
                                     //NEW Logic: Breakdown Time = Shift End Time + Job Breakdown Time
@@ -784,11 +777,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                         }
                     }
                     if(max_setup > 0 && shift.sked_Start_Time__c != null){
-                        Integer lunchBreakDuration = 0;
-                        if(shift.sked_Lunch_Break__c && shift.sked_Lunch_Break_Before_Draw_Hours__c && shift.sked_Lunch_Break_Duration__c != null){
-                            lunchBreakDuration = Integer.valueOf(shift.sked_Lunch_Break_Duration__c);
-                        }
-                        Integer ms = Integer.valueOf(0 - max_setup - lunchBreakDuration);
+                        Integer ms = Integer.valueOf(0 - max_setup);
                         rw.oppInfo.setup = getFormattedTime(shift.sked_Start_Time__c.addMinutes(ms).hour(),shift.sked_Start_Time__c.addMinutes(ms).minute());
                     }else if(shift.sked_Start_Time__c != null){
                         rw.oppInfo.setup = getFormattedTime(shift.sked_Start_Time__c.hour(),shift.sked_Start_Time__c.minute());

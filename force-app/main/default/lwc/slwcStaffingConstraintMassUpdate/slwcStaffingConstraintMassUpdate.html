@@ -50,17 +50,16 @@
             >
           </c-slwc-multi-picklist>
         
-          <div
-            class="slds-no-flex slds-m-right_small"
-            style="width: 300px"
-          >
+          <div class="slds-no-flex slds-m-right_small">
             <c-slwc-new-collection-operation-multi-picklist
               division-single-select
               region-single-select
               date-range={collectionOperationDateRange}
               default-values={filters.collectionOperationValues}
               onchange={handleCollectionOperationChanged}
-            >
+              ontimeblockchange={handleTimeBlockChanged}
+              time-block-enabled
+              shared-time-block-disabled>
             </c-slwc-new-collection-operation-multi-picklist>
           </div>
 
@@ -145,12 +144,10 @@
                     <div
                       class="slds-staffing-constrain-mass-update__grid-left-row slds-text-align_left"
                     >
-                      <div class="slds-p-around_x-small slds-truncate">
+                      <div class="slds-p-around_x-small">
                         {row.name}
                       </div>
-                      <div
-                        class="slds-p-around_x-small slds-border_left slds-truncate"
-                      >
+                      <div class="slds-p-around_x-small slds-border_left slds-truncate">
                         {row.driveType}
                       </div>
                     </div>
@@ -182,6 +179,7 @@
                               data-date-of-constraint={cellData.dateIso}
                               data-collection-operation-id={row.collectionOperationId}
                               data-drive-type={row.driveType}
+                              data-time-block-id={row.timeBlockId}
                               onclick={handleEditStaffingConstraint}
                             ></lightning-menu-item>
                             <lightning-menu-item
@@ -190,6 +188,7 @@
                               data-key={cellData.data.key}
                               data-date-of-constraint={cellData.dateIso}
                               data-collection-operation-id={row.collectionOperationId}
+                              data-time-block-id={row.timeBlockId}
                               onclick={handleEditRecurrenceStaffingConstraints}
                             ></lightning-menu-item>
                             <lightning-menu-item
@@ -198,6 +197,7 @@
                               data-date-of-constraint={cellData.dateIso}
                               data-collection-operation-id={row.collectionOperationId}
                               data-drive-type={row.driveType}
+                              data-time-block-id={row.timeBlockId}
                               onclick={handleDeleteStaffingConstraint}
                             ></lightning-menu-item>
                             <lightning-menu-divider></lightning-menu-divider>
@@ -231,6 +231,7 @@
                               data-date-of-constraint={cellData.dateIso}
                               data-collection-operation-id={row.collectionOperationId}
                               data-drive-type={row.driveType}
+                              data-time-block-id={row.timeBlockId}
                               onclick={handleCreateStaffingConstraint}
                             ></lightning-menu-item>
                             <lightning-menu-divider></lightning-menu-divider>
@@ -262,6 +263,7 @@
   <c-slwc-edit-recurrence-staffing-constraint-modal
     default-collection-operation-id={editRecurrenceStaffingConstraintModalData.collectionOperationId}
     default-date-range={editRecurrenceStaffingConstraintModalData.dateRange}
+    time-blocks={editRecurrenceStaffingConstraintModalData.timeBlocks}
     if:true={editRecurrenceStaffingConstraintModalData.isOpen}
     is-open={editRecurrenceStaffingConstraintModalData.isOpen}
     onclose={closeEditRecurrenceStaffingConstraintModal}

@@ -1,0 +1,124 @@
+<apex:page controller="TimeBlockComplianceReportController" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false" showHeader="false">
+
+    <html>
+        <head>
+            <style>
+                @page {
+                    size: A4 landscape;
+                    @top-center {
+                        content: "Time Block Compliance Report";
+                    }
+                    @bottom-right {
+                        content: "Page " counter(page) " of " counter(pages);
+                    }
+                }
+
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 10px;
+                    margin: 20px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                }
+
+                th, td {
+                    border: 1px solid black;
+                    padding: 4px;
+                    text-align: center;
+                }
+
+                th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
+
+                .summary-table {
+                    margin-bottom: 20px;
+                    width: 100%;
+                    font-weight: bold;
+                }
+
+                .summary-table td {
+                    border: none;
+                    text-align: left;
+                    padding: 4px 10px 4px 0;
+                }
+            </style>
+        </head>
+        <body>
+
+            <!-- Summary Section -->
+            <table class="summary-table">
+                <tr>
+                    <td>Total Records: {!summary['totalRecords']}</td>
+                    <td>Total Violations: {!summary['totalViolations']}</td>
+                    <td>Violation %: {!summary['violationPercentage']}%</td>
+                </tr>
+            </table>
+
+           <apex:repeat value="{!paginatedData}" var="page">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Division</th>
+                            <th>Region</th>
+                            <th>CO</th>
+                            <th>District</th>
+                            <th>Drive Name</th>
+                            <th>Drive Status</th>
+                            <th>Drive Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>TB Name</th>
+                            <th>TB Start</th>
+                            <th>TB End</th>
+                            <th>TB Eff. Start</th>
+                            <th>TB Eff. End</th>
+                            <th>Account Manager</th>
+                            <th>Staff Requested</th>                            
+                            <th>Site Name</th>
+                            <th>Address</th>
+                            <th>Zip</th>
+                            <th>Type</th>
+                            <th>Violation</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!page}" var="row">
+                            <tr>
+                                <td>{!row['division']}</td>
+                                <td>{!row['region']}</td>
+                                <td>{!row['co']}</td>
+                                <td>{!row['district']}</td>
+                                <td>{!row['driveName']}</td>
+                                <td>{!row['status']}</td>
+                                <td>{!row['driveDate']}</td>
+                                <td>{!row['shiftStartTime']}</td>
+                                <td>{!row['shiftEndTime']}</td>
+                                <td>{!row['tbName']}</td>
+                                <td>{!row['tbStartTime']}</td>
+                                <td>{!row['tbEndTime']}</td>
+                                <td>{!row['tbEffStart']}</td>
+                                <td>{!row['tbEffEnd']}</td>
+                                <td>{!row['accountManager']}</td>
+                                <td>{!row['staffRequested']}</td>                                
+                                <td>{!row['siteName']}</td>
+                                <td>{!row['siteAddress']}</td>
+                                <td>{!row['siteZip']}</td>
+                                <td>{!row['type']}</td>
+                                <td>{!row['violation']}</td>
+                                <td>{!row['contentionResolution']}</td>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+                <div class="page-break"></div>
+            </apex:repeat>
+        </body>
+    </html>
+</apex:page>

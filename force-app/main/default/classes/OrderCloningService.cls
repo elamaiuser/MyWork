@@ -81,32 +81,29 @@ public without sharing class OrderCloningService  implements Callable{
                     }
                 }
             }
-
+            List<Order> existingOrders = [SELECT Id
+                                            FROM Order
+                                            WHERE Publicity_Approved__c = false
+                                            AND Publicity_Submitted__c = false
+                                            AND OpportunityId IN :oppIds];
+            if(!existingOrders.isEmpty()){
+                TriggerHandler.bypass('OrderTriggerHandler');
+                Database.DeleteResult[] deleteResult = Database.delete(existingOrders,false);
+                TriggerHandler.clearAllBypasses();
+                errorLog.addAll(BSF_Utilities.createErrorLog(
+                                                            deleteResult,
+                                                            'Delete Existing Order',
+                                                            'OrderCloningService',
+                                                            'syncTemplateOrdertoOpportunity',
+                                                            'Error',
+                                                            'Error in deleting order'
+                                                        ));
+            }
             if(!templateOrderMap.isEmpty()){
-                Set<Id> oppIdsHavingOrder = new Set<Id>();
                 for(Id oppId : oppMap.keySet()){
                     if(templateOrderMap.containsKey(oppMap.get(oppId).Parent_Template_Id__c)){
                         orderList.add(cloneOrder(templateOrderMap.get(oppMap.get(oppId).Parent_Template_Id__c),oppId));
-                        oppIdsHavingOrder.add(oppId);
                     }
-                }
-                List<Order> existingOrders = [SELECT Id
-                                                FROM Order
-                                                WHERE Publicity_Approved__c = false
-                                                AND Publicity_Submitted__c = false
-                                                AND OpportunityId IN :oppIdsHavingOrder];
-                if(!existingOrders.isEmpty()){
-                    TriggerHandler.bypass('OrderTriggerHandler');
-                    Database.DeleteResult[] deleteResult = Database.delete(existingOrders,false);
-                    TriggerHandler.clearAllBypasses();
-                    errorLog.addAll(BSF_Utilities.createErrorLog(
-                                                                deleteResult,
-                                                                'Delete Existing Order',
-                                                                'OrderCloningService',
-                                                                'syncTemplateOrdertoOpportunity',
-                                                                'Error',
-                                                                'Error in deleting order'
-                                                            ));
                 }
                 if(!orderList.isEmpty()){
                     Database.SaveResult[] srList = Database.insert(orderList,false);

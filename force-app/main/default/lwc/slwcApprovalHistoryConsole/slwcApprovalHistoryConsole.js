@@ -112,7 +112,8 @@ export default class SlwcApprovalHistoryConsole extends LightningElement {
         this.canApproveReject = !this.isReadonly && (!this.canApproveOrReject || this.canApproveOrReject(record)) && !!canApproveResult.returnedData;
         this.dispatchEvent(new CustomEvent('canapproverefreshed', {
           detail: {
-            canApproveReject: this.canApproveReject
+            canApproveReject: this.canApproveReject,
+            driveChangeRequest: record
           }
         }));
         this.record = record;

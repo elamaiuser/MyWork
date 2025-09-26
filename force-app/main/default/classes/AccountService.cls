@@ -153,7 +153,7 @@ if(newAccount.Account_Strategy_Notes__c != null && ((newAccount.Account_Strategy
 ContentVersion objCntNote = new ContentVersion();
 objCntNote.Title = newAccount.Account_Strategy__c;
 objCntNote.PathOnClient = objCntNote.Title + '.snote';
-objCntNote.VersionData = Blob.valueOf(newAccount.Account_Strategy_Notes__c);
+objCntNote.VersionData = Blob.valueOf((newAccount.Account_Strategy_Notes__c).escapeHtml4());
 objCntNote.FirstPublishLocationId = newAccount.id;  // ParentId
 NotesList.add(objCntNote);
 //insert objCntNote;
