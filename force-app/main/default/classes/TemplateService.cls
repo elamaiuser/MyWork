@@ -68,11 +68,12 @@ public without sharing class TemplateService implements Callable {
 
         List<Account_Service_Role__c> serviceRoles = [
             SELECT Id, Account__c, Contact__c, 
-            Contact__r.FirstName, CreatedDate,
-            Start_Date__c, Account_Service_Role__c
+            Contact__r.FirstName, Contact__r.LastName,
+            CreatedDate, Start_Date__c, Account_Service_Role__c
             FROM Account_Service_Role__c
-            WHERE Account_Service_Role__c IN (:BSF_Constants.BLOOD_PROGRAM_LEADER_ROLE, :BSF_Constants.ACCOUNT_CONTACT_ROLE)
+            WHERE Is_Active__c = true
             AND Account__c IN :templateAccountIds
+            AND Account_Service_Role__c IN (:BSF_Constants.BLOOD_PROGRAM_LEADER_ROLE, :BSF_Constants.ACCOUNT_CONTACT_ROLE)
             ORDER BY Account_Service_Role__c DESC
         ];
 
@@ -163,10 +164,13 @@ public without sharing class TemplateService implements Callable {
                     returnValue = 1;
                 }
                 else {
-                    if (serviceRole.Contact__r.FirstName < compareTo.serviceRole.Contact__r.FirstName) {
+                    String serviceRoleName = serviceRole.Contact__r.FirstName + '-' + serviceRole.Contact__r.LastName;
+                    String compareToServiceRoleName = compareTo.serviceRole.Contact__r.FirstName + '-' + compareTo.serviceRole.Contact__r.LastName;
+                    
+                    if (serviceRoleName < compareToServiceRoleName) {
                         returnValue = -1;
                     }
-                    else if (serviceRole.Contact__r.FirstName > compareTo.serviceRole.Contact__r.FirstName) {
+                    else if (serviceRoleName > compareToServiceRoleName) {
                         returnValue = 1;
                     }
                 }
