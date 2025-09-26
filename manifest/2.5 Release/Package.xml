@@ -28,12 +28,10 @@
 		<name>ApexTrigger</name>
 	</types>
     <types>
-		<members>Biomed_Collection_Op_Center__c.Staging_Location_Geolocation__c</members>		
 		<members>Opportunity.Cancellation_Detail__c</members>
 		<members>Opportunity.Primary_Drive_Contact__c</members>
 		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
 		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
-		<members>sked__Location__c.sked__GeoLocation__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
