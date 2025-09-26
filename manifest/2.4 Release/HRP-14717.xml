@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+        <members>sked__Resource__c-sked__Resource Layout</members>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>sked__Resource__c.Staff_MaxHours_Validation</members>
+		<members>sked__Resource__c.Staff_MinHours_Validation</members>
+		<members>sked__Resource__c.Staff_MobileType_Validation</members>
+		<members>sked__Resource__c.Staff_PrimaryPhone_Validation</members>
+		<members>sked__Resource__c.Staff_TurnaroundTime_Validation</members>
+		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
+		<name>ValidationRule</name>
+	</types>
+	<types>
+		<members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
+		<name>CustomField</name>
+	</types>
+	<version>64.0</version>
+</Package>
