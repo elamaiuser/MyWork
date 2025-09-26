@@ -864,8 +864,10 @@ class BaseGenerator {
     if (!shiftKey || !job) return;
 
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
-    let newList = this.helper.getDriveShiftJobs(shift, {
-      excludeManuallyCreatedFromStaffingModal: true
+    let newList = job.volunteerRole ? this.helper.getDriveShiftJobs(shift, {
+      excludeManuallyCreatedFromStaffingModal : false 
+    }) : this.helper.getDriveShiftJobs(shift, {
+      excludeManuallyCreatedFromStaffingModal : true 
     });
     let target = job;
     let jobsToBeGenerated = [];
