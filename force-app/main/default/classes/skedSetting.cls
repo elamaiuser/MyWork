@@ -424,6 +424,7 @@ global class skedSetting {
         public boolean enableManualRefreshBanner;
         public integer maxTravelTimeIndexItemsForPeriodicRefresh;
         public integer coGroupIndexRefreshPriority;
+        public string travelTimeRefreshEndpoint;
         
         public skedTravelTimeManager() {
             sked_Travel_Time_Manager__c setting = sked_Travel_Time_Manager__c.getOrgDefaults();
@@ -435,6 +436,7 @@ global class skedSetting {
             this.enableManualRefreshBanner = setting.sked_Enable_Manual_Refresh_Banner__c;
             this.maxTravelTimeIndexItemsForPeriodicRefresh = setting.sked_Max_TTI_Items_For_Periodic_Refresh__c != NULL ? integer.valueOf(setting.sked_Max_TTI_Items_For_Periodic_Refresh__c) : 10000;
             this.coGroupIndexRefreshPriority = setting.sked_CO_Group_Index_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_CO_Group_Index_Refresh_Priority__c) : 1000;
+            this.travelTimeRefreshEndpoint = setting.sked_TTI_Refresh_Endpoint__c;
         }
     }
 
