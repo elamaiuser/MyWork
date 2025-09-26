@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">	
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Biomed_Collection_Op_Center__c.Staging_Location_Geolocation__c</members>
+		<members>sked__Location__c.sked__GeoLocation__c</members>
+		<name>CustomField</name>
+	</types>
 	<types>
 		<members>unfiled$public/Site_CO_without_Travel_Time</members>
 		<name>Report</name>
