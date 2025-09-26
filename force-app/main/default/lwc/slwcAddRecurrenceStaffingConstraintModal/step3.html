@@ -44,6 +44,27 @@
               </div>
 
               <c-slwc-multi-picklist
+                  class="slds-m-right_small"
+                  name="timeBlocks"
+                  label="Time Blocks"
+                  pick-list-values={timeBlockOptions}
+                  onpicklistchange={handleStep3FiltersOnChange}
+                  >
+              </c-slwc-multi-picklist>
+
+              <c-slwc-multi-picklist
+                  class="slds-m-right_small"
+                  name="driveTypes"
+                  label="Drive Types"
+                  selected-by-default
+                  object-api-name="sked_Drive__c"
+                  field-api-name="sked_Type_of_Drive__c"
+                  default-values={model.STEP3.filters.driveTypes}
+                  onpicklistchange={handleStep3FiltersOnChange}
+                  >
+              </c-slwc-multi-picklist>
+
+              <c-slwc-multi-picklist
                 class="slds-m-right_small"
                 name="daysOfWeek"
                 label="Days of Week"
@@ -85,6 +106,7 @@
                 <th class="slds-cell-wrap event-type__col">
                   Date Of Constraint
                 </th>
+                <th class="slds-cell-wrap event-type__col">Time Block</th>
                 <th class="slds-cell-wrap event-type__col">Drive Type</th>
                 <th class="slds-cell-wrap event-type__col">
                   Total Staff Constraints
@@ -112,6 +134,7 @@
             </thead>
             <tbody>
               <tr>
+                <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col"></td>
                 <td class="slds-cell-wrap event-type__col">
@@ -145,6 +168,7 @@
                   ></lightning-formatted-date-time>
                 </td>
 
+                <td class="slds-cell-wrap event-type__col">{item.timeBlockName}</td>
                 <td class="slds-cell-wrap event-type__col">{item.driveType}</td>
                 <td class="slds-cell-wrap event-type__col">
                   <template

@@ -291,6 +291,278 @@ global class skedExceptionLogService extends skedDataService {
         }
     }
     
+    public void captureFSWBException(Set<Id> driveIds) {
+        List<string> opportunitySources = new List<string>();
+        opportunitySources.add('Adhoc Calendar Build');
+        opportunitySources.add('Calendar Build');
+
+        List<sked_Drive_Shift__c> recordsToValidate = [
+            SELECT Id, sked_Drive__c, sked_Start_Time__c, sked_End_Time__c, sked_Drive_Type__c, sked_Drive_Operation_Type__c, sked_Time_Block__c
+            FROM sked_Drive_Shift__c
+            WHERE sked_Drive__c IN :driveIds
+            AND sked_Drive__r.sked_Opportunity__r.Source__c IN :opportunitySources
+        ];
+        if (!recordsToValidate.isEmpty()) {
+            captureFSWBException(recordsToValidate);
+        }
+    }
+    
+    public void captureFSWBException(List<sked_Drive_Shift__c> driveShifts) {
+        Set<Id> driveIds = new Set<Id>();
+        Set<Id> assignedTimeBlockIds = new Set<Id>();
+        
+        for (sked_Drive_Shift__c driveShift : driveShifts) {
+            driveIds.add(driveShift.sked_Drive__c);
+            
+            if (driveShift.sked_Time_Block__c != NULL) {
+                assignedTimeBlockIds.add(driveShift.sked_Time_Block__c);
+            }
+        }
+        
+        Map<Id, sked_Drive__c> mapDrive = new Map<Id, sked_Drive__c>([
+            SELECT Id, sked_Collection_Operation__c, sked_Drive_Date__c, sked_Day_of_Week__c
+            FROM sked_Drive__c
+            WHERE Id IN :driveIds
+        ]);
+        
+        Map<Id, Time_Block__c> mapAssignedTimeBlock = new Map<Id, Time_Block__c>();
+        if (!assignedTimeBlockIds.isEmpty()) {
+            mapAssignedTimeBlock = new Map<Id, Time_Block__c>([
+                SELECT Id, Start_Time__c, End_Time__c
+                FROM Time_Block__c
+                WHERE Id IN :assignedTimeBlockIds
+            ]);
+        }
+        
+        Date minDate, maxDate;
+        Set<Id> collectionOperationIds = new Set<Id>();
+        for (sked_Drive__c drive : mapDrive.values()) {
+            collectionOperationIds.add(drive.sked_Collection_Operation__c);
+            
+            if (minDate == NULL || minDate > drive.sked_Drive_Date__c) {
+                minDate = drive.sked_Drive_Date__c;
+            }
+            if (maxDate == NULL || maxDate < drive.sked_Drive_Date__c) {
+                maxDate = drive.sked_Drive_Date__c;
+            }
+        }
+        
+        Map<Id, Biomed_Collection_Op_Center__c> mapCO = new Map<Id, Biomed_Collection_Op_Center__c>([
+            SELECT Id, sked_Minimum_Drive_Start_Time__c, sked_Maximum_Drive_End_Time__c,
+            (SELECT Id, Collection_Operation__c, Time_Block__c, Effective_Start_Date__c, Effective_End_Date__c,
+             Time_Block__r.Days_of_Week__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c
+             FROM Collection_Operation_Time_Blocks__r
+             WHERE Effective_Start_Date__c <= :maxDate
+             AND Effective_End_Date__c >= :minDate)
+            FROM Biomed_Collection_Op_Center__c
+            WHERE Id IN :collectionOperationIds
+        ]);
+        
+        Map<string, skedHC__Exception__c> mapActiveException = new Map<string, skedHC__Exception__c>();
+        for (sked_Drive_Shift__c driveShift : driveShifts) {
+            sked_Drive__c drive = mapDrive.get(driveShift.sked_Drive__c);
+            Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
+            
+            List<Collection_Operation_Time_Block__c> usedCOTBs = new List<Collection_Operation_Time_Block__c>();
+            
+            List<Collection_Operation_Time_Block__c> qualifiedCOTBs = new List<Collection_Operation_Time_Block__c>();
+            for (Collection_Operation_Time_Block__c coTB : collectionOperation.Collection_Operation_Time_Blocks__r) {
+                boolean isWeekdayMatched = coTB.Time_Block__r.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
+                boolean isEffective = coTB.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Effective_End_Date__c;
+                boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= coTB.Time_Block__r.Start_Time__c && driveShift.sked_End_Time__c <= coTB.Time_Block__r.End_Time__c;
+                
+                if (isEffective && isWeekdayMatched && isShiftTimeMatched) {
+                    qualifiedCOTBs.add(coTB);
+                }
+                if (isEffective && isWeekdayMatched) {
+                    usedCOTBs.add(coTB);
+                }
+            }
+            
+            string exceptionCode;
+            if (!usedCOTBs.isEmpty()) {
+                if (driveShift.sked_Time_Block__c == NULL) {
+                    exceptionCode = qualifiedCOTBs.size() > 1 ? skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS : skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK;
+                }
+                else {
+                    Time_Block__c assignedTimeBlock = mapAssignedTimeBlock.get(driveShift.sked_Time_Block__c);
+                    boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= assignedTimeBlock.Start_Time__c 
+                        && driveShift.sked_End_Time__c <= assignedTimeBlock.End_Time__c; 
+                    if (!isShiftTimeMatched) {
+                        exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK;
+                    }
+                }
+            }
+            else {
+                if (collectionOperation.sked_Minimum_Drive_Start_Time__c != NULL && collectionOperation.sked_Maximum_Drive_End_Time__c != NULL) {
+                    boolean isShiftTimeMatched = driveShift.sked_Start_Time__c >= collectionOperation.sked_Minimum_Drive_Start_Time__c 
+                        && driveShift.sked_End_Time__c <= collectionOperation.sked_Maximum_Drive_End_Time__c; 
+                    if (!isShiftTimeMatched) {
+                        exceptionCode = skedConstants.EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS;
+                    }
+                }
+            }
+            
+            if (!string.isBlank(exceptionCode)) {
+                skedHC__Exception__c activeException = new skedHC__Exception__c(
+                    sked_Drive__c = driveShift.sked_Drive__c,
+                    sked_Drive_Shift__c = driveShift.Id,
+                    sked_Exception_Code__c = exceptionCode,
+                    skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                );
+                string key = activeException.sked_Drive_Shift__c + ':' + activeException.sked_Exception_Code__c;
+                mapActiveException.put(key, activeException);
+            }
+        }
+        
+        upsertTimeBlockExceptionLog(driveShifts, mapActiveException);
+    }
+    
+    public void captureAPExceptionLogs(List<sked__Activity_Resource__c> newRecords) {
+        Set<Id> resourceIds = new Set<Id>();
+        Map<Id, skedModels.resource> mapResource = new Map<Id, skedModels.resource>();
+        DateTime minStart;
+        DateTime maxEnd;
+        Set<Date> inputDates = new Set<Date>();
+        
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            resourceIds.add(newRecord.sked__Resource__c);
+        }
+        
+        Map<Id, sked__Resource__c> mapSkedResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked__Primary_Region__r.sked__Timezone__c
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
+        
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            sked__Resource__c skedResource = mapSkedResource.get(newRecord.sked__Resource__c);
+            
+            skedModels.resource resource = new skedModels.resource();
+            resource.id = skedResource.Id;
+            resource.timezoneSidId = skedResource.sked__Primary_Region__r.sked__Timezone__c;
+            
+            mapResource.put(resource.id, resource);
+            
+            if (minStart == NULL || minStart > newRecord.sked_Start1__c) {
+                minStart = newRecord.sked_Start1__c;
+            }
+            if (maxEnd == NULL || maxEnd < newRecord.sked_End__c) {
+                maxEnd = newRecord.sked_End__c;
+            }
+            
+            inputDates.add(newRecord.sked_Start_Date__c);
+            inputDates.add(newRecord.sked_End_Date__c);
+        }
+        
+        if (minStart != NULL && maxEnd != NULL) {
+            List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+            
+            DateTime startTime = skedDateTimeUtils.getStartOfDate(minStart, UserInfo.getTimeZone().getID());
+            DateTime endTime = skedDateTimeUtils.getEndOfDate(maxEnd, UserInfo.getTimeZone().getID());
+
+            skedResourceService resourceService = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
+            resourceService.populateNonWorkingEvents(mapResource.values(), inputDates, startTime, endTime);
+            
+            for (sked__Activity_Resource__c newRecord : newRecords) {
+                skedModels.resource resource = mapResource.get(newRecord.sked__Resource__c);
+                string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
+                
+                system.debug('#resourceTimezoneSidId#' + resourceTimezoneSidId);
+                
+                boolean conflictNonWorkingTime = false;
+                for (skedModels.event event : resource.availability) {
+                    DateTime resourceEventStart = skedDateTimeUtils.newDateTimeInstance(event.startDate, 0, resourceTimezoneSidId);
+                    if (resourceEventStart != NULL && event.startTimeInMinutes != NULL) {
+                        resourceEventStart = resourceEventStart.addMinutes(event.startTimeInMinutes);
+                    }
+                    
+                    DateTime resourceEventFinish = skedDateTimeUtils.newDateTimeInstance(event.endDate, 0, resourceTimezoneSidId);
+                    if (resourceEventFinish != NULL && event.endTimeInMinutes != NULL) {
+                        resourceEventFinish = resourceEventFinish.addMinutes(event.endTimeInMinutes);
+                    }
+
+                    system.debug('#resourceEventStart#' + resourceEventStart.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#resourceEventFinish#' + resourceEventFinish.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#newRecord.sked_Start1__c#' + newRecord.sked_Start1__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#newRecord.sked_End__c#' + newRecord.sked_End__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    
+                    if (resourceEventStart != NULL && resourceEventFinish != NULL) {
+                        if (resourceEventStart < newRecord.sked_End__c && resourceEventFinish > newRecord.sked_Start1__c) {
+
+                            
+
+                            conflictNonWorkingTime = TRUE;
+                            break;
+                        }
+                    }
+                }
+                system.debug('#conflictNonWorkingTime#' + conflictNonWorkingTime);
+                if (conflictNonWorkingTime) {
+                    skedHC__Exception__c skedException = new skedHC__Exception__c (
+                        skedHC__Activity__c = newRecord.sked__Activity__c,
+                        //skedHC__Job_Allocation__c = newRecord.Id,
+                        skedHC__Resource__c = resource.id,
+                        sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN,
+                        skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+                    );
+                    exceptionLog.add(skedException);
+                }
+            }
+            
+            if (!exceptionLog.isEmpty()) {
+                insert exceptionLog;
+            }
+        }
+    }
+    
+    private void upsertTimeBlockExceptionLog(List<sked_Drive_Shift__c> driveShifts, Map<string, skedHC__Exception__c> mapActiveException) {
+        List<skedHC__Exception__c> exceptionLogToInsert = new List<skedHC__Exception__c>();
+        List<skedHC__Exception__c> exceptionLogToUpdate = new List<skedHC__Exception__c>();
+        
+        List<string> timeBlockExceptionCodes = new List<string>();
+        timeBlockExceptionCodes.add(skedConstants.EXCEPTION_CODE_MISSING_TIME_BLOCK);
+        timeBlockExceptionCodes.add(skedConstants.EXCEPTION_CODE_FITS_MULTIPLE_TIME_BLOCKS);
+        timeBlockExceptionCodes.add(skedConstants.EXCEPTION_CODE_OUT_OF_TIME_BLOCK);
+        timeBlockExceptionCodes.add(skedConstants.EXCEPTION_CODE_OUT_OF_OPERATIONAL_HOURS);
+        
+        Set<string> timeBlockExceptionKeys = new Set<string>();
+        for (sked_Drive_Shift__c driveShift : driveShifts) {
+            for (string exceptionCode : timeBlockExceptionCodes) {
+                timeBlockExceptionKeys.add(driveShift.Id + ':' + exceptionCode);
+            }
+        }
+        List<skedHC__Exception__c> existingExceptionLog = [
+            SELECT Id, sked_UniqueKey__c, sked_Drive_Shift__c, sked_Exception_Code__c
+            FROM skedHC__Exception__c
+            WHERE sked_UniqueKey__c IN :timeBlockExceptionKeys
+            AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN
+        ];
+        Map<string, skedHC__Exception__c> mapExistingException = new Map<string, skedHC__Exception__c>();
+        for (skedHC__Exception__c existingException : existingExceptionLog) {
+            mapExistingException.put(existingException.sked_UniqueKey__c, existingException);
+            
+            if (!mapActiveException.containsKey(existingException.sked_UniqueKey__c)) {
+                existingException.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                exceptionLogToUpdate.add(existingException);
+            }
+        }
+        
+        for (string key : mapActiveException.keySet()) {
+            if (!mapExistingException.containsKey(key)) {
+                skedHC__Exception__c activeException = mapActiveException.get(key);
+                exceptionLogToInsert.add(activeException);
+            }
+        }
+        
+        if (!exceptionLogToInsert.isEmpty()) {
+            insert exceptionLogToInsert;
+        }
+        if (!exceptionLogToUpdate.isEmpty()) {
+            update exceptionLogToUpdate;
+        }
+    }
+    
     /*********************************************************** Private methods ***********************************************************/
     private List<sked__Job_Allocation__c> getConflictedAllocations(Set<Id> resourceIds, DateTime startTime, DateTime endTime, Set<Id> excludedIds, boolean futureOnly) {
         skedQueryBuilder jobAllocationBuilder = new skedQueryBuilder();

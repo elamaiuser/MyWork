@@ -8,6 +8,7 @@ import {
   fixedSiteProcedureProjectionService, fixedSiteProcedureProjectionQueryModel, 
   userService, jobAllocationService,
   collectionOperationStagingLocationService, collectionOperationStagingLocationQueryModel,
+  collectionOperationTimeBlockService, collectionOperationTimeBlockQueryModel,
   travelTimeIndexItemService, travelTimeIndexItemQueryModel,
   resourceService, resourceQueryModel, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel
 } from 'c/dataService';
@@ -116,6 +117,7 @@ class SlwcDrivesGenerator {
           this.retrieveDefaultTags(),
           this.retrieveVehicles(),
           this.retrieveTerritoryCollectionOps(),
+          this.retrieveCollectionOperationTimeBlocksData()
         ])
       })
       .then(() => {
@@ -317,6 +319,7 @@ class SlwcDrivesGenerator {
         query.startDate = this.drivesDateRange.minStartDate;
         query.endDate = this.drivesDateRange.maxEndDate;
         query.collectionOpIds = this.collectionOperationIds;
+        query.subQueryIndicator = sObjectType.DRIVE_SHIFT;
 
         let service = new driveService();
         return service.query(query)
@@ -356,6 +359,23 @@ class SlwcDrivesGenerator {
         return service.getRoleTimeData(this.drivesDateRange.minStartDate, this.drivesDateRange.maxEndDate, this.collectionOperationIds, this.driveSiteIds)
           .then(result => {
             this.masterData.roleTimeData = result || {};
+          })
+      });
+  }
+
+  retrieveCollectionOperationTimeBlocksData() {
+    return Promise.resolve()
+      .then(() => {
+        if (!this.collectionOperationIds.length || !this.drivesDateRange.minStartDate || !this.drivesDateRange.maxEndDate) return;
+
+        let service = new collectionOperationTimeBlockService();
+        let model = new collectionOperationTimeBlockQueryModel();
+        model.collectionOperationIds = this.collectionOperationIds;
+        model.startDate = this.drivesDateRange.minStartDate;
+        model.endDate = this.drivesDateRange.maxEndDate;
+        return service.query(model)
+          .then(result => {
+            this.masterData.collectionOperationTimeBlocks = result;
           })
       });
   }
@@ -407,8 +427,6 @@ class SlwcDrivesGenerator {
   initDriveGeneratorInstances() {
     if(!this.drives.length) return [];
 
-    let helper = new DriveHelper();
-
     const filterItemsByDateRange = (items = [], {startField, startValue}, {endField, endValue}) => {
       return items.filter(item => {
         if(['start'].includes(startField) && ['finish', 'end'].includes(endField)) {
@@ -448,6 +466,7 @@ class SlwcDrivesGenerator {
     let retrieveFixedSiteProcedureProjectionsMap = groupBy(this.masterData.fixedSiteProcedureProjections, 'accountId');
     let collectionOperationSDMMap = groupBy(this.masterData.collectionOperationSDM, 'collectionOpId');
     let staffingDecisionMatrixMap = keyBy(this.masterData.staffingDecisionMatrix, 'id');
+    let collectionOperationTimeBlocksMap = groupBy(this.masterData.collectionOperationTimeBlocks, 'collectionOperationId');
     let loginUser = this.masterData.loginUser;
 
     this.drives = this.drives.map(drive => {
@@ -534,7 +553,14 @@ class SlwcDrivesGenerator {
             endValue: drive.driveDate
           }),
           vehicles: vehiclesMap[drive.collectionOperationId] || [],
-          travelTimeIndexItemMap: this.masterData.travelTimeIndexItemMap
+          travelTimeIndexItemMap: this.masterData.travelTimeIndexItemMap,
+          collectionOperationTimeBlocks: filterItemsByDateRange(collectionOperationTimeBlocksMap[drive.collectionOperationId] || [], {
+            startField: 'effectiveStartDate',
+            startValue: drive.driveDate
+          }, {
+            endField: 'effectiveEndDate',
+            endValue: drive.driveDate
+          })
         }
       })
 

@@ -283,7 +283,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
            OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
-        //HRP-14399
+
         if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
             OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
@@ -299,6 +299,12 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
             OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
+
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('validateManualFirstTimeFlagSelection') == -1) {
+            OpportunityService.validateManualFirstTimeFlagSelection((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         System.debug('Exiting method beforeUpdate');
     }
     
@@ -471,19 +477,22 @@ public class OpportunityTriggerHandler extends TriggerHandler{
            OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, NULL);
         }
 
-        //HRP-14399
         if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
             OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, NULL);
         }
         if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
             OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, NULL);
         }
-        
         //HRP-13146
         if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
         }
 
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('populateSpecialCircumstancesBadgeData') == -1) {
+            OpportunityService.populateSpecialCircumstancesBadgeData((List<Opportunity>)trigger.new);
+        }
+       
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }
@@ -562,7 +571,14 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.syncTemplateOrdertoOpportunity() Bypassed');
         }
-		//HRP-12664        
+		//HRP-12664
+
+        //HRP-7470
+        if(super.getTriggerMethodsToBypass().indexOf('createPrimaryContactRoleAfterTemplateCreation') == -1) {
+            OpportunityService.createPrimaryContactRoleAfterTemplateCreation((List<Opportunity>)trigger.new);
+        }
+
+		System.debug('getCpuTime()'+limits.getCpuTime());
         System.debug('Exiting method AfterInsert');
     }
     
@@ -718,8 +734,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             	System.debug('OpportunityTriggerHandler.afterUpdate() - BSFTaskChecklistTriggerHandler.updateTaskChecklist() Executing...');
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
-            // HRP- 12142 --> Ends Here        
-            
+            // HRP- 12142 --> Ends Here
             System.debug('Exiting method AfterUpdate');
         }
         
@@ -738,6 +753,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
                 System.debug('OpportunityTriggerHandler.beforeDelete - BSF_Utilities.restrictNonAdminUsersForSobjectDeletion() Bypassed');  
             }
          // Part of HRP-10115 --> Ends Here
-            System.debug('Exiting method beforeDelete');       
+            System.debug('Exiting method beforeDelete');
+       
     }
 }

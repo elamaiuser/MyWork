@@ -76,6 +76,10 @@
                 <field>sked_Cancellation_Reason__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Cancellation_Detail__c</field>
+            </layoutItems>
+            <layoutItems>
                 <emptySpace>true</emptySpace>
             </layoutItems>
             <layoutItems>
@@ -110,18 +114,6 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Total_Products_Projected__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Total_Planned_Units__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Total_Number_of_Drives_Agreed_Annual__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Average_Per_Drive_planned_goal__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -292,10 +284,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>No_Publicity_Needed__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>HS_Relationship_Manager__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -723,8 +711,8 @@
         <excludeButtons>OppContactRoleMultiEdit</excludeButtons>
         <fields>ContactName</fields>
         <fields>Role</fields>
+        <fields>Assigned_Date__c</fields>
         <fields>ContactEmail</fields>
-        <fields>ContactPhone</fields>
         <relatedList>RelatedContactRoleList</relatedList>
     </relatedLists>
     <relatedLists>

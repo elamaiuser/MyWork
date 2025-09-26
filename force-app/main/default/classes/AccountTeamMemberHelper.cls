@@ -13,7 +13,7 @@ public  with sharing  class AccountTeamMemberHelper {
     public static Boolean firstRun = true;
     public static Boolean skipAccountTrigger = false;
 
-    public static void handleMilitaryMoATaskReassignment(List<AccountTeamMember> accntTeamMembers) {
+    /*public static void handleMilitaryMoATaskReassignment(List<AccountTeamMember> accntTeamMembers) {
         Set<Id> accountIds = new Set<Id>();
         for(AccountTeamMember atm : accntTeamMembers) {
             accountIds.add(atm.AccountId);
@@ -78,7 +78,112 @@ public  with sharing  class AccountTeamMemberHelper {
             }
         }
         return ownerId;        
+    }*/
+
+   public static void handleMilitaryMoATaskReassignment(List<AccountTeamMember> accntTeamMembers) {
+        Set<Id> accountIds = new Set<Id>();
+        for (AccountTeamMember atm : accntTeamMembers) {
+            if (atm.AccountId != null) accountIds.add(atm.AccountId);
+        }
+        if (accountIds.isEmpty()) return;
+
+        Date today = Date.today();
+        Map<Id, Account> accountMap = new Map<Id, Account>([
+            SELECT Id, Account_Manager__c, OwnerId,
+                   (SELECT UserId, TeamMemberRole, Start_Date__c, End_Date__c, Is_Covering_Recruiter__c
+                    FROM AccountTeamMembers
+                    WHERE Start_Date__c <= :today AND End_Date__c >= :today
+                    ORDER BY TeamMemberRole ASC, Is_Covering_Recruiter__c DESC)
+            FROM Account
+            WHERE Id IN :accountIds
+        ]);
+
+        String subjectKey = Task_Reassignment_Matrix__mdt.getInstance('Renew_Military_MoA').Task_Subject__c;
+        List<Task> tasks = [
+            SELECT Id, WhatId, OwnerId
+            FROM Task
+            WHERE WhatId IN :accountIds AND Subject = :subjectKey
+        ];
+        if (tasks.isEmpty()) return;
+
+        List<Task> toUpdate = new List<Task>();
+        for (Task t : tasks) {
+            Account acc = accountMap.get(t.WhatId);
+            if (acc == null) continue;
+            Id taskOwnerId = acc.Account_Manager__c != null ? acc.Account_Manager__c : acc.OwnerId;
+            Id newOwner = determineTaskOwner(acc, taskOwnerId);
+            if (newOwner != null && newOwner != t.OwnerId) {
+                t.OwnerId = newOwner;
+                toUpdate.add(t);
+            }
+        }
+        if (!toUpdate.isEmpty()) update toUpdate;
     }
+
+    public static Id determineTaskOwner(Account acc, Id ownerId) {
+        if (acc.AccountTeamMembers == null || acc.AccountTeamMembers.isEmpty()) return ownerId;
+        
+        Map<String, List<AccountTeamMember>> roleMap = new Map<String, List<AccountTeamMember>>();
+        for (AccountTeamMember m : acc.AccountTeamMembers) {
+            if (!roleMap.containsKey(m.TeamMemberRole)) {
+                roleMap.put(m.TeamMemberRole, new List<AccountTeamMember>());
+            }
+            roleMap.get(m.TeamMemberRole).add(m);
+        }
+        
+        List<String> hierarchy = new List<String>{BSF_Constants.ACCOUNT_MANAGER, BSF_Constants.ACCOUNT_SPECIALIST, BSF_Constants.DISTRICT_MANAGER};
+                    
+                    for(String role : hierarchy) {
+                        List<AccountTeamMember> membersInRole = roleMap.get(role);
+                        if(membersInRole != null && !membersInRole.isEmpty()) { 
+                            for(AccountTeamMember member : membersInRole) {
+                                if(member.Is_Covering_Recruiter__c) {
+                                    return member.UserId;
+                                }
+                            }
+                            return membersInRole[0].UserId;
+                        }
+                    }
+        return ownerId;
+    }
+
+
+    /*private static Id determineTaskOwnerBulk(Id accountId, Id fallbackOwnerId, Map<Id, List<AccountTeamMember>> teamMap) {
+        List<AccountTeamMember> teamMembers = teamMap.get(accountId);
+        if (teamMembers == null || teamMembers.isEmpty()) {
+            return fallbackOwnerId;
+        }
+
+        Map<String, List<AccountTeamMember>> roleToMembers = new Map<String, List<AccountTeamMember>>();
+        for (AccountTeamMember member : teamMembers) {
+            if (!roleToMembers.containsKey(member.TeamMemberRole)) {
+                roleToMembers.put(member.TeamMemberRole, new List<AccountTeamMember>());
+            }
+            roleToMembers.get(member.TeamMemberRole).add(member);
+        }
+
+        List<String> roleHierarchy = new List<String>{
+            BSF_Constants.ACCOUNT_MANAGER,
+            BSF_Constants.ACCOUNT_SPECIALIST,
+            BSF_Constants.DISTRICT_MANAGER
+        };
+
+        for (String role : roleHierarchy) {
+            List<AccountTeamMember> members = roleToMembers.get(role);
+            if (members != null && !members.isEmpty()) {
+                for (AccountTeamMember m : members) {
+                    if (m.Is_Covering_Recruiter__c) {
+                        return m.UserId;
+                    }
+                }
+                return members[0].UserId;
+            }
+        }
+
+        return fallbackOwnerId;
+    }*/
+
+
     
     @InvocableMethod(label='Get Account Team Members' description='Get all the Account Team Members' category='AccountTeamMember')
     public static void getAccountTeamMembers(List<ID> ids) {
