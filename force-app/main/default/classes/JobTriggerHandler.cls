@@ -59,50 +59,7 @@ public class JobTriggerHandler extends TriggerHandler implements Callable {
     }
     
     /************************************************************************************************************************************************************/
-    //HRP-15160 starts
-    public static void populateAdditionalRole(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
-        Set<Id> jobIds = new Set<Id>(); 
-        for (sked__Job__c newRecord : newRecords) {
-            sked__Job__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Dual_Role__c != oldData.sked_Dual_Role__c) {
-                jobIds.add(newRecord.id);
-            }
-        }
-        if (!jobIds.isEmpty()) {
-            List<sked__Job_Allocation__c> allocations = [Select Id , sked_Additional_Roles__c , sked_Dual_Role__c from sked__Job_Allocation__c where sked__Job__c in : jobIds ];
-            if(!allocations.isEmpty()){
-            if (!System.isBatch()) {
-                skedFutureCallEventHandler.publishFutureCallEvent(
-                    'JobTriggerHandler',
-                    'updateAdditionalRole',
-                    new List<sked__Job_Allocation__c>(allocations)
-                );
-            } else {
-                JobTriggerHandler.updateAdditionalRole(new List<sked__Job_Allocation__c>(allocations));
-            }
-        }
-        }
-    }
-
-    public static void updateAdditionalRole(List<sked__Job_Allocation__c> allocationList) {
-        List<sked__Job_Allocation__c> updatedJA = new List<sked__Job_Allocation__c>();
-        for(sked__Job_Allocation__c allocation : allocationList){
-                List<string> additionalRoles = new List<string>();
-                if(!string.isBlank(allocation.sked_Dual_Role__c)){
-                    additionalRoles = allocation.sked_Dual_Role__c.split(';');
-                    allocation.sked_Additional_Roles__c = string.join(additionalRoles, ';');
-                }
-                else{
-                    allocation.sked_Additional_Roles__c = '';
-                }
-                    updatedJA.add(allocation);
-            }
-        if (!updatedJA.isEmpty()) {
-            update updatedJA ;
-        }
-    }
-    //HRP-15160 ends
-
+    
     public static void jobPopulateDriveSupervisoryRole(List<sked__Job__c> newJobsList, Map<Id, sked__Job__c> oldJobsMap) {
         if(newJobsList == null || newJobsList.isEmpty()) {
             return;
