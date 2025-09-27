@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Set_UFID</name>
+        <label>Set UFID</label>
+        <locationX>1202</locationX>
+        <locationY>2423</locationY>
+        <actionName>UFIDGenerator</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>fieldName</name>
+            <value>
+                <stringValue>ufid__c</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>maxLength</name>
+            <value>
+                <numberValue>6.0</numberValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>prefix</name>
+            <value>
+                <stringValue>C</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>value</name>
+            <value>
+                <elementReference>Convert_UFID_AN_to_Number</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>UFIDGenerator</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
     <apiVersion>63.0</apiVersion>
     <assignments>
         <name>Copy_1_of_End_ASR_with_Non_Common_Reason</name>
@@ -400,12 +441,41 @@
             <label>No</label>
         </rules>
     </decisions>
+    <decisions>
+        <name>Is_Null_UFID</name>
+        <label>Is Null UFID</label>
+        <locationX>1334</locationX>
+        <locationY>2315</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>UFID_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.UFID__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_UFID</targetReference>
+            </connector>
+            <label>UFID is Null</label>
+        </rules>
+    </decisions>
     <description>This flow handles the creation and update of Account Service Role (ASR) records based on Contact-related changes.
 1. On Contact creation, it creates an ASR record linking the Contact to the related Account.
 2. On update, if &quot;Do Not Contact&quot; is set to true, it updates the ASR with an End Date and End Reason.
 
-The flow ensures ASR records stay in sync with the Contact.</description>
+The flow ensures ASR records stay in sync with the Contact.
+This flow also populates the UFID</description>
     <environments>Default</environments>
+    <formulas>
+        <name>Convert_UFID_AN_to_Number</name>
+        <dataType>Number</dataType>
+        <expression>VALUE({!$Record.UFID_AN__c})</expression>
+        <scale>2</scale>
+    </formulas>
     <formulas>
         <name>Label_EndReasonValue</name>
         <dataType>String</dataType>
@@ -465,6 +535,9 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <label>Create Account Service Role</label>
         <locationX>50</locationX>
         <locationY>539</locationY>
+        <connector>
+            <targetReference>Is_Null_UFID</targetReference>
+        </connector>
         <inputAssignments>
             <field>Account_Service_Role__c</field>
             <value>
@@ -546,6 +619,9 @@ The flow ensures ASR records stay in sync with the Contact.</description>
         <label>Mark Deceased  Contact As In Active</label>
         <locationX>2354</locationX>
         <locationY>2123</locationY>
+        <connector>
+            <targetReference>Is_Null_UFID</targetReference>
+        </connector>
         <inputReference>ListOfContactToSetAsInActive</inputReference>
     </recordUpdates>
     <recordUpdates>

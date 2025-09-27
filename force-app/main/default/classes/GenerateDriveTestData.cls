@@ -157,6 +157,28 @@ public class GenerateDriveTestData {
         
         insert firstList;
         
+        List<sked__Account_Tag__c> testAccountTags = new List<sked__Account_Tag__c>();
+        sked__Account_Tag__c mobileAccountTag;
+        mobileAccountTag = new sked__Account_Tag__c(
+            sked__Account__c = fixedSiteAccount.Id,
+            sked__Tag__c = usCitizenTag.Id,
+            sked__Required__c = TRUE,
+            sked__Weighting__c = NULL
+        );
+        testAccountTags.add(mobileAccountTag);
+        
+        mobileAccountTag = new sked__Account_Tag__c(
+            sked__Account__c = fixedSiteAccount.Id,
+            sked__Tag__c = spanishTag.Id,
+            sked__Required__c = FALSE,
+            sked__Weighting__c = 10,
+            sked_Minimum_Quantity__c = 1
+        );
+        testAccountTags.add(mobileAccountTag);
+        skedHubBase.BypassInsertTriggers = true;
+        insert testAccountTags;
+        skedHubBase.BypassInsertTriggers = false;
+        
         // insert Account Team and add DRDAMUser
         List<AccountTeammember> atmList = new List<AccountTeammember>();
         AccountTeammember atm;
@@ -555,13 +577,13 @@ public class GenerateDriveTestData {
             sked_Resource_Role_Group__c = 'Staff roles',
             sked_Resource_Roles__c	= 'Apheresis;2RBC;2RBC Sign-off;Post Collections'
         );
-        forthList.add(fixSiteRoleGrp2);*/
+        forthList.add(fixSiteRoleGrp2);
         
         sked_Resource_Role_Group__c fixSiteRoleGrp3 = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Driving roles',
-            sked_Resource_Roles__c	= 'Driver CDL A'
+            sked_Resource_Roles__c	= 'Driver CDL B'
         );
-        forthList.add(fixSiteRoleGrp3);
+        forthList.add(fixSiteRoleGrp3);*/
         
         insert forthList;
         
@@ -672,7 +694,7 @@ public class GenerateDriveTestData {
         return mapTestData;
     }
 
-    /*@isTest
+    @isTest
     public static Map<string, sObject> testSetupForElseCondition()
     {
         Triggerhandler.bypass('OpportunitySplitTriggerHandler');
@@ -683,7 +705,7 @@ public class GenerateDriveTestData {
         List<sObject> predefinedData = testDataFactory.setupPredefinedData();
         insert predefinedData;
         
-        /***** First list 
+        /***** First list ****/
         List<sObject> firstList = new List<sObject>();
         
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -742,7 +764,7 @@ sked_Charge_Threshold__c = 36,
 sked_Driver_Capacity__c = 2.2,
 sked_Driver_Support_Capacity__c = 2.2,
 sked_Team_Supervisor_Threshold__c = 36,
-sked_VP_HH_Capacity__c = 2.2,
+sked_VP_HH_Capacity__c = 2.2,*/
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix2);
@@ -847,7 +869,7 @@ sked_VP_HH_Capacity__c = 2.2,
         atmList.add(atm);
         insert atmList;
         
-        /***** Second list
+        /***** Second list ****/
         List<sObject> secondList = new List<sObject>();
         
         Opportunity parentOpp = new Opportunity(
@@ -920,7 +942,7 @@ sked_Max_Number_of_Staff__c = 8,
 sked_Min_Number_of_Staff__c = 4,
 sked_Slot_Reduction__c = 5
 );
-secondList.add(setting30definition3); 
+secondList.add(setting30definition3); */
         
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
@@ -1019,7 +1041,7 @@ secondList.add(setting30definition3);
             sked__Weighting__c = 10,
             sked_Minimum_Quantity__c = 1
         );
-        secondList.add(fixedSiteAccountTag2);
+        secondList.add(fixedSiteAccountTag2);*/
         
         sked__Account_Tag__c fixedSiteAccountTag3 = new sked__Account_Tag__c(
             sked__Account__c = fixedSiteAccount.Id,
@@ -1044,7 +1066,7 @@ secondList.add(setting30definition3);
 
         insert secondList;
         
-        /*Chapter for Site
+        /*Chapter for Site*/
         Chapter__c testChapter = new Chapter__c(
             Chapter_Code__c='AB299',
             Division_Code__c='D21',
@@ -1056,7 +1078,7 @@ secondList.add(setting30definition3);
         );
         insert testChapter;
         
-        /***** Third list
+        /***** Third list ****/
         List<sObject> thirdList = new List<sObject>();
         
         sked__Location__c testLocation1 = new sked__Location__c(
@@ -1177,7 +1199,7 @@ secondList.add(setting30definition3);
             sked_Region__c = testRegion1.Id);
         insert siteCollectionOperationForMobile;
         
-        /***** Fifth list
+        /***** Fifth list ****/
         List<sObject> fifthList = new List<sObject>();
         
         sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(Name = 'Test Staging Location 1', sked_Timezone__c = 'America/New_York', sked_Zip_Code__c = '18411',
@@ -1235,7 +1257,7 @@ secondList.add(setting30definition3);
         }
         insert skdBioCollectionList;
      
-        /***** Forth list 
+        /***** Forth list ****/
         List<sObject> forthList = new List<sObject>();
         
         
@@ -1266,7 +1288,8 @@ secondList.add(setting30definition3);
             sked_Resource_Role_Group__c = 'Driving roles', 
             sked_Variance_Applies_to__c = 'Setup Time', 
             sked_Variation_Amount__c = 15, 
-            sked_Variation_Type__c = 'Safety Video'
+            sked_Variation_Type__c = 'Safety Video',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         );
@@ -1280,7 +1303,8 @@ secondList.add(setting30definition3);
             sked_Resource_Role_Group__c = 'Staff roles', 
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From', 
             sked_Variation_Amount__c = 15,
-            sked_Variation_Type__c = 'Loading/ unloading area'
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -1358,7 +1382,7 @@ secondList.add(setting30definition3);
         
         
         
-        /***** Sixth list 
+        /***** Sixth list ****/
         List<sObject> sixthList = new List<sObject>();
         
         // Mobile Opp
@@ -1419,7 +1443,7 @@ secondList.add(setting30definition3);
         insert sixthList;
         
         return mapTestData;
-    }*/
+    }
 
     @isTest
     public static Map<string, sObject> testSetupForErrorMessage()
@@ -2069,6 +2093,9 @@ secondList.add(setting30definition3); */
         List<sObject> predefinedData = testDataFactory.setupPredefinedData();
         insert predefinedData;
         
+        //skedulo Admin Setting
+        insert new sked_Admin_Setting__c(Admin_Excess_Staff_Capacity_Threshold__c = 0, sked_Admin_Call_List_Recipient_None__c = 130, sked_Admin_Call_List_Recipient__c = 115);
+        
         /***** First list ****/
         List<sObject> firstList = new List<sObject>();
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
@@ -2083,24 +2110,25 @@ secondList.add(setting30definition3); */
             sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
             sked_Travel_Time_Included_Mobile__c = 'All Roles',
             sked_Unpaid_Lunch_Break_Duration__c = 30,
-            sked_Lunch_Break__c = true
+            sked_Lunch_Break__c = true,
+            sked_Auto_Generate_Dual_Role__c = true,
+            sked_Only_Generate_Dual_If_1_Machine__c = false
         );
         firstList.add(testCollectionOperation1);
         mapTestData.put('testCollectionOperation1', testCollectionOperation1);
         
-            Biomed_Collection_Op_Center__c testCollectionOperation2 = new Biomed_Collection_Op_Center__c(
+        Biomed_Collection_Op_Center__c testCollectionOperation2 = new Biomed_Collection_Op_Center__c(
             Name = 'Collection Operation 2',
             sked_Lunch_Break_Duration_Fixed_Site__c = '30',
             sked_Lunch_Break_Duration_Mobile__c = '30',			
             sked_Maximum_Shift_Length_Threshold__c = 25,
             sked_Skip_Last_Appointment_For__c = 'Fixed Site',
-          //  sked_Breakdown_Time_Threshold__c = 15,
-          //  sked_Setup_Time_Threshold__c = 15,
             sked_Lunch_Break_Before_Draw_Hours__c = false,
             sked_Lunch_Break__c = true,
             sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
-            sked_Travel_Time_Included_Mobile__c = 'All Roles'
-          //  sked_Unpaid_Lunch_Break_Duration__c = 30
+            sked_Travel_Time_Included_Mobile__c = 'All Roles',
+            sked_Auto_Generate_Dual_Role__c = true,
+            sked_Only_Generate_Dual_If_1_Machine__c = false
         );
         firstList.add(testCollectionOperation2);
         mapTestData.put('testCollectionOperation2', testCollectionOperation2);
@@ -2113,7 +2141,6 @@ secondList.add(setting30definition3); */
             sked_Driver_Support_Capacity__c = 2.2,
             sked_Team_Supervisor_Threshold__c = 1,
             sked_VP_HH_Capacity__c = 2.2,
-           // sked_NR_Volunteer_Fixed_Site_Band_Lower__c = 15,
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Mobile').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix);
@@ -2124,13 +2151,6 @@ secondList.add(setting30definition3); */
             sked_Platelet_Hourly_Capacity__c = 0.67,
             sked_Plasma_Hourly_Capacity__c = 1.17,
             sked_2RBC_Hourly_Capacity__c = 1,
-            /* sked_2RBC_Staff_Capacity__c = 1.6,
-sked_Charge_Capacity__c = 1.1,
-sked_Charge_Threshold__c = 36,
-sked_Driver_Capacity__c = 2.2,
-sked_Driver_Support_Capacity__c = 2.2,
-sked_Team_Supervisor_Threshold__c = 36,
-sked_VP_HH_Capacity__c = 2.2,*/
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Fixed_Site').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix2);
@@ -2181,21 +2201,13 @@ sked_VP_HH_Capacity__c = 2.2,*/
         );
         firstList.add(liftGateTag);
         mapTestData.put('liftGateTag', liftGateTag);
-        
-        
+                
         sked__Tag__c personTag = new sked__Tag__c(
             Name = 'Sample Person Tag',
             sked_Resource_Type__c = 'Person'
         );
         firstList.add(personTag);
         mapTestData.put('personTag', personTag);
-        
-        /*sked__Tag__c vehicleTag = new sked__Tag__c(
-            Name = 'Sample Vehicle Tag',
-            sked_Resource_Type__c = 'Vehicle'
-        );
-        firstList.add(vehicleTag);
-        mapTestData.put('vehicleTag', vehicleTag);*/
         
         sked__Tag__c equipmentTag = new sked__Tag__c(
             Name = 'Sample Equipment Tag',
@@ -2206,23 +2218,39 @@ sked_VP_HH_Capacity__c = 2.2,*/
         
         insert firstList;
         
+        List<sked__Account_Tag__c> testAccountTags = new List<sked__Account_Tag__c>();
+        sked__Account_Tag__c mobileAccountTag;
+        mobileAccountTag = new sked__Account_Tag__c(
+            sked__Account__c = mobileAccount.Id,
+            sked__Tag__c = usCitizenTag.Id,
+            sked__Required__c = TRUE,
+            sked__Weighting__c = NULL
+        );
+        testAccountTags.add(mobileAccountTag);
+        
+        mobileAccountTag = new sked__Account_Tag__c(
+            sked__Account__c = mobileAccount.Id,
+            sked__Tag__c = spanishTag.Id,
+            sked__Required__c = FALSE,
+            sked__Weighting__c = 10,
+            sked_Minimum_Quantity__c = 1
+        );
+        testAccountTags.add(mobileAccountTag);
+        skedHubBase.BypassInsertTriggers = true;
+        insert testAccountTags;
+        skedHubBase.BypassInsertTriggers = false;
+        
         sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(Name = 'Test Staging Location 1', sked_Timezone__c = 'America/New_York', sked_Zip_Code__c = '18411',
                                                                                sked_GeoLocation__Latitude__s = 38.7631899,
             																	sked_GeoLocation__Longitude__s = -90.3815903);
-        //fifthList.add(stagingLocation);
         mapTestData.put('stagingLocation', stagingLocation);
         insert stagingLocation;
         
-        //List<sObject> seventhList = new List<sObject>();
         sked_Collection_Op_Staging_Location__c colOppStagingLocation = new sked_Collection_Op_Staging_Location__c();
         colOppStagingLocation.sked_Collection_Operation__c = testCollectionOperation1.Id;
         colOppStagingLocation.sked_Staging_Location__c = stagingLocation.Id;
         colOppStagingLocation.sked_Start_Date__c = Date.newInstance(2020,01,01);
         colOppStagingLocation.sked_End_Date__c = Date.newInstance(4000,12,31);
-        //colOppStagingLocation.sked_Staging_Location__c = stagingLocation.Id;
-        
-        //seventhList.add(colOppStagingLocation);
-        //mapTestData.put('colOppStagingLocation', colOppStagingLocation);
         insert colOppStagingLocation;
         
         List<sked_Travel_Time_Index_Item__c> travelTimeIndexItemList = new List<sked_Travel_Time_Index_Item__c>();
@@ -2287,8 +2315,7 @@ sked_VP_HH_Capacity__c = 2.2,*/
         mapTestData.put('testRegion1', testRegion1);
         
         sked_Collection_Operation_SDM__c collectionOperationSdm = new sked_Collection_Operation_SDM__c(
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            
+            sked_Collection_Operation__c = testCollectionOperation1.Id,            
             sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
             sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
             sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix.Id
@@ -2307,8 +2334,7 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Lunch_Break_Duration__c = 10,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 2,
-            sked_Min_Number_of_Staff__c = 0,
-            
+            sked_Min_Number_of_Staff__c = 0,            
             sked_Slot_Reduction__c = 2
         );
         secondList.add(setting30definition1);
@@ -2335,8 +2361,7 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Lunch_Break_Duration__c = 15,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 16,
-            sked_Min_Number_of_Staff__c = 9,
-            
+            sked_Min_Number_of_Staff__c = 9,            
             sked_Slot_Reduction__c = 2
         );
         secondList.add(setting30definition4);
@@ -2345,13 +2370,11 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Lunch_Break_Duration__c = 12,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 9,
-            sked_Min_Number_of_Staff__c = 17,
-            
+            sked_Min_Number_of_Staff__c = 17,            
             sked_Slot_Reduction__c = 6.67
         );
         secondList.add(setting30definition5);
         
-        //  skedFixedSiteProcedureProjectionHandler.bypassInsertTrigger = true;
         sked_Fixed_Site_Procedure_Projection__c fixedSiteProcedureProjection1 = new sked_Fixed_Site_Procedure_Projection__c(
             sked_Account__c = fixedSiteAccount.Id,
             sked_Deferral__c = 25,
@@ -3951,5 +3974,354 @@ sked_VP_HH_Capacity__c = 2.2,*/
         return mapTestData;
         
     }
+    
+    // test data for generating Non Integrated WB fixed site drives
+    @isTest
+    public static Map<string, sObject> testSetupForNonIntWbFsDrives()
+    {
+        Map<string, sObject> mapTestData = new Map<string, sObject>();
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        
+        List<sObject> predefinedData = testDataFactory.setupPredefinedData();
+        insert predefinedData;
+        
+        /***** First list ****/
+        List<sObject> firstList = new List<sObject>();
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(
+            Name = 'Collection Operation 1',
+            sked_Lunch_Break_Duration_Fixed_Site__c = '30',
+            sked_Lunch_Break_Duration_Mobile__c = '30',			
+            sked_Maximum_Shift_Length_Threshold__c = 300,
+            sked_Skip_Last_Appointment_For__c = 'Fixed Site',
+            sked_Breakdown_Time_Threshold__c = 15,
+            sked_Setup_Time_Threshold__c = 15,
+            sked_Lunch_Break_Before_Draw_Hours__c = false,
+            sked_Travel_Time_Included_Fixed_Site__c = 'Drivers Only',
+            sked_Travel_Time_Included_Mobile__c = 'All Roles',
+            sked_Unpaid_Lunch_Break_Duration__c = 30,
+            sked_Lunch_Break__c = true
+        );
+        firstList.add(testCollectionOperation1);
+        mapTestData.put('testCollectionOperation1', testCollectionOperation1);
+  
+        // Mobile SDM
+        sked_Staffing_Decision_Matrix__c staffingDecisionMatrix = new sked_Staffing_Decision_Matrix__c (
+            sked_2RBC_Staff_Capacity__c = 1.6,
+            sked_Charge_Capacity__c = 1.1,
+            sked_Charge_Threshold__c = 36,
+            sked_Driver_Capacity__c = 2.2,
+            sked_Driver_Support_Capacity__c = 2.2,
+            sked_Team_Supervisor_Threshold__c = 1,
+            sked_VP_HH_Capacity__c = 2.2,
+            RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Mobile').getRecordTypeId()
+        );
+        firstList.add(staffingDecisionMatrix);
+        
+        //LB Setting
+        sked_Lunch_Break_Setting__c lunchBreakSetting30 = new sked_Lunch_Break_Setting__c(
+            sked_Maximum_Lunch_Break_Duration__c = '30'
+        );
+        firstList.add(lunchBreakSetting30);
+        
+        //FS Account
+        Account fixedSiteAccount = new Account(
+            Name = 'Test Account',
+            Internal_Name__c ='TEST',
+            District_Manager__c = UserInfo.getUserId(),
+            RecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Account').getRecordTypeId()
+        );
+        firstList.add(fixedSiteAccount);
+        mapTestData.put('fixedSiteAccount', fixedSiteAccount);
+        
+        //Tags
+        sked__Tag__c usCitizenTag = new sked__Tag__c(
+            Name = 'US Citizen',
+            sked__Type__c = 'Certification',
+            sked_Resource_Type__c = 'Person'
+        );
+        firstList.add(usCitizenTag);
+        
+        sked__Tag__c spanishTag = new sked__Tag__c(
+            Name = 'Spanish',
+            sked__Type__c = 'Certification',
+            sked_Resource_Type__c = 'Person'
+        );
+        firstList.add(spanishTag);
+        
+        sked__Tag__c liftGateTag = new sked__Tag__c(
+            Name = 'Lift Gate',
+            sked__Type__c = 'Certification',
+            sked_Resource_Type__c = 'Vehicle'
+        );
+        firstList.add(liftGateTag);
+        
+        sked__Tag__c personTag = new sked__Tag__c(
+            Name = 'Sample Person Tag',
+            sked_Resource_Type__c = 'Person'
+        );
+        firstList.add(personTag);
        
+        sked__Tag__c equipmentTag = new sked__Tag__c(
+            Name = 'Sample Equipment Tag',
+            sked_Resource_Type__c = 'Equipment'
+        );
+        firstList.add(equipmentTag);        
+        
+        insert firstList;
+        
+        //Staging Location
+        sked_Staging_Location__c stagingLocation = new sked_Staging_Location__c(
+            Name = 'Test Staging Location 1', 
+            sked_Timezone__c = 'America/New_York', 
+            sked_Zip_Code__c = '18411',
+            sked_GeoLocation__Latitude__s = 38.7631899,
+            sked_GeoLocation__Longitude__s = -90.3815903
+        );
+        insert stagingLocation;
+        
+        // CO Staging Location
+        sked_Collection_Op_Staging_Location__c colOppStagingLocation = new sked_Collection_Op_Staging_Location__c();
+        colOppStagingLocation.sked_Collection_Operation__c = testCollectionOperation1.Id;
+        colOppStagingLocation.sked_Staging_Location__c = stagingLocation.Id;
+        colOppStagingLocation.sked_Start_Date__c = Date.newInstance(2020,01,01);
+        colOppStagingLocation.sked_End_Date__c = Date.newInstance(4000,12,31);
+        insert colOppStagingLocation;    
+        
+        /***** Second list ****/
+        List<sObject> secondList = new List<sObject>();
+        
+        //sked Region
+        sked__Region__c testRegion1 = new sked__Region__c(
+            Name = 'Region 1',
+            sked__Timezone__c = UserInfo.getTimeZone().getID(),
+            sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id
+        );
+        secondList.add(testRegion1);
+       
+        // CO Mobile SDM
+        sked_Collection_Operation_SDM__c collectionOperationSdm = new sked_Collection_Operation_SDM__c(
+            sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
+            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
+            sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix.Id
+        );
+        secondList.add(collectionOperationSdm);
+        
+        // LB Definition
+        sked_Lunch_Break_Definition__c setting30definition1 = new sked_Lunch_Break_Definition__c(
+            sked_Lunch_Break_Duration__c = 60,
+            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
+            sked_Max_Number_of_Staff__c = 2,
+            sked_Min_Number_of_Staff__c = 0,
+            sked_Slot_Reduction__c = 100
+        );
+        secondList.add(setting30definition1);
+        
+        sked_Lunch_Break_Definition__c setting30definition2 = new sked_Lunch_Break_Definition__c(
+            sked_Lunch_Break_Duration__c = 90,
+            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
+            sked_Max_Number_of_Staff__c = 3,
+            sked_Min_Number_of_Staff__c = 3,            
+            sked_Slot_Reduction__c = 33.33
+        );
+        secondList.add(setting30definition2);
+        
+        sked_Lunch_Break_Definition__c setting30definition3 = new sked_Lunch_Break_Definition__c(
+            sked_Lunch_Break_Duration__c = 120,
+            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
+            sked_Max_Number_of_Staff__c = 8,
+            sked_Min_Number_of_Staff__c = 4,            
+            sked_Slot_Reduction__c = 25
+        );
+        secondList.add(setting30definition3); 
+        
+        sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
+            sked_Lunch_Break_Duration__c = 150,
+            sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
+            sked_Max_Number_of_Staff__c = 9999,
+            sked_Min_Number_of_Staff__c = 9,            
+            sked_Slot_Reduction__c = 20
+        );
+        secondList.add(setting30definition4); 
+        insert secondList;
+        
+        /* Chapter for Site */
+        Chapter__c testChapter = new Chapter__c(
+            Chapter_Code__c = 'AB299',
+            Division_Code__c = 'D21',
+            City__c = 'Charlotte',
+            State__c = 'NC',
+            Regional_Chapter_Code__c = '00F33',
+            Type__c = 'Chapter',
+            Region_Name__c = 'Test Region'
+        );
+        insert testChapter;
+        
+        /***** Third list ****/
+        List<sObject> thirdList = new List<sObject>();
+        
+        //FS Site with Operation Type = 'Non Integrated WB'
+        sked__Location__c testLocation1 = new sked__Location__c(
+            Name = 'Test FS Location 1',
+            sked__Address__c = 'Inner Parkside, San Francisco, CA, USA',
+            RecordTypeId = Schema.SObjectType.sked__Location__c.getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId(),
+            sked__GeoLocation__Latitude__s = 37.7450046,
+            sked__GeoLocation__Longitude__s = -122.4816244,
+            sked__Region__c = testRegion1.Id,
+            sked_ARC_Vehicle_Parking_Directions__c = 'ARC Vehicle Parking Directions',
+            sked_Automation_Suitability__c = 'Suitable',
+            sked_Base_Description__c = 'Base Description',
+            sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_Directions_From_CollectionOperation__c = 'Directions from Collection Operation',
+            sked_Date_Site_Inspection_Completed__c = testDataFactory.summary.startDate,
+            sked_Floor_Description__c = 'Floor Description',
+            sked_Fixed_Site_Appointment_Pattern__c = 'Grouped',
+            sked_National_Name__c = 'USA',
+            sked_Outside_stairs__c = 3,
+            sked_Pay_for_Parking__c = 'Other',
+            sked_Pay_for_Parking_Details__c = 'Pay for parking details',
+            sked_Physical_Location_Type__c = 'Inside',
+            sked_Room_Name__c = 'Room 1',
+            sked_Room_Size__c = '2001-2400 Sq. Ft.',
+            sked_Site_Building_Name__c = 'Building Name',
+            sked_Site_Inspection_Completed_By__c = UserInfo.getUserId(),
+            sked_Site_Main_Phone__c = '098-765-4321',
+            sked_Staff_Personal_Parking_Directions__c = 'Staff Personal Parking Directions',
+            sked_Travel_Time_to_Staging_Location__c = 15,
+            sked_Wireless_Policy__c = 'Accepted',
+            sked_Timezone__c = 'America/New_York',
+            Source__c = 'Custom New Form',
+            Operation_Type__c = 'Non Integrated WB',
+            Chapter__c = testChapter.Id,
+            sked_Address_1__c = 'ABC STREET',
+            sked_City__c = 'Test City',
+            sked_County__c = 'Test',
+            sked_State__c = 'PA',
+            sked_Zip_Code__c = '18411'
+        );
+        thirdList.add(testLocation1);
+      	insert thirdList;
+      
+        /***** Forth list ****/
+        List<sObject> forthList = new List<sObject>();
+		
+        // Location Tags
+        sked_Location_Tag__c driveSiteTag1 = new sked_Location_Tag__c(
+            sked_Location__c = testLocation1.Id,
+            sked_Tag__c = liftGateTag.Id,
+            sked_Minimum_Quantity__c = 5,
+            sked_Required__c = FALSE
+        );
+        forthList.add(driveSiteTag1);  
+        
+        // Site Collection Operation
+        sked_Site_Collection_Operation__c siteCollectionOperation = new sked_Site_Collection_Operation__c(
+            sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_End_Date__c = testDataFactory.summary.endDate,
+            sked_Site__c = testLocation1.Id,
+            sked_Start_Date__c = testDataFactory.summary.startDate,
+            sked_Region__c = testRegion1.Id,
+            External_Id__c = 'Bio_Collection_BSF_SiteCo'+'_'+testLocation1.Id+'_'+testDataFactory.summary.startDate,
+            External_Id_BackEnd__c = 'Bio_Collection_BSF_SiteCo_Backend_External_Id',
+            sked_Travel_Time_Breakdown_JSON__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]',
+            sked_Travel_Time_Breakdown_JSON_2__c = '[{"weekday":"Sunday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Sunday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Monday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Tuesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Wednesday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Thursday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":33,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":34,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Friday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":32,"travelDistance":22725,"startOfWindow":"00:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"08:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":33,"travelDistance":22725,"startOfWindow":"08:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"16:00:00.000Z","direction":"CO to Site"},{"weekday":"Saturday","travelTime":31,"travelDistance":22725,"startOfWindow":"16:00:00.000Z","siteId":"a1L5c00000B2izBEAR","siteCollectionOperationIds":null,"endOfWindow":"23:59:00.000Z","direction":"CO to Site"}]'
+        
+        );
+        forthList.add(siteCollectionOperation);
+
+        //Role Time Variances
+        sked_Role_Time_Variance__c fixSiteVariance1 = new sked_Role_Time_Variance__c(
+            sked_Buffer_Type__c = 'Add', 
+            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
+            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
+            sked_Location__c = testLocation1.Id,
+            sked_Resource_Role_Group__c = 'Staff roles;Supervisory roles', 
+            sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Site Logistics Back;Site Logistics To;Lead Time;Wrap-up Time;', 
+            sked_Variation_Amount__c = 25,
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'            
+        ); 
+        
+        forthList.add(fixSiteVariance1);
+        
+        sked_Role_Time_Variance__c fixSiteVariance2 = new sked_Role_Time_Variance__c(
+            sked_Buffer_Type__c = 'Subtract', 
+            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
+            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
+            sked_Location__c = testLocation1.Id,
+            sked_Resource_Role_Group__c = 'Supervisory roles', 
+            sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From;Lead Time;Wrap-up Time;Site Logistics Back;Site Logistics To', 
+            sked_Variation_Amount__c = 5,
+            sked_Variation_Type__c = 'Loading/ unloading area',
+            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'           
+        ); 
+        
+        forthList.add(fixSiteVariance2);
+        
+        // Role Time Details
+        sked_Role_Time_Detail__c fixSiteRoleTime1 = new sked_Role_Time_Detail__c(
+            sked_Type__c = 'Global',
+            sked_Drive_Type__c = 'Fixed Site',
+            sked_Fixed_Site_Operation_Type__c = 'Non Integrated WB',
+            sked_Resource_Role_Group__c	= 'Staff roles',
+            sked_Lead_Time__c = 0,
+            sked_Setup_Time__c = 15,
+            sked_Breakdown_Time__c = 45,
+            sked_Wrap_up_Time__c = 90,
+            sked_Effective_Start_Date__c = testDataFactory.summary.startDate,
+            sked_Effective_End_Date__c = testDataFactory.summary.endDate,
+            sked_Mobile_Type__c = 'Inside',
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+        );
+        forthList.add(fixSiteRoleTime1);
+
+        /*sked_Resource_Role_Group__c fixSiteRoleGrp1 = new sked_Resource_Role_Group__c(
+            sked_Resource_Role_Group__c = 'Supervisory roles',
+            sked_Resource_Roles__c	= 'Apheresis Charge;Charge;Drive Lead;Team Supervisor'
+        );
+        //forthList.add(fixSiteRoleGrp1);
+        
+        sked_Resource_Role_Group__c fixSiteRoleGrp2 = new sked_Resource_Role_Group__c(
+            sked_Resource_Role_Group__c = 'Staff roles',
+            sked_Resource_Roles__c	= '2RBC;2RBC Sign-off;Post Collections'
+        );
+        //forthList.add(fixSiteRoleGrp2);
+        
+        sked_Resource_Role_Group__c fixSiteRoleGrp3 = new sked_Resource_Role_Group__c(
+            sked_Resource_Role_Group__c = 'Driving roles',
+            sked_Resource_Roles__c	= 'Driver'
+        );*/
+        
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        Triggerhandler.bypass('OpportunitySplitTriggerHandler');
+        
+        // FS Opportunity
+        Opportunity fixedSiteOpportunity = new Opportunity(
+            Name = 'Test Non-Int FS Opportunity',
+            AccountId = fixedSiteAccount.Id,
+            Anticipated_Registered_Donors__c = 35,
+            CloseDate = testDataFactory.summary.startDate,
+            Drive_Date__c = testDataFactory.summary.startDate,
+            Drive_Site__c = testLocation1.Id,
+            End_Time__c = Time.newInstance(18, 0, 0, 0),
+            StageName = 'Discovery',
+            Start_Time__c = Time.newInstance(6, 0, 0, 0),
+            WB_Projected_Procedures__c = 10,
+            X2RBC_Projected_Procedures__c = 10,
+            Type_of_Drive__c = 'Fixed Site',
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId(),
+            Online_Scheduling_Enabled__c = 'No',
+            Number_of_2RBC_Assets__c = 2,
+            Source__c = 'Calendar Build',
+            Flow_Start_Time_Field__c = '1000',
+            Flow_End_Time_Field__c = '1830'
+        );
+        forthList.add(fixedSiteOpportunity);
+        mapTestData.put('nonItegratedWBFixedSiteOpportunity', fixedSiteOpportunity);
+        
+        insert forthList;
+        
+        TriggerHandler.clearAllBypasses();
+        return mapTestData;  
+    }   
 }

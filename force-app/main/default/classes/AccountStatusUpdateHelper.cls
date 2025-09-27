@@ -5,7 +5,7 @@ public with sharing class AccountStatusUpdateHelper
         Date tDay = system.today();
         Id recordTypeID = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Mobile Account').getRecordTypeId();
         List<Account> accOppFuture = [Select id,Account_Status__c,(Select Id,Drive_Date__c,AccountId,StageName from Opportunities where Drive_Date__c >= :tDay and (StageName = 'Closed' or StageName = 'Discovery') order by Drive_Date__c asc Limit 1) from Account where Id IN:accId and RecordTypeId=:recordTypeID ];
-        List<Account> accOppPast = [Select id,Account_Status__c,(Select Id,Drive_Date__c,AccountId,StageName from Opportunities where Drive_Date__c < :tDay and StageName = 'Closed' order by Drive_Date__c desc Limit 1) from Account where Id IN:accId and RecordTypeId=:recordTypeID ];
+        List<Account> accOppPast = [Select id,Account_Status__c,CreatedDate,(Select Id,Drive_Date__c,AccountId,StageName from Opportunities where Drive_Date__c < :tDay and StageName = 'Closed' order by Drive_Date__c desc Limit 1) from Account where Id IN:accId and RecordTypeId=:recordTypeID ];
         
         
         map<Id,Opportunity> accFutureOppMap	= new map<Id,Opportunity>();
@@ -31,6 +31,10 @@ public with sharing class AccountStatusUpdateHelper
                         Integer daysSinceLastDrive = tDay.daysBetween(opp.Drive_Date__c);
                         accWithDaysSinceLastDrive.put(opp.AccountId,daysSinceLastDrive);
                 }
+            }
+            if(acc.opportunities == null || acc.opportunities.isEmpty()){
+                Integer daysSinceLastDrive = tDay.daysBetween(acc.CreatedDate.date());
+                accWithDaysSinceLastDrive.put(acc.Id,daysSinceLastDrive);
             }
         }
         
@@ -109,8 +113,10 @@ public with sharing class AccountStatusUpdateHelper
         if(!accToUpdate.isEmpty())
         {
             Database.SaveResult[] srList = Database.update (accToUpdate,false);
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'updating Account Status to Inactive','AccountStatusUpdateHelper','updateAcc','Error','Error in updating Account Status to Inactive');
+            InsertBsfErrorLog.insertBsfErrors(logList);
             
-            for (Database.SaveResult sr : srList) 
+            /*for (Database.SaveResult sr : srList) 
             {
                 if (sr.isSuccess()) 
                 {
@@ -121,7 +127,7 @@ public with sharing class AccountStatusUpdateHelper
                     for(Database.Error err : sr.getErrors()) 
                     {System.debug('The Error in updating the Account Status is : '+err.getStatusCode() + ': ' + err.getMessage());}
                 }
-            }
+            }*/
         }
     }
 }

@@ -299,6 +299,12 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
             OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
+
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('validateManualFirstTimeFlagSelection') == -1) {
+            OpportunityService.validateManualFirstTimeFlagSelection((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         System.debug('Exiting method beforeUpdate');
     }
     
@@ -484,6 +490,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
         }
 
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('populateSpecialCircumstancesBadgeData') == -1) {
+            OpportunityService.populateSpecialCircumstancesBadgeData((List<Opportunity>)trigger.new);
+        }
+       
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }

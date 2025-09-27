@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>sked_Drive__c.sked_Drive_Operation_Type__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcConstants</members>
+		<members>slwcDriveCalendar</members>
+        <members>slwcDriveSchedulingConsole</members>		
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>64.0</version>
+</Package>

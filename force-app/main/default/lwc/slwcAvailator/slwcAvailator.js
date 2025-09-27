@@ -67,6 +67,19 @@ const isDriverJob = (job, onlyCheckResourceRole = false) => {
   )
 }
 
+const isResourceTagRestricted = (resourceTag, {
+    startDate,
+    endDate
+}) => {
+  if(!resourceTag.restrictionStartDate && !resourceTag.restrictionEndDate) return false;
+
+  if(resourceTag.restrictionEndDate) {
+    return resourceTag.restrictionStartDate <= endDate && resourceTag.restrictionEndDate >= startDate;
+  } else {
+    return resourceTag.restrictionStartDate <= startDate;
+  }
+}
+
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -153,6 +166,7 @@ class SlwcAvailator {
   resourceRoleGroups = [];
   callOutJobAllocations = [];
   tradedJobAllocations = [];
+  prevCancelledJobAllocations = [];
   resourceOverrides = [];
   maxCDLDOTDurationInMinutes = 60;
   travelTimeMap = {};
@@ -238,10 +252,11 @@ class SlwcAvailator {
     return distance;
   };
 
-  doTransformResources(skedResources, groupActivities, callOutJobAllocations, tradedJobAllocations, resourceOverrides, resourceHoursRecordDetails) {
+  doTransformResources(skedResources, groupActivities, callOutJobAllocations, tradedJobAllocations, prevCancelledJobAllocations, resourceOverrides, resourceHoursRecordDetails) {
     let groupActivitiesMap = keyBy(groupActivities, "id");
     let callOutJobAllocationsMap = groupBy(callOutJobAllocations, "resourceId");
     let tradedJobAllocationsMap = groupBy(tradedJobAllocations, "resourceId"); 
+    let prevCancelledJobAllocationsMap = groupBy(prevCancelledJobAllocations, "resourceId"); 
     let resourceOverridesMap = groupBy(resourceOverrides, "resourceId");
     let resourceHoursRecordDetailsMap = groupBy(resourceHoursRecordDetails, "resourceHoursRecordId");
 
@@ -315,6 +330,7 @@ class SlwcAvailator {
       resource.jobAllocations = (resource.jobAllocations || []).map((item) => {
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
+        item.driveName = item.job.driveName;
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -345,6 +361,14 @@ class SlwcAvailator {
       })
       resource.tradedJobIds = resource.tradedJobAllocations.map(jobAllocation => jobAllocation.jobId);
       resource.isTraded = resource.tradedJobIds.length > 0;
+
+      resource.prevCancelledJobAllocations = [];
+      (prevCancelledJobAllocationsMap[resource.id] || []).forEach(jobAllocation => {
+        if (jobAllocation.driveId !== this.driveId && jobAllocation.driveDate === this.drive.driveDate) {
+          resource.prevCancelledJobAllocations.push(jobAllocation);
+        }
+      })
+      resource.isPrevCancelled = resource.prevCancelledJobAllocations.length > 0;
 
       resource.resourceOverrides = resourceOverridesMap[resource.id] || [];
 
@@ -530,6 +554,9 @@ fetchJobTags(driveId){
         let returnTradedJobAllocations = this.doTransformJobAllocations(result.returnedData.tradedJobAllocations);
         this.tradedJobAllocations = this.tradedJobAllocations.concat(returnTradedJobAllocations);
 
+        let returnPrevCancelledJobAllocations = this.doTransformJobAllocations(result.returnedData.prevCancelledJobAllocations);
+        this.prevCancelledJobAllocations = this.prevCancelledJobAllocations.concat(returnPrevCancelledJobAllocations);
+
         let returnResourceOverrides = this.doTransformResourceOverrides(result.returnedData.resourceOverrides);
         this.resourceOverrides = this.resourceOverrides.concat(returnResourceOverrides);
 
@@ -540,6 +567,7 @@ fetchJobTags(driveId){
           this.groupActivities,
           this.callOutJobAllocations,
           this.tradedJobAllocations,
+          this.prevCancelledJobAllocations,
           this.resourceOverrides,
           returnResourceHoursRecordDetails
         );
@@ -1834,9 +1862,11 @@ fetchJobTags(driveId){
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && 
-                      resourceTag.restrictionStartDate <= job.driveDate && 
-                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
+                const tagRestricted = isResourceTagRestricted(resourceTag, {
+                  startDate: job.driveDate,
+                  endDate: job.driveDate
+                })
+
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1958,6 +1988,10 @@ fetchJobTags(driveId){
                     if (event.objectType == OBJECT_TYPE.AVAILABILITY && !event.isAvailable) {
                       exception.availabilityId = event.id;
                       exception.exception = event.eventType;
+
+                      if(event.eventType === 'Call Out') {
+                        exception.exception = event.callOutType; 
+                      }
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
                       exception.exception = "Conflict with " + event.activityTitle;
@@ -2229,5 +2263,6 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
-  isDriverJob
+  isDriverJob,
+  isResourceTagRestricted
 }

@@ -7,7 +7,7 @@ import { driveQueryModel, driveService, debugLogService, sObjectType } from 'c/d
 import { DateTime } from 'c/luxon';
 import { groupBy, result } from 'c/lodash';
 import { classNames, generateColors } from 'c/slwcUtils';
-import { DRIVE_STATUS, DRIVE_TYPE, LINK_DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_OPERATION_TYPE, DRIVE_TYPE, LINK_DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
 import { drivesGeneratorInstance } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle'
@@ -108,6 +108,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             }
         }});
         
+        results.push({label: 'Collection Operation', fieldName: 'collectionOperationName', type: 'text', hideDefaultActions: true, wrapText: true } );
+        results.push({label: 'City', fieldName: 'city', type: 'text', hideDefaultActions: true, wrapText: true } );
         if (this.selectedStatus === DRIVE_STATUS.DRAFT) {
             results.push({label: 'Rank', fieldName: 'rank', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true, wrapText: true } );
         }
@@ -208,6 +210,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         driveQuery.endDate = endDate;
         driveQuery.eventTypes = this.filters.driveTypes;
         driveQuery.stages = this.filters.stages;
+        driveQuery.statuses = this.filters.driveStatuses;
         driveQuery.accountTypes = this.filters.accountTypes;
         driveQuery.accountIndustryCodes = this.filters.accountIndustryCodes;
         driveQuery.procedureTypes = this.filters.procedureTypes;
@@ -223,16 +226,32 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         driveQuery.districtManagerPortfolioIds = (this.filters.districtManagerPortfolios || []).map(districtManagerPortfolio => {
             return districtManagerPortfolio.id;
         })
-        driveQuery.subQueryIndicator = sObjectType.JOB;
-        driveQuery.operationTypes = this.filters.operationTypes;
+        //driveQuery.operationTypes = this.filters.operationTypes;
+        driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
         // driveQuery.daysOfWeek = this.filters.daysOfWeek;
-        
+        driveQuery.subQueryIndicator = sObjectType.JOB | sObjectType.DRIVE_SHIFT;
+
         let service = new driveService();
         this.currentGetDriveListPromise = service.query(driveQuery)
             .then((result) => {
                 let drives = [];
                 if (result && result.length) {
-                    result.forEach((drive) => {
+                    result
+                    .filter(drive => {
+                        const selectedTimeBlocks = this.filters.collectionOperationValues?.timeBlocks || [];
+                        const selectedTimeBlockIds = selectedTimeBlocks.map(item => item.value);
+                        if(!selectedTimeBlockIds.length) return true;
+
+                        const isFixedSiteDrive = drive.driveOperationType === DRIVE_OPERATION_TYPE.FIXED_SITE;
+                        if(isFixedSiteDrive) return true;
+
+                        const anyDriveShiftMatchTimeBlock = !!drive.driveShifts?.find(driveShift => {
+                            return selectedTimeBlockIds.includes(driveShift.timeBlockId);
+                        });
+
+                        return anyDriveShiftMatchTimeBlock;
+                    })
+                    .forEach((drive) => {
                         drive.recordPageUrl = '/' + drive.id;
                         drive.driveNameData = {
                             id: drive.id,
@@ -250,6 +269,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
                         } : null;
 
                         drive.type = drive.opportunity.type;
+                        drive.collectionOperationName = drive.collectionOperation.name;
+                        drive.city = drive.driveSite.city;
                         drive.startTimeStr = this.formatTime(drive.startTime);
                         drive.endTimeStr = this.formatTime(drive.endTime);
 
@@ -347,7 +368,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     }
 
     saveDriveSideMenu() {
-        this.closeDriveSideMenu();
+        // this.closeDriveSideMenu();
         this.handleRefresh();
     }
 

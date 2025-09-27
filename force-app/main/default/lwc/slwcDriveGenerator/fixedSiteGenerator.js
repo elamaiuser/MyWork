@@ -917,10 +917,12 @@ class FixedSiteGenerator extends BaseGenerator {
         let resourceQuantityMap = this.mapResourceQuantity.get(driveShift.key);
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(resourceRole => {
-          const { quantity, systemQuantity } = staffingComplement[resourceRole];
+          const { quantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[resourceRole]; //preserve properties for manually created jobs
           resourceQuantityMap.set(resourceRole, {
             quantity: quantity,
-            systemQuantity: systemQuantity
+            systemQuantity: systemQuantity,
+            isManuallyCreated: isManuallyCreated,
+            manuallyCreatedFrom: manuallyCreatedFrom
           });
         })
       })
@@ -1242,7 +1244,7 @@ class FixedSiteGenerator extends BaseGenerator {
 
     let jobs = [];
     const mapResourceQuantity = this.mapResourceQuantity.get(driveShiftMetadata.key);
-    mapResourceQuantity.forEach(({ quantity, systemQuantity }, mergedJobType) => {
+    mapResourceQuantity.forEach(({ quantity, systemQuantity, isManuallyCreated, manuallyCreatedFrom }, mergedJobType) => {
       if (quantity > 0) {
         let { jobType, jobSubtype } = this.helper.splitMergedJobType(mergedJobType);
         let job = (driveShift.jobs || []).find(driveShiftJob => {
@@ -1262,6 +1264,8 @@ class FixedSiteGenerator extends BaseGenerator {
         job.procedureType = jobSubtype;
         job.quantity = quantity;
         job.systemQuantity = systemQuantity || job.quantity;
+        job.isManuallyCreated = !!isManuallyCreated;
+        job.manuallyCreatedFrom = manuallyCreatedFrom;
         jobs.push(job);
       }
     });

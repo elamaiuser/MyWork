@@ -92,6 +92,10 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         return this.job && this.job.id && this.job.dualRole;
     }
 
+    get isFromDriveStaffingModal() {
+        return this.type === 'allocationModal';
+    }
+
     get secondaryRoleOptions() {
         const roleMap = {
             '2RBC': ['Driver', 'Driver Support', 'OJI', 'None'],
@@ -396,7 +400,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                         longitude: this.driveSite ? this.driveSite.geoLocationLongitude : null,
                         jobTags: [],
                         isManuallyCreated: true,
-                        manuallyCreatedFrom: this.type === 'allocationModal' ? MANUALLY_CREATED_FROM.STAFFING_MODAL : MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+                        manuallyCreatedFrom: this.isFromDriveStaffingModal ? MANUALLY_CREATED_FROM.STAFFING_MODAL : MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
                         jobAllocationTimeSource: false
                     };
     
@@ -454,7 +458,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             })
         }
 
-        if(this.isPersonResource && this.action === 'create') {
+        if(this.isPersonResource && this.action === 'create' && !this.isFromDriveStaffingModal) {
             const existed = this.driveShift.jobs?.find(job => this.helper.isJobsSameRoles(job, this.job));
             if(existed) {
                 this.errorMessages.push({
