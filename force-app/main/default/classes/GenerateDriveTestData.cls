@@ -581,7 +581,7 @@ public class GenerateDriveTestData {
         
         sked_Resource_Role_Group__c fixSiteRoleGrp3 = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Driving roles',
-            sked_Resource_Roles__c	= 'CT1'
+            sked_Resource_Roles__c	= 'Driver CDL B'
         );
         forthList.add(fixSiteRoleGrp3);*/
         
@@ -1289,7 +1289,7 @@ secondList.add(setting30definition3); */
             sked_Variance_Applies_to__c = 'Setup Time', 
             sked_Variation_Amount__c = 15, 
             sked_Variation_Type__c = 'Safety Video',
-            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         );
@@ -1304,7 +1304,7 @@ secondList.add(setting30definition3); */
             sked_Variance_Applies_to__c = 'Setup Time;Breakdown Time;Travel Time To;Travel Time From', 
             sked_Variation_Amount__c = 15,
             sked_Variation_Type__c = 'Loading/ unloading area',
-            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            sked_Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
@@ -1319,8 +1319,7 @@ secondList.add(setting30definition3); */
             sked_Resource_Role_Group__c = 'Supervisory roles', 
             sked_Variance_Applies_to__c = 'Lead Time;Wrap-up Time', 
             sked_Variation_Amount__c = 5,
-            sked_Variation_Type__c = 'Loading/ unloading area',
-            sked_Days_Of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+            sked_Variation_Type__c = 'Loading/ unloading area'
             //sked_Roles__c = '2RBC;Apheresis;Drive Lead;Charge;Volunteer Donor Ambassador',
             
         ); 
