@@ -194,7 +194,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             })
         }
 
-        if (!slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity && this.model.redcrossVolunteerQuantity <= 0)) {
+        if (!slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity) && this.model.redcrossVolunteerQuantity <= 0) {
             this.errorMessages.push({
                 message: 'Edit Field Red Cross Volunteer Quantity must be greater than 0.'
             })
