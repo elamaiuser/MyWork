@@ -271,6 +271,16 @@
                 <identifier>forceChatter_publisher</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>context</name>
+                    <value>RECORD</value>
+                </componentInstanceProperties>
+                <componentName>forceChatter:exposedFeed</componentName>
+                <identifier>forceChatter_exposedFeed</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>Facet-6517e395-e991-49ad-af89-be4ddcfd6fc2</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -347,43 +357,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tabset</componentName>
                 <identifier>flexipage_tabset2</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Account Name,UFID</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>Select Name,UFID__c from Account where ID IN(Select AccountId from contact where Id IN:)</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>dateFormatType</name>
-                    <value>Custom Date Format</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>fieldwithOrderBy</name>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>headerName</name>
-                    <value>Related Account</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>hyperLinkColumn</name>
-                    <value>Account Name</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>iconName</name>
-                    <value>standard:account</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>recordButton</name>
-                    <value>View</value>
-                </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>c_GenericRelatedList2</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
