@@ -908,12 +908,11 @@ global class slwcDriveShiftTradeService implements Callable {
         
         decimal requestingShiftSwapCutoff = request.requestingStaff.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Shift_Swap_Cutoff__c;
         requestingShiftSwapCutoff = requestingShiftSwapCutoff != null ? requestingShiftSwapCutoff : 42;
-        
-        decimal tradingShiftSwapCutoff = request.tradingStaff.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Shift_Swap_Cutoff__c;
-        tradingShiftSwapCutoff = tradingShiftSwapCutoff != null ? tradingShiftSwapCutoff : 42;
-		
         result = isCutoffRuleViolated(request.requestingRecordDate, requestingShiftSwapCutoff);
-        if (result == FALSE && request.tradingRecordDate != null) {
+        
+        if (result == FALSE && request.tradingStaff != NULL && request.tradingRecordDate != null) {
+            decimal tradingShiftSwapCutoff = request.tradingStaff.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Shift_Swap_Cutoff__c;
+            tradingShiftSwapCutoff = tradingShiftSwapCutoff != null ? tradingShiftSwapCutoff : 42;
             result = isCutoffRuleViolated(request.tradingRecordDate, tradingShiftSwapCutoff);
         }
         
