@@ -1460,7 +1460,23 @@ class BaseGenerator {
           relatedJobs.forEach(job => {
             mapJobsToSave[job.id] = {
               id: job.id,
-              isLocked: !!sourceJob.isLocked
+              isLocked: !!sourceJob.isLocked,
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerRole)) {
+              mapJobsToSave[job.id].volunteerRole = sourceJob.volunteerRole;
+            }
+
+            if(!isNullOrEmpty(sourceJob.redcrossVolunteerQuantity)) {
+              mapJobsToSave[job.id].redcrossVolunteerQuantity = sourceJob.redcrossVolunteerQuantity;
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].volunteerAdjustmentReason = sourceJob.volunteerAdjustmentReason;
+            }
+            
+            if(!isNullOrEmpty(sourceJob.otherVolunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].otherVolunteerAdjustmentReason = sourceJob.otherVolunteerAdjustmentReason;
             }
           })
         })
