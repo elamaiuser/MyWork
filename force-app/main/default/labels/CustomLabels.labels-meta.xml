@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>Mobile_Account_Record_Type</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
+    </labels>
+    <labels>
+        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
+        <value>Other</value>
+    </labels>
+    <labels>
+        <fullName>Task_Subject_Marketing_Exception</fullName>
+        <categories>Task Subject</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Task Subject - Marketing Exception</shortDescription>
+        <value>Request for Marketing Exception</value>
+    </labels>
+    <labels>
+        <fullName>Taxonomy_Custom_Notification_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
+        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
+    </labels>
+    <labels>
         <fullName>AccPortfolioAssignmentException</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -839,4 +868,18 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
         <value>10</value>
     </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
+        <value>17</value>
+    </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
+        <value>10</value>
+	</labels>
 </CustomLabels>
