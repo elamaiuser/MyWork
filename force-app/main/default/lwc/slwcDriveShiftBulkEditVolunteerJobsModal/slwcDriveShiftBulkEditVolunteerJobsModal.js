@@ -88,7 +88,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     }
 
     get modalOverflowInitial() {
-        return this.step === STEP.STEP_1;
+        return false;
     }
     
     connectedCallback() {
@@ -249,7 +249,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
 
     fetchVolunteerRolesSameDrives(jobs = []){
         this.mapVolunteerRolesByDriveId = {};
-        if(!jobs.length) return;
+        if(!jobs.length) return Promise.resolve();
 
         const driveIds = jobs.map(job => job.driveId);
         let jobQuery = new jobQueryModel();
