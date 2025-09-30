@@ -469,21 +469,13 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         }
 
          if(this.isVolunteerResource && this.action === 'create') {
-
              const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
-
              if(existed) {
-
                 this.errorMessages.push({
-
                     message: `${this.job.volunteerRole} role already exists.`
-
                 })
-
                 return false;
-
             }
-
         }
         
         return allValid && !this.errorMessages.length;
