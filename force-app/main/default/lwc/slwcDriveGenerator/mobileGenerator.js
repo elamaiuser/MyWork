@@ -643,7 +643,7 @@ class MobileGenerator extends BaseGenerator {
       let isAllAssignedVehiclesValid = assignedVehicles.every(assignedVehicle => {
         return availableVehicleIds.includes(assignedVehicle.id) || (availableButNotSharedAssetIds.includes(assignedVehicle.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
       })
-      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity !== maxRegisteredDonors) {
+      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
         let { maxRegisteredDonorsToAllocate, availableVehiclesCanBeUsed, remainingMaxDOT, remainingMaxCDL } = this.helper.preProcessSuggestVehicles(maxRegisteredDonors, availableVehicles, lockedVehicles, {
           maxDOT,
           maxCDL
