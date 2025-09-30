@@ -54,9 +54,50 @@
                         <div class="slds-section-title--divider">
                             Edit Fields
                         </div>
-                        <div class="slds-col slds-size_1-of-1 slds-p-around_x-small">
-                            <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={model.isLocked} autocomplete="off"></lightning-input>
+                        <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <c-slwc-picklist
+                                    required
+                                    name="volunteerRole"
+                                    label="Volunteer Role"
+                                    unique-key={model.volunteerRole} 
+                                    object-api-name="sked__Job__c" 
+                                    selected-value={model.volunteerRole}  
+                                    pick-listfield-api-name="sked_Volunteer_Role__c"
+                                    onpicklistchange={handleOnChange}>
+                                </c-slwc-picklist>
+                            </div>
+                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={model.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={model.isLocked} autocomplete="off"></lightning-input>
+                            </div>
                         </div>
+
+                        <template if:true={isVolunteerAdjustmentReasonRequired}>
+                            <div class="slds-section-title--divider">
+                                Volunteer Adjustment Reason
+                            </div>
+                            <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
+                                <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                    <c-slwc-picklist
+                                        required
+                                        name="volunteerAdjustmentReason"
+                                        label="Volunteer Adjustment Reason"
+                                        unique-key={model.volunteerAdjustmentReason} 
+                                        object-api-name="sked__Job__c" 
+                                        selected-value={model.volunteerAdjustmentReason}  
+                                        pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
+                                        onpicklistchange={handleOnChange}
+                                        dropdown-alignment="auto">
+                                    </c-slwc-picklist>
+                                </div>
+                                <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                    <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={model.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required></lightning-input>
+                                </div>
+                            </div>
+                        </template>
                     </template>
 
                     <template if:true={showStep2}>
