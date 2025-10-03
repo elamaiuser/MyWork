@@ -362,43 +362,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Account Name,UFID</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>Select Name,UFID__c from Account where ID IN(Select AccountId from contact where Id IN:)</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>dateFormatType</name>
-                    <value>Custom Date Format</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>fieldwithOrderBy</name>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>headerName</name>
-                    <value>Related Account</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>hyperLinkColumn</name>
-                    <value>Account Name</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>iconName</name>
-                    <value>standard:account</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>recordButton</name>
-                    <value>View</value>
-                </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>c_GenericRelatedList2</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
                     <name>parentFieldApiName</name>
                     <value>Contact.Id</value>
                 </componentInstanceProperties>
