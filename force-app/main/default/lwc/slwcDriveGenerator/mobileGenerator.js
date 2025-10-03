@@ -1409,11 +1409,9 @@ class MobileGenerator extends BaseGenerator {
         if(item.isManuallyCreated) return;
 
         const { resourceRole, dualRole, quantity, isCreatedOrUpdatedViaDualRoleChange } = item;
-        const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
         let dualRoleQuantityAfterRegenerated = tempResourceQuantityMap.get(dualRole);
         let resourceRoleQuantityAfterRegenreted = tempResourceQuantityMap.get(resourceRole);
-
-        const canRestore = hasResourceRoleAfterRegenerated && dualRoleQuantityAfterRegenerated;
+        const canRestore = resourceRoleQuantityAfterRegenreted > 0 && dualRoleQuantityAfterRegenerated > 0;
 
         if(isCreatedOrUpdatedViaDualRoleChange) {
           tempResourceQuantityMap.delete(resourceRole);
