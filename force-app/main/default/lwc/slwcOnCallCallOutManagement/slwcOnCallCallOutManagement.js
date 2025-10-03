@@ -691,7 +691,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
     })
     //HRP-14118
   .then(() => {
-      return availator.fetchJobTags(this.selectedAllocationData.job.driveId);
+      return this.selectedEvent.isDrive ? availator.fetchJobTags(this.selectedAllocationData.job.driveId): Promise.resolve([]); //HRP-15881
     })
 
     .then(() => {
