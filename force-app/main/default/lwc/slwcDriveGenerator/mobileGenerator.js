@@ -1236,7 +1236,7 @@ class MobileGenerator extends BaseGenerator {
 
     this.generateDualRoles();
 
-    const drive = {
+    const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges({
       ...this.drive,
       driveShifts: Array.from(this.mapResourceQuantity.values()).map(mapResourceQuantity => {
         const jobs = [];
@@ -1253,19 +1253,17 @@ class MobileGenerator extends BaseGenerator {
           jobs
         }
       })
-    }
-    const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges(drive, this.masterData.backupDrive, { isDriveGettingRegenerated : this.isRegenerateDriveChange });
+    }, this.masterData.backupDrive, { isDriveGettingRegenerated : this.isRegenerateDriveChange });
     if(!systemGeneratedStaffingComplementChanges.newJobs.length && 
       !systemGeneratedStaffingComplementChanges.changedJobs.length && 
       !systemGeneratedStaffingComplementChanges.deletedJobs.length) {
-        this.restoreJobsQuantity(skipCalculateResourceRoles ? this.masterData.backupDrive : drive);
+        this.restoreJobsQuantity(skipCalculateResourceRoles ? this.masterData.backupDrive : this.drive);
     } 
   }
 
   generateDualRoles() {
     const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
       const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-
       let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
       for (let [key, value] of  tempMapResourceQuantityForStaffCapacity.entries()) {
         if(value.has('VP/HH')){
