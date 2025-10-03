@@ -225,7 +225,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                     const newVolunteerRoleAlreadyExists = volunteerRolesSameDrive.find(item => item.volunteerRole === this.model.volunteerRole);
 
                     if(notMatchVolunteerRole) {
-                        errorMessages.push("Role type not found")
+                        errorMessages.push("Role does not match")
                     }
 
                     if(notMatchVolunteerRoleQuantity) {
