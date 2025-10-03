@@ -64,6 +64,7 @@
         <members>slwcDriveSchedulingFilters</members>
 		<members>slwcDriveShiftJobTable</members>
 		<members>slwcPendingActionDriveApproval</members>
+		<members>slwcPlanDrive</members>
 		<members>slwcResolveDriveContentions</members>
 		<members>slwcSchedulingConsoleDriveList</members>
 		<name>LightningComponentBundle</name>
