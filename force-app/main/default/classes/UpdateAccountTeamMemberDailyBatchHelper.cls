@@ -91,7 +91,7 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                     updateRequired = handleDistrictManagerLogic(atm, acc, coveringMemberByKey, portfolioByRoleAndAccount);
                 }
 
-                if(updateRequired){
+                if(!updateRequired){
                     updateRequired = (old_AM != acc.Account_Manager__c || old_DM != acc.District_Manager__c 
                                         || old_AM_Portfolio != acc.Account_Manager_Portfolio__c || old_DM_Portfolio != acc.District_Manager_Portfolio__c);
                 }
