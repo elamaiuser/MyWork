@@ -19,6 +19,7 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
         List<AccountTeamMember> coveringTeamMembers = new List<AccountTeamMember>();
         List<AccountTeamMember> nonCoveringTeamMembers = new List<AccountTeamMember>();
         Map<String, AccountTeamMember> coveringMemberByKey = new Map<String, AccountTeamMember>();
+        List<BSF_Error_Log__c> errorLog = new List<BSF_Error_Log__c>();
 
         
         for (AccountTeamMember atm : accTeamMemberList) {
@@ -53,34 +54,61 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
         Map<Id, Account> accountsToUpdate = new Map<Id, Account>();
 
         for (AccountTeamMember atm : accTeamMemberList) {
-            Account acc = accountsToUpdate.containsKey(atm.AccountId)
-                ? accountsToUpdate.get(atm.AccountId)
-                : new Account(Id = atm.AccountId);
+            try{
+                Account acc = accountsToUpdate.containsKey(atm.AccountId)
+                    ? accountsToUpdate.get(atm.AccountId)
+                    : new Account(Id = atm.AccountId,
+                                    Account_Manager__c = atm.Account.Account_Manager__c,
+                                    District_Manager__c = atm.Account.District_Manager__c,
+                                    Account_Manager_Portfolio__c = atm.Account.Account_Manager_Portfolio__c,
+                                    District_Manager_Portfolio__c = atm.Account.District_Manager_Portfolio__c);
 
-            Boolean updateRequired = false;
+                Boolean updateRequired = false;
+                Id old_AM = acc.Account_Manager__c;
+                Id old_DM = acc.District_Manager__c;
+                Id old_AM_Portfolio = acc.Account_Manager_Portfolio__c;
+                Id old_DM_Portfolio = acc.District_Manager_Portfolio__c;
+
+                
+                populateManagerLookups(acc, atm);
+
+                
+                populatePortfolioLookups(acc, atm);
+
+                
+                Boolean isActive = atm.Start_Date__c <= System.today() && atm.End_Date__c >= System.today();
+                if (!isActive){
+                    continue;
+                }
+
+                
+                if (atm.TeamMemberRole == BSF_Constants.ACCOUNT_MANAGER) {
+                    updateRequired = handleAccountManagerLogic(atm, acc, coveringMemberByKey, portfolioByRoleAndAccount);
+                }
 
             
-            populateManagerLookups(acc, atm);
+                else if (atm.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
+                    updateRequired = handleDistrictManagerLogic(atm, acc, coveringMemberByKey, portfolioByRoleAndAccount);
+                }
 
-            
-            populatePortfolioLookups(acc, atm);
+                if(updateRequired){
+                    updateRequired = (old_AM != acc.Account_Manager__c || old_DM != acc.District_Manager__c 
+                                        || old_AM_Portfolio != acc.Account_Manager_Portfolio__c || old_DM_Portfolio != acc.District_Manager_Portfolio__c);
+                }
 
-            
-            Boolean isActive = atm.Start_Date__c <= System.today() && atm.End_Date__c >= System.today();
-            if (!isActive) continue;
-
-            
-            if (atm.TeamMemberRole == BSF_Constants.ACCOUNT_MANAGER) {
-                updateRequired = handleAccountManagerLogic(atm, acc, coveringMemberByKey, portfolioByRoleAndAccount);
-            }
-
-            
-            else if (atm.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
-                updateRequired = handleDistrictManagerLogic(atm, acc, coveringMemberByKey, portfolioByRoleAndAccount);
-            }
-
-            if (updateRequired) {
-                accountsToUpdate.put(atm.AccountId, acc);
+                if (updateRequired) {
+                    accountsToUpdate.put(atm.AccountId, acc);
+                }
+            } catch (Exception e) {
+                errorLog.add(BSF_Utilities.createBsfErrorLogForExceptions(e,
+                                                                    'UpdateAccountTeamMemberDailyBatchHelper',
+                                                                    'cloneTemplateOrder',
+                                                                    'updateAccountTeamMemberLookUps', 
+                                                                    'Error in sync AM DM Portfolio from AccountTeamMember to Account',
+                                                                    'Account',
+                                                                    atm.AccountId
+                                                                    ));
+                continue;
             }
         }
 
@@ -88,10 +116,28 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
         if (!accountsToUpdate.isEmpty()) {
             try {
                 
-                Database.update(accountsToUpdate.values());
-            } catch (Exception e) {
-                
+                Database.SaveResult[] srList = Database.update(accountsToUpdate.values(),false);
+                errorLog.addAll(BSF_Utilities.createErrorLog(
+                                                            srList, 
+                                                            'syncing AM DM Portfolio from AccountTeamMember to Account',
+                                                            'UpdateAccountTeamMemberDailyBatchHelper',
+                                                            'updateAccountTeamMemberLookUps',
+                                                            'Error',
+                                                            'Error in sync AM DM Portfolio from AccountTeamMember to Account'
+                                                        ));
+            } catch (Exception ex) {
+                errorLog.add(BSF_Utilities.createBsfErrorLogForExceptions(ex,
+                                                                    'UpdateAccountTeamMemberDailyBatchHelper',
+                                                                    'cloneTemplateOrder',
+                                                                    'updateAccountTeamMemberLookUps', 
+                                                                    'Error in sync AM DM Portfolio from AccountTeamMember to Account',
+                                                                    'Account',
+                                                                    JSON.Serialize(accountIds)
+                                                                    ));
             }
+        } 
+        if(!errorLog.isEmpty()){
+            Database.insert(errorLog,false);
         }
     }
 
@@ -141,7 +187,9 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                 acc.Account_Manager__c = atm.UserId;
                 acc.Is_Account_Managed__c = false;
                 acc.Unmanaged__c = (atm.Coverage_Reason__c == 'Leave of Absence (LOA)') ? 'LOA Vacancy' : 'Territory Vacancy';
-                if (portfolio != null) acc.Account_Manager_Portfolio__c = portfolio;
+                if (portfolio != null){
+                    acc.Account_Manager_Portfolio__c = portfolio;
+                }
                 updated = true;
             }
         } else {
@@ -151,7 +199,9 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                 acc.Account_Manager__c = atm.UserId;
                 acc.Is_Account_Managed__c = true;
                 acc.Unmanaged__c = null;
-                if (atm.BSF_Portfolio__c != null) acc.Account_Manager_Portfolio__c = atm.BSF_Portfolio__c;
+                if (atm.BSF_Portfolio__c != null){
+                    acc.Account_Manager_Portfolio__c = atm.BSF_Portfolio__c;
+                }
                 updated = true;
 
             } else if (coveringATM != null &&
@@ -161,7 +211,9 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                 acc.Is_Account_Managed__c = false;
                 acc.Unmanaged__c = (coveringATM.Coverage_Reason__c == 'Leave of Absence (LOA)')
                     ? 'LOA Vacancy' : 'Vacant Territory';
-                if (portfolio != null) acc.Account_Manager_Portfolio__c = portfolio;
+                if (portfolio != null){
+                    acc.Account_Manager_Portfolio__c = portfolio;
+                }
                 updated = true;
             }
         }
@@ -188,7 +240,9 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
             needsAccountUpdate(acc.District_Manager__c, atm.UserId, isTest, acc.District_Manager_Portfolio__c, portfolio)) {
 
             acc.District_Manager__c = atm.UserId;
-            if (portfolio != null) acc.District_Manager_Portfolio__c = portfolio;
+            if (portfolio != null){ 
+                acc.District_Manager_Portfolio__c = portfolio;
+            }
             updated = true;
 
         } else if (!isCovering) {
@@ -196,14 +250,18 @@ public with sharing class UpdateAccountTeamMemberDailyBatchHelper {
                 needsAccountUpdate(acc.District_Manager__c, atm.UserId, isTest, acc.District_Manager_Portfolio__c, portfolio)) {
 
                 acc.District_Manager__c = atm.UserId;
-                if (atm.BSF_Portfolio__c != null) acc.District_Manager_Portfolio__c = atm.BSF_Portfolio__c;
+                if (atm.BSF_Portfolio__c != null){
+                    acc.District_Manager_Portfolio__c = atm.BSF_Portfolio__c;
+                }
                 updated = true;
 
             } else if (coveringATM != null &&
                 needsAccountUpdate(acc.District_Manager__c, coveringATM.UserId, isTest, acc.District_Manager_Portfolio__c, portfolio)) {
 
                 acc.District_Manager__c = coveringATM.UserId;
-                if (portfolio != null) acc.District_Manager_Portfolio__c = portfolio;
+                if (portfolio != null){
+                    acc.District_Manager_Portfolio__c = portfolio;
+                }
                 updated = true;
             }
         }
