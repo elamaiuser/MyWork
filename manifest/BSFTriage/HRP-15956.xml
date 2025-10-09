@@ -2,6 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>BSF_AccessControlManager</members>
+		<members>BSF_AccessControlManagerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<version>65.0</version>
