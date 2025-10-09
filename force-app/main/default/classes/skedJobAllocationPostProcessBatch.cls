@@ -68,6 +68,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             exceptionLog.addAll(captureTravelTimeExceptionLog(master));
             exceptionLog.addAll(captureTurnaroundTimeExceptionLog(master));
             exceptionLog.addAll(captureRequiredTagExceptionLog(master));
+            exceptionLog.addAll(captureAdditionalRolesExceptionLog(master));
             exceptionLog.addAll(capture14hrsMoreExceptionLog(master));
             exceptionLog.addAll(captureBlacklistExceptionLog(master));
             exceptionLog.addAll(captureDriveShiftExceptionLog(master));
@@ -508,6 +509,35 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 }
             }
         }
+        return exceptionLog;
+    }
+    
+    private static List<skedHC__Exception__c> captureAdditionalRolesExceptionLog(skedExceptionMasterModel master) {
+        List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+        
+        for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
+            if (skedAllocation.sked_Additional_Roles__c != NULL && !string.isBlank(skedAllocation.sked_Additional_Roles__c)) {
+                List<string> additionalRoles = skedAllocation.sked_Additional_Roles__c.split(';');
+                
+                sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
+                
+                for (string additionalRole : additionalRoles) {
+                    boolean isValid = FALSE;
+                    for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
+                        if (resourceTag.sked__Tag__r.Name == additionalRole) {
+                            isValid = TRUE;
+                            break;
+                        }
+                    }
+                    if (!isValid) {
+                        string exceptionText = 'Missing required tag ' + additionalRole;
+                        skedHC__Exception__c skedException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionText);
+                        exceptionLog.add(skedException);
+                    }
+                }
+            }
+        }
+        
         return exceptionLog;
     }
     
