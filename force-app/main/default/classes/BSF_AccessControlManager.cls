@@ -1,17 +1,122 @@
 /**
+ * @author Elam Pandian
+ * @date 10/08/2025
  * @description Processes Access Control Rules for Permission Sets using efficient, bulk DML.
  *              This framework manages Object, Field, Apex Class, and Visualforce Page permissions.
- *              It is designed to be run as an automated post-deployment step.
+ *              It includes a robust logging mechanism that creates a single, comprehensive summary
+ *              log for each run in a custom bsf_errorlog__c object for complete auditability.
  * @important The user executing this needs the "Manage Profiles and Permission Sets" permission.
  */
 public without sharing class BSF_AccessControlManager {
 
     /**
-     * @description Entry point: processes all 'Permission Set' rules for a specific release tag.
-     * @param releaseTag The value in the Release_Tag__c field of the rules to process.
+     * @description A private inner class used as a data transfer object (DTO) to accumulate
+     *              all statistics and warnings from a single execution run.
+     */
+    private class RunSummary {
+        Integer objInserted = 0, objUpdated = 0, fldInserted = 0, fldUpdated = 0;
+        Integer apexInserted = 0, pageInserted = 0;
+        Integer missingPS = 0, missingComp = 0, missingFields = 0, undescribableObjects = 0;
+        Integer dmlFailures = 0;
+        List<String> missingFieldList = new List<String>();
+        List<String> undescribedObjectList = new List<String>();
+        List<String> dmlErrors = new List<String>();
+        Datetime startedAt, endedAt;
+    }
+    
+    /**
+     * @description A Queueable inner class that handles inserting the final summary log.
+     *              This runs in a separate, asynchronous transaction to prevent Mixed DML errors
+     *              that occur when mixing setup and non-setup object DML.
+     */
+    public class AccessControlLogQueueable implements Queueable {
+        private final String releaseTag;
+        private final RunSummary summary;
+
+        /**
+         * @description Constructor to pass the necessary logging data to the async job.
+         * @param releaseTag The release tag that initiated the run.
+         * @param summary The completed RunSummary object containing all metrics.
+         */
+        public AccessControlLogQueueable(String releaseTag, RunSummary summary) {
+            this.releaseTag = releaseTag;
+            this.summary = summary;
+        }
+
+    	/**
+         * @description The main execution body of the Queueable job. It builds and inserts the
+         *              single, comprehensive summary log record.
+         * @param context The context for the Queueable job.
+         */
+        public void execute(QueueableContext context) {
+            try {
+                String shortMsg = 'ACM run summary';
+                String longMsg = 'Release Tag: ' + releaseTag +
+                        ' | Started: ' + String.valueOf(summary.startedAt) + ' | Ended: ' + String.valueOf(summary.endedAt) +
+                        ' | ObjInserted: ' + summary.objInserted + ' | ObjUpdated: ' + summary.objUpdated +
+                        ' | FldInserted: ' + summary.fldInserted + ' | FldUpdated: ' + summary.fldUpdated +
+                        ' | ApexInserted: ' + summary.apexInserted + ' | PageInserted: ' + summary.pageInserted +
+                        ' | MissingPS: ' + summary.missingPS + ' | MissingComp: ' + summary.missingComp +
+                        ' | MissingFields: ' + summary.missingFields + ' | UndescribableObjects: ' + summary.undescribableObjects +
+                        ' | DmlFailures: ' + summary.dmlFailures;
+
+                if (!summary.missingFieldList.isEmpty()) {
+                    List<String> missingFieldsSubList = new List<String>();
+                    Integer maxMissingFields = Math.min(10, summary.missingFieldList.size());
+                    for(Integer i = 0; i < maxMissingFields; i++) {
+                        missingFieldsSubList.add(summary.missingFieldList[i]);
+                    }
+                    longMsg += ' | MissingFieldSamples: ' + String.join(missingFieldsSubList, ',');
+                }
+                if (!summary.undescribedObjectList.isEmpty()) {
+                    List<String> undescribedObjectsSubList = new List<String>();
+                    Integer maxUndescribedObjects = Math.min(10, summary.undescribedObjectList.size());
+                    for(Integer i = 0; i < maxUndescribedObjects; i++) {
+                        undescribedObjectsSubList.add(summary.undescribedObjectList[i]);
+                    }
+                    longMsg += ' | UndescribedObjectSamples: ' + String.join(undescribedObjectsSubList, ',');
+                }
+                if (!summary.dmlErrors.isEmpty()) {
+                    List<String> dmlErrorsSubList = new List<String>();
+                    Integer maxDmlErrors = Math.min(5, summary.dmlErrors.size());
+                    for(Integer i = 0; i < maxDmlErrors; i++) {
+                        dmlErrorsSubList.add(summary.dmlErrors[i]);
+                    }
+                    longMsg += ' | DmlErrorSamples: ' + String.join(dmlErrorsSubList, ' || ');
+                }
+
+                String typeVal = (summary.dmlFailures > 0) ? 'Error' :
+                                ((summary.missingPS > 0 || summary.missingComp > 0 || summary.missingFields > 0 || summary.undescribableObjects > 0) ? 'Debug Log' : 'Success');
+                
+                BSF_Error_Log__c row = new BSF_Error_Log__c();
+                row.Process_Name__c = 'Access Control Manager';
+                row.ApexClass__c = 'BSF_AccessControlManager';
+                row.Method__c = 'processRulesByReleaseTag';
+                row.Functionality__c = 'Run Summary';
+                row.Type__c = typeVal;
+                row.Error_Description__c = shortMsg.left(255);
+                row.Error_Description_Long__c = longMsg.left(131072);                
+                
+                Database.SaveResult result = Database.insert(row, false);
+                if (!result.isSuccess()) {
+                    System.debug(LoggingLevel.WARN, 'BSF_Error_Log__c single-row insert failed: ' + result.getErrors()[0].getMessage());
+                }
+            } catch (Exception e) {
+                System.debug(LoggingLevel.WARN, 'BSF_Error_Log__c single-row insert failed: ' + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * @description Main entry point for the framework. Initializes a RunSummary, retrieves all
+     *              'Permission Set' rules for a given release tag, and orchestrates processing.
+     * @param releaseTag The unique identifier from the Release_Tag__c field used to select which
+     *                   Access_Control_Rule__mdt records to process.
      */
     public static void processRulesByReleaseTag(String releaseTag) {
         System.debug(LoggingLevel.INFO, 'Starting AccessControlManager for release tag: ' + releaseTag);
+        RunSummary summary = new RunSummary();
+        summary.startedAt = System.now();
 
         List<BSF_Access_Control_Rule__mdt> rules = [
             SELECT Rule_Type__c, Target_API_Names__c, SObject_API_Name__c,
@@ -22,7 +127,9 @@ public without sharing class BSF_AccessControlManager {
         ];
 
         if (rules.isEmpty()) {
-            System.debug(LoggingLevel.INFO, 'No Permission Set rules found for release tag: ' + releaseTag + '. Execution finished.');
+            System.debug(LoggingLevel.INFO, 'No Permission Set rules found. Execution finished.');
+            summary.endedAt = System.now();
+            System.enqueueJob(new AccessControlLogQueueable(releaseTag, summary));
             return;
         }
 
@@ -36,22 +143,26 @@ public without sharing class BSF_AccessControlManager {
         }
 
         if (rulesByType.containsKey('Object/Field')) {
-            processFieldAndObjectPermissions(rulesByType.get('Object/Field'));
+            processFieldAndObjectPermissions(rulesByType.get('Object/Field'), summary);
         }
         if (rulesByType.containsKey('Apex Class')) {
-            processJunctionPermissions(rulesByType.get('Apex Class'), 'ApexClass', 'PermissionSetApexClassAccess', 'ApexClassId');
+            processJunctionPermissionsWithSetupEntityAccess(rulesByType.get('Apex Class'), 'ApexClass', summary);
         }
         if (rulesByType.containsKey('Visualforce Page')) {
-            processJunctionPermissions(rulesByType.get('Visualforce Page'), 'ApexPage', 'PermissionSetApexPageAccess', 'ApexPageId');
+            processJunctionPermissionsWithSetupEntityAccess(rulesByType.get('Visualforce Page'), 'ApexPage', summary);
         }
+
         System.debug(LoggingLevel.INFO, 'AccessControlManager finished processing for release tag: ' + releaseTag);
+        summary.endedAt = System.now();
+        System.enqueueJob(new AccessControlLogQueueable(releaseTag, summary));
     }
 
     /**
-     * @description Processes rules for Object and Field Level Security.
+     * @description Processes rules for Object and Field Level Security, updating the RunSummary object.
      * @param rules A list of 'Object/Field' type rules to process.
+     * @param summary The central RunSummary object to accumulate metrics and warnings.
      */
-    private static void processFieldAndObjectPermissions(List<BSF_Access_Control_Rule__mdt> rules) {
+    private static void processFieldAndObjectPermissions(List<BSF_Access_Control_Rule__mdt> rules, RunSummary summary) {
         System.debug(LoggingLevel.INFO, 'Processing ' + rules.size() + ' Object/Field rules...');
 
         Set<String> permSetNames = new Set<String>();
@@ -68,15 +179,26 @@ public without sharing class BSF_AccessControlManager {
                 }
             }
         }
-        if (permSetNames.isEmpty() || objectApiNames.isEmpty()) return;
+        if (permSetNames.isEmpty() || objectApiNames.isEmpty()) {
+            return;
+        }
 
         Map<String, Id> permSetNameToIdMap = new Map<String, Id>();
-        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) permSetNameToIdMap.put(ps.Name, ps.Id);
+        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) {
+            permSetNameToIdMap.put(ps.Name, ps.Id);
+        }
 
         Map<String, Map<String, Schema.SObjectField>> objectFieldMaps = new Map<String, Map<String, Schema.SObjectField>>();
         for (String objName : objectApiNames) {
-            try { objectFieldMaps.put(objName, Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap()); } 
-            catch (Exception e) { System.debug(LoggingLevel.WARN, 'Could not describe SObject "' + objName + '". Rules for this object will be skipped.'); }
+            try {
+                objectFieldMaps.put(objName, Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap());
+            } catch (Exception e) { 
+                System.debug(LoggingLevel.WARN, 'Could not describe SObject "' + objName + '".');
+                summary.undescribableObjects++;
+                if (summary.undescribedObjectList.size() < 20) {
+                    summary.undescribedObjectList.add(objName);
+                }
+            }
         }
 
         Set<Id> permSetIds = new Set<Id>(permSetNameToIdMap.values());
@@ -98,124 +220,141 @@ public without sharing class BSF_AccessControlManager {
 
         for (BSF_Access_Control_Rule__mdt rule : rules) {
             String sObjectName = String.isBlank(rule.SObject_API_Name__c) ? '' : rule.SObject_API_Name__c.trim();
-            if (sObjectName == '') continue;
-
-            List<String> psNames = cleanSplit(rule.Target_API_Names__c);
-            List<String> fieldNames = cleanSplit(rule.Field_API_Names__c);
-
-            for (String psName : psNames) {
+            if (sObjectName == '') {
+                continue;
+            }
+            for (String psName : cleanSplit(rule.Target_API_Names__c)) {
                 Id permSetId = permSetNameToIdMap.get(psName);
-                if (permSetId == null) continue;
-
+                if (permSetId == null) {
+                    continue;
+                }
+                List<String> fieldNames = cleanSplit(rule.Field_API_Names__c);
                 if (fieldNames.isEmpty()) {
                     String key = permSetId + '-' + sObjectName;
                     ObjectPermissions op = existingObjectPerms.get(key);
                     if (op == null) {
                         recordsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
+                        summary.objInserted++;
                     } else if (op.PermissionsRead!=rule.PermissionsRead__c || op.PermissionsCreate!=rule.PermissionsCreate__c || op.PermissionsEdit!=rule.PermissionsEdit__c || op.PermissionsDelete!=rule.PermissionsDelete__c) {
                         op.PermissionsRead=rule.PermissionsRead__c; op.PermissionsCreate=rule.PermissionsCreate__c; op.PermissionsEdit=rule.PermissionsEdit__c; op.PermissionsDelete=rule.PermissionsDelete__c;
                         recordsToUpdate.add(op);
+                        summary.objUpdated++;
                     }
                 } else {
                     Map<String, Schema.SObjectField> fieldMap = objectFieldMaps.get(sObjectName);
-                    if (fieldMap == null) continue;
+                    if (fieldMap == null) {
+                        continue;
+                    }
                     for (String fieldName : fieldNames) {
                         Schema.SObjectField token = fieldMap.get(fieldName);
-                        if (token == null) { System.debug(LoggingLevel.WARN, 'Field "' + sObjectName + '.' + fieldName + '" not found. Skipping.'); continue; }
-                        
+                        if (token == null) {
+                            System.debug(LoggingLevel.WARN, 'Field "' + sObjectName + '.' + fieldName + '" not found. Skipping.');
+                            summary.missingFields++;
+                            if (summary.missingFieldList.size() < 25) {
+                                summary.missingFieldList.add(sObjectName + '.' + fieldName);
+                            }
+                            continue;
+                        }
                         Boolean effectiveEdit = rule.PermissionsEdit__c && token.getDescribe().isUpdateable();
                         String fullFieldApiName = sObjectName + '.' + fieldName;
                         String key = permSetId + '-' + fullFieldApiName;
                         FieldPermissions fp = existingFieldPerms.get(key);
-
                         if (fp == null) {
                             recordsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
+                            summary.fldInserted++;
                         } else if (fp.PermissionsRead != rule.PermissionsRead__c || fp.PermissionsEdit != effectiveEdit) {
                             fp.PermissionsRead=rule.PermissionsRead__c; fp.PermissionsEdit=effectiveEdit;
                             recordsToUpdate.add(fp);
+                            summary.fldUpdated++;
                         }
                     }
                 }
             }
         }
-        
-        Integer insertedCount = recordsToInsert.size();
-        Integer updatedCount = recordsToUpdate.size();
-        executeDml(recordsToInsert, 'insert');
-        executeDml(recordsToUpdate, 'update');
-        System.debug(LoggingLevel.INFO, 'Object/Field processing summary - Inserted: ' + insertedCount + ', Updated: ' + updatedCount);
+        executeDml(recordsToInsert, 'insert', summary);
+        executeDml(recordsToUpdate, 'update', summary);
     }
 
     /**
-     * @description Generic helper to process junction permissions like PermissionSetApexClassAccess.
+     * @description Processes component access rules using the generic SetupEntityAccess object.
      * @param rules A list of component-type rules to process.
-     * @param childEntityType The API name of the component (e.g., 'ApexClass').
-     * @param junctionSObjectName The API name of the junction object (e.g., 'PermissionSetApexClassAccess').
-     * @param childRelationshipName The relationship field name on the junction object (e.g., 'ApexClassId').
+     * @param childEntityType The API name of the component (e.g., 'ApexClass', 'ApexPage').
+     * @param summary The central RunSummary object to accumulate metrics and warnings.
      */
-    private static void processJunctionPermissions(List<BSF_Access_Control_Rule__mdt> rules, String childEntityType, String junctionSObjectName, String childRelationshipName) {
-        System.debug(LoggingLevel.INFO, 'Processing ' + rules.size() + ' ' + childEntityType + ' access rules...');
+    private static void processJunctionPermissionsWithSetupEntityAccess(List<BSF_Access_Control_Rule__mdt> rules, String childEntityType, RunSummary summary) {
+        System.debug(LoggingLevel.INFO, 'Processing ' + rules.size() + ' ' + childEntityType + ' access rules via SetupEntityAccess...');
 
         Set<String> permSetNames = new Set<String>();
         Set<String> componentNames = new Set<String>();
-
         for (BSF_Access_Control_Rule__mdt rule : rules) {
             permSetNames.addAll(cleanSplit(rule.Target_API_Names__c));
             componentNames.addAll(cleanSplit(rule.Component_API_Names__c));
         }
-        if (permSetNames.isEmpty() || componentNames.isEmpty()) return;
-
-        Map<String, Id> permSetNameToIdMap = new Map<String, Id>();
-        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) permSetNameToIdMap.put(ps.Name, ps.Id);
-
-        Map<String, Id> componentNameToIdMap = new Map<String, Id>();
-        for (SObject component : Database.query('SELECT Id, Name FROM ' + childEntityType + ' WHERE Name IN :componentNames')) {
-            componentNameToIdMap.put((String)component.get('Name'), (Id)component.get('Id'));
+        if (permSetNames.isEmpty() || componentNames.isEmpty()) {
+            return;
         }
-        
-        Set<String> existingKeys = new Set<String>();
-        Set<Id> parentIds = new Set<Id>(permSetNameToIdMap.values());
-        Set<Id> childIds = new Set<Id>(componentNameToIdMap.values());
-        if (!parentIds.isEmpty() && !childIds.isEmpty()) {
-            for (SObject existing : Database.query('SELECT ParentId, ' + childRelationshipName + ' FROM ' + junctionSObjectName + ' WHERE ParentId IN :parentIds AND ' + childRelationshipName + ' IN :childIds')) {
-                existingKeys.add(existing.get('ParentId') + '-' + existing.get(childRelationshipName));
+
+        Map<String, Id> permSetNameToId = new Map<String, Id>();
+        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) {
+            permSetNameToId.put(ps.Name, ps.Id);
+        }
+
+        Map<String, Id> compNameToId = new Map<String, Id>();
+        Set<String> allowedEntityTypes = new Set<String>{'ApexClass', 'ApexPage'};
+        if (allowedEntityTypes.contains(childEntityType)) {
+            String query = 'SELECT Id, Name FROM ' + childEntityType + ' WHERE Name IN :componentNames';
+            for (SObject comp : Database.query(query)) {
+                compNameToId.put((String)comp.get('Name'), (Id)comp.get('Id'));
             }
         }
-        
-        List<SObject> recordsToInsert = new List<SObject>();
-        SObjectType junctionType = Schema.getGlobalDescribe().get(junctionSObjectName);
-        Boolean hasEnabledField = junctionType.getDescribe().fields.getMap().containsKey('Enabled');
 
+        Set<Id> psIds = new Set<Id>(permSetNameToId.values());
+        Set<Id> compIds = new Set<Id>(compNameToId.values());
+        Set<String> existing = new Set<String>();
+        if (!psIds.isEmpty() && !compIds.isEmpty()) {
+            for (SetupEntityAccess sea : [SELECT ParentId, SetupEntityId FROM SetupEntityAccess WHERE ParentId IN :psIds AND SetupEntityId IN :compIds]) {
+                existing.add(sea.ParentId + '-' + sea.SetupEntityId);
+            }
+        }
+
+        List<SetupEntityAccess> inserts = new List<SetupEntityAccess>();
         for (BSF_Access_Control_Rule__mdt rule : rules) {
-            if (!rule.Is_Enabled__c) continue;
+            if (!rule.Is_Enabled__c) {
+                continue;
+            }
             for (String psName : cleanSplit(rule.Target_API_Names__c)) {
-                Id parentId = permSetNameToIdMap.get(psName);
-                if (parentId == null) continue;
+                Id parentId = permSetNameToId.get(psName);
+                if (parentId == null) {
+                    summary.missingPS++;
+                    continue;
+                }
                 for (String compName : cleanSplit(rule.Component_API_Names__c)) {
-                    Id childId = componentNameToIdMap.get(compName);
-                    if (childId == null) continue;
-                    
-                    String key = parentId + '-' + childId;
-                    if (!existingKeys.contains(key)) {
-                        SObject newRecord = junctionType.newSObject();
-                        newRecord.put('ParentId', parentId);
-                        newRecord.put(childRelationshipName, childId);
-                        if (hasEnabledField) newRecord.put('Enabled', true);
-                        recordsToInsert.add(newRecord);
-                        existingKeys.add(key);
+                    Id setupEntityId = compNameToId.get(compName);
+                    if (setupEntityId == null) {
+                        summary.missingComp++;
+                        continue;
+                    }
+                    String key = parentId + '-' + setupEntityId;
+                    if (!existing.contains(key)) {
+                        inserts.add(new SetupEntityAccess(ParentId = parentId, SetupEntityId = setupEntityId));
+                        existing.add(key);
+                        if (childEntityType == 'ApexClass') {
+                            summary.apexInserted++;
+                        }
+                        if (childEntityType == 'ApexPage') {
+                            summary.pageInserted++;
+                        }
                     }
                 }
             }
         }
-        
-        Integer insertedCount = recordsToInsert.size();
-        executeDml(recordsToInsert, 'insert');
-        System.debug(LoggingLevel.INFO, childEntityType + ' processing summary - Inserted: ' + insertedCount);
+        executeDml(inserts, 'insert', summary);
     }
 
     /**
-     * @description Safely splits a comma-separated string into a list of trimmed, non-blank strings.
-     * @param input The string to split.
+     * @description Utility method to safely split a comma-separated string into a list of
+     *              trimmed, non-blank strings.
+     * @param input The raw, comma-separated string from the metadata rule.
      * @return A list of clean string tokens.
      */
     private static List<String> cleanSplit(String input) {
@@ -232,18 +371,29 @@ public without sharing class BSF_AccessControlManager {
     }
 
     /**
-     * @description Safe DML execution helper to prevent entire transaction failure.
-     * @param records The list of records to perform DML on.
+     * @description Centralized, safe DML execution helper. It wraps DML operations in a try-catch
+     *              block and updates the RunSummary object with any failures.
+     * @param records The list of SObjects to perform DML on.
      * @param operation The DML operation as a string ('insert' or 'update').
+     * @param summary The central RunSummary object to update in case of DML failure.
      */
-    private static void executeDml(List<SObject> records, String operation) {
-        if (records == null || records.isEmpty()) return;
+    private static void executeDml(List<SObject> records, String operation, RunSummary summary) {
+        if (records == null || records.isEmpty()) {
+            return;
+        }
         try {
-            if (operation == 'insert') insert records;
-            else if (operation == 'update') update records;
-            System.debug(LoggingLevel.INFO, 'SUCCESS: Performed ' + operation + ' on ' + records.size() + ' records for SObject ' + records[0].getSObjectType());
+            if (operation == 'insert') {
+                insert records;
+            } else if (operation == 'update') {
+                update records;
+            }
+            System.debug(LoggingLevel.INFO, 'SUCCESS: Performed ' + operation + ' on ' + records.size() + ' records for ' + records[0].getSObjectType());
         } catch (DmlException e) {
             System.debug(LoggingLevel.ERROR, 'DML Error during ' + operation + ' on ' + records[0].getSObjectType() + '. Message: ' + e.getMessage());
+            summary.dmlFailures++;
+            if (summary.dmlErrors.size() < 10) {
+                summary.dmlErrors.add(e.getMessage());
+            }
         }
     }
 }
