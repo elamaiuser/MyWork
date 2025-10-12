@@ -42,19 +42,20 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public static List<sked__Job__c> equipmentTypeJob = new  List<sked__Job__c>();
     public static List<sked__Resource__c> successfullyEvaluatedResourceList = new List<sked__Resource__c>();	
     public static Map<Id,Decimal> map_allVehicleResourceId_presDonorCapacity = new Map<Id,Decimal>();
-    public static Map<Id,sked__Resource__c> resourceIdVsResourceDetails = new Map<Id,sked__Resource__c>();
-    public static Map<Id,Decimal> resourceIdVsCapacityForCDLAndDOT = new Map<Id,Decimal>();
-    public static Map<Id,Decimal> resourceIdVsCapacityForRegVechicle = new Map<Id,Decimal>(); 	
+    public static Map<Id,sked__Resource__c> resourceIdVsResourceDetails = new Map<Id,sked__Resource__c>();	
     public static Map<Id,List<sked__Resource_Tag__c>> resourceVsResourceTagMap = new Map<Id,List<sked__Resource_Tag__c>>();	
     public static Map<Id,sked_Operation_Drive_Limit__c> map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>();
     public static Decimal remainingStaff = 0; 
     public static Decimal reCalTotalNoOfStaffRequired = 0; 
     private Map<String, Set<Id>> map_driveType_failedDriveIds = new Map<String,  Set<Id>>();
-    private Map<String, Set<ID>> typeOfDriveVsdriveIDSet= new Map<String, Set<ID>>();
-    private Map<Id, String> map_driveId_noAllocationReason= new Map<Id, String>();
+    private Map<String, Set<ID>> typeOfDriveVsdriveIDSet = new Map<String, Set<ID>>();
+    private Map<Id, String> map_driveId_noAllocationReason = new Map<Id, String>();
+    private static Set<Id> driveJobIds = new Set<Id>();
+    private static List<sked__Job_Allocation__c> jobAllocationList = new List<sked__Job_Allocation__c>();
+    private static List<sked_Staffing_Constraint__c> staffConstraintList = new List<sked_Staffing_Constraint__c>();
+    private static ResourceModel calculatedResourceModel;
     private Set<Id> errorLogIdsCreatedDuringBatchRun = new Set<Id>();
     public Set<Id> driveIdSet;
-    public Set<Id> processedResource = new Set<Id>();
     public sked_Drive__c drive;
     public Integer noOfVehicles = 0; 
     private Date targetCreatedDate;
@@ -68,6 +69,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public Decimal fsSysGenCount = 0;
     public Decimal mobileSysGenCount = 0;
     private DriveGenerationUtil.CalendarBuildLogWrapper cbLogWrapper;
+   
     
    	/*HRP-12706 --> Starts Here
     * @Reference : 
@@ -129,11 +131,15 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             if(this.driveSource != NULL && !String.isBlank(this.driveSource)) {
                 cbLogWrapper.opportunitySource = this.driveSource;
                 if(this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) && cbLogWrapper.draftDriveListToBeProcessed != NULL && !cbLogWrapper.draftDriveListToBeProcessed.isEmpty()) {
-                    DateTime dt = Helper.getSameDayOfPrevYear(cbLogWrapper.draftDriveListToBeProcessed[0].sked_Drive_Date__c);
-                    this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                   /* HRP-14179: One drive date is processed every day via CB, 
+                    but user can change the drive date within the 21 days gap before sys gen run.
+                    To correctly capture sys gen info, system should use parent CB drive's drive date to find existing CB log */
+                    
+                    sked_Drive__c newCBDrive = cbLogWrapper.draftDriveListToBeProcessed[0];
+                    this.driveDateToEval = newCBDrive.sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r.Drive_Date__c;
                     cbLogWrapper.driveDateToEval = this.driveDateToEval;
                 }
-            }      
+            } 
         } 
         catch(Exception ex) {
             if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368
@@ -156,36 +162,264 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         return cbLogWrapper.draftDriveListToBeProcessed;
     }
 
-    public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
-        Savepoint sp = Database.setSavepoint(); //HRP-13347
-        try{
-            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;   
-            Set<Id> driveJobIds = new Set<Id>();
-            List<sked__Job_Allocation__c> jobAllocationList = new List<sked__Job_Allocation__c>();
-            Decimal staffJobCount = 0;
-            Decimal xrbcJobCount = 0;
-            Decimal totalNoOfStaffRequired = 0;
-            drive = driveList[0];
-            driveSite = drive.sked_Drive_Site__c;
-            driveDate = drive.sked_Drive_Date__c;
-            driveCO = drive.sked_Collection_Operation__c;
-            driveAccount = drive.sked_Account__c;
-            String dayOfWeek = drive.sked_Day_of_Week__c;
-            String typeOfDrive = drive.sked_Type_of_Drive__c;
-            String operationType = typeOfDrive == Constants.FIX_SITE_OPP ? drive.sked_Operation_Type__c : '';
-            Boolean isCalendarBuildDrive = drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD;
-            String prevDriveStatus = drive.sked_Status__c;
-            List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(drive)); 
+    /**
+     * Drive day limits are found by querying non timeblock ODL records
+     */
+    public List<sked_Operation_Drive_Limit__c> getApplicableODLsForEntireDriveDay(sked_Drive__c drive){
+        driveSite = drive.sked_Drive_Site__c;
+        driveDate = drive.sked_Drive_Date__c;
+        driveCO = drive.sked_Collection_Operation__c;
+        String dayOfWeek = drive.sked_Day_of_Week__c;
 
-            for(sked__Job__c job : drive.sked_Jobs__r) {	
+         // Get only non time block records to get day limit
+        List<sked_Operation_Drive_Limit__c> driveLevelODLRecordsList = new List<sked_Operation_Drive_Limit__c>(
+            [SELECT Id, Name, sked_Collection_Operation__c, sked_Days_of_Week__c, sked_Effective_End_Date__c, 
+                    sked_Effective_Start_Date__c, sked_Quantity__c, sked_Type__c, sked_MigrationID__c,
+                    Time_Block__c
+            FROM sked_Operation_Drive_Limit__c
+            WHERE sked_Type__c IN (:Constants.OPERATION_DRIVE_2RBC_LIMIT, : Constants.OPERATION_DRIVE_DOT_LIMIT, : Constants.OPERATION_DRIVE_CDL_LIMIT) 
+            AND sked_Collection_Operation__c = :driveCO
+            AND sked_Days_of_Week__c INCLUDES (:dayOfWeek)
+            AND Time_Block__c = null //pick records with timeblock as null
+            AND ((sked_Effective_Start_Date__c <= :driveDate 
+            AND (sked_Effective_End_Date__c = NULL
+                OR sked_Effective_End_Date__c >= :driveDate)) 
+                OR ((sked_Effective_Start_Date__c = NULL
+                OR sked_Effective_Start_Date__c <= :driveDate)                
+                AND sked_Effective_End_Date__c >= :driveDate))]);
+
+        return  driveLevelODLRecordsList;           
+
+    }
+
+    public Map<Id, sked_Operation_Drive_Limit__c> getApplicableODLsForDriveShift(sked_Drive__c drive, sked_Drive_Shift__c driveShift){
+        driveSite = drive.sked_Drive_Site__c;
+        driveDate = drive.sked_Drive_Date__c;
+        driveCO = drive.sked_Collection_Operation__c;
+        String dayOfWeek = drive.sked_Day_of_Week__c;
+
+        // Check ODL to get limits
+        map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>(
+            [SELECT Id, Name, sked_Collection_Operation__c, sked_Days_of_Week__c, sked_Effective_End_Date__c, 
+                    sked_Effective_Start_Date__c, sked_Quantity__c, sked_Type__c, sked_MigrationID__c,
+                    Time_Block__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c, Time_Block__r.Days_of_Week__c
+            FROM sked_Operation_Drive_Limit__c
+            WHERE sked_Type__c IN (:Constants.OPERATION_DRIVE_2RBC_LIMIT, : Constants.OPERATION_DRIVE_DOT_LIMIT, : Constants.OPERATION_DRIVE_CDL_LIMIT) 
+            AND sked_Collection_Operation__c = :driveCO
+            AND sked_Days_of_Week__c INCLUDES (:dayOfWeek)
+            AND ((sked_Effective_Start_Date__c <= :driveDate 
+            AND (sked_Effective_End_Date__c = NULL
+                OR sked_Effective_End_Date__c >= :driveDate)) 
+                OR ((sked_Effective_Start_Date__c = NULL
+                OR sked_Effective_Start_Date__c <= :driveDate)                
+                AND sked_Effective_End_Date__c >= :driveDate))]);
+
+        // Filter ODL records based on time block applicability
+        Map<Id, sked_Operation_Drive_Limit__c> filteredOperationDriveLimits = new Map<Id, sked_Operation_Drive_Limit__c>();
+
+        if(map_operationDriveLimitId_operationDriveLimit != NULL && !map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
+                    // Group ODL records by type
+                    Map<String, List<sked_Operation_Drive_Limit__c>> odlByType = new Map<String, List<sked_Operation_Drive_Limit__c>>();
+                    for(sked_Operation_Drive_Limit__c odl : map_operationDriveLimitId_operationDriveLimit.values()) {
+                        String odlType = odl.sked_Type__c;
+                        if(!odlByType.containsKey(odlType)) {
+                            odlByType.put(odlType, new List<sked_Operation_Drive_Limit__c>());
+                        }
+                        odlByType.get(odlType).add(odl);
+                    }
+                    
+                    // Process each type separately
+                    for(String odlType : odlByType.keySet()) {
+                        List<sked_Operation_Drive_Limit__c> odlRecords = odlByType.get(odlType);
+                        List<sked_Operation_Drive_Limit__c> applicableTimeBlockRecords = new List<sked_Operation_Drive_Limit__c>();
+                        List<sked_Operation_Drive_Limit__c> noTimeBlockRecords = new List<sked_Operation_Drive_Limit__c>();
+                        
+                        // Separate records with time blocks 
+                        for(sked_Operation_Drive_Limit__c odl : odlRecords) {
+                            if(odl.Time_Block__c != null && driveShift.sked_Time_Block__c == odl.Time_Block__c &&
+                                            driveShift.sked_Contention__c == null) { //If Matching time block exists
+                                applicableTimeBlockRecords.add(odl);
+                            } else {
+                                noTimeBlockRecords.add(odl);
+                            }
+                        }
+                        
+                        //For each type
+                        if(!applicableTimeBlockRecords.isEmpty()) {
+                            // If there are applicable time block records, keep only the first one
+                            filteredOperationDriveLimits.put(applicableTimeBlockRecords[0].Id, applicableTimeBlockRecords[0]);
+                        } else {
+                            // If no applicable time block records, keep all records without time blocks (existing behavior)
+                            for(sked_Operation_Drive_Limit__c odl : noTimeBlockRecords) {
+                                filteredOperationDriveLimits.put(odl.Id, odl);
+                            }
+                        }
+                    }// end of for loop, for all 3 types  
+        }
+        
+        return filteredOperationDriveLimits;
+    }
+
+
+
+
+
+    public static List<sked_Staffing_Constraint__c> getStaffingConstraints(sked_Drive__c drive,sked_Drive_Shift__c driveShift){
+        List<sked_Staffing_Constraint__c> staffConstraintList = new List<sked_Staffing_Constraint__c>();              
+        // First, try to find staff constraints with matching time block
+        List<sked_Staffing_Constraint__c> timeBlockStaffConstraints = [SELECT Id, sked_Collection_Operation__c, sked_Date_of_Constraint__c, 
+                                                                        sked_Total_Staff_Constraints__c, sked_Num_Available_Staff__c, sked_Time_Block__c 
+                                                                        FROM sked_Staffing_Constraint__c 
+                                                                        WHERE sked_Drive_Type__c =: drive.sked_Type_of_Drive__c 
+                                                                        AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
+                                                                        AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c 
+                                                                        AND sked_Time_Block__c =: driveShift.sked_Time_Block__c 
+                                                                        LIMIT 1];
+        
+        // If no time block specific constraints found, use non-time block constraints
+        if (timeBlockStaffConstraints.isEmpty()) {
+            List<sked_Staffing_Constraint__c> nonTimeBlockStaffConstraints = [SELECT Id, sked_Collection_Operation__c, sked_Date_of_Constraint__c, 
+                                                                                sked_Total_Staff_Constraints__c, sked_Num_Available_Staff__c, sked_Time_Block__c 
+                                                                                FROM sked_Staffing_Constraint__c 
+                                                                                WHERE sked_Drive_Type__c =: drive.sked_Type_of_Drive__c 
+                                                                                AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
+                                                                                AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c 
+                                                                                AND sked_Time_Block__c = NULL 
+                                                                                LIMIT 1];
+            staffConstraintList = nonTimeBlockStaffConstraints;
+        } else {
+            staffConstraintList = timeBlockStaffConstraints;
+        }
+
+        return staffConstraintList;
+    }
+
+
+    /**
+     * This calculates limits from incoming list of ODL Records and populates ResourceModel
+     */
+    public static ResourceModel getResourceModelPopulatedFromODLRecords(List<sked_Operation_Drive_Limit__c> operationDriveLimitRecordsList){
+        ResourceModel resourceModel = new ResourceModel();
+
+        if(operationDriveLimitRecordsList != NULL && !operationDriveLimitRecordsList.isEmpty()) {
+                Map<Id,Decimal> map_operationDriveLimit_odlOverrideQuantity = new Map<Id,Decimal>();
+                // Extract IDs from the list for the SOQL query
+                Set<Id> odlIds = new Set<Id>();
+                for(sked_Operation_Drive_Limit__c odl : operationDriveLimitRecordsList) {
+                    odlIds.add(odl.Id);
+                }
+                
+                List<sked_Operation_Drive_Limit_Override__c> operationDriveLimitOverride = [SELECT Id, sked_Operation_Drive_Limit__c, 
+                                                                                            sked_Operation_Drive_Limit__r.sked_Type__c, sked_Date__c, sked_Quantity__c 
+                                                                                            FROM sked_Operation_Drive_Limit_Override__c 
+                                                                                            WHERE sked_Operation_Drive_Limit__c IN :odlIds 
+                                                                                            AND sked_Date__c = :driveDate];
+                if(!operationDriveLimitOverride.isEmpty()) {
+                    for(sked_Operation_Drive_Limit_Override__c odl : operationDriveLimitOverride) {
+                        map_operationDriveLimit_odlOverrideQuantity.put(odl.sked_Operation_Drive_Limit__c, odl.sked_Quantity__c);
+                    }
+                }
+
+                for(sked_Operation_Drive_Limit__c iterateOperationDriveLimit : operationDriveLimitRecordsList) {
+                    // check for DOT Limit
+                    if(iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_DOT_LIMIT) {
+                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlOverrideQuantity.containsKey(iterateOperationDriveLimit.Id)) {
+                            resourceModel.totalDOTLimit = map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id) == NULL ? 
+                                                            NULL : 
+                                                            map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id);
+                            
+                        } else {
+                            resourceModel.totalDOTLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
+                                                            NULL : 
+                                                            (resourceModel.totalDOTLimit == NULL ? iterateOperationDriveLimit.sked_Quantity__c : 
+                                                            resourceModel.totalDOTLimit + iterateOperationDriveLimit.sked_Quantity__c);
+                        }
+                        if(resourceModel.totalDOTLimit != NULL) {
+                            resourceModel.isDOTLimitPresent = TRUE;
+                        }
+                   
+                    }   
+
+                    // Check for CDL Limit
+                    else if (iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_CDL_LIMIT) {
+                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlOverrideQuantity.containsKey(iterateOperationDriveLimit.Id)) {
+                            resourceModel.totalCDLLimit = map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id) == NULL ? NULL : map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id);
+                        } else {
+                            resourceModel.totalCDLLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
+                                                            NULL : 
+                                                            (resourceModel.totalCDLLimit == NULL ?  iterateOperationDriveLimit.sked_Quantity__c : 
+                                                            resourceModel.totalCDLLimit + iterateOperationDriveLimit.sked_Quantity__c);
+                        }
+                        if(resourceModel.totalCDLLimit != NULL) {
+                            resourceModel.isCDLLimitPresent = TRUE; 
+                        }
+                       
+                    } 
+
+                    //Check for 2RBC Limit
+                    else if(iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_2RBC_LIMIT) {
+                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlOverrideQuantity.containsKey(iterateOperationDriveLimit.Id)) {
+                            resourceModel.total2RBCLimit = map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id) == NULL ? NULL : map_operationDriveLimit_odlOverrideQuantity.get(iterateOperationDriveLimit.Id);
+                        } else {
+                            resourceModel.total2RBCLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
+                                                            NULL : 
+                                                            (resourceModel.total2RBCLimit == NULL ? iterateOperationDriveLimit.sked_Quantity__c :
+                                                            resourceModel.total2RBCLimit + iterateOperationDriveLimit.sked_Quantity__c);     
+                        }
+                        if(resourceModel.total2RBCLimit != NULL) {
+                            resourceModel.is2RBCLimitPresent = TRUE; 
+                        }
+                    
+                    }
+                }
+            }
+
+            return resourceModel;
+    }
+
+
+    public  Boolean processDriveAtShiftLevel(
+        sked_Drive__c drive, 
+        Decimal noOfStaffsAllocated,
+        Decimal noOfRBCAllocated, 
+        Decimal noOfCDLAllocated, 
+        Decimal noOfDOTAllocated, 
+        ResourceModel resourceModelDriveLevel
+    ) {
+                        
+        Boolean allShiftsPassedChecks = true;        
+    
+        driveSite = drive.sked_Drive_Site__c;
+        driveDate = drive.sked_Drive_Date__c;
+        driveCO = drive.sked_Collection_Operation__c;
+        driveAccount = drive.sked_Account__c;
+        String dayOfWeek = drive.sked_Day_of_Week__c;
+        String typeOfDrive = drive.sked_Type_of_Drive__c;
+        
+        // Get drive shifts for this drive
+        List<sked_Drive_Shift__c> driveShifts = getDriveShifts(drive.Id);
+        
+        if(driveShifts.isEmpty()) {
+            return true;
+        }
+
+        Integer driveShiftCount = 0;
+        for(sked_Drive_Shift__c driveShift : driveShifts) {
+            // Clear the sets for each shift
+            driveJobIds.clear();
+            jobAllocationList.clear();
+
+            Decimal staffJobCount = 0;
+            Decimal totalNoOfStaffRequired = 0;
+
+            for(sked__Job__c job : driveShift.sked_Jobs__r) {	
                 if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {	
                     vehicleTypeJob.add(job);
                     driveJobIds.add(job.Id);
-                } else if(job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {	      
+                } else if(job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {	     
                     equipmentTypeJob.add(job);	
                     driveJobIds.add(job.Id);
                 } else if(job.sked__Type__c == Constants.PROCEDURE_TYPE_2RBC) {	      
-                    xrbcJobCount += job.sked__Quantity__c; 
                     staffJobCount += job.sked__Quantity__c; 
                 } else if(job.sked_Volunteer_Role__c != NULL) { 
                     continue;
@@ -193,172 +427,144 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     staffJobCount += job.sked__Quantity__c;
                 }
             }
-            totalNoOfStaffRequired = staffJobCount;
-            ResourceModel resourceModel = new ResourceModel();
-            
-            // Check for existing Job Allocation for Current Drive
-            if(!driveJobIds.isEmpty()) {
-                jobAllocationList = Database.Query(createJobAllocationsQuery(driveJobIds)); 
-            }
 
-            // Check ODL to get limits
-            map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>(
-                                                                                                    [SELECT Id, Name, sked_Collection_Operation__c, sked_Days_of_Week__c, sked_Effective_End_Date__c, 
-                                                                                                    sked_Effective_Start_Date__c, sked_Quantity__c, sked_Type__c, sked_MigrationID__c 
-                                                                                                    FROM sked_Operation_Drive_Limit__c
-                                                                                                    WHERE (sked_Type__c =: Constants.OPERATION_DRIVE_2RBC_LIMIT 
-                                                                                                            OR sked_Type__c =: Constants.OPERATION_DRIVE_DOT_LIMIT 
-                                                                                                            OR sked_Type__c =: Constants.OPERATION_DRIVE_CDL_LIMIT) 
-                                                                                                    AND sked_Collection_Operation__c = :driveCO
-                                                                                                    AND ((sked_Effective_Start_Date__c <= :driveDate 
-                                                                                                    AND (sked_Effective_End_Date__c = NULL
-                                                                                                        OR sked_Effective_End_Date__c >= :driveDate)) 
-                                                                                                        OR ((sked_Effective_Start_Date__c = NULL
-                                                                                                        OR sked_Effective_Start_Date__c <= :driveDate) 
-                                                                                                    AND sked_Effective_End_Date__c >= :driveDate))]);
-                                                                                             
-            if(map_operationDriveLimitId_operationDriveLimit != NULL && !map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                Map<Id,Decimal> map_operationDriveLimit_odlQuantity = new Map<Id,Decimal>();
-                List<sked_Operation_Drive_Limit_Override__c> operationDriveLimitOverride = [SELECT Id, sked_Operation_Drive_Limit__c, 
-                                                                                            sked_Operation_Drive_Limit__r.sked_Type__c, sked_Date__c, sked_Quantity__c 
-                                                                                            FROM sked_Operation_Drive_Limit_Override__c 
-                                                                                            WHERE sked_Operation_Drive_Limit__c IN :map_operationDriveLimitId_operationDriveLimit.keySet() 
-                                                                                            AND sked_Date__c = :driveDate];
-                if(!operationDriveLimitOverride.isEmpty()) {
-                    for(sked_Operation_Drive_Limit_Override__c odl : operationDriveLimitOverride) {
-                        map_operationDriveLimit_odlQuantity.put(odl.sked_Operation_Drive_Limit__c, odl.sked_Quantity__c);
+            if(isFixedSiteDrive(drive)) {
+                allShiftsPassedChecks = true; //Shift level validation does not apply for Fixed site Drives
+            } else {
+                totalNoOfStaffRequired = staffJobCount;
+                
+                // Check for existing Job Allocation for Current Drive Shift
+                if(!driveJobIds.isEmpty()) {
+                    jobAllocationList = Database.Query(createJobAllocationsQuery(driveJobIds)); 
+                }
+
+                // Check Applicable Shift ODL records to get shift limits
+                map_operationDriveLimitId_operationDriveLimit = getApplicableODLsForDriveShift(drive, driveShift);
+                ResourceModel resourceModel = getResourceModelPopulatedFromODLRecords(map_operationDriveLimitId_operationDriveLimit.values());
+                resourceModel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModel);
+                if(driveShiftCount == 0) calculatedResourceModel = resourceModel; //Get the limits from 1st shift only
+
+                staffConstraintList = getStaffingConstraints(drive, driveShift);
+                Decimal remainingStaffShiftLevel = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
+                remainingStaff = remainingStaff + remainingStaffShiftLevel;//Keep the total remaining staff updated at instance level variable, this is used inside allocateResourceToJob
+                
+                Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
+                Boolean passingSubRuleTwo = remainingStaffShiftLevel >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
+                Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || drive.sked_Total_Equipment_Requested__c == 0 || drive.sked_Total_Equipment_Requested__c <= resourceModel.remainingNoOf2RBC);    
+                Boolean hasSufficientResourceBut2rbcLimitExceeded = !passingRuleOne && !passingRuleTwo;
+                
+                // Check if staffing constraint has sufficient resource 
+                if(!passingRuleOne && !passingSubRuleTwo) {
+                    map_driveId_noAllocationReason.put(drive.Id, 
+                        'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaffShiftLevel);
+                    allShiftsPassedChecks =false;
+                    break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
+                }
+
+                // Check if staffing constraint has sufficient resource but 2RBC limit is reached for that day
+                if(hasSufficientResourceBut2rbcLimitExceeded) {
+                    map_driveId_noAllocationReason.put(drive.Id, 
+                        '2RBC Limit Exceeded\n\nTotal Limit: '+resourceModel.total2RBCLimit+'\nRemaining Limit: '+resourceModel.remainingNoOf2RBC+'\nCurrent number of 2RBC: '+drive.sked_Total_Equipment_Requested__c);
+                    allShiftsPassedChecks =false;
+                    break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
+                }
+
+                //check if any of the shift level limits exceeding per day drive level limit
+                if(!passingRuleOne && resourceModelDriveLevel.totalDOTLimit != null && resourceModel.totalDOTLimit != null && resourceModelDriveLevel.totalDOTLimit < resourceModel.totalDOTLimit
+                || (resourceModelDriveLevel.totalCDLLimit != null && resourceModel.totalCDLLimit!= null && resourceModelDriveLevel.totalCDLLimit<resourceModel.totalCDLLimit)
+                || (resourceModelDriveLevel.total2RBCLimit != null && resourceModel.total2RBCLimit != null && resourceModelDriveLevel.total2RBCLimit<resourceModel.total2RBCLimit)) {
+                        map_driveId_noAllocationReason.put(drive.Id, 
+                        'Shift level Limits exceeding Per Day Limits');
+                        allShiftsPassedChecks =false;
+                        break; //break out of the drive shift loop, no need to process any further drive shifts on this drive
+                } 
+                driveShiftCount++;
+            }
+        } //end of drive shifts loop
+        return allShiftsPassedChecks;
+    }
+
+
+    public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
+        Savepoint sp = Database.setSavepoint(); //HRP-13347
+        try{
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; 
+            
+            for(sked_Drive__c drive : driveList) {
+                driveSite = drive.sked_Drive_Site__c;
+                driveDate = drive.sked_Drive_Date__c;
+                driveCO = drive.sked_Collection_Operation__c;
+                driveAccount = drive.sked_Account__c;
+                String dayOfWeek = drive.sked_Day_of_Week__c;
+                String typeOfDrive = drive.sked_Type_of_Drive__c;
+                List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(drive)); 
+
+                Boolean isMobileWithTimeBlockViolation = !isFixedSiteDrive(drive)  && drive.sked_Pending_Action_Reason_Code__c!=null 
+                                                         && drive.sked_Pending_Action_Reason_Code__c.contains('Time Block') ;
+                if(isMobileWithTimeBlockViolation == true) {
+                    map_driveId_noAllocationReason.put(drive.Id, 'Time Block Violation:'+drive.sked_Pending_Action_Reason_Code__c);
+                    continue; //skip processing drives with Time Block Violation
+                }
+
+                // quering for pre-existing drives
+                List<sked_Drive__c> preExistingDriveList = [SELECT Id,sked_Status__c,sked_Collection_Operation__c,sked_Type_of_Drive__c,
+                                                                (SELECT Id,sked__Type__c,sked_Drive_Shift__c,sked__Quantity__c,sked_Asset_Type__c, sked_Volunteer_Role__c, sked_Drive__c, sked_Drive__r.sked_Type_of_Drive__c FROM sked_Jobs__r) //HRP-11793
+                                                                FROM sked_Drive__c Where sked_Status__c !=: Constants.DRIVE_STATUS_DRAFT
+                                                                AND sked_Status__c !=: Constants.DRIVE_STATUS_CANCELLED 
+                                                                AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
+                                                                AND sked_Drive_Date__c =: drive.sked_Drive_Date__c
+                                                                AND ID != :drive.Id
+                                                            ];
+
+                Decimal noOfStaffsAllocated = 0;
+                Decimal noOfRBCAllocated = 0; 
+                Decimal noOfCDLAllocated = 0; 
+                Decimal noOfDOTAllocated = 0; 
+                Set<Id> storeJobIdOfVehicle = new Set<Id>(); // HRP-10212 and HRP 10213
+                system.debug('Pre-Existing Drive List Size:: '+preExistingDriveList.size());
+                if (!preExistingDriveList.isEmpty()) {
+                    for(sked_Drive__c preExistingDrive : preExistingDriveList) {
+                        if(preExistingDrive.sked_Jobs__r != NULL || !preExistingDrive.sked_Jobs__r.isEmpty()) {
+                            for(sked__Job__c job : preExistingDrive.sked_Jobs__r) {
+                                if(job.sked_Asset_Type__c != Constants.JOB_TYPE_VEHICLE && job.sked_Asset_Type__c != Constants.JOB_TYPE_EQUIPMENT && job.sked_Volunteer_Role__c == NULL && job.sked_Drive__r.sked_Type_of_Drive__c == typeOfDrive) { //HRP-11793
+                                    noOfStaffsAllocated += job.sked__Quantity__c;
+                                }
+                                if (job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {
+                                    noOfRBCAllocated += job.sked__Quantity__c;
+                                }
+                                if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) { // HRP-10212 and HRP 10213
+                                    storeJobIdOfVehicle.add(job.Id); 
+                                }
+                            }
+                        }  
                     }
                 }
-
-                for(sked_Operation_Drive_Limit__c iterateOperationDriveLimit : map_operationDriveLimitId_operationDriveLimit.values()) {
-                    // check for DOT Limit
-                    if(iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_DOT_LIMIT) {
-                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlQuantity.containsKey(iterateOperationDriveLimit.Id)) {
-                            resourceModel.totalDOTLimit = map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id) == NULL ? 
-                                                            NULL : 
-                                                            map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id);
-                        } else {
-                            if(iterateOperationDriveLimit.sked_Days_of_Week__c != NULL && (iterateOperationDriveLimit.sked_Days_of_Week__c.contains(dayOfWeek))) {
-                                resourceModel.totalDOTLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
-                                                                NULL : 
-                                                                (resourceModel.totalDOTLimit == NULL ? iterateOperationDriveLimit.sked_Quantity__c : 
-                                                                resourceModel.totalDOTLimit + iterateOperationDriveLimit.sked_Quantity__c);
+                if(!storeJobIdOfVehicle.isEmpty()) { // HRP-10212 start
+                    List <sked__Job_Allocation__c> preExistingJobAllocationForVehicles = Database.Query(createJobAllocationsQuery(storeJobIdOfVehicle));
+                    if(!preExistingJobAllocationForVehicles.isEmpty()) {
+                        for(sked__Job_Allocation__c jobAllocation : preExistingJobAllocationForVehicles) {
+                            if(jobAllocation.sked__Resource__r.sked_DOT__c == true) {
+                                noOfDOTAllocated += 1;
                             }
-                        }
-                        if(resourceModel.totalDOTLimit != NULL) {
-                            resourceModel.isDOTLimitPresent = TRUE;
-                        }
-                    }   
-
-                    // Check for CDL Limit
-                    else if (iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_CDL_LIMIT) {
-                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlQuantity.containsKey(iterateOperationDriveLimit.Id)) {
-                            resourceModel.totalCDLLimit = map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id) == NULL ? NULL : map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id);
-                        } else {
-                            if(iterateOperationDriveLimit.sked_Days_of_Week__c != NULL && (iterateOperationDriveLimit.sked_Days_of_Week__c.contains(dayOfWeek))) {
-                                resourceModel.totalCDLLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
-                                                                NULL : 
-                                                                (resourceModel.totalCDLLimit == NULL ?  iterateOperationDriveLimit.sked_Quantity__c : 
-                                                                resourceModel.totalCDLLimit + iterateOperationDriveLimit.sked_Quantity__c);
+                            if(jobAllocation.sked__Resource__r.sked_CDL__c == true) {
+                                noOfCDLAllocated += 1;
                             }
-                        }
-                        if(resourceModel.totalCDLLimit != NULL) {
-                            resourceModel.isCDLLimitPresent = TRUE; 
-                        }
-                    } 
-
-                    //Check for 2RBC Limit
-                    else if(iterateOperationDriveLimit.sked_Type__c == Constants.OPERATION_DRIVE_2RBC_LIMIT) {
-                        if((!operationDriveLimitOverride.isEmpty()) && map_operationDriveLimit_odlQuantity.containsKey(iterateOperationDriveLimit.Id)) {
-                            resourceModel.total2RBCLimit = map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id) == NULL ? NULL : map_operationDriveLimit_odlQuantity.get(iterateOperationDriveLimit.Id);
-                        } else {
-                            if(iterateOperationDriveLimit.sked_Days_of_Week__c != NULL && (iterateOperationDriveLimit.sked_Days_of_Week__c.contains(dayOfWeek))) {
-                                resourceModel.total2RBCLimit = iterateOperationDriveLimit.sked_Quantity__c == NULL ? 
-                                                                NULL : 
-                                                                (resourceModel.total2RBCLimit == NULL ? iterateOperationDriveLimit.sked_Quantity__c :
-                                                                resourceModel.total2RBCLimit + iterateOperationDriveLimit.sked_Quantity__c);     
-                            }
-                        }
-                        if(resourceModel.total2RBCLimit != NULL) {
-                            resourceModel.is2RBCLimitPresent = TRUE; 
-                        } 
-                    }
-                }
-            }
-            
-            // quering for pre-existing drives
-            List<sked_Drive__c> preExistingDriveList = [SELECT Id,sked_Status__c,sked_Collection_Operation__c,sked_Type_of_Drive__c,
-                                                            (SELECT Id,sked__Type__c,sked_Drive_Shift__c,sked__Quantity__c,sked_Asset_Type__c, sked_Volunteer_Role__c, sked_Drive__c, sked_Drive__r.sked_Type_of_Drive__c FROM sked_Jobs__r) //HRP-11793
-                                                            FROM sked_Drive__c Where sked_Status__c !=: Constants.DRIVE_STATUS_DRAFT
-                                                            AND sked_Status__c !=: Constants.DRIVE_STATUS_CANCELLED 
-                                                            AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
-                                                            AND sked_Drive_Date__c =: drive.sked_Drive_Date__c
-                                                            AND ID != :drive.Id
-                                                        ];
-
-            Decimal noOfStaffsAllocated = 0;
-            Decimal noOfRBCAllocated = 0; 
-            Decimal noOfCDLAllocated = 0; 
-            Decimal noOfDOTAllocated = 0; 
-            Set<Id> storeJobIdOfVehicle = new Set<Id>(); // HRP-10212 and HRP 10213
-            system.debug('Pre-Existing Drive List Size:: '+preExistingDriveList.size());
-            if (!preExistingDriveList.isEmpty()) {
-                for(sked_Drive__c drive : preExistingDriveList) {
-                    if(drive.sked_Jobs__r != NULL || !drive.sked_Jobs__r.isEmpty()) {
-                        for(sked__Job__c job : drive.sked_Jobs__r) {
-                            if(job.sked_Asset_Type__c != Constants.JOB_TYPE_VEHICLE && job.sked_Asset_Type__c != Constants.JOB_TYPE_EQUIPMENT && job.sked_Volunteer_Role__c == NULL && job.sked_Drive__r.sked_Type_of_Drive__c == typeOfDrive) { //HRP-11793
-                                noOfStaffsAllocated += job.sked__Quantity__c;
-                            }
-                            if (job.sked__Type__c == Constants.PROCEDURE_TYPE_2RBC) {
-                                noOfRBCAllocated += job.sked__Quantity__c;
-                            }
-                            if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) { // HRP-10212 and HRP 10213
-                                storeJobIdOfVehicle.add(job.Id); 
-                            }
-                        }
-                    }  
-                }
-            }
-            if(!storeJobIdOfVehicle.isEmpty()) { // HRP-10212 start
-                List <sked__Job_Allocation__c> preExistingJobAllocationForVehicles = Database.Query(createJobAllocationsQuery(storeJobIdOfVehicle));
-                if(!preExistingJobAllocationForVehicles.isEmpty()) {
-                    for(sked__Job_Allocation__c jobAllocation : preExistingJobAllocationForVehicles) {
-                        if(jobAllocation.sked__Resource__r.sked_DOT__c == true) {
-                            noOfDOTAllocated += jobAllocation.sked__Job__r.sked__Quantity__c;
-                        }
-                        if(jobAllocation.sked__Resource__r.sked_CDL__c == true) {
-                            noOfCDLAllocated += jobAllocation.sked__Job__r.sked__Quantity__c;
                         }
                     }
                 }
-            }
-            if(!map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                resourceModel.remainingNoOfDOT = resourceModel.totalDOTLimit == NULL ? NULL : resourceModel.totalDOTLimit - noOfDOTAllocated;
-                resourceModel.remainingNoOfCDL = resourceModel.totalCDLLimit == NULL ? NULL : resourceModel.totalCDLLimit - noOfCDLAllocated;
-                resourceModel.remainingNoOf2RBC = resourceModel.total2RBCLimit == NULL ? NULL : resourceModel.total2RBCLimit - noOfRBCAllocated;
-            } 
-
-            /* Logic for HRP-10523 -  Calculating remaining staff by subtracting noOfStaffAllocated from Available staffs (New Field Added) instead of total staff constraint field
-                * This field will dynamically capture the no. of available staffs once they move to different col opp
-            */
-
-            // Check for Staffing Constraint
-            List<sked_Staffing_Constraint__c> staffConstraintList = [SELECT Id, sked_Collection_Operation__c, sked_Date_of_Constraint__c, 
-                                                                    sked_Total_Staff_Constraints__c,sked_Num_Available_Staff__c 
-                                                                    FROM sked_Staffing_Constraint__c 
-                                                                    WHERE sked_Drive_Type__c =: drive.sked_Type_of_Drive__c 
-                                                                    AND sked_Collection_Operation__c =: drive.sked_Collection_Operation__c 
-                                                                    AND sked_Date_of_Constraint__c =: drive.sked_Drive_Date__c LIMIT 1];
-            remainingStaff = staffConstraintList != NULL && staffConstraintList.size() > 0 && staffConstraintList[0].sked_Total_Staff_Constraints__c != NULL ? (staffConstraintList[0].sked_Total_Staff_Constraints__c - noOfStaffsAllocated) : 0; // HRP-10523 // HRP-11224
-            Boolean passingRuleOne = isFixedSiteDrive(drive) && jobAllocationList.isEmpty();
-            Boolean passingSubRuleTwo = remainingStaff >= totalNoOfStaffRequired && jobAllocationList.isEmpty();
-            Boolean passingRuleTwo = passingSubRuleTwo && (map_operationDriveLimitId_operationDriveLimit.isEmpty() || resourceModel.total2RBCLimit == NULL || xrbcJobCount == 0 || xrbcJobCount <= resourceModel.remainingNoOf2RBC);    
             
-            if(!passingRuleOne && !passingSubRuleTwo) {
-                map_driveId_noAllocationReason.put(drive.Id, 
-                    'Insufficient Resource\n\nStaff Required: '+totalNoOfStaffRequired+'\nStaff Available: '+remainingStaff);
-            } else if(passingRuleOne || passingRuleTwo) {
-                evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModel);
+                ResourceModel resourceModelDriveLevel = getResourceModelPopulatedFromODLRecords(getApplicableODLsForEntireDriveDay(drive));
+                resourceModelDriveLevel = getCalculatedLimits(noOfRBCAllocated, noOfCDLAllocated, noOfDOTAllocated, resourceModelDriveLevel);
+				//Shift level validation does not apply for Fixed site Drives
+                Boolean allShiftsPassedChecks = processDriveAtShiftLevel(drive, noOfStaffsAllocated,  noOfRBCAllocated, 
+                                                noOfCDLAllocated, noOfDOTAllocated,resourceModelDriveLevel);
+                System.debug('All shifts passed checks: ' + allShiftsPassedChecks);
+                if(allShiftsPassedChecks == false) {
+                    continue; //continue to next drive
+                }
+
+                resourceModelDriveLevel = calculatedResourceModel;
+                evaluateResourceEligibilityAndAllocateResources(resList, drive, resourceModelDriveLevel);
             }
             sp = Database.setSavepoint(); //HRP-13347
     	} catch(Exception ex) {
@@ -402,7 +608,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         String queryString = 'SELECT Id, sked_Staff_Capacity__c, Excess_Staff_Capacity__c, Average_Staff_Capacity__c, Name,sked_Status__c, sked_Drive_Shift_Count__c, sked_Day_of_Week__c, sked_2RBC_Projected_Procedures__c, sked_Operation_Type__c,' +
                             ' sked_Total_Products_Projected__c, sked_Maximum_Lunch_Break_Duration__c ,sked_Drive_Site__c,sked_Collection_Operation__c, sked_Total_Equipment_Requested__c, sked_Total_Vehicle_Requested__c,'+
                             ' sked_End_Time__c, sked_Account__c,sked_Collection_Operation__r.sked_Lunch_Break_Before_Draw_Hours__c,sked_Timezone__c,sked_Start_Time__c, sked_Projected_Registered_Donors__c,sked_Drive_Date__c,'+
-                            ' sked_Opportunity__c, sked_Opportunity__r.Source__c, sked_Type_of_Drive__c ,sked_Drive_Site__r.sked_Physical_Location_Type__c, (SELECT Id,sked_Equipment_Subtype__c,'+
+                            ' sked_Opportunity__c, sked_Opportunity__r.Source__c, sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r.Drive_Date__c, sked_Type_of_Drive__c ,sked_Drive_Site__r.sked_Physical_Location_Type__c,sked_Pending_Action_Reason_Code__c, (SELECT Id,sked_Equipment_Subtype__c,'+
                             ' sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,'+
                             ' sked_Drive_Shift__c,sked__Quantity__c,sked_Resource_Role__c,sked_Asset_Type__c,sked_APT_Quantity__c, sked_Volunteer_Role__c, sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked_Jobs__r) FROM sked_Drive__c'+
                             ' WHERE sked_Status__c != \'Cancel\'';
@@ -425,7 +631,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
         //HRP-12706 --> Ends Here
-
         return queryString; //HRP-11793
     }
 
@@ -493,8 +698,13 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     if(drive.sked_Total_Equipment_Requested__c > 0) isFlaggingNeeded = true;
                     else fsDrivesWithNoResourceRequestedCount++;
                 } else {
-                    if(drive.sked_Total_Vehicle_Requested__c > 0 || drive.sked_Total_Equipment_Requested__c > 0) isFlaggingNeeded = true;
-                    else mobileDrivesWithNoResourceRequestedCount++;
+                    if(drive.sked_Total_Vehicle_Requested__c > 0 || drive.sked_Total_Equipment_Requested__c > 0) {
+                        isFlaggingNeeded = true;
+                    }else if(drive.sked_Pending_Action_Reason_Code__c!=null && drive.sked_Pending_Action_Reason_Code__c.contains('Time Block')) { 
+                        isFlaggingNeeded = true;
+                    }else {
+                        mobileDrivesWithNoResourceRequestedCount++;
+                    }
                 }
 
                 if(isFlaggingNeeded) {
@@ -528,7 +738,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             //Custom exception to cover catch blocks 
             if(Test.isRunningTest() && BSF_Utilities.IS_SET_TO_GENERATE_EXCEPTION) {
                 throw new CustomDriveResourceAllocationBatchException('This is custom exception during test class run');
-            } 
+            }
         } catch(Exception ex) {
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
                 this.driveDateToEval, 
@@ -633,55 +843,55 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
     //2. Check for Resource Override - Not in Drive CO
     private static List<sked__Resource__c> filterResourceNotBelongsToDriveCO(List<sked__Resource__c> resourceList, sked_Drive__c drive){
-        List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
             if(!resource.sked__Resource_Overrides__r.isEmpty()) {
                 for(sked__Resource_Override__c resOverride : resource.sked__Resource_Overrides__r) {
                     if(resOverride.sked_Collection_Operation__c == driveCO) {
-                        reourceListToReturn.add(resource);
+                        resourceListToReturn.add(resource);
                     }
                 }
             } else {
-                reourceListToReturn.add(resource);
+                resourceListToReturn.add(resource);
             }  
         }  
         
-        return reourceListToReturn;
+        return resourceListToReturn;
     }
 
     //3. Check Account Blacklist     
     private static List<sked__Resource__c> filterAccountBlacklist(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
-        List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
             if(resource.sked__Account_Resource_Scores__r.isEmpty()) {
-                reourceListToReturn.add(resource);
+                resourceListToReturn.add(resource);
             }
         }
-        return reourceListToReturn;
+        return resourceListToReturn;
     }
     
     //4. Check Location Blacklist     
     private static List<sked__Resource__c> filterLocationBlacklist(List<sked__Resource__c> resourceList, sked_Drive__c drive) {
-        List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
             if(resource.sked__Location_Resource_Scores__r.isEmpty()) {
-                reourceListToReturn.add(resource);
+                resourceListToReturn.add(resource);
             }
         }
-        return reourceListToReturn;
+        return resourceListToReturn;
     }
     
     //5. Check Resource Dedicated to Site
     private static List<sked__Resource__c> filterResourceDedicatedToSite(List<sked__Resource__c> resourceList, Map<Id,sked__Resource__c> successfullyEvaluatedResourceMap) {
-        List<sked__Resource__c> reourceListToReturn = new List<sked__Resource__c>();
+        List<sked__Resource__c> resourceListToReturn = new List<sked__Resource__c>();
         for(sked__Resource__c resource : resourceList) {
             if(resource.sked_Dedicated_to_Site__c != NULL && resource.sked_Dedicated_to_Site__c == driveSite) {
                 successfullyEvaluatedResourceMap.put(resource.Id, resource);
             } else {
-                reourceListToReturn.add(resource);
+                resourceListToReturn.add(resource);
             }
         }
-        return reourceListToReturn;
+        return resourceListToReturn;
     }
     
     //6. Check Resource Availability in Job Collection Operation
@@ -776,7 +986,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             vehicleTypeResource.addAll(vehicleTypeResourceForDOT);
         }
         vehicleTypeResource.addAll(vehicleTypeResourceForRegVechicle); // HRP-10212 end
-
         JobAllocations jobAllocation = new JobAllocations();
         jobAllocation.equipmentAllocations = selectionForEquipments(drive, equipmentTypeJob, equipmentTypeResource, resourceVsResourceTagMap, jobVsJobTagMap);
         jobAllocation.vehicleAllocations = selectionForVehicles(drive, vehicleTypeJob, vehicleTypeResource, resourceVsResourceTagMap, jobVsJobTagMap, map_allVehicleResourceId_presDonorCapacity, resourceModel);
@@ -830,21 +1039,22 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Map<Id,Set<Id>> map_jobId_ResourceIds = new Map<Id,Set<Id>>();
         Map<Id,Set<Id>> jobVsResourceAllocations = new Map<Id,Set<Id>>();
         Set<Id> assignedResourceId = new  Set<Id>();
+        Set<Id> matchingTags;
         for(sked__Job__c vehicleJob : vehicleTypeJob) { // HRP-10212 start
             if(!vehicleTypeResourceForCDL.isEmpty()) {
                 for(sked__Resource__c vehicleResource : vehicleTypeResourceForCDL) {
                     if(!resourceVsResourceTagMap.get(vehicleResource.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.Id)) {
-                        Integer count = 0;
+                        matchingTags = new Set<Id>();
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vehicleResource.Id)) {
                             if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
                                 for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
                                     if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
-                                        count++;
+                                        matchingTags.add(resTag.sked__Tag__c);
                                     }
                                 }
                             }  
                         }
-                        if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
+                        if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()) {
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.Id});
                             }
@@ -865,17 +1075,17 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             if(!vehicleTypeResourceForDOT.isEmpty()) {
                 for(sked__Resource__c vRes : vehicleTypeResourceForDOT) {
                     if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id)) {
-                        Integer count = 0;
+                        matchingTags = new Set<Id>();
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vRes.Id)){
                             if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
                                 for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
                                     if(jobTag.sked__Tag__c == resTag.sked__Tag__c){
-                                        count++;
+                                        matchingTags.add(resTag.sked__Tag__c);
                                     }
                                 }
                             }  
                         } 
-                        if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
+                        if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()){
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
                             }
@@ -895,17 +1105,17 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
             for(sked__Resource__c vRes : vehicleTypeResourceForRegVechicle) { // HRP-10212 end
                 if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id) ){
-                    Integer count = 0;
-                    for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vRes.Id)){
+                    matchingTags = new Set<Id>();
+                    for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vRes.Id)) {
                         if(resTag.sked_Start_Date__c  <= drive.sked_Drive_Date__c && (resTag.sked_Expiry_Date__c == null || (resTag.sked_Expiry_Date__c != null || drive.sked_Drive_Date__c <= resTag.sked_Expiry_Date__c))){
-                            for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)){
-                                if(jobTag.sked__Tag__c == resTag.sked__Tag__c){
-                                    count++;
+                            for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
+                                if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
+                                    matchingTags.add(resTag.sked__Tag__c);
                                 }
                             }
                         }  
                     }
-                    if(count == jobVsJobTagMap.get(vehicleJob.Id).size()){
+                    if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()) {
                         if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                             map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
                         }
@@ -928,28 +1138,30 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Decimal pdC = 0;
             Set<Id> resourceIds = new Set<Id>();
             for (Id resId : map_jobId_ResourceIds.get(jobId)) { // HRP-10212 and HRP-10213 start
-                if(resourceIdVsCapacity.get(resId) != NULL) {
-                    if(map_operationDriveLimitId_operationDriveLimit.isEmpty()) {
-                        pdC += resourceIdVsCapacity.get(resId);
-                        resourceIds.add(resId);
-                    } else if(resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_DOT__c == True && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
+                if(!resourceModel.isCDLLimitPresent && !resourceModel.isDOTLimitPresent) {
+                    pdC += resourceIdVsCapacity.get(resId);
+                    resourceIds.add(resId);
+                } else if(resourceIdVsResourceDetails.containsKey(resId)) {
+                    if(resourceIdVsResourceDetails.get(resId).sked_DOT__c && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
                         resourceModel.remainingNoOfDOT = resourceModel.remainingNoOfDOT != NULL ? resourceModel.remainingNoOfDOT - 1 : NULL;
                         pdC += resourceIdVsCapacity.containsKey(resId) && resourceIdVsCapacity.get(resId) != NULL ? resourceIdVsCapacity.get(resId) : 0;
                         resourceIds.add(resId);
-                    } else if(resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_CDL__c == True && (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == NULL)) {
+                    } else if(resourceIdVsResourceDetails.get(resId).sked_CDL__c && (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == NULL)) {
                         resourceModel.remainingNoOfCDL = resourceModel.remainingNoOfCDL != NULL ? resourceModel.remainingNoOfCDL - 1 : NULL;
                         pdC += resourceIdVsCapacity.containsKey(resId) && resourceIdVsCapacity.get(resId) != NULL ? resourceIdVsCapacity.get(resId) : 0;
                         resourceIds.add(resId);
-                    } else if((vehicleTypeResourceForCDL.isEmpty() || resourceModel.remainingNoOfCDL < = 0) && (vehicleTypeResourceForDOT.isEmpty() || resourceModel.remainingNoOfDOT <= 0) && resourceIdVsResourceDetails.containsKey(resId) && resourceIdVsResourceDetails.get(resId).sked_DOT__c != True && resourceIdVsResourceDetails.get(resId).sked_CDL__c != True) { // HRP-11303
+                    } // HRP-10212 and HRP-10213 end
+                    else if(!resourceIdVsResourceDetails.get(resId).sked_DOT__c && !resourceIdVsResourceDetails.get(resId).sked_CDL__c) { // HRP-14179
                         pdC += resourceIdVsCapacity.get(resId);
                         resourceIds.add(resId);
                     }
-                    // HRP-10212 and HRP-10213 end
-                    if (pdC >= drive.sked_Projected_Registered_Donors__c) {
-                        break;
-                    }
+                }
+                
+                if (pdC >= drive.sked_Projected_Registered_Donors__c) {
+                    break;
                 }
             }
+
             if(pdC >= drive.sked_Projected_Registered_Donors__c) {
                 jobVsResourceAllocations.put(jobId, resourceIds);
                 maxNoOfVehicles = resourceIds.size() > maxNoOfVehicles ? resourceIds.size() : maxNoOfVehicles;
@@ -961,7 +1173,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
     //Job Allocation
     private  void allocateResourceToJob(JobAllocations jobAllocations, sked_Drive__c drive) {
-        String prevDriveStatus = drive.sked_Status__c;
         Integer noOfVehicleAllocations = jobAllocations.vehicleAllocations.keySet().size();
         Integer noOfEquipmentAllocations = jobAllocations.equipmentAllocations.keySet().size();
         List<sked__Job_Allocation__c> jobAlocList = new  List<sked__Job_Allocation__c>();
@@ -974,7 +1185,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         jobAloc.sked__Job__c = jobId;
                         jobAloc.sked__Resource__c = resId; 
                         jobAlocList.add(jobAloc);
-                        processedResource.add(resId);
                     }
                 }            
             }
@@ -986,7 +1196,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     jobAloc.sked__Job__c = jobId;
                     jobAloc.sked__Resource__c = resId;
                     jobAlocList.add(jobAloc);
-                    processedResource.add(resId);
                 }
           }
         }
@@ -1089,7 +1298,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                             driveShiftSingle.sked_Max_Donor_Capacity__c = map_driveShiftId_driveShiftStaffCapacity.get(driveShiftSingle.Id); //HRP-11634
                         }
                         drive.sked_Drive_Productivity_Planned__c = driveProductivity; //HRP-11634
-                        if(map_driveShiftId_driveShift != null){
+                        if(map_driveShiftId_driveShift != null) {
                             update map_driveShiftId_driveShift.values();
                         } //HRP-11207 end
                     }
@@ -1316,7 +1525,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     
     //getDriveShifts for the Drive
     @testVisible private static List<sked_Drive_Shift__c> getDriveShifts(Id driveId) {
-        return [Select Id, sked_Lunch_Break_Before_Draw_Hours__c, sked_Max_Donor_Capacity__c, Name, sked_Vehicles_Needed__c, sked_Lunch_Break__c, sked_2RBC_Projected_Procedures__c, sked_WB_Projected_Procedures__c, sked_Total_Products_Projected__c, sked_Total_Procedures_Projected__c, sked_Start_Time__c,sked_Drive_Date__c, sked_End_Time__c,sked_Timezone__c, sked_Staff_Setup__c, (SELECT Id,sked_VPHH_Quantity__c, sked_Site_Logistics_Back__c,sked_Site_Logistics_To__c,sked_Redcross_Volunteer_Quantity__c, sked_Sponsor_Volunteer_Quantity__c, sked__Location__c, sked_Drive__c,sked_Procedure_Type__c,sked_Drive_Shift__c,sked_Equipment_Subtype__c,sked_APT_Quantity__c,sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,sked__Quantity__c, sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Volunteer_Role__c, sked__Duration__c, sked__Finish__c, sked__Start__c FROM sked_Jobs__r) From sked_Drive_Shift__c Where sked_Drive__c =: driveId]; //HRP-11793
+        return [Select Id, sked_Lunch_Break_Before_Draw_Hours__c, sked_Max_Donor_Capacity__c, Name, sked_Vehicles_Needed__c, sked_Lunch_Break__c, sked_2RBC_Projected_Procedures__c, sked_WB_Projected_Procedures__c, sked_Total_Products_Projected__c, sked_Total_Procedures_Projected__c, sked_Start_Time__c,sked_Drive_Date__c, sked_End_Time__c,sked_Timezone__c, sked_Staff_Setup__c, sked_Time_Block__c, sked_Contention__c, (SELECT Id,sked_VPHH_Quantity__c, sked_Site_Logistics_Back__c,sked_Site_Logistics_To__c,sked_Redcross_Volunteer_Quantity__c, sked_Sponsor_Volunteer_Quantity__c, sked__Location__c, sked_Drive__c,sked_Procedure_Type__c,sked_Drive_Shift__c,sked_Equipment_Subtype__c,sked_APT_Quantity__c,sked__Type__c,sked_Travel_Time2__c,sked_Travel_Time__c,sked_Lead_Time__c,sked_Wrap_up_Time__c,sked_Setup_Time__c,sked_Breakdown_Time__c,sked__Quantity__c, sked_Resource_Role__c, sked_Dual_Role__c, sked_Asset_Type__c, sked_Volunteer_Role__c, sked__Duration__c, sked__Finish__c, sked__Start__c FROM sked_Jobs__r) From sked_Drive_Shift__c Where sked_Drive__c =: driveId]; //HRP-11793
     }
 
     //getLunchBreakSettings for the Drive
@@ -1360,6 +1569,25 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 RecordType.Name
                 FROM sked_Staffing_Decision_Matrix__c
                 WHERE Id IN :staffingDecisionMatrixIds AND RecordType.Name =: drive.sked_Type_of_Drive__c];
+    }
+
+    @testVisible
+    private static ResourceModel getCalculatedLimits(
+        Decimal noOfRBCAllocated, 
+        Decimal noOfCDLAllocated, 
+        Decimal noOfDOTAllocated,
+        ResourceModel resourceModelDriveLevel
+    ) {
+        if(resourceModelDriveLevel.isCDLLimitPresent) {
+            resourceModelDriveLevel.remainingNoOfCDL = resourceModelDriveLevel.totalCDLLimit == NULL ? NULL : resourceModelDriveLevel.totalCDLLimit - noOfCDLAllocated;
+        }
+        if(resourceModelDriveLevel.isDOTLimitPresent) {
+            resourceModelDriveLevel.remainingNoOfDOT = resourceModelDriveLevel.totalDOTLimit == NULL ? NULL : resourceModelDriveLevel.totalDOTLimit - noOfDOTAllocated;
+        }
+        if(resourceModelDriveLevel.is2RBCLimitPresent) {
+            resourceModelDriveLevel.remainingNoOf2RBC = resourceModelDriveLevel.total2RBCLimit == NULL ? NULL : resourceModelDriveLevel.total2RBCLimit - noOfRBCAllocated;
+        }
+        return resourceModelDriveLevel;
     }
 
     public class JobAllocations{

@@ -373,6 +373,7 @@
         <fields>sked_Date_of_Constraint__c</fields>
         <fields>sked_Drive_Type__c</fields>
         <fields>sked_Total_Staff_Constraints__c</fields>
+        <fields>sked_Time_Block__c</fields>
         <relatedList>sked_Staffing_Constraint__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -393,6 +394,7 @@
         <fields>sked_Quantity__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
+        <fields>Time_Block__c</fields>
         <relatedList>sked_Operation_Drive_Limit__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -404,6 +406,16 @@
         <fields>sked_Procedure_Type__c</fields>
         <fields>sked_Total_Products__c</fields>
         <relatedList>sked_Product_Goal__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Time_Block__c.NAME</fields>
+        <fields>Time_Block__c.Days_of_Week__c</fields>
+        <fields>Time_Block__c.Start_Time__c</fields>
+        <fields>Time_Block__c.End_Time__c</fields>
+        <fields>Effective_Start_Date__c</fields>
+        <fields>Effective_End_Date__c</fields>
+        <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

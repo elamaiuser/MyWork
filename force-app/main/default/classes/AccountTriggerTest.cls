@@ -299,11 +299,16 @@
     }
     
      @isTest static void testRestrictAccountDeletionForOtherUsers()
-     {        
-        recordTypeMap = recordTypeMap( 'Account' );       
+     {    
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('UserTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassDeleteTriggers = true;
+         
+        recordTypeMap = recordTypeMap('Account');       
         Id recTypeId = recordTypeMap.get(mobileAccRecType);
         
-         Account accobj;
+        Account accobj;
         accobj = new Account();
         accobj.RecordTypeId = recTypeId;
         accobj.Name = 'TEst';
@@ -323,20 +328,19 @@
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
             LocaleSidKey = 'en_US',
-            isActive=true
-            
+            isActive=true  
         );
          
-         insert AdminUser;
-         System.runAs( AdminUser ){
-          
+        insert AdminUser;
+        TriggerHandler.clearBypass('AccountTriggerHandler');
+        System.runAs( AdminUser ) {
             Test.startTest();
-        try {
-            delete accobj;
-        } catch (DmlException e) {
-            Assert.isTrue(e.getMessage().contains(System.Label.CannotDeleteRecordExceptSystemAdmin), 'Error message should match expected');
-        }
-        Test.stopTest();
+            try {
+                delete accobj;
+            } catch (DmlException e) {
+                Assert.isTrue(e.getMessage().contains(System.Label.CannotDeleteRecordExceptSystemAdmin), 'Error message should match expected');
+            }
+            Test.stopTest();
         }       
     }
        
@@ -638,6 +642,9 @@
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         Account testMobileAccount1 = (Account)mapTestData.get('MOBILE_ACCOUNT');
@@ -735,6 +742,9 @@
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         Account testMobileAccount1 = (Account)mapTestData.get('MOBILE_ACCOUNT');

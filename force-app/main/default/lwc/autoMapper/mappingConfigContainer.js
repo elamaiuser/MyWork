@@ -26,7 +26,7 @@ import {
     SiteBridgeApiMappingConfigFactory, SiteCollectionOperationMappingConfigFactory, SiteFeedbackMappingConfigFactory, SlotMappingConfigFactory, 
     StagingLocationMappingConfigFactory, StaffingConstraintMappingConfigFactory, StaffingDecisionMatrixMappingConfigFactory, TagMappingConfigFactory, TerritoryCollectionOperationMappingConfigFactory,
     TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
-    CollectionOperationOptimizerSettingConfigFactory
+    CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory
 } from './index.js';
 
 class mappingConfigContainer {
@@ -63,6 +63,7 @@ class mappingConfigContainer {
             'sked__Client_Availability__cMappingConfigFactory' : ClientAvailabilityMappingConfigFactory,
             'sked_Collection_Op_Staging_Location__cMappingConfigFactory' : CollectionOpStagingLocationMappingConfigFactory,
             'sked_Collection_Operation_SDM__cMappingConfigFactory' : CollectionOperationSdmMappingConfigFactory,
+            'Collection_Operation_Time_Block__cMappingConfigFactory' : CollectionOperationTimeBlockMappingConfigFactory,
             'sked_Custom_Availability__cMappingConfigFactory' : CustomAvailabilityMappingConfigFactory,
             'sked_DCR_Field__cMappingConfigFactory' : DcrFieldMappingConfigFactory,
             'sked_DCR_Period__cMappingConfigFactory' : DcrPeriodMappingConfigFactory,
@@ -118,6 +119,7 @@ class mappingConfigContainer {
             'sked__Tag__cMappingConfigFactory' : TagMappingConfigFactory,
             'sked_Territory_Collection_Operation__cMappingConfigFactory': TerritoryCollectionOperationMappingConfigFactory,
             'sked_Territory__cMappingConfigFactory' : TerritoryMappingConfigFactory,
+            'Time_Block__cMappingConfigFactory' : TimeBlockMappingConfigFactory,
             'sked_Travel_Time_Index_Item__cMappingConfigFactory' : TravelTimeIndexItemMappingConfigFactory,
             'skedHC__Exception__cMappingConfigFactory' : ExceptionMappingConfigFactory,
             'BSF_Portfolio__cMappingConfigFactory' : BsfPortfolioMappingConfigFactory,

@@ -38,7 +38,7 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
-        <field>Account.CFY_Drives__c</field>
+        <field>Account.CFY_Drives1__c</field>
     </columns>
     <columns>
         <field>Account.District_Manager__c</field>

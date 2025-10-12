@@ -5,14 +5,20 @@
         <name>Call_Reset_Business_Plan_Status_Batch</name>
         <label>Call Reset Business Plan Status Batch</label>
         <locationX>50</locationX>
-        <locationY>1298</locationY>
+        <locationY>1190</locationY>
         <actionName>ResetBusinessPlanningStatusHelper</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>Automatic</flowTransactionModel>
         <inputParameters>
-            <name>accListToBeUpdated</name>
+            <name>action</name>
             <value>
-                <elementReference>accountsToBeUpdatedList</elementReference>
+                <stringValue>start</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>onlyCompleted</name>
+            <value>
+                <booleanValue>true</booleanValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -22,13 +28,42 @@
             </value>
         </inputParameters>
         <nameSegment>ResetBusinessPlanningStatusHelper</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Get_Number_of_total_account</name>
+        <label>Get Number of total account</label>
+        <locationX>182</locationX>
+        <locationY>866</locationY>
+        <actionName>ResetBusinessPlanningStatusHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Is_Any_such_accounts_present</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>action</name>
+            <value>
+                <stringValue>count</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>onlyCompleted</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>ResetBusinessPlanningStatusHelper</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <apiVersion>60.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_allowed_profiles_to_the_collection_variable</name>
         <label>Assign allowed profiles to the collection variable</label>
-        <locationX>468</locationX>
+        <locationX>600</locationX>
         <locationY>566</locationY>
         <assignmentItems>
             <assignToReference>allowedProfileNames</assignToReference>
@@ -41,27 +76,11 @@
             <targetReference>Loop_through_metadata_record</targetReference>
         </connector>
     </assignments>
-    <assignments>
-        <name>Get_total_count_of_the_account_list</name>
-        <label>Get total count of the account list</label>
-        <locationX>182</locationX>
-        <locationY>974</locationY>
-        <assignmentItems>
-            <assignToReference>totalCount</assignToReference>
-            <operator>AssignCount</operator>
-            <value>
-                <elementReference>accountsToBeUpdatedList</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Is_Any_such_accounts_present</targetReference>
-        </connector>
-    </assignments>
     <decisions>
         <name>Is_Any_such_accounts_present</name>
         <label>Is Any such accounts present?</label>
         <locationX>182</locationX>
-        <locationY>1082</locationY>
+        <locationY>974</locationY>
         <defaultConnector>
             <targetReference>No_Accounts_Found_Msg_Screen</targetReference>
         </defaultConnector>
@@ -70,7 +89,7 @@
             <name>Present</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>totalCount</leftValueReference>
+                <leftValueReference>Get_Number_of_total_account.total</leftValueReference>
                 <operator>GreaterThanOrEqualTo</operator>
                 <rightValue>
                     <numberValue>1.0</numberValue>
@@ -85,7 +104,7 @@
     <decisions>
         <name>Is_the_User_Authorized</name>
         <label>Is User Authorized</label>
-        <locationX>380</locationX>
+        <locationX>512</locationX>
         <locationY>758</locationY>
         <defaultConnector>
             <targetReference>Error_Msg_Screen</targetReference>
@@ -102,12 +121,12 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Account_Records</targetReference>
+                <targetReference>Get_Number_of_total_account</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
     </decisions>
-    <description>This flow will be triggered after clicking &#39;Reset Business Planning Status&#39; button from the Account List view. This flow is for HRP-9520</description>
+    <description>This flow will be triggered after clicking &apos;Reset Business Planning Status&apos; button from the Account List view. This flow is for HRP-9520</description>
     <environments>Default</environments>
     <formulas>
         <name>isProfileFoundOut</name>
@@ -119,7 +138,7 @@
     <loops>
         <name>Loop_through_metadata_record</name>
         <label>Loop through metadata record</label>
-        <locationX>380</locationX>
+        <locationX>512</locationX>
         <locationY>458</locationY>
         <collectionReference>metadataRecord</collectionReference>
         <iterationOrder>Asc</iterationOrder>
@@ -150,35 +169,10 @@
     </processMetadataValues>
     <processType>Flow</processType>
     <recordLookups>
-        <description>Get all those accounts where Business Planning Completed checkbox is true, no other filters needed</description>
-        <name>Get_Account_Records</name>
-        <label>Get Account Records</label>
-        <locationX>182</locationX>
-        <locationY>866</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_total_count_of_the_account_list</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Business_Planning_Completed__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <object>Account</object>
-        <outputReference>accountsToBeUpdatedList</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Business_Planning_Completed__c</queriedFields>
-        <queriedFields>Business_Planning_Completed_By__c</queriedFields>
-        <queriedFields>Business_Planning_Completed_Date__c</queriedFields>
-    </recordLookups>
-    <recordLookups>
-        <description>Get the logged-In user&#39;s profile info</description>
+        <description>Get the logged-In user&apos;s profile info</description>
         <name>Get_Logged_In_User_Info</name>
-        <label>Get Logged-In User&#39;s Info</label>
-        <locationX>380</locationX>
+        <label>Get Logged-In User&apos;s Info</label>
+        <locationX>512</locationX>
         <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -200,8 +194,8 @@
     </recordLookups>
     <recordLookups>
         <name>Get_Logged_In_User_s_Profile</name>
-        <label>Get Logged-In User&#39;s Profile</label>
-        <locationX>380</locationX>
+        <label>Get Logged-In User&apos;s Profile</label>
+        <locationX>512</locationX>
         <locationY>242</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -224,7 +218,7 @@
     <recordLookups>
         <name>Get_Reset_Planning_Metadata_Records</name>
         <label>Get Reset Planning Metadata Records</label>
-        <locationX>380</locationX>
+        <locationX>512</locationX>
         <locationY>350</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -242,7 +236,7 @@
         <name>Accounts_Found_Msg_Screen</name>
         <label>Accounts Found Msg Screen</label>
         <locationX>50</locationX>
-        <locationY>1190</locationY>
+        <locationY>1082</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -251,8 +245,16 @@
         </connector>
         <fields>
             <name>Count_Msg</name>
-            <fieldText>&lt;p&gt;You are about to reset business plan status for &lt;strong&gt;{!totalCount}&lt;/strong&gt; accounts. This may take a while!&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;You are about to reset business plan status for &lt;strong&gt;{!Get_Number_of_total_account.total}&lt;/strong&gt; accounts. This may take a while!&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Proceed</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -261,7 +263,7 @@
     <screens>
         <name>Error_Msg_Screen</name>
         <label>Error Msg Screen</label>
-        <locationX>578</locationX>
+        <locationX>842</locationX>
         <locationY>866</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
@@ -270,6 +272,14 @@
             <name>Display_Error_Msg</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(237, 11, 11); font-size: 16px;&quot;&gt;You are not authorized to run this functionality. Please contact your salesforce administrator for further assistance.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Ok</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -279,7 +289,7 @@
         <name>No_Accounts_Found_Msg_Screen</name>
         <label>No Accounts Found Msg Screen</label>
         <locationX>314</locationX>
-        <locationY>1190</locationY>
+        <locationY>1082</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -287,13 +297,21 @@
             <name>No_Accounts</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(228, 13, 13); font-size: 16px;&quot;&gt;No such accounts found for resetting business planning status. Please review and try again!&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Ok</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
     <start>
-        <locationX>254</locationX>
+        <locationX>386</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Logged_In_User_Info</targetReference>

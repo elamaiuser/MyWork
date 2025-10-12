@@ -12,9 +12,12 @@ import {
   driveQueryModel,
   driveService,
   activityQueryModel,
-  activityService
+  activityService,
+  collectionOperationTimeBlockQueryModel,
+  collectionOperationTimeBlockService,
+  sObjectType
 } from "c/dataService";
-import { DRIVE_STATUS } from "c/slwcConstants";
+import { DRIVE_TYPE, DRIVE_STATUS } from 'c/slwcConstants';
 
 const KEY_SEPERATOR = "__";
 
@@ -38,6 +41,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
   @track totalFixedSiteStaffRequested = 0;
   @track totalMobileStaffRequested = 0;
 
+  @track timeBlockOptions = [];
   @track existingStaffingConstraints = [];
   @track mappedStaffingConstraintData = null;
   @track mappedDriveData = null;
@@ -45,6 +49,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
 
   @track model = {
     collectionOperation: null,
+    timeblockId: null,
     driveTypes: [],
     dateOfConstraint: null,
     totalStaffConstraints: 0
@@ -91,6 +96,10 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
 
   get isDateOfConstraintFieldReadonly() {
     return this.isFulfilledFields && this.model.dateOfConstraint;
+  }
+
+  get isTimeBlockFieldReadonly() {
+    return this.isFulfilledFields && this.model.timeBlockId;
   }
 
   get customClass() {
@@ -200,14 +209,23 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
     } else {
       let value = getValueFromEvent(event);
       this.model[event.currentTarget.name] = value;
+    }
 
-      const { collectionOperation, dateOfConstraint, driveTypes } = this.model;
+    const { collectionOperation, dateOfConstraint, driveTypes } = this.model;
 
-      if (event.currentTarget.name === 'totalStaffConstraints') {
-        return;
-      }
+    if (event.currentTarget.name === 'totalStaffConstraints') {
+      return;
+    }
 
-      if (collectionOperation?.id && dateOfConstraint && driveTypes.length) {
+    if (event.currentTarget.name === 'timeBlockId') {
+      this.calculateRequestedStaff();
+      return;
+    }
+
+    if (collectionOperation?.id && dateOfConstraint) {
+      this.fetchTimeBlockData();
+
+      if (driveTypes.length) { 
         this.fetchStafingConstrainData();
       }
     }
@@ -223,11 +241,55 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
     this.isOpen = false;
   };
 
+  async fetchTimeBlockData() {
+    this.showLoading();
+    let timeBlockOptions = [];
+
+    const { collectionOperation, dateOfConstraint } = this.model;
+
+    await Promise.resolve()
+      .then(() => {
+        const collectionOperationTimeBlockQuery = new collectionOperationTimeBlockQueryModel();
+        collectionOperationTimeBlockQuery.effectiveStartDate = dateOfConstraint;
+        collectionOperationTimeBlockQuery.effectiveEndDate = dateOfConstraint;
+        collectionOperationTimeBlockQuery.collectionOperationIds = [collectionOperation?.id];
+
+        const collectionOperationTimeBlockSvc = new collectionOperationTimeBlockService();
+
+        return Promise.all([
+          collectionOperationTimeBlockSvc.query(collectionOperationTimeBlockQuery),
+        ]);
+      })
+      .then(([collectionOperationTimeBlockResult]) => {
+        collectionOperationTimeBlockResult.forEach(coTimeBlock => {
+          const weekdayLong = this.dateUtils.dateIso2WeeekDay(dateOfConstraint).weekdayLong;
+          if (coTimeBlock.timeBlock.daysOfWeek.includes(weekdayLong)) {
+            timeBlockOptions.push({
+              ...coTimeBlock.timeBlock,
+              label: coTimeBlock.timeBlock.name,
+              value: coTimeBlock.timeBlock.id
+            });
+          }
+        });
+
+        if (timeBlockOptions.length) {
+          timeBlockOptions.unshift({ label: '--None--', value: "" });
+        }
+        this.timeBlockOptions = timeBlockOptions;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        this.hideLoading();
+      });
+  }
+
   async fetchStafingConstrainData() {
     this.showLoading();
     this.existingStaffingConstraints = [];
 
-    const { collectionOperation, dateOfConstraint, driveTypes } = this.model;
+    const { collectionOperation, dateOfConstraint, driveTypes, timeBlockId } = this.model;
 
     await Promise.resolve()
       .then(() => {
@@ -247,6 +309,9 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
           DRIVE_STATUS.CONFIRMED,
           DRIVE_STATUS.HOLD
         ];
+        if (timeBlockId) {
+          driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT
+        }
 
         const activityQuery = new activityQueryModel();
         activityQuery.startDate = dateOfConstraint;
@@ -269,12 +334,14 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
         this.mappedStaffingConstraintData = groupBy(
           [...staffingConstraintResult],
           (item) =>
-            `${item.collectionOperationId}${KEY_SEPERATOR}${item.driveType}${KEY_SEPERATOR}${item.dateOfConstraint}`
+            `${item.collectionOperationId}${item.timeBlockId ? KEY_SEPERATOR + item.timeBlockId : ''}${KEY_SEPERATOR}${item.driveType}${KEY_SEPERATOR}${item.dateOfConstraint}`
         );
         this.mappedDriveData = groupBy(
           [...driveResult],
-          (item) =>
-            `${item.collectionOperationId}${KEY_SEPERATOR}${item.typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
+          (item) => {
+            let typeOfDrive = this.driveHelper.isFixedSiteDrive(item) ? DRIVE_TYPE.FIXED_SITE : DRIVE_TYPE.MOBILE;
+            return `${item.collectionOperationId}${KEY_SEPERATOR}${typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
+          }
         );
         this.mappedActivityData = groupBy(
           [...activityResult], 
@@ -282,32 +349,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
             `${item.collectionOperationId}${KEY_SEPERATOR}${item.startDate}`
         );
 
-        const {
-          totalFixedSiteStaffRequested,
-          totalStaffRequested,
-          totalMobileStaffRequested
-        } = this.driveHelper.calculateRequestedStaff(
-          this.mappedDriveData,
-          this.mappedActivityData,
-          collectionOperation?.id,
-          driveTypes,
-          dateOfConstraint
-        );
-
-        this.totalFixedSiteStaffRequested = totalFixedSiteStaffRequested;
-        this.totalMobileStaffRequested = totalMobileStaffRequested;
-        this.totalStaffRequested = totalStaffRequested;
-
-        driveTypes?.forEach((driveType) => {
-          const existingStaffingConstraint =
-            this.mappedStaffingConstraintData?.[
-              `${collectionOperation?.id}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
-            ]?.[0];
-
-          if (existingStaffingConstraint) {
-            this.existingStaffingConstraints.push(existingStaffingConstraint);
-          }
-        });
+        this.calculateRequestedStaff();
       })
       .catch((error) => {
         console.log(error);
@@ -315,6 +357,38 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
       .finally(() => {
         this.hideLoading();
       });
+  }
+
+  calculateRequestedStaff() {
+    const { collectionOperation, dateOfConstraint, driveTypes, timeBlockId } = this.model;
+
+    const {
+      totalFixedSiteStaffRequested,
+      totalStaffRequested,
+      totalMobileStaffRequested
+    } = this.driveHelper.calculateRequestedStaff(
+      this.mappedDriveData,
+      this.mappedActivityData,
+      collectionOperation?.id,
+      timeBlockId,
+      driveTypes,
+      dateOfConstraint
+    );
+
+    this.totalFixedSiteStaffRequested = totalFixedSiteStaffRequested;
+    this.totalMobileStaffRequested = totalMobileStaffRequested;
+    this.totalStaffRequested = totalStaffRequested;
+
+    driveTypes?.forEach((driveType) => {
+      const existingStaffingConstraint =
+        this.mappedStaffingConstraintData?.[
+          `${collectionOperation?.id}${timeBlockId ? KEY_SEPERATOR + timeBlockId : ''}${KEY_SEPERATOR}${driveType}${KEY_SEPERATOR}${dateOfConstraint}`
+        ]?.[0];
+
+      if (existingStaffingConstraint) {
+        this.existingStaffingConstraints.push(existingStaffingConstraint);
+      }
+    });
   }
 
   validate() {
@@ -348,18 +422,26 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
     const {
       id,
       collectionOperation,
+      timeBlockId,
       dateOfConstraint,
       driveTypes,
       totalStaffConstraints
     } = this.model;
 
-    const modelsToSave = driveTypes.map((item) => ({
-      ...(id && { id }),
-      collectionOperationId: collectionOperation?.id,
-      dateOfConstraint,
-      totalStaffConstraints,
-      driveType: item
-    }));
+    const modelsToSave = [];
+    driveTypes.forEach(driveType => {
+      if (!timeBlockId || driveType !== DRIVE_TYPE.FIXED_SITE) {
+        const model = {
+          ...(id && { id }),
+          collectionOperationId: collectionOperation?.id,
+          timeBlockId,
+          dateOfConstraint,
+          totalStaffConstraints,
+          driveType
+        }
+        modelsToSave.push(model);
+      }
+    })
 
     const service = new staffingConstraintService();
 

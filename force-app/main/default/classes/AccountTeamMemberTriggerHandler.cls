@@ -48,6 +48,7 @@ public class AccountTeamMemberTriggerHandler extends TriggerHandler{
         //Added as part of HRP-2193
         // AccountTeamMemberHelper.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.new);
         AccountTeamMemberService.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.new,null);//HRP-11281
+       AccountTeamMemberService.assignCoveringRecruiterFromATM((List<AccountTeamMember>)trigger.new);//HRP-14849
         system.debug('populateDefaultAllocationFiledsOnInsert');
         //AccountTeamMemberService.coveringRecruiterOpptyTeamonPastOpp((List<AccountTeamMember>)trigger.new,null);//HRP-11281 //HRP-13340 commented
         //AccountTeamMemberService.populateDefaultAllocationFiledsOnInsert((List<AccountTeamMember>)trigger.new);//HRP-13340
@@ -71,6 +72,7 @@ public class AccountTeamMemberTriggerHandler extends TriggerHandler{
     public override void afterUpdate(){
         System.debug('AccountTeamMemberTriggerHandler: Entered afterUpdate');
         AccountTeamMemberService.createAccountTeamMemberHistoryRecords((List<AccountTeamMember>)trigger.new,(Map<ID,AccountTeamMember>)trigger.oldMap);//HRP-11281
+       	AccountTeamMemberService.assignCoveringRecruiterFromATM((List<AccountTeamMember>)trigger.new);//HRP-14849
         // HRP-5486 :CR: Account Manager will be Account/Opportunity Owner
         // HRP-5487 :CR: Adding Account Team to Blood Drive Team
         if(super.getTriggerMethodsToBypass().indexOf('addAcctTeamMembersToBloodDriveOpptyMembers') == -1 && !BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)//HRP-10888 & HRP-10890
