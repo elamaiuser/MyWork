@@ -225,9 +225,9 @@
             </value>
         </inputParameters>
         <nameSegment>UFIDGenerator</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>50.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <processMetadataValues>
             <name>index</name>
@@ -321,7 +321,7 @@
     </processMetadataValues>
     <processType>Workflow</processType>
     <startElementReference>myDecision</startElementReference>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <name>myVariable_current</name>
         <dataType>SObject</dataType>

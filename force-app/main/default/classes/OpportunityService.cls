@@ -2295,6 +2295,7 @@ if(ds.isDeletable()){}*/
         
         map<id,list<String>> oppIdLookupPopulatedListMap = new map<id,list<String>>();//HRP-11234
         map<id,AccountTeamMember> oppIdCoverageAmMap = new  map<id,AccountTeamMember>();//HRP-11234
+        AccountTeamMember chosenCoveringRec;//HRP-14849
         oppIdCoverageAmMap = AccountTeamMemberService.isCoverageAmPresent(mapOfAcctsWithTeamMembers,newOppsList);//HRP-11234
         set<id> accIdSet = new set<id>();//HRP-11234
         for(Opportunity opRecord:newOppsList){
@@ -2338,6 +2339,16 @@ if(ds.isDeletable()){}*/
                             }
                             j++;
                         }  //HRP-10359 end
+                        
+                        /* ── //HRP-14849 - COVERING-RECRUITER LOGIC ────────────────────────────── */
+                        if (atmRecords.Is_Covering_Recruiter__c && opRecord.Drive_Date__c != null && atmRecords.Start_Date__c != null
+    						&& atmRecords.End_Date__c != null && atmRecords.Start_Date__c <= opRecord.Drive_Date__c && atmRecords.End_Date__c   >= opRecord.Drive_Date__c) {
+                                if (chosenCoveringRec == null ||
+                                    atmRecords.Start_Date__c > chosenCoveringRec.Start_Date__c) {
+                            
+                                    chosenCoveringRec = atmRecords;
+                                }
+                            }
                         if(addOpptyTeam == true){
                             OpportunityTeamMember optyTeamMemeberToAdd = new OpportunityTeamMember();
                             optyTeamMemeberToAdd.OpportunityId = opRecord.Id;
@@ -2370,6 +2381,15 @@ if(ds.isDeletable()){}*/
                     }
                 }
             }
+             /* COVERING-RECRUITER //HRP-14849*/
+                if (updateOpptyOwner == true) {
+                    if (chosenCoveringRec != null) {
+                        opRecord.Covering_Recruiter__c = chosenCoveringRec.UserId;
+                    } else {
+                        opRecord.Covering_Recruiter__c = null;
+                    }
+                }
+
             //HRP-11849 starts
             if (!accIdVsaccPortfolioAssignmentMap.isEmpty() && accIdVsaccPortfolioAssignmentMap.containsKey(opRecord.AccountId)) {
                 for(Account_Portfolio_Assignment__c pfa : accIdVsaccPortfolioAssignmentMap.get(opRecord.AccountId)){
@@ -4980,6 +5000,7 @@ opp.StageName = 'Closed';
         Integer baseVolunteers = 0;
         if(anticipatedRegisteredDonors != null && highSchool != null && matrixRecords != null && !matrixRecords.isEmpty()){
             for (Volunteer_Staffing_Matrix__mdt record : matrixRecords) {
+                if(record.Drive_Type__c != null && record.Drive_Type__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue; //HRP-15041
                 if(record.High_School_Drive__c == highSchool){
                     if (anticipatedRegisteredDonors >= record.Min_Anticipated_Registered_Donors__c &&
                         anticipatedRegisteredDonors <= record.Max_Anticipated_Registered_Donors__c) {
@@ -5158,4 +5179,83 @@ opp.StageName = 'Closed';
             }
         }
     }
+
+    //HRP-701 --> Starts Here
+    public static void populateSpecialCircumstancesBadgeData(List<Opportunity> newOppList) {
+        Map<Id, List<Opportunity>> map_accountId_mobileOppList = new Map<Id, List<Opportunity>>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c || opp.RecordTypeId == FIXED_SITE_OPP_RECTYPEID) continue;
+
+            if(!map_accountId_mobileOppList.containsKey(opp.AccountId)) {
+                map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
+            }
+            map_accountId_mobileOppList.get(opp.AccountId).add(opp);
+        }
+
+        Map<Id, Account> map_accId_accountWithNoCompletedDrives = new Map<Id, Account>([
+            SELECT Id
+            FROM Account
+            WHERE Id IN :map_accountId_mobileOppList.keySet() 
+            AND Id NOT IN 
+                (
+                    SELECT sked_Account__c
+                    FROM sked_Drive__c
+                    WHERE sked_Status__c = :BSF_Constants.DOC_STATUS_COMPLETE
+                )
+        ]);
+
+        for(Id accountId : map_accountId_mobileOppList.keySet()) {
+            if(!map_accId_accountWithNoCompletedDrives.containsKey(accountId)) continue;
+
+            for(Opportunity newOpp : map_accountId_mobileOppList.get(accountId)) {
+                newOpp.Special_Circumstances__c = BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE;   
+            } 
+        }
+    }
+
+    public static void validateManualFirstTimeFlagSelection(List<Opportunity> newOppList, Map<Id, Opportunity> oldOppMap) {
+        Map<Id, List<Opportunity>> map_accountId_mobileOppList = new Map<Id, List<Opportunity>>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c || opp.RecordTypeId == FIXED_SITE_OPP_RECTYPEID) continue;
+            if(opp.Special_Circumstances__c == null) continue;
+            if(oldOppMap == NULL || !oldOppMap.containsKey(opp.Id)) continue;
+
+            Opportunity oldOpp = oldOppMap.get(opp.Id);
+            List<String> newSpecialCircumstances = opp.Special_Circumstances__c.split(';');
+            List<String> oldSpecialCircumstances = oldOpp.Special_Circumstances__c != null ? oldOpp.Special_Circumstances__c.split(';') : new List<String>();
+
+            if(opp.Special_Circumstances__c != oldOpp.Special_Circumstances__c && 
+                newSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) &&
+                !oldSpecialCircumstances.contains(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE)) 
+            {
+                if(!map_accountId_mobileOppList.containsKey(opp.AccountId)) {
+                    map_accountId_mobileOppList.put(opp.AccountId, new List<Opportunity>());
+                }
+                map_accountId_mobileOppList.get(opp.AccountId).add(opp);
+            }
+        }
+
+        Map<Id, Account> map_accId_accountWithNoCompletedDrives = new Map<Id, Account>([
+            SELECT Id
+            FROM Account
+            WHERE Id IN :map_accountId_mobileOppList.keySet() 
+            AND Id NOT IN 
+                (
+                    SELECT sked_Account__c
+                    FROM sked_Drive__c
+                    WHERE sked_Status__c = :BSF_Constants.DOC_STATUS_COMPLETE
+                )
+        ]);
+
+        for(Id accountId : map_accountId_mobileOppList.keySet()) {
+            if(!map_accId_accountWithNoCompletedDrives.containsKey(accountId)) {
+                for(Opportunity newOpp : map_accountId_mobileOppList.get(accountId)) {
+                    newOpp.Special_Circumstances__c.addError(Custom_Messages__mdt.getInstance('SSB_First_Time_Badge_Modification_Msg').Value__c);
+                } 
+            }
+        }
+    } 
+    //HRP-701 --> Ends Here
 }

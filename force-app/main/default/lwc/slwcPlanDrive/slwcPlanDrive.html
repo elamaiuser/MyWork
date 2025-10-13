@@ -50,6 +50,15 @@
                     </div>
                 </div>
                 <div if:false={isMobile} class="slds-no-flex slds-grid slds-grid_vertical-align-end">
+                    <div if:true={showTimeBlockSelect} class="slds-form-element slds-m-right_x-small">
+                        <c-slwc-select
+                            name="timeBlock"
+                            label="Time Block"
+                            selected-value={filter.selectedTimeBlockId}
+                            options={timeBlockOptions}
+                            read-only={showSpinner}
+                            onchange={handleTimeBlockChanged}></c-slwc-select>
+                    </div>
                     <div class="slds-form-element slds-m-right_x-small">
                         <c-slwc-month-picker 
                             unique-key="planDrive" 
@@ -73,35 +82,47 @@
                         master-data={masterData}
                         default-date={driveDate}
                         onselectdate={handleSelectDate}
-                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-calendar>
+                        selected-month={filter.selectedMonth}
+                        selected-time-block-id={filter.selectedTimeBlockId}></c-slwc-plan-drive-calendar>
                 </div>
             </div>
         </template>
         <template if:true={isDesktop}>
             <div class="slds-grid" if:true={initialized}>
-                <div class="slds-grow">
-                    <c-slwc-plan-drive-booking-grid
-                        opportunity={opportunity}
-                        master-data={masterData}
-                        default-date={driveDate}
-                        onselectdate={handleSelectDate}
-                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-booking-grid>
-                </div>
-                <div class="slds-no-flex" style="width: 20rem;">
-                    <c-slwc-plan-drive-calendar
-                        opportunity={opportunity}
-                        master-data={masterData}
-                        default-date={driveDate}
-                        onselectdate={handleSelectDate}
-                        selected-month={nextMonth}></c-slwc-plan-drive-calendar>
-                    
-                    <c-slwc-plan-drive-calendar
-                        opportunity={opportunity}
-                        master-data={masterData}
-                        default-date={driveDate}
-                        onselectdate={handleSelectDate}
-                        selected-month={next2Month}></c-slwc-plan-drive-calendar>
-                </div>
+                <template if:true={requireSelectTimeBlock}>
+                    <div class="slds-align_absolute-center slds-p-around_small">
+                        <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-m-right_xx-small"></lightning-icon>
+                        <span>Please select 1 Time Block</span>
+                    </div>
+                </template>
+                <template if:false={requireSelectTimeBlock}>
+                    <div class="slds-grow">
+                        <c-slwc-plan-drive-booking-grid
+                            opportunity={opportunity}
+                            master-data={masterData}
+                            default-date={driveDate}
+                            onselectdate={handleSelectDate}
+                            selected-month={filter.selectedMonth}
+                            selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-booking-grid>
+                    </div>
+                    <div class="slds-no-flex" style="width: 20rem;">
+                        <c-slwc-plan-drive-calendar
+                            opportunity={opportunity}
+                            master-data={masterData}
+                            default-date={driveDate}
+                            onselectdate={handleSelectDate}
+                            selected-month={nextMonth}
+                            selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-calendar>
+                        
+                        <c-slwc-plan-drive-calendar
+                            opportunity={opportunity}
+                            master-data={masterData}
+                            default-date={driveDate}
+                            onselectdate={handleSelectDate}
+                            selected-month={next2Month}
+                            selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-calendar>
+                    </div>
+                </template>
             </div>
         </template>
         <template if:true={isTablet}>
@@ -112,7 +133,8 @@
                         master-data={masterData}
                         default-date={driveDate}
                         onselectdate={handleSelectDate}
-                        selected-month={filter.selectedMonth}></c-slwc-plan-drive-booking-grid>
+                        selected-month={filter.selectedMonth}
+                        selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-booking-grid>
                 </div>
                 <div class="slds-grid">
                     <div class="slds-col slds-size--1-of-2 slds-align_absolute-center">
@@ -121,7 +143,8 @@
                         master-data={masterData}
                         default-date={driveDate}
                         onselectdate={handleSelectDate}
-                        selected-month={nextMonth}></c-slwc-plan-drive-calendar>
+                        selected-month={nextMonth}
+                        selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-calendar>
                     </div>
                     <div class="slds-col slds-size--1-of-2 slds-align_absolute-center">
                         <c-slwc-plan-drive-calendar
@@ -129,7 +152,8 @@
                         master-data={masterData}
                         default-date={driveDate}
                         onselectdate={handleSelectDate}
-                        selected-month={next2Month}></c-slwc-plan-drive-calendar>
+                        selected-month={next2Month}
+                        selected-time-block-id={selectedTimeBlockId}></c-slwc-plan-drive-calendar>
                     </div>
                 </div>
             </div>

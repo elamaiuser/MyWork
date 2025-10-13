@@ -19,7 +19,7 @@ public class AccountAffiliationTriggerHandler extends TriggerHandler {
     
     public override void afterInsert() {
         if (super.getTriggerMethodsToBypass().indexOf('createHistoryOnAccAffiliation') == -1) {
-            AccountAffiliationService.createHistoryOnAccAffiliation((list<Account_Marketing_Program__c>) Trigger.new, 'Insert');      
+            AccountAffiliationService.createHistoryOnAccAffiliation((list<Account_Marketing_Program__c>) Trigger.new, 'Insert');
         }
         
         if (super.getTriggerMethodsToBypass().indexOf('AccountFlagForAffiliationList') == -1) {  

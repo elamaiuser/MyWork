@@ -90,7 +90,15 @@
                                                     Employment Type:</dt>
                                                 <dd class="slds-item_detail slds-truncate">
                                                     {resource.categoryText}
-                                                </dd>
+                                                </dd> 
+                                               <dt
+                                                  class="slds-item_label slds-text-color_weak slds-truncate">
+                                                 AvailabilityPattern:</dt>
+                                                 <dd class="slds-item_detail slds-truncate">
+                                                    <template for:each={resource.getAvailabilityPatternResourceNamesForAllocation} for:item="patternName">
+                                                        <div key={patternName}>{patternName}</div>
+                                                    </template>
+                                                 </dd>
 
                                                 <dt
                                                     class="slds-item_label slds-text-color_weak slds-truncate">
