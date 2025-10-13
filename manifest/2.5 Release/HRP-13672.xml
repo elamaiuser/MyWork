@@ -4,6 +4,10 @@
 		<members>skedJobAllocationHandler</members>
 		<members>skedJobAllocationPostProcessBatch</members>
 		<name>ApexClass</name>
-	</types>    
+	</types>  
+	<types>
+		<members>slwcDriveStaffingDetails</members>
+		<name>LightningComponentBundle</name>
+	</types>  
     <version>64.0</version>
 </Package>
