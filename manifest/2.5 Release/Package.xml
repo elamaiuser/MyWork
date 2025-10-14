@@ -70,6 +70,14 @@
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
+		<members>BSF_Support/Site_CO_without_Travel_Time</members>
+		<name>Report</name>
+	</types>
+	<types>
+		<members>Site_Collection_Operations</members>
+		<name>ReportType</name>
+	</types>
+	<types>
 		<members>sked_HLT_Dist</members>
 		<members>skedLWCCustomStyle</members>
 		<name>StaticResource</name>
