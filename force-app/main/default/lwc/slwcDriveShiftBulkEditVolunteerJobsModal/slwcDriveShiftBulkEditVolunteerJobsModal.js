@@ -225,15 +225,15 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                     const newVolunteerRoleAlreadyExists = volunteerRolesSameDrive.find(item => item.volunteerRole === this.model.volunteerRole);
 
                     if(notMatchVolunteerRole) {
-                        errorMessages.push("Role does not match")
+                        errorMessages.push(`Drive Criteria: Role ${this.filters.volunteerRole} does not match`)
                     }
 
                     if(notMatchVolunteerRoleQuantity) {
-                        errorMessages.push("Red Cross Volunteer Quantity does not match")
+                        errorMessages.push("Drive Criteria: Red Cross Volunteer Quantity does not match")
                     }
 
                     if(newVolunteerRoleAlreadyExists) {
-                        errorMessages.push("Role already exists")
+                        errorMessages.push(`Role ${this.model.volunteerRole} already exists`)
                     }
 
                     return {
