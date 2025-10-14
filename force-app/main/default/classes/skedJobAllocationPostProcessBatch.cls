@@ -1,4 +1,4 @@
-global class skedJobAllocationPostProcessBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
+global class skedJobAllocationPostProcessBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful, Schedulable {
     
     public static final string TAG_DRIVER = 'Driver';
     public static final string TAG_DRIVER_DOT = 'Driver - DOT';
@@ -6,6 +6,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
     
     public batchSetting setting;
     public Set<Id> jobAllocationIds;
+    public Integer batchSize;
+    private Integer retryCount;
     
     protected Set<Id> newExceptionIds;
 
@@ -13,6 +15,39 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         this.setting = setting;
         this.jobAllocationIds = jobAllocationIds;
         this.newExceptionIds = new Set<Id>();
+    }
+
+    global skedJobAllocationPostProcessBatch(batchSetting setting, Set<Id> jobAllocationIds, Integer batchSize, Integer retryCount) {
+        this(setting, jobAllocationIds);
+        this.batchSize = batchSize;
+        this.retryCount = retryCount;
+    }
+
+    public static void schedule(batchSetting setting, Set<Id> jobAllocationIds, Integer batchSize, Integer retryCount) {
+        skedJobAllocationPostProcessBatch batchInstance = new skedJobAllocationPostProcessBatch(setting, jobAllocationIds, batchSize, retryCount);
+        if(!skedTriggerUtils.isFlexQueueLimitReached()) {
+            Database.executeBatch(batchInstance, batchSize);
+        } else {
+            retryCount++;
+            if(retryCount > skedSetting.instance.jaPostProcessBatchConfig.maxRetries) {
+                BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
+                    'skedJobAllocationPostProcessBatch',
+                    'execute',
+                    'Job Allocation Post Process',
+                    '',
+                    'Failed processing job allocation records'
+                );
+                errorLog.Error_Description_Long__c = 'ids: '+String.join(new List<Id>(jobAllocationIds), ',');
+                insert errorLog;
+            }
+            else {
+                skedUtils.scheduleUniqueJobInSeconds('skedJobAllocationPostProcessBatch', batchInstance, skedSetting.instance.jaPostProcessBatchConfig.rescheduleIntervalSeconds, false);
+            }
+        }
+    }
+
+    global void execute(SchedulableContext SC) {
+        schedule(setting, jobAllocationIds, batchSize, retryCount + 1);
     }
 
     global List<sObject> start(Database.BatchableContext BC) {

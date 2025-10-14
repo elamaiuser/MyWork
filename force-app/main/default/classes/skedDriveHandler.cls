@@ -1095,7 +1095,8 @@ public class skedDriveHandler extends skedTriggerHub {
             if (!mapJobAllocation.isEmpty()) {
                 if (!System.isBatch() && !Test.isRunningTest()) {
                     skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-                    Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
+                    skedJobAllocationPostProcessBatch.schedule(batchSetting, mapJobAllocation.keyset(), 200, 0);
+                    //Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
                 }
             }
         }
