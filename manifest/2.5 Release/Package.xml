@@ -1,91 +1,132 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-		<members>BSF_BatchUpdateAccountForZipCode</members>
-		<members>BSF_Batch_BSFPortfolioScheduler</members>
-		<members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSFBatchPortfolio_Test</members>
+        <members>BSF_AccessControlManager</members>
+        <members>BSF_AccessControlManagerTest</members>
+        <members>BSF_BatchUpdateAccountForZipCode</members>
+        <members>BSF_Batch_BSFPortfolioScheduler</members>
+        <members>BSF_Batch_PopulateCORegionScheduler</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
-		<members>BSF_Constants</members>
+        <members>BSF_Batch_TaxonomyEndDate_Test</members>
+        <members>BSF_Constants</members>
         <members>DelayedTaxonomyBatchScheduler</members>
+        <members>DeleteExpiredTaxoVersionBatchTest</members>
         <members>FieldIdentifiers</members>
         <members>OpportunityService</members>
-		<members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
-		<members>OrderCloningService</members>
-		<members>Taxo_Utilities</members>
-		<members>TemplateService</members>
+        <members>OrderCloningService</members>
+        <members>Taxo_Utilities</members>
+        <members>TemplateService</members>
         <members>TemplateService_Test</members>
-		<members>skedDriveHandler</members>
-		<members>skedDriveTrigger_Test</members>
-		<members>skedResourceTagHandler</members>
+        <members>UpdateAccountTeamMemberDailyBatchHelper</members>
+        <members>skedCaptureJobIMPACTBatch</members>
+        <members>skedDriveHandler</members>
+        <members>skedDriveTrigger_Test</members>
+        <members>skedJobAllocationHandler</members>
+        <members>skedJobAllocationPostProcessBatch</members>
+        <members>skedJobAllocationTravelTimeBatch</members>
+        <members>skedResourceTagHandler</members>
+        <members>skedSetting</members>
+        <members>skedTriggerUtils</members>
+        <members>skedWeeklyHoursCorrectionBatch</members>
         <members>slwcDriveService</members>
-        <members>slwcDriveService_Test</members>				
-		<name>ApexClass</name>
-	</types>
+        <members>slwcDriveService_Test</members>
+        <name>ApexClass</name>
+    </types>
     <types>
-		<members>Add_Update_OpptyTeamMembers</members>
-		<members>updateEventTrigger</members>
-		<name>ApexTrigger</name>
-	</types>
+        <members>Add_Update_OpptyTeamMembers</members>
+        <members>updateEventTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
     <types>
-		<members>Opportunity.Cancellation_Detail__c</members>
-		<members>Opportunity.Primary_Drive_Contact__c</members>
-		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
-		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
-		<name>CustomField</name>
-	</types>
-	<types>
-		<members>Create_New_Template</members>
-		<name>Flow</name>
-	</types>
+        <members>BSF_Access_Control_Rule__mdt.Component_API_Names__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Field_API_Names__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Is_Enabled__c</members>
+        <members>BSF_Access_Control_Rule__mdt.PermissionsCreate__c</members>
+        <members>BSF_Access_Control_Rule__mdt.PermissionsDelete__c</members>
+        <members>BSF_Access_Control_Rule__mdt.PermissionsEdit__c</members>
+        <members>BSF_Access_Control_Rule__mdt.PermissionsRead__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Release_Tag__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Rule_Type__c</members>
+        <members>BSF_Access_Control_Rule__mdt.SObject_API_Name__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Target_API_Names__c</members>
+        <members>BSF_Access_Control_Rule__mdt.Target_Type__c</members>
+        <members>Opportunity.Cancellation_Detail__c</members>
+        <members>Opportunity.Primary_Drive_Contact__c</members>
+        <members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
+        <members>sked_Drive__c.sked_Cancellation_Detail__c</members>
+        <members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
+        <members>sked_JA_Post_Process_Config__c.sked_Allowed_No_of_Jobs_in_Flex_Queue__c</members>
+        <members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
+        <name>CustomField</name>
+    </types>
     <types>
-		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
-		<members>Opportunity-APS Planner Mobile Opp Layout</members>
-		<members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
-		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
-		<members>Opportunity-DRD Fixed Site Opp Layout</members>
-		<members>Opportunity-DRD Mobile Opp Layout</members>
-		<members>Opportunity-Fixed Site Opp APS Layout</members>
-		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
-		<members>Opportunity-Mobile Opp Layout</members>
-		<members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
-		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-		<name>Layout</name>
-	</types>
+        <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_13448_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14427_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14511_Class_Component</members>
+        <members>BSF_Access_Control_Rule.HRP_14511_Visual_Force_Page</members>
+        <name>CustomMetadata</name>
+    </types>
     <types>
-		<members>autoMapper</members>
-		<members>slwcApprovalHistoryConsole</members>
+        <members>BSF_Access_Control_Rule__mdt</members>
+        <members>sked_JA_Post_Process_Config__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Create_New_Template</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Planner Mobile Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Mobile Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Mobile Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>autoMapper</members>
+        <members>slwcActivityCalendarActivityList</members>
+        <members>slwcAvailator</members>
         <members>slwcCancelDriveModal</members>
-		<members>slwcDriveCalendarActivityList</members>
-		<members>slwcDriveCalendarDriveList</members>
-		<members>slwcDriveChangeRequestApproval</members>
+        <members>slwcDriveCalendarDriveList</members>
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveSchedulingFilters</members>
-		<members>slwcDriveShiftJobTable</members>
-		<members>slwcPendingActionDriveApproval</members>
-		<members>slwcPlanDrive</members>
-		<members>slwcResolveDriveContentions</members>
-		<members>slwcSchedulingConsoleDriveList</members>
-		<name>LightningComponentBundle</name>
-	</types>
-	<types>
-		<members>BSF_Support/Site_CO_without_Travel_Time</members>
-		<name>Report</name>
-	</types>
-	<types>
-		<members>Site_Collection_Operations</members>
-		<name>ReportType</name>
-	</types>
-	<types>
-		<members>sked_HLT_Dist</members>
-		<members>skedLWCCustomStyle</members>
-		<name>StaticResource</name>
-	</types>
-	<types>
-		<members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
-		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
-		<name>ValidationRule</name>
-	</types>
+        <members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
+        <members>slwcDriveShiftJobTable</members>
+        <members>slwcDriveStaffingDetails</members>
+        <members>slwcPlanDrive</members>
+        <members>slwcSchedulingConsoleDriveList</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>BSF_Support/Site_CO_without_Travel_Time</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Site_Collection_Operations</members>
+        <name>ReportType</name>
+    </types>
+    <types>
+        <members>skedLWCCustomStyle</members>
+        <members>sked_HLT_Dist</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
+        <members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
+        <name>ValidationRule</name>
+    </types>
     <version>64.0</version>
 </Package>
