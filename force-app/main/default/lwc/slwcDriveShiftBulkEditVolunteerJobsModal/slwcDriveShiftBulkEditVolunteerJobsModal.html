@@ -64,7 +64,8 @@
                                     object-api-name="sked__Job__c" 
                                     selected-value={model.volunteerRole}  
                                     pick-listfield-api-name="sked_Volunteer_Role__c"
-                                    onpicklistchange={handleOnChange}>
+                                    onpicklistchange={handleOnChange}
+                                    dropdown-alignment="bottom-left">
                                 </c-slwc-picklist>
                             </div>
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
@@ -90,7 +91,7 @@
                                         selected-value={model.volunteerAdjustmentReason}  
                                         pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
                                         onpicklistchange={handleOnChange}
-                                        dropdown-alignment="auto">
+                                        dropdown-alignment="bottom-left">
                                     </c-slwc-picklist>
                                 </div>
                                 <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
