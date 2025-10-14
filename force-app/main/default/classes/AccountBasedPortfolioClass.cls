@@ -563,7 +563,10 @@ Creating Accoiut Portfolio data
             if( !apassignList.isEmpty() ){
                 try{
                     //Schema.DescribeSObjectResult ds = Account_Portfolio_Assignment__c.sObjectType.getDescribe();if( ds.isCreateable() ){}
-                    
+                    List<Account_Portfolio_Assignment__c> terrAPAtoCoverTailList =  AccountPortfolioAssignmentService.ensureTerritoryCoverage(apassignList);
+                    if(terrAPAtoCoverTailList !=null && !terrAPAtoCoverTailList.isEmpty()){
+                        apassignList.addAll(terrAPAtoCoverTailList);
+                    }
                     
                     insert apassignList;
                     

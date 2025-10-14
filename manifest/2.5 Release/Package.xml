@@ -19,7 +19,11 @@
 		<members>skedDriveTrigger_Test</members>
 		<members>skedResourceTagHandler</members>
         <members>slwcDriveService</members>
-        <members>slwcDriveService_Test</members>				
+        <members>slwcDriveService_Test</members>	
+		<members>AccountBasedPortfolioClass</members>
+        <members>AccountBasedPortfolioClass_Test</members>
+        <members>AccountPortfolioAssignmentService</members>
+        <members>AccountPortfolioAssignmentTrigger_Test</members>			
 		<name>ApexClass</name>
 	</types>
     <types>
