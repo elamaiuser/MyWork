@@ -54,6 +54,7 @@
 	</types>
     <types>
 		<members>autoMapper</members>
+		<members>slwcActivityCalendarActivityList</members>
 		<members>slwcApprovalHistoryConsole</members>
         <members>slwcCancelDriveModal</members>
 		<members>slwcDriveCalendarActivityList</members>
@@ -62,6 +63,7 @@
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveSchedulingFilters</members>
+		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
 		<members>slwcDriveShiftJobTable</members>
 		<members>slwcPendingActionDriveApproval</members>
 		<members>slwcPlanDrive</members>
