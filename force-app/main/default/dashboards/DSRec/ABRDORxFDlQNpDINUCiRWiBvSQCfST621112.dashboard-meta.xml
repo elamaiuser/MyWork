@@ -161,7 +161,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>true</sortLegendValues>
                 <title>Increase productivity or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -208,7 +208,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>true</sortLegendValues>
                 <title>Increase APO or feed into FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -259,7 +259,7 @@
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Minimal BPL support favors FS growth</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -306,7 +306,7 @@
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
-                
+                <sortLegendValues>false</sortLegendValues>
                 <title>Identify Accounts that can support FS</title>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -396,10 +396,10 @@
     </dashboardGridLayout>
     <dashboardType>MyTeamUser</dashboardType>
     <isGridLayout>true</isGridLayout>
-    <owner>shubham.tiwari@redcross.org</owner>
-    <runningUser>heather.olsen@redcross.org</runningUser>
+    <owner>deploymentuser@redcross.org</owner>
+    <runningUser>deploymentuser@redcross.org</runningUser>
     <textColor>#000000</textColor>
-    <title>Fixed Site Dashboard Central Atlantic</title>
+    <title>Fixed Site Dashboard: Central Atlantic Division</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>
