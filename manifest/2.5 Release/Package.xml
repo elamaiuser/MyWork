@@ -55,8 +55,7 @@
         <members>BSF_Access_Control_Rule__mdt.Target_Type__c</members>
         <members>Opportunity.Cancellation_Detail__c</members>
         <members>Opportunity.Primary_Drive_Contact__c</members>
-        <members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
-		<members>Opportunity.Primary_Drive_Contact__c</members>
+        <members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>		
         <members>sked_Drive__c.sked_Cancellation_Detail__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_No_of_Jobs_in_Flex_Queue__c</members>
