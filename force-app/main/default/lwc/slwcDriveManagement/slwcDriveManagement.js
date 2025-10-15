@@ -660,6 +660,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             requiresAssetValidation = this.driveHelper.checkForChangesToDriveJobs(this.drive, this.masterData.backupDrive);
         }
 
+        if (!requiresAssetValidation) { 
+            requiresAssetValidation = this.driveHelper.checkForChangesToDriveShifts(this.drive, this.masterData.backupDrive);
+        }
+
         if (this.showApproveDriveSubmissionBtn) {
             requiresAssetValidation = true;
         }
