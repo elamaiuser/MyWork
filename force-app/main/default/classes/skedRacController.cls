@@ -609,6 +609,32 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
+
+    @remoteAction
+    global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        try {
+            skedCollectionOpTimeBlockService.queryModel query = new skedCollectionOpTimeBlockService.queryModel();
+            query.collectionOperationIds = request.collectionOperationIds;
+            query.endDate = request.endDate;
+            query.startDate = request.startDate;
+            
+            skedCollectionOpTimeBlockService service = new skedCollectionOpTimeBlockService();
+            List<Collection_Operation_Time_Block__c> records = (List<Collection_Operation_Time_Block__c>)service.query(query);
+            
+            List<skedModels.collectionOperationTimeBlock> collectionOperationTimeBlocks = new List<skedModels.collectionOperationTimeBlock>();
+            skedAutoMapper autoMapper = skedAutoMapper.instance;
+            for (Collection_Operation_Time_Block__c record : records) {
+                skedModels.collectionOperationTimeBlock collectionOperationTimeBlock = (skedModels.collectionOperationTimeBlock)skedAutoMapper.instance.mapTo(record, skedModels.collectionOperationTimeBlock.class);
+                collectionOperationTimeBlocks.add(collectionOperationTimeBlock);
+            } 
+            result.data = collectionOperationTimeBlocks;
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+        }
+        return result;
+    }
     
     @remoteAction
     global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
