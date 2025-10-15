@@ -57,7 +57,7 @@
         <field>sked_Drive__c.sked_Drive_Productivity_Banding__c</field>
     </columns>
     <filter>
-        <booleanFilter>((1 OR 2) AND 3 AND 4 AND 5) AND 6</booleanFilter>
+        <booleanFilter>(((1 OR 2) AND 3 AND 4 AND 5) AND 6) AND 7</booleanFilter>
         <criteriaItems>
             <column>sked_Drive__c.sked_Drive_Productivity_Banding__c</column>
             <columnToColumn>false</columnToColumn>
@@ -99,6 +99,13 @@
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Draft,System Generated,Hold,Tentative,Confirmed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked_Drive__c.sked_Type_of_Drive__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Mobile</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
