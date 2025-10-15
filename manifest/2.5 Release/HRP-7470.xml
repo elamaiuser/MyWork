@@ -14,6 +14,11 @@
 		<name>CustomField</name>
 	</types>
     <types>
+		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
 		<members>Create_New_Template</members>
 		<name>Flow</name>
 	</types>
