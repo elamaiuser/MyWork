@@ -42,6 +42,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Copy_1_of_End_ASR_with_Non_Common_Reason</name>
         <label>Copy 1 of End ASR with Non-Common Reason</label>

@@ -17,6 +17,7 @@
         <nameSegment>SessionPermSetActivationController</nameSegment>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <processMetadataValues>
             <name>index</name>

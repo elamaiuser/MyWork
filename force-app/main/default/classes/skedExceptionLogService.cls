@@ -468,6 +468,8 @@ global class skedExceptionLogService extends skedDataService {
                 skedModels.resource resource = mapResource.get(newRecord.sked__Resource__c);
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
                 
+                system.debug('#resourceTimezoneSidId#' + resourceTimezoneSidId);
+                
                 boolean conflictNonWorkingTime = false;
                 for (skedModels.event event : resource.availability) {
                     DateTime resourceEventStart = skedDateTimeUtils.newDateTimeInstance(event.startDate, 0, resourceTimezoneSidId);
@@ -480,13 +482,22 @@ global class skedExceptionLogService extends skedDataService {
                         resourceEventFinish = resourceEventFinish.addMinutes(event.endTimeInMinutes);
                     }
 
+                    system.debug('#resourceEventStart#' + resourceEventStart.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#resourceEventFinish#' + resourceEventFinish.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#newRecord.sked_Start1__c#' + newRecord.sked_Start1__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    system.debug('#newRecord.sked_End__c#' + newRecord.sked_End__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
+                    
                     if (resourceEventStart != NULL && resourceEventFinish != NULL) {
                         if (resourceEventStart < newRecord.sked_End__c && resourceEventFinish > newRecord.sked_Start1__c) {
+
+                            
+
                             conflictNonWorkingTime = TRUE;
                             break;
                         }
                     }
                 }
+                system.debug('#conflictNonWorkingTime#' + conflictNonWorkingTime);
                 if (conflictNonWorkingTime) {
                     skedHC__Exception__c skedException = new skedHC__Exception__c (
                         skedHC__Activity__c = newRecord.sked__Activity__c,

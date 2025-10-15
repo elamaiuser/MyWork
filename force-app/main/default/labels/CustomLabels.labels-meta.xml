@@ -1,35 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>Mobile_Account_Record_Type</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Mobile Account Record Type</shortDescription>
-        <value>Mobile Account</value>
-    </labels>
-    <labels>
-        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
-        <value>Other</value>
-    </labels>
-    <labels>
-        <fullName>Task_Subject_Marketing_Exception</fullName>
-        <categories>Task Subject</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Task Subject - Marketing Exception</shortDescription>
-        <value>Request for Marketing Exception</value>
-    </labels>
-    <labels>
-        <fullName>Taxonomy_Custom_Notification_Email</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
-        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
-    </labels>
-    <labels>
         <fullName>AccPortfolioAssignmentException</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -397,6 +368,13 @@
         <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
     </labels>
     <labels>
+        <fullName>Mobile_Account_Record_Type</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
+    </labels>
+    <labels>
         <fullName>NO_SBPM_ABM</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -467,23 +445,6 @@
         <protected>false</protected>
         <shortDescription>NotifyAmWeekConfigForBplRecruited</shortDescription>
         <value>6</value>
-    </labels>
-    <labels>
-        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
-        <categories>Validation Message</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
-        <value>Effective Start/End Dates must fall within the associated Time Block&#39;s effective
-            date range.</value>
-    </labels>
-    <labels>
-        <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
-        <categories>Validation Message</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
-        <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
     <labels>
         <fullName>OnlyForMigration</fullName>
@@ -806,6 +767,28 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>System Administrator,Recruitment Admin,Global Admin</value>
     </labels>
     <labels>
+        <fullName>Sync_Contact_To_ASR_EndReason</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sync Contact To ASR EndReason</shortDescription>
+        <value>Other</value>
+    </labels>
+    <labels>
+        <fullName>Task_Subject_Marketing_Exception</fullName>
+        <categories>Task Subject</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Task Subject - Marketing Exception</shortDescription>
+        <value>Request for Marketing Exception</value>
+    </labels>
+    <labels>
+        <fullName>Taxonomy_Custom_Notification_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Taxonomy_Custom_Notification_Email</shortDescription>
+        <value>harika.bolisetti2@redcross.org;kata.manishreddy@redcross.org;rajesh.rapolu@redcross.org</value>
+    </labels>
+    <labels>
         <fullName>Team_Supervisor_Job_Code</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -818,6 +801,20 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>TravelTimeEditableProfiles</shortDescription>
         <value>APS Admin,System Administrator,Global Admin</value>
+    </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
+        <value>17</value>
+    </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
+        <value>10</value>
     </labels>
     <labels>
         <fullName>WeeklyStaffingRoleReportURL</fullName>
@@ -855,17 +852,20 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>System Administrator</value>
     </labels>
     <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
+        <categories>Validation Message</categories>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
-        <value>17</value>
+        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
+        <value>Effective Start/End Dates must fall within the associated Time Block&#39;s effective
+            date range.</value>
     </labels>
     <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
+        <categories>Validation Message</categories>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
-        <value>10</value>
+        <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
+        <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
 </CustomLabels>

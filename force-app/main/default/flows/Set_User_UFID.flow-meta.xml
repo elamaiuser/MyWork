@@ -227,6 +227,7 @@
         <nameSegment>UFIDGenerator</nameSegment>
     </actionCalls>
     <apiVersion>50.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <processMetadataValues>
             <name>index</name>

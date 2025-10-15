@@ -6,8 +6,8 @@ public with sharing class OperationDriveLimitService {
         for (sked_Operation_Drive_Limit__c odl : newItems) {
             if(odl.Time_Block__c!=null) {
                 odlsWithTimeBlock.add(odl);
-            collectionOperationIds.add(odl.sked_Collection_Operation__c);
-        }
+                collectionOperationIds.add(odl.sked_Collection_Operation__c);
+            }
         }
         
         if (odlsWithTimeBlock.isEmpty()) return;

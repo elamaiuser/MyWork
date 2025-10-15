@@ -634,7 +634,7 @@ global virtual class skedRacController extends skedBaseController {
             result.getError(ex);
         }
         return result;
-    }
+    }    
     
     @remoteAction
     global static skedRemoteResultModel saveAvailability(saveAvailabilityRequestModel request) {
@@ -1329,7 +1329,7 @@ global virtual class skedRacController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__r.Name
+                (SELECT Id, sked__Tag__r.Name 
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
@@ -1459,7 +1459,6 @@ global virtual class skedRacController extends skedBaseController {
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
             skedDataService.saveResult saveResult = service.saveUnavailability(request.availability);
             result.data = saveResult.success == FALSE ? saveResult.returnedData : request.model;
-
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = false;
         }
         catch (Exception ex) {

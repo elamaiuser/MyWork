@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>HRP-14506 - Migrated from the: Optimization Run Timeout workflow rule
 Workflow rule description: Handle timeout for Optimization that run too long&quot;</description>
     <environments>Default</environments>

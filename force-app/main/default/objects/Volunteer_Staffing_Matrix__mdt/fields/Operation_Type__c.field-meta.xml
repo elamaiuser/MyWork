@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Operation_Type__c</fullName>
     <description>Created as part of HRP-15041</description>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Operation Type</label>
     <required>false</required>
