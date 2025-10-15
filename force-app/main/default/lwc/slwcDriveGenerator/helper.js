@@ -784,6 +784,7 @@ class DriveHelper {
           startTime: true,
           endTime: true,
           driveSite: true,
+          timeBlock: true,
           projectedRegisteredDonors: true,
           driveShiftsMetadata: true,
           driveShiftsConfiguration: true,
@@ -811,6 +812,7 @@ class DriveHelper {
             startTime: true,
             endTime: true,
             driveSite: true,
+            timeBlock: true,
             projectedRegisteredDonors: true,
             driveShiftsMetadata: true,
             driveShiftsConfiguration: true, 
@@ -845,6 +847,7 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
+            timeBlock: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
             redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
@@ -868,6 +871,7 @@ class DriveHelper {
       startTime: isReadonly,
       endTime: isReadonly,
       driveSite: isReadonly,
+      timeBlock: isReadonly,
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
@@ -903,6 +907,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
           fieldReadonlyMap.redcrossVolunteerRequired = false;
+          fieldReadonlyMap.timeBlock = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -2286,6 +2291,27 @@ class DriveHelper {
     }
     
     return false;
+  }
+
+  checkForChangesToDriveShifts(drive, backupDrive) {
+    if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
+      return true;
+    }
+
+    let requiresAssetValidation = false;
+    for (let i = 0; i < drive.driveShifts.length; i++) {
+      let driveShift = drive.driveShifts[i];
+      let backupDriveShift = backupDrive.driveShifts[i];
+      
+      const triggeringFields = ['timeBlockId'];
+      triggeringFields.forEach(field => {
+        if (driveShift[field] !== backupDriveShift?.[field]) {
+          requiresAssetValidation = true;
+        }
+      });
+    }
+    
+    return requiresAssetValidation;
   }
 
   findDriveLimitByDay = (dateIso, driveLimits = [], type = null) => {
