@@ -95,14 +95,16 @@
         <name>Layout</name>
     </types>
     <types>
-        <members>autoMapper</members>
-        <members>slwcActivityCalendarActivityList</members>
+        <members>autoMapper</members>        
         <members>slwcAvailator</members>
         <members>slwcCancelDriveModal</members>
+        <members>slwcDriveCalendarActivityList</members>
         <members>slwcDriveCalendarDriveList</members>
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
+        <members>slwcDriveManagement</members>
         <members>slwcDriveSchedulingFilters</members>
+        <members>slwcDriveShift</members>
         <members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
         <members>slwcDriveShiftJobTable</members>
         <members>slwcDriveStaffingDetails</members>
