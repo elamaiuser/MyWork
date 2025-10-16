@@ -79,6 +79,7 @@
         <members>BSF_Access_Control_Rule.HRP_14511_Visual_Force_Page</members>
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -106,20 +107,24 @@
 	</types>
     <types>
 		<members>autoMapper</members>
+        <members>slwcApprovalHistoryConsole</members>
 		<members>slwcAvailator</members>
         <members>slwcCancelDriveModal</members>
 		<members>slwcDriveCalendarActivityList</members>
 		<members>slwcDriveCalendarDriveList</members>
+        <members>slwcDriveChangeRequestApproval</members>
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
-		<members>slwcDriveManagement</members>
+		<members>slwcDriveManagement</members>        
         <members>slwcDriveSchedulingFilters</members>
 		<members>slwcDriveShift</members>
 		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
 		<members>slwcDriveShiftJobTable</members>
         <members>slwcDriveStaffingDetails</members>
+        <members>slwcPendingActionDriveApproval</members>
 		<members>slwcPlanDrive</members>
-		<members>slwcSchedulingConsoleDriveList</members>
+        <members>slwcResolveDriveContentions</members>
+		<members>slwcSchedulingConsoleDriveList</members>		
 		<name>LightningComponentBundle</name>
 	</types>
     <types>
