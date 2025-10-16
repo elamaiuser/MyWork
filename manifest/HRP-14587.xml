@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-	<types>
-		<members>sked__Activity__c.sked_Time_Block__c</members>
-		<members>sked_Staffing_Constraint__c.sked_Time_Block__c</members>
-		<name>CustomField</name>
-	</types>	
-	<version>60.0</version>
-</Package>
