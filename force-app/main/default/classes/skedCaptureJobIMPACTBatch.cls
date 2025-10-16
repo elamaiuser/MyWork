@@ -104,7 +104,8 @@ global class skedCaptureJobIMPACTBatch implements Database.Batchable<sObject>, D
 
             if (jobAllocations != null && !jobAllocations.keySet().isEmpty()) {
                 skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-                Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocations.keyset()), 200);
+                skedJobAllocationPostProcessBatch.schedule(batchSetting, jobAllocations.keyset(), 200, 0);
+                //Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocations.keyset()), 200);
             }
         }
         this.coImpactChanges.remove(0);
