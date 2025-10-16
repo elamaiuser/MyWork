@@ -234,7 +234,7 @@ export default class SlwcPlanDrive extends LightningElement {
     return service.query(queryModel)
       .then((result = []) => {
         this.timeBlockOptions = [{
-          label: 'No Time Block',
+          label: 'Operation Hours',
           value: NO_TIME_BLOCK
           }, ...uniqBy(result.map(COTimeBlock => {
             return {

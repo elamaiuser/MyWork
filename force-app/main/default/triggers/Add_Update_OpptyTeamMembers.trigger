@@ -6,6 +6,7 @@
 * 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
 * 08/28/2024				 Balaji N					 Logic for HRP-13340
 * 20/06/2025                 Harika Bolisetti            Logic for HRP-15121
+* 08/20/2025                 Satyendra Vishwakarma       Logic for HRP-15577 - Fix for BSF_Batch_OpportunityTeamSync getting triggerred multiple times
 ************************************************************************************************************************************************
 */
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
@@ -74,9 +75,10 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
         //HRP-15121
         if(!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)
         {
-            System.debug('HRP-Sync add_update 74:'+!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c);
+            System.debug('HRP-Sync add_update 78:'+BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c);
             //HRP-10569 End
             Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+            
         }
     } 
     //HRP-15205 --> In case of accounts with no team members

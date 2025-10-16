@@ -212,7 +212,8 @@ class DriveHelper {
     timezoneSidId,
     cancellationReason,
     initiatedBy,
-    replacementDriveId
+    replacementDriveId,
+    cancellationDetail
   }) {
     if(!drive) return null;
 
@@ -233,7 +234,8 @@ class DriveHelper {
         pendingActionReasonCode: DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
         cancellationReason: cancellationReason,
         initiatedBy: initiatedBy,
-        replacementDriveId: replacementDriveId
+        replacementDriveId: replacementDriveId,
+        cancellationDetail: cancellationDetail
       }
     } else {
       if(needToCheckForApproval && diff <= 42) {
@@ -244,7 +246,8 @@ class DriveHelper {
           pendingActionReasonCode: '',
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       } else {
         return {
@@ -253,7 +256,8 @@ class DriveHelper {
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
           pendingActionReasonCode: '',
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       }
     }
@@ -780,6 +784,7 @@ class DriveHelper {
           startTime: true,
           endTime: true,
           driveSite: true,
+          timeBlock: true,
           projectedRegisteredDonors: true,
           driveShiftsMetadata: true,
           driveShiftsConfiguration: true,
@@ -807,6 +812,7 @@ class DriveHelper {
             startTime: true,
             endTime: true,
             driveSite: true,
+            timeBlock: true,
             projectedRegisteredDonors: true,
             driveShiftsMetadata: true,
             driveShiftsConfiguration: true, 
@@ -841,6 +847,7 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
+            timeBlock: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
             redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
@@ -864,6 +871,7 @@ class DriveHelper {
       startTime: isReadonly,
       endTime: isReadonly,
       driveSite: isReadonly,
+      timeBlock: isReadonly,
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
@@ -899,6 +907,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
           fieldReadonlyMap.redcrossVolunteerRequired = false;
+          fieldReadonlyMap.timeBlock = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -1850,6 +1859,9 @@ class DriveHelper {
       let dualRole = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
+        if (resourceRole === 'VP/HH') {
+          noOfResources = data.vphhQuantity || 0;
+        }
         dualRole = data.dualRole;
       }
 
@@ -2281,6 +2293,27 @@ class DriveHelper {
     return false;
   }
 
+  checkForChangesToDriveShifts(drive, backupDrive) {
+    if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
+      return true;
+    }
+
+    let requiresAssetValidation = false;
+    for (let i = 0; i < drive.driveShifts.length; i++) {
+      let driveShift = drive.driveShifts[i];
+      let backupDriveShift = backupDrive.driveShifts[i];
+      
+      const triggeringFields = ['timeBlockId'];
+      triggeringFields.forEach(field => {
+        if (driveShift[field] !== backupDriveShift?.[field]) {
+          requiresAssetValidation = true;
+        }
+      });
+    }
+    
+    return requiresAssetValidation;
+  }
+
   findDriveLimitByDay = (dateIso, driveLimits = [], type = null) => {
     if (!dateIso) return null;
 
@@ -2405,7 +2438,7 @@ class DriveHelper {
           passed: !violated
         }
       });
-
+      
       result.data = {
         driveLimit: isNullOrEmpty(driveLimit) ? '∞' : driveLimit,
         noOfCurrentDrives: noOfConfirmedDrives,
@@ -2662,7 +2695,7 @@ class DriveHelper {
           passed: !violated
         }
       });
-
+      
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfCDLRequested,
@@ -3362,7 +3395,7 @@ class DriveHelper {
       } else {
         return ['Donor Ambassador'].includes(job.volunteerRole);
       }
-    }
+      }
 
     return false;
   }

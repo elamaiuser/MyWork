@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>skedFutureCallPostCommitEventHandler</members>
@@ -11,7 +11,7 @@
         <members>skedFutureCallPostCommitEventTrigger</members>
         <name>ApexTrigger</name>
     </types>
-    <types>
+    </types>
 		<members>sked_Future_Call_Post_Commit_Event__e</members>
 		<name>CustomObject</name>
     </types>

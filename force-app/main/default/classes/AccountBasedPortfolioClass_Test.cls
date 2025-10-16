@@ -388,6 +388,137 @@
         }
         return recTypeNameWithIdMap;
     }
-    
+
+    @isTest
+    static void testGetBaseURLandFormattedDate() {
+        Test.startTest();
+
+        String url = AccountBasedPortfolioClass.getBaseURLExternalform();
+        System.assert(url != null, 'Expected getBaseURLExternalform() to return a non-null URL');
+
+        String formatted = AccountBasedPortfolioClass.getFormattedDate(Date.today());
+        System.assertEquals(
+            String.valueOf(Date.today()).substring(0,10),
+            formatted,
+            'Expected formatted date to match today\'s date'
+        );
+
+        String emptyDate = AccountBasedPortfolioClass.getFormattedDate(null);
+        System.assertEquals(
+            '',
+            emptyDate,
+            'Expected getFormattedDate(null) to return empty string'
+        );
+
+        Test.stopTest();
+    }
+    @isTest
+    static void testGetNonGeoPortfolioData_OtherTypes() {
+        // Create sample Account
+        Account acc = new Account(Name = 'RelTestAcc', BillingPostalCode = '12345');
+        insert acc;
+
+        // Create Fixed Site portfolio with valid fields and future End_Date
+        BSF_Portfolio__c fixedSitePort = new BSF_Portfolio__c(
+            Portfolio_Name__c = 'FixedSitePortfolio',
+            Portfolio_Code__c = 'FX123',
+            Portfolio_Type__c = 'Fixed Site',
+            Taxonomy_Type__c = 'Bio Fixed Sites',
+            Account_Based_Portfolio__c = true,
+            Start_Date__c = System.today(),
+            End_Date__c = System.today().addDays(10)
+        );
+        insert fixedSitePort;
+
+        // Create Relationship Manager portfolio with valid data
+        BSF_Portfolio__c rmPort = new BSF_Portfolio__c(
+            Portfolio_Name__c = 'RM Portfolio',
+            Portfolio_Code__c = 'RM123',
+            Portfolio_Type__c = 'Relationship Manager',
+            Taxonomy_Type__c = 'Bio Relationship Manager Portfolio',
+            Account_Based_Portfolio__c = true,
+            Start_Date__c = System.today(),
+            End_Date__c = System.today().addDays(10)
+        );
+        insert rmPort;
+
+        Test.startTest();
+
+        // Call for Fixed Site
+        List<AccountBasedPortfolioClass.BSFPortfolioWrapper> fixedResult =
+            AccountBasedPortfolioClass.getNonGeoPortfolioData('Fixed Site', new List<Id>{acc.Id});
+        System.assert(
+            fixedResult != null,
+            'Expected non-null portfolio list for Fixed Site type (check End_Date__c condition)'
+        );
+
+        // Call for Relationship Manager
+        List<AccountBasedPortfolioClass.BSFPortfolioWrapper> rmResult =
+            AccountBasedPortfolioClass.getNonGeoPortfolioData('Relationship Manager', new List<Id>{acc.Id});
+        System.assert(
+            rmResult != null,
+            'Expected non-null portfolio list for Relationship Manager type (check End_Date__c condition)'
+        );
+
+        Test.stopTest();
+    }
+    @isTest
+    static void testCreateAccountTeamData_RM() {
+        // Create test Account
+        Account acc = new Account(Name = 'RM Account', BillingPostalCode = '12345');
+        insert acc;
+
+        BSF_Portfolio__c bsfPort = new BSF_Portfolio__c(
+            Portfolio_Name__c = 'RM Portfolio Test',
+            Portfolio_Code__c = 'RM001',
+            Portfolio_Type__c = 'Relationship Manager',
+            Taxonomy_Type__c = 'Bio Relationship Manager Portfolio',
+            Account_Based_Portfolio__c = true,
+            Start_Date__c = System.today(),
+            End_Date__c = System.today().addDays(10)
+        );
+        insert bsfPort;
+
+        // Create Portfolio Assignment
+        Portfolio_Assignment__c pa = new Portfolio_Assignment__c(
+            BSF_Portfolio__c = bsfPort.Id,
+            Assignment_Type__c = 'Relationship Manager',
+            User__c = UserInfo.getUserId(),
+            Start_Date__c = System.today(),
+            End_Date__c = System.today().addDays(5)
+        );
+        insert pa;
+
+        // Create Account Portfolio Assignment
+        Account_Portfolio_Assignment__c apa = new Account_Portfolio_Assignment__c(
+            Account__c = acc.Id,
+            BSF_Portfolio__c = bsfPort.Id,
+            Start_Date__c = System.today(),
+            End_Date__c = System.today().addDays(5)
+        );
+        insert apa;
+
+        Map<Id, Account_Portfolio_Assignment__c> apMap = new Map<Id, Account_Portfolio_Assignment__c>{ acc.Id => apa };
+
+        Test.startTest();
+        AccountBasedPortfolioClass.createAccountTeamData(
+            new List<Id>{ acc.Id },
+            apMap,
+            bsfPort.Id,
+            'Relationship Manager',
+            Date.today(),
+            Date.today().addDays(5),
+            bsfPort
+        );
+        Test.stopTest();
+
+        // Assert that Relationship_Manager__c field was updated
+        acc = [SELECT Relationship_Manager__c FROM Account WHERE Id = :acc.Id];
+        System.assertNotEquals(
+            null,
+            acc.Relationship_Manager__c,
+            'Expected Relationship_Manager__c to be updated after createAccountTeamData()'
+        );
+    }   
     
 }

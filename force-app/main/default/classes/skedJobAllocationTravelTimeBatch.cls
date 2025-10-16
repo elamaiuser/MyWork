@@ -59,7 +59,8 @@ global class skedJobAllocationTravelTimeBatch implements Database.Batchable<sObj
         }
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, this.jobAllocationIds), 100);
+        skedJobAllocationPostProcessBatch.schedule(batchSetting, this.jobAllocationIds, 100, 0);
+        //Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, this.jobAllocationIds), 100);
     }
     
     /*********************************************************** Privated Methods ***********************************************************/

@@ -2,12 +2,13 @@
 /* 
 *Modification Log 
 * Date					     Developer Name			     Comments
-* ***************************************************************************
+* *******************************************************************************************************************************************************************************************************************************************
 * 08/29/2023				  Balaji N					 Logic for HRP-10888(Start Method: added orderby on Team_Code__ABM_Code__c; Finish Method: removed start,end parameters and added tax version on BSF_Batch_AccountPortfolioAssignment)
 * 09/27/2023				  Balaji N					 Logic for HRP-10890(Method call: BSF_Utilities.metaDataupdate)
 * 05/15/2024                  Balaji N                   Logic for HRP-12054
 * 03/05/2025                  Harika  Bolisetti          Logic for  HRP-14298//Taxo Run Chaining in finish method
-*****************************************************************************
+* 08/20/2025                  Satyendra Vishwakarma      Logic for  HRP-15577 - Fix for BSF_Batch_OpportunityTeamSync getting triggerred multiple times
+*******************************************************************************************************************************************************************************************
 */
 global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sObject>,Database.Stateful
 {
@@ -189,6 +190,7 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                 
                 BatchByPassSettings__mdt accPortbatchBypass = BSF_Utilities.metaDataupdate(null, null, null, 'Account_Portfolio_Assignment_Batch');
                 //RecordType:Bio Recruitment CD
+                system.debug('HRP-15577 The runAssignmentBatch :'+this.runAssignmentBatch);
                 if (this.runAssignmentBatch) {
                     
                     system.debug('Executing AccountPortfolioAssignment batch');
@@ -204,8 +206,8 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                 //All RecordTypes(Except Bio Recruitment CD,Bio Collection BSF)
                 else {
                    
-                    system.debug('The AccountPortfolioAssignment batch is Bypassed ');
-                    system.debug('BatchSize----->'+integer.valueof(accPortbatchBypass.Batch_Size__c));
+                    system.debug('HRP-15577 The AccountPortfolioAssignment batch is Bypassed ');
+                    system.debug('HRP-15577 BatchSize------>'+integer.valueof(accPortbatchBypass.Batch_Size__c));
                     BatchByPassSettings__mdt batchBypass = BSF_Utilities.metaDataupdate(null,System.now(),false,'Opportunity_Team_Sync_Batch');//HRP-10890
                     
                     
@@ -326,15 +328,35 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                 
                 if (txrn.Taxo_Record_Type__c == BSF_Constants.BIO_COLLECTION_RECORD_TYPE) {
                     batchSize = Taxo_Utilities.getBatchSize(txrn.Taxo_Record_Type__c, 'BSF_Batch_PopulateCORegion');
-                    Database.executeBatch(new BSF_Batch_PopulateCORegion(null,txrn.Future_Version_Number__c,this.allowChaining), batchSize);
+                    //Database.executeBatch(new BSF_Batch_PopulateCORegion(null,txrn.Future_Version_Number__c,this.allowChaining), batchSize);
+                    // NEW (scheduled by metadata delay):
+                    Taxo_Utilities.scheduleAfterDelay(
+                        new BSF_Batch_PopulateCORegionScheduler(txrn.Future_Version_Number__c, true, batchSize),
+                        txrn.Taxo_Record_Type__c,
+                        'BSF_Batch_PopulateCORegion'
+                    ); 
                 } 
                 else if (txrn.Taxo_Record_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE) {
                     batchSize = Taxo_Utilities.getBatchSize(txrn.Taxo_Record_Type__c, 'BSF_Batch_BSFPortfolio');
-                    Database.executeBatch(new BSF_Batch_BSFPortfolio(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, null, null, true, this.allowChaining), batchSize);
+                    //Database.executeBatch(new BSF_Batch_BSFPortfolio(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, null, null, true, this.allowChaining), batchSize);
+                    // Recruitment case NEW (scheduled by metadata delay):
+                    Boolean runAssign = true;  
+                    Taxo_Utilities.scheduleAfterDelay(
+                        new BSF_Batch_BSFPortfolioScheduler(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, runAssign, true, batchSize),
+                        txrn.Taxo_Record_Type__c,
+                        'BSF_Batch_BSFPortfolio'
+                    );
                 } 
                 else {
                     batchSize = Taxo_Utilities.getBatchSize(txrn.Taxo_Record_Type__c, 'BSF_Batch_BSFPortfolio');
-                    Database.executeBatch(new BSF_Batch_BSFPortfolio(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, null, null, false, this.allowChaining), batchSize);
+                    //Database.executeBatch(new BSF_Batch_BSFPortfolio(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, null, null, false, this.allowChaining), batchSize);
+                    // For non-recruitment record types NEW (scheduled by metadata delay):
+                    Boolean runAssignFalse = false;
+                    Taxo_Utilities.scheduleAfterDelay(
+                        new BSF_Batch_BSFPortfolioScheduler(txrn.Taxo_Record_Type__c, txrn.Future_Version_Number__c, runAssignFalse, true, batchSize),
+                        txrn.Taxo_Record_Type__c,
+                        'BSF_Batch_BSFPortfolio'
+                    );
                 }
             }
         }catch (Exception e) {
