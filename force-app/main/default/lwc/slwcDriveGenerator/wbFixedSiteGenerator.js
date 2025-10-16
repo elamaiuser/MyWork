@@ -1365,7 +1365,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled
       };
 
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);

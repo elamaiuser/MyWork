@@ -168,6 +168,10 @@ export default class SlwcDriveShift extends LightningElement {
             {
                 targetName: 'timeBlockId', 
                 targetValue: slwcUtils.getValueFromEvent(event)
+            },
+            {
+                targetName: 'timeBlockManuallyChanged', 
+                targetValue: true
             }
         ]);
     }
