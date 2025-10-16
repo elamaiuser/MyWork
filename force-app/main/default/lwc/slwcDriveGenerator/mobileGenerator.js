@@ -1934,7 +1934,7 @@ class MobileGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled,
         APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
