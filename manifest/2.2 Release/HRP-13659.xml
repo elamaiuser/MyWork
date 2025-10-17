@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
+		<members>BSFStagingSheetController</members>
+        <members>BSFWeeklyStaffingRoleTimeController</members>
+        <members>BSFWeeklyStaffingRoleTimeControllerTest</members>
+        <members>BSFWeeklyStaffingRTReportController</members>
+        <members>WeeklyStaffScheduleReportController</members>
+        <members>WeeklyStaffScheduleReportControllerTest</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>bsfWeeklyStaffingRoleTimeReport</members>
+		<members>bsfWeeklyStaffScheduleReportlwc</members>		
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Custom_Report_Config.RoleTimeReportCharacterSplit</members>		
+		<name>CustomMetadata</name>
+	</types>
+    <version>60.0</version>
+</Package>

@@ -609,7 +609,7 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
-    
+
     @remoteAction
     global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
@@ -634,7 +634,7 @@ global virtual class skedRacController extends skedBaseController {
             result.getError(ex);
         }
         return result;
-    }
+    }    
     
     @remoteAction
     global static skedRemoteResultModel saveAvailability(saveAvailabilityRequestModel request) {

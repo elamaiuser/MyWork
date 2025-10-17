@@ -12,10 +12,18 @@
     <columns>CORE.USERS.TITLE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CORE.USERS.EMAIL</field>
+        <field>CORE.USERS.ACTIVE</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.SAML_SUBJECT</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>CORE.PROFILE.NAME</field>
         <operation>contains</operation>
-        <value>Skedulo</value>
+        <value>System Administrator</value>
     </filters>
     <label>Find User</label>
-    <language>en_US</language>
 </ListView>

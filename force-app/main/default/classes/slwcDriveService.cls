@@ -210,7 +210,7 @@ global class slwcDriveService {
         }
         Map<Id, sked_Drive__c> mapSkedDrive = new Map<Id, sked_Drive__c>([
             SELECT Id, sked_Drive_Date__c, sked_Status__c, sked_Cancellation_Reason__c,
-            sked_Pending_Action__c, sked_Replacement_Drive__c,
+            sked_Cancellation_Detail__c, sked_Pending_Action__c, sked_Replacement_Drive__c,
             sked_Is_Surrogate__c, sked_Linked_Drives__c
             FROM sked_Drive__c
             WHERE Id IN :mapDrive.keySet()
@@ -240,6 +240,7 @@ global class slwcDriveService {
                     }
                     canUpdateStatus = FALSE;
                 }
+                skedDrive.sked_Cancellation_Detail__c = drive.cancellationDetail;
                 skedDrive.sked_Cancellation_Reason__c = drive.cancellationReason;
                 skedDrive.sked_Replacement_Drive__c = drive.replacementDriveId;
             }
@@ -776,6 +777,7 @@ global class slwcDriveService {
     public class driveModel {
         public string id;
         public string status;
+        public string cancellationDetail;
         public string cancellationReason;
         public string replacementDriveId;
     }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_Constants</members>
+		<members>DriveGenerationUtil</members>
+        <members>DriveResourceAllocationBatch</members>
+        <members>DriveResourceAllocationBatchTest</members>
+        <members>GenerateMobileDriveTest</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+        <members>Calendar_Build_Log__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log__c.Mobile_Drives_wo_Resource_Requested__c</members>
+        <members>Calendar_Build_Error_Log__c.Category__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.FS_Drives_wo_Resource_Requested__c</members>	
+        <members>Calendar_Build_Log_Manual_Run__c.Mobile_Drives_wo_Resource_Requested__c</members>	
+        <name>CustomField</name>
+    </types>
+    <types>
+		<members>Calendar_Build_Log_Manual_Run__c-Calendar Build Log Manual Run Layout</members>
+		<members>Calendar_Build_Log__c-Calendar Build Log Layout</members>
+		<name>Layout</name>
+	</types>
+     <types>
+        <members>Calendar_Build_Log_Record_Page</members>
+		<members>Calendar_Build_Log_Manual_Run_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+    <version>59.0</version>
+</Package>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Component_API_Names__c</fullName>
+    <description>HRP-15953 Used only when Rule Type is &apos;Apex Class&apos; or &apos;Visualforce Page&apos;. A comma-separated list of the API names of the Apex classes or pages to grant access to.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Component API Names</label>
+    <length>131072</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>
