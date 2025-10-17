@@ -12,6 +12,12 @@ private class skedJobAllocationPostProcessBatch_Test {
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Resource__c testVehicle = (sked__Resource__c) mapTestData.get('testVehicle1');
         
+        sked_JA_Post_Process_Config__c testSetting = new sked_JA_Post_Process_Config__c();
+        testSetting.sked_Allowed_Maximum_Retries__c = 1;
+        testSetting.sked_Allowed_No_of_Jobs_in_Flex_Queue__c = 1;
+        testSetting.sked_Reschedule_Interval_Sec_Flex_Queue__c = 10;
+        insert testSetting;
+        
         Test.startTest();
         
         sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
@@ -118,7 +124,7 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        skedJobAllocationPostProcessBatch.schedule(batchSetting, jobAllocationIds, 100, 0);
         
         Test.stopTest();
     }
@@ -133,6 +139,12 @@ private class skedJobAllocationPostProcessBatch_Test {
         sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Resource__c testVehicle = (sked__Resource__c) mapTestData.get('testVehicle1');
+        
+        sked_JA_Post_Process_Config__c testSetting = new sked_JA_Post_Process_Config__c();
+        testSetting.sked_Allowed_Maximum_Retries__c = 1;
+        testSetting.sked_Allowed_No_of_Jobs_in_Flex_Queue__c = 0;
+        testSetting.sked_Reschedule_Interval_Sec_Flex_Queue__c = 5;
+        insert testSetting;
         
         Test.startTest();
         
@@ -230,7 +242,7 @@ private class skedJobAllocationPostProcessBatch_Test {
         
         skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
         batchSetting.geographicException = false;
-        Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, jobAllocationIds));
+        skedJobAllocationPostProcessBatch.schedule(batchSetting, jobAllocationIds, 100, 0);
         
         Test.stopTest();
     }

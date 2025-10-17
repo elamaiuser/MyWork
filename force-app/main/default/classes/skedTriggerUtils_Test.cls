@@ -173,4 +173,18 @@ private class skedTriggerUtils_Test {
         Test.stopTest();
         Assert.isTrue(testDrive.hasErrors());
     }
+    
+    static testMethod void testIsFlexQueueLimitReached() {
+        sked_JA_Post_Process_Config__c testJAPostProcessSetting = new sked_JA_Post_Process_Config__c(
+        	sked_Allowed_Maximum_Retries__c = 1,
+        	sked_Allowed_No_of_Jobs_in_Flex_Queue__c = 0,
+        	sked_Reschedule_Interval_Sec_Flex_Queue__c = 10
+        );
+        insert testJAPostProcessSetting;
+        
+        Test.startTest();
+        Boolean isLimitReached = skedTriggerUtils.isFlexQueueLimitReached();
+        Test.stopTest();
+        Assert.isTrue(isLimitReached);
+    }
 }
