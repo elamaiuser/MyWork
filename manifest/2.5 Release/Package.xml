@@ -26,15 +26,20 @@
         <members>TemplateService_Test</members>
         <members>UpdateAccountTeamMemberDailyBatchHelper</members>
         <members>skedCaptureJobIMPACTBatch</members>
+        <members>skedCaptureJobIMPACTBatch_Test</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
         <members>skedJobAllocationHandler</members>
         <members>skedJobAllocationPostProcessBatch</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedJobAllocationTravelTimeBatch</members>
 		<members>skedResourceTagHandler</members>
         <members>skedSetting</members>
+        <members>skedSetting_Test</members>
         <members>skedTriggerUtils</members>
+        <members>skedTriggerUtils_Test</members>
         <members>skedWeeklyHoursCorrectionBatch</members>
+        <members>skedWeeklyHoursCorrection_Test</members>
         <members>slwcDriveService</members>
         <members>slwcDriveService_Test</members>				
 		<name>ApexClass</name>
@@ -92,6 +97,7 @@
 		<name>Flow</name>
 	</types>
     <types>
+        <members>BSF_Access_Control_Rule__mdt-Access Control Rule Layout</members>
 		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
 		<members>Opportunity-APS Planner Mobile Opp Layout</members>
 		<members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
@@ -126,6 +132,10 @@
         <members>slwcResolveDriveContentions</members>
 		<members>slwcSchedulingConsoleDriveList</members>		
 		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Taxonomy_Run_Config__mdt.Taxonomy_Run_Config</members>
+		<name>ListView</name>
 	</types>
     <types>
         <members>BSF_Support/Site_CO_without_Travel_Time</members>
