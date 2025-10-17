@@ -107,6 +107,11 @@
                                 controlling-field-values={filters.accountTypes}>
                             </c-slwc-multi-picklist>
                         </div>
+                        <template if:true={showDriveNameSearch}>
+                            <div class="slds-form-element slds-form-element_stacked">
+                                <lightning-input label="Drive Name" name="searchText" type="text" value={filters.searchText} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                            </div>
+                        </template>
                         <div class="slds-form-element slds-form-element_stacked">
                             <label class="slds-form-element__label">Show Only Linked Events</label>
                             <lightning-input onchange={handleOnChange} name="showOnlyLinkedEvents" variant="label-hidden"

@@ -1,375 +1,173 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>APComplianceReportController</members>
-        <members>APComplianceReportControllerTest</members>
-        <members>AccountAffiliationService</members>
-        <members>AccountAffiliationTriggerHandler</members>
-        <members>AccountService</members>
-        <members>AccountStatusUpdateHelper</members>
-        <members>AccountTeamMemberHelper</members>
-        <members>AccountTeamMemberService</members>
-        <members>AccountTeamMemberTriggerHandler</members>
-        <members>BSF_Batch_UpdateAccountStatusInactive</members>
-        <members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
-        <members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
-        <members>BSF_ClosePastDriveExceptionsBatch</members>
-        <members>BSF_ClosePastDriveExceptionsBatch_Test</members>
-        <members>BSF_Constants</members>
-        <members>BSF_Utilities</members>
-        <members>BSF_UtilitiesTest</members>
-        <members>BatchAccountsMilitaryMoAUploadedFiles</members>
-        <members>ChangePasswordController</members>
-        <members>ChangePasswordControllerTest</members>
-		<members>ContactTriggerHandler</members>
-        <members>DriveResourceAllocationBatch</members>
-        <members>DriveResourceAllocationBatchTest</members>
-        <members>DriveTriggerHandler</members>
-        <members>DriveTriggerService</members>
-        <members>DriveTriggerServiceTest</members>
-        <members>ForgotPasswordController</members>
-        <members>ForgotPasswordControllerTest</members>
-        <members>FutureDrivesController</members>
-        <members>FutureDrivesController_Test</members>
+	<types>
+		<members>Optimization_Run_Timeout</members>
+		<members>Set_UFID_for_User</members>
+		<members>Set_User_UFID</members>
+		<members>Sync_ASR_with_Contact_Changes</members>
+		<members>Create_Account_Service_Role_Upon_Contact_Creation</members>
+		<members>Set_Contact_UFID</members>
+		<members>Contact_Before_Insert_Update_Flow</members>
+		<members>Send_Bell_Notification_To_Task</members>
+		<members>Send_Bell_Notification_to_AM_for_approval_status</members>
+		<members>Send_Bell_and_Email_Notifications_for_Task</members>
+		<members>Skedulo_Resource_Termination_Rule</members>
+		<members>Aggregate_TimeStamp</members>
+		<members>Lead_Status_Timestamp</members>
+		<members>Lead_Management</members>
+		<members>DeactivateOppSplitAccess</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>Opportunity.FieldsApplytoDrives</members>
+		<name>FieldSet</name>
+	</types>
+	<types>
+		<members>sked_Optimization_Run__c</members>
+		<members>sked__Resource__c</members>
+		<members>Lead</members>
+		<name>Workflow</name>
+	</types>
+	<types>
+		<members>Contact.Do Not Contact is Selected</members>
+		<members>Contact.Do Not Contact Reasons Equals to Deceased</members>
+		<members>Contact.Mailing Address Flag Checked Populated Secondary Address</members>
+		<members>Contact.Update Preferred Phone Number Field</members>
+		<name>WorkflowRule</name>
+	</types>
+	<types>
+		<members>LeadService</members>        
+		<members>LeadServiceTests</members>
+		<members>FutureDrivesController</members>
+		<members>FutureDrivesController_Test</members>
         <members>GenerateDriveTestData</members>
-        <members>GenerateDriveWorksheetPdfController</members>
-        <members>GenerateMobileDrive</members>
-        <members>GenerateMobileDriveTest</members>
-        <members>LeadFormCon</members>
-        <members>LeadFormConTests</members>
-        <members>LeadFormLSLCon</members>
-        <members>LeadFormLSLConTests</members>
-        <members>LeadService</members>
-        <members>LeadServiceTests</members>
-        <members>LeadTriggerHandler</members>
-        <members>MobileDriveGeneratorDMLService</members>
-        <members>MyProfilePageController</members>
-        <members>MyProfilePageControllerTest</members>
-        <members>OperationDriveLimitService</members>
-        <members>OperationDriveLimitServiceTest</members>
-        <members>OperationDriveLimitTriggerHandler</members>
-        <members>OpportunityService</members>
-        <members>OpportunityTriggerHandler</members>
+		<members>GenerateMobileDrive</members>
+		<members>GenerateMobileDriveTest</members>
+		<members>PublicityReportNewPortfoliosController</members>		
+		<members>publicityReportNewPortfoliosTest</members>
+		<members>AccountService</members>
+		<members>BSF_Batch_UpdateSpecialCircumstanceOnOpp</members>
+		<members>BSF_Batch_UpdateSpecialCircumstance_Test</members>
+		<members>BSF_Constants</members>
+		<members>BSF_Utilities</members>
+		<members>BSF_UtilitiesTest</members>
+		<members>DriveTriggerService</members>
+		<members>DriveTriggerHandler</members>
+        <members>DriveTriggerServiceTest</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
-        <members>PrepareMySandbox</members>
-        <members>PrepareMySandboxTest</members>
-        <members>PublicityReportNewPortfoliosController</members>
-        <members>SObjectUtils</members>
-        <members>SiteLoginController</members>
-        <members>SiteLoginControllerTest</members>
-        <members>SiteRegisterController</members>
-        <members>SiteRegisterControllerTest</members>
-        <members>TestUtil</members>
-        <members>TimeBlockComplianceReportController</members>
-        <members>TimeBlockComplianceReportControllerTest</members>
-        <members>TriggerHandlerTests</members>
-        <members>publicityReportNewPortfoliosTest</members>
-        <members>skedActivityResourceHandler</members>
-        <members>skedActivityService</members>
-        <members>skedActivityService_Test</members>
-        <members>skedAvailabilityPatternHandler</members>
-        <members>skedAvailabilityPatternService</members>
-        <members>skedCollectionOpTimeBlockService</members>
-        <members>skedConstants</members>
-        <members>skedDriveHandler</members>
-        <members>skedDriveShiftHandler</members>
-        <members>skedExceptionLogService</members>
-		<members>skedFixedSiteProcedureProjectionHandler</members>
-        <members>skedHCExceptionHandler</members>
-        <members>skedJobHandler</members>
-        <members>skedMappingConfigContainer</members>
-        <members>skedMockTest</members>
-        <members>skedModels</members>
-        <members>skedPicklistFieldUtils</members>
-        <members>skedRacController</members>
-		<members>skedReprocessStuckTTIRequestBatch</members>
+		<members>skedRacController</members>
+		<members>skedActivityService</members>
+		<members>skedActivityService_Test</members>
+		<members>skedResourceHandler_Test</members>
         <members>skedResourceHandler</members>
-        <members>skedResourceHandler_Test</members>
-        <members>skedResourceService</members>
         <members>skedTestDataFactory</members>
-        <members>slwcAllocationService</members>
-        <members>slwcDataService_Test</members>
-        <members>slwcDriveGenerator</members>
-        <members>slwcDriveShiftTradeService</members>
-        <members>slwcDriveShiftTradeService_Test</members>
-        <members>slwcResourceService</members>
-        <members>slwcSetting</members>
-        <name>ApexClass</name>
-    </types>
+		<members>slwcSetting</members>
+		<members>slwcDataService_Test</members>
+		<members>skedDriveHandler</members>
+		<members>BSF_ClosePastDriveExceptionsBatch</members>
+		<members>BSF_ClosePastDriveExceptionsBatch_Test</members>
+		<members>DriveResourceAllocationBatch</members>
+		<members>DriveResourceAllocationBatchTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
+		<members>Custom_Messages.Asset_Validation_for_Dedicated_to_Site</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_0_17</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_18_69</members>
+		<members>Volunteer_Staffing_Matrix.All_Non_Int_FS_70_Above</members>
+		<members>Volunteer_Staffing_Matrix.High_School_0_70</members>
+		<members>Volunteer_Staffing_Matrix.High_School_121_170</members>
+		<members>Volunteer_Staffing_Matrix.High_School_171_210</members>
+		<members>Volunteer_Staffing_Matrix.High_School_211_265</members>
+		<members>Volunteer_Staffing_Matrix.High_School_71_120</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_0_17</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_121_160</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_18_40</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_41_80</members>
+		<members>Volunteer_Staffing_Matrix.Non_High_School_81_120</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
+		<members>slwcDriveGenerator</members>
+		<members>slwcDriveStaffingDetails</members>
+		<members>slwcFilterResourceMultiPicklist</members>
+		<members>slwcLinkedDrivesAvailator</members>
+		<members>slwcLinkedDriveStaffingDetails</members>
+		<members>slwcResolveDriveContentions</members>
+		<members>slwcSlider</members>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveCalendarDriveList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked__Resource__c-Asset Layout</members>
+		<members>sked__Resource__c-Staff Layout</members>
+		<members>Account-APS Planner Mobile Account Layout</members>
+		<members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>sked__Resource__c-sked__Resource Layout</members>
+		<members>Volunteer_Staffing_Matrix__mdt-Volunteer Staffing Matrix Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>Mobile_Account_Record_Page</members>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Account.CFY_Drives1__c</members>
+		<members>Account.CY_Drives1__c</members>
+        <members>Account.CFY_Drives__c</members>
+		<members>Account.CY_Drives__c</members>
+		<members>Opportunity.Special_Circumstances_Notes__c</members>
+		<members>Opportunity.Special_Circumstances__c</members>
+		<members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
+		<members>Volunteer_Staffing_Matrix__mdt.Drive_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
+        <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
+		<members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
+		<members>sked_Drive__c.sked_Is_Logistic_Different__c</members>
+		<name>CustomField</name>
+	</types>
     <types>
-        <members>APComplianceExcel</members>
-        <members>AnswersHome</members>
-        <members>BSFAPComplianceReportPDF</members>
-        <members>BandwidthExceeded</members>
-        <members>ChangePassword</members>
-        <members>Exception</members>
-        <members>FileNotFound</members>
-        <members>ForgotPassword</members>
-        <members>ForgotPasswordConfirm</members>
-        <members>IdeasHome</members>
-        <members>InMaintenance</members>
-        <members>LeadForm</members>
-        <members>LeadFormComplete</members>
-        <members>LeadFormLSL</members>
-        <members>LeadFormLSLComplete</members>
-        <members>MyProfilePage</members>
-        <members>SiteLogin</members>
-        <members>SiteRegister</members>
-        <members>SiteRegisterConfirm</members>
-        <members>SiteTemplate</members>
-        <members>StdExceptionTemplate</members>
-        <members>TimeBlockComplianceExcel</members>
-        <members>TimeBlockCompliancePDF</members>
-        <members>Unauthorized</members>
-        <members>UnderConstruction</members>
-        <name>ApexPage</name>
+        <members>Obsolete/Copy_of_Fixed_Site_Accounts_buW</members>
+        <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
+        <name>Report</name>
     </types>
-    <types>
-        <members>Lead</members>
-        <members>OperationDriveLimitTrigger</members>
-        <members>skedAvailabilityPatternTrigger</members>
-        <name>ApexTrigger</name>
-    </types>
-	<types>         
+	<types>
+		<members>Special_Circumstances_Badge_Logo</members>
+		<name>StaticResource</name>
+	</types>
+	<types>
+		<members>sked__Resource__c.Staff_MaxHours_Validation</members>
+		<members>sked__Resource__c.Staff_MinHours_Validation</members>
+		<members>sked__Resource__c.Staff_MobileType_Validation</members>
+		<members>sked__Resource__c.Staff_PrimaryPhone_Validation</members>
+		<members>sked__Resource__c.Staff_TurnaroundTime_Validation</members>
+		<members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
+		<name>ValidationRule</name>
+	</types>
+	<types>
+		<members>Account.Upgrade_Account</members>
+		<name>QuickAction</name>
+	</types>
+	<types>
+        <!-- Aura components -->
         <members>LightningOutContainerApp</members>
         <name>AuraDefinitionBundle</name>
     </types>
-    <types>
-        <members>Account.CFY_Drives1__c</members>
-        <members>Account.CFY_Drives__c</members>
-        <members>Account.CY_Drives1__c</members>
-        <members>Account.CY_Drives__c</members>        
-        <members>Collection_Operation_Time_Block__c.Collection_Operation__c</members>
-        <members>Collection_Operation_Time_Block__c.Effective_End_Date__c</members>
-        <members>Collection_Operation_Time_Block__c.Effective_Start_Date__c</members>
-        <members>Collection_Operation_Time_Block__c.Time_Block__c</members>
-        <members>Opportunity.Special_Circumstances_Notes__c</members>
-        <members>Opportunity.Special_Circumstances__c</members>
-        <members>Time_Block__c.Days_of_Week__c</members>
-        <members>Time_Block__c.End_Time__c</members>
-        <members>Time_Block__c.Start_Time__c</members>
-        <members>Volunteer_Staffing_Matrix__mdt.Drive_Type__c</members>
-        <members>Volunteer_Staffing_Matrix__mdt.Max_Anticipated_Registered_Donors__c</members>
-        <members>Volunteer_Staffing_Matrix__mdt.Operation_Type__c</members>
-        <members>skedHC__Exception__c.sked_Exception_Code__c</members>
-        <members>sked_Drive_Shift_Trade__c.sked_Reason_Approval_Required__c</members>
-        <members>sked_Drive_Shift__c.sked_Contention_Resolution__c</members>
-        <members>sked_Drive_Shift__c.sked_Contention__c</members>
-        <members>sked_Drive_Shift__c.sked_Drive_Operation_Type__c</members>
-        <members>sked_Drive_Shift__c.sked_Drive_Type__c</members>
-        <members>sked_Drive_Shift__c.sked_Time_Block__c</members>
-        <members>sked_Drive__c.sked_Drive_Operation_Type__c</members>
-        <members>sked_Drive__c.sked_Is_Logistic_Different__c</members>
-        <members>sked_Drive__c.sked_Rejection_Reason_Code__c</members>
-        <members>sked_Operation_Drive_Limit__c.Time_Block__c</members>
-        <members>sked_Staffing_Constraint__c.sked_Time_Block__c</members>
-        <members>sked__Activity__c.sked_Time_Block__c</members>
-        <members>sked__Resource__c.sked_Address_Referenced_for_Scheduling__c</members>
-        <members>sked__Resource__c.sked_Dedicated_to_Site__c</members>
-        <name>CustomField</name>
-    </types>
-    <types>
-        <members>ODL_DateRangeOutsideTimeBlock</members>
-        <members>ODL_TimeBlockNotAssociatedWithCO</members>
-        <name>CustomLabel</name>
-    </types>
-    <types>
-        <members>Custom_Messages.Asset_Validation_for_Dedicated_to_Site</members>
-        <members>Custom_Messages.Logistics_Chg_Rsn_to_Future_Drives</members>
-        <members>Custom_Messages.SSB_First_Time_Badge_Modification_Msg</members>
-        <members>Task_Report_Link.Sponsor_Planning_Report</members>
-        <members>Volunteer_Staffing_Matrix.All_Non_Int_FS_0_17</members>
-        <members>Volunteer_Staffing_Matrix.All_Non_Int_FS_18_69</members>
-        <members>Volunteer_Staffing_Matrix.All_Non_Int_FS_70_Above</members>
-        <members>Volunteer_Staffing_Matrix.High_School_0_70</members>
-        <members>Volunteer_Staffing_Matrix.High_School_121_170</members>
-        <members>Volunteer_Staffing_Matrix.High_School_171_210</members>
-        <members>Volunteer_Staffing_Matrix.High_School_211_265</members>
-        <members>Volunteer_Staffing_Matrix.High_School_71_120</members>
-        <members>Volunteer_Staffing_Matrix.Non_High_School_0_17</members>
-        <members>Volunteer_Staffing_Matrix.Non_High_School_121_160</members>
-        <members>Volunteer_Staffing_Matrix.Non_High_School_18_40</members>
-        <members>Volunteer_Staffing_Matrix.Non_High_School_41_80</members>
-        <members>Volunteer_Staffing_Matrix.Non_High_School_81_120</members>
-        <name>CustomMetadata</name>
-    </types>
-    <types>
-        <members>Collection_Operation_Time_Block__c</members>
-        <members>Time_Block__c</members>
-        <name>CustomObject</name>
-    </types>
-    <types>
-        <members>Collection_Operation_Time_Block__c</members>
-        <members>Time_Block__c</members>
-        <name>CustomTab</name>
-    </types>
-    <types>        
-        <members>DSRec/ABRDORxFDlQNpDINUCiRWiBvSQCfST6211111</members>
-        <members>DSRec/ABRDORxFDlQNpDINUCiRWiBvSQCfST621112</members>
-        <members>DSRec/JOpuztwSZtXRfxEAdjaogrmqNjJmcY</members>
-        <members>DSRec/XgutbeKUKRcnmEWOPnvwhSefwsdOko</members>
-        <members>DSRec/XgutbeKUKRcnmEWOPnvwhSefwsdOko1</members>
-        <members>DSRec/dRrCUCNztgEMkDuWviusMXyspdjuJP</members>
-        <name>Dashboard</name>
-    </types>
-    <types>
-        <members>Opportunity.FieldsApplytoDrives</members>
-        <name>FieldSet</name>
-    </types>
-    <types>
-        <members>Availability_Pattern_Compliance_Report</members>
-        <members>Mobile_Account_Record_Page</members>
-        <members>Mobile_Opp_Record_Page</members>
-        <members>Time_block_CR</members>
-        <name>FlexiPage</name>
-    </types>
-    <types>
-        <members>Aggregate_TimeStamp</members>
-        <members>Contact_Before_Insert_Update_Flow</members>
-        <members>Create_Account_Service_Role_Upon_Contact_Creation</members>
-		<members>DeactivateOppSplitAccess</members>
-        <members>Handle_Do_Not_Contact_Updates_On_Contact</members>
-        <members>Lead_Management</members>
-        <members>Lead_Status_Timestamp</members>
-        <members>Optimization_Run_Timeout</members>
-        <members>Send_Bell_Notification_To_Task</members>
-        <members>Send_Bell_Notification_to_AM_for_approval_status</members>
-        <members>Send_Bell_and_Email_Notifications_for_Task</members>
-        <members>Set_Contact_UFID</members>
-        <members>Set_UFID_for_User</members>
-        <members>Set_User_UFID</members>
-        <members>Skedulo_Resource_Termination_Rule</members>
-        <members>Sync_ASR_with_Contact_Changes</members>
-        <name>Flow</name>
-    </types>
-    <types>
-        <members>sked_Drive_Contention</members>
-		<members>sked_Resource_Roles</members>
-        <name>GlobalValueSet</name>
-    </types>
-    <types>
-        <members>Account-APS Planner Mobile Account Layout</members>
-        <members>Account-BioSponsor Account</members>
-        <members>Account-Biomed Read Only Mobile Account Layout</members>
-        <members>Account-DRD Mobile Account Layout</members>
-        <members>Account-Sponsor Marketing Mobile Layout</members>
-        <members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
-        <members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
-        <members>Collection_Operation_Time_Block__c-Collection Operation Time Block Layout</members>
-        <members>Opportunity-APS Planner Mobile Opp Layout</members>
-        <members>Opportunity-APS Scheduler Mobile Opp Layout</members>
-        <members>Opportunity-DRD Mobile Opp Layout</members>
-        <members>Opportunity-Mobile Opp Layout</members>
-        <members>Opportunity-Opportunity Layout</members>
-        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-        <members>Time_Block__c-Time Block Layout</members>
-        <members>Volunteer_Staffing_Matrix__mdt-Volunteer Staffing Matrix Layout</members>
-        <members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
-        <members>sked__Resource__c-Asset Layout</members>
-        <members>sked__Resource__c-Staff Layout</members>
-        <members>sked__Resource__c-sked__Resource Layout</members>
-        <name>Layout</name>
-    </types>
-    <types>
-        <members>aPComplianceReport</members>
-        <members>autoMapper</members>
-        <members>dataService</members>
-        <members>showSpecialCircumstanceBadgesOnOpportunity</members>
-        <members>slwcAddRecurrenceStaffingConstraintModal</members>
-        <members>slwcAddStaffingConstraintModal</members>
-		<members>slwcAvailator</members>
-        <members>slwcConstants</members>
-		<members>slwcCustomModal</members>
-        <members>slwcDriveCalendar</members>
-        <members>slwcDriveCalendarDriveList</members>
-        <members>slwcDriveChangeRequestApproval</members>
-        <members>slwcDriveGenerator</members>
-        <members>slwcDriveListMap</members>
-        <members>slwcDriveManagement</members>
-        <members>slwcDriveSchedulingConsole</members>
-        <members>slwcDriveSchedulingFilters</members>
-		<members>slwcDriveShift</members>
-		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
-        <members>slwcDriveShiftJobModal</members>
-		<members>slwcDriveShiftJobTable</members>
-        <members>slwcDriveStaffingDetails</members>
-        <members>slwcEditRecurrenceStaffingConstraintModal</members>
-        <members>slwcExceptionConsole</members>
-        <members>slwcExceptionList</members>
-        <members>slwcFilterResourceMultiPicklist</members>
-        <members>slwcHelpers</members>
-        <members>slwcLinkedDriveStaffingDetails</members>
-        <members>slwcLinkedDrivesAvailator</members>
-        <members>slwcNewCollectionOperationMultiPicklist</members>
-        <members>slwcOnCallCallOutManagement</members>
-        <members>slwcPendingActionDriveApproval</members>
-        <members>slwcPendingActionDriveConfirmModal</members>
-		<members>slwcPopoverContent</members>
-        <members>slwcPlanDrive</members>
-        <members>slwcPlanDriveBookingGrid</members>
-        <members>slwcPlanDriveCalendar</members>
-		<members>slwcRecurrenceDatesPickerModal</members>
-        <members>slwcResolveDriveContentions</members>		
-		<members>slwcShiftJobs</members>
-        <members>slwcSlider</members>
-		<members>slwcStaffingComplementModal</members>
-        <members>slwcStaffingConstraintMassUpdate</members>
-        <members>timeBlockComplianceReport</members>
-        <name>LightningComponentBundle</name>
-    </types>
-    <types>
-        <members>Collection_Operation_Time_Block__c.All</members>
-        <members>Time_Block__c.All</members>
-        <name>ListView</name>
-    </types>
-    <types>
-        <members>Account.Upgrade_Account</members>
-        <name>QuickAction</name>
-    </types>
-	<types>
-        <members>sked__Resource__c.sked_Asset</members>
-		<members>sked__Resource__c.sked_Staff</members>
-        <name>RecordType</name>
-    </types>
-    <types>
-        <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
-        <members>BSFRecruitment/Costly_low_productivity_drives_roq</members>
-        <members>BSFRecruitment/FS_Opps_for_Dashboard_snr</members>
-        <members>BSFRecruitment/Feeder_Only_and_Feeder_Plus_Accounts_5Fx</members>
-        <members>BSFRecruitment/Low_Projection_Drives</members>
-        <members>BSFRecruitment/Type_B_drives_aid</members>
-        <members>Obsolete/Copy_of_Fixed_Site_Accounts_buW</members>
-        <name>Report</name>
-    </types>
-    <types>
-        <members>Special_Circumstances_Badge_Logo</members>
-        <members>sked_HLT_Dist</members>
-        <name>StaticResource</name>
-    </types>
-    <types>
-        <members>Collection_Operation_Time_Block__c.End_Date_Should_Be_After_Start_Date</members>
-        <members>Time_Block__c.End_Time_Should_Be_After_Start_Time</members>
-        <members>Time_Block__c.Time_Block_Names_Must_Be_Unique</members>
-        <members>sked__Resource__c.Staff_MaxHours_Validation</members>
-        <members>sked__Resource__c.Staff_MinHours_Validation</members>
-        <members>sked__Resource__c.Staff_MobileType_Validation</members>
-        <members>sked__Resource__c.Staff_PrimaryPhone_Validation</members>
-        <members>sked__Resource__c.Staff_TurnaroundTime_Validation</members>
-        <members>sked__Resource__c.Validate_AddressReferencedforScheduling</members>
-        <name>ValidationRule</name>
-    </types>
-    <types>
-        <members>Lead</members>
-        <members>sked_Optimization_Run__c</members>
-        <members>sked__Resource__c</members>
-        <name>Workflow</name>
-    </types>
-    <types>
-        <members>Contact.Do Not Contact Reasons Equals to Deceased</members>
-        <members>Contact.Do Not Contact is Selected</members>
-        <members>Contact.Mailing Address Flag Checked Populated Secondary Address</members>
-        <members>Contact.Update Preferred Phone Number Field</members>
-        <name>WorkflowRule</name>
-    </types>
-    <version>64.0</version>
+    <version>63.0</version>
 </Package>

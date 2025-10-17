@@ -2798,6 +2798,7 @@ if(ds.isDeletable()){}*/
 
                                    driveModelRecTemp.status = 'Cancel';
                                    driveModelRecTemp.cancellationReason = newOpportunity.sked_Cancellation_Reason__c;
+                                   driveModelRecTemp.cancellationDetail = newOpportunity.Cancellation_Detail__c;
                                    driveModelRecTemp.id = skedDr.id;
                                    lstOfDrives.add(driveModelRecTemp);//HRP 11393-adding all matching drives, when cancelled status
                                 }
@@ -2934,10 +2935,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c, Cancellation_Detail__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [SELECT sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
-                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
+                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c, sked_Cancellation_Detail__c, sked_Opportunity__c,
                                            sked_APT_Required__c, sked_APT_Quantity__c,
                                            sked_Redcross_Volunteer_Required__c, sked_Redcross_Volunteer_Quantity__c //HRP-13146
                                            FROM sked_Drive__c 
@@ -3215,6 +3216,14 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                             oppField.Parent_Template_Id = null;
                         }//HRP-10312 end
                     }
+                    if(data.containsKey('Cancellation_Detail__c')) {
+                        if(data.get('Cancellation_Detail__c') != null && oppRec.Cancellation_Detail__c != null) {
+                            oppField.Cancellation_Detail = (doc != null && doc.sked_Cancellation_Detail__c != oppField.Cancellation_Detail) ? doc.sked_Cancellation_Detail__c : oppRec.Cancellation_Detail__c;
+                        }
+                        else {
+                            oppField.Cancellation_Detail = '';
+                        }
+                    }
                     if(data.containsKey('sked_Cancellation_Reason__c') == true){//HRP-10312 
                         if(data.get('sked_Cancellation_Reason__c') != null && oppRec.sked_Cancellation_Reason__c != null && doc.sked_Cancellation_Reason__c != oppField.sked_Cancellation_Reason) {
                             oppField.sked_Cancellation_Reason = doc != null? doc.sked_Cancellation_Reason__c : oppRec.sked_Cancellation_Reason__c;
@@ -3258,8 +3267,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                                if(mapOfOpportunity.get(oppRec.Id).Initiated_By__c != null) {
                                    oppField.Sked_Cancellation_Reason = '';
                                    oppField.Initiated_By = '';
+                                   oppField.Cancellation_Detail = '';
                                    oppField.updatedDataKeys.add('Initiated_By__c');    
                                    oppField.updatedDataKeys.add('sked_Cancellation_Reason__c');
+                                   oppField.updatedDataKeys.add('Cancellation_Detail__c');
                                }
                            }
                            if(latestDriveStatus == 'Confirmed' && mapOfOpportunity.get(oppRec.Id).StageName != 'Closed') {
@@ -3268,8 +3279,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                                if(mapOfOpportunity.get(oppRec.Id).Initiated_By__c != null) {
                                    oppField.Sked_Cancellation_Reason = '';
                                    oppField.Initiated_By = '';
+                                   oppField.Cancellation_Detail = '';
                                    oppField.updatedDataKeys.add('Initiated_By__c');    
                                    oppField.updatedDataKeys.add('sked_Cancellation_Reason__c');
+                                   oppField.updatedDataKeys.add('Cancellation_Detail__c');
                                }
                            }
                            if((mapOfOpportunity.get(oppRec.Id).Drive_Status__c == 'Draft' && latestDriveStatus == 'Hold') || 
@@ -4993,7 +5006,6 @@ opp.StageName = 'Closed';
         }    
     }
     //HRP-6051 Ends Here
-    
     public static Decimal getVolunteerQuantity(Integer anticipatedRegisteredDonors, Boolean highSchool, List<Volunteer_Staffing_Matrix__mdt> matrixRecords) {
         Integer volunteers = 0;
         Integer maxRange = 0;
@@ -5258,4 +5270,15 @@ opp.StageName = 'Closed';
         }
     } 
     //HRP-701 --> Ends Here
+
+    //HRP-7470
+    public static void createPrimaryContactRoleAfterTemplateCreation(List<Opportunity> newOppList) {
+        List<Opportunity> templates = new List<Opportunity>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c) templates.add(opp);
+        }
+
+        if(!templates.isEmpty()) TemplateService.createPrimaryContactDriveServiceRole(templates);
+    }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Target_Type__c</fullName>
+    <description>HRP-15953 Specifies the targets are Permission Sets.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Target Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Permission Set</fullName>
+                <default>true</default>
+                <label>Permission Set</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

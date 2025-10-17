@@ -17,6 +17,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Approval_Status__c', 'approvalStatus', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_APT_Quantity__c', 'aptQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_APT_Required__c', 'aptRequired', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Cancellation_Detail__c', 'cancellationDetail', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Cancellation_Reason__c', 'cancellationReason', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
