@@ -51,6 +51,12 @@ public class skedWeeklyHoursCorrection_Test {
         );
         insert testJobAllocation;
         
+        sked_JA_Post_Process_Config__c testSetting = new sked_JA_Post_Process_Config__c();
+        testSetting.sked_Allowed_Maximum_Retries__c = 1;
+        testSetting.sked_Allowed_No_of_Jobs_in_Flex_Queue__c = 1;
+        testSetting.sked_Reschedule_Interval_Sec_Flex_Queue__c = 5;
+        insert testSetting;
+        
         Database.executeBatch(new skedWeeklyHoursCorrectionBatch());
         
         Test.stopTest();
