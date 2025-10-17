@@ -2323,7 +2323,7 @@ if(asApa.Start_Date__c>accBsfIdAccportMap.get(key).End_Date__c)
         List<Taxonomy__c> taxoRows = [
             SELECT Id, Zip_Code__c, Start_Date__c, End_Date__c, DRD_Territory_Name__c,DRD_Territory_Code__c 
             FROM Taxonomy__c
-            WHERE Zip_Code__c IN :zipSet
+            WHERE Zip_Code__c IN :zipSet and DRD_Territory_Code__c !=null 
               AND Start_Date__c <= :maxTail
               AND End_Date__c   >= :minTail
         ];

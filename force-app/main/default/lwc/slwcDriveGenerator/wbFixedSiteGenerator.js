@@ -1216,6 +1216,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
+          driveSiteId: this.drive.driveSiteId,
           jobTags: []
         };
         newList.push(newJob);
