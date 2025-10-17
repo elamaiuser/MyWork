@@ -207,9 +207,18 @@
     </customValue>
     <customValue>
         <fullName>Float</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
+        <default>false</default>        
         <label>Float</label>
+    </customValue>
+    <customValue>
+        <fullName>Volunteer Donor Ambassador</fullName>
+        <default>false</default>        
+        <label>Volunteer Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Work Restriction</fullName>
+        <default>false</default>        
+        <label>Work Restriction</label>
     </customValue>
     <customValue>
         <fullName>Redcross Translator</fullName>
@@ -240,19 +249,7 @@
         <default>false</default>
         <isActive>false</isActive>
         <label>Sponsor Volunteer Donor Ambassador</label>
-    </customValue>
-    <customValue>
-        <fullName>Work Restriction</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Work Restriction</label>
-    </customValue>
-    <customValue>
-        <fullName>Volunteer Donor Ambassador</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Volunteer Donor Ambassador</label>
-    </customValue>
+    </customValue>        
     <customValue>
         <fullName>Lead Donor Ambassador</fullName>
         <default>false</default>
