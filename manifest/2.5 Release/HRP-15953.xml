@@ -27,6 +27,10 @@
 	<types>
 		<members>BSF_Access_Control_Rule__mdt</members>
 		<name>CustomObject</name>
-	</types>	
+	</types>
+	<types>
+        <members>BSF_Access_Control_Rule__mdt-Access Control Rule Layout</members>		
+		<name>Layout</name>
+	</types>
 	<version>65.0</version>
 </Package>
