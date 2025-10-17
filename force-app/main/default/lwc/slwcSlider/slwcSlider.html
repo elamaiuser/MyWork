@@ -1,9 +1,11 @@
 <template>
     <div class="slds-form-element slider-wrapper" onmouseup={onMouseUp}>
-      <label class="slds-form-element__label slds-grid" for="input">
-              <span class="slds-col">{label}</span>
-              <span class="slds-slider-label__range slds-col_bump-left">{min}-{max}</span>
-          </label>
+      <div if:false={labelNotNeeded}>
+        <label class="slds-form-element__label slds-grid" for="input">
+          <span class="slds-col">{label}</span>
+          <span class="slds-slider-label__range slds-col_bump-left">{min}-{max}</span>
+        </label>
+      </div>
       <div class="slds-form-element__control">
         <div class="slds-slider">
           <section class="range-slider">

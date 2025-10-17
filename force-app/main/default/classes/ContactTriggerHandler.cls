@@ -45,6 +45,7 @@ public with sharing class ContactTriggerHandler extends TriggerHandler{
 
 
     public static void handlePhoneUpdate(List<Contact> newList, Map<Id, Contact> oldMap) {
+        System.debug('handlePhoneUpdate');
         for (Contact con : newList) {
             Contact oldCon = oldMap.get(con.Id);
 
@@ -54,8 +55,11 @@ public with sharing class ContactTriggerHandler extends TriggerHandler{
                 con.OtherPhone != oldCon.OtherPhone
                 || con.Phone==null) {
                 // Copy formula field phone to standard phone
-                con.phone = con.Primary_Phone_Number_New__c;
+                if (!String.isBlank(con.Primary_Phone_Number_New__c)) {
+    				con.Phone = con.Primary_Phone_Number_New__c;
+				}
             }
+
         }
     }
     
@@ -73,7 +77,6 @@ public with sharing class ContactTriggerHandler extends TriggerHandler{
         //Logic for HRP-10394 **Ends here**
         for (Contact con : (List<Contact>)trigger.new) {
             con.phone = con.Primary_Phone_Number_New__c;
-
         }
     }
     
