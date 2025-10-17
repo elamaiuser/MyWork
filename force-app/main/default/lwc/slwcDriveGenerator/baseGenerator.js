@@ -442,8 +442,15 @@ class BaseGenerator {
     })
   }
 
-  populateDriveShiftTimeBlocks(driveShift) {
+  populateDriveShiftTimeBlocks(driveShift, driveShiftIndex) {
     if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
+      return;
+    }
+
+    let currentDriveShift = this.drive.driveShifts[driveShiftIndex];
+    if(currentDriveShift?.timeBlockManuallyChanged) {
+      driveShift.timeBlock = currentDriveShift.timeBlock;
+      driveShift.timeBlockId = currentDriveShift.timeBlockId;
       return;
     }
 
@@ -750,13 +757,14 @@ class BaseGenerator {
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT);
 
     if(backupDrive) {
-      //Drive Date changed or CO changed, reset all contention resolution
+      //Drive Date changed or CO changed, reset all contention resolution and timeBlockManuallyChanged
       if(currentDrive.driveDate !== backupDrive.driveDate || 
         currentDrive.collectionOperationId !== backupDrive.collectionOperationId) {
         currentContentionResolutions = [];
 
         this.drive.driveShifts?.forEach(driveShift => {
           driveShift.contentionResolution = ''
+          driveShift.timeBlockManuallyChanged = false;
         })
       }
 
@@ -1461,7 +1469,23 @@ class BaseGenerator {
           relatedJobs.forEach(job => {
             mapJobsToSave[job.id] = {
               id: job.id,
-              isLocked: !!sourceJob.isLocked
+              isLocked: !!sourceJob.isLocked,
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerRole)) {
+              mapJobsToSave[job.id].volunteerRole = sourceJob.volunteerRole;
+            }
+
+            if(!isNullOrEmpty(sourceJob.redcrossVolunteerQuantity)) {
+              mapJobsToSave[job.id].redcrossVolunteerQuantity = sourceJob.redcrossVolunteerQuantity;
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].volunteerAdjustmentReason = sourceJob.volunteerAdjustmentReason;
+            }
+            
+            if(!isNullOrEmpty(sourceJob.otherVolunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].otherVolunteerAdjustmentReason = sourceJob.otherVolunteerAdjustmentReason;
             }
           })
         })

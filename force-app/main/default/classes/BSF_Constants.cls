@@ -127,6 +127,10 @@ public class BSF_Constants {
     public static final string SECURITY_LIST_RECIPIENT_ROLE = 'Security List Recipient';
     public static final string PRIMARY_CONTACT_ROLE = 'Primary Contact';
 
+    // Account Service Roles
+    public static final string BLOOD_PROGRAM_LEADER_ROLE = 'Blood Program Leader';
+    public static final string ACCOUNT_CONTACT_ROLE = 'Account Contact';
+
     // Task Record Types
     public static final String X72_HOUR_CHECK_IN_RECORD_TYPE = '72 Hour Check In';
     public static final String RECRUITMENT_MEETING_RECORD_TYPE = 'Recruitment Meeting';

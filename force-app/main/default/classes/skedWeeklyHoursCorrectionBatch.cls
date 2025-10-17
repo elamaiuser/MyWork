@@ -40,7 +40,8 @@ global class skedWeeklyHoursCorrectionBatch implements Database.Batchable<sked__
     global void finish(Database.BatchableContext BC) { 
         if (!this.idsToProcess.isEmpty()) {
             skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-            Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, this.idsToProcess), 100);
+            skedJobAllocationPostProcessBatch.schedule(batchSetting, this.idsToProcess, 100, 0);
+            //Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, this.idsToProcess), 100);
         }
         
         List<sked__Job_Allocation__c> remainRecordQuery = [

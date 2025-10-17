@@ -554,7 +554,6 @@ class SlwcDrivesGenerator {
           }),
           vehicles: vehiclesMap[drive.collectionOperationId] || [],
           travelTimeIndexItemMap: this.masterData.travelTimeIndexItemMap,
-          travelTimeIndexItemMap: this.masterData.travelTimeIndexItemMap,
           collectionOperationTimeBlocks: filterItemsByDateRange(collectionOperationTimeBlocksMap[drive.collectionOperationId] || [], {
             startField: 'effectiveStartDate',
             startValue: drive.driveDate
