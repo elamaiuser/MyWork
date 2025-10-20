@@ -509,10 +509,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         } = this.getNumberOfDotAndCdlDrivers(drive);
 
         drive.driveShifts.forEach(driveShift => {
-            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, true));
-            if(!driverJob) {
-                driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, false));
-            };
+            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
+            
             if(!driverJob) return;
 
             let dotDriverJob = driveShift.jobs.find(job => job.id.startsWith('driverdot'));
@@ -1204,7 +1202,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 isRelocatedResource: posAl?.isTemporaryCO || false,
                 DOT: false,
                 CDL: false,
-                additionalRoles: job.dualRole,
+                additionalRoles: job.dualRole ? [job.dualRole] : [],
                 additionalRolesString: job.dualRole
             };
             job.jobAllocations.push(newJobAllocation);
@@ -1373,7 +1371,6 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         exceptionLogList = exceptionLogList.concat((jaItem.exceptionLog || []).filter(ex => ex.status != 'Resolved').map(exception => ({
                             exception: exception.exception,
                             exceptionCode: exception.exceptionCode,
-                            eventURL: exception.eventURL,
                             id: exception.id,
                             key: uniqueId('exception_ja'),
                             resource: jaItem.resource,
@@ -1560,7 +1557,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let groupResourceTag;
         if(item.assetType === TYPE_RESOURCE.VEHICLE) {
             groupResourceTag = {
-                'Mobile Type': item.mobileType ? item.mobileType.split(';').map(item => {
+                'Mobile Type': (item.mobileType || []).map(item => {
                     return {
                         key: item,
                         tag: {
@@ -1568,7 +1565,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             name: item
                         }
                     } 
-                }) : [],
+                }),
                 'Certification': (item.resourceTags || []).filter(tagItem => tagItem.tag.type === 'Certification')
             }
         } else {
@@ -1726,7 +1723,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         return JSON.parse(JSON.stringify(drive));
     };
     buildDrive(drive) {
-        console.log('drive', drive);
+        console.log('drive in buildDrive ', drive);
         this.timezoneSidId = drive && drive.driveSite && drive.driveSite.timezoneSidId;
 
         let driveDetail = {
@@ -1772,7 +1769,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             ...itemJa,
                             id: itemJa.id,
                             jobId: itemJa.jobId,
-                            additionalRolesString: itemJa.additionalRoles ? itemJa.additionalRoles.split(';').join(', ') : null,
+                            additionalRolesString: (itemJa.additionalRoles || []).join(', '),
                             isDeleted: itemJa.status === JOB_ALLOCATION_STATUS.DELETED,
                             icon: this.getResourceIcon(itemJa.resource),
                             timezoneSidId: this.timezoneSidId,
@@ -1957,7 +1954,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             selectedResourceEmploymentTypes: [],
             weeklyHoursRange: {
                 start: 0,
-                end: 100
+                end: 40
             },
             queryText: ''
         }
@@ -2382,10 +2379,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         } = this.getNumberOfDotAndCdlDrivers(drive, includeDeleted);
 
         driveToSave.driveShifts.forEach(driveShift => {
-            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, true));
-            if (!driverJob) {
-                driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, false));
-            }
+            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
 
             if(driverJob) {
                 driveShift.jobs.forEach(job => {
@@ -2874,9 +2868,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
     handleSaveAddRoleModal(event) {
         let { jobId, jobAllocation } = this.addRoleModalData;
         let [ job ] = this.getJobById(jobId);
-        let ja = find(job.jobAllocations, item => item.key == jobAllocation.key)
+        let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
         ja.additionalRoles = event.detail.roles
-        ja.additionalRolesString = ja.additionalRoles ? ja.additionalRoles.split(';').join(', ') : null;
+        ja.additionalRolesString = (ja.additionalRoles || []).join(', ');
     }
 
     /** Confirm Modal **/

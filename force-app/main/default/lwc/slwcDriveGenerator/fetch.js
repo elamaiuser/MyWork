@@ -12,7 +12,7 @@ import {
   roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
-import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS } from 'c/slwcConstants';
 import { keyBy, groupBy, uniq } from 'c/lodash';
 import { getTravelTimeIndexKey } from 'c/slwcUtils';
 class Fetch {
@@ -26,7 +26,7 @@ class Fetch {
 
   get settingKeys() {
     if(this.driveType === DRIVE_TYPE.MOBILE) {
-      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles', 'redcrossVolunteerMatrix'];
+      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
     } else {
       return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
     }
@@ -54,8 +54,7 @@ class Fetch {
               adminSetting: result.returnedData.adminSetting,
               resourceRoleGroups: result.returnedData.resourceRoleGroups,
               lunchBreakSettings: autoMapper.autoMapperInstance.mapToArray('sked_Lunch_Break_Setting__c', result.returnedData.lunchBreakSettings),
-              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles),
-              redcrossVolunteerMatrix: result.returnedData.redcrossVolunteerMatrix
+              staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles)
             }
           })
       });
@@ -250,7 +249,7 @@ class Fetch {
 
               return autoMapper.autoMapperInstance.mapToArray('sked__Resource__c', result.returnedData.resources).filter(resource => {
                 return resource.assetType === ASSET_TYPE.VEHICLE;
-              });
+              });;
             })
         }
       });

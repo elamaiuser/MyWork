@@ -16,7 +16,7 @@ class collectionOperationOptimizerSettingService extends dataService {
 }
 
 class collectionOperationOptimizerSettingQueryModel extends queryModelBase  {
-  collectionOperationId;
+  collectionOperationIds;
 }
 
 export {

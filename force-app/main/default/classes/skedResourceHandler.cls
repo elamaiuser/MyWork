@@ -27,8 +27,7 @@ public class skedResourceHandler extends skedTriggerHub {
         addMobileTypeTags(this.context.newRecords);
         addEquipmentDriveTypeTags(this.context.newRecords);
         addPersonDriveTypeTags(this.context.newRecords);
-        addRealIdTypeTags(this.context.newRecords);
-        assignDefaultPatterns(this.context.newRecords);
+        assignDefaultPatterns(this.context.newRecords); 
         
         if (!skedSetting.instance.Admin.migrationMode) {
             populateGeoLocation(this.context.newRecords);
@@ -54,7 +53,6 @@ public class skedResourceHandler extends skedTriggerHub {
         updateMobileTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updateEquipmentDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         updatePersonDriveTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
-        updateRealIdTypeTags(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         
         if (!skedSetting.instance.Admin.migrationMode) {
             captureFieldChangeExceptionLog(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
@@ -160,38 +158,6 @@ public class skedResourceHandler extends skedTriggerHub {
                     );
                     newResourceTags.add(newResourceTag);
                 }
-            }
-            insert newResourceTags;
-        }
-    }
-
-    private void addRealIdTypeTags(List<sked__Resource__c> newRecords) {
-        List<sked__Resource__c> recordsToPopulate = new List<sked__Resource__c>();
-        for (sked__Resource__c newRecord : newRecords) {
-            if (newRecord.sked_REAL_ID_Compliant_indicator__c) {
-                recordsToPopulate.add(newRecord);
-            }
-        }
-        if (!recordsToPopulate.isEmpty()) {
-            Date startDate = system.today();
-            
-            List<sked__Tag__c> skedTags = [SELECT Id, Name
-                                           FROM sked__Tag__c
-                                           WHERE sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION];
-            Map<string, sked__Tag__c> mapTag = new Map<string, sked__Tag__c>();
-            for (sked__Tag__c skedTag : skedTags) {
-                mapTag.put(skedTag.Name, skedTag);
-            }
-            List<sked__Resource_Tag__c> newResourceTags = new List<sked__Resource_Tag__c>();
-            for (sked__Resource__c newRecord : recordsToPopulate) {                
-                sked__Tag__c skedTag = mapTag.get('REAL ID');
-                sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
-                    sked__Resource__c = newRecord.Id,
-                    sked__Tag__c = skedTag.Id,
-                    sked_Start_Date__c = startDate,
-                    sked_Role_Status__c = 'Active'
-                );
-                newResourceTags.add(newResourceTag);                
             }
             insert newResourceTags;
         }
@@ -1240,62 +1206,6 @@ public class skedResourceHandler extends skedTriggerHub {
             }
         }
     }
-
-    private void updateRealIdTypeTags(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
-        Set<Id> recordIdsToUpdate = new Set<Id>();
-        for (sked__Resource__c newRecord : newRecords) {
-            sked__Resource__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_REAL_ID_Compliant_indicator__c != oldData.sked_REAL_ID_Compliant_indicator__c) {
-                recordIdsToUpdate.add(newRecord.Id);
-            }
-        }
-        if (!recordIdsToUpdate.isEmpty()) {
-            Date startDate = system.today();
-            
-            List<sked__Resource__c> skedResources = [SELECT Id, sked_REAL_ID_Compliant_indicator__c,
-                                                     (SELECT Id, sked__Tag__r.Name
-                                                      FROM sked__ResourceTags__r
-                                                      WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION
-                                                      AND sked__Tag__r.Name = 'REAL ID')
-                                                     FROM sked__Resource__c
-                                                     WHERE Id IN :recordIdsToUpdate];
-            List<sked__Resource_Tag__c> recordsToDelete = new List<sked__Resource_Tag__c>();
-            List<sked__Resource_Tag__c> recordsToInsert = new List<sked__Resource_Tag__c>();
-            
-            List<sked__Tag__c> skedTags = [SELECT Id, Name
-                                           FROM sked__Tag__c
-                                           WHERE sked__Type__c = :skedConstants.TAG_TYPE_CERTIFICATION];
-            Map<string, sked__Tag__c> mapTag = new Map<string, sked__Tag__c>();
-            for (sked__Tag__c skedTag : skedTags) {
-                mapTag.put(skedTag.Name, skedTag);
-            }
-            
-            for (sked__Resource__c skedResource : skedResources) {
-                if (!skedResource.sked_REAL_ID_Compliant_indicator__c) {
-                    if (skedResource.sked__ResourceTags__r != NULL) {
-                        recordsToDelete.addAll(skedResource.sked__ResourceTags__r);
-                    }
-                }
-                else {
-                    sked__Tag__c skedTag = mapTag.get('REAL ID');
-                    sked__Resource_Tag__c newResourceTag = new sked__Resource_Tag__c(
-                        sked__Resource__c = skedResource.Id,
-                        sked__Tag__c = skedTag.Id,
-                        sked_Start_Date__c = startDate,
-                        sked_Role_Status__c = 'Active'
-                    );
-                    recordsToInsert.add(newResourceTag);                       
-                }
-            }
-            if (!recordsToDelete.isEmpty()) {
-                delete recordsToDelete;
-            }
-            if (!recordsToInsert.isEmpty()) {
-                insert recordsToInsert;
-            }
-        }
-    }
-
     private void updateResourceSeniorityRankings(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
         List<sked__Resource__c> resourcesToUpdate = new List<sked__Resource__c>();
         for (sked__Resource__c newRecord : newRecords) {

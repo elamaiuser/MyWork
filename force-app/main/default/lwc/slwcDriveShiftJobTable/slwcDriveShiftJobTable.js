@@ -36,7 +36,7 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
         if (this.resourceType == 'Volunteer') {
             columns.push({ label: 'Volunteer Role', fieldName: 'volunteerRole', type: 'text' });
             columns.push({ label: 'Tag Names', fieldName: 'tagNames', type: 'text', wrapText: true, cellAttributes: { alignment: 'left' } });
-            columns.push({ label: 'Red Cross Volunteer Quantity', fieldName: 'redcrossVolunteerQuantity', type: 'number', cellAttributes: { alignment: 'left' } });
+            columns.push({ label: 'Redcross Volunteer Quantity', fieldName: 'redcrossVolunteerQuantity', type: 'number', cellAttributes: { alignment: 'left' } });
             columns.push({ label: 'Sponsor Volunteer Quantity', fieldName: 'sponsorVolunteerQuantity', type: 'number', cellAttributes: { alignment: 'left' } });
             if (this.drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE) {
                 columns.push({ label: 'Locked', fieldName: 'isLocked', type: 'boolean' });

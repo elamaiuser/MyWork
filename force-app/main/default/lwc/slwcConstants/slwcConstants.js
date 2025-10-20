@@ -105,10 +105,6 @@ export const ASSET_TYPE = {
   EQUIPMENT: 'Equipment'
 }
 
-export const VOLUNTEER_TYPE = {
-  DONOR_AMBASSADOR: 'Donor Ambassador'
-}
-
 export const DRIVE_TYPE = {
   FIXED_SITE: 'Fixed Site',
   MOBILE: 'Mobile'
@@ -369,10 +365,5 @@ export const ACCOUNT_TYPE = {
 
 export const ACCOUNT_INDUSTRY_CODE = {
   MIDDLE_SCHOOL: 'Middle School',
-  ELEMENTARY_SCHOOL: 'Elementary School',
-  HIGH_SCHOOL: 'High School'
-}
-
-export const SKIP_BEST_VEHICLE_CALCULATION = {
-  ANTICIPATED_REGISTERED_DONOR_GREATER_THEN: 500,
+  ELEMENTARY_SCHOOL: 'Elementary School'
 }

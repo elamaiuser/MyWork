@@ -94,32 +94,38 @@ export default class SlwcPopoverContent extends LightningElement {
     }
     get driveShiftResourceAllocationColumns() {
       return [
-        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },        
-        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' }
+        { label: 'Resource Name', fieldName: 'resourceName', type: 'text' },
+        { label: 'Resource Role', fieldName: 'resourceRole', type: 'text' },        
+        { label: 'Start Time', fieldName: 'startTime', type: 'text' },
+        { label: 'End Time', fieldName: 'endTime', type: 'text' }
       ];
     }
-    get resourceAllocations() {      
+    get resourceAllocations() {
+      console.log(':::TPE::: this.popoverData', JSON.stringify(this.popoverData));
+      console.log(':::TPE::: this.popoverData.jobs', JSON.stringify(this.popoverData.jobs));
       let allocations = [];
       if (this.popoverData && this.popoverData.jobs && this.popoverData.jobs.length > 0) {
         this.popoverData.jobs.forEach(job => {
-          const resAllocations = [];
+          console.log(':::TPE::: job.jobAllocations', JSON.stringify(job.jobAllocations));
           job.jobAllocations.forEach(allocation => {
+            console.log(':::TPE::: allocation.status', JSON.stringify(allocation.status));
             if (allocation.status != JOB_ALLOCATION_STATUS.DELETED) {
-              resAllocations.push({
-                id: allocation.id || allocation.key,
-                resourceName: allocation.resourceName || allocation.resource.name,                
-                resourceRole: job.resourceRoleText || job.assetType                
+              allocations.push({
+                id: allocation.id,
+                resourceName: allocation.resourceName,
+                resourceRole: job.resourceRole,
+                startTime: job.start,
+                endTime: job.finish
               });
             }
           });
-          resAllocations.sort((a, b) => a.resourceName.localeCompare(b.resourceName));
-          allocations = allocations.concat(resAllocations);
-        });
+        });        
       }
+      console.log(':::TPE::: allocations', JSON.stringify(allocations));
       return allocations;
     }
-
     render() {
+      console.log(':::TPE::: this.popoverContentMap[this.name]', JSON.stringify(this.popoverContentMap[this.name]));
       return this.popoverContentMap[this.name];
     }
 

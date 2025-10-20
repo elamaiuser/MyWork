@@ -90,7 +90,12 @@
                                             name="driveShiftStaffComplementPopover"
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
-                                    </c-slwc-popover>
+                                    </c-slwc-popover>                                    
+                                </h3>
+                            </div>
+                            <div class="hco-drive-shift-staff-complement-list slds-theme_shade slds-p-vertical_xx-small slds-border_top">
+                                <span>hello 1</span>
+                                <h3 class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-horizontal_small">                                    
                                     <c-slwc-popover
                                         container=".drive-details-side-menu"
                                         position="bottom" trigger="click" width="40rem;">
@@ -99,7 +104,7 @@
                                             name="driveShiftResourceAllocationPopover"
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
-                                    </c-slwc-popover>                                    
+                                    </c-slwc-popover>
                                 </h3>
                             </div>
                             <ul class="hco-job-list">
@@ -437,7 +442,12 @@
                                             name="driveShiftStaffComplementPopover"
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
-                                    </c-slwc-popover>
+                                    </c-slwc-popover>                                    
+                                </h3>
+                            </div>
+                            <div class="hco-drive-shift-staff-complement-list slds-theme_shade slds-p-vertical_xx-small slds-border_top">
+                                <span>Hello 2</span>
+                                <h3 class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-horizontal_small">                                    
                                     <c-slwc-popover
                                         container=".drive-details-side-menu"
                                         position="bottom" trigger="click" width="40rem;">
@@ -446,7 +456,7 @@
                                             name="driveShiftResourceAllocationPopover"
                                             popover-data={driveShift} slot="content">
                                         </c-slwc-popover-content>
-                                    </c-slwc-popover>                                    
+                                    </c-slwc-popover>
                                 </h3>
                             </div>
                             <ul class="hco-job-list">
@@ -1086,17 +1096,9 @@
                                                                                                     type="checkbox"
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
-                                                                                                </lightning-input>-->
-                                                                                                <template if:true={exceptionSub.eventURL} >
-                                                                                                    <span class="color-error"><a href={exceptionSub.eventURL} target="blank" class="color-error">{exceptionSub.exception}</a></span>
-                                                                                                </template>
-                                                                                            
-                                                                                                <!-- Using if:false to render content when isVisible is false -->
-                                                                                                <template if:false={exceptionSub.eventURL} >
-                                                                                                    <span class="color-error">{exceptionSub.exception}</span>
-                                                                                                </template>
-
-                                                                                                
+                                                                                                </lightning-input> -->
+                                                                                                <span
+                                                                                                    class="color-error">{exceptionSub.exception}</span>
                                                                                             </p>
                                                                                         </div>
 

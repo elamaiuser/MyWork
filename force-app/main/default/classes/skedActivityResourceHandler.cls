@@ -11,12 +11,9 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     }
 
     public override void onAfterInsert() {
-        List<sked__Activity_Resource__c> checkedactivityResources = checkActivityForNotOnCallAfterHours(this.context.newRecords);
         if (!skedSetting.instance.Admin.migrationMode) {
         	captureExceptionLogs(this.context.newRecords);
-            if(!checkedactivityResources.isEmpty()) {
-                syncToResourceHoursRecord(checkedactivityResources);
-            }        	
+        	syncToResourceHoursRecord(this.context.newRecords);
         }
         createAvailabilityForOnCallResources(this.context.newRecords);
     }
@@ -29,9 +26,8 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
     }
     
     public override void onAfterUpdate() {
-        List<sked__Activity_Resource__c> checkedactivityResources = checkActivityForNotOnCallAfterHours(this.context.newRecords);
-        if (!skedSetting.instance.Admin.migrationMode && !checkedactivityResources.isEmpty()) {
-        	syncToResourceHoursRecord(checkedactivityResources, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
+        if (!skedSetting.instance.Admin.migrationMode) {
+        	syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
         }
         syncOnCallAvailabilities(this.context.newRecords, (Map<Id, sked__Activity_Resource__c>)this.context.oldMap);
     }
@@ -73,7 +69,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             activityIds.add(newRecord.sked__Activity__c);
         }
         Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([
-            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c,sked_Activity_Title__c
+            SELECT Id, Name, sked__Start__c, sked__End__c, sked__Type__c, sked_Is_Group_Activity__c
             FROM sked__Activity__c
             WHERE Id IN :activityIds
         ]);
@@ -86,7 +82,7 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             unavailability.startTime = newRecord.sked_Start1__c;
             unavailability.endTime = newRecord.sked_End__c;
             unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
-            unavailability.exceptionText = 'Conflict with ' + activity.sked_Activity_Title__c;
+            unavailability.exceptionText = 'Conflict with ' + activity.Name;
             unavailability.relatedEventFieldApi = 'skedHC__Activity__c';
             unavailability.recordId = activity.Id;
             unavailabilityList.add(unavailability);
@@ -169,30 +165,6 @@ public class skedActivityResourceHandler extends skedTriggerHub implements Calla
             item.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
         }
         update exceptions;
-    }
-
-    private List<sked__Activity_Resource__c> checkActivityForNotOnCallAfterHours(List<sked__Activity_Resource__c> activityResources) {
-        Set<Id> activityIds = new Set<Id>();
-        List<sked__Activity_Resource__c> checkedactivityResources = new List<sked__Activity_Resource__c>();
-
-        for (sked__Activity_Resource__c activityResource : activityResources) {
-            activityIds.add(activityResource.sked__Activity__c);
-        }
-
-        Map<Id, sked__Activity__c> mapActivity = new Map<Id, sked__Activity__c>([
-            SELECT Id, sked__Type__c
-            FROM sked__Activity__c
-            WHERE Id IN :activityIds
-        ]);
-
-        for (sked__Activity_Resource__c activityResource : activityResources) {
-            sked__Activity__c activity = mapActivity.get(activityResource.sked__Activity__c);
-            if (activity != null && activity.sked__Type__c != skedConstants.ACTIVITY_TYPE_ON_CALL &&
-                activity.sked__Type__c != skedConstants.ACTIVITY_TYPE_AFTER_HOURS_CALL_OUT_MANAGEMENT) {
-                    checkedactivityResources.add(activityResource);
-            }
-        }
-        return checkedactivityResources;
     }
 
     /**************************************** RESOURCE HOURS RECORD ********************************************/

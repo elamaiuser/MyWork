@@ -5,9 +5,9 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend, orderBy } from 'c/lodash';
+import { cloneDeep, difference, uniqueId, extend } from 'c/lodash';
 import { Fetch } from './fetch';
-import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
+import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -319,6 +319,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
                     staffSetupExcludedRoles
                   }]) => {
                     this.populateDriveCollectionOperation();
+                    this.populateCollectionOperationData();
 
                     return Promise.all([
                       driveSite,
@@ -352,7 +353,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       staffSetupExcludedRoles
                     })
 
-                    this.populateCollectionOperationData();
                     this.calculateTotalProceduresProjected();
                     this.calculateDriveShiftsMetadata();
                     this.calculateNumberOf2rbcAssets();
@@ -757,6 +757,17 @@ class WbFixedSiteGenerator extends BaseGenerator {
     return driveShiftStaffCapacity;
   }
   
+  calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak);
+
+    return driveShiftStaffCapacity;
+  }
+
   calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
     const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
     return drawHours;
@@ -797,7 +808,20 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
+    let driveStaffCount = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      this.drive.driveShifts.forEach((driveShift) => {
+        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
+        driveStaffCount += driveShiftStaffCount;
+      });
+    }
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
+      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
+      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
+    } else {
+      this.drive.averageStaffCapacity = 0;
+    }
+    
   }
 
   updateDriveMaxRoleCapacity() {
@@ -824,7 +848,16 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   updateDriveExcessStaffCapacity() {
-    this.drive.excessStaffCapacity = this.helper.calculateExcessStaffCapacity(this.drive);
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
+      if(this.drive.projectedRegisteredDonors) {
+        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
+      } else {
+        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
+      }
+      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
+    } else {
+      this.drive.excessStaffCapacity = 0;
+    }
   }
 
   calculateNumberOf2rbcAssets() {
@@ -988,7 +1021,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
     });
   }
 
-  calculateResourceQuantity(skipCalculateResourceRoles = false, jobsUpdatedViaDualRoleChangeMap = {}) {
+  calculateResourceQuantity(skipCalculateResourceRoles = false) {
     //assets
     this.calculateEquipmentQuantity();
 
@@ -1025,10 +1058,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
     // HRP-10652: WB Fixed Site Drive Generation Code - Volunteer Jobs Generated
     // this.calculateVolunteerDonorAmbassadors();    
 
-    if(jobsUpdatedViaDualRoleChangeMap) {
-      this.restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap);
-    }
-
     const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges({
       ...this.drive,
       driveShifts: Array.from(this.mapResourceQuantity.values()).map(mapResourceQuantity => {
@@ -1054,30 +1083,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
     } 
 
     return true;
-  }
-
-  //Will work at the time of dual role modification save
-  restoreDualRoleModification(jobsUpdatedViaDualRoleChangeMap = {}) {
-    if(jobsUpdatedViaDualRoleChangeMap) {
-      const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-      Object.keys(jobsUpdatedViaDualRoleChangeMap).forEach(driveShiftIndex => {
-        const driveShiftMetadata =  driveShiftsMetadata?.driveShifts?.[driveShiftIndex];
-        let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata?.key);
-        if(!resourceQuantityMap) return;
-
-        let tempResourceQuantityMap = cloneDeep(resourceQuantityMap);
-        let roles = orderBy(jobsUpdatedViaDualRoleChangeMap[driveShiftIndex], [item => item.isManuallyCreated], ['asc']);
-        roles.forEach(item => {
-          tempResourceQuantityMap.delete(item.resourceRole);
-          tempResourceQuantityMap.set(item.resourceRole, cloneDeep({
-            ...resourceRoleQuantityAfterRegenreted,
-            quantity: quantity,
-            isCreatedOrUpdatedViaDualRoleChange: true
-          }));
-        });
-        this.mapResourceQuantity.set(driveShiftMetadata?.key, new Map([...tempResourceQuantityMap]));
-      });
-    }
   }
 
   calculateEquipmentQuantity() {
@@ -1121,76 +1126,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
     })
   }
 
-  recalculateVphhQuantity(driveShift, resourceRoles = ['2RBC', 'Charge']) {
-    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
-
-    const driveShiftMetadata = driveShift.driveShiftMetadata;
-    const staffCapacity = this.helper.calculateStaffCapacity(
-      resourceRoles,
-      this.drive,
-      driveShiftMetadata,
-      new Map()
-        .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
-    )
-
-    const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-    let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
-    if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
-      
-    const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
-
-    let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
-
-    let existingVphhJob = driveShift.jobs.find(job => 
-      job.resourceRole === 'VP/HH' && 
-      !job.dualRole)
-
-    if(existingVphhJob?.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) {
-      return;
-    }
-
-    if(noOfVpHhStaffs > 0) {
-      if(existingVphhJob) {
-        existingVphhJob.vphhQuantity = noOfVpHhStaffs;
-        existingVphhJob.quantity = existingVphhJob.vphhQuantity + (existingVphhJob.aptQuantity ?? 0);
-        existingVphhJob.systemQuantity = existingVphhJob.quantity;
-      } else {
-        let shift = this.drive.driveShifts.find((e) => e.key == driveShift.key);
-        const newList = [...shift.jobs];
-        let newJob = {
-          id: uniqueId('temp_job_'),
-          key: generateUUID(),
-          resourceRole: 'VP/HH',
-          dualRole: '',
-          vphhQuantity: noOfVpHhStaffs,
-          aptQuantity: 0,
-          quantity: noOfVpHhStaffs,
-          systemQuantity: noOfVpHhStaffs,
-          jobTags: []
-        };
-        newList.push(newJob);
-
-        shift.jobs = newList;
-        shift.jobs.forEach(job => {
-          if(newJob.key === job.key) {
-            this.applyRoleTimeForSingleJob(shift, job);
-          }
-        });
-      }
-    } else {
-      if(existingVphhJob) {
-        if(existingVphhJob.aptQuantity > 0) {
-          existingVphhJob.vphhQuantity = 0;
-          existingVphhJob.quantity = existingVphhJob.vphhQuantity + (existingVphhJob.aptQuantity ?? 0);
-        } else {
-          remove(driveShift.jobs, job => job.key === existingVphhJob.key);
-        }
-      }
-    }
-  }
-
-  calculateVpHhQuantity(resourceRoles = ['2RBC', 'Charge']) {
+  calculateVpHhQuantity(resourceRoles = ['2RBC']) {
     if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
@@ -1210,7 +1146,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
       
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
-      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
+      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
       let noOfAptStaffs = 0;
 
       if(this.drive.aptRequired) {
@@ -1253,7 +1189,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
       });
 
       //Recalculate VP/HH
-      this.calculateVpHhQuantity();
+      this.calculateVpHhQuantity(['2RBC', 'Charge']);
     });
   }
 
@@ -1299,22 +1235,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
     skipGenerateSlots = false
   } = {}) {
     if (this.drive.projectedRegisteredDonors) {
-
-      let jobsUpdatedViaDualRoleChangeMap = {};
-      this.drive.driveShifts.forEach((driveShift, driveShiftIndex) => {
-        if(!jobsUpdatedViaDualRoleChangeMap[driveShiftIndex]) {
-          jobsUpdatedViaDualRoleChangeMap[driveShiftIndex] = [];
-        }
-
-        driveShift.jobs.forEach(job => {
-          if(job.resourceRole && job.isCreatedOrUpdatedViaDualRoleChange) {
-            jobsUpdatedViaDualRoleChangeMap[driveShiftIndex].push(cloneDeep(job));
-          }
-        })
-      });
-
       this.initResourceQuantityMap();
-      this.calculateResourceQuantity(skipCalculateResourceRoles, jobsUpdatedViaDualRoleChangeMap);
+      this.calculateResourceQuantity(skipCalculateResourceRoles);
 
       this.drive.driveShifts = this.buildMultiDriveShifts();
       this.populateDriveTime();
@@ -1532,76 +1454,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
       });
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
-
-    const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
-        this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
-      )
-    });
-
-    if(anyManuallyCreatedJobsHoldCapacity) {
-      this.recalculateVphhQuantity(driveShift);
-    }
-
-  }
-
-  // To create new jobs /update existing jobs after dual role modification
-  repopulateJobsAfterDualRoleModification(driveShift, job) {
-    let newJob;
-    let existingJob = driveShift.jobs?.find(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(existingJob) {
-      newJob = {
-        ...existingJob,
-        quantity: existingJob.quantity + job.quantity,
-        isCreatedOrUpdatedViaDualRoleChange: true
-      };
-      const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-      driveShift.jobs[index] = newJob;
-    } else {
-      let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
-      let jobTemplate = {
-        driveSiteId: this.drive.driveSiteId,
-        collectionOperationId: this.drive.collectionOperationId,
-        address: this.drive.driveSite?.address,
-        latitude: this.drive.driveSite?.geoLocationLatitude,
-        longitude: this.drive.driveSite?.geoLocationLongitude,
-        jobAllocationTimeSource: false,
-        isCreatedOrUpdatedViaDualRoleChange: true,
-        isManuallyCreated: false,
-        manuallyCreatedFrom: ''
-      };
-      newJob = cloneDeep(jobTemplate);
-      newJob.key = generateUUID();
-      newJob.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
-      newJob.resourceRole = job.dualRole;
-      newJob.dualRole = '';
-
-      if (newJob.resourceRole === 'VP/HH') {
-        if (job.quantity > 0) {
-          newJob.vphhQuantity = job.quantity;
-          newJob.aptQuantity = 0
-          newJob.quantity = newJob.vphhQuantity + (newJob.aptQuantity || 0);
-          newJob.systemQuantity = job.quantity;
-        }
-      } else {
-        if (job.quantity > 0) {
-          newJob.quantity = job.quantity;
-          newJob.systemQuantity = job.quantity;
-        }
-      }
-
-      if (newJob.jobTags && newJob.jobTags.length) {
-        let tagNameArr = newJob.jobTags.reduce((result, item) => {
-          return result.concat(item.tag.name);
-        }, []);
-        newJob.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
-      }
-      driveShift.jobs.push(newJob);
-    }
-
-    this.applyRoleTimeForSingleJob(driveShift, newJob);
-    this.onJobChanged(driveShift, newJob);
   }
 
   /** Lunch break */
@@ -2032,12 +1884,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   onJobChanged(driveShift, job) {
     this.correctJobTime(job, driveShift);
-    if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-      this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
-    )) {
-      this.recalculateVphhQuantity(driveShift);
-    }
     this.updateShiftMobileSetup(driveShift);
 
     if(!job.volunteerRole) {

@@ -11,7 +11,7 @@ export class OperationRecordStaffMappingConfigFactory {
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Absent__c', 'absent', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Actual_Roles__c', 'actualRoles', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Actual_Roles__c', 'actualRoles', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Actual_Shift_End__c', 'actualShiftEnd', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Actual_Shift_End_Date__c', 'actualShiftEndDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Actual_Shift_End_Time__c', 'actualShiftEndTime', MAPPING_TYPE.time);
@@ -34,7 +34,7 @@ export class OperationRecordStaffMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Operation_Record__c', 'operationRecordId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Operation_Record__r.Name', 'operationRecordName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Pool__c', 'pool', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Premiums_Op_Pay__c', 'premiumsOpPay', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Premiums_Op_Pay__c', 'premiumsOpPay', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Resource__c', 'resourceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Resource__r.Name', 'resourceName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Role__c', 'role', MAPPING_TYPE.direct);

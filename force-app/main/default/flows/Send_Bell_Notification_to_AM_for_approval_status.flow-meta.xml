@@ -60,7 +60,6 @@
             </value>
         </inputParameters>
         <nameSegment>MarketingExceptionInvokable</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -332,7 +331,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -391,7 +389,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -663,7 +660,6 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_CustomNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <processMetadataValues>
@@ -722,9 +718,9 @@
             </value>
         </inputParameters>
         <nameSegment>BSF_EmailNotification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>51.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>isChangedDecision2_myRule_1_Approved_c</name>
         <label>isChangedDecision2_myRule_1_Approved_c</label>

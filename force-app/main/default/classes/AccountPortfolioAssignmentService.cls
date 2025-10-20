@@ -20,7 +20,6 @@
 * 07/12/2024				  Balaji N 				 logic for HRP-13028(Method:HandleAccExceptionDelete, null check; zipTerrForException,Error log event)
 * 07/29/2024				  Balaji N 				 logic for HRP-13174(Method:accTeamDateSyncOnAccPortUpdates, Skip DML for account team with End dates in past)
 * 08/12/2024				  Balaji N				 logic for HRP-12485(Method:handleTerritoryPortfolioInsert,logic for adding territory portfolio)
-* 03/06/2025                  Krapy Tuli             logic for HRP-14322 to handle ATM bsf portfolio change if the same user present in future as well as past BSF portfolio
 * *
 *************************************************************************************************************************************************
 */
@@ -151,11 +150,9 @@ commented part of HRP-12053*/
     public static map<string,AccountTeamMember> accTeamDateSyncOnAccPortUpdates (List<id> accountIdList,String calledFromBatch,Set<id> oppSet,map<id,list<accountTeamMember>> accIdFutureAccTeamMap,map <id,list<AccountTeamMember>> accIdAccTeamListMap)
     {
         set<string> focusedPortFolioTypeSet = new set<string>{BSF_Constants.ACCOUNT_MANAGER,bsf_constants.SICKLE_CELL_ACCOUNT_MANAGER,Bsf_constants.NATIONAL_ACCOUNT_MANAGER,bsf_constants.Booking_Support,bsf_constants.ACCOUNT_SPECIALIST};//HRP-11290
-        list <Account_Portfolio_assignment__c> accportfolioAssignOfAccList = new list<Account_Portfolio_assignment__c>();//HRP-11290 added BSF_Portfolio__r.Portfolio_type__c in:focusedPortFolioTypeSet
+            list <Account_Portfolio_assignment__c> accportfolioAssignOfAccList = new list<Account_Portfolio_assignment__c>();//HRP-11290 added BSF_Portfolio__r.Portfolio_type__c in:focusedPortFolioTypeSet
         list<AccountTeamMember> overAllteamMembersList = new list<AccountTeamMember>();
         List <AccountTeamMember> atmToDeleteList = new List <AccountTeamMember>();
-        List <AccountTeamMember> teamMemberListToInsert = new List <AccountTeamMember>();
-        List <BSF_Error_Log__c> errorLogInsertList = new List <BSF_Error_Log__c>();
         set<id> bsfIdsSet=new set<id>();
         list<account> acclist = [select id,(Select id,Start_date__c,End_Date__c,Account__c,BSF_Portfolio__c,BSF_Portfolio__r.Portfolio_code__c,BSF_Portfolio__r.Parent_Portfolio__c,
                                             BSF_Portfolio__r.Parent_Portfolio__r.Parent_Portfolio__c,BSF_Portfolio__r.Taxonomy_Type__c,BSF_Portfolio__r.portfolio_type__c from
@@ -224,7 +221,6 @@ commented part of HRP-12053*/
                                 atm.start_date__c = startDate;
                                 atm.End_Date__c = endDate;
                                 atm.TeamMemberRole = pa.Assignment_Type__c;
-                                atm.BSF_Portfolio__c=pa.BSF_Portfolio__c;//HRP-14322
                             }
                             //HRP-10569 start
                             //The Acc Team inside this else if are future teams coming part of portfolio assignment
@@ -431,14 +427,12 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
             if(!atmToDeleteList.isEmpty())
             {
                 BSF_Constants.isTeamMemberCreatedFromBackend = true;
-                Database.DeleteResult [] deleteResult = Database.delete(atmToDeleteList,false);
-                errorLogInsertList.addAll(
-                    BSF_Utilities.createErrorLog(deleteResult,'Acc Team Delete', 'AccountPortfolioAssignmentService', 'accTeamDateSyncOnAccPortUpdates', 'Error', 'sync accteam dates')
-                );
+                database.delete(atmToDeleteList,false);
                 BSF_Constants.isTeamMemberCreatedFromBackend = false;
             }
             if(accIdAccTeamUpdateMap.values().size()>0)
             {
+                List<AccountTeamMember> teamMemberListToInsert = new List<AccountTeamMember>();
                 for(id i: accIdAccTeamUpdateMap.keyset())
                 {
                     teamMemberListToInsert.addAll(accIdAccTeamUpdateMap.get(i));
@@ -453,25 +447,10 @@ atm = new accountTeamMember(userid=pa.user__c,accountId=apa.account__c,Start_Dat
                 //HRP-8897
                 BSF_Constants.isTeamMemberCreatedFromBackend = true;
                 bsf_constants.isdateCheckbeforeInsertUpdate = false;
-                database.SaveResult [] srlist = Database.Insert(teamMemberListToInsert,false);
+                database.SaveResult [] srlist =Database.Insert(teamMemberListToInsert,false);
                 bsf_constants.isdateCheckbeforeInsertUpdate = true;//HRP-8897 bypasses date validation from AccountTeamTriggerHandler method call dateCheckbeforeInsertUpdate
-                errorLogInsertList.addAll(
-                    BSF_Utilities.createErrorLog(srlist,'Acc Team Insert','AccountPortfolioAssignmentService','accTeamDateSyncOnAccPortUpdates','Error','sync accteam dates')
-                );
-            }
-            InsertBsfErrorLog.insertBsfErrors(errorLogInsertList);
-            
-            //HRP-15205 -> In case of Acc Team Member Trigger doesn't get triggered due to failures
-            List<Portfolio_Accounts_Processing__c> portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
-                                                                                   Records_Processed__c, Portfolio_Assignment_Updated__c 
-                                                                                   FROM Portfolio_Accounts_Processing__c];
-            if (portfolioAccProcessingRecord != NULL && !portfolioAccProcessingRecord.isEmpty() && portfolioAccProcessingRecord[0].Portfolio_Assignment_Updated__c) {
-                update new Portfolio_Accounts_Processing__c(
-                    Id = portfolioAccProcessingRecord[0].Id,
-                    Portfolio_progress_for_Accounts__c = 0,
-                    Records_Processed__c = 0,
-                    Portfolio_Assignment_Updated__c = false
-                );
+                List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srlist,'Create Portfolio','AccountPortfolioAssignmentService','accTeamDateSyncOnAccPortUpdates','Error','sync accteam dates');
+                InsertBsfErrorLog.insertBsfErrors(logList);
             }
         }
         //HRP-10569 start
@@ -1120,12 +1099,13 @@ return supervisorTeamMemberListToUpdate;
                 String key;
                 if(ap.BSF_Portfolio__r.Taxonomy_Type__c!=BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE)
                 {
+                    lastEndDate =ap.End_Date__c;//HRP-13898 moved this to handle null pointer exception
                     //HRP-12053 start
                     //Expired - No action needed
                     if(ap.End_Date__c < currentDate){
                         continue;
                     }
-                    lastEndDate =ap.End_Date__c;
+                    //lastEndDate =ap.End_Date__c;//HRP-13898 commented this to handle null pointer exception
                     Boolean isPortfolioSame = false;
                     if(ap.BSF_Portfolio__r.Taxonomy_Type__c ==BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE)
                     {

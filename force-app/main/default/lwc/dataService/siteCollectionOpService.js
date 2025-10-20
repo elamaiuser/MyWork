@@ -19,7 +19,7 @@ class siteCollectionOpService extends dataService {
   isManualRefreshInProgress = (params) => auraProxy.getInstance().isManualRefreshInProgress(params);
   hasInvalidTravelTimeData = (params) => auraProxy.getInstance().hasInvalidTravelTimeData(params);
   getRelatedSiteInfo = (params) => auraProxy.getInstance().getRelatedSiteInfo(params);
-  isUserOverrideEnabled = (params) => auraProxy.getInstance().isUserOverrideEnabled(params);
+  isSCOUserOverrideEnabled = (params) => auraProxy.getInstance().isSCOUserOverrideEnabled(params);
 }
 
 class siteCollectionOpQueryModel extends queryModelBase {

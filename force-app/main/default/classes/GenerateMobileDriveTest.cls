@@ -10,15 +10,13 @@
  * 07/23/2024				  Priti Jana			 Corrected the test class, 
  													 increased code coverage
  * 09/26/2024				  Priti Jana			 Increased code coverage for JobTriggerHandler (HRP-13522)
- *													 
- * 08/06/2025				  Krapy Tuli			 Added test class for populateAdditionalRole in JobTriggerHandler (HRP-15160)
 -------------------------
 Current Code Coverage :  
 -------------------------
 ** CreateSkedDrive : 92%
 ** GenerateMobileDrive : 91%
 ** DriveGeneratorService : 92%
-** JobTriggerHandler : 91%
+** JobTriggerHandler : 83%
 *******************************************************************************
 */
 
@@ -214,62 +212,5 @@ public class GenerateMobileDriveTest {
         Assert.areEqual(1, mobileDriveCreated.size()); // NEW Assert Class
         
     }
-
-    //HRP-15160
-      @istest
-    public static void JobTriggerHandlerTest() {
-
-       Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-        
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        skedHubBase.BypassUpdateTriggers = TRUE;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
-        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        Test.startTest();
-        GenerateMobileDrive.generateDrives(config);
-        
-        List<sked_Drive__c> mobileDriveCreated = [Select Id , sked_Opportunity__c , sked_Collection_Operation__c from sked_Drive__c where sked_Opportunity__c IN :config.oppIds];
-        List<sked__Job__c> jobsCreated = [SELECT Id FROM sked__Job__c where sked_Drive__c = :mobileDriveCreated[0].Id];
-
-        List<sked__Resource__c> resource = [SELECT Id, Name from sked__Resource__c where sked_Collection_Operation_Id__c = :mobileDriveCreated[0].sked_Collection_Operation__c];
-        sked__Job_Allocation__c alloc = new sked__Job_Allocation__c(
-            sked__Job__c = jobsCreated[0].Id ,
-            sked__Resource__c = resource[0].Id
-        );
-        insert alloc;
-        
-        jobsCreated[0].sked_Dual_Role__c = 'Driver';
-        update jobsCreated[0];
-
-       List<sked__Job_Allocation__c> allocs = [
-        SELECT Id, sked_Dual_Role__c, sked_Additional_Roles__c
-        FROM sked__Job_Allocation__c
-        WHERE sked__Job__c = :jobsCreated[0].Id
-    ];
-    Map<String, Object> params = new Map<String, Object>{
-    'param1' => JSON.serialize(allocs)
-    };
-
-        JobTriggerHandler.call('updateAdditionalRole', params);
-        Triggerhandler.clearAllBypasses();
-        Test.stopTest();
-
-        sked__Job_Allocation__c updatedAlloc = [
-            SELECT Id, sked_Additional_Roles__c
-            FROM sked__Job_Allocation__c
-            WHERE Id = :alloc.Id
-        ];
-
-        System.assertEquals('Driver', updatedAlloc.sked_Additional_Roles__c, 'Additional role should match Dual Role');
-        
-    }
+    
 }

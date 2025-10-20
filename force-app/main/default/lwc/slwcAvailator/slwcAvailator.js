@@ -54,19 +54,6 @@ const isJobRequireTravelTimes = (isTemporaryCO, job, drive, {
   return rule1 || rule2;
 }
 
-const isDriverJob = (job, onlyCheckResourceRole = false) => {
-  if(!job) return false;
-  const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
-  const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
-  if(onlyCheckResourceRole) {
-    return isNotCdlDriverJob && isNotDotDriverJob && job.resourceRole === 'Driver' && !job.dualRole;
-  }
-
-  return isNotCdlDriverJob && isNotDotDriverJob && (
-    job.resourceRole === 'Driver' || job.dualRole === 'Driver'
-  )
-}
-
 class dateslotModel {
   timezoneSidId = null;
   startJS = null;
@@ -438,43 +425,6 @@ class SlwcAvailator {
       });
     });
   }
-
-//HRP-14118
-
-fetchJobTags(driveId){
-  let service = new driveService();
-  return service.getDriveById(driveId)
-      .then((result) => {
-          if (!result) {
-              throw new Error('Cannot fetch jobs');
-          }
-          //Getting the jobTags
-          result.driveShifts.forEach(driveShift => {
-            driveShift.jobs.forEach(job => {
-                if (job.jobTags && job.jobTags.length > 0) {
-                    job.jobTags.forEach(tag => {
-                      // Find matching job in this.jobs by ID
-                        let matchingJob = this.jobs.find(j => j.id === tag.jobId);
-                        if (matchingJob) {
-                            
-                            if (!matchingJob.jobTags) {
-                                matchingJob.jobTags = [];
-                            }
-                            // Avoid duplicate tags
-                            if (!matchingJob.jobTags.some(t => t.id === tag.id)) {
-                                matchingJob.jobTags.push(tag);
-                            }
-                        }
-                    });
-                }
-            });
-        });
-    });
-
-}
-
-
-
   fetchResources(pageNo = 1, totalRecords, getAssetsOnly, additionalFilters) {
     let inputDates = [];
     this.jobs.forEach((item) => {
@@ -619,8 +569,6 @@ fetchJobTags(driveId){
 
         return this.doTransformJobs([{
           ...job,
-          actualStart: job.start,
-          actualFinish: job.finish,
           driveDate: this.drive.driveDate,
           start: startLuxon.toUTC().toISO(),
           finish: endLuxon.toUTC().toISO()
@@ -823,6 +771,7 @@ fetchJobTags(driveId){
       return service.query(queryModel);
     })
     .then((collectionOperations = []) => {
+      console.log('collectionOperations in slwcAvailator ',collectionOperations);
       this.collectionOperationDataMap = keyBy(collectionOperations, 'id');
     });
   }
@@ -1042,7 +991,7 @@ fetchJobTags(driveId){
       return () => {
         const origins = originsDestinationsChunk.origins;
         const destinations = originsDestinationsChunk.destinations;
-        return service.calculateDistanceMatrix({
+        const request = {
           origins: origins.map(item => {
             return {
               lat: item.latitude,
@@ -1056,8 +1005,11 @@ fetchJobTags(driveId){
             }
           }),
           departureTime: this.drive.minShiftStart
-        })
+        };
+        console.log('@@@calculateDistanceMatrix request: ', request);
+        return service.calculateDistanceMatrix(request)
         .then(result => {
+          console.log('@@@calculateDistanceMatrix result: ', result);
           const matrixData = result?.returnedData?.result?.matrix || [];
           mapResult(origins, destinations, matrixData);
         })
@@ -1385,8 +1337,11 @@ fetchJobTags(driveId){
     }
   }
 
-  isDriverJob(job, onlyCheckResourceRole = false) {
-    return isDriverJob(job, onlyCheckResourceRole);
+  isDriverJob(job) {
+    if(!job) return false;
+    const isNotCdlDriverJob = job.id && !job.id.startsWith('drivercdl');
+    const isNotDotDriverJob = job.id && !job.id.startsWith('driverdot');
+    return isNotCdlDriverJob && isNotDotDriverJob && (job.resourceRole === 'Driver' || job.dualRole === 'Driver')
   }
 
   setupDriverJobs() {
@@ -1404,10 +1359,7 @@ fetchJobTags(driveId){
     });
 
     this.drive.driveShifts.forEach(driveShift => {
-      let driverJob = driveShift.jobs.find(job => this.isDriverJob(job, true));
-      if(!driverJob) {
-        driverJob = driveShift.jobs.find(job => this.isDriverJob(job, false));
-      }
+      const driverJob = driveShift.jobs.find(job => this.isDriverJob(job));
       if(!driverJob) return;
       if(!driverJob.jobAllocations) {
         driverJob.jobAllocations = [];
@@ -1834,9 +1786,9 @@ fetchJobTags(driveId){
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                const tagRestricted = resourceTag.restrictionStartDate && 
-                      resourceTag.restrictionStartDate <= job.driveDate && 
-                      (slwcUtils.isNullOrEmpty(resourceTag.restrictionEndDate)  || resourceTag.restrictionEndDate >= job.driveDate);
+                const tagRestricted = resourceTag.restrictionStartDate && resourceTag.restrictionEndDate && 
+                  resourceTag.restrictionStartDate <= job.driveDate && resourceTag.restrictionEndDate >= job.driveDate;
+
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1844,8 +1796,8 @@ fetchJobTags(driveId){
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
-                //console.log('slwc Availator => tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
               });
+      
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
 
@@ -1900,31 +1852,8 @@ fetchJobTags(driveId){
                 return this.dateUtils.compareDateJS(event.startJS, job.startJS) > 0;
               });
 
-              /* In case of assets, if job start and drive date matches, 
-                1. either job actually starts on the drive date
-                2. or it starts the day before and it has been transformed to the drive date (fetchAssetData)
-              In any case, we need to transform the events as well for a consistent comparison */
-              
-              if(!job.actualStart) job.actualStart = job.start;
-              if(!job.actualFinish) job.actualFinish = job.finish;
-
-              const isEventTransformationNeeded = this.dateUtils.compareDateJS(job.start, job.actualStart) !== 0;
-
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
-                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
-                
-                if(isEventTransformationNeeded) {
-                  let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);
-                  if(diff === 0) diff = this.dateUtils.diffDays(job.startJS, job.finishJS);
-                  
-                  event = {
-                    ...event, 
-                    startJS: this.dateUtils.addDay(event.startJS, diff), 
-                    finishJS: this.dateUtils.addDay(event.finishJS, diff)
-                  };
-                }
-                
                 if (event.objectType === OBJECT_TYPE.JOB_ALLOCATION) {
                   if (!ignoreExistingAllocations) {
                     if (inputJobIds.indexOf(event.jobId) > -1 || event.status === EVENT_STATUS.DECLINED) {
@@ -1946,8 +1875,7 @@ fetchJobTags(driveId){
                     jobId: job.id,
                     resourceId: resource.id,
                     exception: "",
-                    exceptionCode: "RESOURCE_TIME_CONFLICT",
-                    eventURL:""
+                    exceptionCode: "RESOURCE_TIME_CONFLICT"
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -1960,19 +1888,9 @@ fetchJobTags(driveId){
                       exception.exception = event.eventType;
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
-                      exception.exception = "Conflict with " + event.activityTitle;
-                      let baseUrl = window.location.origin;
-                      console.log(baseUrl);
-                      let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
-                      exception.eventURL=fullUrl;
                       exception.activityId = event.id;
                     }
                     else if (event.objectType == OBJECT_TYPE.JOB_ALLOCATION) {
-                      let baseUrl = window.location.origin;
-                      console.log(baseUrl);
-                      let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
-                      exception.eventURL=fullUrl;
-                      exception.exception = "Conflict with "+event.driveName;
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }
@@ -2229,5 +2147,4 @@ export default {
   },
   isJobRequireTravelTimes,
   isJobBelongToDrivingRolesGroup,
-  isDriverJob
 }

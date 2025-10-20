@@ -406,26 +406,4 @@
          Test.stopTest();
          Assert.isTrue(mapSkedRegion != NULL);
     }
-
-    static testMethod void getStringWithinLimit_Test() {
-        Test.startTest();
-        // A random text with 260 characters
-        String randomText = 'The golden sun dipped below the horizon, casting a warm glow across the tranquil sea. The fragrance of the earth, Waves gently lapped at the shore, while seagulls soared above, their calls echoing in the crisp evening air, a perfect end to another peaceful day by the ocean.';
-        String result = BSF_Utilities.getStringWithinLimit(randomText, 255);
-        Assert.isTrue(result.length() == 255);
-        Test.stopTest();
-    }
-     
-     /*static testMethod void createBsfErrorLogwithoutExceptions_Test() {
-         Test.startTest();
-         BSF_Error_Log__c testLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
-         	'Test_Class',
-         	'testMethod',
-         	'Test Process',
-         	'Test Object',
-         	'Test Error'
-         );
-         Test.stopTest();
-         Assert.isTrue(testLog != NULL);
-     }*/
 }

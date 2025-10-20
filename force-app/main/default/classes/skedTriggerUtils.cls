@@ -74,17 +74,8 @@ public class skedTriggerUtils {
                 }
             ];
                 
-            Set<Id> jobAllocationIds = new Set<Id>();
-            for (sked__Job_Allocation__c ja : jobAllocations) {
-                jobAllocationIds.add(ja.Id);
-            }
-    
-            if (!Test.isRunningTest()) {
-                Database.executeBatch(new skedJobAllocationPostProcessBatch(
-                    new skedJobAllocationPostProcessBatch.batchSetting(),
-                    jobAllocationIds
-                ));
-            }
+            removePostProcessFromJobAllocations(jobAllocations, skedConstants.JOB_ALLOCATION_POST_PROCESS_MAIN_PROCESS);
+            skedJobAllocationPostProcessBatch.schedule();
         }
     }
 
@@ -176,12 +167,21 @@ public class skedTriggerUtils {
         boolean isAllowedProfile = allowedProfiles.contains(skedTriggerHub_Cache.loginUser.Profile.Name);
         boolean isAutoProcUser = UserInfo.getUserId() == skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
         boolean isPermittedUsage = usageAllowedViaService ? CHANGES_INITIATED_FROM_SERVICE : usageAllowedViaService;
-        boolean bypassProfileValidation = BSFBypassFlowValidationService.bypassProfileValidation;
 
-        if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !bypassProfileValidation && !isPermittedUsage) {
+        if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !isPermittedUsage) {
             for (SObject newRecord : newRecords) {
-            newRecord.addError(errorMessage);
+                newRecord.addError(errorMessage);
             }
         }
+    }
+
+    public static void removePostProcessFromJobAllocations(List<sked__Job_Allocation__c> jobAllocations, string postProcess) {
+        for (sked__Job_Allocation__c jobAllocation : jobAllocations) {
+            jobAllocation.sked_Completed_Post_Processes__c = skedUtils.removeItemFromMultiPicklist(jobAllocation.sked_Completed_Post_Processes__c, postProcess);
+        }
+
+        skedHubBase.setBypassAllTriggers(true);
+        update jobAllocations;
+        skedHubBase.setBypassAllTriggers(false);
     }
 }

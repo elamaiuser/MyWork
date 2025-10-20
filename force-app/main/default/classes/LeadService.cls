@@ -13,7 +13,6 @@
  *  08/14/2024               Priti Jana                 Logic for HRP-12190
  *  10/22/2024				 Balaji N				  	Logic for HRP-13603 handleLeadStageStatus method call
  *  12/09/2024               Priti Jana                 Logic for HRP-13602
- *  03/10/2025               Souvik Mukherjee           Logic for HRP-14331 - only consider Leads of Record Type Marketing Manager for conversion to Feeder Group
  *************************************************************************************************************************************************
 */
 
@@ -32,20 +31,14 @@ public class LeadService {
     public static void setAccountRecordType(List<Lead> newLeads, Map<Id,Lead> oldMap){
         Map<Id, Boolean> map_convertedAccountId_isFeederLead = new Map<Id, Boolean>();
         List<String> feederGroupLeadStatus = System.Label.Potential_Feeder_Group_Lead_Status.split(',');
-        System.debug('*****feederGroupLeadStatus : ' + System.Label.Potential_Feeder_Group_Lead_Status);
         for (Lead objLead : newLeads) {
 
             /* Getting Account Ids from the Lead after conversion .
             ConvertedAccountId in Lead contains the Account Id to which the Lead is converted.
             */
             if (objLead.IsConverted && objLead.IsConverted != oldMap.get( objLead.Id ).IsConverted) {
-                Id marketManagerLeadId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Market Manager').getRecordTypeId();        //Changed for HRP-14331
-                System.debug('******marketManagerLeadId : ' + marketManagerLeadId);
-                System.debug('******OldLead.RecordTypeId : ' + oldMap.get( objLead.Id ).RecordTypeId);
-                System.debug('******oldMap.get(objLead.Id).Status within Feeder Group Status List ? : ' + feederGroupLeadStatus.contains(oldMap.get(objLead.Id).Status));
-                Boolean isFeederLeadConverted = oldMap.get( objLead.Id ).RecordTypeId == marketManagerLeadId ? feederGroupLeadStatus.contains(oldMap.get(objLead.Id).Status) : false;       //Changed for HRP-14331
+                Boolean isFeederLeadConverted = feederGroupLeadStatus.contains(oldMap.get(objLead.Id).Status);
                 map_convertedAccountId_isFeederLead.put(objLead.ConvertedAccountId, isFeederLeadConverted);
-                System.debug('******isFeederLeadConverted : ' + isFeederLeadConverted);
             }
         }
 
@@ -54,9 +47,7 @@ public class LeadService {
             List<Account> listAcctForUpdate = [SELECT Id, RecordTypeId, Feeder_Account_Type__c FROM Account WHERE Id IN :map_convertedAccountId_isFeederLead.keySet()];
             for (Account objAccount :  listAcctForUpdate) {
                 objAccount.RecordTypeId = mobileRecordTypeId; //Updating account record type to "Mobile"
-                System.debug('******objAccount.Feeder_Account_Type__c : ' + objAccount.Feeder_Account_Type__c);
                 if(map_convertedAccountId_isFeederLead.get(objAccount.Id) && String.isBlank(objAccount.Feeder_Account_Type__c)) {
-                    System.debug('******bjAccount.Feeder_Account_Type__c Set To FEEDER ONLY');
                     objAccount.Feeder_Account_Type__c = BSF_Constants.FEEDER_ONLY_ACCOUNT; //Updating feeder account type to "Feeder Only" if a feeder lead is converted
                 }
             }
@@ -891,11 +882,9 @@ public class LeadService {
         List<String> feederGroupLeadStatus = System.Label.Potential_Feeder_Group_Lead_Status.split(',');
         String restrictionMsg = Custom_Messages__mdt.getInstance('Non_Feeder_Acc_Convert_Validation').Value__c;
         Set<Id> accountIdsToValidate = new Set<Id>();
-        Id marketManagerLeadId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Market Manager').getRecordTypeId();        //Changed for HRP-14331
         if(newLeads != NULL && !newLeads.isEmpty()) {
             for(Lead objLead : newLeads) {
-                //Changed for HRP-14331
-                if(oldLeadsMap.get( objLead.Id ).RecordTypeId == marketManagerLeadId && feederGroupLeadStatus.contains(oldLeadsMap.get(objLead.Id).Status) && objLead.IsConverted && objLead.IsConverted != oldLeadsMap.get(objLead.Id).IsConverted) {
+                if(feederGroupLeadStatus.contains(oldLeadsMap.get(objLead.Id).Status) && objLead.IsConverted && objLead.IsConverted != oldLeadsMap.get(objLead.Id).IsConverted) {
                     accountIdsToValidate.add(objLead.convertedAccountId);
                 }
             }

@@ -3,7 +3,7 @@
         <template if:true={buttonEnabled}>
             <lightning-button-group slot="actions">
                 <lightning-button if:true={showDualRoleAssignmentButton} label="Dual Role Assignment" onclick={handleDualRoleAssigment}></lightning-button>
-                <lightning-button if:true={isCreatable} label="New" onclick={handleNewJob}></lightning-button>
+                <lightning-button label="New" onclick={handleNewJob}></lightning-button>
             </lightning-button-group>
         </template>
         <div class="slds-scrollable_x slds-p-bottom_x-small">

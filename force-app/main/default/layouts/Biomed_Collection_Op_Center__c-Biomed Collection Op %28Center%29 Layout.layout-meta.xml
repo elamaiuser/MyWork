@@ -103,6 +103,22 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Low_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_High_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Medium_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Role_Priorities_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_Available_Day_Trade_Window__c</field>
             </layoutItems>
         </layoutColumns>
@@ -328,31 +344,12 @@
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
-        <detailHeading>true</detailHeading>
-        <editHeading>true</editHeading>
-        <label>Dual Role Automation Settings</label>
-        <layoutColumns>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Auto_Generate_Dual_Role__c</field>
-            </layoutItems>
-        </layoutColumns>
-        <layoutColumns>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Only_Generate_Dual_If_1_Machine__c</field>
-            </layoutItems>
-        </layoutColumns>
-        <style>TwoColumnsLeftToRight</style>
-    </layoutSections>
-    <layoutSections>
-        <customLabel>true</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -405,7 +402,9 @@
         <fields>NAME</fields>
         <fields>sked_Type__c</fields>
         <fields>sked_Resource_Role_Group__c</fields>
+        <fields>sked_Days_of_Week__c</fields>
         <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Mobile_Type__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>

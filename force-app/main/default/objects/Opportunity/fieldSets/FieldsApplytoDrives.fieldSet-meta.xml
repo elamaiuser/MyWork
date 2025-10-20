@@ -62,10 +62,5 @@
         <isFieldManaged>false</isFieldManaged>
         <isRequired>false</isRequired>
     </displayedFields>
-    <displayedFields>
-        <field>Red_Cross_Volunteer_Required__c</field>
-        <isFieldManaged>false</isFieldManaged>
-        <isRequired>false</isRequired>
-    </displayedFields>
     <label>FieldsApplytoDrives</label>
 </FieldSet>

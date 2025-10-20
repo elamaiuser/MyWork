@@ -22,6 +22,7 @@ public class DriveTriggerHandler extends TriggerHandler{
     Boolean isInserted=false;
     
     public override void beforeUpdate() {
+        System.debug('#13864 trigger.new '+trigger.new);
         //Start HRP-10912
         if (super.getTriggerMethodsToBypass().indexOf('validateNoPendingDCR') == -1) {
             DriveTriggerService.validateNoPendingDCR((Map<Id, sked_Drive__c>)trigger.newMap, (Map<Id, sked_Drive__c>)trigger.oldMap);
@@ -64,7 +65,8 @@ public class DriveTriggerHandler extends TriggerHandler{
         // HRP-9815 --> Ends Here
     }
      
-    public override void beforeInsert() {
+    public override void beforeInsert(){
+        System.debug('#13864 trigger.new '+trigger.new);
         if (super.getTriggerMethodsToBypass().indexOf('populateDriveWorksheetData') == -1) {
             DriveTriggerService.populateDriveWorksheetData((List<sked_Drive__c>)trigger.new);
         } //HRP-10359 Start
@@ -78,7 +80,7 @@ public class DriveTriggerHandler extends TriggerHandler{
         //End HRP-11326
     }
     
-    public override void afterInsert() {
+    public override void afterInsert(){
         isInserted = true;
         if(super.getTriggerMethodsToBypass().indexOf('updateReadyForNationalNameReview') == -1) {
             DriveTriggerService.updateReadyForNationalNameReview((List<sked_Drive__c>)trigger.new, null);
@@ -94,7 +96,7 @@ public class DriveTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('updateReadyForNationalNameReview') == -1) {
             DriveTriggerService.updateReadyForNationalNameReview((List<sked_Drive__c>)trigger.new, (Map<Id, sked_Drive__c>)trigger.oldMap);
         }
-        
+
         //HRP-9815 --> Starts Here
         if(super.getTriggerMethodsToBypass().indexOf('updateDrdRepOnOpRecordUponOwnerChange') == -1) {
             DriveTriggerService.updateDrdRepOnOpRecordUponOwnerChange((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);

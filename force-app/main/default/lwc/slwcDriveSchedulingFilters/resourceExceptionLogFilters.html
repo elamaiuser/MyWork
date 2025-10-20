@@ -21,18 +21,6 @@
                                 default-values={filters.priorities}>
                             </c-slwc-multi-picklist>
                         </div>
-                        <div class="slds-form-element slds-form-element_stacked">
-                            <c-slwc-multi-picklist
-                                name="resourceDriveTypes"
-                                label="Resource Drive Types"
-                                selected-by-default
-                                object-api-name="sked__Resource__c"
-                                field-api-name="sked_Drive_Type__c"
-                                onpicklistchange={handleOnChange}
-                                default-values={filters.resourceDriveTypes}>
-                            </c-slwc-multi-picklist>
-                        </div>
-
                         <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
                             <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
                         </div>

@@ -19,10 +19,6 @@ export default class SlwcDriveShift extends LightningElement {
         return this.driveHelper.isFixedSiteDrive(this.drive);
     }
 
-    get isMobileDrive() {
-        return this.driveHelper.isMobileDrive(this.drive);
-    }
-
     get isLunchBreakReadonly(){
         return this.shift.lunchBreakBeforeDrawHours == true;
     }

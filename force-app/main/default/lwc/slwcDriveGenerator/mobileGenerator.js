@@ -4,9 +4,9 @@ import * as autoMapper from 'c/autoMapper';
 import { debugLogService, operationDriveLimitService, operationDriveLimitQueryModel, 
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
-import { cloneDeep, difference, isEmpty, uniqueId, extend, orderBy, remove } from 'c/lodash';
+import { cloneDeep, difference, isEmpty, uniqueId, extend, orderBy } from 'c/lodash';
 import { Fetch } from './fetch';
-import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS, VOLUNTEER_TYPE, MANUALLY_CREATED_FROM } from 'c/slwcConstants';
+import { ACCOUNT_TYPE, ACCOUNT_INDUSTRY_CODE, PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
 
 const DEFAULT_CALENDAR_SETTINGS = {
   timezone: TIME_ZONE,
@@ -17,7 +17,7 @@ const DRIVE_ACTION_GROUPS_ORDER = [
   ['retrieveDriveSiteAndPopulateCollectionOperation', 'populateSiteCollectionOperation', 'populateDriveCollectionOperation', 'populateCollectionOperationData'],
   ['retrieveVehicles', 'retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags'],
   ['calculateNumberOf2rbcAssets', 'calculate2rbcProjectedProcedures', 'splitScheduledDonors', 'split2rbcProjectedProcedures', 'calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata',
-     'applyStaffingComplementAndProposeDriveShifts', 'handlePreferSystemGeneratedVehiclesChanged', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
+     'applyStaffingComplementAndProposeDriveShifts', 'proposeDriveShifts', 'proposeDriveShiftSlots', 'updateDriveTotalSlots', 'calculateDriveProductivityPlanned',
     'handleTotalVehicleRequestedChanged', 'handleEquipmentRequestedChanged', 'handleDriveShiftsMetadataChanged', 'correctJobAllocationTimes']
 ]
 
@@ -206,22 +206,6 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] }
     ]
   },
-  'preferSystemGeneratedVehicles': {
-    groups: [
-      { actions: [] },
-      { actions: [] },
-      { actions: ['handlePreferSystemGeneratedVehiclesChanged'] },
-      { actions: [] }
-    ]
-  },
-  'numberOfVehicles': {
-    groups: [
-      { actions: [] },
-      { actions: [] },
-      { actions: ['proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
-      { actions: [] }
-    ]
-  },
   'IMPACT': {
     groups: [
       { actions: [] },
@@ -235,22 +219,6 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] },
       { actions: [] },
       { actions: ['calculateTotalProceduresProjected', 'calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
-      { actions: [] }
-    ]
-  },
-  'redcrossVolunteerRequired': {
-    groups: [
-      { actions: [] },
-      { actions: [] },
-      { actions: ['handleRedcrossVolunteerRequirement'] },
-      { actions: [] }
-    ]
-  },
-  'redcrossVolunteerQuantity': {
-    groups: [
-      { actions: [] },
-      { actions: [] },
-      { actions: ['handleRedcrossVolunteerRequirement'] },
       { actions: [] }
     ]
   },
@@ -328,17 +296,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
       { actions: ['handleDriveShiftsMetadataChanged'] },
       { actions: [] }
     ]
-  },
-
-  'redcrossVolunteerRequired': {
-    groups: [
-      { actions: [] },
-      { actions: [] },
-      { actions: ['handleDriveShiftsMetadataChanged'] },
-      { actions: [] }
-    ]
   }
-
 }
 
 class MobileGenerator extends BaseGenerator {
@@ -379,8 +337,7 @@ class MobileGenerator extends BaseGenerator {
                     resourceRoleGroups,
                     lunchBreakSettings,
                     adminSetting,
-                    staffSetupExcludedRoles,
-                    redcrossVolunteerMatrix
+                    staffSetupExcludedRoles
                   }]) => {
                     this.populateDriveCollectionOperation();
 
@@ -390,7 +347,6 @@ class MobileGenerator extends BaseGenerator {
                       lunchBreakSettings,
                       adminSetting,
                       staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix,
                       this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
                       this.fetch.retrieveVehicles(this.drive),
                       this.fetch.retrieveSameDateDrives(this.drive),
@@ -401,7 +357,7 @@ class MobileGenerator extends BaseGenerator {
                       this.fetch.retrieveTerritoryCollectionOperations(this.drive)
                     ])
                   })
-                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations]) => {
+                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, travelTimeIndexItemMap, vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations]) => {
                     this.initMasterData({
                       loginUser,
                       driveSite,
@@ -416,8 +372,7 @@ class MobileGenerator extends BaseGenerator {
                       roleTimeData,
                       driveTags,
                       territoryCollectionOperations,
-                      staffSetupExcludedRoles,
-                      redcrossVolunteerMatrix
+                      staffSetupExcludedRoles
                     })
 
                     this.populateCollectionOperationData();
@@ -487,8 +442,7 @@ class MobileGenerator extends BaseGenerator {
           resourceRoleGroups,
           lunchBreakSettings,
           adminSetting,
-          staffSetupExcludedRoles,
-          redcrossVolunteerMatrix
+          staffSetupExcludedRoles
         }]) => {
 
           return Promise.all([
@@ -497,7 +451,6 @@ class MobileGenerator extends BaseGenerator {
             lunchBreakSettings,
             adminSetting,
             staffSetupExcludedRoles,
-            redcrossVolunteerMatrix,
             this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
             this.fetch.retrieveVehicles(this.drive),
             this.fetch.retrieveSameDateDrives(this.drive),
@@ -508,7 +461,7 @@ class MobileGenerator extends BaseGenerator {
             this.fetch.retrieveActiveDriveChangeRequest(this.drive)
           ]);
         })
-        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap , vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest]) => {
+        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, travelTimeIndexItemMap , vehicles, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest]) => {
           this.initMasterData({
             loginUser,
             driveSite,
@@ -523,8 +476,7 @@ class MobileGenerator extends BaseGenerator {
             roleTimeData,
             driveTags,
             activeDriveChangeRequest,
-            staffSetupExcludedRoles,
-            redcrossVolunteerMatrix
+            staffSetupExcludedRoles
           })
           
           this.populateCollectionOperationData();
@@ -682,7 +634,7 @@ class MobileGenerator extends BaseGenerator {
       allAssignedVehiclesValid: true,
       canHandleDriveProjectedRegisteredDonors: true
     });
-    const fieldsToCheckChange = ['driveDate', 'doNotUseVehicle', 'preferSystemGeneratedVehicles', 'numberOfVehicles'];
+    const fieldsToCheckChange = ['driveDate', 'doNotUseVehicle'];
     const anyField = properties.find(property => {
       return fieldsToCheckChange.includes(property.targetName);
     })
@@ -694,14 +646,10 @@ class MobileGenerator extends BaseGenerator {
 
     const driveDateChanged = properties.find(property => property.targetName === 'driveDate');
     const doNotUseVehicleChanged = properties.find(property => property.targetName === 'doNotUseVehicle');
-    const preferSystemGeneratedVehiclesChaged = properties.find(property => property.targetName === 'preferSystemGeneratedVehicles');
-    const numberOfVehiclesChanged = properties.find(property => property.targetName === 'numberOfVehicles');
     const newDrive = {
       ...this.drive,
       driveDate: driveDateChanged ? driveDateChanged.targetValue : this.drive.driveDate,
-      doNotUseVehicle: doNotUseVehicleChanged ? !!doNotUseVehicleChanged.targetValue : this.drive.doNotUseVehicle,
-      preferSystemGeneratedVehicles: preferSystemGeneratedVehiclesChaged ? !!preferSystemGeneratedVehiclesChaged.targetValue : this.drive.preferSystemGeneratedVehicles,
-      numberOfVehicles: numberOfVehiclesChanged ? !!numberOfVehiclesChanged.targetValue : this.drive.numberOfVehicles
+      doNotUseVehicle: doNotUseVehicleChanged ? !!doNotUseVehicleChanged.targetValue : this.drive.doNotUseVehicle
     };
     return Promise.all([
       this.fetch.retrieveOperationDriveLimit(newDrive),
@@ -831,12 +779,7 @@ class MobileGenerator extends BaseGenerator {
         }
 
         //vehicles
-        let currentNoOfVehicles = this.drive.doNotUseVehicle ? 
-          0 : 
-          this.drive.preferSystemGeneratedVehicles ? 
-            this.drive.totalVehicleRequested : 
-            this.drive.numberOfVehicles;
-
+        let currentNoOfVehicles = this.drive.totalVehicleRequested;
         this.drivesWithVehicles = this.helper.calculateNumberOfVehiclesForDrive(this.drive, availableVehicles, {
           maxDOT,
           maxCDL
@@ -855,7 +798,7 @@ class MobileGenerator extends BaseGenerator {
 
           return this.onDriveDataChanged(driveChanges)
             .then(() => {
-              if (currentNoOfVehicles === noOfVehicles || !this.drive.preferSystemGeneratedVehicles || this.drive.doNotUseVehicle) {
+              if (currentNoOfVehicles === noOfVehicles) {
                 //case 1, new no of Vehicles = current no of Vehicles 
                 //proess validate and save drive
                 return {
@@ -955,6 +898,44 @@ class MobileGenerator extends BaseGenerator {
     return driveShiftStaffCapacity;
   }
 
+  calculateDriveShiftMaxStaffCapacityWithDrawHours(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacityWithDrawHours([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak);
+
+    return driveShiftStaffCapacity;
+  }
+
+  calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
+    const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
+    return drawHours;
+  }
+
+  calculateDriveShiftMaxStaffCapacity(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffCapacity = this.helper.calculateMaximumStaffCapacity([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak);
+
+    return driveShiftStaffCapacity;
+  }
+
+  countDriveShiftStaffs(driveShift, ignoreLunchBreak = false) {
+    const driveShiftStaffs = Math.floor(this.helper.countDriveStaffs([
+      'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
+    ], this.drive, driveShift.driveShiftMetadata, 
+      new Map()
+        .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
+    , this.masterData, ignoreLunchBreak));
+
+    return driveShiftStaffs;
+  }
+
   updateDriveStaffCapacity() {
     let driveStaffCapacity = 0;
     if (this.masterData && this.masterData.staffingDecisionMatrix) {
@@ -968,18 +949,56 @@ class MobileGenerator extends BaseGenerator {
   }
 
   updateDriveAverageStaffCapacity() {
-    this.drive.averageStaffCapacity = this.helper.calculateDriveAverageStaffCapacity(this.drive);
+    let driveStaffCount = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      this.drive.driveShifts.forEach((driveShift) => {
+        const driveShiftStaffCount = this.countDriveShiftStaffs(driveShift);
+        driveStaffCount += driveShiftStaffCount;
+      });
+    }
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && driveStaffCount > 0) {
+      this.drive.averageStaffCapacity = this.drive.staffCapacity / driveStaffCount;
+      this.drive.averageStaffCapacity = this.drive.averageStaffCapacity.toFixed(1);
+    } else {
+      this.drive.averageStaffCapacity = 0;
+    }
+    
   }
 
   updateDriveMaxRoleCapacity() {
-    const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(this.drive, this.masterData)
-
-    this.drive.maxRoleCapacity = maxRoleCapacity;
-    this.drive.maxRoleCapacityWithDrawHours = maxRoleCapacityWithDrawHours;
+    let driveMaxStaffCapacity = 0;
+    let driveMaxStaffCapacityWithDrawHours = 0;
+    let totalDrawHours = 0;
+    if (this.masterData && this.masterData.staffingDecisionMatrix) {
+      this.drive.driveShifts.forEach((driveShift) => {
+        const driveShiftMaxStaffCapacity = this.calculateDriveShiftMaxStaffCapacity(driveShift);
+        if(driveShiftMaxStaffCapacity && driveShiftMaxStaffCapacity > driveMaxStaffCapacity){
+          driveMaxStaffCapacity = driveShiftMaxStaffCapacity;
+        }
+        const shiftDrawHours = this.calculateDriveShiftDrawHours(driveShift);
+        if(shiftDrawHours){
+          totalDrawHours = totalDrawHours + shiftDrawHours;
+        }
+      });
+      if(totalDrawHours > 0){
+        driveMaxStaffCapacityWithDrawHours = driveMaxStaffCapacity * totalDrawHours;
+      }
+    }
+    this.drive.maxRoleCapacity = driveMaxStaffCapacity.toFixed(2);
+    this.drive.maxRoleCapacityWithDrawHours = driveMaxStaffCapacityWithDrawHours.toFixed(2);
   }
 
   updateDriveExcessStaffCapacity() {
-    this.drive.excessStaffCapacity = this.helper.calculateExcessStaffCapacity(this.drive);
+    if(this.drive.staffCapacity && this.drive.staffCapacity > 0 && this.drive.maxRoleCapacityWithDrawHours && this.drive.maxRoleCapacityWithDrawHours > 0) {
+      if(this.drive.projectedRegisteredDonors) {
+        this.drive.excessStaffCapacity = (this.drive.staffCapacity - this.drive.projectedRegisteredDonors) / this.drive.maxRoleCapacityWithDrawHours;
+      } else {
+        this.drive.excessStaffCapacity = this.drive.staffCapacity / this.drive.maxRoleCapacityWithDrawHours;
+      }
+      this.drive.excessStaffCapacity = this.drive.excessStaffCapacity.toFixed(1);
+    } else {
+      this.drive.excessStaffCapacity = 0;
+    }
   }
   
   calculateNumberOf2rbcAssets() {
@@ -1019,7 +1038,6 @@ class MobileGenerator extends BaseGenerator {
       record = this.drive;
     } else {
       this.drive.aptQuantity = record.APTSetup;
-      this.drive.aptRequired = record.APTSetup > 0 ? true : false; //HRP-14339
     }
     let x2rbcProjectedProcedures = record.x2rbcProjectedProcedures || 0;
     let wbProjectedProcedures = record.wbProjectedProcedures || 0;
@@ -1181,7 +1199,7 @@ class MobileGenerator extends BaseGenerator {
         const staffingComplement = staffingComplementChanged[driveShiftIndex];
         Object.keys(staffingComplement).forEach(jobKey => {
           const { resourceRole } = this.helper.parseJobKey(jobKey);
-          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = staffingComplement[jobKey]; //preserve properties for manually created jobs
+          const { quantity, systemQuantity, vphhQuantity, aptQuantity, dualRole, isManuallyCreated, manuallyCreatedFrom } = staffingComplement[jobKey]; //preserve properties for manually created jobs
           if(resourceRole === 'VP/HH') {
             resourceQuantityMap.set('VP/HH', {
               vphhQuantity: vphhQuantity,
@@ -1189,8 +1207,7 @@ class MobileGenerator extends BaseGenerator {
               systemQuantity: systemQuantity,
               dualRole: dualRole,
               isManuallyCreated: isManuallyCreated,
-              manuallyCreatedFrom: manuallyCreatedFrom,
-              isCreatedOrUpdatedViaDualRoleChange: isCreatedOrUpdatedViaDualRoleChange
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           } else {
             resourceQuantityMap.set(jobKey, {
@@ -1198,8 +1215,7 @@ class MobileGenerator extends BaseGenerator {
               systemQuantity: systemQuantity,
               dualRole: dualRole,
               isManuallyCreated: isManuallyCreated,
-              manuallyCreatedFrom: manuallyCreatedFrom,
-              isCreatedOrUpdatedViaDualRoleChange: isCreatedOrUpdatedViaDualRoleChange
+              manuallyCreatedFrom: manuallyCreatedFrom
             });
           }
         })
@@ -1213,15 +1229,11 @@ class MobileGenerator extends BaseGenerator {
     }
 
     // HRP-9187: No longer need to auto generate volunteer jobs
-    //HRP-13146: Adding volunteer jobs for mobile drives if Red Cross Volunteer Required is checked by users
-    this.calculateVolunteerDonorAmbassadors();
-    this.drive.redcrossVolunteerQuantity = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR) || 0;
+    // this.calculateVolunteerDonorAmbassadors();
 
     if(backupAndRestoreDualRoles && this.backupDualRolesMap) {
       this.restoreDualRoles(this.backupDualRolesMap);
     }
-
-    this.generateDualRoles();
 
     const systemGeneratedStaffingComplementChanges = this.helper.getDriveSystemGeneratedStaffingComplementChanges({
       ...this.drive,
@@ -1248,140 +1260,6 @@ class MobileGenerator extends BaseGenerator {
     } 
   }
 
-  generateDualRoles() {
-    const calculateExcessStaffCapacity = (drive, mapResourceQuantity) => {
-      const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-      let tempMapResourceQuantityForStaffCapacity = cloneDeep(mapResourceQuantity);//HRP-14869 start
-      for (let [key, value] of  tempMapResourceQuantityForStaffCapacity.entries()) {
-        if(value.has('VP/HH')){
-            if(value.get('VP/HH').aptQuantity !== 0){
-              value.get('VP/HH').quantity = value.get('VP/HH').vphhQuantity;
-            }
-        }
-      }//HRP-14869 end
-      let staffCapacity = 0;
-      driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
-        const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
-          'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));//HRP-14869
-        staffCapacity += driveShiftStaffCapacity;
-      });
-
-      let tempDrive = {
-        projectedRegisteredDonors: drive.projectedRegisteredDonors,
-        staffCapacity: staffCapacity,
-        driveShifts: driveShiftsMetadata.driveShifts.map((driveShiftMetadata) => {
-          const resourceQuantityMap = mapResourceQuantity.get(driveShiftMetadata?.key);
-          const jobs = [];
-          Array.from(resourceQuantityMap.keys()).forEach((jobKey) => {
-            const {
-              resourceRole,
-              dualRole
-            } = this.helper.parseJobKey(jobKey);
-            let { quantity, vphhQuantity, aptQuantity, isManuallyCreated, manuallyCreatedFrom } = resourceQuantityMap.get(jobKey);
-
-            jobs.push({
-              resourceRole,
-              dualRole,
-              isManuallyCreated,
-              manuallyCreatedFrom,
-              quantity,
-              vphhQuantity,
-              aptQuantity
-            })
-          })          
-          return {
-            ...{
-              ...driveShiftMetadata,
-              driveShiftMetadata: driveShiftMetadata
-            },
-            jobs: jobs
-          }
-        })
-      };
-
-      const { maxRoleCapacity, maxRoleCapacityWithDrawHours } = this.helper.calculateDriveMaxRoleCapacity(tempDrive, this.masterData);
-      const excessStaffCapacity = this.helper.calculateExcessStaffCapacity({
-        ...tempDrive,
-        maxRoleCapacity,
-        maxRoleCapacityWithDrawHours
-      });
-
-      return excessStaffCapacity;
-    }
-
-    if(!this.drive.collectionOperation.autoGenerateDualRole) return;
-    if(this.drive.collectionOperation.onlyGenerateDualRoleIfOneMachine && this.drive.numberOf2rbcAssets !== 1) return;
-    if(this.helper.isDriveAPartOfMultiDaysLinkedDrive(this.drive)) return;
-    if(!this.masterData?.staffingDecisionMatrix) return;
-
-    let tempMapResourceQuantity = cloneDeep(this.mapResourceQuantity);
-    const excessStaffCapacity = calculateExcessStaffCapacity(this.drive, tempMapResourceQuantity);
-    if(excessStaffCapacity < this.masterData.adminSetting.excessStaffCapacityThreshold) return;
-
-    const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    let dualRolesAutoGenerated = false;
-    driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata, driveShiftIndex) => {
-      const resourceQuantityMap = tempMapResourceQuantity.get(driveShiftMetadata?.key);
-      const contains2RBCAndDriverSupportRoles = this.helper.checkResourceQuantityMapContainsRoles(resourceQuantityMap, ['2RBC', 'Driver Support']);
-      const validRoles = this.helper.getValidRolesInResourceQuantityMap(resourceQuantityMap);
-      if(!contains2RBCAndDriverSupportRoles || validRoles.length < 4) return;
-      
-      const driveShift = this.drive.driveShifts[driveShiftIndex];
-      const backupDriveShift = this.masterData.backupDriveShiftMap[driveShift?.key];
-      const any2RBCAllocations = backupDriveShift?.jobs
-        ?.find(job => job.resourceRole === '2RBC' || job.dualRole === '2RBC')
-        ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);
-      const anyDriverSuppoerAllocations = backupDriveShift?.jobs
-        ?.find(job => job.resourceRole === 'Driver Support' || job.dualRole === 'Driver Support')
-        ?.jobAllocations?.find(jobAllocation => jobAllocation.status !== JOB_ALLOCATION_STATUS.DELETED);
-      if(any2RBCAllocations || anyDriverSuppoerAllocations) return;
-
-      const { jobsToCreate, jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
-        resourceRole: '2RBC',
-        quantity: resourceQuantityMap.get('2RBC').quantity
-      }, {
-        resourceRole: 'Driver Support',
-        quantity: resourceQuantityMap.get('Driver Support').quantity
-      });
-      if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
-
-      jobsToDelete.forEach(({previousJob}) => {
-        const jobKey = this.helper.generateJobKey(previousJob);
-        resourceQuantityMap.delete(jobKey);
-      })
-
-      jobsToUpdate.forEach(({previousJob, newJob}) => {
-        const previousJobKey = this.helper.generateJobKey(previousJob);
-        const jobKey = this.helper.generateJobKey(newJob);
-        resourceQuantityMap.set(jobKey, {
-          ...resourceQuantityMap.get(previousJobKey),
-          ...newJob
-        });
-        if(previousJobKey !== jobKey) {
-          resourceQuantityMap.delete(previousJobKey);
-        }
-      })
-
-      jobsToCreate.forEach(({newJob}) => {
-        const jobKey = this.helper.generateJobKey(newJob);
-        resourceQuantityMap.set(jobKey, {
-          ...newJob
-        });
-      })
-      
-      dualRolesAutoGenerated = true;
-    });
-
-    this.drive.dualRolesAutoGenerated = this.drive.dualRolesAutoGenerated || dualRolesAutoGenerated;
-    if(dualRolesAutoGenerated) {
-      const excessStaffCapacity = calculateExcessStaffCapacity(this.drive, tempMapResourceQuantity);
-      if(excessStaffCapacity >= 0) {
-        this.mapResourceQuantity = tempMapResourceQuantity;
-      }
-    }
-  }
-
   restoreDualRoles(backupDualRolesMap = {}) {
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
     Object.keys(backupDualRolesMap).forEach(driveShiftIndex => {
@@ -1395,56 +1273,26 @@ class MobileGenerator extends BaseGenerator {
       backupDualRoles.forEach(item => {
         if(item.isManuallyCreated) return;
 
-        const { resourceRole, dualRole, quantity, isCreatedOrUpdatedViaDualRoleChange } = item;
+        const { resourceRole, dualRole, quantity } = item;
+        //after
         const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
-        let dualRoleQuantityAfterRegenerated = tempResourceQuantityMap.get(dualRole);
+        let hasDualRoleAfterRegenerated = tempResourceQuantityMap.has(dualRole);
         let resourceRoleQuantityAfterRegenreted = tempResourceQuantityMap.get(resourceRole);
 
-        const canRestore = hasResourceRoleAfterRegenerated && dualRoleQuantityAfterRegenerated;
-
-        if(isCreatedOrUpdatedViaDualRoleChange) {
-          tempResourceQuantityMap.delete(resourceRole);
-          tempResourceQuantityMap.set(item.resourceRole, cloneDeep({
-            ...resourceRoleQuantityAfterRegenreted,
-            quantity: quantity,
-            isCreatedOrUpdatedViaDualRoleChange: true
-          }));
-        }
+        const canRestore = hasResourceRoleAfterRegenerated && hasDualRoleAfterRegenerated && (
+          tempResourceQuantityMap.get(resourceRole)?.quantity >= quantity && 
+          tempResourceQuantityMap.get(dualRole)?.quantity >= quantity
+        );
 
         if(canRestore) {
-          const { jobsToCreate, jobsToUpdate, jobsToDelete } = this.helper.generateDualRoleJob({
-            resourceRole: resourceRole,
-            ...resourceRoleQuantityAfterRegenreted
-          }, {
-            resourceRole: dualRole,
-            ...dualRoleQuantityAfterRegenerated
-          }, quantity);
-          
-          if(!jobsToCreate.length && !jobsToUpdate.length && !jobsToDelete.length) return;
-
-          jobsToDelete.forEach(({previousJob}) => {
-            const jobKey = this.helper.generateJobKey(previousJob);
-            tempResourceQuantityMap.delete(jobKey);
-          })
-    
-          jobsToUpdate.forEach(({previousJob, newJob}) => {
-            const previousJobKey = this.helper.generateJobKey(previousJob);
-            const jobKey = this.helper.generateJobKey(newJob);
-            tempResourceQuantityMap.set(jobKey, {
-              ...tempResourceQuantityMap.get(previousJobKey),
-              ...newJob
-            });
-            if(previousJobKey !== jobKey) {
-              tempResourceQuantityMap.delete(previousJobKey);
-            }
-          })
-    
-          jobsToCreate.forEach(({newJob}) => {
-            const jobKey = this.helper.generateJobKey(newJob);
-            tempResourceQuantityMap.set(jobKey, {
-              ...newJob
-            });
-          })
+          resourceRoleQuantityAfterRegenreted.dualRole = dualRole;
+          resourceRoleQuantityAfterRegenreted.quantity = quantity;
+          tempResourceQuantityMap.delete(dualRole); 
+          tempResourceQuantityMap.delete(resourceRole);
+          tempResourceQuantityMap.set(this.helper.generateJobKey({
+            dualRole,
+            resourceRole
+          }), cloneDeep(resourceRoleQuantityAfterRegenreted));
         }
       });
 
@@ -1502,25 +1350,15 @@ class MobileGenerator extends BaseGenerator {
 
   calculateDraftDriveGhostVehicleQuantity(skipVehicleCalculation = false) {
     if (skipVehicleCalculation) {
-      if (!this.drive.totalVehicleRequestedChanged) return;
       let totalVehicleRequested = this.drive.totalVehicleRequestedChanged.totalVehicleRequested;
       if (isNullOrEmpty(totalVehicleRequested) || totalVehicleRequested < 1) {
-        if(this.drive.numberOfVehicles > 0) {
-          totalVehicleRequested = this.drive.numberOfVehicles;
-        } else {
-          totalVehicleRequested = 1;
-        }
+        totalVehicleRequested = 1;
       }
 
       if (this.drive.doNotUseVehicle) {
         this.drive.totalVehicleRequested = 0;
       } else {
-        if(this.drive.preferSystemGeneratedVehicles) {
-          this.drive.totalVehicleRequested = totalVehicleRequested;
-          this.drive.numberOfVehicles = totalVehicleRequested;//HRP-15151
-        } else {
-          this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
-        }
+        this.drive.totalVehicleRequested = totalVehicleRequested;
       }
       return;
     }
@@ -1531,12 +1369,6 @@ class MobileGenerator extends BaseGenerator {
 
     if (this.drive.doNotUseVehicle) {
       this.drive.totalVehicleRequested = 0;
-      return;
-    }
-
-    if (!this.drive.preferSystemGeneratedVehicles) {
-      this.drive.totalVehicleRequested = this.drive.numberOfVehicles;
-      return;
     }
     
     //validate tags
@@ -1565,16 +1397,14 @@ class MobileGenerator extends BaseGenerator {
       let currentDrive = this.drivesWithVehicles.find(drive => drive.driveKey == this.drive.key);
       let noOfVehicles = currentDrive.vehicles.length;
       this.drive.totalVehicleRequested = noOfVehicles;
-      this.drive.numberOfVehicles = noOfVehicles;
     }
     else {
       this.drive.totalVehicleRequested = 1;
-      this.drive.numberOfVehicles = 1;
     }
   }
 
   calculateVehicleQuantity() {
-    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ?  0 : (this.drive.numberOfVehicles ?? this.drive.totalVehicleRequested))
+    this.mapAssetQuantity.set('Vehicle', this.drive.doNotUseVehicle ? 0 : this.drive.totalVehicleRequested);
   }
 
   calculateEquipmentQuantity() {
@@ -1638,76 +1468,7 @@ class MobileGenerator extends BaseGenerator {
     })
   }
 
-  recalculateVphhQuantity(driveShift, resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
-    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
-
-    const driveShiftMetadata = driveShift.driveShiftMetadata;
-    const staffCapacity = this.helper.calculateStaffCapacity(
-      resourceRoles,
-      this.drive,
-      driveShiftMetadata,
-      new Map()
-        .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
-    )
-
-    const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-    let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
-    if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
-      
-    const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
-
-    let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
-
-    let existingVphhJob = driveShift.jobs.find(job => 
-      job.resourceRole === 'VP/HH' && 
-      !job.dualRole)
-
-    if(existingVphhJob?.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) {
-      return;
-    }
-
-    if(noOfVpHhStaffs > 0) {
-      if(existingVphhJob) {
-        existingVphhJob.vphhQuantity = noOfVpHhStaffs;
-        existingVphhJob.quantity = existingVphhJob.vphhQuantity + (existingVphhJob.aptQuantity ?? 0);
-        existingVphhJob.systemQuantity = existingVphhJob.quantity;
-      } else {
-        let shift = this.drive.driveShifts.find((e) => e.key == driveShift.key);
-        const newList = [...shift.jobs];
-        let newJob = {
-          id: uniqueId('temp_job_'),
-          key: generateUUID(),
-          resourceRole: 'VP/HH',
-          dualRole: '',
-          vphhQuantity: noOfVpHhStaffs,
-          aptQuantity: 0,
-          quantity: noOfVpHhStaffs,
-          systemQuantity: noOfVpHhStaffs,
-          jobTags: []
-        };
-        newList.push(newJob);
-
-        shift.jobs = newList;
-        shift.jobs.forEach(job => {
-          if(newJob.key === job.key) {
-            this.applyRoleTimeForSingleJob(shift, job);
-          }
-        });
-      }
-    } else {
-      if(existingVphhJob) {
-        if(existingVphhJob.aptQuantity > 0) {
-          existingVphhJob.vphhQuantity = 0;
-          existingVphhJob.quantity = existingVphhJob.vphhQuantity + (existingVphhJob.aptQuantity ?? 0);
-        } else {
-          remove(driveShift.jobs, job => job.key === existingVphhJob.key);
-        }
-      }
-    }
-  }
-
-  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
+  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC']) {
     if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
 
     const driveShiftsMetadata = this.drive.driveShiftsMetadata;
@@ -1726,7 +1487,7 @@ class MobileGenerator extends BaseGenerator {
       
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
 
-      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
+      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);;
       let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
       resourceQuantityMap.set('VP/HH', {
         vphhQuantity: noOfVpHhStaffs,
@@ -1765,57 +1526,38 @@ class MobileGenerator extends BaseGenerator {
       });
 
       //Recalculate VP/HH.
-      this.calculateVpHhQuantity();
+      this.calculateVpHhQuantity(['Driver', 'Driver Support', '2RBC', 'Charge']);
     });
   }
 
   calculateVolunteerDonorAmbassadors() {
+    let driveDrawHours = this.helper.calculateDrawHours(this.drive, this.masterData);
+    if(driveDrawHours <= 0) return;
 
-    // if checkbox in unchecked, no need to go for further calculation
-    if(!this.drive.redcrossVolunteerRequired) {
-      this.mapVolunteerQuantity.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, 0);
-      return;
-    }
+    let projectedRegisteredDonors = this.drive.projectedRegisteredDonors;
+    let noOfVolunteerDonorAmbassadors = 0;
 
-    const extraVolunteersRecursive = (donorsOverMax, count = 0) => {
-      if (donorsOverMax < 40) return count;
-      return extraVolunteersRecursive(donorsOverMax - 40, count + 1);
-    };
-
-    let noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity || 0;
-
-    const isHighSchoolDrive = this.drive.accountType === ACCOUNT_TYPE.EDUCATION && this.drive.industryCode === ACCOUNT_INDUSTRY_CODE.HIGH_SCHOOL;
-    const redcrossVolunteerMatrix = this.masterData.redcrossVolunteerMatrix?.filter(item => item.isHighSchoolDrive === isHighSchoolDrive) || [];
-
-    if(isNullOrEmpty(this.drive.id)) noOfVolunteerDonorAmbassadors = this.drive.redcrossVolunteerQuantity; //In case of drive generation, get quantity from opp
-    else if(!this.masterData.skipVolunteerRecalculation && redcrossVolunteerMatrix) {
-      const matchedMatrixRecord = redcrossVolunteerMatrix.find(matrix => {
-        return matrix.minDonorValue <= this.drive.projectedRegisteredDonors
-          && matrix.maxDonorValue >= this.drive.projectedRegisteredDonors
-      });
-
-      if(matchedMatrixRecord) {
-        noOfVolunteerDonorAmbassadors = matchedMatrixRecord.volunteerQuantity;
-      } else {
-        const maxDonorValueMatrix = redcrossVolunteerMatrix.reduce((prev, current) => {
-          return (prev.maxDonorValue > current.maxDonorValue) ? prev : current;
-        });
-
-        if(this.drive.projectedRegisteredDonors > maxDonorValueMatrix.maxDonorValue) {
-          const maxVolunteerCount = maxDonorValueMatrix.volunteerQuantity;
-          noOfVolunteerDonorAmbassadors = isHighSchoolDrive ? maxVolunteerCount : extraVolunteersRecursive(this.drive.projectedRegisteredDonors - maxDonorValueMatrix.maxDonorValue, maxVolunteerCount);
-        } 
+    if (this.drive.driveSite.physicalLocationType.indexOf("Inside") > -1) {
+      if (this.drive.accountType == 'Education' && this.drive.industryCode == 'High School') {
+        if (projectedRegisteredDonors <= 70) {
+          noOfVolunteerDonorAmbassadors = 1;
+        }
+        else {
+          noOfVolunteerDonorAmbassadors = 1 + Math.ceil((projectedRegisteredDonors - 70) / 60);
+        }
       }
-
-
-      if(this.masterData.backupDrive?.tempRedcrossVolunteerRequired !== this.drive.redcrossVolunteerRequired) {
-        const isRequired = this.drive.redcrossVolunteerRequired;
-        if(isRequired && noOfVolunteerDonorAmbassadors <= 0) noOfVolunteerDonorAmbassadors = 1;
-        if(!isRequired && noOfVolunteerDonorAmbassadors > 0) noOfVolunteerDonorAmbassadors = 0;
+      else {
+        noOfVolunteerDonorAmbassadors = Math.ceil((projectedRegisteredDonors / driveDrawHours) / 8);
       }
     }
+    else {
+      noOfVolunteerDonorAmbassadors = 1;
+    }
+    if (driveDrawHours > 6.5) {
+      noOfVolunteerDonorAmbassadors = Math.ceil(noOfVolunteerDonorAmbassadors * 0.5);
+    }
 
-    this.mapVolunteerQuantity.set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, noOfVolunteerDonorAmbassadors);
+    this.mapVolunteerQuantity.set('Donor Ambassador', noOfVolunteerDonorAmbassadors);
   }
 
   /** Generate drive shifts & jobs  */
@@ -1825,8 +1567,8 @@ class MobileGenerator extends BaseGenerator {
 
     this.proposeDriveShifts({
       skipCalculateResourceRoles: true,
-      skipVehicleCalculation: true,//HRP-15151
-      backupAndRestoreDualRoles: false,
+      skipVehicleCalculation: false,
+      backupAndRestoreDualRoles: true,
       skipGenerateSlots: false
     })
   }
@@ -1865,15 +1607,6 @@ class MobileGenerator extends BaseGenerator {
                   dualRole: job.dualRole,
                   quantity: job.quantity
                 })
-              } else if(job.isCreatedOrUpdatedViaDualRoleChange) {
-                this.backupDualRolesMap[driveShiftIndex].push({
-                  resourceRole: job.resourceRole,
-                  dualRole: job.dualRole,
-                  quantity: job.quantity,
-                  vphhQuantity: job.vphhQuantity,
-                  aptQuantity: job.aptQuantity,
-                  isCreatedOrUpdatedViaDualRoleChange: true
-                })
               }
             }
           });
@@ -1896,7 +1629,7 @@ class MobileGenerator extends BaseGenerator {
         })
         this.updateDriveTotalSlots();
       }
-    }    
+    }
   }
 
   buildMultiDriveShifts() {
@@ -2012,7 +1745,7 @@ class MobileGenerator extends BaseGenerator {
         dualRole
       } = this.helper.parseJobKey(jobKey);
       let job = (driveShift.jobs || []).find(driveShiftJob => this.helper.isJobsSameRoles(driveShiftJob, {
-        resourceRole,
+        resourceROle,
         dualRole
       }));
       if (!job) {
@@ -2022,45 +1755,41 @@ class MobileGenerator extends BaseGenerator {
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.resourceRole = resourceRole;
 
-        if (resourceRole === 'VP/HH') {
-          let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
-          if (vphhQuantity > 0 || aptQuantity > 0) {
-            job.dualRole = dualRole || '';
-            job.vphhQuantity = vphhQuantity;
-            job.aptQuantity = aptQuantity;
-            job.quantity = vphhQuantity + (aptQuantity || 0);
-            job.systemQuantity = systemQuantity || job.quantity;
-            job.isManuallyCreated = !!isManuallyCreated;
-            job.manuallyCreatedFrom = manuallyCreatedFrom;
-            job.isCreatedOrUpdatedViaDualRoleChange = isCreatedOrUpdatedViaDualRoleChange;
-            jobs.push(job);
-          }
-        } else {
-          let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom, isCreatedOrUpdatedViaDualRoleChange } = mapResourceQuantity.get(jobKey);
-          if (quantity > 0) {
-            job.quantity = quantity;
-            job.dualRole = dualRole || '';
-            job.systemQuantity = systemQuantity || job.quantity;
-            job.isManuallyCreated = !!isManuallyCreated;
-            job.manuallyCreatedFrom = manuallyCreatedFrom;
-            job.isCreatedOrUpdatedViaDualRoleChange = isCreatedOrUpdatedViaDualRoleChange;
-            jobs.push(job);
-          }
+      if (resourceRole === 'VP/HH') {
+        let { vphhQuantity, aptQuantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
+        if (vphhQuantity > 0 || aptQuantity > 0) {
+          job.dualRole = dualRole || '';
+          job.vphhQuantity = vphhQuantity;
+          job.aptQuantity = aptQuantity;
+          job.quantity = vphhQuantity + (aptQuantity || 0);
+          job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
+          jobs.push(job);
         }
-      
+      } else {
+        let { quantity, dualRole, systemQuantity, isManuallyCreated, manuallyCreatedFrom } = mapResourceQuantity.get(jobKey);
+        if (quantity > 0) {
+          job.quantity = quantity;
+          job.dualRole = dualRole || '';
+          job.systemQuantity = systemQuantity || job.quantity;
+          job.isManuallyCreated = !!isManuallyCreated;
+          job.manuallyCreatedFrom = manuallyCreatedFrom;
+          jobs.push(job);
+        }
+      }
     });
-    let originalDriveShift = this.drive.driveShifts[driveShiftIndex];
 
     this.mapVolunteerQuantity.forEach((quantity, volunteerRole) => {
-      let job = (originalDriveShift?.jobs || []).find(driveShiftJob => driveShiftJob.volunteerRole == volunteerRole);
+      let job = (driveShift.jobs || []).find(driveShiftJob => driveShiftJob.volunteerRole == volunteerRole);
       if (!job) {
         job = cloneDeep(jobTemplate);
         job.key = generateUUID();
-        job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
-      } else job.jobTags = [...job.jobTags];
+      }
+      job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
-      if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {
+      if (volunteerRole === 'Donor Ambassador') {
         job.redcrossVolunteerQuantity = quantity || 0;
         job.sponsorVolunteerQuantity = job.sponsorVolunteerQuantity || 0;
         job.quantity = (job.redcrossVolunteerQuantity || 0) + (job.sponsorVolunteerQuantity || 0);
@@ -2090,12 +1819,13 @@ class MobileGenerator extends BaseGenerator {
       }
     });
 
+    let originalDriveShift = this.drive.driveShifts[driveShiftIndex];
+
     //manually created jobs
     let manuallyCreatedJobs = (originalDriveShift?.jobs || []).filter(job => {
       const isManuallyCreatedJob = this.helper.isManuallyCreatedJob(job, this.drive);
       const existed = this.helper.findJob(job, jobs);
-      const isJobTakenCareOf = jobs.find(item => item.key === job.key);
-      return isManuallyCreatedJob && !existed && !isJobTakenCareOf;
+      return isManuallyCreatedJob && !existed;
     })
     .map(job => {
       let updatedJob = extend({}, job, jobTemplate);
@@ -2104,78 +1834,7 @@ class MobileGenerator extends BaseGenerator {
         manuallyCreatedFrom: job.manuallyCreatedFrom
       });
     });
-    driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs.filter(job => job.quantity > 0)));
-
-    const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
-        this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
-      )
-    });
-
-    if(anyManuallyCreatedJobsHoldCapacity) {
-      this.recalculateVphhQuantity(driveShift);
-    }
-  }
-
-  // To create new jobs /update existing jobs after dual role modification
-  repopulateJobsAfterDualRoleModification(driveShift, job) {
-    let newJob;
-    let existingJob = driveShift.jobs?.find(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-    if(existingJob) {
-      newJob = {
-        ...existingJob,
-        quantity: job.quantity,
-        systemQuantity: job.quantity,
-        isCreatedOrUpdatedViaDualRoleChange: true
-      };
-      const index = driveShift.jobs?.findIndex(item => item.resourceRole && !item.dualRole && item.resourceRole === job.dualRole);
-      driveShift.jobs[index] = newJob;
-    } else {
-      let jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
-      let jobTemplate = {
-        driveSiteId: this.drive.driveSiteId,
-        collectionOperationId: this.drive.collectionOperationId,
-        address: this.drive.driveSite?.address,
-        latitude: this.drive.driveSite?.geoLocationLatitude,
-        longitude: this.drive.driveSite?.geoLocationLongitude,
-        jobAllocationTimeSource: false,
-        isCreatedOrUpdatedViaDualRoleChange: true,
-        isManuallyCreated: false,
-        manuallyCreatedFrom: ''
-      };
-      newJob = cloneDeep(jobTemplate);
-      newJob.key = generateUUID();
-      newJob.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
-      newJob.resourceRole = job.dualRole;
-      newJob.dualRole = '';
-
-      if (newJob.resourceRole === 'VP/HH') {
-        if (job.quantity > 0) {
-          newJob.vphhQuantity = job.quantity;
-          newJob.aptQuantity = 0
-          newJob.quantity = newJob.vphhQuantity + (newJob.aptQuantity || 0);
-          newJob.systemQuantity = job.quantity;
-        }
-      } else {
-        if (job.quantity > 0) {
-          newJob.quantity = job.quantity;
-          newJob.systemQuantity = job.quantity;
-        }
-      }
-
-      if (newJob.jobTags && newJob.jobTags.length) {
-        let tagNameArr = newJob.jobTags.reduce((result, item) => {
-          return result.concat(item.tag.name);
-        }, []);
-        newJob.tagNames = orderBy(tagNameArr, [item => item], ['asc']).join(", ");
-        newJob.isCreatedOrUpdatedViaDualRoleChange = true;
-      }
-      driveShift.jobs.push(newJob);
-    }
-
-    this.applyRoleTimeForSingleJob(driveShift, newJob);
-    this.onJobChanged(driveShift, newJob, null);
+    driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
   }
 
   /** Lunch break */
@@ -2546,13 +2205,6 @@ class MobileGenerator extends BaseGenerator {
       this.drive.x2rbcProjectedProcedures = this.drive.driveShiftsMetadata.x2rbcProjectedProcedures;
       this.drive.wbProjectedProcedures = this.drive.driveShiftsMetadata.wbProjectedProcedures;
 
-      if(!isEmpty(driveShift)) {
-        this.masterData.backupDrive = extend(this.masterData.backupDrive, {
-          tempRedcrossVolunteerRequired: this.drive.redcrossVolunteerRequired
-        });
-        this.drive.redcrossVolunteerRequired = driveShift.redcrossVolunteerRequired;
-      }
-      
       this.calculateNumberOf2rbcAssets();
       this.calculatePreferredNumberOf2rbcAssets();
     }
@@ -2564,19 +2216,6 @@ class MobileGenerator extends BaseGenerator {
 
   updateDriveAptSettings() {
     this.drive.aptRequired = this.drive.aptQuantity > 0;
-  }
-
-  handlePreferSystemGeneratedVehiclesChanged() {
-    const backupDrive = this.masterData.backupDrive;
-    if(!backupDrive) return;
-
-    if (this.drive.preferSystemGeneratedVehicles) {
-      this.drive.numberOfVehicles = backupDrive.totalVehicleRequested;
-      this.drive.totalVehicleRequested = backupDrive.totalVehicleRequested;
-      
-      this.proposeDriveShifts();
-      this.calculateDriveProductivityPlanned();
-    }
   }
 
   handleTotalVehicleRequestedChanged() {
@@ -2699,60 +2338,6 @@ class MobileGenerator extends BaseGenerator {
     return this.drive;
   }
 
-  handleRedcrossVolunteerRequirement( job = {} ) {
-    const isSpecificVolunteerJob  = (job, volunteerRole) => {
-      if(!job) return false;
-      return job.volunteerRole === volunteerRole;
-    }
-
-    this.initResourceQuantityMap();
-    
-    if(!isEmpty(job))  {
-      if (!isSpecificVolunteerJob(job, VOLUNTEER_TYPE.DONOR_AMBASSADOR)) return;
-      this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, job.isDeleted ? 0 : job.redcrossVolunteerQuantity || 0);
-    } else this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, this.drive.redcrossVolunteerQuantity || 0);
-
-    const redcrossVolunteerQuantity  = this.mapVolunteerQuantity.get(VOLUNTEER_TYPE.DONOR_AMBASSADOR);
-    this.drive.redcrossVolunteerQuantity = redcrossVolunteerQuantity;
-    this.drive.redcrossVolunteerRequired = redcrossVolunteerQuantity > 0;
-
-    if(!isEmpty(job) && job.isDeleted) return;
-
-    this.drive.driveShifts.forEach((driveShift) => {
-      let driveShiftJobs = cloneDeep(driveShift.jobs);
-      let originalJob = cloneDeep(this.helper.findJob({ volunteerRole: VOLUNTEER_TYPE.DONOR_AMBASSADOR }, driveShiftJobs));
-
-      if(!isEmpty(originalJob)) {
-        if(originalJob.key === job?.key) return;
-
-        const originalJobIndex = driveShiftJobs.findIndex((item) => item.key === originalJob.key);
-        let sponsorVolunteerQuantity = originalJob.sponsorVolunteerQuantity || 0;
-        const quantity = redcrossVolunteerQuantity + sponsorVolunteerQuantity;
-
-        if(quantity <= 0) {
-          driveShiftJobs.splice(originalJobIndex, 1);
-        } else {
-          originalJob = {
-            ...originalJob,
-            redcrossVolunteerQuantity: redcrossVolunteerQuantity,
-            sponsorVolunteerQuantity: sponsorVolunteerQuantity,
-            quantity: quantity,
-            systemQuantity: quantity
-          };
-          driveShiftJobs[originalJobIndex] = originalJob;
-        }
-      } else {
-        this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
-        driveShiftJobs = [...(driveShiftJobs || []).filter(item => !item.isManuallyCreated), ...driveShift.jobs];
-      }
-      driveShift.jobs = driveShiftJobs;
-      let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);
-      if(!isEmpty(volunteerJob)) this.correctJobTime(volunteerJob, driveShift);
-      this.updateShiftMobileSetup(driveShift);
-    });
-    
-  }
-
   onJobChanged(driveShift, job, originalJob) {
     if(job.assetType === ASSET_TYPE.VEHICLE) {
       if(this.drive.status === DRIVE_STATUS.DRAFT) {
@@ -2770,12 +2355,6 @@ class MobileGenerator extends BaseGenerator {
       }
     }
     this.correctJobTime(job, driveShift);
-    if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-      this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
-    )) {
-      this.recalculateVphhQuantity(driveShift);
-    }
     this.updateShiftMobileSetup(driveShift);
 
     if(!job.volunteerRole) {
@@ -2790,15 +2369,10 @@ class MobileGenerator extends BaseGenerator {
       this.calculateDriveProductivityPlanned();
       this.generateShiftSlots(driveShift);
       this.updateDriveTotalSlots();
-      this.calculateTotalProceduresProjected(driveShift);//HRP-14339
     }
 
     if(job.resourceRole) {
       this.applyJobTimeToJobAllocations(job);
-    }
-
-    if(job.volunteerRole) {
-      this.handleRedcrossVolunteerRequirement(job);
     }
 
     this.resetElectContentions();
