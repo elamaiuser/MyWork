@@ -1830,13 +1830,21 @@ class DriveHelper {
   calculateStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
     timezoneSidId 
-  }, ignoreLunchBreak = false) {
+  }, { ignoreLunchBreak = false, useDriveShift = false } = {}) {
     const resourceRoleCapacityFieldMap = {
       'Driver': 'driverCapacity',
       'Driver Support': 'driverSupportCapacity',
       '2RBC': 'x2RbcStaffCapacity',
       'Charge': 'chargeCapacity',
       'VP/HH': 'vpHhCapacity'
+    }
+    let lunchBreakSettings = driveShiftMetadata.lunchBreakSettings;
+    if (useDriveShift) {
+      const driveShift = drive.driveShifts?.find(item => item.driveShiftMetadata.key === driveShiftMetadata.key);
+      if (driveShift) {
+        lunchBreakSettings.lunchBreak = driveShift.lunchBreak;
+        lunchBreakSettings.lunchBreakBeforeDrawHours = driveShift.lunchBreakBeforeDrawHours;
+      }
     }
 
     const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
