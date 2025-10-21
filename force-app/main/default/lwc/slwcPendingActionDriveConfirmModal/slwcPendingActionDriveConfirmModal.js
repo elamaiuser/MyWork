@@ -37,7 +37,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
   }
 
   get pendingActionReasonCodes() {
-    return (this.drive && this.drive.pendingActionReasonCode) ? this.drive.pendingActionReasonCode.split(';') : []
+    return this.drive?.pendingActionReasonCode?.split(';') || []
   }
 
   get submissionNotesRequired() {
@@ -101,6 +101,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
   }
 
   init() {
+    console.log('this.drive?.pendingActionReasonCode ',this.drive?.pendingActionReasonCode);
     this.model = {
       submissionNotes: null
     };
@@ -136,7 +137,7 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       const closeEvent = new CustomEvent('save', {
         detail: {
           submissionNotes: this.model.submissionNotes,
-          contentionResolution: ''
+          contentionResolution: []
         }
       });
       this.dispatchEvent(closeEvent);
@@ -175,7 +176,16 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       const resolveContentionComponent = this.template.querySelector('c-slwc-resolve-drive-contentions');
       return resolveContentionComponent.getData();
     })
-    .then(({ contentionResolution, driveContentions, equipmentJob, vehicleJob }) => {
+    .then(({ drive, contentionResolution, driveTimeBlockContentions = [], driveContentions, equipmentJob, vehicleJob }) => {
+      if(driveTimeBlockContentions.length > 0) {
+         this.dispatchEvent(new ShowToastEvent({
+          message: 'Please resolve all time block contentions before saving.',
+          variant: 'error',
+          mode: 'dismissable',
+        }));
+        return;
+      }
+
       const anyNotPassedContention = driveContentions.find(item => {
         return !item.passed;
       })
@@ -195,8 +205,12 @@ export default class SlwcPendingActionDriveConfirmModal extends LightningElement
       let equipmentAllocations = equipmentJob ? equipmentJob.jobAllocations : null;
       let vehicleAllocations = vehicleJob ? vehicleJob.jobAllocations : null;
       const closeEventDetail = {
+        drive,
         submissionNotes: this.model.submissionNotes,
         contentionResolution: contentionResolution,
+        driveShiftContention: drive.driveShifts.map(driveShift => driveShift.contention),
+        driveShiftTimeBlockId: drive.driveShifts.map(driveShift => driveShift.timeBlockId),
+        driveShiftContentionResolution: drive.driveShifts.map(driveShift => driveShift.contentionResolution),
         equipmentAllocations,
         vehicleAllocations
       };

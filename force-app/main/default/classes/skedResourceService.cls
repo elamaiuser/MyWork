@@ -8,16 +8,21 @@ global class skedResourceService extends skedDataService {
 
     protected override void getQueryConditions(skedQueryBuilder queryBuilder, queryModelBase inputModel) {
         queryModel query = (queryModel)inputModel;
-        Date startDate, endDate;
+        Date startDate, endDate, additionalFilterOnDate;
         if (!string.isBlank(query.startDate)) {
             startDate = skedDateTimeUtils.getDateFromIsoString(query.startDate);
         }
         if (!string.isBlank(query.endDate)) {
             endDate = skedDateTimeUtils.getDateFromIsoString(query.endDate);
         }
+        if (!string.isBlank(query.additionalFilterOnDate)) {
+            additionalFilterOnDate = skedDateTimeUtils.getDateFromIsoString(query.additionalFilterOnDate);
+        }
 
+        string assignmentResourceCoCondition;
         if (query.biomedCollectionOpIds != NULL && !query.biomedCollectionOpIds.isEmpty()) {
             string biomedCollectionOpCondition = queryBuilder.generateCondition('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN {0}', query.biomedCollectionOpIds);
+            assignmentResourceCoCondition = queryBuilder.generateCondition('sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN {0}', query.biomedCollectionOpIds);
             
             //secondary biomed collection ops
             skedResourceRegionService resourceRegionService = (skedResourceRegionService)skedServiceFactory.instance.resolve('sked__Resource_Region__c');
@@ -41,17 +46,20 @@ global class skedResourceService extends skedDataService {
             
             List<string> temporaryCOResourceIds = resourceOverrideService.getResourceIds(resourceOverrideQuery);
             
-            List<string> resourceIds = new List<string>();
+            List<string> predefinedResourceIds = new List<string>();
             if (!secondaryCOResourceIds.isEmpty()) {
-                resourceIds.addAll(secondaryCOResourceIds);
+                predefinedResourceIds.addAll(secondaryCOResourceIds);
             }
             if (!temporaryCOResourceIds.isEmpty()) {
-                resourceIds.addAll(temporaryCOResourceIds);
+                predefinedResourceIds.addAll(temporaryCOResourceIds);
             }
             
-            if (!resourceIds.isEmpty()) {
-                string additionalResourceIdsCondition = queryBuilder.generateCondition('Id IN {0}', resourceIds);
+            if (!predefinedResourceIds.isEmpty()) {
+                string additionalResourceIdsCondition = queryBuilder.generateCondition('Id IN {0}', predefinedResourceIds);
                 biomedCollectionOpCondition = '(' + biomedCollectionOpCondition + ' OR ' + additionalResourceIdsCondition + ')';
+
+                string additionalResourceIdsConditionForAssignment = queryBuilder.generateCondition('sked__Resource__c IN {0}', predefinedResourceIds);
+                assignmentResourceCoCondition = '(' + assignmentResourceCoCondition + ' OR ' + additionalResourceIdsCondition + ')';
             }
             queryBuilder.conditions.add(biomedCollectionOpCondition);
         }
@@ -190,11 +198,106 @@ global class skedResourceService extends skedDataService {
             }
         }
 
+        List<String> temporaryResourceIds;
+        if (query.hasTemporaryRelocation == true && additionalFilterOnDate != null) {
+            skedQueryBuilder resourceOverrideQueryBuilder = new skedQueryBuilder();
+            resourceOverrideQueryBuilder.setFromClause('sked__Resource_Override__c');
+            resourceOverrideQueryBuilder.setGroupBy('sked__Resource__c');
+
+            resourceOverrideQueryBuilder.addField('sked__Resource__c resourceId');
+            resourceOverrideQueryBuilder.addField('COUNT(Id) numOverrides');
+
+            resourceOverrideQueryBuilder.addCondition('sked_End_Date__c >= {0}', additionalFilterOnDate);
+            resourceOverrideQueryBuilder.addCondition('sked_Start_Date__c <= {0}', additionalFilterOnDate);
+
+            if (!matchingTagResourceIds.isEmpty()) {
+                resourceOverrideQueryBuilder.addCondition('sked__Resource__c IN {0}', matchingTagResourceIds);
+            }
+            if (availabilityAndActivityResourceIds != NULL && !availabilityAndActivityResourceIds.isEmpty()) {
+                resourceOverrideQueryBuilder.addCondition('sked__Resource__c IN {0}', availabilityAndActivityResourceIds);
+            }
+
+            temporaryResourceIds = new List<String>();
+            query.predefinedRecordIds = new List<String>();
+
+            List<AggregateResult> aggregateResults = Database.query(resourceOverrideQueryBuilder.toString());
+            for (AggregateResult result : aggregateResults) {
+                String resourceId = (String) result.get('resourceId');
+                Integer numOverrides = (Integer) result.get('numOverrides');
+                if (numOverrides > 0) {
+                    temporaryResourceIds.add(resourceId);
+                }
+            }
+        }
+
         if (query.predefinedRecordIds != null) {
-            if (availabilityAndActivityResourceIds != null) {
+            if (temporaryResourceIds != null) {
+                query.predefinedRecordIds.addAll(temporaryResourceIds);
+            } 
+            else if (availabilityAndActivityResourceIds != null) {
                 query.predefinedRecordIds.addAll(availabilityAndActivityResourceIds);
-            } else if (!matchingTagResourceIds.isEmpty()) {
+            } 
+            else if (!matchingTagResourceIds.isEmpty()) {
                 query.predefinedRecordIds.addAll(matchingTagResourceIds);
+            }
+        }
+
+        if (query.hasNoAssignment == true) {
+            Set<Id> resourceIdsHaveAssignment = new Set<Id>();
+
+            skedQueryBuilder jobAllocationQueryBuilder = new skedQueryBuilder();
+            jobAllocationQueryBuilder.setFromClause('sked__Job_Allocation__c');
+            jobAllocationQueryBuilder.setGroupBy('sked__Resource__c');
+
+            jobAllocationQueryBuilder.addField('sked__Resource__c resourceId');
+            jobAllocationQueryBuilder.addField('COUNT(Id) numAllocations');
+
+            jobAllocationQueryBuilder.addCondition('sked_Start_Date__c = {0}', additionalFilterOnDate);
+            jobAllocationQueryBuilder.addCondition('sked__Status__c != {0}', skedConstants.JOB_ALLOCATION_STATUS_DELETED);
+
+            if (query.predefinedRecordIds != null && !query.predefinedRecordIds.isEmpty()) {
+                jobAllocationQueryBuilder.addCondition('sked__Resource__c IN {0}', query.predefinedRecordIds);
+            }
+            else {
+                jobAllocationQueryBuilder.addCondition(assignmentResourceCoCondition);
+            }
+
+            List<AggregateResult> jaAggregateResults = Database.query(jobAllocationQueryBuilder.toString());
+            for (AggregateResult result : jaAggregateResults) {
+                String resourceId = (String) result.get('resourceId');
+                Integer numAllocations = (Integer) result.get('numAllocations');
+                if (numAllocations > 0) {
+                    resourceIdsHaveAssignment.add(resourceId);
+                }
+            }
+
+            skedQueryBuilder activityResourceQueryBuilder = new skedQueryBuilder();
+            activityResourceQueryBuilder.setFromClause('sked__Activity_Resource__c');
+            activityResourceQueryBuilder.setGroupBy('sked__Resource__c');
+
+            activityResourceQueryBuilder.addField('sked__Resource__c resourceId');
+            activityResourceQueryBuilder.addField('COUNT(Id) numActivity');
+
+            activityResourceQueryBuilder.addCondition('sked_Start_Date__c = {0}', additionalFilterOnDate);
+
+            if (query.predefinedRecordIds != null && !query.predefinedRecordIds.isEmpty()) {
+                activityResourceQueryBuilder.addCondition('sked__Resource__c IN {0}', query.predefinedRecordIds);
+            }
+            else {
+                activityResourceQueryBuilder.addCondition(assignmentResourceCoCondition);
+            }
+
+            List<AggregateResult> arAggregateResults = Database.query(activityResourceQueryBuilder.toString());
+            for (AggregateResult result : arAggregateResults) {
+                String resourceId = (String) result.get('resourceId');
+                Integer numActivity = (Integer) result.get('numActivity');
+                if (numActivity > 0) {
+                    resourceIdsHaveAssignment.add(resourceId);
+                }
+            }
+
+            if (resourceIdsHaveAssignment != NULL && !resourceIdsHaveAssignment.isEmpty()) {
+                queryBuilder.addCondition('Id NOT IN {0}', resourceIdsHaveAssignment);
             }
         }
 
@@ -335,6 +438,13 @@ global class skedResourceService extends skedDataService {
                 customAvailabilityBuilder.addCondition('sked_Status__c IN {0}', query.customAvailabilityStatuses);
             }
         }
+        if(query.includes(skedSObjectType.LOCATION_RESOURCE_SCORE)) {
+            system.debug('here');
+            skedQueryBuilder locationResourceScoreBuilder = query.getQueryBuilder('sked__Location_Resource_Score__c');
+            if(query.locationResourceRelationShip != NULL) {
+                locationResourceScoreBuilder.addCondition('sked_Location_Resource_Relationship__c = {0}', query.locationResourceRelationShip);
+            }
+        }
     }
 
     /*********************************************************** Public ***********************************************************/
@@ -468,6 +578,9 @@ global class skedResourceService extends skedDataService {
         public string endDate;
         public DateTime endTime;
         public List<String> excludedAvailabilityTypes;
+        public boolean hasNoAssignment;
+        public boolean hasTemporaryRelocation;
+        public string additionalFilterOnDate;
         public List<string> jobAllocationStatuses;
         public List<string> locationIds;
         public Boolean matchAllSelectedTags;
@@ -479,6 +592,7 @@ global class skedResourceService extends skedDataService {
         public Date tagExpiry;
         public List<string> tagIds;
         public List<string> templateIds;
+        public String locationResourceRelationShip;
     }
 
 }

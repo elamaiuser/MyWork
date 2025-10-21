@@ -92,10 +92,6 @@
                 <behavior>Edit</behavior>
                 <field>sked_Dedicated_to_Site__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Drive_Type__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
@@ -110,7 +106,7 @@
                 <field>sked_MigrationID__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
@@ -139,6 +135,10 @@
                 <behavior>Edit</behavior>
                 <field>sked_Average_Travel_Time_Per_Drive__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Daily_Time_Off_Hours__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -146,11 +146,11 @@
                 <field>sked_Overtime_Threshold__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Min_Hours_Per_Week__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Max_Hours_Per_Week__c</field>
             </layoutItems>
             <layoutItems>
@@ -164,10 +164,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Max_Working_Days_Per_Week__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Daily_Time_Off_Hours__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -236,10 +232,6 @@
                 <behavior>Readonly</behavior>
                 <field>sked_Supervisor_Name__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Supervisor__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -260,7 +252,7 @@
         <label>Contact Information</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked__Primary_Phone__c</field>
             </layoutItems>
             <layoutItems>
@@ -408,7 +400,7 @@
                 <emptySpace>true</emptySpace>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Address_Referenced_for_Scheduling__c</field>
             </layoutItems>
             <layoutItems>
@@ -491,7 +483,7 @@
                 <field>sked_Secondary_Work_Area_s__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Turnaround_Time__c</field>
             </layoutItems>
             <layoutItems>
@@ -511,7 +503,7 @@
                 <field>sked_Premium_Pay_Roles__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>sked_Mobile_Type__c</field>
             </layoutItems>
         </layoutColumns>
@@ -522,9 +514,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -586,6 +578,8 @@
         <fields>sked__Tag__c.NAME</fields>
         <fields>sked__Tag__c.sked__Type__c</fields>
         <fields>sked_Start_Date__c</fields>
+        <fields>sked_Restriction_Start_Date__c</fields>
+        <fields>sked_Restriction_End_Date__c</fields>
         <fields>sked_Role_Status__c</fields>
         <fields>sked__Tag__c.sked_Priority__c</fields>
         <fields>sked_Premium_Pay__c</fields>

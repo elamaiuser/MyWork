@@ -1,0 +1,61 @@
+<template>
+    <c-slwc-click-outside func={closePanel}>
+        <nav class={customClass.panel}>
+            <div class="toggle-button" onclick={togglePanel}>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronleft" size="large" if:true={isOpen} variant="bare" tooltip="Collapse"></lightning-button-icon>
+                <lightning-button-icon class="arrow-icon" icon-name="utility:chevronright" size="large" if:false={isOpen} variant="bare" tooltip="Expand"></lightning-button-icon>
+            </div>
+
+            <div class="slds-nav-vertical__section">
+                <h2 class="slds-nav-vertical__title slds-p-horizontal_small">Filters</h2>
+                <ul>
+                    <li class="slds-p-right_small slds-p-left_xx-small">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="exceptionCodes"
+                                label="Exception Code"
+                                selected-by-default
+                                object-api-name="skedHC__Exception__c"
+                                field-api-name="sked_Exception_Code__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.exceptionCodes}
+                                excluded-values={filters.excludedValues}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="operationTypes"
+                                label="Operation Types"
+                                selected-by-default
+                                object-api-name="sked__Location__c"
+                                field-api-name="Operation_Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.operationTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="priorities"
+                                label="Priority"
+                                selected-by-default
+                                object-api-name="skedHC__Exception__c"
+                                field-api-name="sked_Priority__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.priorities}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-combobox label="Search Field" name="searchField" options={searchFields} value={filters.searchField} onchange={handleOnChange}></lightning-combobox>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-input label="Search Text" name="searchText" type="text" value={filters.searchText} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
+                            <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </c-slwc-click-outside>
+</template>

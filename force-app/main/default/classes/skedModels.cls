@@ -189,13 +189,14 @@ global class skedModels {
         public string resourceOverrideId;
         public boolean showOnCalendar;
         public string subtype;
+        public string timeBlockId;
         public string timezoneSidId;
         public string timezone;
         public List<String> biomedCollectionOpIds;
         public List<string> driveTypes;
         public List<string> districtIds;
         public List<activityCollectionOperation> activityCollectionOperations;
-        public List<activityResource> activityResources; 
+        public List<activityResource> activityResources;  
     }
 
     global virtual class activityCollectionOperation extends event {
@@ -497,6 +498,8 @@ global class skedModels {
         public integer expiryTime;
         public DateTime expiry;
         public string resourceId;
+        public string restrictionStartDate;
+        public string restrictionEndDate;
         public string roleStatus;
         public string startDate;
         public integer startTime;
@@ -620,6 +623,14 @@ global class skedModels {
                 this.preferredEndTime = integer.valueOf(this.preferredEnd.format('Hmm', inputTimezoneSidId));
             }
         }
+    }
+
+    global virtual class collectionOperationTimeBlock extends modelBase {
+        public string collectionOperationId;
+        public string effectiveEndDate;
+        public string effectiveStartDate;
+        public string timeBlockId;
+        public timeBlock timeBlock;
     }
     
     global virtual class displaySetting extends modelBase {
@@ -818,5 +829,11 @@ global class skedModels {
         public string endDate;
         public string startDate;
         public string territoryId;
+    }
+
+    global virtual class timeBlock extends modelBase {
+        public string daysOfWeek;
+        public string endTime;
+        public string startTime;
     }
 }

@@ -22,9 +22,9 @@
             </value>
         </inputParameters>
         <nameSegment>ResetBusinessPlanningStatusHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>60.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_allowed_profiles_to_the_collection_variable</name>
         <label>Assign allowed profiles to the collection variable</label>
@@ -253,6 +253,14 @@
             <name>Count_Msg</name>
             <fieldText>&lt;p&gt;You are about to reset business plan status for &lt;strong&gt;{!totalCount}&lt;/strong&gt; accounts. This may take a while!&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Proceed</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -270,6 +278,14 @@
             <name>Display_Error_Msg</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(237, 11, 11); font-size: 16px;&quot;&gt;You are not authorized to run this functionality. Please contact your salesforce administrator for further assistance.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Ok</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -287,6 +303,14 @@
             <name>No_Accounts</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(228, 13, 13); font-size: 16px;&quot;&gt;No such accounts found for resetting business planning status. Please review and try again!&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Ok</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>

@@ -18,11 +18,11 @@ class activityService extends dataService {
             queryBuilder.addCondition({ template: "sked_Start_Date__c >= {0}", value: query.startDate });
             queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.endDate });
         }
-        if (query.selectedDates && query.selectedDates.length) {
-            queryBuilder.addCondition({ template: "sked_Start_Date__c IN {0}", value: query.selectedDates, type: "array" });
-        }
         if (query.driveTypes && query.driveTypes.length) {
             queryBuilder.addCondition({ template: "sked_Drive_Types__c IN {0}", value: query.driveTypes, type: "array_string" });
+        }
+        if (query.selectedDates && query.selectedDates.length) {
+            queryBuilder.addCondition({ template: "sked_Start_Date__c IN {0}", value: query.selectedDates, type: "array" });
         }
         if (query.resourceIds && query.resourceIds.length) {
             queryBuilder.addCondition({ template: "sked__Resource__c IN {0}", value: query.resourceIds, type: "array_string" });

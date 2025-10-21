@@ -105,7 +105,7 @@ public class skedTestDataFactory {
 
         sked_Resource_Role_Group__c staffRoleGroup = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Staff roles',
-            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; Float; HH; Limited HH; Limited Ship; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; TRN HH; TRN VP; VOL Limited HH; VP; VP/HH; Work Restriction'
+            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; Float; HH; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; VOL Limited HH; VP; VP/HH; Work Restriction'
         );
         predefinedData.add(staffRoleGroup);
 
@@ -191,7 +191,9 @@ public class skedTestDataFactory {
             sked_Low_Weight__c = 10,
             sked_Medium_Weight__c = 15,
             sked_High_Weight__c = 25,
-            sked_Role_Priorities_Weight__c = 10
+            sked_Role_Priorities_Weight__c = 10,
+            sked_Minimum_Drive_Start_Time__c = Time.newInstance(5, 0, 0, 0),
+            sked_Maximum_Drive_End_Time__c = Time.newInstance(23, 0, 0, 0)
         );
         firstList.add(testCollectionOperation1);
         mapTestData.put('testCollectionOperation1', testCollectionOperation1);
@@ -219,6 +221,15 @@ public class skedTestDataFactory {
         );
         firstList.add(testStagingLocation1);
         mapTestData.put('testStagingLocation1', testStagingLocation1);
+        
+        Time_Block__c testTimeBlock1 = new Time_Block__c(
+        	Name = 'Time Block 1',
+            Start_Time__c = Time.newInstance(1, 0, 0, 0),
+            End_Time__c = Time.newInstance(23, 0, 0, 0),
+            Days_of_Week__c = 'Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday'
+        );
+        firstList.add(testTimeBlock1);
+        mapTestData.put('testTimeBlock1', testTimeBlock1);
 
         Account testAccount1 = new Account(
             Name = 'Test Account',
@@ -448,6 +459,15 @@ public class skedTestDataFactory {
         secondList.add(testCollectionOpStagingLoc1);
         mapTestData.put('testCollectionOpStagingLoc1', testCollectionOpStagingLoc1);
 
+        Collection_Operation_Time_Block__c testCOTB1 = new Collection_Operation_Time_Block__c(
+            Collection_Operation__c = testCollectionOperation1.Id,
+            Time_Block__c = testTimeBlock1.Id,
+            Effective_Start_Date__c = this.summary.startDate,
+            Effective_End_Date__c = this.summary.endDate
+        );
+        secondList.add(testCOTB1);
+        mapTestData.put('testCOTB1', testCOTB1);
+
         insert secondList;
 
         /***** Third list ****/
@@ -526,7 +546,7 @@ public class skedTestDataFactory {
             sked_Timezone__c = this.summary.timezoneSidId,
             sked_MigrationID__c = 'migration-id',
             Source__c = 'Custom New Form',
-            Operation_Type__c = 'Integrated',
+            Operation_Type__c = skedConstants.OPERATION_TYPE_WB,
             RecordTypeId = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName().get('Fixed Site').getRecordTypeId()
         );
         thirdList.add(testLocation2);
@@ -1004,6 +1024,7 @@ public class skedTestDataFactory {
 
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
+        sked__Location__c testLocation2 = (sked__Location__c)mapTestData.get('testLocation2');
         sked_Staging_Location__c testStagingLocation1 = (sked_Staging_Location__c) mapTestData.get('testStagingLocation1');
         Account testAccount1 = (Account)mapTestData.get('testAccount1');
 
@@ -1021,6 +1042,10 @@ public class skedTestDataFactory {
 
         Date taxonomyEffectiveDate = Date.newInstance(2024, 1, 22);
         Date driveStartDate = this.summary.startDate > taxonomyEffectiveDate ? this.summary.startDate : taxonomyEffectiveDate;
+        
+        DateTime driveDateDt = DateTime.newInstance(driveStartDate, Time.newInstance(0, 0, 0, 0));
+        string driveDateDayOfWeek = driveDateDt.format('EEEE');
+        
         Opportunity testOpportunity = new Opportunity(
             Name = 'Test',
             AccountId = testAccount1.Id,
@@ -1050,12 +1075,28 @@ public class skedTestDataFactory {
         firstList.add(testOpportunity2);
         this.mapTestData.put('testOpportunity2', testOpportunity2);
 
+        Opportunity testOpportunity3 = new Opportunity(
+            Name = 'Test',
+            AccountId = testAccount1.Id,
+            Drive_Date__c = driveStartDate.addDays(1),
+            Drive_Site__c = testLocation2.Id,
+            StageName = 'Solicitation',
+            CloseDate = driveStartDate,
+            //Parent_Template_Id__c = parentOpp.Id,
+            Online_Scheduling_Enabled__c = 'No',
+            Source__c = 'Calendar Build'
+            //Split_Reason__c = 'RSMO Donations**'
+        );
+        firstList.add(testOpportunity3);
+        this.mapTestData.put('testOpportunity3', testOpportunity3);
+
         insert firstList;
 
         sked_Drive__c testDrive1 = new sked_Drive__c(
             Name = 'Test Drive',
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked_Drive_Date__c = driveStartDate,
+            sked_Day_of_Week__c = driveDateDayOfWeek,
             sked_Drive_Site__c = testLocation1.Id,
             sked_Opportunity__c = testOpportunity.Id,
             sked_Type_of_Drive__c = 'Mobile',
@@ -1072,6 +1113,28 @@ public class skedTestDataFactory {
         );
         insert testDrive1;
         this.mapTestData.put('testDrive1', testDrive1);
+
+        sked_Drive__c testDrive2 = new sked_Drive__c(
+            Name = 'Test Drive',
+            sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_Drive_Date__c = driveStartDate,
+            sked_Day_of_Week__c = driveDateDayOfWeek,
+            sked_Drive_Site__c = testLocation2.Id,
+            sked_Opportunity__c = testOpportunity3.Id,
+            sked_Type_of_Drive__c = 'Fixed Site',
+            sked_Account__c = testAccount1.Id,
+            sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+            sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+            sked_Drive_Productivity_Planned__c = 0.8,
+            sked_Projected_Registered_Donors__c = 100,
+            sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT,
+            sked_Total_Products_Projected__c = 30,
+            sked_2RBC_Projected_Procedures__c = 10,
+            sked_WB_Projected_Procedures__c = 10,
+            sked_Staging_Location__c = testStagingLocation1.Id
+        );
+        insert testDrive2;
+        this.mapTestData.put('testDrive2', testDrive2);
 
         skedHubBase.setBypassAllTriggers(false);
         return this.mapTestData;

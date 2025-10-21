@@ -133,3 +133,39 @@
   color: #808080;
   font-weight: bold;
 }
+
+.slds-modal__header .slds-modal__close.slds-button_icon-inverse {
+  background: transparent;
+}
+
+.background-brightblue-saturday {
+    background-color: #0072b2 !important;
+}
+
+.background-burntOrange-sunday {
+    background-color: #cc79a7 !important;
+}
+
+.background-orange-monday {
+    background-color: #e69f00 !important;
+}
+
+.background-skyblue-tuesday {
+    background-color: #56b4e9 !important;
+}
+
+.background-orchid-wednesday {
+    background-color: #d55e00 !important;
+}
+
+.background-bluishgreen-thursday {
+    background-color: #009e73 !important;
+}
+
+.background-chartreuse-friday {
+    background-color: #f0e442 !important;
+}
+
+.background-gray-outside {
+  background-color: #b9b9b9 !important;
+}

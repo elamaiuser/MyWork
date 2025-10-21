@@ -22,10 +22,10 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);        
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Start_Time__c', 'driveStartTime', MAPPING_TYPE.time);        
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_End_Time__c', 'driveEndTime', MAPPING_TYPE.time);        
-      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive_Shift__r.Name', 'driveShiftName', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked__Job__r.sked__Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_UFID__c', 'driveUfid', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive__r.sked_Collection_Operation__r.Name', 'collectionOperationName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked_Drive_Shift__r.Name', 'driveShiftName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Job__r.sked__Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Job__r.sked_Resource_Role__c', 'resourceRole', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource__c', 'resourceId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Resource__r.Name', 'resourceName', MAPPING_TYPE.direct);
@@ -40,7 +40,7 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Geoservice_Travel_Distance_Back__c', 'geoServiceTravelDistanceBack', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Geoservice_Travel_Distance_To__c', 'geoServiceTravelDistanceTo', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Is_Relocated_Resource__c', 'isRelocatedResource', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Additional_Roles__c', 'additionalRoles', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Additional_Roles__c', 'additionalRoles', MAPPING_TYPE.multiPicklist);
       mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__c', 'driveShiftTradeId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Locked__c', 'locked', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Call_Out_Reported__c', 'callOutReported', MAPPING_TYPE.direct);

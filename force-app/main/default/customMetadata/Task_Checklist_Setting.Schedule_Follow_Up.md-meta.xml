@@ -56,7 +56,7 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Schedule follow-up to asses recruitment plan, confirm additional meeting dates and educational presentations (if applicable)</value>
+        <value xsi:type="xsd:string">Schedule follow-up to asses recruitment plan, confirm additional meeting dates and educational presentations (if applicable).</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

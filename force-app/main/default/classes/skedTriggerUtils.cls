@@ -176,11 +176,10 @@ public class skedTriggerUtils {
         boolean isAllowedProfile = allowedProfiles.contains(skedTriggerHub_Cache.loginUser.Profile.Name);
         boolean isAutoProcUser = UserInfo.getUserId() == skedTriggerHub_Cache.getAutoProcessUserFromCache().Id;
         boolean isPermittedUsage = usageAllowedViaService ? CHANGES_INITIATED_FROM_SERVICE : usageAllowedViaService;
-        boolean bypassProfileValidation = BSFBypassFlowValidationService.bypassProfileValidation;
 
-        if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !bypassProfileValidation && !isPermittedUsage) {
+        if (!System.isBatch() && !isAutoProcUser && !isAllowedProfile && !isPermittedUsage) {
             for (SObject newRecord : newRecords) {
-            newRecord.addError(errorMessage);
+                newRecord.addError(errorMessage);
             }
         }
     }

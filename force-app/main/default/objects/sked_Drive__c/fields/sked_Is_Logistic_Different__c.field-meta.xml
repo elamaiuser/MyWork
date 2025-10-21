@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Is_Logistic_Different__c</fullName>
-    <externalId>false</externalId>
     <formula>sked_Drive_Date__c &gt;= TODAY()
 &amp;&amp; (sked_Drive_Date__c != sked_Opportunity__r.Drive_Date__c
 || sked_Start_Time__c != sked_Opportunity__r.Start_Time__c
@@ -12,9 +11,9 @@
 || sked_Platelet_Projected_Procedures__c != sked_Opportunity__r.Platelet_Projected_Procedures__c
 || sked_WB_Projected_Procedures__c != sked_Opportunity__r.WB_Projected_Procedures__c
 || sked_Drive_Site__c != sked_Opportunity__r.Drive_Site__c
+|| sked_Number_of_2RBC_Assets__c != sked_Opportunity__r.Number_of_2RBC_Assets__c
 || IF(ISPICKVAL(sked_Type_of_Drive__c , &#39;Mobile&#39;) || sked_Operation_Type__c == &#39;Non Integrated WB&#39;, false,
-sked_Number_of_2RBC_Assets__c != sked_Opportunity__r.Number_of_2RBC_Assets__c
-|| sked_Number_of_Plasma_Assets__c != sked_Opportunity__r.Number_of_Plasma_Assets__c
+sked_Number_of_Plasma_Assets__c != sked_Opportunity__r.Number_of_Plasma_Assets__c
 || sked_Number_of_Platelet_Assets__c != sked_Opportunity__r.Number_of_Platelet_Assets__c) )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Is Logistic Different</label>

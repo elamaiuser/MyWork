@@ -5,7 +5,6 @@
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -324,9 +323,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -360,7 +359,9 @@
         <fields>NAME</fields>
         <fields>sked_Type__c</fields>
         <fields>sked_Resource_Role_Group__c</fields>
+        <fields>sked_Days_of_Week__c</fields>
         <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Mobile_Type__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>
@@ -404,6 +405,16 @@
         <fields>sked_Procedure_Type__c</fields>
         <fields>sked_Total_Products__c</fields>
         <relatedList>sked_Product_Goal__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Time_Block__c.NAME</fields>
+        <fields>Time_Block__c.Days_of_Week__c</fields>
+        <fields>Time_Block__c.Start_Time__c</fields>
+        <fields>Time_Block__c.End_Time__c</fields>
+        <fields>Effective_Start_Date__c</fields>
+        <fields>Effective_End_Date__c</fields>
+        <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

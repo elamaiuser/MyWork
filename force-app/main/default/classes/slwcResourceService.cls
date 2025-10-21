@@ -75,7 +75,7 @@ global class slwcResourceService {
                                               WHERE DAY_ONLY(sked_Start__c) <= :maxDate AND DAY_ONLY(sked_Finish__c) >= :minDate
                                               ORDER BY sked_Start__c ASC),
                                              
-                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.name
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE DAY_ONLY(sked__Start__c) <= :maxDate
                                               AND (sked__End__c = NULL OR DAY_ONLY(sked__End__c) >= :minDate)),
@@ -186,6 +186,31 @@ global class slwcResourceService {
                 }
                 update jobAllocation;
 
+                List<sked_Operation_Record_Staff__c> orsToUpdate = new List<sked_Operation_Record_Staff__c>();
+                if (jobAllocation.sked_Operation_Record_Staff__r != null && !jobAllocation.sked_Operation_Record_Staff__r.isEmpty()) {
+                    for (sked_Operation_Record_Staff__c opRecordStaff : jobAllocation.sked_Operation_Record_Staff__r) {
+                        if (request.callOutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE) {
+                            opRecordStaff.sked_Early_Departure_Date_Received__c = request.callOutReceivedDateTime.date();
+                            opRecordStaff.sked_Early_Departure_Time_Received__c = request.callOutReceivedDateTime.time();
+                            opRecordStaff.sked_Early_Departure_DateTime_Received__c = request.callOutReceivedDateTime;
+                            opRecordStaff.sked_Early_Departure_Reasons__c = request.callOutReason;
+                            orsToUpdate.add(opRecordStaff);
+                        }
+
+                        if (request.callOutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL) {
+                            opRecordStaff.sked_Late_Arrival_Date_Received__c = request.callOutReceivedDateTime.date();
+                            opRecordStaff.sked_Late_Arrival_Time_Received__c = request.callOutReceivedDateTime.time();
+                            opRecordStaff.sked_Late_Arrival_DateTime_Received__c = request.callOutReceivedDateTime;
+                            opRecordStaff.sked_Late_Arrival_Reasons__c = request.callOutReason;
+                            orsToUpdate.add(opRecordStaff);
+                        }
+                    }
+                }
+
+                if (!orsToUpdate.isEmpty()) {
+                    update orsToUpdate;
+                }
+
                 unavailabilityStart = jobAllocation.sked__Start__c;
                 unavailabilityEnd = jobAllocation.sked__Set_End__c;
                 unavailabilityTimezone = jobAllocation.sked__Resource__r.sked_Timezone__c;
@@ -240,10 +265,9 @@ global class slwcResourceService {
 
         if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
             Date callOutDate = unavailabilityStart.date();
-            DateTime callOutFinish = skedDateTimeUtils.getEndOfDate(callOutDate, unavailabilityTimezone);
             callOutAvailability.sked_Is_All_Day__c = true;
             callOutAvailability.sked__Start__c = skedDateTimeUtils.getStartOfDate(callOutDate, unavailabilityTimezone);
-            callOutAvailability.sked__Finish__c = callOutFinish.addMinutes(-1);
+            callOutAvailability.sked__Finish__c = skedDateTimeUtils.getEndOfDate(callOutDate, unavailabilityTimezone);
         }
 
         if (request.usePtoForCallOut == false || request.usePtoForCallOut == null) {
@@ -268,25 +292,12 @@ global class slwcResourceService {
     }
     
     private static void editCallOut(saveCallOutRequestModel request) {
-        sked__Availability__c skedAvail = [SELECT Id, sked_Call_Out_For_Job_Allocation__c,
-                                           sked__Notes__c, sked_Call_Out_Notes__c, sked_Call_Out_Reason_Code__c, sked_Call_Out_Type__c
-                                           FROM sked__Availability__c
-                                           WHERE Id = :request.id];
-        
-        skedAvail.sked__Notes__c = request.callOutNotes;
-        skedAvail.sked_Call_Out_Notes__c = request.callOutNotes;
-        skedAvail.sked_Call_Out_Reason_Code__c = request.callOutReason;
-        skedAvail.sked_Call_Out_Type__c = request.callOutType;
-        update skedAvail;
-        
-        if (skedAvail.sked_Call_Out_For_Job_Allocation__c != NULL) {
-            update new sked__Job_Allocation__c(
-            	Id = skedAvail.sked_Call_Out_For_Job_Allocation__c,
+        update new sked__Availability__c(
+        	Id = request.id,
                 sked_Call_Out_Notes__c = request.callOutNotes,
                 sked_Call_Out_Reason_Code__c = request.callOutReason,
                 sked_Call_Out_Type__c = request.callOutType
             );
-        }
     }
     
     /*********************************************************** Nested Classes ***********************************************************/

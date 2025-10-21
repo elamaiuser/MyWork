@@ -26,6 +26,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     @track confirmImpactedDrivesModalData = {};
     @track confirmModalData = {};
     @track confirmDrivesResultModalData = {};
+    @track sortedBy;
+    @track sortedDirection;
 
     @track driveSideMenuData = {
         shown: false,
@@ -37,7 +39,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     get filters() {
         return this._filters;
     }
-    set filters(value) {
+    set filters(value) {        
         this._filters = value;
         this.getDriveList();
     }
@@ -93,7 +95,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     get columns() {
         let results = [];
         results.push({label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', cellAttributes: { class: { fieldName: 'driveDateClass' }}, typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' }, hideDefaultActions: true } );
-        results.push({label: 'Drive Name', fieldName: 'driveNameData', type: 'driveName', hideDefaultActions: false, wrapText: true, hideDefaultActions: true } );
+        results.push({label: 'Drive Name', fieldName: 'driveNameData', type: 'driveName', hideDefaultActions: false, wrapText: true, hideDefaultActions: true, sortable: true } );
         if ([DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE].includes(this.selectedStatus)) {
             results.push({
                 type: 'action',
@@ -108,14 +110,16 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             }
         }});
         
+        results.push({label: 'Collection Operation', fieldName: 'collectionOperationName', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true } );
+        results.push({label: 'City', fieldName: 'city', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true } );
         if (this.selectedStatus === DRIVE_STATUS.DRAFT) {
             results.push({label: 'Rank', fieldName: 'rank', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true, wrapText: true } );
         }
         if (this.selectedStatus === DRIVE_STATUS.CONFIRMED) {
             results.push({label: 'Optimization Status', fieldName: 'optimizationStatus', type: 'text', hideDefaultActions: true, wrapText: true } );
         }
-        results.push({label: 'Start Time', fieldName: 'startTimeStr', type: 'text', hideDefaultActions: true, wrapText: true } );
-        results.push({label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, wrapText: true } );
+        results.push({label: 'Start Time', fieldName: 'startTimeStr', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true } );
+        results.push({label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true } );
         results.push({label: '# of Staff Requested', fieldName: 'totalStaffRequested', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         results.push({label: '# of Staff Scheduled', fieldName: 'staffAllocated', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true } );
         if (this.selectedStatus === DRIVE_STATUS.DRAFT) {
@@ -224,8 +228,13 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             return districtManagerPortfolio.id;
         })
         driveQuery.subQueryIndicator = sObjectType.JOB;
-        driveQuery.operationTypes = this.filters.operationTypes;
+        //driveQuery.operationTypes = this.filters.operationTypes;
+        driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
         // driveQuery.daysOfWeek = this.filters.daysOfWeek;
+        if (this.filters.searchText && this.filters.searchField) {
+            driveQuery.queryText = this.filters.searchText;
+            driveQuery.searchColumns = [this.filters.searchField];
+        }
         
         let service = new driveService();
         this.currentGetDriveListPromise = service.query(driveQuery)
@@ -250,11 +259,14 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
                         } : null;
 
                         drive.type = drive.opportunity.type;
+                        drive.collectionOperationName = drive.collectionOperation.name;
+                        drive.city = drive.driveSite.city;
                         drive.startTimeStr = this.formatTime(drive.startTime);
                         drive.endTimeStr = this.formatTime(drive.endTime);
 
-                        drive.driveDateClass = (drive.driveDate < this.filters.startDate || 
-                            drive.driveDate > this.filters.endDate) ? 'background-green-super-light important' : 'background-blue-super-light important';
+                        /*drive.driveDateClass = (drive.driveDate < this.filters.startDate || 
+                            drive.driveDate > this.filters.endDate) ? 'background-gray-outside' : 'background-blue-super-light important'; */
+                        drive.driveDateClass = this.getDriveDateClass(drive.driveDate);
 
                         drives.push(drive);
                     });
@@ -275,6 +287,31 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             });
 
         return this.currentGetDriveListPromise;
+    }
+
+    getDriveDateClass(driveDate) {
+        if (driveDate < this.filters.startDate || driveDate > this.filters.endDate) {
+            return 'background-gray-outside';
+        }
+        const dayOfWeek = DateTime.fromISO(driveDate).weekday;
+        switch(dayOfWeek) {
+            case 1:
+                return 'background-orange-monday';
+            case 2:
+                return 'background-skyblue-tuesday';
+            case 3:
+                return 'background-orchid-wednesday';
+            case 4:
+                return 'background-bluishgreen-thursday';
+            case 5:
+                return 'background-chartreuse-friday';
+            case 6:
+                return 'background-brightblue-saturday';
+            case 7:
+                return 'background-burntOrange-sunday';
+            default:
+                return '';
+        }
     }
 
     countDriveByStatus() {
@@ -322,8 +359,54 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
             group.class = classNames('slds-grid slds-grid_vertical-align-center scheduling-status__filter-item', {
                 'is-selected': group.status === driveStatus
             });
-        })
+        });
+        if (this.sortedBy && this.sortedDirection) {
+            this.sortData(this.sortedBy, this.sortedDirection);
+        }
     }
+
+    handleSort(event) {
+        const { fieldName, sortDirection } = event.detail;
+        this.sortedBy = fieldName;
+        this.sortedDirection = sortDirection;
+        this.sortData(fieldName, sortDirection);
+    }
+
+    sortData(fieldName, sortDirection) {
+        let dataToSort = [...this.filteredList];
+        let keyValue = (obj) => {
+            switch (fieldName) {
+                case 'driveNameData':
+                    return obj.driveNameData ? obj.driveNameData.name : '';
+                case 'startTimeStr':
+                    return obj.startTime;
+                case 'endTimeStr':
+                    return obj.endTime;
+                default:
+                    return obj[fieldName];
+            }
+        };
+
+        const reverse = sortDirection === 'asc' ? 1 : -1;
+        dataToSort.sort((a, b) => {
+            let valueA = keyValue(a) || '';
+            let valueB = keyValue(b) || '';
+            if(typeof valueA === 'string' && typeof valueB === 'string') {
+                valueA = valueA.toLowerCase();
+                valueB = valueB.toLowerCase();
+            }
+            let result = 0;
+            if (valueA > valueB) {
+                result = 1;
+            } else if (valueA < valueB) { 
+                result = -1;
+            }
+
+            return result * reverse;
+        });
+        this.filteredList = dataToSort;
+    }
+        
 
     handleRowSelection(event) {
         this.selectedRows = event.detail.selectedRows || [];
@@ -347,7 +430,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     }
 
     saveDriveSideMenu() {
-        this.closeDriveSideMenu();
+        // this.closeDriveSideMenu();
         this.handleRefresh();
     }
 
@@ -576,6 +659,8 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     }
 
     handleRefresh() {
+        this.sortedBy = null;
+        this.sortedDirection = null;
         return this.getDriveList();
     }
 

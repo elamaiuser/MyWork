@@ -93,6 +93,9 @@ global virtual class skedRacController extends skedBaseController {
             query.availabilityTypes = request.availabilityTypes;
             query.excludedAvailabilityTypes = new List<String>{skedConstants.AVAILABILITY_TYPE_ON_CALL};
             query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+            query.hasNoAssignment = request.hasNoAssignment;
+            query.hasTemporaryRelocation = request.hasTemporaryRelocation;
+            query.additionalFilterOnDate = request.additionalFilterOnDate;
             
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -161,6 +164,7 @@ global virtual class skedRacController extends skedBaseController {
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
             query.pageNo = request.pageNo;
             query.pageSize = request.pageSize;
+            query.patternIds = request.patternIds;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.resourceTypes = request.resourceTypes;
@@ -605,6 +609,32 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
+
+    @remoteAction
+    global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        try {
+            skedCollectionOpTimeBlockService.queryModel query = new skedCollectionOpTimeBlockService.queryModel();
+            query.collectionOperationIds = request.collectionOperationIds;
+            query.endDate = request.endDate;
+            query.startDate = request.startDate;
+            
+            skedCollectionOpTimeBlockService service = new skedCollectionOpTimeBlockService();
+            List<Collection_Operation_Time_Block__c> records = (List<Collection_Operation_Time_Block__c>)service.query(query);
+            
+            List<skedModels.collectionOperationTimeBlock> collectionOperationTimeBlocks = new List<skedModels.collectionOperationTimeBlock>();
+            skedAutoMapper autoMapper = skedAutoMapper.instance;
+            for (Collection_Operation_Time_Block__c record : records) {
+                skedModels.collectionOperationTimeBlock collectionOperationTimeBlock = (skedModels.collectionOperationTimeBlock)skedAutoMapper.instance.mapTo(record, skedModels.collectionOperationTimeBlock.class);
+                collectionOperationTimeBlocks.add(collectionOperationTimeBlock);
+            } 
+            result.data = collectionOperationTimeBlocks;
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+        }
+        return result;
+    }
     
     @remoteAction
     global static skedRemoteResultModel saveAvailability(saveAvailabilityRequestModel request) {
@@ -838,7 +868,7 @@ global virtual class skedRacController extends skedBaseController {
                     Date startDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.startDate);
                     Date endDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.endDate);
                     if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
-                        throw new skedException('Recurring Pattern exceeds maximum duration');
+                        throw new skedException('Recurring Pattern exceeds maximum duration of ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years.\nPlease select a recurring end date that falls within ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years from today');
                     }
                 }
             }
@@ -2319,6 +2349,9 @@ global virtual class skedRacController extends skedBaseController {
         public Set<Date> inputDates;
         public List<String> availabilityTypes;
         public List<String> activityTypes;
+        public boolean hasNoAssignment;
+        public boolean hasTemporaryRelocation;
+        public string additionalFilterOnDate;
     }
 
     global class getAvailabilityDetailsRequest extends skedRemoteRequestModel {
@@ -2375,6 +2408,12 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     global class getTerritoriesRequestModel extends getDataRequestModel {
+        public string startDate;
+        public string endDate;
+    }
+
+    global class getCollectionOperationTimeBlocksRequestModel extends getDataRequestModel {
+        public List<string> collectionOperationIds; 
         public string startDate;
         public string endDate;
     }

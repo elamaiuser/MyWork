@@ -159,8 +159,11 @@ global virtual class skedSkeduloApiManager {
             mapBody.put('departureTime', JSON.serialize(departureTime).replace('"', ''));
         }
         string jsonBody = Json.serialize(mapBody);
+        jsonBody = jsonBody.replace('latitude', 'lat');
+        jsonBody = jsonBody.replace('longitude', 'lng');
+
         actionBase action = new actionBase();
-        return (skedSkeduloApiData.distanceMatrixResult)action.execute(skedSkeduloApiData.distanceMatrixResult.class, DISTANCE_MATRIX_ENDPOINT, 'POST', getDefaultHeader(), jsonBody , true);
+        return (skedSkeduloApiData.distanceMatrixResult)action.execute(skedSkeduloApiData.distanceMatrixResult.class, DISTANCE_MATRIX_ENDPOINT, 'POST', getDefaultHeader(), jsonBody);
     }
 
     public skedSkeduloApiData.distanceMatrixResult calculateDistanceMatrix(List<object> origins, List<object> destinations) {

@@ -34,7 +34,7 @@
             <name>Update_Lead_Record_Type_Market_Manager</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Lead.Status</field>
             <operation>equals</operation>
@@ -43,7 +43,7 @@
         <criteriaItems>
             <field>Lead.RecordTypeId</field>
             <operation>equals</operation>
-            <value>Lead,LSL,Biomed Recruitment</value>
+            <value>Lead,LSL</value>
         </criteriaItems>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
