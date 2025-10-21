@@ -271,7 +271,9 @@
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <members>Time_Block__c-Time Block Layout</members>
         <members>Volunteer_Staffing_Matrix__mdt-Volunteer Staffing Matrix Layout</members>
+        <members>sked_Drive_Shift__c-Drive Shift Layout</members>
         <members>sked_Operation_Drive_Limit__c-Operation Drive Limit Layout</members>
+        <members>sked_Staffing_Constraint__c-Staffing Constraint Layout</members>
         <members>sked__Resource__c-Asset Layout</members>
         <members>sked__Resource__c-Staff Layout</members>
         <members>sked__Resource__c-sked__Resource Layout</members>
