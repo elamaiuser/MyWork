@@ -44,7 +44,7 @@
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_Manufacturing,sked_Telerecruiter</value>
+        <value xsi:type="xsd:string">sked_DRD_Readonly,sked_Manufacturing,sked_Telerecruiter</value>
     </values>
     <values>
         <field>Target_Type__c</field>
