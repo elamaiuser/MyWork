@@ -40,6 +40,9 @@ public class skedDriveHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
         List<sked_Drive__c> newRecords = filterDrives(this.context.newRecords);
+        if (skedSetting.instance.Admin.dateTimeConversion) {
+            doDateTimeConversion(this.context.newRecords);
+        }
         populateDriveName(newRecords);
         populateCollectionOperationData(newRecords);
         populateData(newRecords);
@@ -59,6 +62,9 @@ public class skedDriveHandler extends skedTriggerHub {
     public override void onBeforeUpdate() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
         List<sked_Drive__c> newRecords = filterDrives(this.context.newRecords);
+        if (skedSetting.instance.Admin.dateTimeConversion) {
+            doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
+        }
         onConfirmDrives((Map<Id, sked_Drive__c>) this.context.newMap, (Map<Id, sked_Drive__c>)this.context.oldMap);
         onApprovedRejected(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
         repopulateDistrict(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
@@ -1220,6 +1226,25 @@ public class skedDriveHandler extends skedTriggerHub {
                 'updateLinkedDriveDetails',
                 linkedDrivesToUpdate
             );
+        }
+    }
+    
+    private void doDateTimeConversion(List<sked_Drive__c> newRecords) {
+        for (sked_Drive__c newRecord : newRecords) {
+            skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Min_Shift_Start__c', 'sked_Min_Shift_Start_Date__c', 'sked_Min_Shift_Start_Time__c', 'sked_Timezone__c', NULL);
+            skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Max_Shift_End__c', 'sked_Max_Shift_End_Date__c', 'sked_Max_Shift_End_Time__c', 'sked_Timezone__c', NULL);
+        }
+    }
+    
+    private void doDateTimeConversion(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+        for (sked_Drive__c newRecord : newRecords) {
+            sked_Drive__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Min_Shift_Start__c != oldData.sked_Min_Shift_Start__c) {
+                skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Min_Shift_Start__c', 'sked_Min_Shift_Start_Date__c', 'sked_Min_Shift_Start_Time__c', 'sked_Timezone__c', NULL);
+            }
+            if (newRecord.sked_Max_Shift_End__c != oldData.sked_Max_Shift_End__c) {
+                skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Max_Shift_End__c', 'sked_Max_Shift_End_Date__c', 'sked_Max_Shift_End_Time__c', 'sked_Timezone__c', NULL);
+            }
         }
     }
     
