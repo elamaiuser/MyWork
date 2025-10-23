@@ -1409,11 +1409,9 @@ class MobileGenerator extends BaseGenerator {
         if(item.isManuallyCreated) return;
 
         const { resourceRole, dualRole, quantity, isCreatedOrUpdatedViaDualRoleChange } = item;
-        const hasResourceRoleAfterRegenerated = tempResourceQuantityMap.has(resourceRole);
         let dualRoleQuantityAfterRegenerated = tempResourceQuantityMap.get(dualRole);
         let resourceRoleQuantityAfterRegenreted = tempResourceQuantityMap.get(resourceRole);
-
-        const canRestore = hasResourceRoleAfterRegenerated && dualRoleQuantityAfterRegenerated;
+        const canRestore = resourceRoleQuantityAfterRegenreted?.quantity > 0 && dualRoleQuantityAfterRegenerated?.quantity > 0;
 
         if(isCreatedOrUpdatedViaDualRoleChange) {
           tempResourceQuantityMap.delete(resourceRole);
@@ -1697,6 +1695,7 @@ class MobileGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
+          driveSiteId: this.drive.driveSiteId,//HRP-15703
           jobTags: []
         };
         newList.push(newJob);
@@ -2569,7 +2568,9 @@ class MobileGenerator extends BaseGenerator {
         this.masterData.backupDrive = extend(this.masterData.backupDrive, {
           tempRedcrossVolunteerRequired: this.drive.redcrossVolunteerRequired
         });
+        if(driveShift.redcrossVolunteerRequired !=null){
         this.drive.redcrossVolunteerRequired = driveShift.redcrossVolunteerRequired;
+        }
       }
       
       this.calculateNumberOf2rbcAssets();
