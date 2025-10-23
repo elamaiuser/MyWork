@@ -37,7 +37,7 @@ const isJobBelongToDrivingRolesGroup = (job, {
   resourceRoleGroups
 }) => {
   const resourceRoleGroup = Object.keys(resourceRoleGroups).find(resourceRoleGroup => {
-    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole);
+    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole || item === job.dualRole);
   })
   return resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES;
 }
@@ -1734,9 +1734,15 @@ fetchJobTags(driveId){
                 if(!ignoreDedicatedSiteRule && resource.dedicatedToSiteId && resource.dedicatedToSiteId !== this.drive.driveSiteId) {
                   return;
                 }
-                const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
-                jobStartLatitude = geoLocationLatitude;
-                jobStartLongitude = geoLocationLongitude;
+
+                const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
+                  resourceRoleGroups: this.resourceRoleGroups
+                });
+                if(_isJobBelongToDrivingRolesGroup) {
+                  const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
+                  jobStartLatitude = geoLocationLatitude;
+                  jobStartLongitude = geoLocationLongitude;
+                }
               }
               
               let isValid = true;
@@ -2076,22 +2082,22 @@ fetchJobTags(driveId){
                   }
                 }
 
-                if (!slwcUtils.isNullOrEmpty(travelTimeFrom) && 
-                  !slwcUtils.isNullOrEmpty(resource.maxTravelTime) && 
-                  travelTimeFrom > resource.maxTravelTime
-                ) {
-                  let exceptionMsg = 'Maximum Travel Time Violation';
-                  if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
-                    exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
+                if(!slwcUtils.isNullOrEmpty(resource.maxTravelTime)) {
+                  if ((!slwcUtils.isNullOrEmpty(travelTimeFrom) && travelTimeFrom > resource.maxTravelTime) 
+                    || (!slwcUtils.isNullOrEmpty(travelTimeTo) && travelTimeTo > resource.maxTravelTime)) {
+                    let exceptionMsg = 'Maximum Travel Time Violation';
+                    if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
+                      exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
+                    }
+                    let exception = {
+                      driveId: this.driveId,
+                      jobId: job.id,
+                      resourceId: resource.id,
+                      exception: exceptionMsg,
+                      exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
+                    };
+                    exceptionLog.push(exception);
                   }
-                  let exception = {
-                    driveId: this.driveId,
-                    jobId: job.id,
-                    resourceId: resource.id,
-                    exception: exceptionMsg,
-                    exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
-                  };
-                  exceptionLog.push(exception);
                 }
               }
               
