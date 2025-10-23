@@ -4,6 +4,7 @@
         <members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
         <members>slwcDriveShift</members>
+        <members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>
 	</types>    
     <version>64.0</version>
