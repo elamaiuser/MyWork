@@ -2570,7 +2570,9 @@ class MobileGenerator extends BaseGenerator {
         this.masterData.backupDrive = extend(this.masterData.backupDrive, {
           tempRedcrossVolunteerRequired: this.drive.redcrossVolunteerRequired
         });
+        if(driveShift.redcrossVolunteerRequired !=null){
         this.drive.redcrossVolunteerRequired = driveShift.redcrossVolunteerRequired;
+        }
       }
       
       this.calculateNumberOf2rbcAssets();
