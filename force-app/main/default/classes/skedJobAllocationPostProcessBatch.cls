@@ -37,7 +37,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                     '',
                     'Failed processing job allocation records'
                 );
-                errorLog.Error_Description_Long__c = 'ids: '+String.join(new List<Id>(jobAllocationIds), ',');
+                errorLog.Error_Description_Long__c = (String.join(new List<Id>(jobAllocationIds), ',')).subString(0, 2500);
                 insert errorLog;
             }
             else {
