@@ -1649,6 +1649,34 @@ class MobileGenerator extends BaseGenerator {
     })
   }
 
+  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
+    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
+
+    const driveShiftsMetadata = this.drive.driveShiftsMetadata;
+    driveShiftsMetadata.driveShifts.forEach(driveShiftMetadata => {
+      const staffCapacity = this.helper.calculateStaffCapacity(
+        resourceRoles,
+        this.drive,
+        driveShiftMetadata,
+        this.mapResourceQuantity,
+        this.masterData
+      )
+
+      const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
+      let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
+      if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
+      
+      const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
+
+      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
+      let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
+      resourceQuantityMap.set('VP/HH', {
+        vphhQuantity: noOfVpHhStaffs,
+        aptQuantity: driveShiftsMetadata.APTSetup
+      });
+    });
+  }
+
   recalculateVphhQuantity(driveShift, resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
     if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
 
@@ -1717,35 +1745,6 @@ class MobileGenerator extends BaseGenerator {
         }
       }
     }
-  }
-
-  calculateVpHhQuantity(resourceRoles = ['Driver', 'Driver Support', '2RBC', 'Charge']) {
-    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
-
-    const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    driveShiftsMetadata.driveShifts.forEach(driveShiftMetadata => {
-      const staffCapacity = this.helper.calculateStaffCapacity(
-        resourceRoles,
-        this.drive,
-        driveShiftMetadata,
-        this.mapResourceQuantity,
-        this.masterData
-      )
-
-      const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-      let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
-      if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
-      
-      const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
-
-      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
-      let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
-      resourceQuantityMap.set('VP/HH', {
-        vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: driveShiftsMetadata.APTSetup
-      });
-    });
-    
   }
 
   calculateChargeQuantity() {
@@ -1936,7 +1935,7 @@ class MobileGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled,
         APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
