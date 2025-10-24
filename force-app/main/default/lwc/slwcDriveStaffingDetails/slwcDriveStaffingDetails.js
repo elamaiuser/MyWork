@@ -1252,7 +1252,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
         const isResource = !newJobAllocation.resourceId;
         const resource = isResource ? newJobAllocation : newJobAllocation.resource;
-        if(resource.resourceType !== RESOURCE_TYPE.PERSON || !resource.resourceHoursRecord) return;
+        if(resource.resourceType !== RESOURCE_TYPE.PERSON) return;
 
         if(!isResource) {
             const currentPossibleAllocation = this.listPossibleAllocations.find(item => item.resourceId === newJobAllocation.resourceId && item.jobId === newJobAllocation.jobId);
@@ -1290,6 +1290,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             this.populateDefaultJobAllocationTimes(driveDetail1, resource);
             this.populateDefaultJobAllocationTimes(driveDetail2, resource);    
         }
+
+        const allocationExceptionLogMap = {};
+        const resourceTagNames = resource.resourceTags?.map(resourceTag => resourceTag.tag.name);
        
         allDriveShifts.forEach(driveShift => {
             driveShift.jobs.forEach(job => {
@@ -1312,14 +1315,33 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         }
                     }
 
+                    const additionalRoles = jobAllocation.additionalRoles?.split(";") || [];
+                    additionalRoles.forEach(additionalRole => {
+                        const havingAdditionalRole = resourceTagNames.find(tagName => tagName === additionalRole);
+                        if (!havingAdditionalRole) {
+                            const exceptionText = `Missing required tag ${additionalRole}`;
+
+                            const existingException = jobAllocation.exceptionLog.find(item => item.exceptionText === exceptionText);
+                            if (!existingException) {
+                                jobAllocation.exceptionLog.push({
+                                    exception: exceptionText,
+                                    exceptionCode: 'MISSING_REQUIRED_TAG',
+                                    key: uniqueId('exception_ja'),
+                                    resource: jobAllocation.resource,
+                                    icon: this.getResourceIcon(jobAllocation.resource),
+                                    isSelected:  false
+                                });
+                            }
+                        }
+                    })
+
                     allAllocationsNeedToUpdateExceptions.push(jobAllocation);
                 });
             });
         });
 
         const weeklyHoursInMinutes = currentWeeklyHoursInMinutes + totalMinutesOfNewAllocations - totalMinutesOfOldAllocationsDeleted;
-        const allocationExceptionLogMap = {};
-        if(weeklyHoursInMinutes > resourceMaxHoursPerWeekInMinutes) {
+        if(resourceHoursRecord && weeklyHoursInMinutes > resourceMaxHoursPerWeekInMinutes) {
             let exceptionText = this.availator1.getExceptionTextByCode('MAXIMUM_WEEKLY_HOURS_VIOLATION')
             if(exceptionText) {
                 exceptionText = exceptionText.replace('{{weekStartDate}}', DateTime.fromFormat(resourceHoursRecord.startDate, 'yyyy-MM-dd').toFormat('MM/dd/yyyy'))

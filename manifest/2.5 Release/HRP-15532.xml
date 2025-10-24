@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>skedCaptureJobIMPACTBatch</members>
+		<members>skedCaptureJobIMPACTBatch_Test</members>
+		<members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
+		<members>skedJobAllocationPostProcessBatch</members>
+		<members>skedJobAllocationPostProcessBatch_Test</members>
+		<members>skedJobAllocationTravelTimeBatch</members>
+		<members>skedSetting</members>
+		<members>skedSetting_Test</members>
+		<members>skedTriggerUtils</members>
+		<members>skedTriggerUtils_Test</members>
+		<members>skedWeeklyHoursCorrectionBatch</members>
+		<members>skedWeeklyHoursCorrection_Test</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
+		<members>sked_JA_Post_Process_Config__c.sked_Allowed_No_of_Jobs_in_Flex_Queue__c</members>
+		<members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked_JA_Post_Process_Config__c</members>
+		<name>CustomObject</name>
+	</types>
+    <version>64.0</version>
+</Package>

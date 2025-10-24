@@ -11,7 +11,12 @@
     <filters>
         <field>sked_Collection_Operation__c</field>
         <operation>equals</operation>
-        <value>Arlington TX</value>
+        <value>Omaha NE</value>
+    </filters>
+    <filters>
+        <field>sked_Date_of_Goal__c</field>
+        <operation>equals</operation>
+        <value>1/5/2025</value>
     </filters>
     <label>All</label>
 </ListView>

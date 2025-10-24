@@ -1,5 +1,5 @@
 @isTest
-private class skedDriveTrigger_Test { 
+private class skedDriveTrigger_Test {
 
     static testmethod void testApproveDrive() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);

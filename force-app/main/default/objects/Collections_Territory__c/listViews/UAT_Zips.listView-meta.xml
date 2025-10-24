@@ -12,7 +12,7 @@
     <filters>
         <field>Zip__c</field>
         <operation>equals</operation>
-        <value>00501</value>
+        <value>01701</value>
     </filters>
     <label>UAT Zips</label>
 </ListView>

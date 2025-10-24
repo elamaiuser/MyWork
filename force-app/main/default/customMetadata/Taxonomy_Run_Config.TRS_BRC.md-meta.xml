@@ -28,7 +28,7 @@
     </values>
     <values>
         <field>Taxo_Expiration_Offset__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Taxo_Record_Type_Name__c</field>
@@ -36,6 +36,6 @@
     </values>
     <values>
         <field>Taxo_Run_Date_Override__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
 </CustomMetadata>

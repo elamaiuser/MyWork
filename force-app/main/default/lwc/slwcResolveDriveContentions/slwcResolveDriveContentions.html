@@ -198,7 +198,7 @@
                                     <lightning-button label="Open Drive Scheduling" onclick={handleOpenDriveSchedulingBtn}></lightning-button>
                                 </template>
                                 <template if:false={isReadonly}>
-                                    <lightning-button label="Validate" onclick={handleValidateBtn}></lightning-button>
+                                    <lightning-button label="Validate" disabled={disabled} onclick={handleValidateBtn}></lightning-button>
                                 </template>
                             </lightning-button-group>
                         </div>
@@ -313,7 +313,7 @@
                                                 </template>
                                                 <template if:false={action.isLink}>
                                                     <lightning-input key={action.label} type="checkbox" data-contention={item.contention} name={action.label} label={action.label}
-                                                        value={action.value} checked={action.value} onchange={handleActionChanged}></lightning-input>
+                                                        value={action.value} checked={action.value} disabled={action.disabled} onchange={handleActionChanged}></lightning-input>
                                                 </template>
                                             </template>
                                         </div>

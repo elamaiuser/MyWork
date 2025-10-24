@@ -7,6 +7,13 @@
     <columns>sked_Request_Type__c</columns>
     <columns>CREATED_DATE</columns>
     <columns>LAST_UPDATE</columns>
+    <columns>sked_Is_Error__c</columns>
+    <columns>sked_Error_Log__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Request_Type__c</field>
+        <operation>equals</operation>
+        <value>Travel Distance,Travel Time</value>
+    </filters>
     <label>All</label>
 </ListView>
