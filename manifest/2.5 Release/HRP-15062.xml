@@ -3,6 +3,10 @@
 	<types>        
 		<members>OrderCloningService</members>        
 		<name>ApexClass</name>
+	</types> 
+	<types>        
+		<members>Opportunity_Template_Order_Sync_Event_Trigger</members>        
+		<name>ApexTrigger</name>
 	</types>    
     <version>64.0</version>
 </Package>
