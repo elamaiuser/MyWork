@@ -10,7 +10,7 @@ trigger Opportunity_Template_Order_Sync_Event_Trigger on Opportunity_Template_Or
     
     if(!oppIds.isEmpty()) {
         //Call helper method to process
-        OrderCloningService.cloneTemplateOrder(oppIds);
+        OrderCloningService.syncTemplateOrder(oppIds);
     }
 
 }
