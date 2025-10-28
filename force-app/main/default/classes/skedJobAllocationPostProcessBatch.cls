@@ -475,7 +475,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         }
         master.mapJob = new Map<Id, sked__Job__c>([
             SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
-            sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
+            sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c, sked_Dual_Role__c,
             sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
             sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,//HRP-12840
             (SELECT Id, sked__Tag__c, sked__Tag__r.Name
@@ -553,6 +553,17 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
             if (skedAllocation.sked_Additional_Roles__c != NULL && !string.isBlank(skedAllocation.sked_Additional_Roles__c)) {
                 List<string> additionalRoles = skedAllocation.sked_Additional_Roles__c.split(';');
+
+                sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
+                if(job.sked_Dual_Role__c != null && !String.isEmpty(job.sked_Dual_Role__c)) {
+                    for(sked__Job_Tag__c dualRoleTag : job.sked__JobTags__r) {
+                        if(job.sked_Dual_Role__c == dualRoleTag.sked__Tag__r.Name && additionalRoles.contains(job.sked_Dual_Role__c)) {
+                            // Avoid generating duplicate exceptions
+                            additionalRoles.remove(additionalRoles.indexOf(job.sked_Dual_Role__c));
+                            break;
+                        }
+                    }
+                }
                 
                 sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
                 
@@ -947,6 +958,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             
             Map<Id, skedModels.resource> mapResource = new Map<Id, skedModels.resource>();
             for (sked__Resource__c skedResource : master.mapResource.values()) {
+                if(skedResource.sked__Resource_Type__c.equalsIgnoreCase(skedConstants.RESOURCE_TYPE_ASSET)) continue;
+
                 skedModels.resource resource = (skedModels.resource)autoMapper.mapTo(skedResource, skedModels.resource.class);
                 mapResource.put(resource.Id, resource);
             }
@@ -959,6 +972,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
 
             for (sked__Job_Allocation__c skedJobAllocation : master.jobAllocations) {
                 skedModels.resource resource = mapResource.get(skedJobAllocation.sked__Resource__c);
+                if(resource == null) continue; //Assets
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
                 
                 boolean conflictNonWorkingTime = false;
