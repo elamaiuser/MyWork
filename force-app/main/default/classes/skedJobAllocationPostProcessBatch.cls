@@ -972,8 +972,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
 
             for (sked__Job_Allocation__c skedJobAllocation : master.jobAllocations) {
                 skedModels.resource resource = mapResource.get(skedJobAllocation.sked__Resource__c);
-                if(resource.resourceType.equalsIgnoreCase(skedConstants.RESOURCE_TYPE_ASSET)) continue; //This exception should  only be generated for staff resources
-
+                if(resource == null) continue; //Assets
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
                 
                 boolean conflictNonWorkingTime = false;
