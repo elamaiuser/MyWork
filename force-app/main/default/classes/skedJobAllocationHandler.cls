@@ -411,6 +411,8 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     private void captureNonGroupException(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
         List<sked__Job_Allocation__c> recordsToProcess = new List<sked__Job_Allocation__c>();
         for (sked__Job_Allocation__c allocation : newRecords) {
+            if (allocation.sked__Status__c == skedConstants.JOB_ALLOCATION_STATUS_DELETED) continue;
+
             sked__Job_Allocation__c oldData = oldMap.get(allocation.Id);
             if (allocation.sked_Geoservice_Travel_Time_To__c != oldData.sked_Geoservice_Travel_Time_To__c 
                 || allocation.sked_Geoservice_Travel_Time_Back__c != oldData.sked_Geoservice_Travel_Time_Back__c

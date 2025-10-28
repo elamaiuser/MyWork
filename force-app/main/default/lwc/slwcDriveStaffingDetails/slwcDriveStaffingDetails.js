@@ -1316,6 +1316,10 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     }
 
                     const additionalRoles = jobAllocation.additionalRoles?.split(";") || [];
+                    const dualRoleJobTag = job.dualRole && (job.jobTags || []).find(jobTag => jobTag.tag.name === job.dualRole);
+                    if(!!dualRoleJobTag) {
+                        remove(additionalRoles, item => item === job.dualRole);
+                    }
                     additionalRoles.forEach(additionalRole => {
                         const havingAdditionalRole = resourceTagNames.find(tagName => tagName === additionalRole);
                         if (!havingAdditionalRole) {
