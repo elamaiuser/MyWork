@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">A change in procedure requires consideration to an updated Anticipated Registered Donors value that impacts resource and appointment slot allocation. Please update value as applicable.</value>
+        <value xsi:type="xsd:string">A change in procedure projection requires consideration to update the Anticipated Registered Donors value that impacts resources and appointment slot allocation. Please update ARD value as applicable.</value>
     </values>
 </CustomMetadata>

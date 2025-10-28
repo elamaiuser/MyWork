@@ -7,6 +7,12 @@
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>Anticipated_Registered_Donors__c</columns>
     <columns>DriveStatus__c</columns>
+    <columns>Calendar_Build_Generated_For__c</columns>
+    <columns>Calendar_Build_Parent_Opportunity__c</columns>
+    <columns>Calendar_Build_Status__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>Do_Not_Roll__c</columns>
+    <columns>Rollover_Consideration__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Is_Template__c</field>
@@ -14,19 +20,19 @@
         <value>0</value>
     </filters>
     <filters>
-        <field>DriveStatus__c</field>
-        <operation>equals</operation>
-        <value>Confirmed</value>
-    </filters>
-    <filters>
         <field>Drive_Date__c</field>
-        <operation>lessThan</operation>
-        <value>TODAY</value>
+        <operation>greaterThan</operation>
+        <value>12/31/2024</value>
     </filters>
     <filters>
-        <field>OPPORTUNITY.RECORDTYPE</field>
+        <field>Type_of_Drive__c</field>
         <operation>equals</operation>
-        <value>Opportunity.Mobile_Opp</value>
+        <value>Mobile</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Closed</value>
     </filters>
     <label>All Opportunities_Completed</label>
 </ListView>

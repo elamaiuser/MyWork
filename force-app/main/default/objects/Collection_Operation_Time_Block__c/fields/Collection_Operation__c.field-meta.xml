@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Collection_Operation__c</fullName>
-    <externalId>false</externalId>
     <label>Collection Operation</label>
     <referenceTo>Biomed_Collection_Op_Center__c</referenceTo>
     <relationshipLabel>Collection Operation Time Blocks</relationshipLabel>

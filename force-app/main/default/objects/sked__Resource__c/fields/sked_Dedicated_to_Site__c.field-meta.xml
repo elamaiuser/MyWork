@@ -3,7 +3,6 @@
     <fullName>sked_Dedicated_to_Site__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description>Changed field label as part of HRP-4075</description>
-    <externalId>false</externalId>
     <label>Dedicated to Site (machines only)</label>
     <referenceTo>sked__Location__c</referenceTo>
     <relationshipLabel>Resources</relationshipLabel>

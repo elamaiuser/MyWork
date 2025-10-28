@@ -19,7 +19,7 @@ global class skedUpdateTTILookupFieldsOnSiteCOBatch implements Database.Batchabl
                          'sked_To__Latitude__s, sked_To__Longitude__s, '+
                          'sked_From__c, sked_To__c, sked_Key__c '+
                          'FROM sked_Travel_Time_Index_Item__c '+
-                         'WHERE LastModifiedDate >= YESTERDAY';
+                         'WHERE CreatedDate >= YESTERDAY';
         }
     }
 

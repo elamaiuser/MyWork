@@ -153,6 +153,7 @@
         <nameSegment>BSF_CustomNotification</nameSegment>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>DM_select_approval_status_No</name>
         <label>DM select approval status No</label>

@@ -2,6 +2,7 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Copy_of_All</fullName>
     <columns>NAME</columns>
+    <columns>Sender_Email__c</columns>
     <columns>Notification_Type__c</columns>
     <columns>Status__c</columns>
     <columns>Subject__c</columns>
@@ -10,9 +11,14 @@
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATED_DATE</field>
+        <field>Notification_Type__c</field>
         <operation>equals</operation>
-        <value>TODAY</value>
+        <value>Email</value>
+    </filters>
+    <filters>
+        <field>Subject__c</field>
+        <operation>contains</operation>
+        <value>. Please review your schedule</value>
     </filters>
     <label>Copy of All</label>
 </ListView>

@@ -38,10 +38,6 @@
                 <behavior>Edit</behavior>
                 <field>sked__Job_Allocation__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Drive_Date__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

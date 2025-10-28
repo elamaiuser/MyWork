@@ -8,6 +8,7 @@
  *********************************************************************************************************************************************************************
 **/
 public with sharing class OrderTriggerHandler extends TriggerHandler {
+    public static boolean bypassDeleteValidation = FALSE;
     public override void beforeUpdate(){
         /*
         * HRP-12664 changes starts here
@@ -90,10 +91,11 @@ public with sharing class OrderTriggerHandler extends TriggerHandler {
     public override void beforeDelete(){
         /*
         * HRP-11307 changes starts here
-        */
-        if(super.getTriggerMethodsToBypass().indexOf('restrictOrderDeletion') == -1) {
-            BSF_Utilities.restrictNonAdminUsersForSobjectDeletion('Order',(List<Order>)Trigger.old);
-        }
+        */ 
+            if(super.getTriggerMethodsToBypass().indexOf('restrictOrderDeletion') == -1) {
+                BSF_Utilities.restrictNonAdminUsersForSobjectDeletion('Order',(List<Order>)Trigger.old);
+            }
+        
         /*
         * HRP-11307 changes ends here
         */

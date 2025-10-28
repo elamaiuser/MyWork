@@ -212,7 +212,7 @@ public with sharing class AccountTeamMemberService {
          
         
     }*/
-    /* commented part of HRP-13340
+/* commented part of HRP-13340    
     //Added as part of HRP-1084
     //Insert Default allocation fields and AM,Covering Recruiter fields present on Blood Drive Opportunity on the insert of Account Team Members
     public static void populateDefaultAllocationFiledsOnInsert(List<AccountTeamMember> newAccountTeamMembers){
@@ -341,7 +341,7 @@ public with sharing class AccountTeamMemberService {
          }
     }
     
-    
+ 
     
     //Added as part of HRP-1084
     //Update Default allocation fields and AM,Covering Recruiter fields present on Blood Drive Opportunity on the update of Account Team Members
@@ -514,11 +514,11 @@ public with sharing class AccountTeamMemberService {
           }--
       
       }
-   commented part of HRP-13340 */
+commented part of HRP-13340 */   
      //Added as part of HRP-1084
     //HRP-5487 :CR: Adding Account Team to Blood Drive Team  
     //Delete related Opportunity Split records when an AccountTeamMember record gets deleted
-    /* commented part of HRP-13340
+/* commented part of HRP-13340
     public static void deleteOpportunity_Splits_Teams_OnAccountTeamMemberDelete(List<AccountTeamMember> deletedTeamMembers, Map<ID, AccountTeamMember> deletedTeamMembersMap){
        Map<Id,List<OpportunitySplit>> acctIdOpptySplitMap = new Map<Id,List<OpportunitySplit>>();
         Map<Id,List<OpportunityTeamMember>> acctIdOpptyTeamMemberMap = new Map<Id,List<OpportunityTeamMember>>();
@@ -622,7 +622,7 @@ public with sharing class AccountTeamMemberService {
         if(!BSF_Constants.isTeamMemberCreatedFromBackend)
         AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new List<id>(acctTeamMemberMap.Keyset()),null,new set<id>(),new map<id,list<accountTeamMember>>(),new map<id,list<accountTeamMember>> ());
     }
-    commented part of HRP-13340 */
+commented part of HRP-13340 */   
     //Added for HRP-5076: Acceptance Criteria #5
     // User will not get an option to provide access to Account , Case, Opportunity after click on Add Team Member
      public static void uncheckCoveringRecFlagForBackEndInsert(List<AccountTeamMember> newAccountTeamMembers,map<id,AccountTeamMember> oldMap){
@@ -644,9 +644,9 @@ public with sharing class AccountTeamMemberService {
         }
         //HRP-11424 Start prev this call was in dateCheckbeforeInsertUpdate method
         Map<id,list<accountTeamMember>> accIdFutureAccTeamMap = new Map<id,list<accountTeamMember>>();
-        if(bsf_constants.isdateCheckbeforeInsertUpdate && !BSF_Constants.isTeamMemberCreatedFromBackend)//HRP-13340
+if(bsf_constants.isdateCheckbeforeInsertUpdate && !BSF_Constants.isTeamMemberCreatedFromBackend)//HRP-13340
         {
-             accIdUserDate=accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,bsf_constants.BYPASS_TEAMDML,new set<id>(),accIdFutureAccTeamMap,new map<id,list<accountTeamMember>> ());//HRP-10569 new parameters
+        accIdUserDate=accountPortfolioassignmentservice.accTeamDateSyncOnAccPortUpdates(accIdList,bsf_constants.BYPASS_TEAMDML,new set<id>(),accIdFutureAccTeamMap,new map<id,list<accountTeamMember>> ());//HRP-10569 new parameters
         }
        
 		//HRP-11424 End     
@@ -866,7 +866,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
             system.debug(atmRecord.AccountId +'atmid '+ atmRecord.Id);
             if(mapOfOldAcctTeamMembers==null ||(mapOfOldAcctTeamMembers!=null && (atmRecord.Start_Date__c!=mapOfOldAcctTeamMembers.get(atmRecord.Id).Start_Date__c || 
               atmRecord.End_Date__c!=mapOfOldAcctTeamMembers.get(atmRecord.Id).End_Date__c))){
-              setofAccountIds.add(atmRecord.AccountId); 
+              setofAccountIds.add(atmRecord.AccountId);              
               //HRP-13340
               if(!accIdMinMaxDates.containsKey(atmRecord.AccountId))
               {
@@ -888,7 +888,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
                 //HRP-13340         
            }
         }
-        if(setofAccountIds.isEmpty()){
+         if(setofAccountIds.isEmpty()){
              List<Portfolio_Accounts_Processing__c> pt = [Select Id, Portfolio_progress_for_Accounts__c, Records_Processed__c, Portfolio_Assignment_Updated__c From Portfolio_Accounts_Processing__c LIMIT 1];
             if (pt.size() > 0 && pt[0].Portfolio_Assignment_Updated__c) 
             {
@@ -901,8 +901,8 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
          //List<BSF_Error_Log__c> logList = new List<BSF_Error_Log__c>();
          for(ID acctId:setofAccountIds){
              UpdateOpptyTeamEvent__e eve = new UpdateOpptyTeamEvent__e();
-             eve.AcctTeamMemberId__c = acctId;
-             eve.Start_Date__c = accIdMinMaxDates.get(acctId)[0];//HRP-13340
+             eve.AcctTeamMemberId__c = acctId;				  
+eve.Start_Date__c = accIdMinMaxDates.get(acctId)[0];//HRP-13340
              eve.End_Date__c   = accIdMinMaxDates.get(acctId)[1];//HRP-13340			  
              publishEvents.add(eve);
              //BSF_Error_Log__c log = BSF_Utilities.getErrorLog('Populate Account Team','AccountTeamMemberService', 'addAcctTeamMembersToBloodDriveOpptyMembers', 'Debug Log','no Error-Platform Event Start log', 'AccountID:'+string.valueof(acctId) );
@@ -993,7 +993,7 @@ teamMember.addError( 'Covering Recruiters need to have a Case Access of Read/Wri
                     
                     if(!oppWithOldOwnerIdMap.keyset().contains(opRecord.id))
                     {
-                        oppWithOldOwnerIdMap.put(opRecord.id,opRecord.OwnerId);
+                        oppWithOldOwnerIdMap.put(opRecord.id,opRecord.OwnerId);		
                     }
                         		
                     
@@ -1219,11 +1219,11 @@ InsertBsfErrorLog.insertBsfErrors(logList);
                         {
                             if(opTeamMember.TeamMemberRole == BSF_Constants.OPPORTUNITY_OWNER || opTeamMember.TeamMemberRole == BSF_Constants.ACCOUNT_MANAGER)
                             {
-                                listOfOpptyTeamMembersTodelete.add(opTeamMember);
+                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
                             }
                             else if(opTeamMember.is_AccountTeammember__c)
                             {
-                                listOfOpptyTeamMembersTodelete.add(opTeamMember);
+                            listOfOpptyTeamMembersTodelete.add(opTeamMember);
                             }
                         }
                     }
@@ -1474,8 +1474,6 @@ insert optyTeamMemberListToInsert;
         map<String,AccountTeamMember> accIdAccTeam4SplitMap = new map<String,AccountTeamMember>();
         set<id> accIdSet = new set<id>();
         set<id> userIdSet = new set<id>();
-        Date startDate;
-        Date endDate;
         for(AccountTeamMember atm:atmList)
         {
             accIdSet.add(atm.accountId);
@@ -1493,19 +1491,6 @@ insert optyTeamMemberListToInsert;
             
             	userIdSet.add(atm.UserId);
             }
-            
-            Date atmStartDate = oldMap == null || atm.Start_Date__c <= oldMap.get(atm.id).Start_Date__c? atm.Start_Date__c:oldMap.get(atm.id).Start_Date__c;
-            Date atmEndDate =  oldMap == null || atm.End_Date__c >= oldMap.get(atm.id).End_Date__c? atm.End_Date__c:oldMap.get(atm.id).End_Date__c;
-            
-            if(startDate == null || (startDate != null && atmStartDate < startDate))
-            {
-                startDate = atmStartDate;
-            }
-            
-            if(endDate == null || (endDate != null && atmEndDate > endDate))
-            {
-                endDate = atmEndDate;
-            }
                 
         }
         
@@ -1522,7 +1507,7 @@ insert optyTeamMemberListToInsert;
         }
         
         
-        list<opportunity> oppList =[Select id,Drive_Date__c,Account_Manager__c,accountId,ownerId from opportunity where AccountId in:accIdSet AND Is_Template__c=false AND Drive_date__c < Today AND Drive_Date__c >= :startDate  AND Drive_Date__c <= :endDate];//HRP-13174
+        list<opportunity> oppList =[Select id,Drive_Date__c,Account_Manager__c,accountId,ownerId from opportunity where AccountId in:accIdSet and Is_Template__c=false];
         map<string,opportunityTeamMember> opptyTeamMap = new map<string,opportunityTeamMember>();
         list<opportunityTeamMember> opptyTeamMemberList = [Select id,UserId,OpportunityID,TeamMemberRole from opportunityTeamMember where opportunity.AccountId in:accIdSet and is_AccountTeammember__c=true];
         for(opportunityTeamMember otm :opptyTeamMemberList)

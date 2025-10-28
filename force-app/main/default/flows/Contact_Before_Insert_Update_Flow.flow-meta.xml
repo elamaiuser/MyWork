@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Clear_Do_Not_Contact_Date_and_Reason0</name>
         <label>Clear Do Not Contact Date and Reason</label>

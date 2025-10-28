@@ -1,4 +1,4 @@
-global class skedJobAllocationPostProcessBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful {
+global class skedJobAllocationPostProcessBatch implements Database.Batchable<sObject>, Database.AllowsCallouts, Database.Stateful, Schedulable {
     
     public static final string TAG_DRIVER = 'Driver';
     public static final string TAG_DRIVER_DOT = 'Driver - DOT';
@@ -6,6 +6,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
     
     public batchSetting setting;
     public Set<Id> jobAllocationIds;
+    public Integer batchSize;
+    private Integer retryCount;
     
     protected Set<Id> newExceptionIds;
 
@@ -13,6 +15,39 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         this.setting = setting;
         this.jobAllocationIds = jobAllocationIds;
         this.newExceptionIds = new Set<Id>();
+    }
+
+    global skedJobAllocationPostProcessBatch(batchSetting setting, Set<Id> jobAllocationIds, Integer batchSize, Integer retryCount) {
+        this(setting, jobAllocationIds);
+        this.batchSize = batchSize;
+        this.retryCount = retryCount;
+    }
+
+    public static void schedule(batchSetting setting, Set<Id> jobAllocationIds, Integer batchSize, Integer retryCount) {
+        skedJobAllocationPostProcessBatch batchInstance = new skedJobAllocationPostProcessBatch(setting, jobAllocationIds, batchSize, retryCount);
+        if(!skedTriggerUtils.isFlexQueueLimitReached()) {
+            Database.executeBatch(batchInstance, batchSize);
+        } else {
+            retryCount++;
+            if(retryCount > skedSetting.instance.jaPostProcessBatchConfig.maxRetries) {
+                BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
+                    'skedJobAllocationPostProcessBatch',
+                    'execute',
+                    'Job Allocation Post Process',
+                    '',
+                    'Failed processing job allocation records'
+                );
+                errorLog.Error_Description_Long__c = (String.join(new List<Id>(jobAllocationIds), ',')).subString(0, 2500);
+                insert errorLog;
+            }
+            else {
+                skedUtils.scheduleUniqueJobInSeconds('skedJobAllocationPostProcessBatch', batchInstance, skedSetting.instance.jaPostProcessBatchConfig.rescheduleIntervalSeconds, false);
+            }
+        }
+    }
+
+    global void execute(SchedulableContext SC) {
+        schedule(setting, jobAllocationIds, batchSize, retryCount + 1);
     }
 
     global List<sObject> start(Database.BatchableContext BC) {
@@ -68,6 +103,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             exceptionLog.addAll(captureTravelTimeExceptionLog(master));
             exceptionLog.addAll(captureTurnaroundTimeExceptionLog(master));
             exceptionLog.addAll(captureRequiredTagExceptionLog(master));
+            exceptionLog.addAll(captureAdditionalRolesExceptionLog(master));
             exceptionLog.addAll(capture14hrsMoreExceptionLog(master));
             exceptionLog.addAll(captureBlacklistExceptionLog(master));
             exceptionLog.addAll(captureDriveShiftExceptionLog(master));
@@ -439,7 +475,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         }
         master.mapJob = new Map<Id, sked__Job__c>([
             SELECT Id, Name, sked__Start__c, sked__Finish__c, sked__GeoLocation__c, sked__Type__c, sked__Duration__c,
-            sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c,
+            sked_Drive__c, sked_Drive__r.sked_Account__c, sked_Drive__r.sked_Drive_Site__c, sked_Drive_Shift__c, sked_Dual_Role__c,
             sked_Start_Date__c, sked_Finish_Date__c, sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Collection_Operation__c,
             sked_Drive__r.sked_Linked_Drives__c, sked_Asset_Type__c,sked_Drive__r.Name,//HRP-12840
             (SELECT Id, sked__Tag__c, sked__Tag__r.Name
@@ -508,6 +544,46 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 }
             }
         }
+        return exceptionLog;
+    }
+    
+    private static List<skedHC__Exception__c> captureAdditionalRolesExceptionLog(skedExceptionMasterModel master) {
+        List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+        
+        for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
+            if (skedAllocation.sked_Additional_Roles__c != NULL && !string.isBlank(skedAllocation.sked_Additional_Roles__c)) {
+                List<string> additionalRoles = skedAllocation.sked_Additional_Roles__c.split(';');
+
+                sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
+                if(job.sked_Dual_Role__c != null && !String.isEmpty(job.sked_Dual_Role__c)) {
+                    for(sked__Job_Tag__c dualRoleTag : job.sked__JobTags__r) {
+                        if(job.sked_Dual_Role__c == dualRoleTag.sked__Tag__r.Name && additionalRoles.contains(job.sked_Dual_Role__c)) {
+                            // Avoid generating duplicate exceptions
+                            additionalRoles.remove(additionalRoles.indexOf(job.sked_Dual_Role__c));
+                            break;
+                        }
+                    }
+                }
+                
+                sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
+                
+                for (string additionalRole : additionalRoles) {
+                    boolean isValid = FALSE;
+                    for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
+                        if (resourceTag.sked__Tag__r.Name == additionalRole) {
+                            isValid = TRUE;
+                            break;
+                        }
+                    }
+                    if (!isValid) {
+                        string exceptionText = 'Missing required tag ' + additionalRole;
+                        skedHC__Exception__c skedException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionText);
+                        exceptionLog.add(skedException);
+                    }
+                }
+            }
+        }
+        
         return exceptionLog;
     }
     
@@ -882,6 +958,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
             
             Map<Id, skedModels.resource> mapResource = new Map<Id, skedModels.resource>();
             for (sked__Resource__c skedResource : master.mapResource.values()) {
+                if(skedResource.sked__Resource_Type__c.equalsIgnoreCase(skedConstants.RESOURCE_TYPE_ASSET)) continue;
+
                 skedModels.resource resource = (skedModels.resource)autoMapper.mapTo(skedResource, skedModels.resource.class);
                 mapResource.put(resource.Id, resource);
             }
@@ -894,6 +972,8 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
 
             for (sked__Job_Allocation__c skedJobAllocation : master.jobAllocations) {
                 skedModels.resource resource = mapResource.get(skedJobAllocation.sked__Resource__c);
+                if(resource.resourceType.equalsIgnoreCase(skedConstants.RESOURCE_TYPE_ASSET)) continue; //This exception should  only be generated for staff resources
+
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
                 
                 boolean conflictNonWorkingTime = false;

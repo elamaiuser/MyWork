@@ -786,16 +786,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>CFY_Drives1__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>CY_Drives1__c</field>
-            <table>Account</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Last_Closed_Drive_New__c</field>
             <table>Account</table>
         </columns>

@@ -574,8 +574,8 @@ public class OpportunityTriggerHandler extends TriggerHandler{
 		//HRP-12664
 
         //HRP-7470
-        if(super.getTriggerMethodsToBypass().indexOf('populatePrimaryContactAfterTemplateCreation') == -1) {
-            OpportunityService.populatePrimaryContactAfterTemplateCreation((List<Opportunity>)trigger.new);
+        if(super.getTriggerMethodsToBypass().indexOf('createPrimaryContactRoleAfterTemplateCreation') == -1) {
+            OpportunityService.createPrimaryContactRoleAfterTemplateCreation((List<Opportunity>)trigger.new);
         }
 
 		System.debug('getCpuTime()'+limits.getCpuTime());

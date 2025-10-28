@@ -43,7 +43,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
             onStatusChanged(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
-            onTravelTimeChanged(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
+            captureNonGroupException(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             updateDriveVehicleTypes(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             removeResourceForLinkedActivities(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
             syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Job_Allocation__c>)this.context.oldMap);
@@ -358,8 +358,8 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         delete [SELECT Id FROM sked_Operation_Record_Staff__c WHERE sked_Job_Allocation__c IN :oldMap.keySet()];
         
         boolean processDriveShiftException = TRUE;
-        boolean processTravelTimeException = FALSE;
         boolean processLinkedDriveException = TRUE;
+        boolean processOtherException = FALSE;
 
         if (!System.isBatch()) {
             skedFutureCallEventHandler.publishFutureCallEvent(
@@ -367,11 +367,11 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                 'maintainExceptionLog',
                 oldMap.values(),
                 processDriveShiftException,
-                processTravelTimeException,
-                processLinkedDriveException
+                processLinkedDriveException,
+                processOtherException
             );
         } else {
-            maintainExceptionLog(oldMap.values(), processDriveShiftException, processTravelTimeException, processLinkedDriveException);
+            maintainExceptionLog(oldMap.values(), processDriveShiftException, processLinkedDriveException, processOtherException);
         }
     }
     
@@ -390,8 +390,8 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             service.removeExceptionLogs(mapDeletedRecord.keySet());
             
             boolean processDriveShiftException = TRUE;
-            boolean processTravelTimeException = FALSE;
             boolean processLinkedDriveException = TRUE;
+            boolean processOtherException = FALSE;
 
             if (!System.isBatch()) {
                 skedFutureCallEventHandler.publishFutureCallEvent(
@@ -399,38 +399,43 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                     'maintainExceptionLog',
                     mapDeletedRecord.values(),
                     processDriveShiftException,
-                    processTravelTimeException,
-                    processLinkedDriveException
+                    processLinkedDriveException,
+                    processOtherException
                 );
             } else {
-                maintainExceptionLog(mapDeletedRecord.values(), processDriveShiftException, processTravelTimeException, processLinkedDriveException);
+                maintainExceptionLog(mapDeletedRecord.values(), processDriveShiftException, processLinkedDriveException, processOtherException);
             }
         }
     }
     
-    private void onTravelTimeChanged(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
+    private void captureNonGroupException(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
         List<sked__Job_Allocation__c> recordsToProcess = new List<sked__Job_Allocation__c>();
         for (sked__Job_Allocation__c allocation : newRecords) {
+            if (allocation.sked__Status__c == skedConstants.JOB_ALLOCATION_STATUS_DELETED) continue;
+
             sked__Job_Allocation__c oldData = oldMap.get(allocation.Id);
-            if (allocation.sked_Geoservice_Travel_Time_To__c != oldData.sked_Geoservice_Travel_Time_To__c || allocation.sked_Geoservice_Travel_Time_Back__c != oldData.sked_Geoservice_Travel_Time_Back__c) {
-                recordsToProcess.add(allocation);
-            }
+            if (allocation.sked_Geoservice_Travel_Time_To__c != oldData.sked_Geoservice_Travel_Time_To__c 
+                || allocation.sked_Geoservice_Travel_Time_Back__c != oldData.sked_Geoservice_Travel_Time_Back__c
+                || allocation.sked_Additional_Roles__c != oldData.sked_Additional_Roles__c) {
+                    recordsToProcess.add(allocation);
+                }
         }
         if (!recordsToProcess.isEmpty()) {
             boolean processDriveShiftException = FALSE;
-            boolean processTravelTimeException = TRUE;
-
+            boolean processLinkedDriveException = FALSE;
+            boolean processOtherException = TRUE;
+            
             if (!System.isBatch()) {
                 skedFutureCallEventHandler.publishFutureCallEvent(
                     skedJobAllocationHandler.class.getName(),
                     'maintainExceptionLog',
                     recordsToProcess,
                     processDriveShiftException,
-                    processTravelTimeException,
-                    false
+                    processLinkedDriveException,
+                    processOtherException
                 );
             } else {
-                maintainExceptionLog(recordsToProcess, processDriveShiftException, processTravelTimeException, false);
+                maintainExceptionLog(recordsToProcess, processDriveShiftException, processLinkedDriveException, processOtherException);
             }
         }
     }
@@ -872,9 +877,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     }
     
     /**************************************** EXCEPTION LOG PRIVATE METHOD ********************************************/
-
-    private static void maintainExceptionLog(List<sked__Job_Allocation__c> skedAllocations, 
-            boolean processDriveShiftException, boolean processTravelTimeException, boolean processLinkedDriveExceptions) {
+	private static void maintainExceptionLog(List<sked__Job_Allocation__c> skedAllocations, boolean processDriveShiftException, boolean processLinkedDriveExceptions, boolean processOtherException) {
         skedExceptionMasterModel master = intializeMasterModel(skedAllocations);
         
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
@@ -882,13 +885,14 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         if (processDriveShiftException == TRUE) {
             exceptionLog.addAll(captureDriveShiftExceptionLog(master));
         }
-        
-        if (processTravelTimeException == TRUE) {
-            exceptionLog.addAll(captureTravelTimeExceptionLog(master));
-        }
 
-        if (processLinkedDriveExceptions) {
+        if (processLinkedDriveExceptions == TRUE) {
             exceptionLog.addAll(captureLinkedDriveExceptionLog(master));
+        }
+        
+        if (processOtherException == TRUE) {
+            exceptionLog.addAll(captureTravelTimeExceptionLog(master));
+            exceptionLog.addAll(captureAdditionalRolesExceptionLog(master));
         }
         
         if (!exceptionLog.isEmpty()) {
@@ -906,12 +910,17 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             jobIds.add(skedAllocation.sked__Job__c);
             resourceIds.add(skedAllocation.sked__Resource__c);
         }
+        
+        List<string> exceptionCodes = new List<string>();
+        exceptionCodes.add(skedConstants.EXCEPTION_CODE_MAXIMUM_TRAVEL_TIME_VIOLATION);
+        exceptionCodes.add(skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG);
+        
         master.jobAllocations = [
-            SELECT Id, Name, sked__Status__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive_Shift__c,
+            SELECT Id, Name, sked__Status__c, sked_Additional_Roles__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive_Shift__c,
             sked__Resource__c, sked__Job__c, sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c,
-            (SELECT Id, skedHC__Status__c, sked_Exception_Code__c
+            (SELECT Id, skedHC__Status__c, sked_Exception_Code__c, skedHC__Exception__c
             FROM skedHC__Exception_Log__r
-            WHERE sked_Exception_Code__c = :skedConstants.EXCEPTION_CODE_MAXIMUM_TRAVEL_TIME_VIOLATION
+            WHERE sked_Exception_Code__c IN :exceptionCodes
             AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN)
             FROM sked__Job_Allocation__c
             WHERE Id IN :jobAllocationIds
@@ -942,7 +951,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         master.mapResource = new Map<Id, sked__Resource__c>([
             SELECT Id, sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked__Resource_Type__c,
             sked__GeoLocation__c, sked_Max_Travel_Time__c,
-            (SELECT Id, sked__Tag__c, sked__Expiry_Date__c, sked_Start__c
+            (SELECT Id, sked__Tag__c, sked__Expiry_Date__c, sked_Start__c, sked__Tag__r.Name
             FROM sked__ResourceTags__r),
             (SELECT Id, sked__Account__c, sked__Resource__c
             FROM sked__Account_Resource_Scores__r
@@ -1102,8 +1111,65 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
     }
 
     private static List<skedHC__Exception__c> captureLinkedDriveExceptionLog(skedExceptionMasterModel master) {
-        System.debug('CAPTURING LINKED DRIVE EXCEPTIONS');
         return skedJobAllocationPostProcessBatch.captureLinkedDriveMismatchedAssetExceptionLog(master);
+    }
+    
+    private static List<skedHC__Exception__c> captureAdditionalRolesExceptionLog(skedExceptionMasterModel master) {
+        List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+        
+        for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
+            if (skedAllocation.sked_Additional_Roles__c != NULL && !string.isBlank(skedAllocation.sked_Additional_Roles__c)) {
+                List<string> additionalRoles = skedAllocation.sked_Additional_Roles__c.split(';');
+                
+                sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
+                sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
+                
+                Set<string> excludedExceptionList = new Set<string>();
+                for (sked__Job_Tag__c jobTag : job.sked__JobTags__r) {
+                    excludedExceptionList.add('Missing required tag ' + jobTag.sked__Tag__r.Name);
+                }
+                
+                Map<string, skedHC__Exception__c> mapExistingAdditionalRoleException = new Map<string, skedHC__Exception__c>();
+                if (skedAllocation.skedHC__Exception_Log__r != NULL && !skedAllocation.skedHC__Exception_Log__r.isEmpty()) {
+                    for (skedHC__Exception__c exceptionItem : skedAllocation.skedHC__Exception_Log__r) {
+                        if (exceptionItem.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG && !excludedExceptionList.contains(exceptionItem.skedHC__Exception__c)) {
+                            mapExistingAdditionalRoleException.put(exceptionItem.skedHC__Exception__c, exceptionItem);
+                        }
+                    }
+                }
+                
+                Set<string> activeExceptionList = new Set<string>();
+                for (string additionalRole : additionalRoles) {
+                    boolean isValid = FALSE;
+                    for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
+                        if (resourceTag.sked__Tag__r.Name == additionalRole) {
+                            isValid = TRUE;
+                            break;
+                        }
+                    }
+                    if (!isValid) {
+                        string exceptionText = 'Missing required tag ' + additionalRole;
+                        activeExceptionList.add(exceptionText);
+                        
+                        if (!mapExistingAdditionalRoleException.containsKey(exceptionText)) {
+                            skedHC__Exception__c skedException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionText);
+                            exceptionLog.add(skedException);
+                        }
+                    }
+                }
+                
+                if (!mapExistingAdditionalRoleException.isEmpty()) {
+                    for (skedHC__Exception__c exceptionItem : mapExistingAdditionalRoleException.values()) {
+                        if (!activeExceptionList.contains(exceptionItem.skedHC__Exception__c)) {
+                            exceptionItem.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                            exceptionLog.add(exceptionItem);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return exceptionLog;
     }
     
     private void sendNotifications(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {

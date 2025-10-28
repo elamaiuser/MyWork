@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PlatformEventSubscriberConfig xmlns="http://soap.sforce.com/2006/04/metadata">
-    <batchSize>50</batchSize>
+    <batchSize>200</batchSize>
     <masterLabel>CollectionOpUpdateEventTriggerConfig</masterLabel>
     <numPartitions>1</numPartitions>
     <partitionKey>EventUuid</partitionKey>
     <platformEventConsumer>CollectionOpUpdateEventTrigger</platformEventConsumer>
-    <user>batchuser@redcrossproduction.com</user>
+    <user>batchuser@redcrossproduction.com.prodcopy</user>
 </PlatformEventSubscriberConfig>

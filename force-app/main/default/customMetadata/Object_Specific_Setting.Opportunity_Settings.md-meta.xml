@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>Bypass_Trigger_Methods_1__c</field>
-        <value xsi:type="xsd:string">generateTemplateOppId, TemplateImpactingRegion</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Bypass_Trigger_Methods_2__c</field>

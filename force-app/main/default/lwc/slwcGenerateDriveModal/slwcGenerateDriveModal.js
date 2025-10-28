@@ -1068,11 +1068,11 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   }
     @wire(getWarningMessage)
     wiredMessage({ error, data }) {
-        if (data) {
-            this.ardWarningMessage = data;
-        } else if (error) {
-            this.message = 'Error fetching message';
-            console.error('Error:', JSON.stringify(error));
-        }
+      if (data) {
+          this.ardWarningMessage = data;
+      } else if (error) {
+          this.message = 'Error fetching message';
+          console.error('Error:', JSON.stringify(error));
+      }
     }
 }

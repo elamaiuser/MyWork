@@ -986,7 +986,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             vehicleTypeResource.addAll(vehicleTypeResourceForDOT);
         }
         vehicleTypeResource.addAll(vehicleTypeResourceForRegVechicle); // HRP-10212 end
-
         JobAllocations jobAllocation = new JobAllocations();
         jobAllocation.equipmentAllocations = selectionForEquipments(drive, equipmentTypeJob, equipmentTypeResource, resourceVsResourceTagMap, jobVsJobTagMap);
         jobAllocation.vehicleAllocations = selectionForVehicles(drive, vehicleTypeJob, vehicleTypeResource, resourceVsResourceTagMap, jobVsJobTagMap, map_allVehicleResourceId_presDonorCapacity, resourceModel);

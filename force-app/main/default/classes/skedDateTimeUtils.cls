@@ -228,6 +228,7 @@ public class skedDateTimeUtils {
     }
 
     public static DateTime toTimezone(DateTime input, string toTimezoneSidId) {
+        system.debug('input in toTimeZone '+input+' and toTimezoneSidId '+toTimezoneSidId+' and users timezone '+UserInfo.getTimeZone().getID());
         return switchTimezone(input, UserInfo.getTimeZone().getID(), toTimezoneSidId);
     }
     

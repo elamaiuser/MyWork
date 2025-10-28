@@ -47,24 +47,21 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_BatchUpdateSiteCollectionOperation_SOQL</shortDescription>
-        <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM
-            sked__Location__c WHERE sked_Active__c = true</value>
+        <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM sked__Location__c WHERE sked_Active__c = true</value>
     </labels>
     <labels>
         <fullName>BSF_Mass_Account_Service_Role_Warning_Message</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF Mass Account Service Role Warning Message</shortDescription>
-        <value>An active Blood Program Leader Role is already associated to this account. When you
-            click Proceed, the Blood Program Leader Role will be removed form your selections.</value>
+        <value>An active Blood Program Leader Role is already associated to this account. When you click Proceed, the Blood Program Leader Role will be removed form your selections.</value>
     </labels>
     <labels>
         <fullName>BSF_Mass_Drive_Service_Role_After_Hours_Contact_Warning_Message</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF Mass Drive Service Role After Hours Contact Warning Message</shortDescription>
-        <value>The After Hours Contact must have an after hours phone number selected on their
-            contact record.</value>
+        <value>The After Hours Contact must have an after hours phone number selected on their contact record.</value>
     </labels>
     <labels>
         <fullName>BSF_Mass_Drive_Service_Role_Call_List_Recipient_Warning_Message</fullName>
@@ -99,8 +96,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
-        <value>
-            subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
+        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
     </labels>
     <labels>
         <fullName>Block_ZipCode_Update_On_Site</fullName>
@@ -152,20 +148,11 @@
         <value>100</value>
     </labels>
     <labels>
-        <fullName>ColorCodeJson</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ColorCodeJson</shortDescription>
-        <value>
-            {&quot;Blue&quot;:&quot;#0077d8&quot;,&quot;Amber&quot;:&quot;#efb009&quot;,&quot;Green&quot;:&quot;#369a4c&quot;,&quot;Red&quot;:&quot;#c12f24&quot;}</value>
-    </labels>
-    <labels>
         <fullName>ContactError</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>ContactError</shortDescription>
-        <value>Contact is associated with Active Template, Future Opportunities or Account. Please
-            remove the association before inactivating the contact.</value>
+        <value>Contact is associated with Active Template, Future Opportunities or Account. Please remove the association before inactivating the contact.</value>
     </labels>
     <labels>
         <fullName>ContactRestrictionAllowedProfiles</fullName>
@@ -189,6 +176,13 @@
         <value>DRD Users Can Not Create a Fixed Site Account.</value>
     </labels>
     <labels>
+        <fullName>DRD_System_User_Name</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DRD System User Name</shortDescription>
+        <value>DRD System User</value>
+    </labels>
+    <labels>
         <fullName>DRD_User_Profile_Names</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -207,8 +201,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Default PhoneNumber Validation Message</shortDescription>
-        <value>Invalid {{field_name}} : {{value}} . Please enter a 10 digit {{field_name}} which
-            includes Area Code + 7 digit {{field_name}}.</value>
+        <value>Invalid {{field_name}} : {{value}} . Please enter a 10 digit {{field_name}} which includes Area Code + 7 digit {{field_name}}.</value>
     </labels>
     <labels>
         <fullName>Default_Primary_Region_Name</fullName>
@@ -222,8 +215,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>DriveDispatchedCheckBoxEnableProfile</shortDescription>
-        <value>APS Admin,System Administrator,APS Management,APS Planner,APS Scheduler,APS
-            Scheduler1</value>
+        <value>APS Admin,System Administrator,APS Management,APS Planner,APS Scheduler,APS Scheduler1,Global Admin</value>
     </labels>
     <labels>
         <fullName>DriveGenerationFailureEmailKey</fullName>
@@ -237,8 +229,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Drive Change Restriction Message</shortDescription>
-        <value>Only Global Admin and System Admin can change the Drive Status from Complete to
-            Cancel via selecting Opportunity Stage from Close to Cancel</value>
+        <value>Only Global Admin and System Admin can change the Drive Status from Complete to Cancel via selecting Opportunity Stage from Close to Cancel</value>
     </labels>
     <labels>
         <fullName>Drive_Worksheet_Report_Drive_Status</fullName>
@@ -374,8 +365,14 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>MOEStagingSheetReportURL</shortDescription>
-        <value>
-            https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/dc0404a3-5cb2-4fb2-9573-3fd49c9532d8?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+    </labels>
+    <labels>
+        <fullName>Mobile_Account_Record_Type</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Mobile Account Record Type</shortDescription>
+        <value>Mobile Account</value>
     </labels>
     <labels>
         <fullName>NO_SBPM_ABM</fullName>
@@ -412,8 +409,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>NationalNameSecondReviewNotDoneByInitialReviewer</shortDescription>
-        <value>Error:- You can not submit request you are a initial reviewer and status is Second
-            review pending</value>
+        <value>Error:- You can not submit request you are a initial reviewer and status is Second review pending</value>
     </labels>
     <labels>
         <fullName>NationalNameUpdateExcludeUser</fullName>
@@ -434,9 +430,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>NonCollectionArea</shortDescription>
-        <value>This Drive is currently in a Non-Collection Area. Please take action to change to a
-            site in a valid Collection Operation or Cancel and leverage the Cancelation Reason of
-            Geo Alignment.</value>
+        <value>This Drive is currently in a Non-Collection Area. Please take action to change to a site in a valid Collection Operation or Cancel and leverage the Cancelation Reason of Geo Alignment.</value>
     </labels>
     <labels>
         <fullName>NonCollectionArea_Label</fullName>
@@ -473,8 +467,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>OpportunitySplitService</shortDescription>
-        <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS
-            Scheduler;Recruitment Admin;APS Management</value>
+        <value>System Administrator;DRD Profile;AP&amp;S Management;APS Admin;APS Planner;APS Scheduler;Recruitment Admin;APS Management;DRD Manager;Global Admin</value>
     </labels>
     <labels>
         <fullName>OpportunityStageAllowedProfile</fullName>
@@ -496,12 +489,12 @@
         <protected>false</protected>
         <shortDescription>OpportunityStageErrorMessage</shortDescription>
         <value>Only below stage transition is valid
-            Discovery-&gt; Solicitation/Commited/Cancelled,
-            Solicitation-&gt; Discovery/Commited/Cancelled,
-            Commited-&gt; Closed/Cancelled,
-            Closed -&gt; Cancelled,
-            Cancelled = No Change Allowed in Stage
-            Withdrawn/Excluded-&gt; Cancelled, Closed</value>
+Discovery-&gt; Solicitation/Commited/Cancelled,
+Solicitation-&gt; Discovery/Commited/Cancelled,
+Commited-&gt; Closed/Cancelled,
+Closed -&gt; Cancelled,
+Cancelled = No Change Allowed in Stage
+Withdrawn/Excluded-&gt; Cancelled, Closed</value>
     </labels>
     <labels>
         <fullName>OpportunityTeamSyncTriggerSize</fullName>
@@ -510,6 +503,13 @@
         <protected>false</protected>
         <shortDescription>OpportunityTeam Sync Batch Size Trigger</shortDescription>
         <value>100</value>
+    </labels>
+    <labels>
+        <fullName>Orphan_Job_Allocations_Email</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
+        <value>BSFSupport@redcross.org;</value>
     </labels>
     <labels>
         <fullName>PROMOTION_SENDER_EMAIL</fullName>
@@ -558,8 +558,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Potential Feeder Group Lead Status</shortDescription>
-        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group -
-            Unqualified</value>
+        <value>Potential Feeder Group,Future Outreach,Feeder Group - Qualified,Feeder Group - Unqualified</value>
     </labels>
     <labels>
         <fullName>PremierCurrent</fullName>
@@ -661,14 +660,6 @@
         <value>200</value>
     </labels>
     <labels>
-        <fullName>Recurring_Mobile_Limit</fullName>
-        <categories>BSF Limits</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Recurring Drive Limit</shortDescription>
-        <value>400</value>
-    </labels>
-    <labels>
         <fullName>ResetPortfolioAssignmentTime</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -680,8 +671,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Resource Change Event Field List</shortDescription>
-        <value>
-            sked__Is_Active__c,sked_Employment_Status__c,sked_Union_Affiliation__c,sked_Union_Description__c,sked__Employment_Type__c,sked__Primary_Region__c</value>
+        <value>sked__Is_Active__c,sked_Employment_Status__c,sked_Union_Affiliation__c,sked_Union_Description__c,sked__Employment_Type__c,sked__Primary_Region__c</value>
     </labels>
     <labels>
         <fullName>RestrictOrderForOpportunity</fullName>
@@ -695,8 +685,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Restrict_Operation_Type_Change_Error_Msg</shortDescription>
-        <value>You can&apos;t change operation type as drives have already been generated. Please
-            create a new fixed site with the desired operation type.</value>
+        <value>You can&apos;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
     </labels>
     <labels>
         <fullName>Restrict_Theme_Product_Add_Error_Msg</fullName>
@@ -761,8 +750,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>StagingSheetReportURL</shortDescription>
-        <value>
-            https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/7ed1ce82-1f15-4528-8e48-e05c48fc0b17?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/7ed1ce82-1f15-4528-8e48-e05c48fc0b17?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
     </labels>
     <labels>
         <fullName>Success_Message</fullName>
@@ -786,6 +774,14 @@
         <value>Other</value>
     </labels>
     <labels>
+        <fullName>Task_Subject_Marketing_Exception</fullName>
+        <categories>Task Subject</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Task Subject - Marketing Exception</shortDescription>
+        <value>Request for Marketing Exception</value>
+    </labels>
+    <labels>
         <fullName>Taxonomy_Custom_Notification_Email</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -800,13 +796,6 @@
         <value>CO1004,CO7001,CO1002,CO1045</value>
     </labels>
     <labels>
-        <fullName>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ToHandleConstructorOfUpdateDrivesVehicleAllocationSchedulable</shortDescription>
-        <value>2</value>
-    </labels>
-    <labels>
         <fullName>TravelTimeEditableProfiles</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -814,12 +803,25 @@
         <value>APS Admin,System Administrator,Global Admin</value>
     </labels>
     <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
+        <value>17</value>
+    </labels>
+    <labels>
+        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
+        <value>10</value>
+    </labels>
+    <labels>
         <fullName>WeeklyStaffingRoleReportURL</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>WeeklyStaffingRoleReportURL</shortDescription>
-        <value>
-            https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/1eacf224-056a-46ad-baf4-af03654cf447</value>
+        <value>https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/rdlreports/1eacf224-056a-46ad-baf4-af03654cf447</value>
     </labels>
     <labels>
         <fullName>callListRecipient</fullName>
@@ -834,19 +836,13 @@
         <protected>false</protected>
         <shortDescription>generatePendingDCRErrorMessages</shortDescription>
         <value>{
-            &quot;fromDriveDateError&quot; : &quot;Start date of drive should be less than end date
-            of drive&quot;,
-            &quot;startTimeFromError&quot; : &quot;Start time of drive should be less than end time
-            of drive&quot;,
-            &quot;endTimeFromError&quot; : &quot;End time of drive should be greater than start time
-            of drive&quot;,
-            &quot;toDriveDateError&quot; : &quot;End time of drive should be greater than start time
-            of drive&quot;,
-            &quot;startTimeToError&quot; : &quot;Start time of drive should be less than end time of
-            drive&quot;,
-            &quot;endTimeToError&quot; : &quot;End time of drive should be greater than start time
-            of drive&quot;
-            }</value>
+&quot;fromDriveDateError&quot; : &quot;Start date of drive should be less than end date of drive&quot;,
+&quot;startTimeFromError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeFromError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;toDriveDateError&quot; : &quot;End time of drive should be greater than start time of drive&quot;,
+&quot;startTimeToError&quot; : &quot;Start time of drive should be less than end time of drive&quot;,
+&quot;endTimeToError&quot; : &quot;End time of drive should be greater than start time of drive&quot;
+}</value>
     </labels>
     <labels>
         <fullName>storeProfileToCreateBsfPortfolioTask</fullName>
@@ -854,28 +850,6 @@
         <protected>false</protected>
         <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
         <value>System Administrator</value>
-    </labels>
-    <labels>
-        <fullName>Mobile_Account_Record_Type</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Mobile Account Record Type</shortDescription>
-        <value>Mobile Account</value>
-    </labels>
-    <labels>
-        <fullName>Task_Subject_Marketing_Exception</fullName>
-        <categories>Task Subject</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Task Subject - Marketing Exception</shortDescription>
-        <value>Request for Marketing Exception</value>
-    </labels>
-    <labels>
-        <fullName>Orphan_Job_Allocations_Email</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Orphan_Job_Allocations_Email</shortDescription>
-        <value>BSFSupport@redcross.org;</value>
     </labels>
     <labels>
         <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
@@ -894,18 +868,4 @@
         <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
         <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
-    <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT DESCRIPTION LENGTH</shortDescription>
-        <value>17</value>
-    </labels>
-    <labels>
-        <fullName>WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>WEEKLY STAFF SCHEDULE REPORT NAME LENGTH</shortDescription>
-        <value>10</value>
-    </labels>   
 </CustomLabels>

@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Value__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>sked_Weighting__c</field>
@@ -16,7 +16,7 @@
 		&quot;unassigned&quot;: &quot;9000hard&quot;,
 		&quot;requirements&quot;: &quot;2700hard&quot;,
 		&quot;concurrent&quot;: &quot;1000000hard&quot;,
-		&quot;locked&quot;: &quot;1000000hard&quot;,
+		&quot;locked&quot;: &quot;1000000000hard&quot;,
 		&quot;blacklist&quot;: &quot;1000000hard&quot;,
 		&quot;availability&quot;: &quot;10000hard&quot;,
 		&quot;skills&quot;: &quot;10000hard&quot;,

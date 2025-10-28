@@ -63,10 +63,6 @@
         <value xsi:type="xsd:string">{{sked_Drive__r.Name}} for {{sked_Drive__r.sked_Drive_Date_Text__c}} has changed. Please review your schedule</value>
     </values>
     <values>
-        <field>sked_Target_Field_Prev_Value__c</field>
-        <value xsi:nil="true"/>
-    </values>
-    <values>
         <field>sked_Target_Field_Value__c</field>
         <value xsi:nil="true"/>
     </values>

@@ -4,9 +4,7 @@
 		<members>Fixed_Site_Opp_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
-	<types>
-		<members>Opportunity-DRD Fixed Site Opp Layout</members>
-		<members>Opportunity-Fixed Site Opp APS Layout</members>
+	<types>		
 		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
 		<name>Layout</name>
 	</types>

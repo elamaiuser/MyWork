@@ -102,14 +102,6 @@
                 <behavior>Edit</behavior>
                 <field>OwnerId</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Drive_Type__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Supervisor__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

@@ -1205,7 +1205,7 @@ public with sharing class GenerateMobileDrive {
                 List<Collection_Operation_Time_Block__c> dayMatchingBlocks = new List<Collection_Operation_Time_Block__c>();
 
                 for(Collection_Operation_Time_Block__c tb : timeBlocks) {
-                    if(tb.Time_Block__r.Days_of_Week__c.contains(driveDayOfWeek)) {
+                    if(tb.Time_Block__r.Days_of_Week__c !=null && tb.Time_Block__r.Days_of_Week__c.contains(driveDayOfWeek)) {
                         dayMatchingBlocks.add(tb); //HRP-14369 - Added for day only matching
                         // Check for exact match
                         if(driveShift.startTime >= tb.Time_Block__r.Start_Time__c 

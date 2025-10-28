@@ -431,7 +431,7 @@ class FixedSiteGenerator extends BaseGenerator {
               this.fetch.retrieveRoleTimeData(this.drive),
               this.fetch.retrieveDefaultTags(this.drive),
               this.fetch.retrieveFixedSiteProcedureProjections(this.drive),
-              this.fetch.retrieveActiveDriveChangeRequest(this.drive)
+              this.fetch.retrieveActiveDriveChangeRequest(this.drive),
             ]);
           })
           .then(([driveSite, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, fixedSiteProcedureProjections, activeDriveChangeRequest]) => {
@@ -500,7 +500,8 @@ class FixedSiteGenerator extends BaseGenerator {
 
       if (!allAssignedEquipmentsValid || currentAssignedEquipments.length < totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
+        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
+        
         //try to assign new equipments 
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed, slotsToAllocate);
         let newEquipmentJobsMap = {};
@@ -517,7 +518,7 @@ class FixedSiteGenerator extends BaseGenerator {
         }
       } else if (assignedEquipmentsValid.length > totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
+        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
         
         //remove redundant equipments
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed);
@@ -758,7 +759,6 @@ class FixedSiteGenerator extends BaseGenerator {
       this.helper.splitProcedureCapacity(this.drive, tempDriveShifts, driveProcedureCapacityMap, procedureType, this.masterData.timezoneSidId);
     })
 
-    driveProcedureCapacity = Math.round(driveProcedureCapacity);
     driveProcedureCapacity = Math.round(driveProcedureCapacity);
     this.drive.procedureCapacity = driveProcedureCapacity;
 
@@ -1285,7 +1285,7 @@ class FixedSiteGenerator extends BaseGenerator {
       let volunteerJobQuantityRetainNeeded = false;
       if (volunteerRole === 'Donor Ambassador') {
         //HRP-10534: Retain Fixed Site Volunteer Value if Zero
-        //HRP-13119: Retain Fixed Site Volunteer Value if locked
+        //HRP-13119: Retain Fixed Site Volunteer if they are locked
         if (originalJob && (originalJob.quantity === 0 || originalJob.isLocked)) {
           job.redcrossVolunteerQuantity = originalJob.redcrossVolunteerQuantity;
           job.sponsorVolunteerQuantity = originalJob.sponsorVolunteerQuantity;

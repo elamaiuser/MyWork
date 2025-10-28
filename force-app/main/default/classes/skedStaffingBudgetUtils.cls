@@ -31,7 +31,6 @@ public class skedStaffingBudgetUtils implements Callable {
         string fccCodesMobile = skedSetting.instance.Admin.fccCodeMobile;
 
         if (!datesByResourceId.keySet().isEmpty()) {
-            system.debug('here 1');
             skedQueryBuilder queryBuilder = new skedQueryBuilder();
             queryBuilder.addFields(new List<String>{
                 'Id', 'sked_Staffing_Budget__c',
@@ -107,7 +106,6 @@ public class skedStaffingBudgetUtils implements Callable {
                 }
                 
                 string relatedSobjectQueryStr = queryBuilder.toString();
-                system.debug('relatedSobjectQueryStr '+relatedSobjectQueryStr);
                 Map<Id, skedStaffingBudgetWrapper> wrapperById = new Map<Id, skedStaffingBudgetWrapper>();
                 for (sObject sbRelatedObj : Database.query(relatedSobjectQueryStr)) {
                     String sobjectType = sbRelatedObj.getSObjectType().getDescribe().getName();

@@ -77,10 +77,6 @@
                 <behavior>Readonly</behavior>
                 <field>Feeder_Account_Type__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Service_Level_Agreement__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -121,10 +117,6 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>UFID_AN__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Relationship_Manager__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -322,7 +314,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CFY_Drives1__c</field>
+                <field>CFY_Drives__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -333,7 +325,7 @@
                 <field>Days_Until_Next_Closed_Drive__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Last_Closed_Drive_New__c</field>
             </layoutItems>
             <layoutItems>

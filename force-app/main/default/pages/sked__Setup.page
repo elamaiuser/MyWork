@@ -1,0 +1,88 @@
+<apex:page title="Skedulo Setup" controller="sked.SetupController">
+  <apex:sectionHeader title="Skedulo Setup"></apex:sectionHeader>
+
+  <apex:form >
+    <apex:pageMessage summary="The Skedulo_API_Token setting is deprecated, please use the Skedulo API Token tab to update API Token."
+      severity="Info"
+      strength="2"
+    />
+    <apex:pageMessages />
+    <!-- Page: -->
+    <apex:tabPanel switchType="client" selectedTab="tabOne" id="theTabPanel">
+      <apex:tab label="Skedulo API Token" name="tabOne" id="tabOne">
+        <apex:pageBlock id="tokenBlock">
+          <apex:pageBlockSection columns="1">
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel >Token</apex:outputLabel>
+              <apex:inputTextarea value="{!token}"
+                style="width: 800px; height: 100px"
+              />
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel >Token Jti</apex:outputLabel>
+              <apex:inputTextarea value="{!tokenJti}"
+                style="width: 800px; height: 50px"
+              />
+            </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+
+          <apex:pageBlockButtons id="tokenButtons"
+            location="both"
+            rendered="true"
+          >
+            <apex:commandButton id="saveToken"
+              value="Save Token"
+              action="{!saveToken}"
+            />
+            <apex:commandButton id="testToken"
+              value="Test Token"
+              action="{!testToken}"
+            />
+          </apex:pageBlockButtons>
+        </apex:pageBlock>
+      </apex:tab>
+      <apex:tab label="Admin Settings" name="tabTwo" id="tabTwo">
+        <apex:pageBlock id="settingBlock">
+          <apex:pageBlockSection columns="1">
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel >Setting</apex:outputLabel>
+              <apex:selectList value="{!devName}" size="1">
+                <apex:selectOptions value="{!settingList}" />
+                <apex:actionSupport event="onchange"
+                  action="{!loadSetting}"
+                  reRender="settingBlock"
+                >
+                </apex:actionSupport>
+              </apex:selectList>
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel >Value</apex:outputLabel>
+              <apex:inputTextarea value="{!value}"
+                style="width: 400px; height: 50px"
+              />
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel >Description</apex:outputLabel>
+              <apex:inputTextarea value="{!description}"
+                style="width: 400px; height: 50px"
+              />
+            </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+
+          <apex:pageBlockButtons id="settingButtons"
+            location="both"
+            rendered="true"
+          >
+            <apex:commandButton id="saveSetting"
+              value="Save"
+              action="{!saveAdminSetting}"
+            />
+          </apex:pageBlockButtons>
+        </apex:pageBlock>
+      </apex:tab>
+    </apex:tabPanel>
+  </apex:form>
+</apex:page>

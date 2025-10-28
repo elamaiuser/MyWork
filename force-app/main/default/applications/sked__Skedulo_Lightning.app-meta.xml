@@ -10,6 +10,7 @@
     </actionOverrides>
     <brand>
         <headerColor>#0070D2</headerColor>
+        <logo>sked__knStjhBI</logo>
         <logoVersion>1</logoVersion>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
@@ -22,7 +23,7 @@
     <navType>Standard</navType>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Location_Record_Page_for_Collection_Management_User1</content>
+        <content>Location_Record_Page_for_Collection_Management_User</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>sked__Location__c</pageOrSobjectType>
         <type>Flexipage</type>
@@ -30,7 +31,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Location_Record_Page_for_Collection_Management_User1</content>
+        <content>Location_Record_Page_for_Collection_Management_User</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>sked__Location__c</pageOrSobjectType>
         <recordType>sked__Location__c.sked_Fixed_Site</recordType>
@@ -39,7 +40,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Location_Record_Page_for_Collection_Management_User1</content>
+        <content>Location_Record_Page_for_Collection_Management_User</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>sked__Location__c</pageOrSobjectType>
         <recordType>sked__Location__c.sked_Mobile_Site</recordType>

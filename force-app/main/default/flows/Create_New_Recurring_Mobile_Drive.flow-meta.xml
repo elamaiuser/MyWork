@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>PlanADriveUtilityClass</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Account</name>
@@ -45,7 +44,6 @@
             <assignToReference>Account_Validation_Error_Message</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Plan_A_Drive_Apex_Action</name>
@@ -96,7 +94,6 @@
             <assignToReference>Error_Msg_Test2</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Validate_Planned_Drive</name>
@@ -147,7 +144,6 @@
             <assignToReference>Error_Msg_Test1</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <assignments>
@@ -2096,8 +2092,8 @@
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
@@ -2160,32 +2156,32 @@
     <dynamicChoiceSets>
         <name>AccountAcceptAutomationSelection</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>DriveOrigination</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Drive_Origination__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowEndTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_End_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowStartTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Flow_Start_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -2303,48 +2299,48 @@
     <dynamicChoiceSets>
         <name>Online_Scheduling_Enabled_Picklist</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OnlineSchedulingEnabled</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublic</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublicPickList</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpportunityStage</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>StageName</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>selectedTemplateDriveTypePicklist</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -2399,16 +2395,16 @@
     <dynamicChoiceSets>
         <name>Type</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>TypeOfDrive</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
         <picklistField>Type_of_Drive__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -2416,22 +2412,22 @@
     <formulas>
         <name>Account_Accept_Automation_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Accepts_Automation2__c})), &#39;--Select--&#39;, Text({!Get_Account.Accepts_Automation2__c}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Accepts_Automation2__c})), &apos;--Select--&apos;, Text({!Get_Account.Accepts_Automation2__c}))</expression>
     </formulas>
     <formulas>
         <name>Account_Type_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Type})), &#39;--Select--&#39;, Text({!Get_Account.Type}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Type})), &apos;--Select--&apos;, Text({!Get_Account.Type}))</expression>
     </formulas>
     <formulas>
         <name>allowedProfilesToEnterPastDriveDate</name>
         <dataType>Boolean</dataType>
-        <expression>CONTAINS({!Get_Profile_Info.Name}, &#39;APS Planner&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Management&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Scheduler&#39;)</expression>
+        <expression>CONTAINS({!Get_Profile_Info.Name}, &apos;APS Planner&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Management&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Scheduler&apos;)</expression>
     </formulas>
     <formulas>
         <name>Industry_Code_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Industry_Code__c})), &#39;--Select--&#39;, Text({!Get_Account.Industry_Code__c}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Industry_Code__c})), &apos;--Select--&apos;, Text({!Get_Account.Industry_Code__c}))</expression>
     </formulas>
     <formulas>
         <name>NotNull</name>
@@ -2473,7 +2469,7 @@ TEXT({!TotalCountofRecurringDrives})+&quot; Opportunity records were&quot;)</exp
     <formulas>
         <name>selectedDriveNameDefault</name>
         <dataType>String</dataType>
-        <expression>BLANKVALUE({!varSelectedDriveName},&#39;&#39;)</expression>
+        <expression>BLANKVALUE({!varSelectedDriveName},&apos;&apos;)</expression>
     </formulas>
     <formulas>
         <name>varCloseDateAuto</name>
@@ -3293,7 +3289,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <validationRule>
-                        <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
+                        <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);&quot;&gt;Drives may not be scheduled for dates prior to today&apos;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
                         <formulaExpression>({!allowedProfilesToEnterPastDriveDate} == true &amp;&amp; {!Drive_Date} &lt; TODAY()) || ({!Drive_Date} &gt;= TODAY() &amp;&amp;
 ({!Site_TBD}==true  || {!Drive_Date} &lt; {!varSiteEndDate}))</formulaExpression>
                     </validationRule>
@@ -3499,7 +3495,7 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Drive Keyword</fieldText>
                     <fieldType>InputField</fieldType>
-                    <helpText>&lt;p&gt;&lt;span style=&quot;color: rgb(23, 43, 77); font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+                    <helpText>&lt;p&gt;&lt;span style=&quot;color: rgb(23, 43, 77); font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>false</isRequired>
                     <validationRule>
@@ -3627,7 +3623,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>DefunctAccount</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. Are you sure you would like to proceed creating a new Drive and updating the Account&#39;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. Are you sure you would like to proceed creating a new Drive and updating the Account&apos;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
@@ -3881,7 +3877,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>AccountLostReason</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in the &quot;Lost&quot; Status with a Lost Reason of &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;&lt;i&gt;{!Get_Account.Lost_Reason__c}&lt;/i&gt;. &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;Are you sure you would like to proceed creating a new Drive and updating the Account&#39;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in the &quot;Lost&quot; Status with a Lost Reason of &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;&lt;i&gt;{!Get_Account.Lost_Reason__c}&lt;/i&gt;. &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;Are you sure you would like to proceed creating a new Drive and updating the Account&apos;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
@@ -4177,7 +4173,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>Confirmation_0</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;The template&#39;s status is &#39;Inactive&#39; and will now be updated to &#39;Active&#39;.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;The template&apos;s status is &apos;Inactive&apos; and will now be updated to &apos;Active&apos;.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>

@@ -3,6 +3,7 @@
     <fullName>sked_REAL_ID_Compliant_indicator__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-14419</description>
+    <externalId>false</externalId>
     <label>REAL ID Compliant indicator</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

@@ -762,7 +762,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, { ignoreLunchBreak: ignoreLunchBreak, useDriveShift: true }));
 
     return driveShiftStaffCapacity;
   }
@@ -1145,7 +1145,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
         this.drive,
         driveShiftMetadata,
         this.mapResourceQuantity,
-        this.masterData
+        this.masterData,
+        { ignoreLunchBreak: false, useDriveShift: false }
       )
 
       const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1180,7 +1181,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
       driveShiftMetadata,
       new Map()
         .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
+      this.masterData,
+      { ignoreLunchBreak: false, useDriveShift: false }
     )
 
     const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1216,6 +1218,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
+          driveSiteId: this.drive.driveSiteId,//HRP-15703
           jobTags: []
         };
         newList.push(newJob);
@@ -1365,7 +1368,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled
       };
 
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);

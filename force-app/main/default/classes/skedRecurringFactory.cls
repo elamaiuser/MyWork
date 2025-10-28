@@ -206,7 +206,7 @@ public class skedRecurringFactory {
             Set<Date> globalHolidays = mapHolidays.get(skedConstants.HOLIDAY_GLOBAL);
             allHolidays.addAll(globalHolidays);
         }
-        
+
         List<string> regionIdsToCheck = new List<String>();
         if (!string.isBlank(configuration.regionId)) {
             regionIdsToCheck.add(configuration.regionId);
@@ -214,7 +214,7 @@ public class skedRecurringFactory {
         if(configuration.regionIds != NULL && !configuration.regionIds.isEmpty()) {
             regionIdsToCheck.addAll(configuration.regionIds);
         }
-        
+
         for(String regionId : regionIdsToCheck) {
             if(mapHolidays.containsKey(regionId)) {
                 Set<Date> globalHolidays = mapHolidays.get(regionId);

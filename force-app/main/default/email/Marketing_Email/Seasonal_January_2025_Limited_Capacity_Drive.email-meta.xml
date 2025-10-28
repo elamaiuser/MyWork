@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to BPLs with a drive with limited capacity due to weather.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_January 2025_Limited Capacity Drive</name>
+    <style>formalLetter</style>
+    <subject>Wildfires and Winter Storms – Your blood drives are crucial</subject>
+    <textOnly>Dear Blood Program Leader,
+
+Our hearts go out to everyone impacted by the devastating wildfires and winter storms.
+
+We will do all we can to continue to meet the needs of patients in impacted areas, and the support of Blood Program Leaders like you is vital to that effort. Where it&#39;s safe to do so, donors across the country are asked to make an appointment to give blood or platelets now to help keep the blood supply on track as communities recover from catastrophic damage.
+
+While other blood drives are being rescheduled, at this time, yours is still scheduled for [date]. It is extremely important that we optimize your blood drive during this time, as every appointment is crucial to ensure we are able to continue to support those needing blood.
+
+Each and every drive is critical to your community’s blood supply. We will be reaching out to you to discuss logistics and address any questions or concerns you may have. As our valued partner, we ask that you work with your organization’s leadership to remind them of the key role they play in supporting our local community.
+
+Here’s what you can do to help
+
+Maximize donations. Meet your blood drive goal and encourage Power Red donations.
+
+Share the need for blood with your network and on social media. Encourage people to donate to ensure enough blood is available to support patients impacted by the severe weather.
+
+If you are at limited capacity, encourage donors to donate at your local Fixed Site location if available.
+
+Book your next drive. Contact your local Red Cross representative to schedule a future drive.
+
+Thank you for your patience as we navigate this situation together. If circumstances change and we do have to cancel your blood drive, we thank you for your ongoing commitment and plan to reschedule soon. Our disaster relief efforts and lifesaving blood products go hand in hand as we work with communities like yours to offer help and hope.
+
+We deeply appreciate your continued partnership in our mission.
+
+Sincerely,
+[Account Representative Name]
+[Contact Information]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

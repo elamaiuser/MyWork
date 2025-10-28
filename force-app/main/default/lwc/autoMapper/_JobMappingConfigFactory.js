@@ -24,6 +24,7 @@ export class JobMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Drive__r.Name', 'driveName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__r.sked_Status__c', 'driveStatus', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__r.sked_UFID__c', 'driveUfid', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Drive__r.sked_Timezone__c', 'timezone', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive_Shift__c', 'driveShiftId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive_Shift__r.Name', 'driveShiftName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Equipment_Subtype__c', 'equipmentSubtype', MAPPING_TYPE.direct);

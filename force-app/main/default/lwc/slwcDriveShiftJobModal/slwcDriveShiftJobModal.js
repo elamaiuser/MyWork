@@ -23,14 +23,14 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
  
     @track showModal = false;
     @track showSpinner = false;
-    @track isVolunteerQuantityChanged = false;
-    @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @track isPersonResource;
     @track isVolunteerResource;
     @track isVehicleResource;
     @track isEquipmentResource;
     @track errorMessages = [];
+    @track isVolunteerQuantityChanged = false;
+    @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @wire(CurrentPageReference) pageRef;
     masterData = {};
@@ -468,6 +468,16 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             }
         }
         
+          if(this.isVolunteerResource && this.action === 'create') {
+             const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
+             if(existed) {
+                this.errorMessages.push({
+                    message: `${this.job.volunteerRole} role already exists.`
+                })
+                return false;
+            }
+        }
+
         return allValid && !this.errorMessages.length;
     }
 

@@ -9,7 +9,7 @@
     <columns>Collection_Operation_ID__c</columns>
     <columns>OBJECT_ID</columns>
     <columns>CREATED_DATE</columns>
-    <columns>Staging_Location_Address__c</columns>
+    <columns>sked_Shift_Swap_Cutoff__c</columns>
     <columns>sked_No_Travel_Time__c</columns>
     <columns>sked_Restricts_to_Full_day_PTO__c</columns>
     <columns>sked_Lunch_Break__c</columns>

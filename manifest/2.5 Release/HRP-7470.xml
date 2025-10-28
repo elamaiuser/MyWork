@@ -9,5 +9,18 @@
         <members>TemplateService_Test</members>
 		<name>ApexClass</name>
 	</types>
+    <types>
+		<members>Opportunity.Primary_Drive_Contact__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+		<members>Create_New_Template</members>
+		<name>Flow</name>
+	</types>
     <version>64.0</version>
 </Package>

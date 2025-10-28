@@ -55,7 +55,7 @@ public class BSF_TaskCreationBatch_Test {
     
     static testMethod void testBatchExecutionForAllOpps() {
         Test.startTest();
-        Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
+        Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c, stageName FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
         BSF_TaskCreationBatch taskCreationBatchInstance = new BSF_TaskCreationBatch();
         Database.executeBatch(taskCreationBatchInstance);
         Test.stopTest();
@@ -67,7 +67,7 @@ public class BSF_TaskCreationBatch_Test {
     
     static testMethod void testBatchExecutionForSpecificOpp() {
         Test.startTest();
-        Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
+        Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c, stageName FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
         Date nextNDays = Date.today().addDays(Integer.ValueOf(label.SponsorPlanningMeetingTaskThresholdDays));
         mobileOpp.Drive_Date__c = nextNDays;
         mobileOpp.Drive_Date_Change_Reason__c = 'Test Specific Task Creation';

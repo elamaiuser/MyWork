@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>A post-drive thank you email to BPLs with drive results and their next drive date.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Thank You With Next Drive Date</name>
+    <style>formalLetter</style>
+    <subject>Help Ensure Blood Drive Success</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+Thank you for your continued commitment to saving lives. You should feel proud of your efforts – because of you, many patients will see another tomorrow.
+
+Your past success at [drive] in [month/year] was inspiring. Your organization collected XXX units! Now let’s discuss the opportunity to grow our collections and beat our previous record to make an even larger impact!
+
+As a valued Blood Program Leader, your role as a dedicated partner is so appreciated. Sponsoring a blood drive is an important community responsibility and it requires advance planning to ensure success. Your group&#39;s participation will help us reach the daily collection goal that is needed to support the patients in your community.
+
+The date(s) listed below has been reserved for your group’s blood drive:
+
+[INCLUDE DATES]
+
+Please confirm the above dates. Your confirmation will help us effectively plan for the blood needs of the community. If there is any problem with your dates, please let me know immediately. Remember to reserve the space for your upcoming blood drive.
+
+Let’s focus on booking a blood program that is stronger and better than years before. Again, thank you for your partnership and support. We could not fulfill our lifesaving mission without you!
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

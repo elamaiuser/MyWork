@@ -223,8 +223,8 @@
     <dynamicChoiceSets>
         <name>multipleRoleChoice</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Account_Service_Role__c</picklistField>
         <picklistObject>Account_Service_Role__c</picklistObject>
         <sortOrder>Asc</sortOrder>
@@ -233,7 +233,7 @@
     <formulas>
         <name>forAppendSemicolonToSelectedRoles</name>
         <dataType>String</dataType>
-        <expression>{!varSelectedRoles}+&apos;;&apos;</expression>
+        <expression>{!varSelectedRoles}+&#39;;&#39;</expression>
     </formulas>
     <formulas>
         <name>forCheckIfBPLRoleIsSelected</name>
@@ -248,7 +248,7 @@
     <formulas>
         <name>forRemoveBPLRoleIfExist</name>
         <dataType>String</dataType>
-        <expression>IF({!varAccountServiceRoleId}&lt;&gt; null, SUBSTITUTE(SUBSTITUTE({!forAppendSemicolonToSelectedRoles}, &apos;Blood Program Leader;&apos;, null),{!varBloodProgramLeaderRole}, &apos;&apos;), {!forAppendSemicolonToSelectedRoles})</expression>
+        <expression>IF({!varAccountServiceRoleId}&lt;&gt; null, SUBSTITUTE(SUBSTITUTE({!forAppendSemicolonToSelectedRoles}, &#39;Blood Program Leader;&#39;, null),{!varBloodProgramLeaderRole}, &#39;&#39;), {!forAppendSemicolonToSelectedRoles})</expression>
     </formulas>
     <formulas>
         <name>forRemoveParsedRoleOfMultiPicklistValue</name>

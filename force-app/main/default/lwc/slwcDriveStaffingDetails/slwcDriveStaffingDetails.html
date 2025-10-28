@@ -909,7 +909,7 @@
                                                     <div for:each={resource.exceptionLog} for:item="exception" key={exception.exception}
                                                         class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
                                                         <p class="color-default-text slds-m-vertical_xx-small color-error" style="white-space: normal;">
-                                                            {exception.exception}                                                        
+                                                            {exception.exception}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1024,7 +1024,6 @@
                                                                                 checked={exception.isSelected}>
                                                                             </lightning-input> -->
                                                                             <span
-
                                                                                 class="color-error slds-truncate width200">{exception.exception}</span>
                                                                         </p>
                                                                     </div>
@@ -1091,7 +1090,6 @@
                                                                                                     checked={exceptionSub.isSelected}
                                                                                                     onchange={handleOnChange}>
                                                                                                 </lightning-input>-->
-                                                                                                  <!-- HRP-12840 begin -->
                                                                                                 <template if:true={exceptionSub.eventURL} >
                                                                                                     <span class="color-error"><a href={exceptionSub.eventURL} target="blank" class="color-error">{exceptionSub.exception}</a></span>
                                                                                                 </template>
@@ -1100,7 +1098,6 @@
                                                                                                 <template if:false={exceptionSub.eventURL} >
                                                                                                     <span class="color-error">{exceptionSub.exception}</span>
                                                                                                 </template>
-                                                                                                <!-- HRP-12840 end -->
 
                                                                                                 
                                                                                             </p>

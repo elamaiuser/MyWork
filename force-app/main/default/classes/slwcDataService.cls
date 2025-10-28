@@ -346,6 +346,7 @@ public without sharing class slwcDataService {
     }
 
     private static void updateRecordsWithErrorBuilt(List<sObject> recordsToUpdate, String sObjectName) {
+        system.debug('recordsToUpdate '+JSON.serialize(recordsToUpdate));
         List<Database.SaveResult> saveResults = Database.update(recordsToUpdate, false);
         String errorMessage = skedErrorUtils.getPartialUpdateErrorString(saveResults, recordsToUpdate, sObjectName);
         Database.SaveResult firstFailedSaveResult = findFirstFailedSaveResult(saveResults);

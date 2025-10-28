@@ -54,53 +54,51 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
 
         Map <String,Schema.RecordTypeInfo> recordTypesSite = sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id siteMobileRecordTypeId = recordTypesSite.get(BSF_Constants.MOBILE_SITE_RECORD_TYPE).getRecordTypeId();
+        String query;
         if (runType == 'Account') {
-            for (ContentDocumentLink cdl : [
-                SELECT LinkedEntityId FROM ContentDocumentLink 
-                WHERE LinkedEntityId IN (SELECT Id FROM Account WHERE RecordTypeId = :mobileRecordTypeId)]) {
+            query = 'SELECT Id, Name, Account_Manager__c, OwnerId ' +
+                    'FROM Account ' +
+                    'WHERE RecordTypeId = :mobileRecordTypeId';            
 
-                    recordsWithFiles.add(cdl.LinkedEntityId);
-            }
-            System.debug('Account recordsWithFiles:'+recordsWithFiles.size());
-            // Query Accounts
-            return Database.getQueryLocator([
-                SELECT Id, Name, Account_Manager__c, OwnerId 
-                FROM Account 
-                WHERE Id IN :recordsWithFiles]);
-
-        }else if (runType == 'sked__Location__c') {
-            // Query for Sites (sked__Location__c) with files
-            for (ContentDocumentLink cdl : [
-                SELECT LinkedEntityId,ContentDocumentId FROM ContentDocumentLink 
-                WHERE LinkedEntityId IN (SELECT Id FROM sked__Location__c WHERE RecordTypeId = :siteMobileRecordTypeId)
-            ]) {
-                recordsWithFiles.add(cdl.LinkedEntityId);
-            }
-            System.debug('Batch ==> recordsWithFiles =====>'+recordsWithFiles.size());
-            // Process Sites
-            return Database.getQueryLocator([
-                SELECT Id, Name, sked__Account__c, OwnerId 
-                FROM sked__Location__c
-                WHERE Id IN :recordsWithFiles
-            ]);
         }
-        // If runType is invalid, return an empty query
-        return Database.getQueryLocator([SELECT Id FROM Account WHERE Id = null]);
+        else if (runType == 'sked__Location__c') {
+            query = 'SELECT Id, Name, sked__Account__c, OwnerId ' +
+                    'FROM sked__Location__c ' +
+                    'WHERE RecordTypeId = :siteMobileRecordTypeId';            
+        }
+        else {
+            query = 'SELECT Id FROM Account WHERE Id = null';
+        }        
+        return Database.getQueryLocator(query);
     }
 
     public void execute(Database.BatchableContext bc, List<SObject> scope) {
         System.debug('Batch execute 2');
-        try {
-            Set<Id> recordIds = new Set<Id>();
-            for (SObject record : scope) {
-                recordIds.add((Id) record.get('Id'));
-            }
-            System.debug('Batch ==> recordIds :'+recordIds);
-            Map<Id, List<ContentDocumentLink>> recordToLinksMap = getContentDocumentLinks(recordIds);
-            Map<Id, ContentVersion> expiringFilesMap = getExpiringContentVersions(recordIds);
-            Map<Id, Set<Id>> locationToAccountsMap = getLocationToAccountMap(recordIds);
+        Set<Id> recordIdsInScope = (new Map<Id, sObject>(scope)).keySet();
+        Set<Id> idsWithFiles = new Set<Id>();
 
-            List<Task> tasksToCreate = generateTasks(scope, recordToLinksMap, expiringFilesMap, locationToAccountsMap);
+        for (ContentDocumentLink cdl : [SELECT LinkedEntityId FROM ContentDocumentLink WHERE LinkedEntityId IN :recordIdsInScope]) {
+            idsWithFiles.add(cdl.LinkedEntityId);
+        }
+
+        if (idsWithFiles.isEmpty()) {
+            System.debug('No records in this chunk have files attached. Exiting execute method.');
+            return;
+        }
+
+        List<sObject> scopeWithFiles = new List<sObject>();
+        for (sObject record : scope) {
+            if (idsWithFiles.contains(record.Id)) {
+                scopeWithFiles.add(record);
+            }
+        }        
+        
+        try {            
+            Map<Id, List<ContentDocumentLink>> recordToLinksMap = getContentDocumentLinks(idsWithFiles);
+            Map<Id, ContentVersion> expiringFilesMap = getExpiringContentVersions(idsWithFiles);
+            Map<Id, Set<Id>> locationToAccountsMap = getLocationToAccountMap(idsWithFiles);
+
+            List<Task> tasksToCreate = generateTasks(scopeWithFiles, recordToLinksMap, expiringFilesMap, locationToAccountsMap);
 
             if (!tasksToCreate.isEmpty()) {
                 Database.SaveResult[] results = Database.insert(tasksToCreate, false);
@@ -118,10 +116,8 @@ global class BatchAccountsMilitaryMoAUploadedFiles implements Database.Batchable
         // If we completed the "Account" run, schedule the "sked__Location__c" run
         if (runType == 'Account') {
             System.debug('Scheduling next batch for Site Processing...');
-            Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles('sked__Location__c'));
-            //System.schedule('Batch Site Processing', System.now().addMinutes(2), new BatchAccountsMilitaryMoAUploadedFiles('sked__Location__c'));
+            Database.executeBatch(new BatchAccountsMilitaryMoAUploadedFiles('sked__Location__c'));            
         }
-        
     }
     
     private List<Task> generateTasks(List<sObject> records, 

@@ -1,15 +1,15 @@
 /*@Description: 1. This class contains different Trigger methods working in different trigger contexts to support order product related functionalities
-*              2. This service class is called from OrderItem Trigger Handler (Maintaining Trigger Framework)
-* ***************************************************************************************************************************************************************/
+ *              2. This service class is called from OrderItem Trigger Handler (Maintaining Trigger Framework)
+ * ***************************************************************************************************************************************************************/
 /*@Modification Log 
-* 
-* Date					Developer Name			Comments
-* ***************************************************************************************************************************************************************************
-* 08/03/2023			Priti Jana				Logic for HRP-10307
-* 14/07/2024            Ankit Kundu             Publicity Material Ordering at template level(HRP-12664)
-* 10/25/2024			Balaji N				Logic for HRP-13489 calculateBudgetforProductsProjected error for Budget exceeding
-* 01/21/2024			Krapy Tuli				Logic for HRP-14063 update logic to handle unexpacted addition of order items twice which triggered the trigger logic
-*****************************************************************************************************************************************************************************
+ * 
+ * Date					Developer Name			Comments
+ * ***************************************************************************************************************************************************************************
+ * 08/03/2023			Priti Jana				Logic for HRP-10307
+ * 14/07/2024           Ankit Kundu             Publicity Material Ordering at template level(HRP-12664)
+ * 10/25/2024			Balaji N				Logic for HRP-13489 calculateBudgetforProductsProjected error for Budget exceeding
+ * 01/21/2024			Krapy Tuli				Logic for HRP-14063 update logic to handle unexpacted addition of order items twice which triggered the trigger logic
+ *****************************************************************************************************************************************************************************
 */
 
 public with sharing class OrderItemTriggerService {
@@ -146,6 +146,7 @@ public with sharing class OrderItemTriggerService {
                                                            Map<Id,OrderItem> oldOrdersItemsMap,Map<Id,OrderItem> newOrderItemsMap){
                                                                
                                                                
+                                                               
                                                                //HRP-13489 Start
                                                                Map<Id,List<OrderItem>> orderIdOrderItemListMap = new Map<Id,List<OrderItem>>();
                                                                Set<Id>beingEditedOrderItems = new Set<Id>();//HRP-14063
@@ -166,7 +167,7 @@ orderIdOrdermap.put( ord.Id, ord );
 }
 }*/
                                                                
-                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice,OrderId from OrderItem where orderid in:orderIdOrdermap.KeySet() AND Id NOT IN :beingEditedOrderItems];//HRP-14063                                      
+                                                               List<OrderItem> oitemlist = [select Id, Quantity, UnitPrice,OrderId from OrderItem where orderid in:orderIdOrdermap.KeySet() AND Id NOT IN :beingEditedOrderItems];//HRP-14063                                           
                                                                if( !oitemlist.isEmpty() ){
                                                                    for( OrderItem oitem : oitemlist )
                                                                    {        
@@ -208,6 +209,7 @@ orderIdOrdermap.put( ord.Id, ord );
                                                                    }
                                                                }
                                                                //HRP-13489 End 
+                                                               
                                                            }    
     
     /*
@@ -216,64 +218,64 @@ orderIdOrdermap.put( ord.Id, ord );
 */
     
     /*public static void checkDrivedateAndProductStartEnddate( List<OrderItem> oldOrderItems, List<OrderItem> newOrderItems,
-Map<Id,OrderItem> oldOrdersItemsMap,Map<Id,OrderItem> newOrderItemsMap){ 
-
-List<Product2> productList = new List<Product2>();	
-List<Order> orders = new List<Order>();	
-List<Opportunity> opportunities = new List<Opportunity>();	
-
-Set<Id> productids = new Set<Id>();
-Set<Id> orderids = new Set<Id>();
-Set<Id> oppids = new Set<Id>();
-
-Map<Id, Id> orderItemIdProductMap = new Map<Id, Id>();
-Map<Id, Opportunity> oppIdOpportunityMap = new Map<Id, Opportunity>();
-Map<Id, Order> orderIdOrderMap = new Map<Id, Order>();
-//Map<Id, Order> orderItemIdOrderMap = new Map<Id, Order>();
-Map<Id, Product2> productIdProductMap = new Map<Id, Product2>();
-
-for( OrderItem oit : newOrderItems ){
-productids.add(oit.Product2Id);	
-orderids.add( oit.OrderId);				
-orderItemIdProductMap.put( oit.Id, oit.Product2Id );
-}
-
-productList = [ select Id, Start_Date__c, End_Date__c from Product2 where id in: productids ];
-orders = [ select Id, OpportunityId from Order where Id in:orderids ];
-
-for( Product2 pd : productList ){
-productIdProductMap.put( pd.Id, pd );
-}
-for( Order od : orders ){
-oppids.add(od.OpportunityId);
-orderIdOrderMap.put( od.Id, od );
-}
-
-opportunities = [ select Id, Drive_Date__c, Type_of_Drive__c from Opportunity where Id in: oppids ];
-for( Opportunity op : opportunities ){
-oppIdOpportunityMap.put( op.Id, op );
-}
-
-for( OrderItem oit : newOrderItems ){
-Date opportunityDrivedate = oppIdOpportunityMap.get( orderIdOrderMap.get( oit.OrderId ).OpportunityId  ).Drive_Date__c;
-Date productStartDate = productIdProductMap.get( orderItemIdProductMap.get(oit.Id) ).Start_Date__c;
-Date productEndDate = productIdProductMap.get( orderItemIdProductMap.get(oit.Id) ).End_Date__c;
-String drivetype = oppIdOpportunityMap.get( orderIdOrderMap.get( oit.OrderId ).OpportunityId  ).Type_of_Drive__c;
-//if( productStartDate!= null && opportunityDrivedate >= productStartDate ){ // && opportunityDrivedate <= productEndDate ){
-//continue;
-//}else{
-//oit.addError( 'Opportunity Drive date does not fall in between Product Start date and End date' );
-//}
-if( drivetype == 'Mobile' && productStartDate!= null && productEndDate == null && opportunityDrivedate < productStartDate){
-oit.addError( 'Opportunity Drive date  is less than Product Start date' );
-}else if( drivetype == 'Mobile' && productStartDate!= null && productEndDate != null && (opportunityDrivedate < productStartDate || opportunityDrivedate > productEndDate)  ){
-oit.addError( 'Opportunity Drive date does not fall in between Product Start date and End date' );
-}
-}
-
-
-}  
-/*
+                                                            Map<Id,OrderItem> oldOrdersItemsMap,Map<Id,OrderItem> newOrderItemsMap){ 
+                                                                
+                                                                List<Product2> productList = new List<Product2>();	
+                                                                List<Order> orders = new List<Order>();	
+                                                                List<Opportunity> opportunities = new List<Opportunity>();	
+                                                                
+                                                                Set<Id> productids = new Set<Id>();
+                                                                Set<Id> orderids = new Set<Id>();
+                                                                Set<Id> oppids = new Set<Id>();
+                                                                
+                                                                Map<Id, Id> orderItemIdProductMap = new Map<Id, Id>();
+                                                                Map<Id, Opportunity> oppIdOpportunityMap = new Map<Id, Opportunity>();
+                                                                Map<Id, Order> orderIdOrderMap = new Map<Id, Order>();
+                                                                //Map<Id, Order> orderItemIdOrderMap = new Map<Id, Order>();
+                                                                Map<Id, Product2> productIdProductMap = new Map<Id, Product2>();
+                                                                
+                                                                for( OrderItem oit : newOrderItems ){
+                                                                    productids.add(oit.Product2Id);	
+                                                                    orderids.add( oit.OrderId);				
+                                                                    orderItemIdProductMap.put( oit.Id, oit.Product2Id );
+                                                                }
+                                                                
+                                                                productList = [ select Id, Start_Date__c, End_Date__c from Product2 where id in: productids ];
+                                                                orders = [ select Id, OpportunityId from Order where Id in:orderids ];
+                                                                
+                                                                for( Product2 pd : productList ){
+                                                                    productIdProductMap.put( pd.Id, pd );
+                                                                }
+                                                                for( Order od : orders ){
+                                                                    oppids.add(od.OpportunityId);
+                                                                    orderIdOrderMap.put( od.Id, od );
+                                                                }
+                                                                
+                                                                opportunities = [ select Id, Drive_Date__c, Type_of_Drive__c from Opportunity where Id in: oppids ];
+                                                                for( Opportunity op : opportunities ){
+                                                                    oppIdOpportunityMap.put( op.Id, op );
+                                                                }
+                                                                
+                                                                for( OrderItem oit : newOrderItems ){
+                                                                    Date opportunityDrivedate = oppIdOpportunityMap.get( orderIdOrderMap.get( oit.OrderId ).OpportunityId  ).Drive_Date__c;
+                                                                    Date productStartDate = productIdProductMap.get( orderItemIdProductMap.get(oit.Id) ).Start_Date__c;
+                                                                    Date productEndDate = productIdProductMap.get( orderItemIdProductMap.get(oit.Id) ).End_Date__c;
+                                                                    String drivetype = oppIdOpportunityMap.get( orderIdOrderMap.get( oit.OrderId ).OpportunityId  ).Type_of_Drive__c;
+                                                                    //if( productStartDate!= null && opportunityDrivedate >= productStartDate ){ // && opportunityDrivedate <= productEndDate ){
+                                                                    //continue;
+                                                                    //}else{
+                                                                    //oit.addError( 'Opportunity Drive date does not fall in between Product Start date and End date' );
+                                                                    //}
+                                                                    if( drivetype == 'Mobile' && productStartDate!= null && productEndDate == null && opportunityDrivedate < productStartDate){
+                                                                        oit.addError( 'Opportunity Drive date  is less than Product Start date' );
+                                                                    }else if( drivetype == 'Mobile' && productStartDate!= null && productEndDate != null && (opportunityDrivedate < productStartDate || opportunityDrivedate > productEndDate)  ){
+                                                                        oit.addError( 'Opportunity Drive date does not fall in between Product Start date and End date' );
+                                                                    }
+                                                                }
+                                                                
+                                                                
+                                                            }  
+    /*
 * JIRA Ticket: HRP - 3534, 
 * Description: 1.0 User - Associate a Publicity Item to a Collection Operation
 */
@@ -328,10 +330,10 @@ oit.addError( 'Opportunity Drive date does not fall in between Product Start dat
         }
     }
     
-    /* HRP - 10307 --> Starts Here
-@Description - Users should not be allowed to add more than one theme product per order
-@Added By - Priti
-*/
+     /* HRP - 10307 --> Starts Here
+      @Description - Users should not be allowed to add more than one theme product per order
+      @Added By - Priti
+	*/
     public static void validateOneThemePerOrder(List<OrderItem> newOrderItemList)
     {
         Set<Id> productIds = new Set<Id>();
@@ -360,24 +362,24 @@ oit.addError( 'Opportunity Drive date does not fall in between Product Start dat
                 }
             }
         }
-        
+                
         List<OrderItem> orderItemWithExistingThemeProductList = [select Product2Id, OrderId from OrderItem where Product2.Product_Id__c like '%theme%' and (not Product2.Product_Id__c like '%size%') and OrderId in : orderIds];
         
         
-        for(OrderItem ord : newOrderItemList)
-        {
-            if(themeProductList.size() > 1 && !productIds.contains(ord.Product2Id) && orderItemWithExistingThemeProductList.isEmpty())
+            for(OrderItem ord : newOrderItemList)
             {
-                ord.addError(errorMsgForMoreThanOneTheme);                    
-            }                
-            else if(!orderItemWithExistingThemeProductList.isEmpty() && !productIds.contains(ord.Product2Id))
-            {
-                ord.addError(errorMsgForExistingTheme);                                            
-            }                
-        }                                              
+                if(themeProductList.size() > 1 && !productIds.contains(ord.Product2Id) && orderItemWithExistingThemeProductList.isEmpty())
+                {
+                    ord.addError(errorMsgForMoreThanOneTheme);                    
+                }                
+                else if(!orderItemWithExistingThemeProductList.isEmpty() && !productIds.contains(ord.Product2Id))
+                {
+                    ord.addError(errorMsgForExistingTheme);                                            
+                }                
+            }                                              
     }
     // HRP - 10307 --> Ends Here
-    // HRP- 12664 --> Start
+     // HRP- 12664 --> Start
     public static void validateProductEndDate(List<OrderItem> newOrderItemList)
     {
         
@@ -415,5 +417,4 @@ oit.addError( 'Opportunity Drive date does not fall in between Product Start dat
         }
     }
     // HRP- 12664 --> End
-    
 }

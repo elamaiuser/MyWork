@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to BPLs with a drive not impacted weather but asking them to help.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Seasonal_January 2025_Areas Not Impacted</name>
+    <style>formalLetter</style>
+    <subject>Wildfires and Winter Storms – Here’s how you can help!</subject>
+    <textOnly>Dear Blood Program Leader,
+
+Devastating wildfires continue to ravage California while dangerous snow and ice conditions moving across the country have already caused the cancellation of more than 200 blood drives. As a result, 5,500 blood donations have gone uncollected in the first week of the new year.
+
+Where it&#39;s safe to do so, donors are asked to make an appointment to give blood or platelets now to help keep the blood supply on track as impacted communities recover from catastrophic damage.
+
+Act now – here’s what you can do to help!
+
+If you have an upcoming drive:
+
+Maximize donations. Meet your blood drive goal and encourage Power Red donations. This can help make up for cancellations in areas impacted by severe weather.
+
+Send an email using the Blood Drive Management System to recruit donors. All blood types are needed, especially Type O.
+
+Ensure your schedule is fully booked. Also, keep a list of &quot;standby&quot; donors who are ready to jump in when an unexpected opening becomes available.
+
+If you have not booked your next blood drive:
+
+Schedule your next blood drive. Contact your local Red Cross representative to schedule a future drive.
+
+Share the need for blood with your network and on social media. Send donors to a location near you and donate blood and encourage your friends and family to join you.
+
+Encourage anyone who wants to help to make a financial donation. They can visit redcross.org, call 1-800-RED CROSS, or text the word REDCROSS to 90999 to make a donation.
+
+The blood collected at your drive may help alleviate the suffering that disasters like this can cause. Our disaster relief efforts and lifesaving blood products go hand in hand as we work with communities to offer help and hope. Thank you for helping to ensure we are able to meet the needs of patients in impacted areas and throughout the country!
+
+Sincerely,
+[Account Representative Name]
+[Contact Information]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

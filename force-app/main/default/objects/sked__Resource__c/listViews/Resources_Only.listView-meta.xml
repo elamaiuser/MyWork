@@ -12,7 +12,7 @@
     <columns>sked_Roles__c</columns>
     <columns>sked_Job_Code__c</columns>
     <columns>sked_FCC_Code__c</columns>
-    <columns>sked__User__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked__Resource_Type__c</field>
@@ -20,14 +20,9 @@
         <value>Person</value>
     </filters>
     <filters>
-        <field>sked_Employment_Status__c</field>
+        <field>sked__Employment_Type__c</field>
         <operation>equals</operation>
-        <value>Active</value>
-    </filters>
-    <filters>
-        <field>sked_FCC_Code__c</field>
-        <operation>equals</operation>
-        <value>83340,83347</value>
+        <value>Volunteer</value>
     </filters>
     <label>Resources Only</label>
 </ListView>

@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Special_Circumstances__c</fullName>
     <description>Created as part of HRP-701</description>
-    <externalId>false</externalId>
     <label>Special Circumstances</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

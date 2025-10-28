@@ -17,6 +17,9 @@
         <field>sked__Job__c.sked_Volunteer_Adjustment_Reason__c</field>
     </columns>
     <columns>
+        <field>sked__Job__c.sked_Other_Volunteer_Adjustment_Reason__c</field>
+    </columns>
+    <columns>
         <field>sked__Job__c.sked_VAR_Last_Modified_By__c</field>
     </columns>
     <columns>

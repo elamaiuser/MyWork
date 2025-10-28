@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>HRP-14507 Deactivates a Resource one day after Termination Date. Migrated from the: Skedulo Resource Termination Rule workflow rule.</description>
     <environments>Default</environments>
     <interviewLabel>Skedulo Resource Termination Rule {!$Flow.CurrentDateTime}</interviewLabel>

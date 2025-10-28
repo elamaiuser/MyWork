@@ -3,6 +3,7 @@
     <excludeButtons>ChangeOwnerOne</excludeButtons>
     <excludeButtons>ChangeRecordType</excludeButtons>
     <excludeButtons>Clone</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
@@ -515,6 +516,11 @@
             <sortOrder>1</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
+            <actionName>Site_Audit</actionName>
+            <actionType>CustomButton</actionType>
+            <sortOrder>2</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
             <actionName>LogACall</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>3</sortOrder>
@@ -528,11 +534,6 @@
             <actionName>SendEmail</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>5</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Site_Audit</actionName>
-            <actionType>CustomButton</actionType>
-            <sortOrder>2</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
             <actionName>NewTask</actionName>

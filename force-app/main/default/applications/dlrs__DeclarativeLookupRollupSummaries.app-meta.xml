@@ -8,10 +8,4 @@
     <tabs>dlrs__Welcome</tabs>
     <tabs>dlrs__ManageLookupRollupSummaries</tabs>
     <tabs>dlrs__LookupRollupSummaryLog__c</tabs>
-    <tabs>Calendar_Build_Log__c</tabs>
-    <tabs>Calendar_Build_Error_Log__c</tabs>
-    <tabs>Calendar_Build_Log_Manual_Run__c</tabs>
-    <tabs>sked_Travel_Time_Index_Refresh_Request__c</tabs>
-    <tabs>ChildTemp__c</tabs>
-    <tabs>ParentTemp__c</tabs>
 </CustomApplication>

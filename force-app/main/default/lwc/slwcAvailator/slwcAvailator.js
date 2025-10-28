@@ -37,7 +37,7 @@ const isJobBelongToDrivingRolesGroup = (job, {
   resourceRoleGroups
 }) => {
   const resourceRoleGroup = Object.keys(resourceRoleGroups).find(resourceRoleGroup => {
-    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole);
+    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole || item === job.dualRole);
   })
   return resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES;
 }
@@ -328,13 +328,9 @@ class SlwcAvailator {
       });
 
       resource.jobAllocations = (resource.jobAllocations || []).map((item) => {
-        console.log(' item.job->'+JSON.stringify(item.job));
-
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
         item.driveName = item.job.driveName;
-
-        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -407,7 +403,6 @@ class SlwcAvailator {
     let jobAllocations = (data || []).map((skedJobAllocation) => {
       let jobAllocation = autoMapper.autoMapperInstance.mapTo('sked__Job_Allocation__c', skedJobAllocation);
       this.populateDateTime(jobAllocation);
-      console.log('jobAllocation->'+jobAllocation);
       return jobAllocation;
     });
     jobAllocations = orderBy(jobAllocations, ['start'], ['asc']);
@@ -468,7 +463,7 @@ class SlwcAvailator {
     });
   }
 
-  //HRP-14118
+//HRP-14118
 
 fetchJobTags(driveId){
   let service = new driveService();
@@ -501,6 +496,8 @@ fetchJobTags(driveId){
     });
 
 }
+
+
 
   fetchResources(pageNo = 1, totalRecords, getAssetsOnly, additionalFilters) {
     let inputDates = [];
@@ -538,7 +535,6 @@ fetchJobTags(driveId){
         request.recordIds = additionalFilters.recordIds;
       }
     }
-    console.log('request->'+JSON.stringify(request));
     let service = new jobAllocationService();
     return service.getResourceData({request : request})
       .then((result) => {
@@ -855,7 +851,6 @@ fetchJobTags(driveId){
       return service.query(queryModel);
     })
     .then((collectionOperations = []) => {
-      console.log('collectionOperations in slwcAvailator ',collectionOperations);
       this.collectionOperationDataMap = keyBy(collectionOperations, 'id');
     });
   }
@@ -1075,7 +1070,7 @@ fetchJobTags(driveId){
       return () => {
         const origins = originsDestinationsChunk.origins;
         const destinations = originsDestinationsChunk.destinations;
-        const request = {
+        return service.calculateDistanceMatrix({
           origins: origins.map(item => {
             return {
               lat: item.latitude,
@@ -1089,11 +1084,8 @@ fetchJobTags(driveId){
             }
           }),
           departureTime: this.drive.minShiftStart
-        };
-        console.log('@@@calculateDistanceMatrix request: ', request);
-        return service.calculateDistanceMatrix(request)
+        })
         .then(result => {
-          console.log('@@@calculateDistanceMatrix result: ', result);
           const matrixData = result?.returnedData?.result?.matrix || [];
           mapResult(origins, destinations, matrixData);
         })
@@ -1647,6 +1639,7 @@ fetchJobTags(driveId){
       console.log('>>> Start building data', new Date());
 
       let resourcesMap = keyBy(this.resources, "id");
+      
       let inputDates = compact(uniqBy(
         this.jobs.map((item) => {
           return item.startDate;
@@ -1741,9 +1734,15 @@ fetchJobTags(driveId){
                 if(!ignoreDedicatedSiteRule && resource.dedicatedToSiteId && resource.dedicatedToSiteId !== this.drive.driveSiteId) {
                   return;
                 }
-                const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
-                jobStartLatitude = geoLocationLatitude;
-                jobStartLongitude = geoLocationLongitude;
+
+                const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
+                  resourceRoleGroups: this.resourceRoleGroups
+                });
+                if(_isJobBelongToDrivingRolesGroup) {
+                  const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
+                  jobStartLatitude = geoLocationLatitude;
+                  jobStartLongitude = geoLocationLongitude;
+                }
               }
               
               let isValid = true;
@@ -1869,13 +1868,11 @@ fetchJobTags(driveId){
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
                 const tagRestricted = isResourceTagRestricted(resourceTag, {
                   startDate: job.driveDate,
                   endDate: job.driveDate
                 })
 
-                //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1883,7 +1880,7 @@ fetchJobTags(driveId){
                     restrictedTagNames.push(resourceTag.tag.name);
                   }
                 }
-
+                //console.log('slwc Availator => tagStartDateValid =>',tagStartDateValid,' validTagNames=>',validTagNames,' restrictedTagNames=>',restrictedTagNames);
               });
               (job.jobTags || []).forEach((jobTag) => {
                 if (!jobTag.tag) return;
@@ -1951,7 +1948,7 @@ fetchJobTags(driveId){
 
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
-                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
+                if(!!event.id && exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
                 
                 if(isEventTransformationNeeded) {
                   let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);
@@ -1986,7 +1983,7 @@ fetchJobTags(driveId){
                     resourceId: resource.id,
                     exception: "",
                     exceptionCode: "RESOURCE_TIME_CONFLICT",
-                    eventURL:"" //HRP-12840
+                    eventURL:""
                   };
                   if (event.objectType === OBJECT_TYPE.NON_WORKING) {
                     isResourceQualified = false;
@@ -2003,7 +2000,7 @@ fetchJobTags(driveId){
                       }
                     }
                     else if (event.objectType == OBJECT_TYPE.ACTIVITY) {
-                      exception.exception = "Conflict with " + event.activityTitle;//HRP-12840
+                      exception.exception = "Conflict with " + event.activityTitle;
                       let baseUrl = window.location.origin;
                       console.log(baseUrl);
                       let fullUrl=baseUrl+'/lightning/r/sked__Activity__c/'+event.id+'/view';
@@ -2015,7 +2012,7 @@ fetchJobTags(driveId){
                       console.log(baseUrl);
                       let fullUrl=baseUrl+'/lightning/r/sked_Drive__c/'+event.driveId+'/view';
                       exception.eventURL=fullUrl;
-                      exception.exception = "Conflict with "+event.driveName;//HRP-12840
+                      exception.exception = "Conflict with "+event.driveName;
                       exception.conflictedJobAllocationId = event.id;
                     }
                   }
@@ -2085,22 +2082,22 @@ fetchJobTags(driveId){
                   }
                 }
 
-                if (!slwcUtils.isNullOrEmpty(travelTimeFrom) && 
-                  !slwcUtils.isNullOrEmpty(resource.maxTravelTime) && 
-                  travelTimeFrom > resource.maxTravelTime
-                ) {
-                  let exceptionMsg = 'Maximum Travel Time Violation';
-                  if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
-                    exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
+                if(!slwcUtils.isNullOrEmpty(resource.maxTravelTime)) {
+                  if ((!slwcUtils.isNullOrEmpty(travelTimeFrom) && travelTimeFrom > resource.maxTravelTime) 
+                    || (!slwcUtils.isNullOrEmpty(travelTimeTo) && travelTimeTo > resource.maxTravelTime)) {
+                    let exceptionMsg = 'Maximum Travel Time Violation';
+                    if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
+                      exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
+                    }
+                    let exception = {
+                      driveId: this.driveId,
+                      jobId: job.id,
+                      resourceId: resource.id,
+                      exception: exceptionMsg,
+                      exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
+                    };
+                    exceptionLog.push(exception);
                   }
-                  let exception = {
-                    driveId: this.driveId,
-                    jobId: job.id,
-                    resourceId: resource.id,
-                    exception: exceptionMsg,
-                    exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
-                  };
-                  exceptionLog.push(exception);
                 }
               }
               

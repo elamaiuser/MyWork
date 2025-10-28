@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -8,6 +7,18 @@
         <editHeading>true</editHeading>
         <label>Information</label>
         <layoutColumns>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>sked_Physical_Location_Type__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>sked_Room_Name__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>sked_Site_Building_Name__c</field>
+            </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>Name</field>
@@ -31,18 +42,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Chapter__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>sked_Physical_Location_Type__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>sked_Room_Name__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>sked_Site_Building_Name__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -94,10 +93,11 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
-    <relatedLists>
-        <fields>NAME</fields>
-        <relatedList>Site_Suitability_Checklist__c.Site__c</relatedList>
-    </relatedLists>
+    <miniLayout>
+        <fields>sked_Physical_Location_Type__c</fields>
+        <fields>sked_Room_Name__c</fields>
+        <fields>sked_Site_Building_Name__c</fields>
+    </miniLayout>
     <relatedLists>
         <fields>NAME</fields>
         <fields>sked__Account__c</fields>
@@ -125,7 +125,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h5c00000DaWs6</masterLabel>
+        <masterLabel>00h9000000MoMUA</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

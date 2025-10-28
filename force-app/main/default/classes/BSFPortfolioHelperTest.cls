@@ -29,8 +29,7 @@ public static String rolename = 'West_BDM';
     
     @isTest static void testPortfolioGeneration1(){
         
-        Test.startTest();
-        TriggerHandler.bypass('TaskTriggerHandler');
+        
         
         /*BSFPortfolioHelper.processTaxonomyData(1000,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1001,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
@@ -40,7 +39,7 @@ public static String rolename = 'West_BDM';
         BSFPortfolioHelper.processTaxonomyData(999,BSF_Constants.TAXO_FIXED_SITE_RECORD_TYPE);    
         BSFPortfolioHelper.processTaxonomyData(694,BSF_Constants.TAXO_RELATIONSHIP_MGR_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1317,BSF_Constants.TAXO_SICKLE_CELL_RECORD_TYPE);*/
-        
+        TriggerHandler.bypass('TaskTriggerHandler');
         List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
                                             Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
         									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c
@@ -50,11 +49,10 @@ public static String rolename = 'West_BDM';
         portfolioHelper.createOrUpdatePortfolio(taxoList);
         
         List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
-        
+        Test.startTest();
         update portfolios[0];
         
         delete portfolios[0];
-        
         Test.stopTest();
     }
     

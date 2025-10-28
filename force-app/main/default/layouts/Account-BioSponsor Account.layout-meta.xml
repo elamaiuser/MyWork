@@ -100,14 +100,14 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CY_Drives1__c</field>
+                <field>CY_Drives__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>CFY_Drives1__c</field>
+                <field>CFY_Drives__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Last_Closed_Drive_New__c</field>
             </layoutItems>
             <layoutItems>
@@ -139,7 +139,7 @@
                 <field>Days_Until_Next_Scheduled_Drive__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Readonly</behavior>
                 <field>Number_of_Future_Drives_New__c</field>
             </layoutItems>
             <layoutItems>
@@ -174,10 +174,6 @@
                 <behavior>Readonly</behavior>
                 <field>Division__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Service_Level_Agreement__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -195,10 +191,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Website</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Relationship_Manager__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -562,7 +554,7 @@
         <relatedList>RelatedNoteList</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
+        <fields>sked_Location__c</fields>
         <relatedList>sked_Location_Account__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -579,7 +571,6 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
-        <excludeButtons>New</excludeButtons>
         <fields>Contact__c</fields>
         <fields>Account_Service_Role__c</fields>
         <fields>Start_Date__c</fields>

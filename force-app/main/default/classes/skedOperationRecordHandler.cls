@@ -139,7 +139,9 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
                     if (isEarlyDeparture){
                         callOutTypes.add(skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE);
                     }
+                    if(opRecordStaff.sked_Job_Allocation__c!=null){//HRP-15179
                     jobAllocationIds.add(opRecordStaff.sked_Job_Allocation__c);
+                    }
                 }
             }
 

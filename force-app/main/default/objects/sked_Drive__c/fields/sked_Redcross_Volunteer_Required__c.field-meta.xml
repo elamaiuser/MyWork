@@ -3,7 +3,6 @@
     <fullName>sked_Redcross_Volunteer_Required__c</fullName>
     <defaultValue>false</defaultValue>
     <description>This field is created as part of HRP-13146</description>
-    <externalId>false</externalId>
     <label>Red Cross Volunteer  Required</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

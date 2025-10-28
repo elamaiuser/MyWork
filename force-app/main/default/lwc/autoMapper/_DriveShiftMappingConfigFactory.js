@@ -12,8 +12,8 @@ export class DriveShiftMappingConfigFactory {
       mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_APT_Setup__c', 'APTSetup', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_2RBC_Projected_Procedures__c', 'x2rbcProjectedProcedures', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Contention__c', 'contention', MAPPING_TYPE.multiPicklist);
-      mappingConfig.addFieldConfig('sked_Contention_Resolution__c', 'contentionResolution', MAPPING_TYPE.multiPicklist);
+      mappingConfig.addFieldConfig('sked_Contention__c', 'contention', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Contention_Resolution__c', 'contentionResolution', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Donors_Scheduled__c', 'donorsScheduled', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive__c', 'driveId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
