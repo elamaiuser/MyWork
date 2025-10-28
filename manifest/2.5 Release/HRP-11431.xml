@@ -19,6 +19,11 @@
 		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
 		<name>CustomField</name>
 	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
     <types>
 		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
 		<members>Opportunity-APS Planner Mobile Opp Layout</members>
