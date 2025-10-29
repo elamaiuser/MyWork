@@ -1860,6 +1860,19 @@ class DriveHelper {
       drawHours = drawHoursWithoutLunchBreak;
     }
 
+    let total2RBCResources = 0;
+    resourceQuantity.forEach((data, key) => {
+      let baseRole = key.split('-')[0];
+      if (baseRole === RESOURCE_ROLE.x2RBC) {
+        let qty = isObject(data) ? (data.quantity || 0) : data || 0;
+        total2RBCResources += qty;
+      }
+    });
+
+    const noOf2RBCAssets = drive.numberOf2rbcAssets || 0;
+    let resourcesHaveEnough2RBCAssetsCount = Math.min(total2RBCResources, Math.floor(noOf2RBCAssets / 2));
+    let resourcesNotHaveEnough2RBCAssetsCount = Math.max(total2RBCResources - resourcesHaveEnough2RBCAssetsCount, 0);
+
     let staffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
       const data = resourceQuantity.get(resourceRole);
@@ -1878,14 +1891,17 @@ class DriveHelper {
 
       if(resourceRoles.includes(role)) {
         if(role === RESOURCE_ROLE.x2RBC) {
-          const noOf2RBCAssets = drive.numberOf2rbcAssets || 0;
-          const noOfResourcesHaveEnough2RBCAssets = Math.min(noOfResources, Math.floor(noOf2RBCAssets / 2));
-          const noOfResourcesNotHaveEnough2RBCAssets = Math.max(noOfResources - noOfResourcesHaveEnough2RBCAssets, 0);
+          
+          const noOfResourcesHaveEnough2RBCAssets = Math.min(noOfResources, resourcesHaveEnough2RBCAssetsCount);
+          const noOfResourcesNotHaveEnough2RBCAssets = Math.min(noOfResources - noOfResourcesHaveEnough2RBCAssets, resourcesNotHaveEnough2RBCAssetsCount);
           const x2RBCRoleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[RESOURCE_ROLE.x2RBC]] || 0;
           
           const capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * drawHoursWithoutLunchBreak;
           const capacity2 = noOfResourcesNotHaveEnough2RBCAssets * x2RBCRoleCapacity * drawHoursWithoutLunchBreak;
           staffCapacity += capacity1 + capacity2;
+
+          resourcesHaveEnough2RBCAssetsCount -= noOfResourcesHaveEnough2RBCAssets;
+          resourcesNotHaveEnough2RBCAssetsCount -= noOfResourcesNotHaveEnough2RBCAssets;
         } else {
           staffCapacity += noOfResources * roleCapacity * drawHours;
         }
