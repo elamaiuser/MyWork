@@ -41,7 +41,9 @@
         <members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
         <members>slwcDriveService</members>
-        <members>slwcDriveService_Test</members>				
+        <members>slwcDriveService_Test</members>
+        <members>skedDriveCOChangedBatch</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>				
 		<name>ApexClass</name>
 	</types>
     <types>

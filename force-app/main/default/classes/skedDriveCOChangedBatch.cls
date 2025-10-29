@@ -27,6 +27,13 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
         this(sitecollectionOperationIds);
         this.taxVer = taxVer;
     }
+    // HRP-15653 FIX: new constructor to retain taxVer during batch chaining
+    public skedDriveCOChangedBatch(String lastId, Set<Id> sitecollectionOperationIds, Decimal taxVer) {
+        this.lastId = lastId;
+        this.sitecollectionOperationIds = sitecollectionOperationIds;
+        this.taxVer = taxVer;
+    }
+
     global List<sked_Site_Collection_Operation__c> start(Database.BatchableContext BC) {
         //HRP-14438
         try{
@@ -86,20 +93,22 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
                 ORDER BY Id ASC
                 LIMIT 1
             ];
-            
+            System.debug('HRP-15653 : remainRecordQuery:'+!remainRecordQuery.isEmpty()+' this.lastId:'+this.lastId);
             if (!remainRecordQuery.isEmpty()) {
                 if (!Test.isRunningTest()) {
                     //HRP-14438
-                    Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedDriveCOChangedBatch');   
-                    Database.executeBatch(new skedDriveCOChangedBatch(this.lastId, this.sitecollectionOperationIds), batchSize);
+                    Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedDriveCOChangedBatch');
+                    //HRP-15653 FIX: pass taxVer when chaining to next batch   
+                    Database.executeBatch(new skedDriveCOChangedBatch(this.lastId, this.sitecollectionOperationIds,this.taxVer), batchSize);
                     runSkedDriveCOChangedBatch = true;
                 }
             }
+            System.debug('HRP-15653 :  this.taxVer:'+this.taxVer+':runSkedDriveCOChangedBatch '+runSkedDriveCOChangedBatch);
               //HRP-14438
             if(this.taxVer!=null && runSkedDriveCOChangedBatch == false){
-              
+                System.debug('HRP-15653 : run skedActivityDistrictBatch:');
                 Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedActivityDistrictBatch');   
-                Database.executeBatch(new skedActivityDistrictBatch(taxver),batchSize);
+                //Database.executeBatch(new skedActivityDistrictBatch(taxver),batchSize);
                 
             }
         } catch (Exception e) { //HRP-14438
