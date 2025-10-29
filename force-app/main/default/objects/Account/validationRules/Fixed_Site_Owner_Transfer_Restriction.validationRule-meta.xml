@@ -6,8 +6,7 @@
     <errorConditionFormula>RecordType.DeveloperName = &quot;Fixed_Site_Account&quot; &amp;&amp;
 ISCHANGED(OwnerId) &amp;&amp;
 $Profile.Name  &lt;&gt; &quot;System Administrator&quot; &amp;&amp;
-$Profile.Name  &lt;&gt; &quot;Global Admin&quot; &amp;&amp;
-$Profile.Name  &lt;&gt; &quot;APS Profile&quot;</errorConditionFormula>
+$Profile.Name  &lt;&gt; &quot;Global Admin&quot;</errorConditionFormula>
     <errorDisplayField>OwnerId</errorDisplayField>
     <errorMessage>Only APS staff are able to transfer Fixed Site Accounts to Account Managers.</errorMessage>
 </ValidationRule>
