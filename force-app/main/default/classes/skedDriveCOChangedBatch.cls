@@ -106,9 +106,8 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
             System.debug('HRP-15653 :  this.taxVer:'+this.taxVer+':runSkedDriveCOChangedBatch '+runSkedDriveCOChangedBatch);
               //HRP-14438
             if(this.taxVer!=null && runSkedDriveCOChangedBatch == false){
-                System.debug('HRP-15653 : run skedActivityDistrictBatch:');
                 Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedActivityDistrictBatch');   
-                //Database.executeBatch(new skedActivityDistrictBatch(taxver),batchSize);
+                Database.executeBatch(new skedActivityDistrictBatch(taxver),batchSize);
                 
             }
         } catch (Exception e) { //HRP-14438
