@@ -32,5 +32,9 @@
         <members>BSF_Access_Control_Rule__mdt-Access Control Rule Layout</members>		
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>BSF_Access_Control_Rule__mdt.Release_Tag_View</members>
+		<name>ListView</name>
+	</types>
 	<version>65.0</version>
 </Package>
