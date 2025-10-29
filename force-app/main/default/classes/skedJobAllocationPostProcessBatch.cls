@@ -58,7 +58,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
                 sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
                 sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked__Job__r.sked_Drive__r.Name, sked_Premium_Pay__c,
-                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c
+                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c, sked_Dual_Role__c
             FROM sked__Job_Allocation__c
             WHERE Id IN :this.jobAllocationIds
         ];
@@ -742,7 +742,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
             sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
-            if (resourceRoles.contains(skedAllocation.sked_Resource_Role__c) && job.sked__Duration__c >= maxCDLDOTDurationInMinutes) {
+            if ((resourceRoles.contains(skedAllocation.sked_Resource_Role__c) || resourceRoles.contains(skedAllocation.sked_Dual_Role__c)) && job.sked__Duration__c >= maxCDLDOTDurationInMinutes) {
                 skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_CDL_DOT_HOURS_VIOLATION, exceptionCodeTemplate);
                 exceptionLog.add(newException);
             }
