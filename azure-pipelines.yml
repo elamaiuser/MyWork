@@ -1,18 +1,39 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# This pipeline runs as a required check on all Pull Requests targeting the 'main' branch.
+# This prevents merging code that does not meet quality standards.
+pr:
+- BSFReleaseQA_SFCA
 
-trigger:
-- main
-
+# Use a standard, Microsoft-hosted virtual machine for the job.
 pool:
   vmImage: ubuntu-latest
 
+# Define the sequence of steps to execute.
 steps:
-- task: Checkmarx AST@2
+# --- STAGE 1: SALESFORCE CODE ANALYZER ---
+# These steps will run first. If they fail, the pipeline stops.
+
+- task: NodeTool@0
   inputs:
-    CheckmarxService: 'CheckmarxIntegration'
-    projectName: '$(Build.ARCBiomed.BSF)'
-    branchName: '$(Build.Main)'
-    tenantName: 'americanredcross'
+    versionSpec: '18.x' # Use a stable Long-Term Support version of Node.js
+  displayName: 'Install Node.js'
+
+- script: |
+    echo "Installing Salesforce CLI..."
+    npm install @salesforce/cli --global
+  displayName: 'Install Salesforce CLI'
+
+- script: |
+    echo "Installing Salesforce Code Analyzer plugin..."
+    # Suppress prompts during installation for automation
+    echo y | sf plugins install @salesforce/sfdx-scanner
+  displayName: 'Install SFCA (scanner) Plugin'
+
+- script: |
+    echo "Running Salesforce Code Analyzer scan..."
+    sf scanner:run \
+      --target "./force-app" \
+      --category "ApexSecurity,Performance,Best Practices,Error Prone" \
+      --engine "pmd,eslint" \
+      --format "table" \
+      --severity-threshold "2" # CRITICAL: Fails the pipeline for High (1) or Moderate (2) severity issues.
+  displayName: 'Run Salesforce Code Analyzer Scan'
