@@ -55,7 +55,7 @@ public class skedStaffingBudgetUtils implements Callable {
                 }
                 
                 Id resourceCollectionOpId;
-                String resourcePrimaryRole;
+                List<String> resourcePrimaryRole = new List<String>();
                 List<string> driveTypes = new List<string>();
                 List<String> preferredFixedSiteIds = new List<String>();
 
@@ -68,7 +68,14 @@ public class skedStaffingBudgetUtils implements Callable {
                     resourceCollectionOpId = resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
                 }
                 if (resource.sked__ResourceTags__r != NULL && !resource.sked__ResourceTags__r.isEmpty()) {
-                    resourcePrimaryRole = resource.sked__ResourceTags__r.get(0).sked__Tag__r.Name;
+                    Decimal priority = resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;  
+                    if(priority != NULL){
+                        for(sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r){
+                        if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                            resourcePrimaryRole.add(resourceTag.sked__Tag__r.Name);
+                        }
+                    }
+                    }    
                 }
                 if (resource.sked_FCC_Code__c != NULL) {
                     List<string> resourceFccCodes = new List<string>();
@@ -88,7 +95,7 @@ public class skedStaffingBudgetUtils implements Callable {
                     String siteCondition = queryBuilder.generateCondition('sked_location__c IN {0}', preferredFixedSiteIds);
                     String collectionOpCondition = queryBuilder.generateCondition('sked_Biomed_Collection_Operation__c = {0}', resourceCollectionOpId);
                     String driveTypesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Drive_Types__c INCLUDES {0}', driveTypes);
-                    String rolesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Roles__c INCLUDES {0}', new List<String>{resourcePrimaryRole});
+                    String rolesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Roles__c INCLUDES {0}', resourcePrimaryRole);
                     String datesCondition = queryBuilder.generateCondition('sked_Staffing_Budget__r.sked_Staffing_Budget_Date__c IN {0}', dates);
                     
                     List<string> conditions = new List<String>();
