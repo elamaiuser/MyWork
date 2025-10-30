@@ -16,6 +16,7 @@ steps:
 # in scripts can authenticate with the repository.
 - checkout: self
   persistCredentials: true
+  fetchDepth: 0
 
 # --- STAGE 1: SALESFORCE CODE ANALYZER ---
 # These steps will run first. If they fail, the pipeline stops.
