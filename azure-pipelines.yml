@@ -12,6 +12,11 @@ pool:
 
 # Define the sequence of steps to execute.
 steps:
+# It ensures that subsequent 'git' commands
+# in scripts can authenticate with the repository.
+- checkout: self
+  persistCredentials: true
+
 # --- STAGE 1: SALESFORCE CODE ANALYZER ---
 # These steps will run first. If they fail, the pipeline stops.
 
@@ -51,5 +56,5 @@ steps:
       --target "$FILES_TO_SCAN" \
       --engine "pmd,eslint" \
       --format "table" \
-      --severity-threshold "2" # Or "3", depending on your choice from Part 1
+      --severity-threshold "3"
   displayName: 'Run Salesforce Code Analyzer on Changed Files'
