@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_DriveConfirm_wo_TimeBlock</fullName>
+    <active>true</active>
+    <description>HRP-15704 A Drive cannot go to Confirm Status if Time Block is missing.</description>
+    <errorConditionFormula>AND(
+				ISPICKVAL(sked_Status__c,&quot;Confirmed&quot;),
+				ISCHANGED(sked_Status__c),
+				sked_CO_Time_Block_Count__c &gt; 0,
+				sked_Shifts_Missing_Time_Blocks__c &gt; 0
+				)</errorConditionFormula>
+    <errorMessage>This Drive cannot be Confirmed. Its Collection Operation uses Time Blocks, but at least one Shift is missing a Time Block.</errorMessage>
+</ValidationRule>

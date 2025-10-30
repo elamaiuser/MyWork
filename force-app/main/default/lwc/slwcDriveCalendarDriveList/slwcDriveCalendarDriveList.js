@@ -212,7 +212,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         driveQuery.endDate = endDate;
         driveQuery.eventTypes = this.filters.driveTypes;
         driveQuery.stages = this.filters.stages;
-        driveQuery.statuses = this.filters.driveStatuses;
+        //driveQuery.statuses = this.filters.driveStatuses;
         driveQuery.accountTypes = this.filters.accountTypes;
         driveQuery.accountIndustryCodes = this.filters.accountIndustryCodes;
         driveQuery.procedureTypes = this.filters.procedureTypes;
