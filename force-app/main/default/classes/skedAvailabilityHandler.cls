@@ -50,7 +50,15 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                             unavailabilityWrapper wrapper = new unavailabilityWrapper();
                             wrapper.unavailability = unavailability;
                             wrapper.biomedCollectionOpId = skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
-                            wrapper.role = skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.Name;
+
+                            List<String> primaryRoles = new List<String>();
+                            Decimal priority = skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;
+                            for(sked__Resource_Tag__c resourceTag : skedResource.sked__ResourceTags__r){
+                             if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                            primaryRoles.add(resourceTag.sked__Tag__r.Name);
+                             }
+                            }
+                            wrapper.role = primaryRoles;
                             wrapper.timezoneSidId = skedResource.sked__Primary_Region__r.sked__Timezone__c;
                             wrapper.unavailabilityDate = skedDateTimeUtils.getDate(unavailability.sked__Start__c, wrapper.timezoneSidId);
                             wrapper.key = wrapper.biomedCollectionOpId + ':' + unavailability.sked__Start__c.format(skedDateTimeUtils.DATE_ISO_FORMAT, wrapper.timezoneSidId);
@@ -444,7 +452,11 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                         for (skedStaffingBudgetWrapper staffingBudgetWrapper : staffingBudgetWrappersForDate) {
                             List<String> staffingBudgetRoles = staffingBudgetWrapper.staffingBudget.sked_Roles__c.split(';');
                             if ((wrapper.isResourcePreferredToFixedSites && !staffingBudgetWrapper.siteById.isEmpty()) || (!wrapper.isResourcePreferredToFixedSites && staffingBudgetWrapper.collectionOpById.keySet().contains(wrapper.resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c))) {
-                                if (staffingBudgetRoles.contains(wrapper.role)) {
+
+                                Set<String> rolesFromStaffingBudget = new Set<String>(staffingBudgetRoles);
+                                Set<String> wrapperRoles = new Set<String>(wrapper.role);
+                                rolesFromStaffingBudget.retainAll(wrapperRoles);
+                                if (!rolesFromStaffingBudget.isEmpty()) {
                                     hasMatchingStaffingBudgetSlot = true;
                                     staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
                                         sked_Availability__c = wrapper.unavailability.Id,
@@ -896,7 +908,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         public sked__Availability__c unavailability {get;set;}
         public sked__Resource__c resource {get;set;}
         public string key {get;set;}
-        public string role {get;set;}
+        public List<string> role {get;set;}
         public string biomedCollectionOpId {get;set;}
         public Date unavailabilityDate {get;set;}
         public string timezoneSidId {get;set;}
