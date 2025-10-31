@@ -9,10 +9,10 @@ import * as slwcDateUtils from 'c/slwcDateUtils';
 import { pick } from 'c/lodash';
 
 const DRIVE_EXCEPTION_COLUMNS = [
-    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Created Date', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'createdDateStr' }, target: '_blank'}},
     { label: 'Drive', fieldName: 'driveUrl', type: 'url', hideDefaultActions: false, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'driveName' }, target: '_blank'}},
     { label: 'Drive ID', fieldName: 'ufid', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true, sortable: true },
-    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 125, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 100, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
     { label: 'Job Type', fieldName: 'jobType', type: 'text', hideDefaultActions: false, wrapText: true, initialWidth: 125, sortable: true },
     { label: 'Resource', fieldName: 'resourceName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true, sortable: true },
     { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true, cellAttributes: {wrapText: true} },
@@ -26,7 +26,7 @@ const DRIVE_EXCEPTION_COLUMNS = [
 ];
 
 const ACTIVITY_EXCEPTION_COLUMNS = [
-    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Created Date', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'createdDateStr' }, target: '_blank'}},
     { label: 'Activity Title', fieldName: 'activityUrl', type: 'url', hideDefaultActions: false, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'activityTitle' }, target: '_blank'}},
     {
       label: 'Start', fieldName: 'activityStart', type: 'date', hideDefaultActions: true, sortable: true, typeAttributes: {
@@ -56,7 +56,7 @@ const ACTIVITY_EXCEPTION_COLUMNS = [
 ];
 
 const RESOURCE_EXCEPTION_COLUMNS = [
-    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Created Date', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'createdDateStr' }, target: '_blank'}},
     { label: 'Resource', fieldName: 'resourceUrl', type: 'url', hideDefaultActions: false, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'resourceName' }, target: '_blank'}},
     { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true, cellAttributes: {wrapText: true} },
     { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 150, wrapText: true, sortable: true },
@@ -64,11 +64,11 @@ const RESOURCE_EXCEPTION_COLUMNS = [
 ];
 
 const TBS_EXCEPTION_COLUMNS = [
-    { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 100, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'name' }, target: '_blank'}},
+    { label: 'Created Date', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'createdDateStr' }, target: '_blank'}},
     { label: 'Drive', fieldName: 'driveUrl', type: 'url', hideDefaultActions: false, wrapText: true, sortable: true, typeAttributes:{label: { fieldName: 'driveName' }, target: '_blank'}},
     { label: 'Drive Shift', fieldName: 'driveShiftName', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true, sortable: true },
     { label: 'Drive ID', fieldName: 'ufid', type: 'text', hideDefaultActions: true, initialWidth: 100, wrapText: true, sortable: true },
-    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 125, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+    { label: 'Drive Date', fieldName: 'driveDate', type: 'date-local', initialWidth: 100, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
     { label: 'Start Time', fieldName: 'startTimeStr', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true, sortable: true },
     { label: 'End Time', fieldName: 'endTimeStr', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true, sortable: true },
     { label: 'Time Block', fieldName: 'driveShiftTimeBlockName', type: 'text', hideDefaultActions: true, initialWidth: 200, wrapText: true, sortable: true },
@@ -284,6 +284,9 @@ export default class SlwcExceptionList extends LightningElement {
             .then((result) => {
                 result.forEach((exception) => {
                     exception.recordUrl = '/' + exception.id;
+                    if (exception.createdDate) { 
+                        exception.createdDateStr = DateTime.fromISO(exception.createdDate).toLocaleString({ month: 'short', day: '2-digit', year: 'numeric'});
+                    }
                     if (exception.activityId) {
                         exception.activityUrl = '/' + exception.activityId;
                     }
@@ -476,14 +479,14 @@ export default class SlwcExceptionList extends LightningElement {
         const reverse = sortDirection === 'asc' ? 1 : -1;
         const getSortValue = (obj) => {
             switch (fieldName) {                
-                case 'recordUrl': return obj.name;
+                case 'recordUrl': return obj.createdDate;
                 case 'driveUrl': return obj.driveName;
                 case 'conflictedDriveUrl': return obj.conflictedDriveName;
                 case 'conflictedActivityUrl': return obj.activityTitle;
                 case 'activityUrl': return obj.activityTitle;
                 case 'resourceUrl': return obj.resourceName;                
                 case 'startTimeStr': return obj.driveShiftStartTime ?? obj.driveStartTime;
-                case 'endTimeStr': return obj.driveShiftEndTime ?? obj.driveEndTime;                
+                case 'endTimeStr': return obj.driveShiftEndTime ?? obj.driveEndTime;
                 default: return obj[fieldName];
             }
         };
