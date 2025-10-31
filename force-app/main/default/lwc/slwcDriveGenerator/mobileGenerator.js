@@ -963,7 +963,7 @@ class MobileGenerator extends BaseGenerator {
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, { ignoreLunchBreak: ignoreLunchBreak, useDriveShift: true }));
 
     return driveShiftStaffCapacity;
   }
@@ -1276,7 +1276,7 @@ class MobileGenerator extends BaseGenerator {
       driveShiftsMetadata.driveShifts.forEach((driveShiftMetadata) => {
         const driveShiftStaffCapacity = Math.floor(this.helper.calculateStaffCapacity([
           'Driver', 'Driver Support', '2RBC', 'VP/HH', 'Charge'
-        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData));//HRP-14869
+        ], drive, driveShiftMetadata, tempMapResourceQuantityForStaffCapacity, this.masterData, { ignoreLunchBreak: false, useDriveShift: true }));//HRP-14869
         staffCapacity += driveShiftStaffCapacity;
       });
 
@@ -1503,7 +1503,7 @@ class MobileGenerator extends BaseGenerator {
       ], this.drive, driveShiftMetadata, 
         new Map()
           .set(driveShiftMetadata.key, new Map([...tempResourceQuantityMap, ...tempManuallyCreatedQuantityMap]))
-      , this.masterData));
+      , this.masterData, { ignoreLunchBreak: false, useDriveShift: true }));
       const canAdaptCurrentDriveShiftDonors = driveShiftStaffCapacity >= driveShiftMetadata.donorsScheduled;
       if(canAdaptCurrentDriveShiftDonors) {
         this.mapResourceQuantity.set(driveShiftMetadata?.key, new Map([...tempResourceQuantityMap, ...tempManuallyCreatedQuantityMap]));
@@ -1659,7 +1659,8 @@ class MobileGenerator extends BaseGenerator {
         this.drive,
         driveShiftMetadata,
         this.mapResourceQuantity,
-        this.masterData
+        this.masterData,
+        { ignoreLunchBreak: false, useDriveShift: false }
       )
 
       const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1687,7 +1688,8 @@ class MobileGenerator extends BaseGenerator {
       driveShiftMetadata,
       new Map()
         .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
+      this.masterData,
+      { ignoreLunchBreak: false, useDriveShift: false }
     )
 
     const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1723,6 +1725,7 @@ class MobileGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
+          driveSiteId: this.drive.driveSiteId,//HRP-15703
           jobTags: []
         };
         newList.push(newJob);
@@ -1934,7 +1937,7 @@ class MobileGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled,
         APTSetup: this.drive.driveShiftsMetadata.APTSetup
       };
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -2566,7 +2569,9 @@ class MobileGenerator extends BaseGenerator {
         this.masterData.backupDrive = extend(this.masterData.backupDrive, {
           tempRedcrossVolunteerRequired: this.drive.redcrossVolunteerRequired
         });
+        if(driveShift.redcrossVolunteerRequired !=null){
         this.drive.redcrossVolunteerRequired = driveShift.redcrossVolunteerRequired;
+        }
       }
       
       this.calculateNumberOf2rbcAssets();
