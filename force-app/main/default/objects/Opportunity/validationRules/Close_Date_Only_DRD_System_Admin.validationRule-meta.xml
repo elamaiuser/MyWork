@@ -7,5 +7,5 @@
 ISCHANGED(CloseDate),
  Bypass_Validation_Rule__c == FALSE,
 (AND($Profile.Name &lt;&gt; &quot;System Administrator&quot;)))</errorConditionFormula>
-    <errorMessage>Only a DRD user, APS Planner, APS Scheduler, Global Admin ,APS Admin, Recruitment Admin or System Administrator is able to update the Close Date.</errorMessage>
+    <errorMessage>Only System Administrator is allowed to update the Close Date.</errorMessage>
 </ValidationRule>
