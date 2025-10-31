@@ -511,7 +511,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
       if (!allAssignedEquipmentsValid || currentAssignedEquipments.length < totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
+     let { slotsToAllocate,  availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
         
         //try to assign new equipments 
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed, slotsToAllocate);
@@ -529,7 +529,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         }
       } else if (assignedEquipmentsValid.length > totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
+        let { slotsToAllocate,  availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
         
         //remove redundant equipments
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed);
@@ -1095,6 +1095,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   calculateEquipmentQuantity() {
     let noOfEquipments = this.drive.numberOf2rbcAssets || 0;
+    console.log('noOfEquipments'+noOfEquipments);
     this.mapAssetQuantity.set('Equipment', noOfEquipments);
   }
 
@@ -1993,7 +1994,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   handleEquipmentRequestedChanged() {
-    if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
+      if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
 
     const { equipmentJobsMap, lockedEquipments = [] } = this.drive.totalEquipmentRequestedChanged;
     //allocate equipments to jobs 
