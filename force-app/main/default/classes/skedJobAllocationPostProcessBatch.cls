@@ -30,6 +30,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         } else {
             retryCount++;
             if(retryCount > skedSetting.instance.jaPostProcessBatchConfig.maxRetries) {
+                String errorJobAllocationIds = jobAllocationIds != null && !jobAllocationIds.isEmpty() ? String.join(new List<Id>(jobAllocationIds), ',') : '';
                 BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
                     'skedJobAllocationPostProcessBatch',
                     'execute',
@@ -37,7 +38,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                     '',
                     'Failed processing job allocation records'
                 );
-                errorLog.Error_Description_Long__c = (String.join(new List<Id>(jobAllocationIds), ',')).subString(0, 2500);
+                errorLog.Error_Description_Long__c = !string.isBlank(errorJobAllocationIds) && errorJobAllocationIds.length() > 2500 ? errorJobAllocationIds.subString(0, 2500) : errorJobAllocationIds;
                 insert errorLog;
             }
             else {
