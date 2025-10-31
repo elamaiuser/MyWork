@@ -32,7 +32,8 @@ public class skedTestDataFactory {
         for (string role : roles) {
             sked__Tag__c roleTag = new sked__Tag__c(
                 Name = role,
-                sked__Type__c = 'Role'
+                sked__Type__c = 'Role',
+                sked_Priority__c = 9
             );
             predefinedData.add(roleTag);
         }
