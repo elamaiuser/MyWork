@@ -128,7 +128,7 @@ private class skedStaffingBudgetUtils_Test {
                                            sked_FCC_Code__c,
                                            (SELECT Id, sked__Location__c, sked__Resource__c, sked_Location_Resource_Relationship__c
                                             FROM sked__Location_Resource_Scores__r),
-                         				   (SELECT Id, sked__Tag__r.Name 
+                         				   (SELECT Id, sked__Tag__r.Name , sked__Tag__r.sked_Priority__c
                                             FROM sked__ResourceTags__r)
                                            FROM sked__Resource__c 
                                            LIMIT 1];
