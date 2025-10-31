@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSetGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This is meant for internal developers</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>DeveloperAccess</label>
+    <permissionSets>ListViewsAccess</permissionSets>
+    <permissionSets>ReadAllObjectsAndFields</permissionSets>
+    <permissionSets>sked_Global_Admin</permissionSets>
+    <status>Updated</status>
+</PermissionSetGroup>
