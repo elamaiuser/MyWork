@@ -1725,7 +1725,7 @@ class MobileGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
-          driveSiteId: this.drive.driveSiteId,
+          driveSiteId: this.drive.driveSiteId,//HRP-15703
           jobTags: []
         };
         newList.push(newJob);
@@ -2569,7 +2569,9 @@ class MobileGenerator extends BaseGenerator {
         this.masterData.backupDrive = extend(this.masterData.backupDrive, {
           tempRedcrossVolunteerRequired: this.drive.redcrossVolunteerRequired
         });
+        if(driveShift.redcrossVolunteerRequired !=null){
         this.drive.redcrossVolunteerRequired = driveShift.redcrossVolunteerRequired;
+        }
       }
       
       this.calculateNumberOf2rbcAssets();

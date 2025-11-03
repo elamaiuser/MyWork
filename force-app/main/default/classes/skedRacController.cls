@@ -1329,12 +1329,12 @@ global virtual class skedRacController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__r.Name 
+                (SELECT Id, sked__Tag__r.Name , sked__Tag__r.sked_Priority__c
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
-                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                LIMIT 1),
+                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST //HRP-15634
+                ),
                 (SELECT Id, sked__Location__c, sked_Location_Resource_Relationship__c
                  FROM sked__Location_Resource_Scores__r
                  WHERE sked_Location_Resource_Relationship__c = 'Preferred'

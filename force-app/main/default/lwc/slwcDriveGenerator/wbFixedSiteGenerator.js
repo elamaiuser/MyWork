@@ -512,7 +512,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
       if (!allAssignedEquipmentsValid || currentAssignedEquipments.length < totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
+     let { slotsToAllocate,  availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
         
         //try to assign new equipments 
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed, slotsToAllocate);
@@ -530,7 +530,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         }
       } else if (assignedEquipmentsValid.length > totalRequired) {
         //slots to be allocated
-        let { slotsToAllocate, availableEquipments: availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
+        let { slotsToAllocate,  availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, assignedEquipmentsValid, lockedEquipments);
         
         //remove redundant equipments
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed);
@@ -1218,7 +1218,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           aptQuantity: 0,
           quantity: noOfVpHhStaffs,
           systemQuantity: noOfVpHhStaffs,
-          driveSiteId: this.drive.driveSiteId,
+          driveSiteId: this.drive.driveSiteId,//HRP-15703
           jobTags: []
         };
         newList.push(newJob);

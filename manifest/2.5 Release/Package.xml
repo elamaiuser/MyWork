@@ -33,6 +33,8 @@
         <members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedJobAllocationTravelTimeBatch</members>
+        <members>skedResourceHoursRecordHandler</members>
+		<members>skedResourceHoursRecordHandler_test</members>
 		<members>skedResourceTagHandler</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
@@ -85,6 +87,8 @@
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set_Read</members>
         <name>CustomMetadata</name>
     </types>
     <types>
