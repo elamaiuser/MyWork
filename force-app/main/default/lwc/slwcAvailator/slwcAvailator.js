@@ -928,6 +928,11 @@ fetchJobTags(driveId){
         const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
           resourceRoleGroups: this.resourceRoleGroups
         });
+        if(_isJobBelongToDrivingRolesGroup) {
+          const { geoLocationLatitude, geoLocationLongitude } = this.getDriveStagingLocation(this.drive);
+          jobStartLatitude = geoLocationLatitude;
+          jobStartLongitude = geoLocationLongitude;
+        }
         const travelRoute = _isJobBelongToDrivingRolesGroup ? travelRoutes[RESOURCE_ROLE_GROUP.DRIVING_ROLES] : travelRoutes[RESOURCE_ROLE_GROUP.STAFF_ROLES];
         let resourceCollectionOperationId = resource.collectionOperationId;
         let overrideRegion = resource.resourceOverrides.find((item) => {
@@ -955,10 +960,6 @@ fetchJobTags(driveId){
           if(resource.dedicatedToSiteId && resource.dedicatedToSiteId !== this.drive.driveSiteId) {
             return;
           }
-
-          const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
-          jobStartLatitude = geoLocationLatitude;
-          jobStartLongitude = geoLocationLongitude;
         }
         
         let isValid = true;
@@ -1688,6 +1689,16 @@ fetchJobTags(driveId){
               let jobStartLongitude = job.longitude;
               let jobEndLatitude = job.latitude;
               let jobEndLongitude = job.longitude;
+
+              const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
+                resourceRoleGroups: this.resourceRoleGroups
+              });
+              if(_isJobBelongToDrivingRolesGroup) {
+                const { geoLocationLatitude, geoLocationLongitude } = this.getDriveStagingLocation(this.drive);
+                jobStartLatitude = geoLocationLatitude;
+                jobStartLongitude = geoLocationLongitude;
+              }
+
               let resourceCollectionOperationId = resource.collectionOperationId;
               const resourcePrimaryCollectionOperationId = resourceCollectionOperationId;
               const resourceSecondaryCollectionOperationIds = (resource.secondaryCollectionOperations || [])
@@ -1733,15 +1744,6 @@ fetchJobTags(driveId){
               if(!isTemporaryCO) {
                 if(!ignoreDedicatedSiteRule && resource.dedicatedToSiteId && resource.dedicatedToSiteId !== this.drive.driveSiteId) {
                   return;
-                }
-
-                const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
-                  resourceRoleGroups: this.resourceRoleGroups
-                });
-                if(_isJobBelongToDrivingRolesGroup) {
-                  const { geoLocationLatitude, geoLocationLongitude } = this.getResourceStagingLocation(resource, job.driveDate);
-                  jobStartLatitude = geoLocationLatitude;
-                  jobStartLongitude = geoLocationLongitude;
                 }
               }
               
@@ -2034,70 +2036,65 @@ fetchJobTags(driveId){
               }
       
               let travelTimeFrom, travelTimeTo;
-              let travelDistanceFrom;
+              let travelDistanceFrom, travelDistanceTo;
               let startFromLocation, goToLocation;
               
               //default
               if (resourceLongitude) {
                 startFromLocation = {latitude: resourceLatitude, longitude: resourceLongitude};
+                goToLocation = {latitude: jobStartLatitude, longitude: jobStartLongitude};
               }
 
-              if(job.resourceRole) {
-                if (jobStartLongitude) {
-                  if (previousEvent && previousEvent.longitude) {
-                    let location1 = {latitude: previousEvent.latitude, longitude: previousEvent.longitude};
-                    let location2 = {latitude: jobStartLatitude, longitude: jobStartLongitude};
-                    //previous job to current job
-                    startFromLocation = location1;
-                    goToLocation = location2;
-                  } 
-                  else {
-                    if (resourceLatitude) {
-                      let location1 = {latitude: resourceLatitude, longitude: resourceLongitude};
-                      let location2 = {latitude: jobStartLatitude, longitude: jobStartLongitude};
-                      //resource default location or resource override location to current job
-                      startFromLocation = location1;
-                      goToLocation = location2;
-                    }
-                  }
-  
-                  if(startFromLocation && goToLocation) {
-                    travelTimeFrom = this.getTravelTime(startFromLocation, goToLocation);
-                    travelDistanceFrom = this.calculateDistance(startFromLocation, goToLocation);
-  
-                    if(previousEvent && previousEvent.longitude) {
-                      if (this.dateUtils.compareDateJS(this.dateUtils.addMinute(previousEvent.finishJS, travelTimeFrom), job.startJS) > 0) {
-                        isResourceAvailable = false;
-                      }
-                    }
-                  }
-  
-                  if (nextEvent && nextEvent.longitude && jobEndLatitude) {
-                    let location1 = {latitude: jobEndLatitude, longitude: jobEndLongitude};
-                    let location2 = {latitude: nextEvent.latitude, longitude: nextEvent.longitude};
-                    travelTimeTo = this.getTravelTime(location1, location2);
-                    if (this.dateUtils.compareDateJS(this.dateUtils.addMinute(job.finishJS, travelTimeTo), nextEvent.startJS) > 0) {
-                      isResourceAvailable = false;
-                    }
-                  }
-                }
+              if(job.latitude) {
+                if (previousEvent && previousEvent.longitude) {
+                  let location1 = {latitude: previousEvent.latitude, longitude: previousEvent.longitude};
+                  let location2 = {latitude: job.latitude, longitude: job.longitude};
+                  //previous job to current job
+                  startFromLocation = location1;
+                  goToLocation = location2;
 
-                if(!slwcUtils.isNullOrEmpty(resource.maxTravelTime)) {
-                  if ((!slwcUtils.isNullOrEmpty(travelTimeFrom) && travelTimeFrom > resource.maxTravelTime) 
-                    || (!slwcUtils.isNullOrEmpty(travelTimeTo) && travelTimeTo > resource.maxTravelTime)) {
-                    let exceptionMsg = 'Maximum Travel Time Violation';
-                    if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
-                      exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
-                    }
-                    let exception = {
-                      driveId: this.driveId,
-                      jobId: job.id,
-                      resourceId: resource.id,
-                      exception: exceptionMsg,
-                      exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
-                    };
-                    exceptionLog.push(exception);
+                  if (this.dateUtils.compareDateJS(this.dateUtils.addMinute(previousEvent.finishJS, travelTimeFrom), job.startJS) > 0) {
+                    isResourceAvailable = false;
                   }
+                } 
+              }
+  
+              if(startFromLocation && goToLocation) {
+                travelTimeFrom = this.getTravelTime(startFromLocation, goToLocation);
+                travelDistanceFrom = this.calculateDistance(startFromLocation, goToLocation);
+              }
+  
+              if (nextEvent && nextEvent.longitude && jobEndLatitude) {
+                let location1 = {latitude: jobEndLatitude, longitude: jobEndLongitude};
+                let location2 = {latitude: nextEvent.latitude, longitude: nextEvent.longitude};
+                travelTimeTo = this.getTravelTime(location1, location2);
+                travelDistanceTo = this.calculateDistance(location1, location2);
+                
+                if (this.dateUtils.compareDateJS(this.dateUtils.addMinute(job.finishJS, travelTimeTo), nextEvent.startJS) > 0) {
+                  isResourceAvailable = false;
+                }
+              } else {
+                let location1 = {latitude: jobStartLatitude, longitude: jobStartLongitude};
+                let location2 = {latitude: resourceLatitude, longitude: resourceLongitude};
+                travelTimeTo = this.getTravelTime(location1, location2);
+                travelDistanceTo = this.calculateDistance(location1, location2);
+              }
+
+              if(!slwcUtils.isNullOrEmpty(resource.maxTravelTime)) {
+                if ((!slwcUtils.isNullOrEmpty(travelTimeFrom) && travelTimeFrom > resource.maxTravelTime) 
+                  || (!slwcUtils.isNullOrEmpty(travelTimeTo) && travelTimeTo > resource.maxTravelTime)) {
+                  let exceptionMsg = 'Maximum Travel Time Violation';
+                  if (this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"] && this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception) {
+                    exceptionMsg = this.exceptionSettingsMap["MAXIMUM_TRAVEL_TIME_VIOLATION"].exception;
+                  }
+                  let exception = {
+                    driveId: this.driveId,
+                    jobId: job.id,
+                    resourceId: resource.id,
+                    exception: exceptionMsg,
+                    exceptionCode: 'MAXIMUM_TRAVEL_TIME_VIOLATION'
+                  };
+                  exceptionLog.push(exception);
                 }
               }
               
@@ -2120,10 +2117,6 @@ fetchJobTags(driveId){
                     exceptionLog.push(exception);
                 }
               }
-              
-              const _isJobBelongToDrivingRolesGroup = isJobBelongToDrivingRolesGroup(job, {
-                resourceRoleGroups: this.resourceRoleGroups
-              });
 
               if (_isJobBelongToDrivingRolesGroup && this.dateUtils.compareDateJS(job.finishJS, this.dateUtils.addMinute(job.startJS, this.maxCDLDOTDurationInMinutes)) > 0) {
                 let exceptionMsg = 'CDL/DOT staff cannot be scheduled to drive a CDL/DOT vehicle for a shift length that exceeds {{hours}} hours';
@@ -2208,7 +2201,13 @@ fetchJobTags(driveId){
                 estimatedTravelTimeTo = travelData?.travelTimeTo;
                 estimatedTravelTimeBack = travelData?.travelTimeBack;
 
-                estimatedTravelData = travelTimeGroup[_isJobBelongToDrivingRolesGroup ? RESOURCE_ROLE_GROUP.DRIVING_ROLES : RESOURCE_ROLE_GROUP.STAFF_ROLES];
+                //estimatedTravelData = travelTimeGroup[_isJobBelongToDrivingRolesGroup ? RESOURCE_ROLE_GROUP.DRIVING_ROLES : RESOURCE_ROLE_GROUP.STAFF_ROLES];
+                estimatedTravelData = {
+                  travelTimeTo: travelTimeFrom,
+                  travelDistanceTo: travelDistanceFrom,
+                  travelTimeBack: travelTimeTo,
+                  travelDistanceBack: travelDistanceTo
+                };
               }
 
               let possibleAllocation = {};
