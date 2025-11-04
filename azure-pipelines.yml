@@ -57,5 +57,5 @@ steps:
       --target "$FILES_TO_SCAN" \
       --engine "pmd,eslint" \
       --format "table" \
-      --severity-threshold "3"
+      --severity-threshold "2"
   displayName: 'Run Salesforce Code Analyzer on Changed Files'
