@@ -57,5 +57,6 @@ steps:
       --target "$FILES_TO_SCAN" \
       --engine "pmd,eslint" \
       --format "table" \
+      --eslintconfig ".eslintrc.json" \
       --severity-threshold "2"
   displayName: 'Run Salesforce Code Analyzer on Changed Files'
