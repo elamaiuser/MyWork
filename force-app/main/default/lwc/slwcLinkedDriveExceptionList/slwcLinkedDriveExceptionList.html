@@ -42,6 +42,9 @@
                         key-field="id"
                         data={exceptionLog}
                         columns={columns}
+                        onsort={handleSort}
+                        sorted-by={sortedBy}
+                        sorted-direction={sortedDirection}
                         wrap-text-max-lines="100"
                         onrowselection={handleRowSelection}
                         enable-infinite-loading={enableInfiniteLoading}
