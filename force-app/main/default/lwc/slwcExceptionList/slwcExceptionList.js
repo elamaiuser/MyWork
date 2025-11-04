@@ -133,7 +133,7 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     get collectionOperationFirstDay() {
-        if (!this.collectionOperations || !this.collectionOperations.length) return;
+        if (!this.collectionOperations || !this.collectionOperations.length) return null;
         return this.collectionOperations[0].workWeekFirstDay;
     }
     
@@ -183,7 +183,7 @@ export default class SlwcExceptionList extends LightningElement {
     connectedCallback() {
         //init settings
         if (!this.initialized) {
-            let lastSearchQuery = this.getLastQuery();
+            const lastSearchQuery = this.getLastQuery();
             if (lastSearchQuery) {
                 this.filters = {
                     ...this.filters,
@@ -210,7 +210,7 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     fetchExceptionData() {
-        let query = new exceptionQueryModel();
+        const query = new exceptionQueryModel();
 
         let exceptionCodes = [];
         let driveTypes = [];
@@ -275,7 +275,7 @@ export default class SlwcExceptionList extends LightningElement {
         query.limit = 20;
         query.offset = (this.exceptionLog || []).length;
         
-        let service = new exceptionService();
+        const service = new exceptionService();
 
         return Promise.resolve()
             .then(() => {
@@ -393,7 +393,7 @@ export default class SlwcExceptionList extends LightningElement {
         //Display a spinner to signal that data is being loaded
         event.target.isLoading = true;
         
-        let target = event.target;
+        const target = event.target;
         this.fetchExceptionData()
             .then((result) => {
                 if (result.length == 0) {
@@ -414,7 +414,7 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     handleCloseException() {
-        let exceptionLog = [];
+        const exceptionLog = [];
         this.selectedExceptionLog.forEach((item) => {
             exceptionLog.push({
                 id: item.id,
@@ -422,9 +422,9 @@ export default class SlwcExceptionList extends LightningElement {
             });
         });
         this.showSpinner = true;
-        let service = new exceptionService();
+        const service = new exceptionService();
         service.saveList(exceptionLog)
-            .then((result) => {
+            .then(() => {
                 this.dispatchEvent(new ShowToastEvent({
                     message: 'Exception log was closed successfully.',
                     variant: 'success',
@@ -443,9 +443,9 @@ export default class SlwcExceptionList extends LightningElement {
     }
     
     getLastQuery() {
-        let tabQuery = slwcUtils.getLastQuery(this.pageName);
-        let schedulingConsoleQuery = slwcUtils.getLastQuery('schedulingConsole');
-        let collectionOperationValues =  (schedulingConsoleQuery || {}).collectionOperationValues || {
+        const tabQuery = slwcUtils.getLastQuery(this.pageName);
+        const schedulingConsoleQuery = slwcUtils.getLastQuery('schedulingConsole');
+        const collectionOperationValues =  (schedulingConsoleQuery || {}).collectionOperationValues || {
             divisions: [],
             arcRegions: [],
             districts: [],
@@ -475,7 +475,7 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     sortData(fieldName, sortDirection) {        
-        let dataToSort = JSON.parse(JSON.stringify(this.exceptionLog));
+        const dataToSort = JSON.parse(JSON.stringify(this.exceptionLog));
         const reverse = sortDirection === 'asc' ? 1 : -1;
         const getSortValue = (obj) => {
             switch (fieldName) {                
