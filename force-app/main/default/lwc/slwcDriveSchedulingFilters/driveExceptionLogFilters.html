@@ -56,6 +56,17 @@
                             </c-slwc-multi-picklist>
                         </div>
                         <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
+                                name="jobTypes"
+                                label="Job Type"
+                                selected-by-default
+                                object-api-name="sked__Job__c"
+                                field-api-name="sked__Type__c"
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.jobTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
                             <lightning-combobox label="Search Field" name="searchField" options={searchFields} value={filters.searchField} onchange={handleOnChange}></lightning-combobox>
                         </div>
                         <div class="slds-form-element slds-form-element_stacked">
