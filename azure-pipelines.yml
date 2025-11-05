@@ -1,3 +1,4 @@
+# Runs as a required check on Pull Requests.
 pr:
 - BSFReleaseQA_SFCA
 
@@ -7,26 +8,32 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+# Step 1: Checkout with full history and credentials for Git commands.
 - checkout: self
   persistCredentials: true
   fetchDepth: 0
 
+# Step 2: Install Node.js.
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
+# Step 3: Install project dependencies.
 - script: npm install
   displayName: 'Install NPM Dependencies'
 
+# Step 4: Install Salesforce CLI & Scanner.
 - script: |
     npm install @salesforce/cli --global
     echo y | sf plugins install @salesforce/sfdx-scanner
   displayName: 'Install Salesforce CLI & Scanner'
 
+# Step 5: Run the scanner on changed files, with the original explicit fetch command restored.
 - script: |
-    # This simple fetch helps the agent align its local refs with the remote.
-    git fetch origin
+    # This explicit fetch command creates the specific local ref that the diff command needs.
+    echo "Fetching target branch $(System.PullRequest.TargetBranch) for comparison..."
+    git fetch origin $(System.PullRequest.TargetBranch):refs/remotes/origin/$(System.PullRequest.TargetBranch)
 
     echo "Identifying changed Salesforce files in this Pull Request..."
     FILES_TO_SCAN=$(git diff --name-only "origin/$(System.PullRequest.TargetBranch)...HEAD" | grep -E "\.(cls|trigger|component|page|js|xml)$" | tr '\n' ',' | sed 's/,$//')
