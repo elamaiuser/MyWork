@@ -1,39 +1,35 @@
-# This pipeline runs as a required check on Pull Requests.
 pr:
-- BSFReleaseQA_SFCA  # Or whatever your target branch is, e.g., 'main'
+- BSFReleaseQA_SFCA
 
-# This disables the pipeline from running on direct pushes.
 trigger: none
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-# Step 1: Checkout the code with full git history for accurate file comparison.
 - checkout: self
   persistCredentials: true
   fetchDepth: 0
 
-# Step 2: Install Node.js, which is required for NPM and Salesforce CLI.
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# Step 3: Install project dependencies (like the Salesforce LWC rules) from package.json.
 - script: npm install
   displayName: 'Install NPM Dependencies'
 
-# Step 4: Install the Salesforce CLI tool and the Code Analyzer plugin.
 - script: |
     npm install @salesforce/cli --global
     echo y | sf plugins install @salesforce/sfdx-scanner
   displayName: 'Install Salesforce CLI & Scanner'
 
-# Step 5: Run the scanner on the files that were changed in the Pull Request.
 - script: |
+    # This simple fetch helps the agent align its local refs with the remote.
+    git fetch origin
+
     echo "Identifying changed Salesforce files in this Pull Request..."
-    FILES_TO_SCAN=$(git diff --name-only origin/$(System.PullRequest.TargetBranch)...HEAD | grep -E "\.(cls|trigger|component|page|js|xml)$" | tr '\n' ',' | sed 's/,$//')
+    FILES_TO_SCAN=$(git diff --name-only "origin/$(System.PullRequest.TargetBranch)...HEAD" | grep -E "\.(cls|trigger|component|page|js|xml)$" | tr '\n' ',' | sed 's/,$//')
 
     if [ -z "$FILES_TO_SCAN" ]; then
       echo "No relevant Salesforce files were changed. Skipping scan."
