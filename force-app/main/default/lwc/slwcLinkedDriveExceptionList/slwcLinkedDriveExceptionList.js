@@ -8,7 +8,7 @@ import * as slwcUtils from "c/slwcUtils";
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { cloneDeep, keyBy } from 'c/lodash';
 import { collectionOperationService, linkedDrivesService, linkedDrivesQueryModel } from 'c/dataService';
-
+//
 const TERRITORY_TYPE = {
   ARC_REGION: 'ARC Region',
   DIVISION: 'Division',

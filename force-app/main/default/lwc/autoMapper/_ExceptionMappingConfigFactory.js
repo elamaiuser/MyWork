@@ -4,7 +4,7 @@ export class ExceptionMappingConfigFactory {
   constructor() {}
 
   process() {
-      let mappingConfig = new mappingConfigModel();
+      const mappingConfig = new mappingConfigModel();
       mappingConfig.sObjectName = 'skedHC__Exception__c';
       mappingConfig.objectType = 'exception';
 
