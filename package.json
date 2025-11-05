@@ -1,0 +1,10 @@
+{
+  "name": "salesforce-project",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Salesforce project dependencies for code analysis",
+  "devDependencies": {
+    "@salesforce/eslint-config-lwc": "^3.0.0",
+    "eslint": "^8.0.0"
+  }
+}
