@@ -2203,9 +2203,9 @@ fetchJobTags(driveId){
 
                 //estimatedTravelData = travelTimeGroup[_isJobBelongToDrivingRolesGroup ? RESOURCE_ROLE_GROUP.DRIVING_ROLES : RESOURCE_ROLE_GROUP.STAFF_ROLES];
                 estimatedTravelData = {
-                  travelTimeTo: travelTimeFrom,
+                  travelTimeTo: Math.ceil(travelTimeFrom),
                   travelDistanceTo: travelDistanceFrom,
-                  travelTimeBack: travelTimeTo,
+                  travelTimeBack: Math.ceil(travelTimeTo),
                   travelDistanceBack: travelDistanceTo
                 };
               }
