@@ -5,7 +5,7 @@
   "description": "Salesforce project dependencies for code analysis",
   "devDependencies": {
     "@salesforce/eslint-config-lwc": "^3.0.0",
-    "eslint": "^9.39.1",
-    "jest":"^30.2.0"
+    "eslint": "^8.0.0",
+    "jest":"^29.0.0"
   }
 }
