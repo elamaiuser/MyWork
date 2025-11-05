@@ -2,6 +2,7 @@
 pr:
 - BSFReleaseQA_SFCA
 
+# Disables the pipeline from running on direct pushes.
 trigger: none
 
 pool:
@@ -19,17 +20,17 @@ steps:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# Step 3: Install project dependencies.
+# Step 3: Install project dependencies (for ESLint) from package.json.
 - script: npm install
   displayName: 'Install NPM Dependencies'
 
-# Step 4: Install Salesforce CLI & Scanner.
+# Step 4: Install Salesforce CLI & the Code Analyzer plugin.
 - script: |
     npm install @salesforce/cli --global
     echo y | sf plugins install @salesforce/sfdx-scanner
   displayName: 'Install Salesforce CLI & Scanner'
 
-# Step 5: Run the scanner on changed files, with the original explicit fetch command restored.
+# Step 5: Run the scanner on changed files.
 - script: |
     # This explicit fetch command creates the specific local ref that the diff command needs.
     echo "Fetching target branch $(System.PullRequest.TargetBranch) for comparison..."
@@ -45,10 +46,12 @@ steps:
 
     echo "The following files will be scanned: $FILES_TO_SCAN"
 
+    # This is the corrected command, with the --pmdconfig line removed.
+    # The PMD engine will now use its default rules.
     sf scanner:run \
       --target "$FILES_TO_SCAN" \
       --engine "pmd,eslint" \
-      --format "table" \      
+      --format "table" \
       --eslintconfig ".eslintrc.json" \
       --severity-threshold "2"
   displayName: 'Run Salesforce Code Analyzer on Changed Files'
