@@ -37,6 +37,11 @@ steps:
     echo y | sf plugins install @salesforce/sfdx-scanner
   displayName: 'Install SFCA (scanner) Plugin'
 
+  - script: |
+    echo "Installing NPM Dependencies"
+    npm install
+  displayName: 'Install NPM Dependencies'
+
 - script: |
     # Azure DevOps does a shallow fetch, so we must fetch the target branch to be able to compare against it.
     echo "Fetching target branch $(System.PullRequest.TargetBranch) for comparison..."
