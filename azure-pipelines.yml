@@ -1,18 +1,62 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# This pipeline runs as a required check on all Pull Requests targeting the 'main' branch.
+# This prevents merging code that does not meet quality standards.
+pr:
+- BSFReleaseQA_SFCA
 
-trigger:
-- main
+# This line is critical: it disables the pipeline from running on direct pushes to any branch.
+trigger: none
 
+# Use a standard, Microsoft-hosted virtual machine for the job.
 pool:
   vmImage: ubuntu-latest
 
+# Define the sequence of steps to execute.
 steps:
-- task: Checkmarx AST@2
+# It ensures that subsequent 'git' commands
+# in scripts can authenticate with the repository.
+- checkout: self
+  persistCredentials: true
+  fetchDepth: 0
+
+# --- STAGE 1: SALESFORCE CODE ANALYZER ---
+# These steps will run first. If they fail, the pipeline stops.
+
+- task: NodeTool@0
   inputs:
-    CheckmarxService: 'CheckmarxIntegration'
-    projectName: '$(Build.ARCBiomed.BSF)'
-    branchName: '$(Build.Main)'
-    tenantName: 'americanredcross'
+    versionSpec: '18.x' # Use a stable Long-Term Support version of Node.js
+  displayName: 'Install Node.js'
+
+- script: |
+    echo "Installing Salesforce CLI..."
+    npm install @salesforce/cli --global
+  displayName: 'Install Salesforce CLI'
+
+- script: |
+    echo "Installing Salesforce Code Analyzer plugin..."
+    # Suppress prompts during installation for automation
+    echo y | sf plugins install @salesforce/sfdx-scanner
+  displayName: 'Install SFCA (scanner) Plugin'
+
+- script: |
+    # Azure DevOps does a shallow fetch, so we must fetch the target branch to be able to compare against it.
+    echo "Fetching target branch $(System.PullRequest.TargetBranch) for comparison..."
+    git fetch origin $(System.PullRequest.TargetBranch):refs/remotes/origin/$(System.PullRequest.TargetBranch)
+
+    echo "Identifying changed Salesforce files in this Pull Request..."
+    # Get a comma-separated list of changed files that match our target extensions.
+    FILES_TO_SCAN=$(git diff --name-only origin/$(System.PullRequest.TargetBranch)...HEAD | grep -E "\.(cls|trigger|component|page|js|xml)$" | tr '\n' ',' | sed 's/,$//')
+
+    if [ -z "$FILES_TO_SCAN" ]; then
+      echo "No relevant Salesforce files were changed in this PR. Skipping scan."
+      exit 0 # Exit successfully
+    fi
+
+    echo "The following files will be scanned: $FILES_TO_SCAN"
+
+    sf scanner:run \
+      --target "$FILES_TO_SCAN" \
+      --engine "pmd,eslint" \
+      --format "table" \
+      --eslintconfig ".eslintrc.json" \
+      --severity-threshold "2"
+  displayName: 'Run Salesforce Code Analyzer on Changed Files'
