@@ -48,8 +48,7 @@ steps:
     sf scanner:run \
       --target "$FILES_TO_SCAN" \
       --engine "pmd,eslint" \
-      --format "table" \
-      --pmdconfig "./build-tools/pmd-ruleset.xml" \
+      --format "table" \      
       --eslintconfig ".eslintrc.json" \
       --severity-threshold "2"
   displayName: 'Run Salesforce Code Analyzer on Changed Files'
