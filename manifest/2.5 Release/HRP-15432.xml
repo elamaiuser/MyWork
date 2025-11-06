@@ -20,6 +20,7 @@
 		<name>CustomMetadata</name>
 	</types>
     <types>
+		<members>autoMapper</members>
 		<members>showSpecialCircumstanceBadgesOnOpportunity</members>
 		<name>LightningComponentBundle</name>
 	</types>
