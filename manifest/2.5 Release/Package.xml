@@ -14,6 +14,12 @@
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
 		<members>BSF_Constants</members>
+        <members>BSF_Batch_RemoveDriveSpecialAffiliations</members>
+		<members>BSF_Batch_RemoveSpecialAffiliations_Test</members>
+		<members>BSF_TestDataSetup</members>
+		<members>DriveMarketingProgramTriggerHandler</members>
+		<members>DriveMarketingProgramTriggerService</members>
+		<members>DriveMarketingProgramTriggerService_Test</members>
         <members>DelayedTaxonomyBatchScheduler</members>
         <members>DeleteExpiredTaxoVersionBatchTest</members>
         <members>FieldIdentifiers</members>
@@ -66,6 +72,7 @@
         <members>BSF_Access_Control_Rule__mdt.Target_Type__c</members>
 		<members>Opportunity.Cancellation_Detail__c</members>
 		<members>Opportunity.Primary_Drive_Contact__c</members>
+        <members>Opportunity.Special_Affiliations__c</members>
 		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
 		<members>sked_Drive__c.sked_Cancellation_Detail__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
@@ -89,6 +96,9 @@
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set_Read</members>
+		<members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -117,6 +127,7 @@
 	</types>
     <types>
 		<members>autoMapper</members>
+        <members>showSpecialCircumstanceBadgesOnOpportunity</members>
         <members>slwcApprovalHistoryConsole</members>
 		<members>slwcAvailator</members>
         <members>slwcCancelDriveModal</members>
@@ -152,6 +163,7 @@
 	<types>
 		<members>skedLWCCustomStyle</members>
 		<members>sked_HLT_Dist</members>
+        <members>Special_Affiliations_Badge_Logo</members>
 		<name>StaticResource</name>
 	</types>
 	<types>
