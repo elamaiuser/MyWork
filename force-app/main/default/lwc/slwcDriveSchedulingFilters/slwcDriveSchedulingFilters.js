@@ -61,6 +61,8 @@ const MODE = {
       driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE],
       operationTypes: [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_WB, OPERATION_TYPE.NON_INTEGRATED_APH],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       searchText: "",
       searchField: "sked_Drive__r.Name",
       exceptionCodes: [
@@ -113,6 +115,8 @@ const MODE = {
       searchText: "",
       searchField: "sked_Drive__r.Name",
       jobTypes: [],
+      submissionStartDate: null,
+      submissionEndDate: null,
       exceptionCodes: [
         "CDL_DOT_HOURS_VIOLATION",
         "CERT_ADDED_42DAYS",
@@ -157,6 +161,8 @@ const MODE = {
     defaultModel: {
       priorities: ["High", "Medium", "Low"],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       exceptionCodes: [
         "LINKED_DRIVE_MISMATCHING_ASSETS",
       ],
@@ -200,7 +206,9 @@ const MODE = {
     template: resourceExceptionLogFiltersTemplate,
     defaultModel: {
       priorities: ["High", "Medium", "Low"],
-      statuses: ["Open"]
+      statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null
     }
   },
   ACTIVITY_EXCEPTION_LOG: {
@@ -211,6 +219,8 @@ const MODE = {
       activityTypes: [],
       activitySubTypes: [],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       searchText: "",
       searchField: "skedHC__Activity__r.sked_Activity_Title__c"
     },
@@ -402,7 +412,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
         ...(this.modeSettings || {}).defaultModel
       }
 
-      let lastSearchQuery = this.getLastQuery();
+      const lastSearchQuery = this.getLastQuery();
       if (lastSearchQuery) {
         this.filters = {
           ...this.filters,
@@ -445,7 +455,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
   }
 
   handleSearchMarket(event) {
-    let svc = new accountService();
+    const svc = new accountService();
 
     return svc.searchMarket({
       queryText: event.searchTerm
@@ -499,7 +509,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
   }
 
   getLastQuery() {
-    let tabQuery = slwcUtils.getLastQuery(this.filterName);
+    const tabQuery = slwcUtils.getLastQuery(this.filterName);
     return tabQuery;
   }
 }
