@@ -363,7 +363,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
     wiredJobTypes({error, data}) {
       if(data) {
         this.jobTypes = data.values.map(picklistValue => picklistValue.value);
-        if(this.mode === MODE.DRIVE_EXCEPTION_LOG.id) {
+        if(this.mode === MODE.DRIVE_EXCEPTION_LOG.id && this.selectedAllByDefault) {
           this.filters.jobTypes = [...this.jobTypes];
         }
       } else if(error) {

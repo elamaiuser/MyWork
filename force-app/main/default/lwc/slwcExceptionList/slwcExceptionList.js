@@ -217,7 +217,7 @@ export default class SlwcExceptionList extends LightningElement {
         let operationTypes = [];
         let resourceDriveTypes = [];
         let activityTypes = [];
-        let activitySubTypes = [];
+        let activitySubTypes = [];        
         if (this.exceptionType === "drive") {
             query.exceptionType = "drive";
             const territoryKeys = this.territoryKeys;
@@ -228,6 +228,7 @@ export default class SlwcExceptionList extends LightningElement {
             exceptionCodes = this.filters.exceptionCodes;
             driveTypes = this.filters.driveTypes;
             operationTypes = this.filters.operationTypes;
+            query.jobTypes = this.filters.jobTypes;
         }
         else if (this.exceptionType === "activity") {
             query.exceptionType = "activity";
@@ -266,6 +267,8 @@ export default class SlwcExceptionList extends LightningElement {
         query.statuses = this.filters.statuses;
         query.startDate  = this.filters.startDate;
         query.endDate = this.filters.endDate;
+        query.submissionStartDate = this.filters.submissionStartDate;
+        query.submissionEndDate = this.filters.submissionEndDate;
         query.collectionOperationIds = this.collectionOperations.map(item => item.id);
 
         if (this.filters.searchText && this.filters.searchField) {
