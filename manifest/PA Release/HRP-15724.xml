@@ -4,5 +4,10 @@
 		<members>BSFStagingSheetLinks</members>
 		<name>ApexPage</name>
 	</types>
+    <types>
+        <members>Staging_Sheet_Config.Show_MOE_Sheet_Link</members>
+        <members>Staging_Sheet_Config.Show_Non_MOE_Sheet_Link</members>
+        <name>CustomMetadata</name>
+    </types>
 	<version>63.0</version>
 </Package>
