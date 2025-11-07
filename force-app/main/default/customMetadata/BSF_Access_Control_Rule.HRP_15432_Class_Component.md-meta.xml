@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>HRP-15432 Field Permission Set Read</label>
+    <label>HRP-15432 Class Component</label>
     <protected>false</protected>
     <values>
         <field>Component_API_Names__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">slwcDataService</value>
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">Special_Affiliations__c</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Is_Enabled__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>PermissionsCreate__c</field>
@@ -28,7 +28,7 @@
     </values>
     <values>
         <field>PermissionsRead__c</field>
-        <value xsi:type="xsd:boolean">true</value>
+        <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
         <field>Release_Tag__c</field>
@@ -36,15 +36,15 @@
     </values>
     <values>
         <field>Rule_Type__c</field>
-        <value xsi:type="xsd:string">Object/Field</value>
+        <value xsi:type="xsd:string">Apex Class</value>
     </values>
     <values>
         <field>SObject_API_Name__c</field>
-        <value xsi:type="xsd:string">Opportunity</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_Manufacturing,sked_Telerecruiter,Content_Manager</value>
+        <value xsi:type="xsd:string">Content_Manager</value>
     </values>
     <values>
         <field>Target_Type__c</field>
