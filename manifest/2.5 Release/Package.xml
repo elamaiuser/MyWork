@@ -96,7 +96,6 @@
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set_Read</members>
-        <members>BSF_Access_Control_Rule.HRP_15432_Class_Component</members>
         <members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set_Read</members>
 		<members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
