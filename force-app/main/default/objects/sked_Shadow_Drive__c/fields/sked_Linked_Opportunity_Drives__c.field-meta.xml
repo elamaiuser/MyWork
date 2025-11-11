@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Linked_Opportunity_Drives__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Linked Opportunity Drives</label>
+    <referenceTo>Linked_Opportunity_Drives__c</referenceTo>
+    <relationshipLabel>Shadow Drives</relationshipLabel>
+    <relationshipName>sked_Shadow_Drives</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
