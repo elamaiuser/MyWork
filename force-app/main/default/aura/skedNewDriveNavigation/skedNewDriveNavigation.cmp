@@ -1,6 +1,0 @@
-<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
-    <div class="slds-text-align_center">Loading...</div>
-    <lightning:navigation aura:id="navService"/>
-    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:handler event="aura:doneRendering" action="{!c.doneRendering}"/>
-</aura:component>
