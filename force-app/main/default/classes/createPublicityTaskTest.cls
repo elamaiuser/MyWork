@@ -3,16 +3,13 @@
  * */
 
 @isTest(SeeAllData = False)
-public class createPublicityTaskTest 
-{
-    public static String roleName = 'West_BDM';
-    public static String mobileAccRecType = 'Mobile Account';
+public class createPublicityTaskTest {
 	public static String mobileOppRecType = 'Mobile Opp';
     public static Map<String,Id> recordTypeMap  = new Map<String,Id>();
     
     @testSetup
-    public static void setupData()
-    {    
+    public static void setupData() {
+        
         // insert admin user - system admin        
         User AdminUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
@@ -29,7 +26,6 @@ public class createPublicityTaskTest
             
         );
         insert AdminUser ;
-        UserRole urole  = [select id from userrole where developername =: roleName];
         
         // insert DRD User - AM
         User DRDAMUser = new User(
@@ -43,10 +39,9 @@ public class createPublicityTaskTest
              TimeZoneSidKey = 'America/Los_Angeles',
              EmailEncodingKey = 'UTF-8',
              LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
+             LocaleSidKey = 'en_US'
         );
-        System.runAs( AdminUser ){
+        System.runAs( AdminUser ) {
             insert DRDAMUser;
         }
         
@@ -54,43 +49,57 @@ public class createPublicityTaskTest
         List<Opportunity> oppList = new List<Opportunity>();
         List<Order> orderList = new List<Order>();
         
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
         //insert account
-        recordTypeMap = recordTypeMap( 'Account' );
-        Id recTypeId = recordTypeMap.get(mobileAccRecType);
-        Account acc = new account();
-        acc.RecordTypeId = recTypeId;        
-        acc.name='Test Account';
-        acc.Internal_Name__c = 'Test Account';
-        acc.BillingPostalCode = '30146';
-        insert acc;   
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'Test Account';
+        testMobileAccount.BillingPostalCode = '30146';
+        insert testMobileAccount;
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
         
         //insert opportunity
         recordTypeMap = recordTypeMap( 'Opportunity' );
 		Id optyRecTypeId = recordTypeMap.get(mobileOppRecType);
 		opportunity opp;
-        opp =new opportunity();
+        
+        opp = new opportunity();
 		opp.RecordTypeId = optyRecTypeId;        
-        opp.AccountId=acc.Id;
-        opp.name='testOpp1';
-        opp.StageName= 'Closed';
-        opp.CloseDate= system.today().addDays(30); 
+        opp.AccountId = testMobileAccount.Id;
+        opp.name = 'testOpp1';
+        opp.StageName = 'Closed';
+        opp.CloseDate = system.today().addDays(30); 
         opp.Drive_Date__c = system.today().addDays(62);
         opp.Accept_56_Day_Rule_Violation__c = true;
         opp.Account_Manager__c = UserInfo.getUserId();
         opp.Start_Time__c = System.now().Time();
-		opp.End_Time__c = System.now().Time()+1;
+		opp.End_Time__c = System.now().Time() + 1;
 		opp.Anticipated_Registered_Donors__c = 1;	
         oppList.add(opp);
         
         opp =new opportunity();
-        opp.AccountId=acc.Id;
-        opp.name='testOpp2';
-        opp.StageName= 'Discovery';
-        opp.CloseDate= system.today().addDays(30); 
+        opp.AccountId = testMobileAccount.Id;
+        opp.name = 'testOpp2';
+        opp.StageName = 'Discovery';
+        opp.CloseDate = system.today().addDays(30); 
         opp.Drive_Date__c = system.today().addDays(63);
         opp.Accept_56_Day_Rule_Violation__c = true;
         opp.Start_Time__c = System.now().Time();
-		opp.End_Time__c = System.now().Time()+1;
+		opp.End_Time__c = System.now().Time() + 1;
 		opp.Anticipated_Registered_Donors__c = 1;	
         oppList.add(opp);
         
@@ -98,14 +107,14 @@ public class createPublicityTaskTest
         
         Order od ;
         od = new Order();
-        od.AccountId = acc.Id;
+        od.AccountId = testMobileAccount.Id;
         od.OpportunityId = oppList[0].Id;
         od.EffectiveDate = system.today();
         od.Status = 'Draft';
         orderList.add(od);
         
         od = new Order();
-        od.AccountId = acc.Id;
+        od.AccountId = testMobileAccount.Id;
         od.OpportunityId = oppList[1].Id;
         od.EffectiveDate = system.today();
         od.Status = 'Draft';
@@ -117,7 +126,7 @@ public class createPublicityTaskTest
     @isTest
     public static void createTask_Test(){
         
-        List<Opportunity> oppList = [select id,stageName,drive_date__c, Account_Manager__c,ownerId from Opportunity];
+        List<Opportunity> oppList = [select id,stageName,drive_date__c, Account_Manager__c,ownerId from Opportunity WHERE Is_Template__c = false];
         List<Order> orderList = [select id,EffectiveDate,OpportunityId from order];
         
         List<createPublicityTask.getValues> dataList = new List<createPublicityTask.getValues>();

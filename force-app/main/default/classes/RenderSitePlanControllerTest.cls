@@ -2,14 +2,17 @@
 private class RenderSitePlanControllerTest {
 
     @testSetup
-    static void makeData(){
-        Test.startTest();
+    static void makeData() {
         AzureSitePlanCredentials__c cred = new AzureSitePlanCredentials__c();
         cred.Name = 'Site plan';
         cred.EndPoint__c = 'https://siteplanrest.azurewebsites.net/api/GetSitePlan';
         cred.Key__c = 'testkey';
         insert cred;
-        Test.stopTest();
+        
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
     }
 
     @isTest static void getImageTestSuccess() {
