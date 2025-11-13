@@ -47,12 +47,16 @@ public  with sharing class DriveMarketingProgramTriggerService {
 		List<String> specialAffiliations = BSF_Utilities.getActivePicklistValues('Opportunity', 'Special_Affiliations__c');
 		List<String> specialAffiliationsToSync;
 		Map<Id, Opportunity> oppIdVsOppWithSpecialAffiliationsMap = new Map<Id, Opportunity>();
+		Map<Id, Drive_Marketing_Programs__c> clonedDriveAffiliationsMap = driveAffiliationsMap.deepClone();
 
 		if(operation.equalsIgnoreCase('Update') && oldDriveAffiliationsMap != null && !oldDriveAffiliationsMap.isEmpty()) {
 			for(Drive_Marketing_Programs__c newDriveAffiliation : driveAffiliationsMap.values()) {
-				Boolean isAffiliationPostProcessNeeded = newDriveAffiliation.Date_Removed__c != oldDriveAffiliationsMap.get(newDriveAffiliation.Id).Date_Removed__c && newDriveAffiliation.Date_Removed__c <= System.today();
-				if(!isAffiliationPostProcessNeeded) {
-					driveAffiliationsMap.remove(newDriveAffiliation.Id);
+				if(newDriveAffiliation.Date_Removed__c != oldDriveAffiliationsMap.get(newDriveAffiliation.Id).Date_Removed__c) {
+					if(newDriveAffiliation.Date_Removed__c == null) {
+						operation = 'Insert'; //If date removed is made blank, sync the special affiliations field through insert operation
+					} else if(newDriveAffiliation.Date_Removed__c > System.today()) {
+						clonedDriveAffiliationsMap.remove(newDriveAffiliation.Id); //If date removed is greater than today, remove the affiliation so that it doesn't get processed further and eventually gets removed
+					}
 				}
 			}
 		}
@@ -62,7 +66,7 @@ public  with sharing class DriveMarketingProgramTriggerService {
 			Blood_Drive_Opportunity__r.Special_Affiliations__c,
 			Marketing_Program__r.Name
 			FROM Drive_Marketing_Programs__c
-			WHERE Id IN :driveAffiliationsMap.keySet()
+			WHERE Id IN :clonedDriveAffiliationsMap.keySet()
 			AND Marketing_Program__r.Name IN :specialAffiliations
 			AND Blood_Drive_Opportunity__r.Is_Template__c = false
 			AND Blood_Drive_Opportunity__r.Type_of_Drive__c = :BSF_Constants.MOBILE_DRIVE
