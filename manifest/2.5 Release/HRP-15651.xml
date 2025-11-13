@@ -5,6 +5,8 @@
 		<members>skedJobAllocationTrigger_Test</members>
 		<members>skedJobAllocationPostProcessBatch</members>
 		<members>skedJobAllocationPostProcessBatch_Test</members>
+		<members>skedResourceHoursRecordHandler</members>
+		<members>skedResourceHoursRecordHandler_test</members>
 		<name>ApexClass</name>
 	</types>
     <types>

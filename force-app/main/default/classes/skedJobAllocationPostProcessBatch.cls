@@ -30,6 +30,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         } else {
             retryCount++;
             if(retryCount > skedSetting.instance.jaPostProcessBatchConfig.maxRetries) {
+                String errorJobAllocationIds = jobAllocationIds != null && !jobAllocationIds.isEmpty() ? String.join(new List<Id>(jobAllocationIds), ',') : '';
                 BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogwithoutExceptions(
                     'skedJobAllocationPostProcessBatch',
                     'execute',
@@ -37,7 +38,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                     '',
                     'Failed processing job allocation records'
                 );
-                errorLog.Error_Description_Long__c = (String.join(new List<Id>(jobAllocationIds), ',')).subString(0, 2500);
+                errorLog.Error_Description_Long__c = !string.isBlank(errorJobAllocationIds) && errorJobAllocationIds.length() > 2500 ? errorJobAllocationIds.subString(0, 2500) : errorJobAllocationIds;
                 insert errorLog;
             }
             else {
@@ -58,7 +59,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                 sked_Geoservice_Travel_Time_To__c, sked_Geoservice_Travel_Time_Back__c, 
                 sked_Is_Handled_Exception_from_Client__c, sked_Exclude_TAT_Exception__c, sked_Resource_Role__c, 
                 sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Drive_Date__c, sked__Job__r.sked_Drive__r.Name, sked_Premium_Pay__c,
-                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c
+                sked_DOT__c, sked_CDL__c, sked_Additional_Roles__c, sked_Dual_Role__c
             FROM sked__Job_Allocation__c
             WHERE Id IN :this.jobAllocationIds
         ];
@@ -742,7 +743,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
             sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
-            if (resourceRoles.contains(skedAllocation.sked_Resource_Role__c) && job.sked__Duration__c >= maxCDLDOTDurationInMinutes) {
+            if ((resourceRoles.contains(skedAllocation.sked_Resource_Role__c) || resourceRoles.contains(skedAllocation.sked_Dual_Role__c)) && job.sked__Duration__c >= maxCDLDOTDurationInMinutes) {
                 skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_CDL_DOT_HOURS_VIOLATION, exceptionCodeTemplate);
                 exceptionLog.add(newException);
             }
@@ -972,8 +973,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
 
             for (sked__Job_Allocation__c skedJobAllocation : master.jobAllocations) {
                 skedModels.resource resource = mapResource.get(skedJobAllocation.sked__Resource__c);
-                if(resource.resourceType.equalsIgnoreCase(skedConstants.RESOURCE_TYPE_ASSET)) continue; //This exception should  only be generated for staff resources
-
+                if(resource == null) continue; //Assets
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
                 
                 boolean conflictNonWorkingTime = false;

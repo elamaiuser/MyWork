@@ -9,6 +9,7 @@ public class skedResourceHoursRecordHandler extends skedTriggerHub {
     private void onDurationChanged(List<sked_Resource_Hours_Record__c> newRecords, Map<Id, sked_Resource_Hours_Record__c> oldMap) {
         List<string> uniqueKeys = new List<string>();
         Map<Id, sked_Resource_Hours_Record__c> mapResourceHourByResourceId = new Map<Id, sked_Resource_Hours_Record__c>();
+        List<Id> resourceHoursRecordIdsToProcess = new List<Id>();
         for (sked_Resource_Hours_Record__c newRecord : newRecords) {
             sked_Resource_Hours_Record__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Total_Working_Time__c != oldData.sked_Total_Working_Time__c) {
@@ -44,6 +45,7 @@ public class skedResourceHoursRecordHandler extends skedTriggerHub {
                                                                                      WHERE Id IN :mapResourceHourByResourceId.keySet()
                                                                                      AND sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON]);
             for (sked_Resource_Hours_Record__c resourceHoursRecord : mapResourceHourByResourceId.values()) {
+                resourceHoursRecordIdsToProcess.add(resourceHoursRecord.Id);
                 string uniqueKey = resourceHoursRecord.Id + ':' + skedConstants.EXCEPTION_CODE_MAXIMUM_WEEKLY_HOURS_VIOLATION;
                 
                 sked__Resource__c resource = mapResource.get(resourceHoursRecord.sked_Resource__c);
@@ -82,6 +84,8 @@ public class skedResourceHoursRecordHandler extends skedTriggerHub {
             if (!exceptionLogToUpdate.isEmpty()) {
                 update exceptionLogToUpdate;
             }
+            
+            skedResourceHoursRecordUtils.captureWorkDaysException(resourceHoursRecordIdsToProcess);
         }
     }
     

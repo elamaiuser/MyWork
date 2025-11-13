@@ -49,7 +49,6 @@
             <value>
                 <fullName>Expired</fullName>
                 <default>false</default>
-                <isActive>false</isActive>
                 <label>Expired</label>
             </value>
             <value>
