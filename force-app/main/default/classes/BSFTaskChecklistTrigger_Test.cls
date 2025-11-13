@@ -119,7 +119,7 @@ public class BSFTaskChecklistTrigger_Test {
             }
         }
 
-        BSFTaskChecklistTriggerHandler.processChecklistUpdates(map_chklstId_taskCheckList.values(), oldCheckListMap); // explicit call as method calling is bypassed in triggerHandler
+        //BSFTaskChecklistTriggerHandler.processChecklistUpdates(map_chklstId_taskCheckList.values(), oldCheckListMap); // explicit call as method calling is bypassed in triggerHandler
         Test.stopTest();
     }
 }

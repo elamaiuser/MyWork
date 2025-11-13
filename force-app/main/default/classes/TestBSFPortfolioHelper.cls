@@ -3,45 +3,9 @@
  * 
  * */
 @isTest
-public class TestBSFPortfolioHelper {
-	@testSetup static void setUpData() {
-         Account acc = new Account(name='Test Account 1');
-         acc.BillingStreet = '2204 Westcrt ln, Apt 213'; 
-         acc.BillingCity = 'Herndon';
-         acc.BillingStateCode = 'MI';
-         acc.BillingPostalCode = '48420';
-         insert acc;
-        
-         Contact contact = new Contact (firstname='Test Contact First 1',lastname='Test Contact Last 1');
-         contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-         contact.MailingCity = 'Herndon';
-         contact.MailingStateCode = 'MI';
-         contact.MailingPostalCode = '48420';
-         contact.AccountId = acc.id;
-         contact.Primary_Phone__c = 'Mobile Phone';
-         contact.MobilePhone = '222-222-2222';
-         contact.Email = 'testtest@test.com';
-         contact.Original_Service_Date__c = Date.today();
-         insert contact;
-        
-         Account acc1 = new Account(name='Test Account 2');
-         acc1.BillingStreet = '2205 Westcrt ln, Apt 215'; 
-         acc1.BillingCity = 'Herndon';
-         acc1.BillingStateCode = 'MI';
-         acc1.BillingPostalCode = '48093';
-         insert acc1;
-        
-         Contact contact1 = new Contact (firstname='Test Contact First 2',lastname='Test Contact Last 2');
-         contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-         contact1.MailingCity = 'Herndon1';
-         contact1.MailingStateCode = 'AL';
-         contact1.MailingPostalCode = '48094';
-         contact1.AccountId = acc1.id;
-         contact1.Primary_Phone__c = 'Work Phone';
-         contact1.MobilePhone = '222-452-2222';
-         contact1.Email = 'testtester@test.com';
-         contact1.Original_Service_Date__c = Date.today();
-         insert contact1;
+private class TestBSFPortfolioHelper {
+    
+	@testSetup static void prepareTestData() {
         String recordTypeName = BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
         Map <String,Schema.RecordTypeInfo> recordTypesadjustment = Taxonomy__c.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id RecTypeId = recordTypesadjustment.get(recordTypeName).getRecordTypeId();
@@ -59,11 +23,15 @@ public class TestBSFPortfolioHelper {
         insert taxList;
     }
     
-    @isTest static void testPortfolioInsert(){
+    @isTest static void testPortfolioInsert() {
         String recordTypeName = BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE;
         Test.startTest();
-        BSFPortfolioHelper.processTaxonomyData(108,recordTypeName);
+        
+        BSFPortfolioHelper.processTaxonomyData(108, recordTypeName);
         
         Test.stopTest();
+        
+        List<BSF_Portfolio__c> testPortfolios = [SELECT Id FROM BSF_Portfolio__c];
+        Assert.isTrue(testPortfolios != null && !testPortfolios.isEmpty());
     }
 }

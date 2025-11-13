@@ -1,55 +1,78 @@
 @isTest
-public class calculateOrderDueDateTest {
+private class calculateOrderDueDateTest {
+    
     @testSetup
-    public static void setupData(){
-        Test.startTest();               
-        Account acc = new account();
-        acc.name='testAccount';
-        insert acc;   
+    static void prepareTestData() {            
+       skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         
-        opportunity opp1=new opportunity();
-        opp1.AccountId=acc.Id;
-        opp1.name='testOpp1';
-        opp1.StageName= 'Discovery';
-        opp1.CloseDate= date.newInstance(2022, 11, 05); 
-        opp1.Drive_Date__c = date.newInstance(2022, 11, 08);
-        opp1.Accept_56_Day_Rule_Violation__c = true;
-        opp1.End_Time__c = Time.newInstance(4, 4, 4, 4);
-        insert opp1;  
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
         
-        Order od = new Order();
-        od.AccountId = acc.Id;
-        od.OpportunityId = opp1.Id;
-        od.EffectiveDate = system.today();
-        od.Status = 'Draft';
-        insert od;
+        //insert Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'Test Account';
+        testMobileAccount.BillingPostalCode = '30146';
+        insert testMobileAccount;
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        //insert mobile opportunity
+        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp.AccountId = testMobileAccount.Id;
+        testMobileOpp.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp;
+        
+        //insert order
+        Order testOrder = new Order(
+            AccountId = testMobileAccount.Id,
+            OpportunityId = testMobileOpp.Id,
+            EffectiveDate = system.today(),
+            Status = 'Draft'
+        );
+        insert testOrder;
+    }
+    
+    @isTest
+    private static void dueDateMethod_Test() {
+        Test.startTest();
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        
+        List<Order> orderList = [SELECT Id, OpportunityId, Order_Due_Date__c FROM Order];
+        OrderService.calculateOrderDueDate(orderList);
+        
+        Opportunity opp = [SELECT Id, Drive_Date__c FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+        opp.Drive_Date__c = Date.newInstance(2024, 4, 10);
+        opp.Drive_Date_Change_Reason__c = 'TEST';
+        update opp;
+        OrderService.calculateOrderDueDate(orderList);
         
         Test.stopTest();
     }
+    
     @isTest
-    public static void dueDateMethod_Test(){
+    public static void dueDateForSunday_Test() {
         Test.startTest();
-        list<order> orderList = [select id, opportunityId, Order_Due_Date__c from order];
-        OrderService.calculateOrderDueDate(orderList);
+        TriggerHandler.bypass('OpportunityTriggerHandler');
         
-        list<opportunity> oppList = [Select id, Drive_Date__c from opportunity];
-        for(opportunity opp: oppList){
-            opp.Drive_Date__c = Date.newInstance(2021, 4, 10);
-        }
-        update oppList;
-        OrderService.calculateOrderDueDate(orderList);
+        Opportunity opp = [SELECT Id, Drive_Date__c FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+        opp.Drive_Date__c = Date.newInstance(2024, 4, 11);
+        opp.Drive_Date_Change_Reason__c = 'TEST';
+        update opp;
         
-        Test.stopTest();
-    }
-    @isTest
-    public static void dueDateForSunday_Test(){
-        Test.startTest();
-        list<opportunity> oppList1 = [Select id, Drive_Date__c from opportunity];
-        for(opportunity opp: oppList1){
-            opp.Drive_Date__c = Date.newInstance(2021, 4, 11);
-        }
-        update oppList1;
-        list<order> orderList = [select id, opportunityId, Order_Due_Date__c from order];
+        List<order> orderList = [SELECT Id, opportunityId, Order_Due_Date__c FROM Order];
         
         OrderService.calculateOrderDueDate(orderList);
         Test.stopTest();
