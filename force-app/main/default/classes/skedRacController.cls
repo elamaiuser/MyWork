@@ -906,6 +906,15 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            sked__Activity__c skedActivity = [SELECT Id, sked__Timezone__c
+                                              FROM sked__Activity__c
+                                              WHERE Id = :request.activityResources.get(0).activityId];
+            string timezoneSidId = skedActivity.sked__Timezone__c;
+            
+            for (skedModels.activityResource activityResource : request.activityResources) {
+                activityResource.updateStartFinish(timezoneSidId);
+            }
+            
             skedExceptionLogService service = new skedExceptionLogService();
             List<skedHC__Exception__c> exceptionLog = service.generateAPExceptionLogs(request.activityResources);
             
