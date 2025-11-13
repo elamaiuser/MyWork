@@ -902,6 +902,35 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     @remoteAction
+    global static skedRemoteResultModel validateActivityResources(saveActivityResourcesRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            skedExceptionLogService service = new skedExceptionLogService();
+            List<skedHC__Exception__c> exceptionLog = service.generateAPExceptionLogs(request.activityResources);
+            
+            Map<string, skedHC__Exception__c> mapException = new Map<string, skedHC__Exception__c>();
+            if (exceptionLog != NULL && !exceptionLog.isEmpty()) {
+                for (skedHC__Exception__c exceptionItem : exceptionLog) {
+                    string key = exceptionItem.skedHC__Activity__c + ':' + exceptionItem.skedHC__Resource__c;
+                    mapException.put(key, exceptionItem);
+                }
+            }
+            
+            for (skedModels.activityResource activityResource : request.activityResources) {
+                string key = activityResource.activityId + ':' + activityResource.resourceId;
+                activityResource.isAPViolated = mapException.containsKey(key);
+            }
+            
+            result.data = request.activityResources;
+        }
+        catch (Exception ex) {
+            result.getError(ex, sp);
+        }
+        return result;
+    }
+    
+    @remoteAction
     global static skedRemoteResultModel saveActivityResources(saveActivityResourcesRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
@@ -912,10 +941,6 @@ global virtual class skedRacController extends skedBaseController {
                 FROM sked__Activity_Resource__c
                 WHERE sked__Activity__c = :request.activityId
             ];
-            Set<Id> existingResourceIds = new Set<Id>();
-            for (sked__Activity_Resource__c existingActivityResource : existingActivityResources) {
-                existingResourceIds.add(existingActivityResource.sked__Resource__c);
-            }
             
             Set<Id> activityIds = new Set<Id>();
             Set<Id> resourceIds = new Set<Id>();
