@@ -16,7 +16,7 @@ export class CollectionOpMappingConfigFactory {
       mappingConfig.addFieldConfig('Staging_Location_Geolocation__Longitude__s', 'stagingLocationGeolocationLongitude', MAPPING_TYPE.direct);
 
       //mappingConfig.addFieldConfig('sked_Account_Preferences_Score__c', 'accountPreferencesScore', MAPPING_TYPE.direct);
-     // mappingConfig.addFieldConfig('sked_Geographic_Preferences_Score__c', 'geographicPreferencesScore', MAPPING_TYPE.direct);
+     //mappingConfig.addFieldConfig('sked_Geographic_Preferences_Score__c', 'geographicPreferencesScore', MAPPING_TYPE.direct);
      // mappingConfig.addFieldConfig('sked_Location_Preferences_Score__c', 'locationPreferencesScore', MAPPING_TYPE.direct);
      // mappingConfig.addFieldConfig('sked_Seniority_Rank_Score__c', 'seniorityRankScore', MAPPING_TYPE.direct);
 
