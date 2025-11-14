@@ -3,7 +3,7 @@
     <fullName>Cancellation_Detail_wo_Drive_Cancel</fullName>
     <active>true</active>
     <description>User should not be able to populate cancellation detail on a non-cancelled drive (HRP-11431)</description>
-    <errorConditionFormula>AND( NOT( ISPICKVAL( sked_Status__c  , &apos;Cancel&apos; )) , NOT( ISBLANK( sked_Cancellation_Detail__c )))</errorConditionFormula>
+    <errorConditionFormula>AND((ISPICKVAL(sked_Cancellation_Reason__c, &apos;&apos;)), NOT(ISBLANK(sked_Cancellation_Detail__c)))</errorConditionFormula>
     <errorDisplayField>sked_Cancellation_Detail__c</errorDisplayField>
     <errorMessage>Cancellation Detail cannot be populated for a non-cancelled drive</errorMessage>
 </ValidationRule>
