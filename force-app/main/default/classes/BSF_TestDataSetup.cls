@@ -930,7 +930,19 @@ public class BSF_TestDataSetup {
         serviceRole.Account_Service_Role__c='Blood Program Leader';
         serviceRole.Account__c = mobileAcc.id; 
         serviceRole.Contact__c = contact.id;
-        insert serviceRole;*/        
+        insert serviceRole;*/  
+        
+        /* Affiliations */
+        Marketing_Program__c testAffiliation = new Marketing_Program__c(
+            Name = 'Battle of the Badges',
+            External_Name__c = 'Battle of the Badges',
+            Scope__c = 'Drive;Template',
+            RecordTypeId = Schema.SObjectType.Marketing_Program__c.getRecordTypeInfosByDeveloperName().get('Marketing_Program').getRecordTypeId()
+        );
+        if(doInsert) {
+        	insert testAffiliation;
+        }
+        mapTestData.put('AFFILIATION', testAffiliation);
         
         return mapTestData;
     }

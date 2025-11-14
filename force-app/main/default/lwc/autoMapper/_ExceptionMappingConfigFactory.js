@@ -9,6 +9,7 @@ export class ExceptionMappingConfigFactory {
       mappingConfig.objectType = 'exception';
 
       mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('CreatedDate', 'createdDate');
       mappingConfig.addFieldConfig('Name', 'name');
       mappingConfig.addFieldConfig('skedHC__Activity__c', 'activityId');
       mappingConfig.addFieldConfig('skedHC__Availability__c', 'availabilityId');
