@@ -76,24 +76,26 @@ public  with sharing class DriveMarketingProgramTriggerService {
 			ALL ROWS
 		];
 
-		for(Drive_Marketing_Programs__c driveAffiliation : driveAffiliations) {
-			specialAffiliationsToSync = new List<String>();
+		if(driveAffiliations != null && !driveAffiliations.isEmpty()) {
+			for(Drive_Marketing_Programs__c driveAffiliation : driveAffiliations) {
+				specialAffiliationsToSync = new List<String>();
 
-			if(!oppIdVsOppWithSpecialAffiliationsMap.containsKey(driveAffiliation.Blood_Drive_Opportunity__c)) {
-				oppIdVsOppWithSpecialAffiliationsMap.put(driveAffiliation.Blood_Drive_Opportunity__c, driveAffiliation.Blood_Drive_Opportunity__r);
-			}
-
-			String existingSpecialAffiliations = oppIdVsOppWithSpecialAffiliationsMap.get(driveAffiliation.Blood_Drive_Opportunity__c).Special_Affiliations__c;
-			for(String existingSpecialAffiliation : existingSpecialAffiliations?.split(';') ?? new List<String>()) {
-				if(!existingSpecialAffiliation.equalsIgnoreCase(driveAffiliation.Marketing_Program__r.Name)) {
-					specialAffiliationsToSync.add(existingSpecialAffiliation);
+				if(!oppIdVsOppWithSpecialAffiliationsMap.containsKey(driveAffiliation.Blood_Drive_Opportunity__c)) {
+					oppIdVsOppWithSpecialAffiliationsMap.put(driveAffiliation.Blood_Drive_Opportunity__c, driveAffiliation.Blood_Drive_Opportunity__r);
 				}
-			}
 
-			if(operation.equalsIgnoreCase('Insert') && !specialAffiliationsToSync.contains(driveAffiliation.Marketing_Program__r.Name)) {
-				specialAffiliationsToSync.add(driveAffiliation.Marketing_Program__r.Name);
+				String existingSpecialAffiliations = oppIdVsOppWithSpecialAffiliationsMap.get(driveAffiliation.Blood_Drive_Opportunity__c).Special_Affiliations__c;
+				for(String existingSpecialAffiliation : existingSpecialAffiliations?.split(';') ?? new List<String>()) {
+					if(!existingSpecialAffiliation.equalsIgnoreCase(driveAffiliation.Marketing_Program__r.Name)) {
+						specialAffiliationsToSync.add(existingSpecialAffiliation);
+					}
+				}
+
+				if(operation.equalsIgnoreCase('Insert') && !specialAffiliationsToSync.contains(driveAffiliation.Marketing_Program__r.Name)) {
+					specialAffiliationsToSync.add(driveAffiliation.Marketing_Program__r.Name);
+				}
+				oppIdVsOppWithSpecialAffiliationsMap.get(driveAffiliation.Blood_Drive_Opportunity__c).Special_Affiliations__c = String.join(specialAffiliationsToSync, ';');
 			}
-			oppIdVsOppWithSpecialAffiliationsMap.get(driveAffiliation.Blood_Drive_Opportunity__c).Special_Affiliations__c = String.join(specialAffiliationsToSync, ';');
 		}
 
 		if(!oppIdVsOppWithSpecialAffiliationsMap.isEmpty()) {
