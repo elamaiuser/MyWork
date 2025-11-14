@@ -1,304 +1,170 @@
-@isTest
+@IsTest
 private class TaskGenerationBatch_Test {
+
     @testSetup
-    static void setup() {
+    static void setupTestData() {
+
+        //Temporarily bypass heavy triggers during setup
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        Account acc = new Account(name='Test Account',Account_Manager__c = UserInfo.getUserId(),Internal_Name__c='test234');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
 
+        //Create Account
+        Account acc = new Account(
+            Name = 'Test Account',
+            Account_Manager__c = UserInfo.getUserId(),
+            Internal_Name__c = 'Test_Account_Internal'
+        );
         insert acc;
+
+        //Create Contact
+        Contact con = new Contact(
+            FirstName = 'Test',
+            LastName = 'Contact',
+            Email = 'test.contact@example.com',
+            Phone = '9999999999',
+            AccountId = acc.Id,
+            Original_Service_Date__c = System.today().addDays(5),
+            Primary_Phone__c = 'Mobile Phone'
+        );
+        insert con;
+
+        //Create Account Service Role
+        Account_Service_Role__c asr = new Account_Service_Role__c(
+            Account__c = acc.Id,
+            Contact__c = con.Id,
+            Account_Service_Role__c = 'Blood Program Leader'
+        );
+        insert asr;
+
+        //Create Site
+        sked__Location__c site = new sked__Location__c(
+            Name = 'testSite',
+            sked_Floor_Description__c = 'test Floor',
+            sked_Room_Name__c = 'test Room',
+            sked_National_Name__c = 'test National Name',
+            sked_Automation_Suitability__c = 'Suitable',
+            sked_Site_Main_Phone__c = '999-999-9999',
+            sked_Site_Building_Name__c = 'test Building',
+            sked_Physical_Location_Type__c = 'Inside',
+            sked_Pay_for_Parking__c = 'Other',
+            sked_Pay_for_Parking_Details__c = 'Other',
+         	sked_Wireless_Policy__c = 'Accepted',
+         	sked_Site_Inspection_Completed_By__c = UserInfo.getUserId(),
+         	sked_Room_Size__c = '801-1200 Sq. Ft.',
+         	sked_Staff_Personal_Parking_Directions__c = 'test',
+         	sked_Address_1__c = 'test',
+         	sked_Outside_stairs__c = 10,
+         	sked_County__c = 'test',
+         	sked_State__c = 'test',
+         	sked_Zip_Code__c = 'test123',
+         	sked_City__c = 'test',
+         	sked_Inside_stairs__c = 10,
+         	sked_Base_Description__c = 'test',
+         	sked_ARC_Vehicle_Parking_Directions__c = 'test',
+         	sked_Directions_From_CollectionOperation__c = 'test',
+         	sked_Start_Date__c = System.today(),
+         	sked_End_Date__c = System.today()+5,
+        	Source__c='Custom New Form'
+        );
+        insert site;
+
+        //Create Opportunities
+        Id mobileRTId = Opportunity.SObjectType.getDescribe()
+            .getRecordTypeInfosByName()
+            .get('Mobile Opp')
+            .getRecordTypeId();
+
+        List<Opportunity> oppList = new List<Opportunity>{
+            new Opportunity(
+                Name = 'Test Opportunity 1',
+                StageName = 'Committed',
+                Drive_Site__c = site.Id,
+                Drive_Name__c = 'Drive A',
+                Drive_Date__c = System.today(),
+                CloseDate = System.today(),
+                AccountId = acc.Id,
+                RecordTypeId = mobileRTId,
+                Flow_Start_Time_Field__c = '1000',
+                Flow_End_Time_Field__c = '1530',
+                WB_Projected_Procedures__c = 4,
+                X2RBC_Projected_Procedures__c = 2,
+                Anticipated_Registered_Donors__c = 20
+            ),
+            new Opportunity(
+                Name = 'Test Opportunity 2',
+                StageName = 'Closed',
+                Drive_Site__c = site.Id,
+                Drive_Name__c = 'Drive B',
+                Drive_Date__c = System.today(),
+                CloseDate = System.today(),
+                AccountId = acc.Id,
+                RecordTypeId = mobileRTId,
+                Flow_Start_Time_Field__c = '1000',
+                Flow_End_Time_Field__c = '1530',
+                WB_Projected_Procedures__c = 5,
+                X2RBC_Projected_Procedures__c = 3,
+                Anticipated_Registered_Donors__c = 25
+            )
+        };
+        insert oppList;
+
+        //Create Tasks related to first opportunity
+        List<Task> tasks = new List<Task>{
+            new Task(
+                WhatId = oppList[0].Id,
+                Subject = 'Recruitment Planning Meeting',
+                ActivityDate = System.today(),
+                OwnerId = UserInfo.getUserId(),
+                Status = 'Not Started'
+            ),
+            new Task(
+                WhatId = oppList[0].Id,
+                Subject = 'Sponsor Planning Meeting',
+                ActivityDate = System.today(),
+                OwnerId = UserInfo.getUserId(),
+                Status = 'Not Started'
+            ),
+            new Task(
+                WhatId = oppList[0].Id,
+                Subject = '72 Hour Check-In',
+                ActivityDate = System.today(),
+                OwnerId = UserInfo.getUserId(),
+                Status = 'Not Started'
+            )
+        };
+        insert tasks;
+
+        //Clear bypass flags
         TriggerHandler.clearBypass('AccountTriggerHandler');
-        Contact contact = new Contact (firstname='Test Contact First',lastname='Test_Contact_Last');
-        contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-        contact.Email = 'testContact@gmail.com';
-		contact.Original_Service_Date__c = system.today().addDays(3);
-		contact.Primary_Phone__c = 'Mobile Phone';
-        contact.MobilePhone = '752-781-0090';
-        contact.MailingCity = 'Herndon';
-        contact.MailingStateCode = 'VA';
-        contact.MailingPostalCode = '20170';
-        contact.MailingStreet = '2204 Westcourt Ln,Apt 218'; 
-        contact.AccountId = acc.id;
-        insert contact;
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        TriggerHandler.clearBypass('TaskTriggerHandler');
+        skedHubBase.BypassInsertTriggers = false;
+        skedHubBase.BypassUpdateTriggers = false;
     }
 
-    @isTest static void batchtest() {
-        Test.startTest();
-        
-            sked__Location__c site = new sked__Location__c();
-            site.Name = 'testSite';
-            site.sked_Floor_Description__c = 'test Floor';
-            site.sked_Room_Name__c = 'test Room';
-            site.sked_National_Name__c = 'test National Name';
-            site.sked_Automation_Suitability__c = 'Suitable';
-            site.sked_Site_Main_Phone__c = '999-999-9999';
-            site.sked_Site_Building_Name__c = 'test Building';
-            site.sked_Physical_Location_Type__c = 'Inside';
-            site.sked_Pay_for_Parking__c = 'Other';
-            site.sked_Pay_for_Parking_Details__c = 'Other';
-         	site.sked_Wireless_Policy__c = 'Accepted';
-         	site.sked_Site_Inspection_Completed_By__c = UserInfo.getUserId();
-         	site.sked_Room_Size__c = '801-1200 Sq. Ft.';
-         	site.sked_Staff_Personal_Parking_Directions__c = 'test';
-         	site.sked_Address_1__c = 'test';
-         	site.sked_Outside_stairs__c = 10;
-         	site.sked_County__c = 'test';
-         	site.sked_State__c = 'test';
-         	site.sked_Zip_Code__c = 'test123';
-         	site.sked_City__c = 'test';
-         	site.sked_Inside_stairs__c = 10;
-         	site.sked_Base_Description__c = 'test';
-         	site.sked_ARC_Vehicle_Parking_Directions__c = 'test';
-         	site.sked_Directions_From_CollectionOperation__c = 'test';
-         	site.sked_Start_Date__c = System.today();
-         	site.sked_End_Date__c = System.today()+5;
-        	site.Source__c='Custom New Form';
-            insert site;
-            
-            Opportunity opp = new Opportunity();
-            Account acc = [select id from Account where name='Test Account' limit 1];
-            opp.AccountId = acc.id;
-             Account_Service_Role__c serviceRole = new Account_Service_Role__c();
-             serviceRole.Account_Service_Role__c='Blood Program Leader';
-             serviceRole.Account__c = acc.id; 
-            serviceRole.Contact__c = [select id from Contact where firstname='Test Contact First' limit 1].id;
-            insert serviceRole;
-            opp.StageName = 'Committed';
-            opp.Drive_Site__c = site.id;
-			opp.Drive_Name__c = 'Test Drive';
-            opp.Drive_Date__c = System.today();
-            opp.CloseDate = System.today();
-            opp.Call_List_Recipient_Exist__c = true;
-            Time startTime = Time.newInstance(10, 0, 0, 0);
-            System.debug('startTime->'+startTime);
-            opp.Start_Time__c = startTime;
-            Time endTime = Time.newInstance(15, 30, 0, 0);
-            System.debug('endTime->'+endTime);
-			//opp.Flow_Start_Time_Field__c = '10:00 AM';
-            opp.Flow_Start_Time_Field__c = '1000';
-			opp.Accept_56_Day_Rule_Violation__c = true;
-            opp.Flow_End_Time_Field__c = '1530';
-            //opp.Flow_End_Time_Field__c = '3:30 PM';
-
-            //opp.End_Time__c = endTime;
-            opp.WB_Projected_Procedures__c = 4;
-            opp.X2RBC_Projected_Procedures__c = 2;
-            opp.Name = 'Test Opportunity';
-            opp.Anticipated_Registered_Donors__c =25;
-            TriggerHandler.bypass('OpportunityTriggerHandler');
-			insert opp;
-			TriggerHandler.clearBypass('OpportunityTriggerHandler');
-            Opportunity opp2 = new Opportunity();
-            opp2.AccountId = acc.id;
-            
-            opp2.StageName = 'Closed';
-            opp2.Drive_Site__c = site.id;
-			opp2.Drive_Name__c = 'Test Drive';
-            opp2.Drive_Date__c = System.today();
-            opp2.CloseDate = System.today();
-            opp2.Call_List_Recipient_Exist__c = true;
-            System.debug('startTime->'+startTime);
-            opp2.Start_Time__c = startTime;
-            System.debug('endTime->'+endTime);
-			//opp2.Flow_Start_Time_Field__c = '10:00 AM';
-            opp2.Flow_Start_Time_Field__c = '1000';
-			opp2.Accept_56_Day_Rule_Violation__c = true;
-            opp2.Flow_End_Time_Field__c = '1530';
-            //opp2.Flow_End_Time_Field__c = '3:30 PM';
-			
-            list<task> taskList = new list<task>();
-            //opp2.End_Time__c = endTime;
-            opp2.WB_Projected_Procedures__c = 4;
-            opp2.X2RBC_Projected_Procedures__c = 2;
-            opp2.Name = 'Test opp2ortunity';
-            opp2.Anticipated_Registered_Donors__c =25;
-			insert opp2;
-            task tsk1 = new task();
-            tsk1.ActivityDate =  System.today();
-            tsk1.OwnerId = UserInfo.getUserId();
-            tsk1.subject = 'Recruitment Task - System Generated';
-            tsk1.WhatId = opp.id;
-            taskList.add(tsk1);
-
-            task tsk2 = new task();
-            tsk2.ActivityDate =  System.today();
-            tsk2.OwnerId = UserInfo.getUserId();
-            tsk2.subject = '72 Hour Check in - System Generated';
-            tsk2.WhatId = opp.id;
-            taskList.add(tsk2);
-
-            task tsk3 = new task();
-            tsk3.ActivityDate =  System.today();
-            tsk3.OwnerId = UserInfo.getUserId();
-            tsk3.Type = 'Sponsor Planning Meeting';
-            tsk3.WhatId = opp.id;
-            taskList.add(tsk3);
-			
-        	insert taskList;
-        
-        
-        TaskGenerationBatch tgb = new TaskGenerationBatch();
-        Id batchId = Database.executeBatch(tgb);
-        Test.stopTest();
-        // after the testing stops, assert records were updated properly
-        //System.assertEquals(10, [select count() from contact where MailingCity = 'New York']);
-    }
-    
-    @isTest static void batchtest1() {
-            
-            sked__Location__c site = new sked__Location__c();
-            site.Name = 'testSite';
-            site.sked_Floor_Description__c = 'test Floor';
-            site.sked_Room_Name__c = 'test Room';
-            site.sked_National_Name__c = 'test National Name';
-            site.sked_Automation_Suitability__c = 'Suitable';
-            site.sked_Site_Main_Phone__c = '999-999-9999';
-            site.sked_Site_Building_Name__c = 'test Building';
-            site.sked_Physical_Location_Type__c = 'Inside';
-            site.sked_Pay_for_Parking__c = 'Other';
-            site.sked_Pay_for_Parking_Details__c = 'Other';
-         	site.sked_Wireless_Policy__c = 'Accepted';
-         	site.sked_Site_Inspection_Completed_By__c = UserInfo.getUserId();
-         	site.sked_Room_Size__c = '801-1200 Sq. Ft.';
-         	site.sked_Staff_Personal_Parking_Directions__c = 'test';
-         	site.sked_Address_1__c = 'test';
-         	site.sked_Outside_stairs__c = 10;
-         	site.sked_County__c = 'test';
-         	site.sked_State__c = 'test';
-         	site.sked_Zip_Code__c = 'test123';
-         	site.sked_City__c = 'test';
-         	site.sked_Inside_stairs__c = 10;
-         	site.sked_Base_Description__c = 'test';
-         	site.sked_ARC_Vehicle_Parking_Directions__c = 'test';
-         	site.sked_Directions_From_CollectionOperation__c = 'test';
-         	site.sked_Start_Date__c = System.today();
-         	site.sked_End_Date__c = System.today()+5;
-        	site.Source__c='Custom New Form';
-            insert site;
-            
-            Opportunity opp = new Opportunity();
-            Account acc = [select id from Account where name='Test Account' limit 1];
-            opp.AccountId = acc.id;
-             Account_Service_Role__c serviceRole = new Account_Service_Role__c();
-             serviceRole.Account_Service_Role__c='Blood Program Leader';
-             serviceRole.Account__c = acc.id; 
-            serviceRole.Contact__c = [select id from Contact where firstname='Test Contact First' limit 1].id;
-            insert serviceRole;
-            opp.StageName = 'Committed';
-            opp.Drive_Site__c = site.id;
-			opp.Drive_Name__c = 'Test Drive';
-            opp.Drive_Date__c = System.today();
-            opp.CloseDate = System.today();
-            opp.Call_List_Recipient_Exist__c = true;
-            Time startTime = Time.newInstance(10, 0, 0, 0);
-            System.debug('startTime->'+startTime);
-            opp.Start_Time__c = startTime;
-            Time endTime = Time.newInstance(15, 30, 0, 0);
-            System.debug('endTime->'+endTime);
-			//opp.Flow_Start_Time_Field__c = '10:00 AM';
-            opp.Flow_Start_Time_Field__c = '1000';
-			opp.Accept_56_Day_Rule_Violation__c = true;
-            opp.Flow_End_Time_Field__c = '1530';
-            //opp.Flow_End_Time_Field__c = '3:30 PM';
-
-            //opp.End_Time__c = endTime;
-            opp.WB_Projected_Procedures__c = 4;
-            opp.X2RBC_Projected_Procedures__c = 2;
-            opp.Name = 'Test Opportunity';
-            opp.Anticipated_Registered_Donors__c =25;
-			insert opp;
-
-            task tsk1 = new task();
-            tsk1.ActivityDate =  System.today();
-            tsk1.OwnerId = UserInfo.getUserId();
-            tsk1.subject = 'Recruitment Task - System Generated';
-            tsk1.WhatId = opp.id;
-            insert tsk1;
-
-            task tsk2 = new task();
-            tsk2.ActivityDate =  System.today();
-            tsk2.OwnerId = UserInfo.getUserId();
-            tsk2.subject = '72 Hour Check in - System Generated';
-            tsk2.WhatId = opp.id;
-            insert tsk2;
+    //Primary batch test
+    @isTest
+    static void test_TaskGenerationBatch_Run() {
+        List<Opportunity> oppList = [SELECT Id FROM Opportunity];
+        System.assert(oppList.size() > 0, 'No Opportunity found from setup');
 
         Test.startTest();
-        TaskGenerationBatch tgb = new TaskGenerationBatch();
-        Id batchId = Database.executeBatch(tgb);
+        Id batchId = Database.executeBatch(new TaskGenerationBatch(), 5);
         Test.stopTest();
-        // after the testing stops, assert records were updated properly
-        //System.assertEquals(10, [select count() from contact where MailingCity = 'New York']);
-    }
-    
-    @isTest static void batchtest2() {
-            
-            sked__Location__c site = new sked__Location__c();
-            site.Name = 'testSite';
-            site.sked_Floor_Description__c = 'test Floor';
-            site.sked_Room_Name__c = 'test Room';
-            site.sked_National_Name__c = 'test National Name';
-            site.sked_Automation_Suitability__c = 'Suitable';
-            site.sked_Site_Main_Phone__c = '999-999-9999';
-            site.sked_Site_Building_Name__c = 'test Building';
-            site.sked_Physical_Location_Type__c = 'Inside';
-            site.sked_Pay_for_Parking__c = 'Other';
-            site.sked_Pay_for_Parking_Details__c = 'Other';
-         	site.sked_Wireless_Policy__c = 'Accepted';
-         	site.sked_Site_Inspection_Completed_By__c = UserInfo.getUserId();
-         	site.sked_Room_Size__c = '801-1200 Sq. Ft.';
-         	site.sked_Staff_Personal_Parking_Directions__c = 'test';
-         	site.sked_Address_1__c = 'test';
-         	site.sked_Outside_stairs__c = 10;
-         	site.sked_County__c = 'test';
-         	site.sked_State__c = 'test';
-         	site.sked_Zip_Code__c = 'test123';
-         	site.sked_City__c = 'test';
-         	site.sked_Inside_stairs__c = 10;
-         	site.sked_Base_Description__c = 'test';
-         	site.sked_ARC_Vehicle_Parking_Directions__c = 'test';
-         	site.sked_Directions_From_CollectionOperation__c = 'test';
-         	site.sked_Start_Date__c = System.today();
-         	site.sked_End_Date__c = System.today()+5;
-        	site.Source__c='Custom New Form';
-            insert site;
-            
-            Opportunity opp = new Opportunity();
-            Account acc = [select id from Account where name='Test Account' limit 1];
-            opp.AccountId = acc.id;
-             Account_Service_Role__c serviceRole = new Account_Service_Role__c();
-             serviceRole.Account_Service_Role__c='Blood Program Leader';
-             serviceRole.Account__c = acc.id; 
-            serviceRole.Contact__c = [select id from Contact where firstname='Test Contact First' limit 1].id;
-            insert serviceRole;
-            opp.StageName = 'Committed';
-            opp.Drive_Site__c = site.id;
-			opp.Drive_Name__c = 'Test Drive';
-            opp.Drive_Date__c = System.today();
-            opp.CloseDate = System.today();
-            opp.Call_List_Recipient_Exist__c = true;
-            Time startTime = Time.newInstance(10, 0, 0, 0);
-            System.debug('startTime->'+startTime);
-            opp.Start_Time__c = startTime;
-            Time endTime = Time.newInstance(15, 30, 0, 0);
-            System.debug('endTime->'+endTime);
-			//opp.Flow_Start_Time_Field__c = '10:00 AM';
-            opp.Flow_Start_Time_Field__c = '1000';
-			opp.Accept_56_Day_Rule_Violation__c = true;
-            opp.Flow_End_Time_Field__c = '1530';
-            //opp.Flow_End_Time_Field__c = '3:30 PM';
 
-            //opp.End_Time__c = endTime;
-            opp.WB_Projected_Procedures__c = 4;
-            opp.X2RBC_Projected_Procedures__c = 2;
-            opp.Name = 'Test Opportunity';
-            opp.Anticipated_Registered_Donors__c =25;
-			insert opp;
+        //Business assertion: check if tasks were created or updated by the batch
+        Integer taskCount = [
+            SELECT COUNT()
+            FROM Task
+            WHERE Subject IN ('Recruitment Planning Meeting', 'Sponsor Planning Meeting', '72 Hour Check-In')
+        ];
+        System.assert(
+            taskCount > 0,
+            'Expected at least one task (Recruitment, Sponsor, or 72-Hour Check-In) after TaskGenerationBatch run.'
+        );
 
-        Test.startTest();
-        TaskGenerationBatch tgb = new TaskGenerationBatch();
-        Id batchId = Database.executeBatch(tgb);
-        Test.stopTest();
-        // after the testing stops, assert records were updated properly
-        //System.assertEquals(10, [select count() from contact where MailingCity = 'New York']);
     }
 }

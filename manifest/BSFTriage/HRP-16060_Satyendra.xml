@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>BSF_BatchPopulateDriveShift_Test</members>
+        <members>SponsorPlanningReportController_Test</members>
+        <members>TaskForMigratedDrivesBatchTest</members>
+        <members>TaskGenerationBatch_Test</members>
+        <members>UpdateDriveShiftProjectedProcTest</members>
+        <members>UpdateOpportunityStageBatchTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>64.0</version>
+</Package>
