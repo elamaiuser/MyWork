@@ -106,7 +106,8 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
         
     }
     
-    public override void beforeInsert(){
+    public override void beforeInsert() {
+         checkRecursive.isNewlyCreatedAccount = true;
         
         if(super.getTriggerMethodsToBypass().indexOf('updateAccountType') == -1) {
             System.debug('AccountTriggerHandler.beforeInsert() - AccountService.updateAccountType() Executing...');

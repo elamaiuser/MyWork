@@ -20,6 +20,12 @@
  * 06/06/2024                 Priti Jana             Logic for HRP-12011
  * 17/06/2024                 Barnojit Sharma        Logic for HRP-12738
  * 08/01/2024                 Priti Jana             Logic for HRP-10994
+ * 01/15/2025				  Priti Jana			 Logic for HRP-12299
+ * 01/15/2025				  Barnojit Sharma		 Logic for HRP-13864
+ * 01/27/2025                 Priti Jana             Logic for HRP-14065
+ * 03/04/2025                 Priti Jana             Logic for HRP-11850
+ * 03/12/2025                 Priti Jana             Logic for HRP-13862
+ * 05/05/2025                 Priti Jana             Logic for HRP-13146
  *****************************************************************************
 */
 public with sharing class MobileDriveGeneratorDMLService {
@@ -186,7 +192,11 @@ public with sharing class MobileDriveGeneratorDMLService {
         insert skedSlots;
     }
     
-    public static void updateDriveGenerationStatus(List<DMLDrive> drives) {
+    /*HRRP-11850
+        1. Add unqualifying reasons on top of the existing reasons for CB drives only
+        2. Limit the reason field to 255 characters
+    */
+    public static void updateCalendarBuildStatusForCbDrives(List<DMLDrive> drives) {
         if (drives != NULL && !drives.isEmpty()) {
             Set<Id> oppIds = new Set<Id>();
             for (DMLDrive drive : drives) {
@@ -196,30 +206,33 @@ public with sharing class MobileDriveGeneratorDMLService {
             Map<Id, Opportunity> mapOpp = new Map<Id, Opportunity>([SELECT Id, Calendar_Build_Status__c, Calendar_Build_Reasons_For_Unqualified__c,
                                                                     Source__c
                                                                     FROM Opportunity
-                                                                    WHERE Id IN :oppIds]);
+                                                                    WHERE Id IN :oppIds
+                                                                    AND (Source__c = :BSF_Constants.OPP_SOURCE_CALENDAR_BUILD 
+                                                                        OR Source__c = :BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)]);
             
             List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
             for (DMLDrive drive : drives) {
                 if (mapOpp.containsKey(drive.opportunityId)) {
                     Opportunity opp = mapOpp.get(drive.opportunityId);
-                    if (opp.Source__c == 'Calendar Build' && string.isBlank(opp.Calendar_Build_Status__c)) {
-                        List<string> unqualifiedReasons = new List<string>();
-                        if (drive.driveProductivityPlanned < 0.5) {
-                            unqualifiedReasons.add('productivity < .5');
+                    List<string> unqualifiedReasons = new List<string>();
+                    if (drive.driveProductivityPlanned < 0.5) unqualifiedReasons.add('Productivity < .5');
+                    if (drive.totalProductsProjected < 25) unqualifiedReasons.add('Products Projected < 25');
+                    
+                    if (!unqualifiedReasons.isEmpty()) {
+                        String existingUnqualifyingReasons = opp.Calendar_Build_Reasons_For_Unqualified__c ?? '';
+                        if(existingUnqualifyingReasons != NULL && String.isNotBlank(existingUnqualifyingReasons)) {
+                            existingUnqualifyingReasons = existingUnqualifyingReasons +';';
                         }
-                        if (drive.totalProductsProjected < 25) {
-                            unqualifiedReasons.add('products projected < 25');
-                        }
-                        opp.Calendar_Build_Status__c = unqualifiedReasons.isEmpty() ? skedConstants.CALENDAR_BUILD_STATUS_QUALIFIED 
-                                                                                    : skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
-                        if (!unqualifiedReasons.isEmpty()) {
-                            opp.Calendar_Build_Reasons_For_Unqualified__c = string.join(unqualifiedReasons, ';');
-                        }
-                        
-                        opportunitiesToUpdate.add(opp);
+                        opp.Calendar_Build_Reasons_For_Unqualified__c = BSF_Utilities.getStringWithinLimit((existingUnqualifyingReasons + string.join(unqualifiedReasons, ';')), 255);
+                        opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_UNQUALIFIED;
+                        opp.Rollover_Consideration__c = BSF_Constants.ROLLOVER_CONSIDERATION_DO_NOT_ROLL; //HRP-12299
+                    } else if(opp.Calendar_Build_Status__c == NULL || String.isBlank(opp.Calendar_Build_Status__c)) {
+                        opp.Calendar_Build_Status__c = skedConstants.CALENDAR_BUILD_STATUS_QUALIFIED;
                     }
-                }
+                    opportunitiesToUpdate.add(opp);
+                } 
             }
+
             if (!opportunitiesToUpdate.isEmpty()) {
                 update opportunitiesToUpdate;
             }
@@ -368,7 +381,9 @@ public with sharing class MobileDriveGeneratorDMLService {
                 Drive_Date__c, Drive_Site__c,Flow_Start_Time_Field__c, Drive_Site__r.sked_Collection_Operation__c, Drive_Site__r.Operation_type__c,
                 End_Time__c, Industry_Code__c, Recruited_By__c, Start_Time__c,
                 Type_of_Drive__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
-                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c 
+                Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c, Day_of_Week__c,Call_List_Recipient_Exist__c, Slot_Generator__c, 
+                APT_Required__c, APT_Quantity__c, //HRP-13190 
+                Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c //HRP-13146
                 FROM Opportunity
                 WHERE Id IN :oppIds];
     }
@@ -391,7 +406,8 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Lunch_Break_Before_Draw_Hours__c, sked_Lunch_Break_Duration_Fixed_Site__c, sked_Lunch_Break_Duration_Mobile__c, 
                 sked_Maximum_Drive_End_Time__c, sked_Maximum_Shift_Length_Threshold__c, sked_Mid_Drive_Productivity_Threshold__c, 
                 sked_Minimum_Drive_Start_Time__c, sked_Setup_Time_Threshold__c, sked_Skip_Last_Appointment_For__c, sked_Unpaid_Lunch_Break_Duration__c, sked_Lunch_Break__c, 
-                sked_Travel_Time_Included_Mobile__c, sked_Travel_Time_Included_Fixed_Site__c, sked_IMPACT__c, sked_IMPACT_End_Date__c, sked_IMPACT_Start_Date__c, sked_No_Travel_Time__c //HRP-11419
+                sked_Travel_Time_Included_Mobile__c, sked_Travel_Time_Included_Fixed_Site__c, sked_IMPACT__c, sked_IMPACT_End_Date__c, sked_IMPACT_Start_Date__c, sked_No_Travel_Time__c, //HRP-11419
+                sked_Auto_Generate_Dual_Role__c, sked_Only_Generate_Dual_If_1_Machine__c //HRP-13862
                 FROM Biomed_Collection_Op_Center__c
                 WHERE Id IN :collectionOperationIds];
     }
@@ -681,6 +697,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Date impactStartDate;
         //HRP-9945 End
         public Boolean noTravelTime; //HRP-11419
+        public Boolean autoGenerateDualRole; //HRP-13862
+        public Boolean onlyGenerateDualRoleIfOneMachine; //HRP-13862
         
         public DMLCollectionOperation(Biomed_Collection_Op_Center__c collectionOperation) {
             this.id = collectionOperation.Id;
@@ -708,6 +726,8 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.impactStartDate = collectionOperation.sked_IMPACT_Start_Date__c != null ? collectionOperation.sked_IMPACT_Start_Date__c : null;
             //HRP-9945 End
             this.noTravelTime = collectionOperation.sked_No_Travel_Time__c != null ? collectionOperation.sked_No_Travel_Time__c : null; //HRP-11419
+            this.autoGenerateDualRole = collectionOperation.sked_Auto_Generate_Dual_Role__c; //HRP-13862
+            this.onlyGenerateDualRoleIfOneMachine = collectionOperation.sked_Only_Generate_Dual_If_1_Machine__c; //HRP-13862
         }
     }
 
@@ -778,7 +798,14 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal slotGenerator; //HRP-12011
         public Decimal excessStaffCapacity; //HRP-10994
         public Decimal averageStaffCapacity; //HRP-10994
+        public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         public Decimal totalStaffRequested; //HRP-10994
+        public Boolean aptRequired; //HRP-13190
+        public Decimal aptQuantity; //HRP-13190
+        public Boolean isDualRolesAutoGenerated; //HRP-13862
+        public Decimal redcrossVolunteerQuantity; //HRP-13146
+        public Boolean redcrossVolunteerRequired; //HRP-13146
         
         public DMLAccount account;
         public DMLCollectionOperation collectionOperation;
@@ -788,6 +815,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public List<DMLDriveShift> driveShifts;
         public Boolean hasError = false;
         public Boolean impactCO = false; //HRP-9945
+        public String pendingActionReasonCode; //HRp-14369
         
         public DMLDrive(Opportunity opp) {
             DMLSchedulingBounds schedulingBounds = reduceSchedulingBoundsFromOpportunities(new List<Opportunity>{opp});
@@ -811,6 +839,10 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.x2rbcProjectedProcedures = opp.X2RBC_Projected_Procedures__c != null ? opp.X2RBC_Projected_Procedures__c : 0;
             this.isCallListRecipientExist = opp.Call_List_Recipient_Exist__c; // HRP - 10478
             this.slotGenerator = opp.Slot_Generator__c; //HRP-12011
+            this.aptRequired = opp.APT_Required__c; //HRP-13190
+            this.aptQuantity = opp.APT_Quantity__c; //HRP-13190
+            this.redcrossVolunteerRequired = opp.Red_Cross_Volunteer_Required__c; //HRP-13146
+            this.redcrossVolunteerQuantity = opp.Red_Cross_Volunteer_Quantity__c; //HRP-13146
             this.totalProceduresProjected = this.wbProjectedProcedures + this.x2rbcProjectedProcedures;
             this.totalProductsProjected = this.wbProjectedProcedures + 2*this.x2rbcProjectedProcedures;
             this.driveSite = new DMLLocation(fetchSites(new Set<Id>{opp.Drive_Site__c}, schedulingBounds)[0]);
@@ -828,6 +860,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Drive_Date__c = this.driveDate,
                 sked_Drive_Productivity_Planned__c = this.driveProductivityPlanned,
                 sked_Drive_Site__c = this.driveSiteId,
+                sked_Dual_Roles_Auto_Generated__c = this.isDualRolesAutoGenerated != NULL ? this.isDualRolesAutoGenerated : false, //HRP-13862
                 sked_End_Time__c = this.endTime,
                 sked_Maximum_Lunch_Break_Duration__c = string.valueOf(this.maximumLunchBreakDuration),
                 sked_Number_of_2RBC_Assets__c = this.numberOf2rbcEquipments,
@@ -848,7 +881,14 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Travel_Time_Site_To_CO__c = this.travelTimeSitetoCO,  //HRP-11650
                 sked_Travel_Time_CO_To_Site__c = this.travelTimeCOtoSite,  //HRP-11650
                 Excess_Staff_Capacity__c = this.excessStaffCapacity, //HRP-10994
-                Average_Staff_Capacity__c = this.averageStaffCapacity //HRP-10994
+                Average_Staff_Capacity__c = this.averageStaffCapacity, //HRP-10994
+                Max_Role_Capacity__c = this.maxRoleCapacity, //HRP-13864
+                Max_Role_Capacity_With_Draw_Hours__c = this.maxRoleCapacityWithDrawHours, //HRP-13864
+                sked_APT_Required__c = this.aptRequired, //HRP-13190
+                sked_APT_Quantity__c = this.aptQuantity, //HRP-13190
+                sked_Redcross_Volunteer_Required__c = this.redcrossVolunteerRequired, //HRP-13146
+                sked_Redcross_Volunteer_Quantity__c = this.redcrossVolunteerQuantity, //HRP-13146
+                sked_Pending_Action_Reason_Code__c = pendingActionReasonCode//HRP-14369
             );
             return skedDrive;
         }
@@ -896,12 +936,18 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal drawHourswithLunchBreak;
         public decimal numberOf2rbcEquipments;
         public Boolean noTravelTime; //HRP-11419
+        public Decimal maxRoleCapacity; //HRP-13864
+        public Decimal maxRoleCapacityWithDrawHours; //HRP-13864
         
         public List<DMLDriveShiftTag> driveShiftTags;
         public List<DMLJob> jobs;
+        public List<DMLJob> tempJobs; //HRP-13862
         public List<DriveGenerationUtil.TimeConfigurationModel> timeConfigurations; //HRP-11908
         public List<DMLSlot> slots;
-     
+        public String timeBlockId; //HRP-14389
+        public String contention; //HRP-14369
+
+        
         public DMLDriveShift() {}
         
          public DMLDriveShift(sked_Drive_Shift__c driveShift) {
@@ -922,6 +968,8 @@ public with sharing class MobileDriveGeneratorDMLService {
                 jobList.add(new DMLJob(job));
             }
             this.jobs = jobList;
+            this.timeBlockId = driveShift.sked_Time_Block__c; //HRP-14389
+            this.contention = driveShift.sked_Contention__c;//HRP-14369
         }
         
         public DMLDriveShift(DMLDriveShift source) {
@@ -947,12 +995,23 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.aPTSetup = source.aPTSetup;
             this.drive = source.drive;
             this.noTravelTime = source.noTravelTime; //HRP-11419
+            this.timeBlockId = source.timeBlockId; //HRP-14389
+            this.contention = source.contention;//HRP-14369
+
             
             if (source.jobs != NULL && !source.jobs.isEmpty()) {
                 this.jobs = new List<DMLJob>();
                 for (DMLJob sourceJob : source.jobs) {
                     DMLJob job = new DMLJob(sourceJob);
                     this.jobs.add(job);
+                }
+            }
+
+            if (source.tempJobs != NULL && !source.tempJobs.isEmpty()) {
+                this.tempJobs = new List<DMLJob>();
+                for (DMLJob sourceJob : source.tempJobs) {
+                    DMLJob job = new DMLJob(sourceJob);
+                    this.tempJobs.add(job);
                 }
             }
         }
@@ -988,7 +1047,9 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_2RBC_Projected_Procedures__c = this.x2rbcProjectedProcedures != null ? this.x2rbcProjectedProcedures.setScale(2) : 0.00,	
                 sked_Total_Procedures_Projected__c = this.totalProceduresProjected != null ? this.totalProceduresProjected.setScale(2) : 0.00,	
                 sked_Total_Products_Projected__c = this.totalProductsProjected != null ? this.totalProductsProjected.setScale(2) : 0.00,
-                sked_Max_Donor_Capacity__c = this.staffCapacity
+                sked_Max_Donor_Capacity__c = this.staffCapacity,
+                sked_Time_Block__c = this.timeBlockId, //HRP-14389
+                sked_Contention__c = this.contention
             );
             return skedDriveShift;
         }
@@ -1052,6 +1113,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal quantity;
         public decimal redcrossVolunteerQuantity;
         public string resourcerole;
+        public string dualRole; //HRP-13862
         public decimal setupTime;
         public decimal sponsorVolunteerQuantity;
         public DateTime start;
@@ -1071,6 +1133,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public DMLJob(sked__Job__c job) {
             this.id = job.Id;
             this.resourceRole = job.sked_Resource_Role__c;
+            this.dualRole = job.sked_Dual_Role__c; //HRP-13862
             this.aptQuantity = job.sked_APT_Quantity__c;
             this.assetType = job.sked_Asset_Type__c;
             this.breakdownTime = job.sked_Breakdown_Time__c;
@@ -1104,6 +1167,7 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.driveId = source.driveId;
             this.driveShiftId = source.driveShiftId;
             this.driveSiteId = source.driveSiteId;
+            this.dualRole = source.dualRole; //HRP-13862
             this.duration = source.duration;
             this.equipmentSubtype = source.equipmentSubtype;
             this.finish = source.finish;
@@ -1133,6 +1197,7 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_Breakdown_Time__c = this.breakdownTime,
                 sked_Drive__c = this.driveId,
                 sked_Drive_Shift__c = this.driveShiftId,
+                sked_Dual_Role__c = this.dualRole, //HRP-13862
                 sked__Duration__c = this.duration,
                 sked_Equipment_Subtype__c = this.equipmentSubtype,
                 sked__Finish__c = this.finish,
@@ -1408,8 +1473,10 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.id = travelTimeIndex.Id;
             this.fromGeo = travelTimeIndex.sked_From__c;
             this.toGeo = travelTimeIndex.sked_To__c;
-            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c)) {
+            if (!string.isBlank(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c) && !travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c.startsWithIgnoreCase('NO')) { //HRP-14065
                 this.travelTimeBreakdown = (List<DMLTravelTimeBreakdown>)JSON.deserialize(travelTimeIndex.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
+            } else {
+                this.travelTimeBreakdown = new List<DMLTravelTimeBreakdown>(); //HRP-14065
             }
         }
     }
@@ -1430,12 +1497,14 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.endDate = siteCollectionOperation.sked_End_Date__c;
             this.siteId = siteCollectionOperation.sked_Site__c;
             this.startDate = siteCollectionOperation.sked_Start_Date__c;
+
+            /* HRP-14065: JSON is no longer needed to be retrieved from Site CO. It will be retrieved from TTII 
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c)) {
                 this.travelTimeBreakdownsCoToSite = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON__c, List<DMLTravelTimeBreakdown>.class);
             }
             if (!string.isBlank(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c)) {
                 this.travelTimeBreakdownsSiteToCo = (List<DMLTravelTimeBreakdown>)JSON.deserialize(siteCollectionOperation.sked_Travel_Time_Breakdown_JSON_2__c, List<DMLTravelTimeBreakdown>.class);
-            }
+            }*/
         }
     }
     

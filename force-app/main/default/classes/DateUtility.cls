@@ -1,3 +1,12 @@
+/* The following class is used in "Plan a Drive" flow to calculate recurring drive dates based on user-input patterns
+ 
+   Modification Log 
+   Date					     Developer Name			       Comments
+   ****************************************************************************
+   2/7/2025                    Priti Jana			    Logic for HRP-13039  
+  *****************************************************************************
+*/
+
 public class DateUtility {
 
     public class ReturnValue {
@@ -7,18 +16,82 @@ public class DateUtility {
         public boolean operationStatus = true;
         @AuraEnabled 
         public string errorMessage;
+        @AuraEnabled 
+        public string donorEligibilityDay; //HRP-13039
+        @AuraEnabled 
+        public string donorEligibilityMsg; //HRP-13039
+    }
+	
+    //HRP-13039 -> Starts Here
+    @AuraEnabled(cacheable=true)
+    public static ReturnValue getDonorEligibilityDay(String donorEligibilityNeededFor) {
+        ReturnValue finalResults = new ReturnValue();
+        BSF_setting__c setting = BSF_setting__c.getOrgDefaults();
+        String donorEligibilityDay;
+        String donorEligibilityMsg;
+        if(donorEligibilityNeededFor != NULL && !String.isBlank(donorEligibilityNeededFor)) {
+            if(donorEligibilityNeededFor.equalsIgnoreCase('Power Red')) {
+                donorEligibilityDay = setting.Donor_Eligibility_Day_for_2RBC__c;
+            } else if(donorEligibilityNeededFor.equalsIgnoreCase('Whole Blood')) {
+                donorEligibilityDay = setting.Donor_Eligibility_Day_for_WB__c;
+            } 
+
+            donorEligibilityMsg = setting.Is_Donor_Eligibility_Msg_Needed__c 
+                                    ? setting.Donor_Eligibility_Msg__c
+                                        .replace('{donorEligibilityType}', donorEligibilityNeededFor.equalsIgnoreCase('Power Red') ? (donorEligibilityNeededFor + 's') : donorEligibilityNeededFor)
+                                        .replace('{donorEligibilityDay}', donorEligibilityDay)
+                                    : '';
+        }
+
+        finalResults.operationStatus = true;
+        finalResults.donorEligibilityDay = donorEligibilityDay;
+        finalResults.donorEligibilityMsg = donorEligibilityMsg;
+        return finalResults;
     }
 
     @AuraEnabled(cacheable=true)
-    public static ReturnValue getRecurrenceDate(string startDate, string endDate, string recurrenceType, string weeklyRecurrence, string daysOfWeek, string occurance, string monthlyRecurrence, string dayOfMonth){
+    public static ReturnValue getRecurrenceDate(
+        string startDate, 
+        string endDate, 
+        string recurrenceType, 
+        string weeklyRecurrence, 
+        string daysOfWeek, 
+        string occurance, 
+        string monthlyRecurrence, 
+        string dayOfMonth,
+        string donorEligibilityFor
+    ) {
         if (String.isBlank(recurrenceType) || recurrenceType == 'weekly') {
             system.System.debug('DateUtility.getRecurrenceDate() - Calling getWeeklyRecurrenceDate(startDate: '+ startDate +' , endDate: '+ endDate +' , weeklyRecurrence: '+ weeklyRecurrence +' , daysOfWeek: '+ daysOfWeek +' )');
             return DateUtility.getWeeklyRecurrenceDate(startDate, endDate, weeklyRecurrence, daysOfWeek);
-        } else {
+        } else if(recurrenceType == 'monthly') {
             system.System.debug('DateUtility.getRecurrenceDate() - Calling getMonthlyRecurrenceDate(startDate: '+ startDate +' , endDate: '+ endDate +' , occurance: '+ occurance +' , monthlyRecurrence: '+ monthlyRecurrence +' , dayOfMonth: '+ dayOfMonth +' )');
             return DateUtility.getMonthlyRecurrenceDate(startDate, endDate, occurance, monthlyRecurrence, dayOfMonth);
+        } else {
+            return DateUtility.getOtherRecurrenceDateBasedOnDonorEligibility(startDate, endDate, donorEligibilityFor);
         }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static ReturnValue getOtherRecurrenceDateBasedOnDonorEligibility(string startDate, string endDate, String donorEligibilityFor) {
+        ReturnValue finalResults = getDonorEligibilityDay(donorEligibilityFor);
+
+        List<Date> intermediateDates = new List<Date>();
+
+        Date dtStartDate = Date.valueOf(startDate);
+        intermediateDates.add(dtStartDate); //Adding the start date in the list as the first drive date
+
+        Date dtEndDate = Date.valueOf(endDate);
+        Date nextDate = dtStartDate.addDays(Integer.valueOf(finalResults.donorEligibilityDay));
+        while (nextDate <= dtEndDate) {
+            intermediateDates.add(nextDate);
+            nextDate = nextDate.addDays(Integer.valueOf(finalResults.donorEligibilityDay));
+        }
+        finalResults.operationStatus = true;
+        finalResults.returnValue = intermediateDates;
+        return finalResults;
+    }
+    //HRP-13039 -> Ends Here
 
     @AuraEnabled(cacheable=true)
     public static ReturnValue getWeeklyRecurrenceDate(string startDate, string endDate, string weeklyRecurrence, string daysOfWeek){

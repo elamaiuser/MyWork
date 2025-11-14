@@ -4,6 +4,7 @@ const THUMBS = ['start', 'end'];
 
 export default class SlwcSlider extends LightningElement {
   @api label;
+  @api labelNotNeeded = false;
   @api
   get min() {
     return this._min;

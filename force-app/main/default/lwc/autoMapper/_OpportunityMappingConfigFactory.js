@@ -16,6 +16,8 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Account_Manager__c', 'accountManagerId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Anticipated_Registered_Donors__c', 'anticipatedRegisteredDonors', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Anticipated_Registered_Donors_Template__c', 'anticipatedRegisteredDonorsTemplate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('APT_Required__c', 'aptRequired', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('APT_Quantity__c', 'aptQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Call_List_Recipient_Exist__c', 'callListRecipientExist', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Date__c', 'driveDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Drive_Date_Change_Reason__c', 'driveDateChangeReason', MAPPING_TYPE.direct);
@@ -32,7 +34,10 @@ export class OpportunityMappingConfigFactory {
       mappingConfig.addFieldConfig('Plasma_Pheresis_Projected_Procedures__c', 'plasmaProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Platelet_Projected_Procedures__c', 'plateletProjectedProcedures', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Recruited_By__c', 'recruitedBy', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Red_Cross_Volunteer_Required__c', 'redcrossVolunteerRequired', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Red_Cross_Volunteer_Quantity__c', 'redcrossVolunteerQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Slot_Generator__c', 'slotGenerator', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Special_Circumstances__c', 'specialCircumstances', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Start_Time__c', 'startTime', MAPPING_TYPE.time);
       mappingConfig.addFieldConfig('StageName', 'stage', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Type', 'type', MAPPING_TYPE.direct);

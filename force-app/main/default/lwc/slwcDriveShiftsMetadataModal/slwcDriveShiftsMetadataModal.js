@@ -263,6 +263,8 @@ export default class SlwcDriveShiftsMetadataModal extends LightningElement {
     }
 
     if (targetName === 'projectedRegisteredDonors') {
+      this.model.skipAptCalculation = true;
+      this.model.skipVolunteerRecalculation = false;
       driveHelper.splitScheduledDonors({
         ...this.drive,
         projectedRegisteredDonors: this.model.projectedRegisteredDonors
@@ -300,9 +302,11 @@ export default class SlwcDriveShiftsMetadataModal extends LightningElement {
       driveShift.rounds = this.generateDriveShiftRounds(driveShift, driveShift.numberOfRounds);
       driveShift.numberOfRounds = driveShift.rounds.length;
     } else if (targetName === 'startTime') {
+      this.model.skipAptCalculation = true;
       driveShift[targetName] = targetValue;
       driveShift.start = targetValue ? this.newDateTime(this.drive.driveDate, targetValue, this.masterData.timezoneSidId) : null;
     } else if (targetName === 'endTime') {
+      this.model.skipAptCalculation = true;
       driveShift[targetName] = targetValue;
       driveShift.finish = targetValue ? this.newDateTime(this.drive.driveDate, targetValue, this.masterData.timezoneSidId) : null;
     } else {

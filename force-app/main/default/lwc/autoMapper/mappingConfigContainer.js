@@ -2,7 +2,7 @@ import {
     MAPPING_TYPE,
     AccountAvailabilityPreferenceMappingConfigFactory, AccountBridgeApiMappingConfigFactory,
     AccountMappingConfigFactory, AccountResourceScoreMappingConfigFactory, AccountTagMappingConfigFactory,
-    ActivityMappingConfigFactory, ActivityResourceMappingConfigFactory,
+    ActivityMappingConfigFactory, ActivityCollectionOperationMappingConfigFactory, ActivityResourceMappingConfigFactory,
     AvailabilityMappingConfigFactory, AvailabilityPatternMappingConfigFactory, AvailabilityPatternResourceMappingConfigFactory,
     CalendarMessageCollectionOperationMappingConfigFactory, CalendarMessageMappingConfigFactory,
     ClientAvailabilityMappingConfigFactory, CollectionOperationSdmMappingConfigFactory, CollectionOpMappingConfigFactory, CollectionOpStagingLocationMappingConfigFactory,
@@ -26,7 +26,7 @@ import {
     SiteBridgeApiMappingConfigFactory, SiteCollectionOperationMappingConfigFactory, SiteFeedbackMappingConfigFactory, SlotMappingConfigFactory, 
     StagingLocationMappingConfigFactory, StaffingConstraintMappingConfigFactory, StaffingDecisionMatrixMappingConfigFactory, TagMappingConfigFactory, TerritoryCollectionOperationMappingConfigFactory,
     TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
-    CollectionOperationOptimizerSettingConfigFactory
+    CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory
 } from './index.js';
 
 class mappingConfigContainer {
@@ -51,6 +51,7 @@ class mappingConfigContainer {
             'UserMappingConfigFactory' : UserMappingConfigFactory,
             'sked_Account_Availability_Preference__cMappingConfigFactory' : AccountAvailabilityPreferenceMappingConfigFactory,
             'sked__Activity__cMappingConfigFactory' : ActivityMappingConfigFactory,
+            'sked_Activity_Collection_Operation__cMappingConfigFactory' : ActivityCollectionOperationMappingConfigFactory,
             'sked__Activity_Resource__cMappingConfigFactory' : ActivityResourceMappingConfigFactory,
             'sked__Account_Tag__cMappingConfigFactory' : AccountTagMappingConfigFactory,
             'sked__Account_Resource_Score__cMappingConfigFactory' : AccountResourceScoreMappingConfigFactory,
@@ -62,6 +63,7 @@ class mappingConfigContainer {
             'sked__Client_Availability__cMappingConfigFactory' : ClientAvailabilityMappingConfigFactory,
             'sked_Collection_Op_Staging_Location__cMappingConfigFactory' : CollectionOpStagingLocationMappingConfigFactory,
             'sked_Collection_Operation_SDM__cMappingConfigFactory' : CollectionOperationSdmMappingConfigFactory,
+            'Collection_Operation_Time_Block__cMappingConfigFactory' : CollectionOperationTimeBlockMappingConfigFactory,
             'sked_Custom_Availability__cMappingConfigFactory' : CustomAvailabilityMappingConfigFactory,
             'sked_DCR_Field__cMappingConfigFactory' : DcrFieldMappingConfigFactory,
             'sked_DCR_Period__cMappingConfigFactory' : DcrPeriodMappingConfigFactory,
@@ -117,6 +119,7 @@ class mappingConfigContainer {
             'sked__Tag__cMappingConfigFactory' : TagMappingConfigFactory,
             'sked_Territory_Collection_Operation__cMappingConfigFactory': TerritoryCollectionOperationMappingConfigFactory,
             'sked_Territory__cMappingConfigFactory' : TerritoryMappingConfigFactory,
+            'Time_Block__cMappingConfigFactory' : TimeBlockMappingConfigFactory,
             'sked_Travel_Time_Index_Item__cMappingConfigFactory' : TravelTimeIndexItemMappingConfigFactory,
             'skedHC__Exception__cMappingConfigFactory' : ExceptionMappingConfigFactory,
             'BSF_Portfolio__cMappingConfigFactory' : BsfPortfolioMappingConfigFactory,
@@ -130,7 +133,6 @@ class mappingConfigContainer {
         let mappingConfig;
         if (!this.mapConfig.has(sObjectType)) {
             let className = sObjectType + 'MappingConfigFactory';
-            console.log('init factoryInstance: ' + className);
             //implement cache class mapping
             let factoryInstance = new this.classesMapping[className]();
             mappingConfig = factoryInstance.process();

@@ -1135,23 +1135,6 @@
                 <identifier>RecordSite_Smoking_Policy_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.sked_On_Site_Food_Conditions__c</fieldItem>
-                <identifier>Recordsked_On_Site_Food_Conditions_cField</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!Record.RecordType.Name}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Mobile Site</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </fieldInstance>
-        </itemInstances>
         <name>Facet-074c5dc8-4465-4cdb-9665-2f9a5f267a12</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -2423,11 +2406,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
-                    <value>File Title, File Type</value>
+                    <value>File Title, File Type, Expiry Date</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>SELECT Title, Description FROM ContentVersion</value>
+                    <value>SELECT Title, Description,Expiry_Date__c  FROM ContentVersion</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>

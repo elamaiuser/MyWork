@@ -1,9 +1,13 @@
 import { getValueFromEvent } from 'c/slwcUtils';
 import { CurrentPageReference } from 'lightning/navigation';
 import { LightningElement, api, track, wire } from 'lwc';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 export default class SlwcLockAppointmentModal extends LightningElement {
+    driveHelper = new DriveHelper();
+
     @api slots;
+    @api drive;
 
     @track _isOpen = false;
     @api
@@ -18,7 +22,8 @@ export default class SlwcLockAppointmentModal extends LightningElement {
     }
 
     @track model = {}
-    
+    @track recurrenceDatesPickerModalData = {};
+
     get excludedValues() {
         const allPlasmaSlots = this.slots?.every(slot => slot.slotType === 'Plasma');
 
@@ -27,6 +32,14 @@ export default class SlwcLockAppointmentModal extends LightningElement {
         }
 
         return []
+    }
+
+    get showApplyFutureDatesBtn() {
+        const isLinkedDrive = this.drive.linkedDriveId;
+        return (
+            this.driveHelper.isFixedSiteDrive(this.drive) ||
+            this.driveHelper.isWbFixedSiteDrive(this.drive)
+        ) && !isLinkedDrive;
     }
 
     @wire(CurrentPageReference) pageRef;
@@ -38,9 +51,13 @@ export default class SlwcLockAppointmentModal extends LightningElement {
     }
 
     init() {
+        const recurrenceDates = this.slots.length === 1 ? this.slots[0].recurrenceDates ?? [] : []
+        const selectedDriveIds = this.slots.length === 1 ? this.slots[0].selectedDriveIds ?? [] : []
         this.model = {
             fixedSiteLockReason: '',
             fixedSiteLockComment: '',
+            recurrenceDates,
+            selectedDriveIds
         }
     }
 
@@ -80,9 +97,30 @@ export default class SlwcLockAppointmentModal extends LightningElement {
         this.dispatchEvent(new CustomEvent('save', {
             detail: {
                 fixedSiteLockComment: this.model.fixedSiteLockComment,
-                fixedSiteLockReason: this.model.fixedSiteLockReason
+                fixedSiteLockReason: this.model.fixedSiteLockReason,
+                recurrenceDates: this.model.recurrenceDates,
+                selectedDriveIds: this.model.selectedDriveIds
             }
         }));
         this.closeModal();
+    }
+
+    /* Recurrence Dates Picker modal */
+    openRecurrenceDatesPickerModalData() {
+        this.recurrenceDatesPickerModalData = {
+            isOpen: true,
+            selectedDays: this.model.recurrenceDates,
+            selectedDriveIds: this.model.recurrenceDriveIds
+        }
+    }
+
+    saveRecurrenceDatesPickerModalData(event) {
+        const { selectedDays, selectedDriveIds } = event.detail; 
+        this.model.recurrenceDates = selectedDays;
+        this.model.recurrenceDriveIds = selectedDriveIds
+    }
+
+    closeRecurrenceDatesPickerModalData() {
+        this.recurrenceDatesPickerModalData = {};
     }
 }

@@ -16,7 +16,8 @@ public class skedNightlyRefreshTravelTimeIndexBatch extends skedRefreshTravelTim
         Integer maxTravelTimeIndexItemsForPeriodicRefresh = skedSetting.instance.TravelTime.maxTravelTimeIndexItemsForPeriodicRefresh;
         return Database.getQueryLocator([
             SELECT Id, sked_Timezone__c, sked_Ordering_Key__c, User_Override__c,
-            sked_From__c, sked_To__c
+            sked_From__c, sked_To__c, sked_Travel_Time_Breakdown_JSON__c,
+            sked_Travel_Time_Breakdown_JSON_Backup__c
             FROM sked_Travel_Time_Index_Item__c
             WHERE (sked_Last_Refresh_Date__c = NULL
                    OR sked_Last_Refresh_Date__c < :thresholdToRefresh)

@@ -432,7 +432,7 @@ public without sharing class BSFStagingSheetController {
                                 driveDriverMap.put(jba.sked__Job__r.sked_Drive__c, new Set<String>());
                             }
                             String firstName = String.isNotBlank(jba.sked__Resource__r.sked_Preferred_First_Name__c) ? jba.sked__Resource__r.sked_Preferred_First_Name__c : jba.sked__Resource__r.sked_First_Name__c;
-                            driveDriverMap.get(jba.sked__Job__r.sked_Drive__c).add(BSFWeeklyStaffingRoleTimeController.capitalizeName(firstName+' '+jba.sked__Resource__r.sked_Last_Name__c));
+                            driveDriverMap.get(jba.sked__Job__r.sked_Drive__c).add(BSF_Utilities.capitalizeName(firstName+' '+jba.sked__Resource__r.sked_Last_Name__c, true));
                         }
                         
                     }

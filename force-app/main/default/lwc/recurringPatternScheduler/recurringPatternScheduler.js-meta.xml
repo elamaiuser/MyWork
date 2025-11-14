@@ -14,10 +14,14 @@
             <property name="InputStartDateOffset" label="How many Days in Future should Start Date be (-1 for no restriction)" type="Integer"/>
             <property name="InputEndtDateOffset" label="How many Days in Future can End Date be (-1 for no restriction)" type="Integer"/>
             <property name="InputEnableFlowButtons" label="Show Flow Buttons in Component" type="Boolean" />
+            <property name="InputDriveType" label="Drive Type" type="String"/>
 
              <property name="OutputStartDateValue" label="Start Date" type="String"/>
              <property name="OutputEndDateValue" label="End Date" type="String"/>
              <property name="OutputRecurTypeValue" label="Recurrence Type" type="String"/>
+             <property name="OutputDonorEligibilityNeededFor" label="Donor Eligibility (Depricated)" type="String[]"/>
+             <property name="OutputDonorEligibilityType" label="Donor Eligibility calculation needed for which type?" type="String"/>
+             <property name="OutputDonorEligibilityDay" label="Donor Eligibility Day" type="String"/>
 
              <property name="OutputMonthlyFrequencyValue" label="Monthly Frequency" type="Integer"/>
              <property name="OutputMonthDayOccuranceValue" label="Day or Week of Month" type="String"/>

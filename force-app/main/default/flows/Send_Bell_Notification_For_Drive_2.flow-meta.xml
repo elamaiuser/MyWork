@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>myRule_1_A1</name>
+        <label>Send Notification TO DM</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>BloodDriveInvokable</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>optyId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>BloodDriveInvokable</nameSegment>
+    </actionCalls>
+    <apiVersion>63.0</apiVersion>
+    <description>Migrated from the Send Bell Notification For Drive process using Check if the Drive has Drive date more than current date and the Account is unmanaged criteria.
+Send a bell notification to District Manager of the Account when a Drive is created where the Drive Date is more than current date and the related Account is unmanaged</description>
+    <environments>Default</environments>
+    <interviewLabel>Send Bell Notification For Drive {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send Bell Notification For Drive_2</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>myRule_1_A1</targetReference>
+        </connector>
+        <filterLogic>1 AND (2 OR 3)</filterLogic>
+        <filters>
+            <field>Drive_Status__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Drive_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Confirmed</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Drive_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Tentative</stringValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

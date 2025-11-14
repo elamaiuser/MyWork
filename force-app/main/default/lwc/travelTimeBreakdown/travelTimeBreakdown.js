@@ -14,7 +14,7 @@ export default class TravelTimeBreakdown extends LightningElement {
     initialRecords = [];
     @track modifiedRecordIds = [];
     @track errorMessage = '';
-    
+
 
     @wire(getData, { siteCO_Id: '$recordId' })
     wiredData({ error, data }) {
@@ -35,7 +35,7 @@ export default class TravelTimeBreakdown extends LightningElement {
     
                     newRecord.timeSlots = Object.keys(slots).map(key => ({
                         timeRange: key,
-                        travelTimes: this.daysOfWeek.map(day => slots[key][day] || '-')
+                        travelTimes: this.daysOfWeek.map(day => slots[key][day] || '')
                     }));
                 } else {
                     console.error('travelTimeBreakdownData is not an array for record:', record);
@@ -46,12 +46,31 @@ export default class TravelTimeBreakdown extends LightningElement {
                 
             });
             this.initialRecords = JSON.parse(JSON.stringify(this.records));
+
+            const systemOverrideRecordsToUpdate = data.filter(record => record.systemOverride === true);                     
+            if(systemOverrideRecordsToUpdate.length > 0){
+                saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate })
+                .then(result => {
+                    console.log('Records updated successfully');                    
+                    window.location.reload();
+                })
+                .catch(error => {                    
+                    console.error('Error in updating records:', error);
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Error updating records',
+                            variant: 'error'
+                        })
+                    );
+                });
+            }
+            
         } else if (error) {
             console.error('Error fetching data:', error);
         }
     }
 
-    
     extractTimeSlots(data) {
         let slots = {};
         data.forEach(item => {
@@ -147,7 +166,7 @@ export default class TravelTimeBreakdown extends LightningElement {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
-                    message: 'Travel time value should be a valid integer.',
+                    message: 'All time-blocks must be completed with positive values.',
                     variant: 'error'
                 })
             );
@@ -213,13 +232,15 @@ export default class TravelTimeBreakdown extends LightningElement {
         const updatedUserOverride = event.target.checked;
         console.log('recordIndexId:', recordIndexId);
         console.log('updatedUserOverride:', updatedUserOverride);
-    
+
         this.records = this.records.map(record => {
             console.log('record.indexId:', record.indexId);
             if (record.indexId === recordIndexId) {
                 console.log('Entering the if block');
                 console.log('updatedUserOverride1:', updatedUserOverride);
-                const updatedRecord = { ...record, userOverride: updatedUserOverride };
+                const updatedRecord = { ...record, userOverride: updatedUserOverride,
+                    overrideComment: updatedUserOverride ? record.overrideComment : null
+                 };
                 console.log('Updated Record with userOverride:', JSON.stringify(updatedRecord));
                 return updatedRecord;
             }
@@ -230,13 +251,29 @@ export default class TravelTimeBreakdown extends LightningElement {
     handleSave() {
         let updatedRecords = this.records.filter(record => record.isEditMode);
         console.log('Updated Records:', JSON.stringify(updatedRecords));
+        let hasNegativeValues = false;
+
+        const missingComments = updatedRecords.some(record =>
+            record.userOverride && (!record.overrideComment || record.overrideComment.trim() === '')
+        );
+
+        if (missingComments) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Please provide a comment for all user overrides.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
         
         let updatedDataWrappers = updatedRecords.map(record => {
             //console.log(`ROriginal Travel Time Data:`, JSON.stringify(record.travelTimeBreakdownData, null, 2));
             let travelTimeData = record.travelTimeBreakdownData.flatMap(ttbd => {
-                let parsedTime = Number(ttbd.travelTime); 
+                let parsedTime = Number(ttbd.travelTime);                
     
-                if (!isNaN(parsedTime)) {
+                if (!isNaN(parsedTime) && parsedTime > 0) {
                     let timeData = {
                         weekday: ttbd.weekday,
                         travelTime: parsedTime, 
@@ -244,12 +281,12 @@ export default class TravelTimeBreakdown extends LightningElement {
                         endTime: ttbd.endTime, 
                         travelDistance: ttbd.travelDistance,
                         travelTimeKey:ttbd.travelTimeKey,
-
                     };
                     //console.log('Updated Travel Time Data:', JSON.stringify(timeData, null, 2));
                     return timeData;
                 } else {
-                    console.error(`Incorrect or missing time data for ${ttbd.weekday}:`, ttbd.travelTime);
+                    //console.error(`Incorrect or missing time data for ${ttbd.weekday}:`, ttbd.travelTime);
+                    hasNegativeValues = true;
                     return null; 
                 }
             }).filter(timeData => timeData !== null); 
@@ -264,6 +301,17 @@ export default class TravelTimeBreakdown extends LightningElement {
             };
             return dataWrapper;
          });
+
+         if (hasNegativeValues) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'All time-blocks must be completed with positive values.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
     
         console.log('Data Wrappers Being Sent to Apex:', JSON.stringify(updatedDataWrappers, null, 2));
     
@@ -271,10 +319,25 @@ export default class TravelTimeBreakdown extends LightningElement {
             .then(result => {
                 console.log('Records updated successfully');
                 this.exitEditMode();
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Records updated successfully',
+                        variant: 'success'
+                    })
+                );
+                //window.location.reload();
             })
             .catch(error => {
                 //this.exitEditMode();
                 console.error('Error in updating records:', error);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Error updating records',
+                        variant: 'error'
+                    })
+                );
             });
     }
     

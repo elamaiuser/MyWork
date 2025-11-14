@@ -75,7 +75,106 @@
             </div>
         </article>
 
-        <article class="slds-card slds-card_boundary approval-history-page">
+        <article if:true={requireResolveTimeBlockContentions} class="slds-card slds-card_boundary approval-history-page">
+            <div class="slds-grid slds-page-header">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
+                        <lightning-icon icon-name="custom:custom2" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-page-header__title slds-truncate">Time Block Contentions</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <lightning-button-group>
+                                <template if:false={isReadonly}>
+                                    <lightning-button label="Confirm Time Block" onclick={handleConfirmTimeBlockBtn}></lightning-button>
+                                </template>
+                            </lightning-button-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered contention-table">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width: 20%">
+                                <div class="slds-truncate" title="Drive Shift">Drive Shift</div>
+                            </th>
+                            <th class="" scope="col" style="width: 20%">
+                                <div class="slds-truncate" title="Drive Shift">Drive Shift Time</div>
+                            </th>
+                            <th class="" scope="col" style="width: 30%">
+                                <div class="slds-truncate" title="Contention">Contention</div>
+                            </th>
+                            <th class="" scope="col" style="width: 30%">
+                                <div class="slds-truncate" title="Drive Shifts">Time Block</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={driveTimeBlockContentions} for:item="item">
+                            <tr key={item.driveShiftKey} class="slds-hint-parent">
+                                <td>
+                                    <span class="contention-indicator" if:false={item.passed}></span>
+                                    <span class="contention-indicator passed" if:true={item.passed}></span>
+                                    {item.driveShiftName}
+                                </td>
+                                <td>
+                                    {item.driveShiftTime}
+                                </td>
+                                <td>
+                                    <p class="white-space-pre-line">
+                                        {item.contention}
+                                    </p>
+                                </td>
+                                <td>
+                                    <c-slwc-select
+                                        name="driveShiftTimeBlock"
+                                        label="Time Block"
+                                        variant="label-hidden"
+                                        classes="slds-m-top_xx-small"
+                                        data-value={item.driveShiftKey}
+                                        data-contention={item.contention} 
+                                        selected-value={item.timeBlockId}
+                                        read-only={item.timeBlockDisabled}
+                                        options={item.timeBlockOptions}
+                                        onchange={handleTimeBlockChanged}></c-slwc-select>
+                                    <template if:false={isReadonly}>
+                                        <lightning-input 
+                                            if:true={item.showAcknowledgeDriveShiftOutOfTimeBlock}
+                                            type="checkbox" 
+                                            class="slds-m-top_xx-small"
+                                            data-value={item.driveShiftKey}
+                                            data-contention={item.contention} 
+                                            name="electOutOfTimeBlock" label="Elect to acknowledge the drive shift is out of Time Block"
+                                                value={item.electOutOfTimeBlock} checked={item.electOutOfTimeBlock} onchange={handleTimeBlockActionChanged}></lightning-input>
+                                        <lightning-input 
+                                            type="checkbox" 
+                                            class="slds-m-top_xx-small"
+                                            data-value={item.driveShiftKey}
+                                            data-contention={item.contention} 
+                                            name="electNotUseTimeBlock" label="Elect to acknowledge the drive shift without Time Block"
+                                                value={item.electNotUseTimeBlock} checked={item.electNotUseTimeBlock} onchange={handleTimeBlockActionChanged}></lightning-input>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article if:false={requireResolveTimeBlockContentions} class="slds-card slds-card_boundary approval-history-page">
             <div class="slds-grid slds-page-header">
                 <header class="slds-media slds-media--center slds-has-flexi-truncate">
                     <div class="slds-media__figure slds-m-right_small slds-avatar slds-avatar_small">
@@ -239,4 +338,12 @@
         onsave={saveDriveStaffingDetails}
         onclose={closeDriveStaffingDetails}>
     </c-slwc-drive-staffing-details>
+
+    <c-slwc-staffing-complement-modal
+        drive-generator-instance={staffingComplementModalData.driveGeneratorInstance}
+        is-open={staffingComplementModalData.isOpen}
+        onclose={closeStaffingComplementModal}
+        onsave={saveStaffingComplementModal}
+    >
+    </c-slwc-staffing-complement-modal>
 </template>

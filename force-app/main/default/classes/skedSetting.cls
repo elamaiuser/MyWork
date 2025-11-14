@@ -100,6 +100,16 @@ global class skedSetting {
         }
     }
 
+    private skedTTIRRStuckJobConfigSetting stuckTTIRRSetting;
+    public skedTTIRRStuckJobConfigSetting stuckTTIRR {
+        get {
+            if(stuckTTIRRSetting == NULL) {
+                stuckTTIRRSetting = new skedTTIRRStuckJobConfigSetting();
+            }
+            return stuckTTIRRSetting;
+        }
+    }
+
     /*********************************************************** Singleton stuffs ***********************************************************/
     private static skedSetting mInstance = null;
 
@@ -413,6 +423,8 @@ global class skedSetting {
         public integer manualRefreshPriority;
         public boolean enableManualRefreshBanner;
         public integer maxTravelTimeIndexItemsForPeriodicRefresh;
+        public integer coGroupIndexRefreshPriority;
+        public string travelTimeRefreshEndpoint;
         
         public skedTravelTimeManager() {
             sked_Travel_Time_Manager__c setting = sked_Travel_Time_Manager__c.getOrgDefaults();
@@ -423,7 +435,27 @@ global class skedSetting {
             this.manualRefreshPriority = setting.sked_Manual_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_Manual_Refresh_Priority__c) : 1000;
             this.enableManualRefreshBanner = setting.sked_Enable_Manual_Refresh_Banner__c;
             this.maxTravelTimeIndexItemsForPeriodicRefresh = setting.sked_Max_TTI_Items_For_Periodic_Refresh__c != NULL ? integer.valueOf(setting.sked_Max_TTI_Items_For_Periodic_Refresh__c) : 10000;
+            this.coGroupIndexRefreshPriority = setting.sked_CO_Group_Index_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_CO_Group_Index_Refresh_Priority__c) : 1000;
+            this.travelTimeRefreshEndpoint = setting.sked_TTI_Refresh_Endpoint__c;
         }
+    }
+
+    public class skedTTIRRStuckJobConfigSetting {
+        public Boolean enableAutoReschedule;
+        public Boolean isActive;
+        public Decimal maxRetries;
+        public Decimal stuckThresholdMins;
+        public Decimal rescheduleIntervalMins;
+
+        public skedTTIRRStuckJobConfigSetting() {
+            sked_TTIRR_Stuck_Job_Config_Setting__c setting = sked_TTIRR_Stuck_Job_Config_Setting__c.getOrgDefaults();
+            this.enableAutoReschedule = setting.sked_Enable_Auto_Reschedule__c;
+            this.isActive = setting.sked_Is_Active__c;
+            this.maxRetries = setting.sked_Maximum_Retries__c;
+            this.stuckThresholdMins = setting.sked_Stuck_Threshold_Minutes__c;
+            this.rescheduleIntervalMins = setting.sked_Reschedule_Interval_Minutes__c;
+        }
+
     }
 
     /*********************************************************** Abstract Classes ***********************************************************/

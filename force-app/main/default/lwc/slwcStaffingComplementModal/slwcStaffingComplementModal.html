@@ -1,0 +1,49 @@
+<template>
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9003;">
+        <div class="slds-modal__container" style="width: 70rem;"> 
+            <header class={customClass.headerClass}>
+                <lightning-button-icon onclick={handleClose} class="slds-button slds-button_icon slds-modal__close" size="large"
+                    icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
+
+                <h2 class="slds-modal__title slds-hyphenate">Staff Complement</h2>
+            </header>
+            <div class="slds-modal__content">
+                <div class="slds-is-relative slds-p-around_medium">
+                    <template if:true={showSpinner}>
+                        <lightning-spinner class="spins" size="medium"></lightning-spinner>
+                    </template>
+    
+                    <template for:each={staffingComplement} for:item="item">
+                        <div class="slds-m_vertical_small" key={item.key}>
+                            <div class="slds-section-title--divider slds-m-bottom_small">{item.name}</div>
+                            <lightning-card style="width:100%">
+                                <lightning-button-group slot="actions">
+                                    <lightning-button label="Dual Role Assignment" data-key={item.key} onclick={showDualRoleAssignmentModal}></lightning-button>
+                                </lightning-button-group>
+                                <div class="slds-scrollable_x slds-p-bottom_x-small">
+                                    <c-slwc-drive-shift-job-table drive={drive} master-data={masterData} resource-type="Person" shift={item.driveShift} jobs={item.personJobs}>
+                                    </c-slwc-drive-shift-job-table>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </template>            
+                </div>
+            </div>
+            <footer class={customClass.footerClass}>
+                <button class="slds-button slds-button_neutral" onclick={handleClose}>Close</button>
+                <button class="slds-button slds-button_brand" onclick={handleSave}>Save</button>
+            </footer>
+        </div>
+    </section>
+    <div class={customClass.backdropClass} style="z-index: 9002;"></div>
+
+    <c-slwc-dual-role-assignment-modal
+        mode="resolveDriveContention"
+        is-open={dualRoleAssignmentModalData.isOpen}
+        drive={dualRoleAssignmentModalData.drive}
+        drive-shift={dualRoleAssignmentModalData.driveShift}
+        onsave={saveDualRoleAssignmentModal}
+        onclose={closeDualRoleAssignmentModal}
+    >
+    </c-slwc-dual-role-assignment-modal>
+</template>

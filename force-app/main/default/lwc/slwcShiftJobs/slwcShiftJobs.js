@@ -5,6 +5,7 @@ import { fireEvent } from 'c/pubsub';
 export default class SlwcShiftJobs extends LightningElement {
     @api isReadonly;
     @api drive;
+    @api masterData;
     @api isCreatable = false;
     @api isEditable = false;
     @api isDeletable = false;

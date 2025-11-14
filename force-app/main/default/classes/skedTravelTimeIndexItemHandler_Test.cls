@@ -1,6 +1,6 @@
 @isTest
 private class skedTravelTimeIndexItemHandler_Test {
-
+    
     static testmethod void mainTest() {
         sked_Travel_Time_Manager__c travelTimeManager = sked_Travel_Time_Manager__c.getOrgDefaults();
         travelTimeManager.sked_Drive_Impact_Threshold__c = 15;

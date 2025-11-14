@@ -26,28 +26,40 @@ public class ResetBusinessPlanningStatusHelperTest {
         insert accList;
     }
     
-    static testMethod void testHelperMethod() {
-        
-        Test.startTest();
-        List<ResetBusinessPlanningStatusHelper.getValues> getValuesList = new List<ResetBusinessPlanningStatusHelper.getValues>();
-        ResetBusinessPlanningStatusHelper.getValues resetBusinessPlanClass = new ResetBusinessPlanningStatusHelper.getValues();
-        
-        List<account> accListToUpdate = [SELECT Id, Business_Planning_Completed__c, Business_Planning_Completed_By__c, Business_Planning_Completed_Date__c FROM Account LIMIT 2];
-        resetBusinessPlanClass.accListToBeUpdated = accListToUpdate;
-        resetBusinessPlanClass.profileName = 'System Administrator';        
-        getValuesList.add(resetBusinessPlanClass);
-        
-        ResetBusinessPlanningStatusHelper.runBusinessPlanResetBatch(getValuesList);
-        BSF_Batch_ResetBusinessPlanningStatus batch = new BSF_Batch_ResetBusinessPlanningStatus(getValuesList);
-        Database.BatchableContext BC;
-        batch.execute(BC, getValuesList);
-        
-        List<account> accListAfterUpdate = [SELECT Id, Business_Planning_Completed__c, Business_Planning_Completed_By__c, Business_Planning_Completed_Date__c FROM Account WHERE Id IN :accListToUpdate];
-        for(Account acc : accListAfterUpdate) {
-            Assert.isTrue(acc.Business_Planning_Completed__c == FALSE);
-        }        
-        Test.stopTest();
-            
+    @IsTest
+static void testHelperMethods() {
+    ResetBusinessPlanningStatusHelper.Request countReq = new ResetBusinessPlanningStatusHelper.Request();
+    countReq.action = 'count';
+    countReq.onlyCompleted = true;
+    
+    List<ResetBusinessPlanningStatusHelper.Response> countResults =
+        ResetBusinessPlanningStatusHelper.run(new List<ResetBusinessPlanningStatusHelper.Request>{ countReq });
+    
+    System.assertEquals(2, countResults[0].total, 'Expected 2 accounts to be completed');
+    System.assertEquals(null, countResults[0].jobId, 'JobId should be null for count action');
+    
+
+    ResetBusinessPlanningStatusHelper.Request startReq = new ResetBusinessPlanningStatusHelper.Request();
+    startReq.action = 'start';
+    startReq.profileName = 'System Administrator'; 
+    startReq.onlyCompleted = true;
+    
+    Test.startTest();
+    List<ResetBusinessPlanningStatusHelper.Response> startResults =
+        ResetBusinessPlanningStatusHelper.run(new List<ResetBusinessPlanningStatusHelper.Request>{ startReq });
+    Test.stopTest(); 
+    
+    System.assertNotEquals(null, startResults[0].jobId, 'JobId should be returned for start action');
+    
+    List<Account> accListAfter = [
+        SELECT Id, Business_Planning_Completed__c
+        FROM Account
+    ];
+    
+    for (Account acc : accListAfter) {
+        System.assertEquals(false, acc.Business_Planning_Completed__c,
+            'Business_Planning_Completed__c should be reset to false after batch');
     }
+}
 
 }

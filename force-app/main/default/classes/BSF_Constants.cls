@@ -33,6 +33,14 @@ public class BSF_Constants {
     
     //Affiliation Record Types
     public static final String AFFILIATION_RECORD_TYPE = 'Sponsor Recognition';
+    public static final String AFFILIATION_RECORD_TYPE2 = 'Organization Partnership';
+
+    //Affiliation Names
+    public static final String HOSPITAL_CONTRACT_PARTNER = 'Hospital Contract Partner';
+
+    //Account Record Types
+    public static final String FIXED_SITE_ACCOUNT_RECORD_TYPE = 'Fixed Site Account';
+    public static final String MOBILE_ACCOUNT_RECORD_TYPE = 'Mobile Account';
     
     public static final String STRING_NO = 'No';
     public static final String STRING_YES = 'Yes';
@@ -112,6 +120,7 @@ public class BSF_Constants {
      public static final String OPP_SOURCE_PLAN_A_DRIVE = 'Plan a Drive';
      public static final String OPP_SOURCE_ADHOC = 'Adhoc';
      public static final String OPP_SOURCE_BUSINESS_PLANNING = 'Business Planning';
+     public static final String OPP_SOURCE_ADHOC_CALENDAR_BUILD = 'Adhoc Calendar Build'; //HRP-11368
 
 
     // Opportunity Contact Roles
@@ -197,8 +206,9 @@ public class BSF_Constants {
         'Current ABM Account/Portfolio Review Meeting' => 'CurrentABMAccPortfolioReviewMeeting',
         'New AM Account/Portfolio Review Meeting' => 'NewAMAccPortfolioReviewMeeting',
         'New SBPM Account/Portfolio Review Meeting' => 'NewSBPMAccPortfolioReviewMeeting',
-        'Template Order Task' => 'TemplateOrderExpiry'//HRP-12664
+        'Template Order Task' => 'TemplateOrderExpiry',//HRP-12664
         //HRP-11784
+        'Renew Military MoA' => 'RenewMilitaryMoA'
         }; 
 
     // Initiated By picklist Values
@@ -292,11 +302,17 @@ public class BSF_Constants {
         'Fixed Site' => 'Sys Gen Run - FS',
         'Mobile' => 'Sys Gen Run - Mobile'   
     };
+
+    public static Map<String, String> MAP_DRIVETYPE_ERRORCATEGORY = new Map<String, String>{
+        'Fixed Site' => 'Sys Gen Run - FS Business Error',
+        'Mobile' => 'Sys Gen Run - Mobile Business Error'   
+    };
     
     // Batch Status
     public static final String BATCH_STATUS_COMPLETED = 'Completed';
     public static final String BATCH_STATUS_PENDING = 'Pending';
     public static final String BATCH_STATUS_ERROR = 'Error';
+    public static final String BATCH_STATUS_NOT_NEEDED = 'Not Needed'; //HRP-11368
 
     //CB Batches
     public static final String BATCH_CALENDAR_BUILD = 'Calendar Build';
@@ -324,4 +340,30 @@ public class BSF_Constants {
     public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis';
     public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
+    
+    public static final String ACCOUNT_TYPE_EDUCATION = 'Education';
+    public static final String ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL = 'Middle School';
+    public static final String ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL = 'Elementary School';   
+    public static final String ACCOUNT_INDUSTRY_CODE_COLLEGE_OR_UNIVERSITY = 'College / University';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_COMMUNITY_OR_JUNIOR_COLLEGE = 'Community / Junior College';//HRP-14286
+    public static final String ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL = 'High School';//HRP-14286
+    public static final String APT_CHANGE_VIA_TEMPLATE = 'Apply Changes to Future Drive';  
+
+    public static final String FEEDER_ONLY_ACCOUNT = 'Feeder Only';
+    public static final String FEEDER_PLUS_ACCOUNT = 'Feeder Plus';
+
+    public static final String SYSTEM_TTBD_OVERRIDE_COMMENT = 'As of {0} System has failed to return valid Travel Time values. Manual override values are required. Re-attempt refresh by unchecking User Override checkbox and selecting banner option to manually refresh.';
+
+    //HRP-13426 --> 
+    public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
+    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
+
+    //Special Circumstances Badges -> HRP-701
+    public static final String SSBS_BADGE_FIRST_TIME_DRIVE = 'First Time Drive';
+    public static final String SSBS_BADGE_COMPETITION_IMPACT = 'Competition Impact';
+    public static final String SSBS_BADGE_HIGH_PROFILE = 'High Profile/Sensitive';
+    public static final String SSBS_BADGE_RISK_FOR_REMOVAL = 'Risk for Removal';
+    public static final String SSBS_BADGE_STRATEGIC_STRETCH = 'Strategic Stretch Booking';
+    public static final String SSBS_BADGE_STRATEGIC_STRETCH_DIVERSE = 'Strategic Stretch Booking - Diverse';
 }

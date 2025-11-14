@@ -32,9 +32,8 @@ public class skedStaffingBudgetUtils implements Callable {
 
         if (!datesByResourceId.keySet().isEmpty()) {
             skedQueryBuilder queryBuilder = new skedQueryBuilder();
-            queryBuilder.setFromClause('sked_Staffing_Budget_Collection_Op__c');
             queryBuilder.addFields(new List<String>{
-                'Id', 'sked_Biomed_Collection_Operation__c', 'sked_Biomed_Collection_Operation__r.sked_Waitlist_Enabled__c', 'sked_Staffing_Budget__c',
+                'Id', 'sked_Staffing_Budget__c',
                 'sked_Staffing_Budget__r.sked_Drive_Types__c', 'sked_Staffing_Budget__r.sked_Roles__c', 'sked_Staffing_Budget__r.sked_Staffing_Budget_Date__c',
                 'sked_Staffing_Budget__r.sked_Request_Type__c', 'sked_Staffing_Budget__r.sked_Total_Slots__c',
                 'sked_Staffing_Budget__r.sked_Available_Slots__c', 'sked_Staffing_Budget__r.sked_Approved_Slots_Rollup__c',
@@ -44,17 +43,39 @@ public class skedStaffingBudgetUtils implements Callable {
 
             List<List<string>> conditionGroups = new List<List<string>>();
             for (Id resourceId : datesByResourceId.keySet()) { 
+                Boolean isResourcePreferredToFS = FALSE;
                 sked__Resource__c resource = resourceById.get(resourceId);
+                if(resource.sked__Location_Resource_Scores__r != NULL && !resource.sked__Location_Resource_Scores__r.isEmpty()) {
+                    isResourcePreferredToFS = TRUE;
+                    queryBuilder.setFromClause('sked_Staffing_Budget_Site__c');
+                    queryBuilder.addFields(new List<String> {'sked_Location__c', 'sked_Location__r.Name'});
+                } else {
+                    queryBuilder.setFromClause('sked_Staffing_Budget_Collection_Op__c');
+                    queryBuilder.addFields(new List<String> {'sked_Biomed_Collection_Operation__c', 'sked_Biomed_Collection_Operation__r.sked_Waitlist_Enabled__c'});
+                }
                 
                 Id resourceCollectionOpId;
-                String resourcePrimaryRole;
+                List<String> resourcePrimaryRole = new List<String>();
                 List<string> driveTypes = new List<string>();
-                
+                List<String> preferredFixedSiteIds = new List<String>();
+
+                if(isResourcePreferredToFS) {
+                    for(sked__Location_Resource_Score__c locationResourceScore : resource.sked__Location_Resource_Scores__r) {
+                        preferredFixedSiteIds.add(locationResourceScore.sked__Location__c);
+                    }
+                }
                 if (resource.sked__Primary_Region__r != NULL) {
                     resourceCollectionOpId = resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
                 }
                 if (resource.sked__ResourceTags__r != NULL && !resource.sked__ResourceTags__r.isEmpty()) {
-                    resourcePrimaryRole = resource.sked__ResourceTags__r.get(0).sked__Tag__r.Name;
+                    Decimal priority = resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;  
+                    if(priority != NULL){
+                        for(sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r){
+                        if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                            resourcePrimaryRole.add(resourceTag.sked__Tag__r.Name);
+                        }
+                    }
+                    }    
                 }
                 if (resource.sked_FCC_Code__c != NULL) {
                     List<string> resourceFccCodes = new List<string>();
@@ -69,15 +90,16 @@ public class skedStaffingBudgetUtils implements Callable {
                     }
                 }
                 
-                if (resourceCollectionOpId != NULL && resourcePrimaryRole != NULL) {
+                if ((resourceCollectionOpId != NULL || !preferredFixedSiteIds.isEmpty()) && resourcePrimaryRole != NULL) {
                     Set<Date> dates = datesByResourceId.get(resourceId);
+                    String siteCondition = queryBuilder.generateCondition('sked_location__c IN {0}', preferredFixedSiteIds);
                     String collectionOpCondition = queryBuilder.generateCondition('sked_Biomed_Collection_Operation__c = {0}', resourceCollectionOpId);
                     String driveTypesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Drive_Types__c INCLUDES {0}', driveTypes);
-                    String rolesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Roles__c INCLUDES {0}', new List<String>{resourcePrimaryRole});
+                    String rolesCondition = queryBuilder.generateMSPCondition('sked_Staffing_Budget__r.sked_Roles__c INCLUDES {0}', resourcePrimaryRole);
                     String datesCondition = queryBuilder.generateCondition('sked_Staffing_Budget__r.sked_Staffing_Budget_Date__c IN {0}', dates);
                     
                     List<string> conditions = new List<String>();
-                    conditions.add(collectionOpCondition);
+                    conditions.add(isResourcePreferredToFS ? siteCondition : collectionOpCondition);
                     conditions.add(driveTypesCondition);
                     conditions.add(rolesCondition);
                     conditions.add(datesCondition);
@@ -90,17 +112,23 @@ public class skedStaffingBudgetUtils implements Callable {
                     queryBuilder.addConditionGroup(conditionGroup);
                 }
                 
-                string sbcoQueryStr = queryBuilder.toString();
+                string relatedSobjectQueryStr = queryBuilder.toString();
                 Map<Id, skedStaffingBudgetWrapper> wrapperById = new Map<Id, skedStaffingBudgetWrapper>();
-                for (sked_Staffing_Budget_Collection_Op__c sbco : Database.query(sbcoQueryStr)) {
-                    skedStaffingBudgetWrapper wrapper = wrapperById.get(sbco.sked_Staffing_Budget__c);
+                for (sObject sbRelatedObj : Database.query(relatedSobjectQueryStr)) {
+                    String sobjectType = sbRelatedObj.getSObjectType().getDescribe().getName();
+                    skedStaffingBudgetWrapper wrapper = wrapperById.get((Id) sbRelatedObj.get('sked_Staffing_Budget__c'));
                     if (wrapper == null) {
                         wrapper = new skedStaffingBudgetWrapper();
-                        wrapper.staffingBudget = sbco.sked_Staffing_Budget__r;
+                        wrapper.staffingBudget = (sked_Staffing_Budget__c) sbRelatedObj.getsObject('sked_Staffing_Budget__r');
                         wrapper.approvedSlots = wrapper.staffingBudget.sked_Approved_Slots_Rollup__c;
                         wrapper.totalSlots = wrapper.staffingBudget.sked_Total_Slots__c;
                     }
-                    wrapper.collectionOpById.put(sbco.sked_Biomed_Collection_Operation__c, sbco.sked_Biomed_Collection_Operation__r);
+                    if(sobjectType == 'sked_Staffing_Budget_Collection_Op__c') {
+                        wrapper.collectionOpById.put((Id) sbRelatedObj.get('sked_Biomed_Collection_Operation__c'), (Biomed_Collection_Op_Center__c) sbRelatedObj.getsObject('sked_Biomed_Collection_Operation__r'));
+                    } else if(sobjectType == 'sked_Staffing_Budget_Site__c') {
+                        wrapper.siteById.put((Id) sbRelatedObj.get('sked_Location__c'), (sked__Location__c) sbRelatedObj.getsObject('sked_Location__r'));
+                    }
+                    
                     wrapperById.put(wrapper.recordId, wrapper);
                 }
 
@@ -117,7 +145,7 @@ public class skedStaffingBudgetUtils implements Callable {
                 if (!wrapperById.keySet().isEmpty()) {
                     skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
                     query.recordIds = new List<Id>(wrapperById.keySet());
-                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_SITE;
 
                     skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
                     List<sked_Staffing_Budget__c> staffingBudgets = service.query(query);

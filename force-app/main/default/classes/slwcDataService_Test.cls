@@ -72,6 +72,8 @@ private class slwcDataService_Test {
         settingKeys.add('optimizerDefaultWeights');
         settingKeys.add('optimizerDefaultSettings');
         settingKeys.add('rtvAPSApprovalWindow');
+        settingKeys.add('travelTimeManager');
+        settingKeys.add('redcrossVolunteerMatrix');
         slwcDataService.getCustomSettings(settingKeys);
         
         Test.stopTest();

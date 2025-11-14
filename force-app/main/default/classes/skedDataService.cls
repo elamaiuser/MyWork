@@ -6,7 +6,9 @@ public abstract class skedDataService {
     protected Type domainType;
 
     public skedDataService() {
+        system.debug('skedSetting.instance.App.timezoneSidId '+skedSetting.instance.App.timezoneSidId);
         this.timezoneSidId = skedSetting.instance.App.timezoneSidId;
+        system.debug('this.timezoneSidId '+this.timezoneSidId);
         initialize();
     }
 
