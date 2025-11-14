@@ -279,4 +279,17 @@ report type: opportunity with drives on calendar with job with job allocation</d
         </columns>
         <masterLabel>Jobs</masterLabel>
     </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Red_Cross_Volunteer_Required__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Red_Cross_Volunteer_Quantity__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <masterLabel>Blood Drive Opportunities</masterLabel>
+    </sections>
 </ReportType>

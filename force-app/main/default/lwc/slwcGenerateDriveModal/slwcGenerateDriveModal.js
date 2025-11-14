@@ -1,13 +1,27 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api,wire, track } from 'lwc';
 import {
   ShowToastEvent
 } from 'lightning/platformShowToastEvent'
 import { sObjectType, debugLogService, driveService, driveChangeRequestQueryModel, driveChangeRequestService, opportunityQueryModel, opportunityService, locationService, locationQueryModel, driveQueryModel, approvalService } from 'c/dataService';
 import { isNullOrEmpty, getValueFromEvent, waitUntil} from 'c/slwcUtils';
+import { isArray, isString, isEmpty } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_STATUS, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_TYPE } from 'c/slwcConstants';
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { NavigationMixin } from 'lightning/navigation';
+import { getRecord } from 'lightning/uiRecordApi';
+import { updateRecord } from 'lightning/uiRecordApi';
+import LightningConfirm from 'lightning/confirm';
+import fetchOpportunityFromDriveChangeRequest from '@salesforce/apex/OpportunityControllerHelper.fetchOpportunityFromDriveChangeRequest';
+import getWarningMessage from '@salesforce/apex/OpportunityControllerHelper.getWarningMessage';
+
+const OPP_ARD_VALIDATION_FLAG = ['Opportunity.Pending_ARD_Confirmation__c'];
+const DCR_FIELDS = [
+  'sked_Drive_Change_Request__c.sked_Opportunity__c',
+  'sked_Drive_Change_Request__c.sked_Drive__c'
+];
+
+const DRIVE_FIELDS = ['sked_Drive__c.sked_Opportunity__c'];
 
 let driveGeneratorInstance = {
   drive: null,
@@ -162,6 +176,9 @@ const STEP = {
         const driveHelper = new DriveHelper();
         const autoApprove = driveHelper.isFixedSiteDrive(scope.drive) || (scope.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
         let driveContentions = scope.getDriveContentions(scope.drive);
+        console.log('driveContentions ',driveContentions);
+       // driveContentions = !isNullOrEmpty(driveContentions) ? driveContentions.split(';') : [];
+        
         if(!scope.noAction && !autoApprove && driveContentions.length > 0) {
           scope.needConfirmToSubmitDriveForApproval = true;
 
@@ -197,7 +214,7 @@ const STEP = {
               return driveGeneratorInstance.validateDrive();
             })
             .then(() => {
-              let pendingActionReasonCodes = driveGeneratorInstance.drive.pendingActionReasonCode ? driveGeneratorInstance.drive.pendingActionReasonCode.split(';') : [];
+              let pendingActionReasonCodes = driveGeneratorInstance.drive.pendingActionReasonCode || [];
               if (pendingActionReasonCodes.length === 0) {
                 driveGeneratorInstance.drive.status = [DRIVE_STATUS.DRAFT].includes(driveGeneratorInstance.drive.status) ? DRIVE_STATUS.TENTATIVE : driveGeneratorInstance.drive.status;
               }
@@ -425,6 +442,11 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   @track needConfirmToContinue = false;
   @track needConfirmToSubmitDriveForApproval = false;
   opportunity = null;
+  @api opportunityRecordId;
+  @track oppArdValidationFlag;
+  @track showARDValidationMessage=false;
+  @track declineByUser=false;
+  @track ardWarningMessage;
 
   get submissionNotesRequired() {
     return this.drive && this.drive.routeApprovalRequestTo === 'Request DM evaluation';
@@ -442,8 +464,41 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
     // this.recordId = '0062i000008JSa7AAG';
     // this.isOpen = true;
     // this.mode = MODE.GENERATE_PAST_DRIVE;
-
+    console.log('connectedCallback recordId :',this.recordId,' opportunityRecordId:',this.opportunityRecordId);
+      
+    if (!this.opportunityRecordId || this.opportunityRecordId.trim() === '') {
+        console.log('opportunityRecordId not found');
+        this.getOpportunity();
+    }
+    
     this.init();
+  }
+
+  @wire(getRecord, { recordId: '$opportunityRecordId', fields: OPP_ARD_VALIDATION_FLAG })
+    wiredOpportunity({ error, data }) {
+      console.log('data --->',data);
+        if (data) {
+            this.oppArdValidationFlag = data.fields.Pending_ARD_Confirmation__c.value;
+        } else if (error) {
+            console.error('Error fetching Opportunity record:', error);
+        }
+    }
+
+  getOpportunity() {
+    console.log('getOpportunity called.');
+    fetchOpportunityFromDriveChangeRequest({ dcrId: this.recordId })
+      .then(result => {
+          if (result) {
+              console.log('Opportunity Record:', JSON.stringify(result));
+              this.oppArdValidationFlag = result.Pending_ARD_Confirmation__c;
+              //this.opportunity = result;
+          } else {
+              console.log('No Opportunity found.');
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching Opportunity:', error);
+      });
   }
 
   showLoading(customSpinnerText) {
@@ -715,6 +770,9 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   saveDrive(drive, scope) {
     return Promise.resolve()
       .then(()=> {
+          if(drive.status === DRIVE_STATUS.DRAFT) {
+            drive = driveGeneratorInstance.releaseAllAssetAllocations();
+          }
           let drivesToSave = [];
           let model = { ...drive };
           drivesToSave.push(model);
@@ -763,8 +821,10 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
 
   declineContinue() {
     if(this.driveChangeRequest) {
+      this.declineByUser=true;
       this.needConfirmToContinue = false;
       this.rejectDCR();
+      this.rollbackChanges();
     } else {
       this.closeModal();
     }
@@ -787,15 +847,18 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
 
   getDriveContentions(drive) {
     if(!drive) return [];
-    let driveContentions = drive.pendingActionReasonCode ? drive.pendingActionReasonCode.split(';') : [];
+    let driveContentions = drive.pendingActionReasonCode || [];
+    driveContentions = isString(driveContentions) && !isNullOrEmpty(driveContentions) ? driveContentions.split(';') : driveContentions;
     return driveContentions;
   }
 
   submitDCR() {
     this.needConfirmToSubmitDriveForApproval = false;
-    
+
     this.showLoading();
     let driveContentions = this.getDriveContentions(this.drive);
+    console.log('driveContentions ',driveContentions);
+    //driveContentions = !isNullOrEmpty(driveContentions) ? driveContentions.split(';') : [];
     let driveChangeRequestItems = driveGeneratorInstance.compareAndGetDriveChanges();
     let service = new driveService();
     return service.captureDriveImpact({
@@ -858,14 +921,15 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
             let dcrService = new driveChangeRequestService();
             let dcr = {
               id: this.driveChangeRequest.id,
-              driveContention: driveContentions.join(';'),
+              driveContention: [...driveContentions],
               notes: this.driveChangeRequest.notes,
               status: 'Submitted',
               routeApprovalRequestTo: this.drive.routeApprovalRequestTo
             }
+            console.log('dcr to save ',dcr);
             return dcrService.save(dcr)
               .then(() => {
-                this.resultMessage = `Drive has been submitted for approval.`;
+                this.resultMessage = 'Drive has been submitted for approval.';
                 this.hookAfterFinishedHandler(true, this.resultMessage);
                 return false;
               })
@@ -881,7 +945,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         }
       })
       .finally(() => this.hideLoading())
-  }
+}
 
   rejectDCR() {
     let dcrService = new driveChangeRequestService();
@@ -941,6 +1005,20 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   }
 
   closeModal() { 
+    console.log('closeModal B showARDValidationMessage :',this.showARDValidationMessage,' declineByUser:',this.declineByUser);
+    if(!this.declineByUser){
+      //this.checkTimeDifference();
+      if(this.oppArdValidationFlag){
+        this.showARDValidationMessage=true;
+      }
+    }
+    console.log('closeModal A showARDValidationMessage :',this.showARDValidationMessage);
+    if(!this.showARDValidationMessage){
+      this.conditionalCloseModal();
+    }
+  }
+  conditionalCloseModal(){
+    console.log('conditionalCloseModal ');
     const closeModalEvent = new CustomEvent('closemodal', {
       detail: {
         needToRefreshPage: this.needToRefreshPage
@@ -952,6 +1030,30 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
       this.refreshPage();
     }
   }
+  handleWarningOk(){
+    console.log('handleWarningOk !');
+    this.showARDValidationMessage=false;
+    this.conditionalCloseModal();
+  }
+  async rollbackChanges() {
+    console.log('HRP-6051 Rolling back changes...');
+    const fields = { 
+        Id: this.opportunityRecordId, 
+        Pending_ARD_Confirmation__c: false
+    };
+    const recordInput = { fields };
+    console.log('HRP-6051 recordInput ->',JSON.stringify(recordInput));
+    try {
+        await updateRecord(recordInput);
+        console.log('HRP-6051 Rollback successful');
+    } catch (error) {
+        console.error('Rollback failed:', error.body ? error.body.message : error.message);
+        console.error('HRP-6051 Rollback failed:', JSON.stringify(error));
+    } finally {
+        console.error('HRP-6051 Rollback Finally block:');
+    }
+}
+  
 
   /* hooks */
   hookAfterFinishedHandler = (result = false, resultMessage) => {
@@ -964,4 +1066,13 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
       }
     });
   }
+    @wire(getWarningMessage)
+    wiredMessage({ error, data }) {
+      if (data) {
+          this.ardWarningMessage = data;
+      } else if (error) {
+          this.message = 'Error fetching message';
+          console.error('Error:', JSON.stringify(error));
+      }
+    }
 }

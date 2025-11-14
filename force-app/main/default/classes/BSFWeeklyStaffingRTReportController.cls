@@ -34,7 +34,7 @@ public class BSFWeeklyStaffingRTReportController {
         }
 
         if(!Test.isRunningTest()){
-            wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(sdate,edate,drivedispatch,collOpIds,driveType);
+            wrapper = BSFWeeklyStaffingRoleTimeController.searchRoleTimeReport(sdate,edate,drivedispatch,collOpIds,driveType, true);
         }
         wrapper = BSFWeeklyStaffingRoleTimeController.addBlankResources(wrapper);
         wrapper = BSFWeeklyStaffingRoleTimeController.calculateRowSpan(wrapper);

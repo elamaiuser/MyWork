@@ -1,5 +1,5 @@
 /* The following test class covers the below mentioned apex class
- * BSF_Utilities (81%)
+ * BSF_Utilities (82%)
  
  /* Modification Log 
  * Date					     Developer Name			             Comments
@@ -273,7 +273,17 @@
              ''
          );
          Test.stopTest();
-     }   
+     }
+     
+     @isTest
+     static void capitalizeNameTest(){
+        Test.startTest();
+        String result = BSF_Utilities.capitalizeName('Aminata Labor-koroma 526350', true);
+        String result1 = BSF_Utilities.capitalizeName('Aminata Labor-koroma 526350', false);
+        Test.stopTest();
+        System.assertEquals('Aminata Labor-kor oma 526350', result);
+        System.assertEquals('Aminata Labor-koroma 526350', result1);
+     }
      
      @isTest
      static void runtest() {
@@ -322,13 +332,19 @@
          testMobileOpp2.AccountId = testMobileAccount.Id;
          testMobileOpp2.Drive_Site__c = testMobileSite.Id;
          testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
+         TriggerHandler.bypass('OpportunityTriggerHandler');
          insert testMobileOpp2;
          
          Boolean isWbFsDrive = BSF_Utilities.isWbFixedSiteOpportunity(testMobileOpp2, testMobileSite);
          Boolean isMobileFsDrive = BSF_Utilities.isMobileOpportunity(testMobileOpp2);
+         List<Opportunity> testUpdatedOpportunityWithFlagAdded = BSF_Utilities.getOpportunitiesWithFirstTimeFlagAdded(new List<Opportunity>{testMobileOpp2});
+         List<Opportunity> testUpdatedOpportunityWithFlagRemoved = BSF_Utilities.getOpportunitiesWithFirstTimeFlagRemoved(testUpdatedOpportunityWithFlagAdded);
+         TriggerHandler.clearBypass('OpportunityTriggerHandler');
          Test.stopTest();
          Assert.isTrue(isWbFsDrive == FALSE);
          Assert.isTrue(isMobileFsDrive == TRUE);
+         Assert.isTrue(testUpdatedOpportunityWithFlagAdded[0].Special_Circumstances__c != null);
+         Assert.isTrue(testUpdatedOpportunityWithFlagRemoved[0].Special_Circumstances__c == '');
      }
      
      static testMethod void findSkedRegion_Test() {
@@ -396,4 +412,15 @@
          Test.stopTest();
          Assert.isTrue(mapSkedRegion != NULL);
     }
+
+    static testMethod void getStringWithinLimit_Test() {
+        Test.startTest();
+        // A random text with 260 characters
+        String randomText = 'The golden sun dipped below the horizon, casting a warm glow across the tranquil sea. The fragrance of the earth, Waves gently lapped at the shore, while seagulls soared above, their calls echoing in the crisp evening air, a perfect end to another peaceful day by the ocean.';
+        String result = BSF_Utilities.getStringWithinLimit(randomText, 255);
+        Assert.isTrue(result.length() == 255);
+        Test.stopTest();
+    }
+     
+    
 }

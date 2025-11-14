@@ -174,14 +174,13 @@ private class TravelTimeIndexItemTriggerTest {
     @isTest
     private static void testMethodOne(){
 
-        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id, User_Override__c FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
+        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
         Assert.isNotNull(ttitem.Id);
 
         Test.startTest();
-            ttitem.User_Override__c = true;
             skedHubBase.BypassUpdateTriggers = true;
             TriggerHandler.bypass('SiteCollectionOperationTriggerHandler');
-            update ttitem;
+            update ttitem; //Blank update
         Test.stopTest();
         Assert.isNotNull(ttitem.Id);
     }
@@ -209,7 +208,7 @@ private class TravelTimeIndexItemTriggerTest {
     @isTest
     private static void testMethodThree(){
 
-        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id, User_Override__c FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
+        sked_Travel_Time_Index_Item__c ttitem = [SELECT Id FROM sked_Travel_Time_Index_Item__c WHERE sked_Timezone__c = 'America/New_York' LIMIT 1];
         Assert.isNotNull(ttitem.Id);
 
         Test.startTest();

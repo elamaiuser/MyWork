@@ -73,6 +73,12 @@
     <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Status__c</field>
     </columns>
+    <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
+    </columns>
+    <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Dispositioned_By_User__c</field>
+    </columns>
     <description>Time Off Request Evaluation Report</description>
     <filter>
         <criteriaItems>
@@ -94,14 +100,14 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>10/1/2024</value>
+            <value>1/1/2025</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$sked_Start_Date__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>lessOrEqual</operator>
-            <value>10/1/2024</value>
+            <value>1/31/2025</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c$Name</column>

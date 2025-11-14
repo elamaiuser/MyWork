@@ -8,6 +8,8 @@
 * ***************************************************************************
 * 10/20/2023                  Krapy Tuli                To increase Code coverage for HRP-10880
 * 09/17/2024				  Priti Jana			    Increase code coverage
+* 12/11/2024				  Priti Jana				Added test method for HRP-13602
+* 03/10/2025                  Souvik Mukherjee          Logic for HRP-14331 - only consider Leads of Record Type Marketing Manager for conversion to Feeder Group
 *****************************************************************************
 */
 
@@ -859,5 +861,54 @@ public class LeadServiceTests {
         } catch(Exception ex) {
             Assert.isTrue(ex.getMessage().contains('You must select a Campaign'));
         } 
+    }
+    
+    //HRP-13602 -> Test Method
+    static testMethod void testRestrictFeederLeadConversion() {
+        
+        // Create a Lead to insert
+        Lead testLead = new Lead();
+        testLead.FirstName = 'LeadService'; 
+        testLead.LastName='Tests2323';
+        testLead.Company='TestComany';
+        testLead.City='Aldie';
+        testLead.StateCode='VA';
+        testLead.PostalCode='20105';
+        testLead.CountryCode='US';
+        testLead.Parent_Campaign__c = null;
+        testLead.Campaign_member_status__c = null;
+        testLead.Street ='test';
+        testLead.Email='test@test.com';
+        testLead.Phone_Type__c ='Mobile Phone';
+        testLead.Phone = '123-456-7890';
+        testLead.Status = 'Potential Feeder Group';
+        testLead.RecordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Market Manager').getRecordTypeId();        //Changed for HRP-14331
+        TriggerHandler.bypass('LeadTriggerHandler');
+        insert testLead;
+        Triggerhandler.clearAllBypasses();
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
+        Account testAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        insert testAccount;
+        TriggerHandler.clearBypass('AccountTriggerHandler');
+
+		Test.StartTest();
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+	    Database.LeadConvert lc = new database.LeadConvert();
+        lc.setLeadId(testLead.Id);
+        lc.setAccountId(testAccount.Id);
+        lc.setConvertedStatus('Active Feeder Group');				//Changed for HRP-14331
+        lc.setDoNotCreateOpportunity(true);
+        try{
+        	Database.LeadConvertResult lcr = Database.convertLead(lc);
+        }catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().containsIgnoreCase(Custom_Messages__mdt.getInstance('Non_Feeder_Acc_Convert_Validation').Value__c));
+        }
+	    Test.stopTest();
+        
     }
 }

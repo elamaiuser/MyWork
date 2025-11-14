@@ -85,12 +85,15 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 }
                 if(oppFields.updatedDataKeys.contains('Anticipated_Registered_Donors__c')) { //HRP-10312
                     recOpp.Anticipated_Registered_Donors__c = oppFields.Anticipated_Registered_Donors;
+                    checkRecursive.skipVolunteerCalculation = true; //HRP-13146
                 }
                 if(oppFields.updatedDataKeys.contains('WB_Projected_Procedures__c')) { //HRP-10312
                     recOpp.WB_Projected_Procedures__c = oppFields.WB_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('X2RBC_Projected_Procedures__c')) { //HRP-10312
                     recOpp.X2RBC_Projected_Procedures__c = oppFields.X2RBC_Projected_Procedures;
+                    checkRecursive.skipAptRecalculation = true;
                 }
                 if(oppFields.updatedDataKeys.contains('AnticipatedRegisterDonorChangeReason__c')) { //HRP-10312
                     recOpp.AnticipatedRegisterDonorChangeReason__c = oppFields.AnticipatedRegisterDonorChangeReason;
@@ -142,6 +145,31 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                     recOpp.Slot_Generator_Change_Reason__c = oppFields.Slot_Generator_Change_Reason;
                 }
                 // HRP-12011 --> Ends here
+
+                // HRP-13190 --> Starts here
+                if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
+                    recOpp.APT_Required__c = oppFields.APT_Required;
+                    checkRecursive.skipAptRecalculation = true;
+                }
+                if(oppFields.updatedDataKeys.contains('APT_Quantity__c')) { 
+                    recOpp.APT_Quantity__c = oppFields.APT_Quantity;
+                    checkRecursive.skipAptRecalculation = true;
+                }
+                if(oppFields.updatedDataKeys.contains('APT_Change_Reason__c')) { 
+                    recOpp.APT_Change_Reason__c = oppFields.APT_Change_Reason;
+                }
+                // HRP-13190 --> Starts here
+
+                // HRP-13146 --> Starts here
+                if(oppFields.updatedDataKeys.contains('Red_Cross_Volunteer_Required__c')) { 
+                    recOpp.Red_Cross_Volunteer_Required__c = oppFields.Redcross_Volunteer_Required;
+                    checkRecursive.skipVolunteerCalculation = true; //HRP-13146
+                }
+                if(oppFields.updatedDataKeys.contains('Red_Cross_Volunteer_Quantity__c')) { 
+                    recOpp.Red_Cross_Volunteer_Quantity__c = oppFields.Redcross_Volunteer_Quantity;
+                    checkRecursive.skipVolunteerCalculation = true; //HRP-13146
+                }
+                // HRP-13146 --> Starts here
                 System.debug('recOpp being updated->'+recOpp);
                 
                 mapOfOppToUpdate.put(recOpp.Id,recOpp);//HRP-12422
@@ -165,18 +193,17 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
             }
         }
     }
-    system.debug('###FWO inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
     if(!mapOfOppToUpdate.isEmpty()) {//HRP-12422 start
         Database.SaveResult[] lsOpp = Database.update(mapOfOppToUpdate.values(), false);//HRP-12422 end
-        System.debug('mapOfOppToUpdate being updated->'+mapOfOppToUpdate);
+        checkRecursive.skipVolunteerCalculation = false; //HRP-13146
         //HRP-11296-Begin-Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions
         List<BSF_Error_Log__c> errorLog = BSF_Utilities.createErrorLog(lsOpp,'','updateEventTrigger','execute','Error','Error syncing Opportunity with Drives On Calendar');
 		insert errorLog;
         //HRP-11296-End
     }
     else if (!lstSkedDrives.isEmpty()) {
+        checkRecursive.skipVolunteerCalculation = false; //HRP-13146
         Database.SaveResult[] lsDrive = Database.update(lstSkedDrives, false);
-        system.debug('lstSkedDrives:-'+lstSkedDrives);
         //HRP-11296-Begin-Fix for HRP-11296 Capture error logs in case of DB failures and run time exceptions
 
         List<BSF_Error_Log__c> errorLog =  BSF_Utilities.createErrorLog(lsDrive,'','updateEventTrigger','execute','Error','Error syncing Drives on Calendar with Opportunity');
@@ -184,6 +211,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
     }
    }catch(Exception e){
         System.debug('Exception happened in updateEventTrigger->');
+        checkRecursive.skipVolunteerCalculation = false; //HRP-13146
         BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog(null,'updateEventTrigger','execute','Error',e.getStackTraceString(), e.getMessage()); //HRP-12422
    		insert errorLog;
    }

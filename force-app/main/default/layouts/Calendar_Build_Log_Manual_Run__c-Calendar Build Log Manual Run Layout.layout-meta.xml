@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
@@ -12,14 +11,18 @@
                 <field>Name</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Drive_Date__c</field>
+                <behavior>Readonly</behavior>
+                <field>Source__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>Parent_Calendar_Build_Log__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Drive_Date__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -161,6 +164,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>FS_Drives_wo_Resource_Requested__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>FS_Drives_with_Resource_Allocation__c</field>
             </layoutItems>
             <layoutItems>
@@ -180,6 +187,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Mobile_Sys_Gen_Batch_Run_Date__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Mobile_Drives_wo_Resource_Requested__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -233,6 +244,12 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Category__c</fields>
+        <fields>BSF_Error_Log__c</fields>
+        <fields>Error_Information__c</fields>
+        <fields>Opportunity__c</fields>
+        <fields>Drive__c</fields>
+        <fields>Operation_Record__c</fields>
         <relatedList>Calendar_Build_Error_Log__c.Calendar_Build_Log_Manual_Run__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
@@ -241,7 +258,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h59000000NcXh</masterLabel>
+        <masterLabel>00hVB000002QJCM</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

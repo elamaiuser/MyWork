@@ -1,6 +1,6 @@
 <template>
-    <section role="dialog" tabindex="-1" class={customClass.modalClass}>
-        <div class="slds-modal__container">
+    <section role="dialog" tabindex="-1" class={customClass.modalClass} style="z-index: 9006;">
+        <div class="slds-modal__container" style="width: 32rem;">
             <header class={customClass.headerClass}>
                 <lightning-button-icon onclick={handleCancel} class="slds-button slds-button_icon slds-modal__close" size="large"
                     icon-name="utility:close" variant="bare-inverse" title="Close"></lightning-button-icon>
@@ -43,6 +43,19 @@
                                 </lightning-combobox>
                             </div>
                         </div>
+
+                        <div class="slds-form-element__row slds-m-top_x-small slds-grid slds-grid_pull-padded-small">
+                            <div class="slds-size_1-of-1 slds-p-horizontal_small">
+                                <lightning-input 
+                                    type="number" 
+                                    name="quantity" 
+                                    label="Quantity" 
+                                    value={model.quantity} 
+                                    required
+                                    onchange={handleOnChange}>
+                                </lightning-input>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,5 +65,5 @@
             </footer>
         </div>
     </section>
-    <div class={customClass.backdropClass}></div>
+    <div class={customClass.backdropClass} style="z-index: 9005;"></div>
 </template>

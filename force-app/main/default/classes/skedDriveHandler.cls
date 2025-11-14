@@ -9,7 +9,8 @@ public class skedDriveHandler extends skedTriggerHub {
         'Anticipated_Registered_Donors__c' => 'AnticipatedRegisterDonorChangeReason__c',
         'WB_Projected_Procedures__c' => 'WholeBloodProcedureProjectedChangeReason__c',
         'X2RBC_Projected_Procedures__c' => 'DoubleRedProceduresProjectedChangeReason__c',
-        'Slot_Generator__c' => 'Slot_Generator_Change_Reason__c'
+        'Slot_Generator__c' => 'Slot_Generator_Change_Reason__c',
+        'APT_Quantity__c' => 'APT_Change_Reason__c'
     };
 
     private static final Map<String, String> DRIVE_GEN_OPP_FIELD_BY_DRIVE_FIELD = new Map<String, String>{
@@ -28,7 +29,11 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Number_of_Plasma_Assets__c' => 'Number_of_Plasma_Assets__c',
         'sked_Number_of_Platelet_Assets__c' => 'Number_of_Platelet_Assets__c',
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
-        'sked_Initiated_By__c' => 'Initiated_By__c'
+        'sked_Initiated_By__c' => 'Initiated_By__c',
+        'sked_APT_Required__c' => 'APT_Required__c',
+        'sked_APT_Quantity__c' => 'APT_Quantity__c',
+        'sked_Redcross_Volunteer_Required__c' => 'Red_Cross_Volunteer_Required__c',
+        'sked_Redcross_Volunteer_Quantity__c' => 'Red_Cross_Volunteer_Quantity__c'
     };
     
     public override void onBeforeInsert() {
@@ -46,7 +51,7 @@ public class skedDriveHandler extends skedTriggerHub {
         
         if (!skedSetting.instance.Admin.migrationMode) {
             rankDrives();
-            syncDriveStatusToOpportunity(newRecords);
+            syncDriveFieldsToOpportunity(newRecords);
         }
     }
     
@@ -1050,13 +1055,14 @@ public class skedDriveHandler extends skedTriggerHub {
         }
     }
     
-    public void syncDriveStatusToOpportunity(List<sked_Drive__c> newRecords) {
+    public void syncDriveFieldsToOpportunity(List<sked_Drive__c> newRecords) {
         List<Opportunity> oppList = new List<Opportunity>();
         for (sked_Drive__c newRecord : newRecords) {
             Opportunity oppRec = new Opportunity(
                 Id = newRecord.sked_Opportunity__c,
                 Drive_Status__c = newRecord.sked_Status__c,
-                Is_Recursion_On__c = TRUE
+                Is_Recursion_On__c = TRUE,
+                Number_of_2RBC_Assets__c = newRecord.sked_Number_of_2RBC_Assets__c
             );
             oppList.add(oppRec);
         }
@@ -1086,7 +1092,7 @@ public class skedDriveHandler extends skedTriggerHub {
                 AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             ]);
             if (!mapJobAllocation.isEmpty()) {
-                if (!System.isBatch() || !Test.isRunningTest()) {
+                if (!System.isBatch() && !Test.isRunningTest()) {
                     skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
                     Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
                 }

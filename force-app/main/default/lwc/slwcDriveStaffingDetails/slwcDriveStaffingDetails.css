@@ -16,6 +16,9 @@
 .bg-purple {
   background-color: #7752ad;
 }
+.bg-amber {
+  background-color: #FFBF00;
+}
 .cursor_pointer {
   cursor: pointer;
 }

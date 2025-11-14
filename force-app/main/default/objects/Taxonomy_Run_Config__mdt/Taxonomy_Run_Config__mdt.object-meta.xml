@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Metadata Configuration for Sequencing the order in with Taxo Record Type will be processed. These will be captured with a category value of &quot;Taxo Run Sequence.&quot;. This metadata will also capture batch size configuration for other batches that are run as part of the taxo run as subchains. Any other configuration related to Taxo Run, like the old Taxo version. expiration offset, will also be added to this configuration.</description>
+    <label>Taxonomy Run Config</label>
+    <pluralLabel>Taxonomy Run Config</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

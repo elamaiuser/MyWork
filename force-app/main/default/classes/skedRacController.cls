@@ -14,7 +14,7 @@ global virtual class skedRacController extends skedBaseController {
             if (mapConfigData.containsKey('availabilityTypes')) {
                 List<string> availabilityTypes = (List<String>) mapConfigData.get('availabilityTypes');
                 availabilityTypes.remove(availabilityTypes.indexOf(skedConstants.AVAILABILITY_TYPE_ON_CALL));
-                if (!loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {
+                if (loginUser.sked__SkeduloUserType__c != null && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_ADMIN) && !loginUser.sked__SkeduloUserType__c.contains(skedConstants.USER_TYPE_SCHEDULER)) {     //HRP-14943
                     List<string> results = new List<string>();
                     for (string availabilityType : availabilityTypes) {
                         if (availabilityType != skedConstants.AVAILABILITY_TYPE_AVAILABILITY_TEMPLATE_OVERRIDE) {
@@ -93,6 +93,9 @@ global virtual class skedRacController extends skedBaseController {
             query.availabilityTypes = request.availabilityTypes;
             query.excludedAvailabilityTypes = new List<String>{skedConstants.AVAILABILITY_TYPE_ON_CALL};
             query.customAvailabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+            query.hasNoAssignment = request.hasNoAssignment;
+            query.hasTemporaryRelocation = request.hasTemporaryRelocation;
+            query.additionalFilterOnDate = request.additionalFilterOnDate;
             
             skedResourceService service = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
@@ -161,6 +164,7 @@ global virtual class skedRacController extends skedBaseController {
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
             query.pageNo = request.pageNo;
             query.pageSize = request.pageSize;
+            query.patternIds = request.patternIds;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.resourceTypes = request.resourceTypes;
@@ -324,38 +328,73 @@ global virtual class skedRacController extends skedBaseController {
     global static skedRemoteResultModel getGroupActivities(getGroupActivitiesRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         try {
+            //Get all activities through normal query
             skedActivityService.queryModel query = new skedActivityService.queryModel();
             query.activityTypes = request.activityTypes;
             query.biomedCollectionOpIds = request.biomedCollectionOpIds;
-            query.territoryKeys = request.territoryKeys;
             query.endDate = request.endDate;
             query.isGroupActivity = true;
             query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('activity', request.orderBy);
             query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
-            query.pageNo = request.pageNo;
-            query.pageSize = request.pageSize;
             query.queryText = request.queryText;
             query.regionIds = request.regionIds;
             query.startDate = request.startDate;
             query.subTypes = request.subTypes;
-            query.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE;
+            query.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE | skedSObjectType.ACTIVITY_COLLECTION_OPERATION;
             
             skedActivityService service = (skedActivityService)skedServiceFactory.instance.resolve('sked__Activity__c');
-            skedDataService.paginationQueryModel paginationResult = service.doPaginationQuery(query);
+            List<sObject> activityRecords = service.query(query);
+            List<String> activityRecordIds = new List<String>();
 
-            List<skedModels.activity> activities = new List<skedModels.activity>();
-            skedAutoMapper autoMapper = skedAutoMapper.instance;
-            for (sked__Activity__c record : (List<sked__Activity__c>)paginationResult.records) {
-                autoMapper.setTimezoneSidId(record.sked__Timezone__c);
-                skedModels.activity activity = (skedModels.activity)skedAutoMapper.instance.mapTo(record, skedModels.activity.class);
-                activity.timezone = record.sked__Start__c.format('z', record.sked__Timezone__c);
-                activities.add(activity);
-            } 
+            for(sked__Activity__c activity : (List<sked__Activity__c>)activityRecords) {
+                Boolean hasCorrectTerritoryKey = FALSE;
+                if(activity.sked_Territory_Key__c != NULL && request.territoryKeys.contains(activity.sked_Territory_Key__c)) {
+                    hasCorrectTerritoryKey = TRUE;
+                } else if(activity.sked_Activity_Collection_Operations__r != NULL && !activity.sked_Activity_Collection_Operations__r.isEmpty()) {
+                    for(sked_Activity_Collection_Operation__c activityCo : activity.sked_Activity_Collection_Operations__r) {
+                        if(activityCo.sked_Territory_Key__c != NULL && request.territoryKeys.contains(activityCo.sked_Territory_Key__c)) {
+                            hasCorrectTerritoryKey = TRUE;
+                            break;
+                        }
+                    }
+                }
+                if(hasCorrectTerritoryKey) {
+                    activityRecordIds.add(activity.Id);
+                }
+            }
             
+            // Do Pagination Query to show group activities on RAC
+            List<skedModels.activity> activities = new List<skedModels.activity>();
+            skedDataService.paginationQueryModel paginationResult;
+            
+            if(activityRecordIds != NULL && !activityRecordIds.isEmpty()) {
+                skedActivityService.queryModel reformedQuery = new skedActivityService.queryModel();
+                reformedQuery.recordIds = activityRecordIds;
+                reformedQuery.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('activity', request.orderBy);
+                reformedQuery.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
+                reformedQuery.pageNo = request.pageNo;
+                reformedQuery.pageSize = request.pageSize;
+                reformedQuery.subQueryIndicator = skedSObjectType.ACTIVITY_RESOURCE | skedSObjectType.ACTIVITY_COLLECTION_OPERATION;
+                skedActivityService reformedService = (skedActivityService)skedServiceFactory.instance.resolve('sked__Activity__c');
+                paginationResult = reformedService.doPaginationQuery(reformedQuery);
+                   
+                skedAutoMapper autoMapper = skedAutoMapper.instance;
+                for (sked__Activity__c record : (List<sked__Activity__c>)paginationResult.records) {
+                    system.debug('record '+record);
+                    autoMapper.setTimezoneSidId(record.sked__Timezone__c);
+                    skedModels.activity activity = (skedModels.activity)skedAutoMapper.instance.mapTo(record, skedModels.activity.class);
+                    activity.timezone = record.sked__Start__c.format('z', record.sked__Timezone__c);
+                    activities.add(activity);
+                } 
+                system.debug('activities last '+activities.size());
+            }
+
             groupActivityDataModel data = new groupActivityDataModel();
             data.groupActivities = activities;
-            data.totalRecords = paginationResult.totalRecords;
-            data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
+            data.totalRecords = paginationResult != NULL ? paginationResult.totalRecords : 0;
+            if(data.totalRecords != NULL) {
+            	data.totalPages = (integer)Math.ceil(decimal.valueOf(data.totalRecords) / request.pageSize);
+            }
             
             result.data = data;
         }
@@ -572,6 +611,32 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     @remoteAction
+    global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        try {
+            skedCollectionOpTimeBlockService.queryModel query = new skedCollectionOpTimeBlockService.queryModel();
+            query.collectionOperationIds = request.collectionOperationIds;
+            query.endDate = request.endDate;
+            query.startDate = request.startDate;
+            
+            skedCollectionOpTimeBlockService service = new skedCollectionOpTimeBlockService();
+            List<Collection_Operation_Time_Block__c> records = (List<Collection_Operation_Time_Block__c>)service.query(query);
+            
+            List<skedModels.collectionOperationTimeBlock> collectionOperationTimeBlocks = new List<skedModels.collectionOperationTimeBlock>();
+            skedAutoMapper autoMapper = skedAutoMapper.instance;
+            for (Collection_Operation_Time_Block__c record : records) {
+                skedModels.collectionOperationTimeBlock collectionOperationTimeBlock = (skedModels.collectionOperationTimeBlock)skedAutoMapper.instance.mapTo(record, skedModels.collectionOperationTimeBlock.class);
+                collectionOperationTimeBlocks.add(collectionOperationTimeBlock);
+            } 
+            result.data = collectionOperationTimeBlocks;
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+        }
+        return result;
+    }
+    
+    @remoteAction
     global static skedRemoteResultModel saveAvailability(saveAvailabilityRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
@@ -682,20 +747,39 @@ global virtual class skedRacController extends skedBaseController {
         try {
             string timezoneSidId = request.event.timezoneSidId;
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
+            
+            skedRegionService regionService = (skedRegionService)skedServiceFactory.instance.resolve('sked__Region__c');
+            skedRegionService.queryModel regionQuery = new skedRegionService.queryModel();
+            regionQuery.timezoneSidId = timezoneSidId;
 			
-            string regionId;
             if (!string.isBlank(request.event.biomedCollectionOpId)) {
-                skedRegionService regionService = (skedRegionService)skedServiceFactory.instance.resolve('sked__Region__c');
-                skedRegionService.queryModel regionQuery = new skedRegionService.queryModel();
                 regionQuery.biomedCollectionOpId = request.event.biomedCollectionOpId;
-                regionQuery.timezoneSidId = timezoneSidId;
-                List<sObject> queryResults = regionService.query(regionQuery);
-                if (queryResults == NULL || queryResults.isEmpty()) {
-                    throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+            } else if(request.event.biomedCollectionOpIds != NULL && !request.event.biomedCollectionOpIds.isEmpty()) {
+                regionQuery.biomedCollectionOpIds = request.event.biomedCollectionOpIds;
+            }
+            List<sObject> queryResults = regionService.query(regionQuery);
+            
+            // Region check for single-select collection operation
+            if (queryResults == NULL || queryResults.isEmpty()) {
+                throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+            }
+            Map<String, String> map_colOpId_regionId = new Map<String, String>();
+            for(sked__Region__c region : (List<sked__Region__c>)queryResults) {
+                map_colOpId_regionId.put(region.sked_Biomed_Collection_Op_Center__c, region.Id);
+            }
+            
+            // Region check for multi-select collection operation
+            if(request.event.biomedCollectionOpIds != NULL && !request.event.biomedCollectionOpIds.isEmpty()) {
+                for(String colOpId : request.event.biomedCollectionOpIds) {
+                    if(!map_colOpId_regionId.containsKey(colOpId)) {
+                        throw new skedException('Cannot find Skedulo region that matches the address timezone.');
+                    }
                 }
-                regionId = queryResults.get(0).Id;
-                request.event.regionId = regionId;
-                
+            } else {
+                request.event.regionId = map_colOpId_regionId.get(request.event.biomedCollectionOpId); //Populate region for single select co activity
+            }
+            
+            if (!string.isBlank(request.event.biomedCollectionOpId)) {    
                 //validate staffing constraint
                 if (request.event.reduceFromStaffingConstraint) {
                     Date selectedDate = skedDateTimeUtils.getDateFromIsoString(request.event.startDate);
@@ -772,7 +856,7 @@ global virtual class skedRacController extends skedBaseController {
             request.objectType = 'activity';
             request.model = request.event;
             if (request.recurringOptions != NULL) {
-                request.recurringOptions.regionId = regionId;
+                request.recurringOptions.regionIds = map_colOpId_regionId.values();
                 if (request.recurringOptions.selectedDates != NULL && !request.recurringOptions.selectedDates.isEmpty()) {
                     request.recurringOptions.dateValues = new Set<Date>();
                     for (string selectedDate : request.recurringOptions.selectedDates) {
@@ -784,14 +868,13 @@ global virtual class skedRacController extends skedBaseController {
                     Date startDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.startDate);
                     Date endDate = skedDateTimeUtils.getDateFromIsoString(request.recurringOptions.availabilityTemplate.endDate);
                     if (endDate > startDate.addYears(skedSetting.instance.RAC.maxActivityRecurringYears)) {
-                        throw new skedException('Recurring Pattern exceeds maximum duration');
+                        throw new skedException('Recurring Pattern exceeds maximum duration of ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years.\nPlease select a recurring end date that falls within ' + skedSetting.instance.RAC.maxActivityRecurringYears + ' years from today');
                     }
                 }
             }
 
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
             skedDataService.saveResult saveResult = saveEvent(request);
-          
             if (saveResult.message != null && saveResult.message == skedConstants.ACTIVITY_INSERT_BATCH_STARTED) {
                 result.message = saveResult.message;
             }
@@ -1246,12 +1329,16 @@ global virtual class skedRacController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__r.Name
+                (SELECT Id, sked__Tag__r.Name , sked__Tag__r.sked_Priority__c
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
-                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                LIMIT 1)
+                 ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST //HRP-15634
+                ),
+                (SELECT Id, sked__Location__c, sked_Location_Resource_Relationship__c
+                 FROM sked__Location_Resource_Scores__r
+                 WHERE sked_Location_Resource_Relationship__c = 'Preferred'
+                 AND sked__Location__r.RecordType.Name = 'Fixed Site')
                 FROM sked__Resource__c 
                 WHERE Id = :request.event.resourceId
             ];
@@ -1372,7 +1459,6 @@ global virtual class skedRacController extends skedBaseController {
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
             skedDataService.saveResult saveResult = service.saveUnavailability(request.availability);
             result.data = saveResult.success == FALSE ? saveResult.returnedData : request.model;
-
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = false;
         }
         catch (Exception ex) {
@@ -1615,6 +1701,8 @@ global virtual class skedRacController extends skedBaseController {
             string timezoneSidId = UserInfo.getTimeZone().getID();
 
             Boolean isBiddingPeriodRequest = request.requestTypes != null && request.requestTypes.contains(skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT);
+            
+            //get staffing budget COs
             skedStaffingBudgetCollectionOpService.queryModel sbCoQuery = new skedStaffingBudgetCollectionOpService.queryModel();
             sbCoQuery.collectionOpIds = request.biomedCollectionOpIds;
             sbCoQuery.requestTypes = request.requestTypes;
@@ -1624,15 +1712,27 @@ global virtual class skedRacController extends skedBaseController {
 
             skedStaffingBudgetCollectionOpService sbCoService = (skedStaffingBudgetCollectionOpService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Collection_Op__c');
             List<sObject> sbCoQueryResult = sbCoService.query(sbCoQuery);
-            List<sked_Staffing_Budget_Collection_Op__c> sbCos = new List<sked_Staffing_Budget_Collection_Op__c>();
-            if (sbCoQueryResult != null && !sbCoQueryResult.isEmpty()) {
-                sbCos.addAll((List<sked_Staffing_Budget_Collection_Op__c>) sbCoQueryResult);
-            }
+            
+            //get staffing budget sites
+            skedStaffingBudgetSiteService.queryModel sbSiteQuery = new skedStaffingBudgetSiteService.queryModel();
+            sbSiteQuery.siteCoIds = request.biomedCollectionOpIds;
+            sbSiteQuery.requestTypes = request.requestTypes;
+            sbSiteQuery.endDate = request.endDate;
+            sbSiteQuery.startDate = request.startDate;
+            sbSiteQuery.isBiddingPeriodRequest = isBiddingPeriodRequest;
+
+            skedStaffingBudgetSiteService sbSiteService = (skedStaffingBudgetSiteService) skedServiceFactory.instance.resolve('sked_Staffing_Budget_Site__c');
+            List<sObject> sbSiteQueryResult = sbSiteService.query(sbSiteQuery);
+
+            List<sObject> relatedListResult = new List<sObject>();
+            relatedListResult.addAll(sbCoQueryResult);
+            relatedListResult.addAll(sbSiteQueryResult);
 
             Set<String> staffingBudgetIds = new Set<String>();
-            for (sked_Staffing_Budget_Collection_Op__c sbCo : sbCos) {
-                staffingBudgetIds.add(sbCo.sked_Staffing_Budget__c);
+            for (sObject sbRelated : relatedListResult) {
+                staffingBudgetIds.add((String) sbRelated.get('sked_Staffing_Budget__c'));
             }
+
             List<String> staffingBudgetIdsList = new List<String>();
             staffingBudgetIdsList.addAll(staffingBudgetIds);
             
@@ -1648,10 +1748,10 @@ global virtual class skedRacController extends skedBaseController {
                 query.pageSize = request.pageSize;
                 query.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('staffingBudget', request.orderBy);
                 query.orderAscending = request.orderDirection == 1 ? 'ASC' : 'DESC';
-                query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+                query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_SITE;
 
                 if (isBiddingPeriodRequest) {
-                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
+                    query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_SITE | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
                 }
                 
                 skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
@@ -1685,7 +1785,7 @@ global virtual class skedRacController extends skedBaseController {
             skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
             query.recordIds = new List<string>();
             query.recordIds.add(request.recordId);
-            query.subQueryIndicator =  skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
+            query.subQueryIndicator = skedSObjectType.STAFFING_BUDGET_SITE | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_AVAILABILITY;
             
             skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
             sked_Staffing_Budget__c skedStaffingBudget = (sked_Staffing_Budget__c)service.query(query).get(0);
@@ -1716,7 +1816,7 @@ global virtual class skedRacController extends skedBaseController {
             skedStaffingBudgetService.queryModel query = new skedStaffingBudgetService.queryModel();
             query.recurringScheduleIds = new List<string>();
             query.recurringScheduleIds.add(request.recordId);
-            query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP;
+            query.subQueryIndicator = skedSObjectType.AVAILABILITY | skedSObjectType.STAFFING_BUDGET_COLLECTION_OP | skedSObjectType.STAFFING_BUDGET_SITE;
             
             skedStaffingBudgetService service = (skedStaffingBudgetService)skedServiceFactory.instance.resolve('sked_Staffing_Budget__c');
             List<sked_Staffing_Budget__c> skedStaffingBudgets = (List<sked_Staffing_Budget__c>)service.query(query);
@@ -1831,6 +1931,98 @@ global virtual class skedRacController extends skedBaseController {
         catch (Exception ex) {
             result.getError(ex);
             Database.rollback(sp);
+        }
+        return result;
+    }
+
+    @remoteAction
+    global static skedRemoteResultModel getFixedSitesRelatedToCo(getSitesRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        try {
+            skedDataService siteCoService = (skedDataService)skedServiceFactory.instance.resolve('sked_Site_Collection_Operation__c');
+            skedDataService.queryModelBase siteCoQuery = new skedDataService.queryModelBase();
+            skedQueryBuilder siteCoQueryBuilder = siteCoQuery.getQueryBuilder('sked_Site_Collection_Operation__c');
+            siteCoQueryBuilder.addCondition('sked_Site__r.sked_Active__c = TRUE');
+            siteCoQueryBuilder.addCondition('sked_Site__r.RecordType.Name = \'Fixed Site\'');
+            siteCoQueryBuilder.addCondition('sked_Collection_Operation__c IN {0}', request.biomedCollectionOpIds);
+            if(request.staffingBudgetDate != NULL) {
+                Date startDate = skedDateTimeUtils.getDateFromIsoString(request.staffingBudgetDate);
+                siteCoQueryBuilder.addCondition('sked_Start_Date__c <= {0}', startDate);
+                siteCoQueryBuilder.addCondition('sked_End_Date__c >= {0}', startDate);
+            }
+                
+            List<skedModels.siteCollectionOperation> siteCos = (List<skedModels.siteCollectionOperation>) siteCoService.getList(siteCoQuery);
+            Map<Id, object> map_siteId_siteInfo = new Map<Id, object>();
+            for(skedModels.siteCollectionOperation siteCo : siteCos) {
+                if(!map_siteId_siteInfo.containsKey((Id) siteCo.siteId)) {
+                    skedModels.serviceLocation site = siteCo.site;
+                    map_siteId_siteInfo.put((Id) siteCo.siteId, (object) site);
+                }
+            }
+            result.data = map_siteId_siteInfo.values();
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+            Database.rollback(sp);
+        }
+        return result;
+    }
+
+    @remoteAction
+    global static skedRemoteResultModel validateBulkStaffingBudgetsAgainstSiteCos(validateBulkStaffingBudget request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
+        if(request.siteIds != NULL && !request.siteIds.isEmpty()) {
+            try {
+                skedDataService siteCoService = (skedDataService)skedServiceFactory.instance.resolve('sked_Site_Collection_Operation__c');
+                skedDataService.queryModelBase siteCoQuery = new skedDataService.queryModelBase();
+                skedQueryBuilder siteCoQueryBuilder = siteCoQuery.getQueryBuilder('sked_Site_Collection_Operation__c');
+                siteCoQueryBuilder.addCondition('sked_Site__c IN {0}', request.siteIds);
+                siteCoQuery.orderBy = skedAutoMapper.instance.mapToSObjectFieldPath('siteCollectionOperation', 'startDate');
+                siteCoQuery.orderAscending = 'ASC';
+    
+                List<skedModels.siteCollectionOperation> siteCoList = (List<skedModels.siteCollectionOperation>) siteCoService.getList(siteCoQuery);
+                Map<String, List<skedModels.siteCollectionOperation>> map_siteId_siteInfo = new Map<String, List<skedModels.siteCollectionOperation>>();
+                for(skedModels.siteCollectionOperation siteCo : siteCoList) {
+                    if(!map_siteId_siteInfo.containsKey(siteCo.siteId)) {
+                        map_siteId_siteInfo.put(siteCo.siteId, new List<skedModels.siteCollectionOperation>());
+                    }
+                    map_siteId_siteInfo.get(siteCo.siteId).add(siteCo);
+                }
+    
+                for(String siteId : map_siteId_siteInfo.keySet()) {
+                    Integer count = 0;
+                    List<skedModels.siteCollectionOperation> siteCos = map_siteId_siteInfo.get(siteId);
+                    for(skedModels.siteCollectionOperation siteCo : siteCos) {
+                        count++;
+                        Date siteCoStartDate = skedDateTimeUtils.getDateFromIsoString(siteCo.startDate);
+                        Date siteCoEndDate = skedDateTimeUtils.getDateFromIsoString(siteCo.endDate);
+                        skedModels.siteCollectionOperation nextSiteCo = siteCos.size() != count ? siteCos[count] : NULL;
+                        for(String staffingBudgetDateString : request.staffingBudgetDates) {
+                            Date staffingBudgetDate = skedDateTimeUtils.getDateFromIsoString(staffingBudgetDateString);
+                            if(siteCoStartDate <= staffingBudgetDate && siteCoEndDate >= staffingBudgetDate) {
+                                if(!request.biomedCollectionOpIds.contains(siteCo.biomedCollectionOpId)) {
+                                    result.success = FALSE;
+                                    if(siteCo.site.biomedCollectionOpName.equalsIgnoreCase(siteCo.biomedCollectionOpName)) {
+                                        result.errorMessage = siteCo.site.name +' is currently associated with '+siteCo.site.biomedCollectionOpName+' till '+siteCo.endDate+'. Please adjust your selection.';
+                                    } else {
+                                        result.errorMessage = siteCo.site.name +' is no longer associated with '+siteCo.site.biomedCollectionOpName+' as of '+siteCo.startDate+'. Please adjust your selection.';
+                                    }
+                                }
+                            } else if(siteCoEndDate < staffingBudgetDate && nextSiteCo == NULL) {
+                                DateTime newStartDate = DateTime.newInstance(siteCoEndDate.year(), siteCoEndDate.month(), siteCoEndDate.day() + 1, 0, 0, 0);
+                                String dateIsoString = newStartDate.format('yyyy-MM-dd');
+                                result.success = FALSE;
+                                result.errorMessage = siteCo.site.name +' is no longer associated with any collection operation as of '+dateIsoString+'. Please adjust your selection.';
+                            }
+                        }
+                    }
+                }
+    
+            } catch (Exception ex) {
+                result.getError(ex, sp);
+            }
         }
         return result;
     }
@@ -2156,6 +2348,9 @@ global virtual class skedRacController extends skedBaseController {
         public Set<Date> inputDates;
         public List<String> availabilityTypes;
         public List<String> activityTypes;
+        public boolean hasNoAssignment;
+        public boolean hasTemporaryRelocation;
+        public string additionalFilterOnDate;
     }
 
     global class getAvailabilityDetailsRequest extends skedRemoteRequestModel {
@@ -2212,6 +2407,12 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     global class getTerritoriesRequestModel extends getDataRequestModel {
+        public string startDate;
+        public string endDate;
+    }
+
+    global class getCollectionOperationTimeBlocksRequestModel extends getDataRequestModel {
+        public List<string> collectionOperationIds; 
         public string startDate;
         public string endDate;
     }
@@ -2371,4 +2572,14 @@ global virtual class skedRacController extends skedBaseController {
         public integer totalRecords;
     }
 
+    global class getSitesRequestModel extends getDataRequestModel {
+        public List<string> biomedCollectionOpIds;
+        public string staffingBudgetDate;
+    }
+
+    global class validateBulkStaffingBudget extends getDataRequestModel {
+        public List<string> biomedCollectionOpIds;
+        public List<string> siteIds;
+        public List<String> staffingBudgetDates;
+    }
 }

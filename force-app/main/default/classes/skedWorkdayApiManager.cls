@@ -231,7 +231,7 @@ public class skedWorkdayApiManager {
                         Dom.XmlNode timeOffReasonsPlan = utils.getChild(eligibleTimeOffReason, 'plan');
                         String planName = getPlanLabel(utils.getAttribute(timeOffReasonsPlan, 'Descriptor'));
 
-                        if (result.timeOffPlansByLabel.containsKey(planName)) {
+                        if (result.timeOffPlansByLabel.containsKey(planName) && result.timeOffPlansByLabel.get(planName) != null) {
                             skedWorkdayGetPlanBalanceResponse.timeOffPlan plan = result.timeOffPlansByLabel.get(planName);
                             List<Dom.XmlNode> timeOffReasons = utils.getChildNodes(eligibleTimeOffReason, 'Time_Off_Reasons');
                             for (Dom.XmlNode timeOffReason : timeOffReasons) {

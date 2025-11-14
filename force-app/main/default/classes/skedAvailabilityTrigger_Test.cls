@@ -1,7 +1,7 @@
 @isTest
 public class skedAvailabilityTrigger_Test {
     
-    static  void testException() {
+    static testmethod void testException() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -112,13 +112,15 @@ public class skedAvailabilityTrigger_Test {
         Test.stopTest();
     }
     
-    static  void populateStaffingBudgetAvailabilities_Test_MatchingCO() {
+    static testMethod void populateStaffingBudgetAvailabilities_Test_MatchingCO() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
         
         sked__Resource__c testResource1 = (sked__Resource__c) mapTestData.get('testResource1');
+        
+        sked__Location__c testLocation1 = (sked__Location__c) mapTestData.get('testLocation1');
         
         sked_Staffing_Budget__c testStaffingBudget1 = new sked_Staffing_Budget__c(
             sked_Bidding_End_Date__c = testDataFactory.summary.endDate,
@@ -147,12 +149,12 @@ public class skedAvailabilityTrigger_Test {
                 sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id
             );
         
-        sked_Staffing_Budget_Collection_Op__c testStaffingBudgetCo2 = new sked_Staffing_Budget_Collection_Op__c(
-            sked_Staffing_Budget__c = testStaffingBudget1.Id,
-            sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id
+        sked_Staffing_Budget_Site__c testStaffingBudgetSite1 = new sked_Staffing_Budget_Site__c(
+            sked_Staffing_Budget__c = testStaffingBudget2.Id,
+            sked_Location__c = testLocation1.Id
         );
         
-        insert new List<SObject>{testStaffingBudgetCo1, testStaffingBudgetCo2};
+        insert new List<SObject>{testStaffingBudgetCo1, testStaffingBudgetSite1};
             
             Test.startTest();
         sked__Availability__c testAvailability = new sked__Availability__c(
@@ -169,7 +171,7 @@ public class skedAvailabilityTrigger_Test {
         insert testAvailability;
         
         List<sked_Staffing_Budget_Availability__c> sbas = [SELECT Id FROM sked_Staffing_Budget_Availability__c];
-        System.assertEquals(2, sbas.size());
+        Assert.areEqual(1, sbas.size());
         Test.stopTest();
     }
     

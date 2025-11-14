@@ -60,14 +60,15 @@
             <div class="slds-media__body direction-ltr">
                 <div class="slds-m-top--small slds-border_top"
                     style="min-width: 128px;">
-                    <div for:each={popoverData.resource.resourceTagsDisplay} for:item="resourceTag" key={resourceTag.keyRender} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate" style="white-space: normal;">
+                    <div for:each={popoverData.resource.resourceTagsDisplay} for:item="resourceTag" key={resourceTag.keyRender} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
                         <p class="slds-has-flexi-truncate color-default-text slds-m-vertical_xx-small" >
-                             {resourceTag.value} {resourceTag.key}(s)
+                            {resourceTag.value} {resourceTag.key}(s)
                         </p>
-                        <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate slds-m-vertical_xx-small">
-                            <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak slds-has-flexi-truncate" >
-                                <lightning-icon class="slds-m-horizontal_x-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
-                                 {tag.value}
+                        <div class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate slds-m-vertical_xx-small slds-grid slds-wrap">
+                            <span for:each={resourceTag.details} for:item="tag" key={tag.key} class="slds-text-color_inverse-weak whitespace-nowrap">
+                                <lightning-icon if:true={tag.isRestricted} class="slds-m-left_x-small slds-m-right_xx-small slds-icon-standard-home" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                                <lightning-icon if:false={tag.isRestricted} class="slds-m-left_x-small slds-m-right_xx-small" icon-name="standard:quotes" size="x-small"></lightning-icon>
+                                {tag.value} <span class="slds-m-left__x-small" if:true={tag.isRestricted}>(Restricted)</span>
                             </span>
                         </div>
                     </div>

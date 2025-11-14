@@ -89,7 +89,7 @@ global class skedPtoRequestController extends skedBaseController {
             if (!string.isBlank(request.endDate)) {
                 String endDateString = '4000-12-31';
                 request.endDate = '4000-12-31';
-                Date endDate = skedDateTimeUtils.getDateFromIsoString(endDateString);
+                Date endDate = skedDateTimeUtils.getDateFromIsoString(request.endDate);
                 query.endTime = skedDateTimeUtils.getEndOfDate(endDate, timezoneSidId);
             }
 
@@ -233,12 +233,12 @@ global class skedPtoRequestController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__r.Name
+                (SELECT Id, sked__Tag__r.Name , sked__Tag__r.sked_Priority__c
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
                  ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                LIMIT 1)
+                ) //HRP-15634
                 FROM sked__Resource__c 
                 WHERE Id = :request.event.resourceId
             ];

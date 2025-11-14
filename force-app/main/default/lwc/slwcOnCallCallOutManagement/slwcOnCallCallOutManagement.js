@@ -14,6 +14,9 @@ import { DateTime } from 'c/luxon';
 import { DRIVE_STATUS, JOB_ALLOCATION_STATUS, RESOURCE_ROLE_GROUP, RESOURCE_TYPE } from 'c/slwcConstants';
 import * as slwcAvailator from 'c/slwcAvailator';
 import * as slwcUtils from 'c/slwcUtils';
+import * as slwcDateUtils from "c/slwcDateUtils";
+
+
 
 const STEP = {
   SEARCH: 1,
@@ -595,6 +598,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       }
     }
     
+    const getAvailabilityPatternResourceNamesForAllocation = this.getAvailabilityPatternResourceNamesForAllocation(posAl);
     resource = {
       ...resource,
       noException: !posAl.exceptionLog?.length,
@@ -602,11 +606,50 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       weeklyHoursInMinutes,
       travelData: travelData || [],
       isSecondaryCO,
-      isTemporaryCO
+      isTemporaryCO,
+      getAvailabilityPatternResourceNamesForAllocation
     }
     
     return resource;
   }
+
+  get dateUtils() {
+    return slwcDateUtils.getInstance({
+      timezone: TIME_ZONE
+    });
+  }
+ /**
+  * Returns an array string of the pattern names of availability pattern resources
+  * for the resource in possibleAllocation whose startDate is less than the job's driveDate and 
+  * end date is either null or greater than or equal to the job's driveDate
+  * 
+  * @param {Object} possibleAllocation - The possible allocation object containing job and resource.
+  * @returns {Array} - Array of availability pattern resource names.
+  * 
+  */
+ getAvailabilityPatternResourceNamesForAllocation(possibleAllocation) {
+   if (
+      !possibleAllocation ||
+      !possibleAllocation.resource ||
+      !Array.isArray(possibleAllocation.resource.availabilityPatternResources) ||
+      !possibleAllocation.job ||
+      !possibleAllocation.job.driveDate 
+   ) {
+      return '';
+   }
+
+  const driveDate = possibleAllocation.job.driveDate;
+  return possibleAllocation.resource.availabilityPatternResources
+      .filter(apr =>
+          apr.startDate &&
+          (this.dateUtils.compareDateJS(apr.startDate, driveDate) < 0 &&
+           (!apr.endDate || this.dateUtils.compareDateJS(apr.endDate, driveDate) >= 0)
+          )
+      )
+      .map(apr => apr.patternName)
+      .filter(Boolean)
+  }
+  
 
   initStepReplaceResource = () => {
     //Reset values
@@ -646,6 +689,11 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
         collectionOperationIds: collectionOperationIds,
       })
     })
+    //HRP-14118
+  .then(() => {
+      return this.selectedEvent.isDrive ? availator.fetchJobTags(this.selectedAllocationData.job.driveId): Promise.resolve([]); //HRP-15881
+    })
+
     .then(() => {
       return availator.buildScheduledAllocations({
         ignoreDedicatedSiteRule: true
@@ -655,8 +703,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       let validPossibleAllocations = (result.possibleAllocations || []).filter(posAl => {
         const anyInvalidException = (posAl.exceptionLog || []).find(exception => {
           const hasConflictToPTOException = exception.exceptionCode === 'RESOURCE_TIME_CONFLICT' && !!exception.availabilityId;
-          const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
-          return hasConflictToPTOException || invalidTagException;
+        // const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
+          return hasConflictToPTOException; /*|| invalidTagException;*/
         })
         return !anyInvalidException;
       })
@@ -728,7 +776,23 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
         return service.save({
           jobId: this.selectedAllocationData.job.id,
           resourceId: this.selectedResource.id,
-          status: JOB_ALLOCATION_STATUS.CONFIRMED
+          status: JOB_ALLOCATION_STATUS.PENDING_DISPATCH
+        })
+        .then((result) => {
+          if(!result.success) throw result;
+
+          let driveSvc = new driveService();
+          return driveSvc.dispatchDrives({
+            request: {
+              driveIds: [this.selectedAllocationData.job.driveId],
+              resend: false
+            }
+          });
+        })
+        .then(() => {
+          return {
+            success: true
+          }
         })
       } else {
         const service = new activityResourceService();

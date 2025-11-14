@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -328,16 +329,40 @@
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Dual Role Automation Settings</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Auto_Generate_Dual_Role__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Only_Generate_Dual_If_1_Machine__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
         <actionListContext>Record</actionListContext>
+        <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
         <platformActionListItems>
             <actionName>Biomed_Collection_Op_Center__c.Update_Web_Scheduling</actionName>
             <actionType>QuickAction</actionType>
@@ -357,11 +382,6 @@
             <actionName>Clone</actionName>
             <actionType>StandardButton</actionType>
             <sortOrder>4</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <relatedLists>
@@ -393,10 +413,12 @@
         <relatedList>sked_Role_Time_Detail__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>sked_Date_of_Constraint__c</fields>
         <fields>sked_Drive_Type__c</fields>
         <fields>sked_Total_Staff_Constraints__c</fields>
+        <fields>sked_Time_Block__c</fields>
         <relatedList>sked_Staffing_Constraint__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -413,6 +435,7 @@
         <fields>sked_Quantity__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
+        <fields>Time_Block__c</fields>
         <relatedList>sked_Operation_Drive_Limit__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -433,6 +456,16 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Time_Block__c.NAME</fields>
+        <fields>Time_Block__c.Days_of_Week__c</fields>
+        <fields>Time_Block__c.Start_Time__c</fields>
+        <fields>Time_Block__c.End_Time__c</fields>
+        <fields>Effective_Start_Date__c</fields>
+        <fields>Effective_End_Date__c</fields>
+        <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

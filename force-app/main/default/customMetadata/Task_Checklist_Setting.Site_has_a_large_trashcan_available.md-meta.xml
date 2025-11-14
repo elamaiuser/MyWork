@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Site has a large trashcan available</label>
+    <protected>false</protected>
+    <values>
+        <field>Column__c</field>
+        <value xsi:type="xsd:double">2.0</value>
+    </values>
+    <values>
+        <field>Help_Text__c</field>
+        <value xsi:type="xsd:string">If a large trashcan is not available, please communicate with Collections by no later than one day prior to the day of the drive so that other arrangements can be made.</value>
+    </values>
+    <values>
+        <field>Hyperlink__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Input_API_Name__c</field>
+        <value xsi:type="xsd:string">Input_Checkbox__c</value>
+    </values>
+    <values>
+        <field>Input_Type__c</field>
+        <value xsi:type="xsd:string">Checkbox</value>
+    </values>
+    <values>
+        <field>Is_Dynamic__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Order__c</field>
+        <value xsi:type="xsd:double">23.0</value>
+    </values>
+    <values>
+        <field>Parent__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Picklist_Input_1__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Section_Header__c</field>
+        <value xsi:type="xsd:string">Site &amp; Security</value>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">72 Hour Check-In</value>
+    </values>
+    <values>
+        <field>Subtype__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>UI_Text__c</field>
+        <value xsi:type="xsd:string">Verify the site has a large trashcan available for canteen use.</value>
+    </values>
+    <values>
+        <field>Unique_Name__c</field>
+        <value xsi:type="xsd:string">Site_has_a_large_trashcan_available</value>
+    </values>
+</CustomMetadata>
