@@ -15,13 +15,7 @@
     </filters>
     <filters>
         <field>sked_District_Name__c</field>
-        <operation>contains</operation>
-        <value>Roch</value>
-    </filters>
-    <filters>
-        <field>sked_Asset_Type__c</field>
-        <operation>contains</operation>
-        <value>Equipment</value>
+        <operation>notEqual</operation>
     </filters>
     <label>All</label>
 </ListView>

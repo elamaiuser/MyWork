@@ -15,6 +15,7 @@ public class skedJobHandler extends skedTriggerHub {
         }
         autoCorrectDuration(this.context.newRecords);
         populateScheduler(this.context.newRecords);
+        updateVARLastModifiedBy(this.context.newRecords,null);
     }
     
     public override void onAfterInsert() {
@@ -28,6 +29,7 @@ public class skedJobHandler extends skedTriggerHub {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
         autoCorrectDuration(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
+        updateVARLastModifiedBy(this.context.newRecords,(Map<Id, sked__Job__c>)this.context.oldMap);
     }
     
     public override void onAfterUpdate() {
@@ -148,14 +150,16 @@ public class skedJobHandler extends skedTriggerHub {
             }
         }
         if (!cancelledJobIds.isEmpty()) {
-            List<sked__Job_Allocation__c> allocationsToDelete = [SELECT Id, sked__Status__c
+            List<sked__Job_Allocation__c> allocationsToDelete = [SELECT Id, sked__Status__c, sked_Time_Cancelled__c
                                                                  FROM sked__Job_Allocation__c
                                                                  WHERE sked__Job__c IN :cancelledJobIds
                                                                  AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                                                  AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DECLINED];
             if (!allocationsToDelete.isEmpty()) {
+                DateTime timeCancelled = system.now();
                 for (sked__Job_Allocation__c skedAllocation : allocationsToDelete) {
                     skedAllocation.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
+                    skedAllocation.sked_Time_Cancelled__c = timeCancelled;
                 }
                 update allocationsToDelete;
             }
@@ -358,10 +362,28 @@ public class skedJobHandler extends skedTriggerHub {
             }
             
             for (sked__Job__c newRecord : newRecords) {
-                if (!string.isBlank(newRecord.sked_Resource_Role__c) || !string.isBlank(newRecord.sked_Asset_Type__c)) {
-                    sked__Tag__c skedTag;
-                    skedTag = mapRole.containsKey(newRecord.sked_Resource_Role__c) ? 
-                        mapRole.get(newRecord.sked_Resource_Role__c) : mapRole.get(newRecord.sked_Asset_Type__c);
+                if (!string.isBlank(newRecord.sked_Resource_Role__c)) {
+                    List<sked__Tag__c> skedTags = new List<sked__Tag__c>();
+                    if(mapRole.containsKey(newRecord.sked_Resource_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Resource_Role__c));
+                    }
+                    if(mapRole.containsKey(newRecord.sked_Dual_Role__c)) {
+                        skedTags.add(mapRole.get(newRecord.sked_Dual_Role__c));
+                    }
+                    
+                    if (!skedTags.isEmpty()) {
+                        for(sked__Tag__c skedTag : skedTags) {
+                            sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
+                                sked__Job__c = newRecord.Id,
+                                sked__Tag__c = skedTag.Id,
+                                sked_SystemCreated__c = TRUE
+                            );
+                            skedJobTags.add(skedJobTag);
+                        }
+                    }
+                }
+                if (!string.isBlank(newRecord.sked_Asset_Type__c)) {
+                    sked__Tag__c skedTag = mapRole.get(newRecord.sked_Asset_Type__c);
                     if (skedTag != NULL) {
                         sked__Job_Tag__c skedJobTag = new sked__Job_Tag__c(
                         	sked__Job__c = newRecord.Id,
@@ -567,12 +589,8 @@ public class skedJobHandler extends skedTriggerHub {
     }
 
     private void sendNotification(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
-        List<string> logisticsFields = new List<string>();
-        logisticsFields.add('sked__Start__c');
-        logisticsFields.add('sked__Finish__c');
-        logisticsFields.add('sked__Address__c');
-        Set<Id> jobIdsLogisticChange = new Set<Id>();
-        Map<Id, sked__Job__c> mapImpactedJobs = new Map<Id, sked__Job__c>();
+        List<sked__Job__c> impactedJobs = new List<sked__Job__c>();
+        Map<Id, sked__Job__c> oldImpactedJobMap = new Map<Id, sked__Job__c>();
 
         Set<Id> newRecordIds = new Set<Id>();
         for (sked__Job__c job : newRecords) {
@@ -592,19 +610,32 @@ public class skedJobHandler extends skedTriggerHub {
 			sked__Job__c oldData = oldMap.get(newRecord.Id);
             sked__Job__c skedJob = mapJobs.get(newRecord.Id);
             if (skedJob.sked__Job_Allocations__r != NULL && !skedJob.sked__Job_Allocations__r.isEmpty()) {
-                for (string logisticsField : logisticsFields) {
-                    if (newRecord.get(logisticsField) != oldData.get(logisticsField)) {
-                        jobIdsLogisticChange.add(newRecord.Id);
-                        mapImpactedJobs.put(newRecord.Id, newRecord);
-                    }
+                if (newRecord.sked__Address__c != oldData.sked__Address__c) {
+                    impactedJobs.add(newRecord);
+                    oldImpactedJobMap.put(newRecord.Id, oldData);
                 }
             }
         }
-        if (!jobIdsLogisticChange.isEmpty()) {
-            if (!Test.isRunningTest() && !System.isBatch()) {
-                Database.executeBatch(new skedScheduleChangeNotificationBatch(jobIdsLogisticChange, mapImpactedJobs, oldMap));
+        if (!impactedJobs.isEmpty()) {
+            new skedCustomNotificationService(
+                new List<string> {
+                    'sked_Job_Info_Changed_OneOff',
+                    'sked_Job_Info_Changed_Email',
+                    'sked_Job_Info_Changed_SFPush'
+                }
+            ).generateNotifications(impactedJobs, oldImpactedJobMap);
+        }
+    }
+    private void updateVARLastModifiedBy(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
+        for (sked__Job__c newRecord : newRecords) {
+            if((newRecord.Id == null || oldMap == null || !oldMap.containsKey(newRecord.Id)) 
+                        && String.isNotBlank(newRecord.sked_Volunteer_Adjustment_Reason__c)) {
+                            newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
+            }else if(newRecord.Id != null && oldMap != null && oldMap.containsKey(newRecord.Id) 
+                    && oldMap.get(newRecord.Id).sked_Volunteer_Adjustment_Reason__c 
+                    != newRecord.sked_Volunteer_Adjustment_Reason__c) {
+                        newRecord.sked_VAR_Last_Modified_By__c = UserInfo.getUserId();
             }
         }
     }
-
 }

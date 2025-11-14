@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to ask BPLs to book during a critical holiday.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Booking Critical Holiday</name>
+    <style>formalLetter</style>
+    <subject>Critical Holiday – Your Help Needed!</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+I so appreciate your support with hosting drives already. On behalf of patients and their loved ones, thank you! We value your commitment as a Blood Program Leader to host drives when they are needed most.
+
+While blood is needed every day to save lives, we must recruit more heavily during certain times of the year to combat fewer donations when people are busy. Vacation travel, back-to-school activities, holiday get-togethers and more plans prevent donors from making time to give.
+
+Patients are still counting on us.
+
+Schedule your upcoming blood drives now!
+
+Plan a blood drive around a critical holiday theme to encourage participation.
+To help get donors in the door, we have great incentives to encourage them to show up for those in need. Spread the word!
+
+[Add if May]
+
+Memorial Day
+
+We honor all those for their service as well as the actions of everyday heroes – like blood donors. Your generosity saves lives! Please host a blood drive in the spirit of service to help those in need. Promote our [item] gift to incentivize donors to give during this critical time.
+
+
+[Add if June/July]
+
+Independence Day
+
+Celebrate Independence Day by encouraging donors to make a life-changing donation for patients across the country. Please host a blood drive to ensure there’s enough blood available throughout the busy summer months. Promote our [item] gift to incentivize donors to give during this critical time.
+
+
+[Add if August/September]
+
+Labor Day
+
+As summer wraps up and kids head back to school, we know schedules shift and blood donors are busy. The Red Cross is reminding donors that blood for patients can only come from volunteer donors. Please make time to host a drive to ensure blood is available for patients this fall. Promote our farewell summer gift, [item], to incentivize donors to give during this critical time.
+
+
+[Add if October/November]
+
+Thanksgiving
+
+While we settle back into fall routines, donors are asked to book a time to give blood or platelets before busy fall schedules and holiday celebrations ramp up. Give thanks and give back! Please host a blood drive in the spirit of giving back and helping those in need have hope this season. Promote our gift of thanks, [item], to incentivize donors to give during this critical time.
+
+
+[Add if November/December]
+
+Winter holiday season
+
+Give something that means something. Patients are counting on the generosity of volunteer blood donors to make giving blood a favorite holiday tradition. This winter, join in the holiday spirit by hosting a blood drive. Promote our [item] gift to incentivize donors to give during this critical time.
+
+
+Let’s get your critical blood drive planned and get donors excited to make a difference when it’s most needed.
+
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

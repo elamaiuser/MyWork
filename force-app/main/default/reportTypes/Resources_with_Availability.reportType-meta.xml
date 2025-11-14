@@ -165,6 +165,11 @@
             <field>sked_Anticipated_Leave_Return_Date__c</field>
             <table>sked__Resource__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_REAL_ID_Compliant_indicator__c</field>
+            <table>sked__Resource__c</table>
+        </columns>
         <masterLabel>Resources</masterLabel>
     </sections>
     <sections>
@@ -276,6 +281,16 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_DateTime_Call_Out_Received__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dispositioned_By_User__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Disposition_Date__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>

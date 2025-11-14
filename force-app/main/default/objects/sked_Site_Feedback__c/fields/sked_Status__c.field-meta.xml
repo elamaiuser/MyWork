@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Status__c</fullName>
-    <externalId>false</externalId>
     <label>Status</label>
     <required>false</required>
     <trackHistory>true</trackHistory>
@@ -49,7 +48,6 @@
             <value>
                 <fullName>Expired</fullName>
                 <default>false</default>
-                <isActive>false</isActive>
                 <label>Expired</label>
             </value>
             <value>

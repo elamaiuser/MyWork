@@ -206,9 +206,18 @@ public class skedRecurringFactory {
             Set<Date> globalHolidays = mapHolidays.get(skedConstants.HOLIDAY_GLOBAL);
             allHolidays.addAll(globalHolidays);
         }
+
+        List<string> regionIdsToCheck = new List<String>();
         if (!string.isBlank(configuration.regionId)) {
-            if (mapHolidays.containsKey(configuration.regionId)) {
-                Set<Date> globalHolidays = mapHolidays.get(configuration.regionId);
+            regionIdsToCheck.add(configuration.regionId);
+        }
+        if(configuration.regionIds != NULL && !configuration.regionIds.isEmpty()) {
+            regionIdsToCheck.addAll(configuration.regionIds);
+        }
+
+        for(String regionId : regionIdsToCheck) {
+            if(mapHolidays.containsKey(regionId)) {
+                Set<Date> globalHolidays = mapHolidays.get(regionId);
                 allHolidays.addAll(globalHolidays);
             }
         }
@@ -292,6 +301,7 @@ public class skedRecurringFactory {
         public boolean isDeleting;
 
         public string regionId;
+        public List<string> regionIds;
     }
 
 }

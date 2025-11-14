@@ -7,8 +7,12 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:type="xsd:string">Opportunity</value>
+    </values>
+    <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">Includes Direct Recruitment, Promotion, Social Media, Communications, Education, and Presentations.</value>
+        <value xsi:type="xsd:string">Includes Direct Recruitment, Promotion, Social Media, Communications, Education, and Presentations</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -20,7 +24,7 @@
     </values>
     <values>
         <field>Input_Type__c</field>
-        <value xsi:type="xsd:string">Text</value>
+        <value xsi:type="xsd:string">TextArea</value>
     </values>
     <values>
         <field>Is_Dynamic__c</field>
@@ -52,10 +56,10 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Develop a strong recruitment plan with specific target goals</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
-        <value xsi:type="xsd:string">Strong_Recruitment_Plan_Text</value>
+        <value xsi:type="xsd:string">Recruitment_Strategy_with_Tactics__c</value>
     </values>
 </CustomMetadata>

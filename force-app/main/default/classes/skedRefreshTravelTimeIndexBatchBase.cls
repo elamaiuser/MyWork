@@ -23,6 +23,7 @@ public virtual class skedRefreshTravelTimeIndexBatchBase implements System.Sched
 
     public void execute(Database.BatchableContext BC, List<SObject> scope) {
         List<sked_Travel_Time_Index_Item__c> ttiis = (List<sked_Travel_Time_Index_Item__c>) scope;
+        skedTravelTimeIndexItemUtils.updateTravelTimeBreakdownJSONBackup(ttiis);
         this.map_key_reversedDirectionTravelTimeIndexItem = fetchReversedDirectionTravelTimeIndexItem(ttiis);
         
         Map<String, List<sked_Travel_Time_Index_Item__c>> mapTtiiByOrderingKey = new Map<String, List<sked_Travel_Time_Index_Item__c>>();
@@ -107,10 +108,13 @@ public virtual class skedRefreshTravelTimeIndexBatchBase implements System.Sched
     }
 
     public void finish(Database.BatchableContext BC) {
+        postProcess();
         if (!Test.isRunningTest()) {
             skedAsyncJobHandler.processTravelTimeRefreshRequest();
         }
     }
+
+    protected virtual void postProcess() {}
 
     protected virtual sked_Travel_Time_Index_Refresh_Request__c createNewTravelTimeIndexRefreshRequest(Set<Id> indexItemIds,
              Set<String> origins, Set<String> destinations, String requestType) {

@@ -1,4 +1,5 @@
 import { LightningElement, track, api, wire } from 'lwc';
+import { cloneDeep, max } from 'c/lodash';
 import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub';
@@ -6,9 +7,11 @@ import * as slwcUtils from 'c/slwcUtils';
 import { debugLogService, tagService, tagQueryModel } from 'c/dataService';
 import { DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
-import { MANUALLY_CREATED_FROM, RESOURCE_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, MANUALLY_CREATED_FROM, RESOURCE_TYPE, RESOURCE_ROLE_GROUP, VOLUNTEER_COUNTS_ADJUSTMENT_REASON, VOLUNTEER_TYPE } from 'c/slwcConstants';
 
 export default class SlwcDriveShiftJobModal extends LightningElement {
+    helper = new DriveHelper();
+
     /* api */
     @api job;
     @api enableAddress = false;
@@ -26,6 +29,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
     @track isVehicleResource;
     @track isEquipmentResource;
     @track errorMessages = [];
+    @track isVolunteerQuantityChanged = false;
+    @track isOtherVolunteerAdjustmentReasonNeeded = false;
 
     @wire(CurrentPageReference) pageRef;
     masterData = {};
@@ -62,7 +67,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     get quantityDisabled() {
         if(this.isVehicleResource) {
-            return this.drive.doNotUseVehicle;
+            return true;
         }
 
         return this.isVolunteerResource || this.showAptQuantityFields;
@@ -74,6 +79,43 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
 
     get isEditMode() {
         return this.job && this.job.id;
+    }
+
+    get isFixedSiteDrive() {
+        return this.drive && this.drive.typeOfDrive === DRIVE_TYPE.FIXED_SITE;
+    }
+
+    get isOtherVolunteerAdjustmentReasonSelected() {
+        return this.job && this.job.volunteerAdjustmentReason === VOLUNTEER_COUNTS_ADJUSTMENT_REASON.OTHER;
+    }
+    get isDualRoleEditMode() {
+        return this.job && this.job.id && this.job.dualRole;
+    }
+
+    get isFromDriveStaffingModal() {
+        return this.type === 'allocationModal';
+    }
+
+    get secondaryRoleOptions() {
+        const roleMap = {
+            '2RBC': ['Driver', 'Driver Support', 'OJI', 'None'],
+            'Charge': ['Driver', 'Driver Support', 'None'],
+            'Trainee': ['Driver Support', 'None'],
+            'Driver': ['Competent Driver', 'OJI', 'None'],
+            'Driver Support': ['OJI', 'None'],
+            'VP/HH': ['OJI', 'None'],
+            'Apheresis': ['OJI', 'None'],
+            'Plasma': ['OJI', 'None']
+          }
+  
+        return (roleMap[this.job.resourceRole] || [])
+            .filter(role => role === 'None' || this.driveShift.jobs?.find(_job => _job.resourceRole === role) || this.driveShift.jobs?.find(_job => _job.key === this.job.key && _job.resourceRole === this.job.resourceRole && _job.dualRole === role))
+            .map(role => {
+                return {
+                    label: role,
+                    value: role
+                }
+        });
     }
     
     connectedCallback() {
@@ -118,15 +160,20 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         this.showModal = false;
     }
 
+    getRoleTimeData(role) {
+        const resourceRoleGroup = this.helper.getResourceRoleGroup(role, this.masterData);
+        return  this.resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];  
+    }
+
     handleResourceRoleChange(event) {
         const name = event.target.name;
-        const helper = new DriveHelper();
         const resourceRole = slwcUtils.getValueFromEvent(event);
-        const resourceRoleGroup = helper.getResourceRoleGroup(resourceRole, this.masterData);
-        const roleTimeData = this.resourceRoleGroupRoleTimeDataMap[resourceRoleGroup];
+        const roleTimeData = this.getRoleTimeData(resourceRole);
+
         let newJob = {
             [name]: resourceRole
-        }
+        };
+
         if(roleTimeData) {
             newJob.leadTime = roleTimeData.leadTime || 0;
             newJob.travelTime = roleTimeData.travelTime || 0;
@@ -144,16 +191,65 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         };
     }
 
+    handleDualRoleChange(event) {
+        const name = event.target.name;
+        const dualRole = slwcUtils.getValueFromEvent(event);
+    
+        const compareAndGetValue = (fieldName, resourceRoleTimeData, dualRoleTimeData) => {
+            if(!fieldName) return 0;
+            if(!dualRoleTimeData) return resourceRoleTimeData[fieldName] || 0;
+            
+            const value1 = resourceRoleTimeData[fieldName] || 0;
+            const value2 = dualRoleTimeData[fieldName] || 0;
+            return max([value1, value2]);
+        }
+
+        let roleTimeData = this.getRoleTimeData(this.job.resourceRole);
+        let newJob = {
+            [name]: dualRole
+        };
+        let dualRoleTimeData;
+        if(newJob.dualRole !== 'None') {
+            const resourceRoleGroup = this.helper.getResourceRoleGroup(this.job.resourceRole, this.masterData);
+            if(resourceRoleGroup !== RESOURCE_ROLE_GROUP.DRIVING_ROLES) {
+                const dualRoleGroup = this.helper.getResourceRoleGroup(dualRole, this.masterData);
+                dualRoleTimeData = this.getRoleTimeData(dualRole);
+                if(dualRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES) roleTimeData = cloneDeep(dualRoleTimeData);
+            }
+        }
+        newJob.leadTime = compareAndGetValue('leadTime', roleTimeData, dualRoleTimeData);
+        newJob.travelTime = compareAndGetValue('travelTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.siteLogisticsTo = compareAndGetValue('siteLogisticsTo', roleTimeData, dualRoleTimeData) || 0;
+        newJob.setupTime = compareAndGetValue('setupTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.breakdownTime = compareAndGetValue('breakdownTime', roleTimeData, dualRoleTimeData) || 0;
+        newJob.travelTime2 = compareAndGetValue('travelTime2', roleTimeData, dualRoleTimeData) || 0;
+        newJob.siteLogisticsBack = compareAndGetValue('siteLogisticsBack', roleTimeData, dualRoleTimeData) || 0;
+        newJob.wrapUpTime = compareAndGetValue('wrapUpTime', roleTimeData, dualRoleTimeData) || 0;
+         
+
+        newJob.jobTags = this.job.jobTags.filter(jobTag => jobTag.tag.name !== this.job.dualRole);
+
+        this.job = {
+            ...this.job,
+            ...newJob
+        };
+    }
+
     handleOnChange(event) {
         const name = event.target.name
         let jobClone = {...this.job}
         jobClone[name] = slwcUtils.getValueFromEvent(event);
         if (name === 'redcrossVolunteerQuantity' || name === 'sponsorVolunteerQuantity') {
             jobClone.quantity = (jobClone.redcrossVolunteerQuantity || 0) + (jobClone.sponsorVolunteerQuantity || 0);
+            this.isVolunteerQuantityChanged = true;
         }
 
         if (name === 'vphhQuantity' || name === 'aptQuantity') {
             jobClone.quantity = (jobClone.vphhQuantity || 0) + (jobClone.aptQuantity || 0);
+        }
+
+        if(name === 'volunteerAdjustmentReason' && jobClone[name] === VOLUNTEER_COUNTS_ADJUSTMENT_REASON.OTHER) {
+            this.isOtherVolunteerAdjustmentReasonNeeded = true;
         }
 
         this.job = jobClone;
@@ -183,13 +279,12 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         let fetch = new DriveFetch({
             driveType: this.drive.typeOfDrive
         })
-        let helper = new DriveHelper();
 
         return Promise.all([
             fetch.retrieveDefaultTags(this.drive),
         ])
         .then(([driveTags]) => {
-            const jobTagsMap = helper.calculateJobTagsMap({
+            const jobTagsMap = this.helper.calculateJobTagsMap({
                 driveTags
             });
             const personTags = jobTagsMap[RESOURCE_TYPE.PERSON] || [];
@@ -206,7 +301,6 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
         let fetch = new DriveFetch({
             driveType: this.drive.typeOfDrive
         })
-        let helper = new DriveHelper();
 
         return Promise.all([
             fetch.retrieveDriveSite(this.drive),
@@ -231,7 +325,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 return item.startDate <= this.drive.driveDate && this.drive.driveDate <= item.endDate;
             });
 
-            let { roleTimeDetailMap, roleTimeVarianceMap, roleGroupTimeDetailMap, roleGroupTimeVarianceMap } = helper.buildRoleTimeDetailMap(this.drive, {
+            let { roleTimeDetailMap, roleTimeVarianceMap, roleGroupTimeDetailMap, roleGroupTimeVarianceMap } = this.helper.buildRoleTimeDetailMap(this.drive, {
                 roleTimeData: roleTimeData,
                 resourceRoleGroups: resourceRoleGroups
             });
@@ -246,14 +340,13 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 roleGroupTimeVarianceMap
             };
 
-            let driveResourceRoleGroupRoleTimeDataMap = helper.calculateDriveRoleTimeData({
+            let driveResourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveRoleTimeData({
                 ...this.drive,
                 siteCollectionOperation,
                 collectionOperation: siteCollectionOperation.collectionOperation,
                 driveSite
             }, masterData)
-            
-            let driveShiftResourceRoleGroupRoleTimeDataMap = helper.calculateDriveShiftRoleTimeData(
+            let driveShiftResourceRoleGroupRoleTimeDataMap = this.helper.calculateDriveShiftRoleTimeData(
                 masterData, {
                 ...this.drive,
                 driveShiftsMetadata: {
@@ -265,7 +358,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                     }),
                     resourceRoleGroupRoleTimeDataMap: driveResourceRoleGroupRoleTimeDataMap
                 },
-                collectionOperation: this.drive.collectionOperation
+                collectionOperation: siteCollectionOperation.collectionOperation
             }, {
                 ...this.driveShift,
                 key: this.driveShift.id || this.driveShift.key
@@ -287,6 +380,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             this.type = detail.type;
             this.driveShift = detail.driveShift;
             this.drive = detail.drive;  
+            this.isVolunteerQuantityChanged = detail.isVolunteerQuantityChanged;  
+            this.errorMessages = [];
             
             this.isPersonResource = this.resourceType == 'Person';
             this.isVolunteerResource = this.resourceType == 'Volunteer';
@@ -305,7 +400,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                         longitude: this.driveSite ? this.driveSite.geoLocationLongitude : null,
                         jobTags: [],
                         isManuallyCreated: true,
-                        manuallyCreatedFrom: this.type === 'allocationModal' ? MANUALLY_CREATED_FROM.STAFFING_MODAL : MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+                        manuallyCreatedFrom: this.isFromDriveStaffingModal ? MANUALLY_CREATED_FROM.STAFFING_MODAL : MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
                         jobAllocationTimeSource: false
                     };
     
@@ -362,7 +457,37 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 message: 'Quantity must be greater than 0.'
             })
         }
-      
+
+        if(this.isPersonResource && this.action === 'create' && !this.isFromDriveStaffingModal) {
+            const existed = this.driveShift.jobs?.find(job => this.helper.isJobsSameRoles(job, this.job));
+            if(existed) {
+                this.errorMessages.push({
+                    message: `${this.job.resourceRole} role already exists.`
+                })
+                return false;
+            }
+        }
+
+         if(this.isVolunteerResource && this.action === 'create') {
+             const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
+             if(existed) {
+                this.errorMessages.push({
+                    message: `${this.job.volunteerRole} role already exists.`
+                })
+                return false;
+            }
+        }
+        
+          if(this.isVolunteerResource && this.action === 'create') {
+             const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
+             if(existed) {
+                this.errorMessages.push({
+                    message: `${this.job.volunteerRole} role already exists.`
+                })
+                return false;
+            }
+        }
+
         return allValid && !this.errorMessages.length;
     }
 
@@ -374,6 +499,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
             if(existed) {
                 this.job = {
                     ...this.job,
+                    redcrossVolunteerQuantity: this.job.redcrossVolunteerQuantity || 0,
+                    sponsorVolunteerQuantity: this.job.sponsorVolunteerQuantity || 0,
                     key: existed.key,
                     id: existed.id
                 }
@@ -381,12 +508,36 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Success',
-                        message: 'Volunteer complement quantity has been updated!',
+                        message: `Volunteer complement ${this.isVolunteerQuantityChanged ? 'quantity ': ''} has been updated!`,
                         variant: 'success'
                     })
                 );
+
+                const isRedCrossQtyUpdateBannerNeeded = 
+                    this.isVolunteerResource && 
+                    this.job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR &&
+                    this.job.redcrossVolunteerQuantity !== existed?.redcrossVolunteerQuantity && 
+                    this.drive?.driveShifts?.length > 1;
+                if(isRedCrossQtyUpdateBannerNeeded) {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Alert!',
+                            message: `Red Cross Volunteer Quantity has been updated on ${this.driveShift.name}. Red Cross Volunteer Quantity will be updated on all shifts.`,
+                            variant: 'warning'
+                        })
+                    );
+                }
             }
         }
+        
+        const originalJob = this.driveShift.jobs?.find(_job => _job.resourceRole === this.job.resourceRole);
+        const isDualRoleModified = this.isDualRoleEditMode && originalJob?.dualRole !== this.job.dualRole;
+        const reducedDualRoleQuantity = this.isDualRoleEditMode ? Math.max(originalJob?.quantity - this.job.quantity, 0) : 0;
+        this.job = {
+            ...this.job,
+            isDualRoleModified: isDualRoleModified,
+            reducedDualRoleQuantity: reducedDualRoleQuantity
+        };
 
         let eventValues = {action: this.action, shiftKey: this.driveShift.key, job: this.job};
         if(this.type != "allocationModal"){

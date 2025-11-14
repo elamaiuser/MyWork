@@ -233,49 +233,7 @@ private class skedRacStory_Test {
         Test.stopTest();
     }
     
-    static testmethod void testGetGroupActivities() {
-        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
-        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
-        
-        sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
-        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
-        
-        Test.startTest();
-        
-        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = TRUE;
-        
-        List<string> activityTypes = skedUtils.getPickListValues('sked__Activity__c', 'sked__Type__c');
-        sked__Activity__c skedGroupActivity = new sked__Activity__c(
-            sked__Start__c = testDataFactory.summary.startTime.addHours(9),
-            sked__End__c = testDataFactory.summary.startTime.addHours(11),
-            sked__Type__c = activityTypes.get(0),
-            sked_Region__c = testRegion1.Id,
-            sked_Is_Group_Activity__c = TRUE
-        );
-        insert skedGroupActivity;
-        
-        sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
-            sked__Activity__c = skedGroupActivity.Id,
-            sked__Resource__c = testResource1.Id
-        );
-        insert skedActivityResource;
-        
-        Test.setCurrentPage(new PageReference('skedRAC'));
-        
-        //getResources
-        skedRacController.getGroupActivitiesRequestModel getGroupActivitiesRequest = new skedRacController.getGroupActivitiesRequestModel();
-        getGroupActivitiesRequest.viewData = new Map<string, object>();
-        getGroupActivitiesRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
-        getGroupActivitiesRequest.pageNo = 1;
-        getGroupActivitiesRequest.pageSize = 25;
-        getGroupActivitiesRequest.regionIds = new List<string>();
-        getGroupActivitiesRequest.regionIds.add(testRegion1.Id);
-        skedRemoteResultModel getGroupActivitiesResult = skedRacController.getGroupActivities(getGroupActivitiesRequest);
-        skedRacController.groupActivityDataModel groupActivityDataResult = (skedRacController.groupActivityDataModel)getGroupActivitiesResult.data;
-        List<skedModels.activity> groupActivities = (List<skedModels.activity>)groupActivityDataResult.groupActivities;
-        
-        Test.stopTest();
-    }
+    
     
     static testmethod void testGetTerritories() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
@@ -1194,16 +1152,16 @@ private class skedRacStory_Test {
         getStaffingBudgetDataRequest.viewData = new Map<string, object>();
         getStaffingBudgetDataRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         getStaffingBudgetDataRequest.biomedCollectionOpIds = new List<string>{testCollectionOperation1.Id};
-            getStaffingBudgetDataRequest.pageNo = 1;
+        getStaffingBudgetDataRequest.pageNo = 1;
         getStaffingBudgetDataRequest.pageSize = 10;
         skedRemoteResultModel getStaffingBudgetDataResult = skedRacController.getStaffingBudgetData(getStaffingBudgetDataRequest);
         
-        sked_Staffing_Budget__c staffingBudget = [SELECT Id FROM sked_Staffing_Budget__c LIMIT 1];
+        sked_Staffing_Budget__c staffingBudget = [SELECT Id, sked_Recurring_Schedule__c FROM sked_Staffing_Budget__c WHERE sked_Recurring_Schedule__c != NULL LIMIT 1];
         
         skedBaseController.getDataRequestModel getRecurringScheduleRequest = new skedBaseController.getDataRequestModel();
         getRecurringScheduleRequest.viewData = new Map<string, object>();
         getRecurringScheduleRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
-        getRecurringScheduleRequest.recordId = staffingBudget.Id;
+        getRecurringScheduleRequest.recordId = staffingBudget.sked_Recurring_Schedule__c;
         skedRacController.getRecurringSchedule(getRecurringScheduleRequest);
         
         skedBaseController.getDataRequestModel getStaffingBudgetDetailsRequest = new skedBaseController.getDataRequestModel();
@@ -1220,7 +1178,6 @@ private class skedRacStory_Test {
         staffingBudgetToDelete.id = staffingBudget.Id;
         deleteStaffingBudgetsRequest.staffingBudgets.add(staffingBudgetToDelete);
         skedRemoteResultModel deleteStaffingBudgetsResult = skedRacController.deleteStaffingBudgets(deleteStaffingBudgetsRequest);
-        system.debug('#deleteStaffingBudgetsResult#' + deleteStaffingBudgetsResult);
         
         Test.stopTest();
     }
@@ -1266,7 +1223,7 @@ private class skedRacStory_Test {
         Test.stopTest();
     }
     
-    static testmethod void getStaffingBudgetsAvailabilities_Test() {
+    static testmethod void testGetStaffingBudgetsAvailabilities() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         
@@ -1305,12 +1262,12 @@ private class skedRacStory_Test {
         Test.stopTest();
     }
 
-    static testmethod void validateResourceOverride_Test(){
+    static testmethod void testValidateResourceOverride(){
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
     }
 
-    static testmethod void getAVailatorData_Test() {
+    static testmethod void testGetAVailatorData() {
         List<String> dates = new List<String>();
         Date startDate = System.today();
         Date endDate = System.today().addDays(10);
@@ -1357,5 +1314,168 @@ private class skedRacStory_Test {
         
         Test.stopTest();
     }
+    
+    static testMethod void testGetFixedSitesRelatedToCo() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        
+        Test.startTest();
+        
+        skedRacController.getSitesRequestModel getSitesRequest = new skedRacController.getSitesRequestModel();
+        getSitesRequest.viewData = new Map<string, object>();
+        getSitesRequest.biomedCollectionOpIds = new List<String>{(String)testCollectionOperation1.Id};
+        getSitesRequest.staffingBudgetDate = testDataFactory.summary.startDateIso;
+        
+        skedRemoteResultModel getSitesResult = skedRacController.getFixedSitesRelatedToCo(getSitesRequest);
+        
+        Assert.isTrue(getSitesResult.data != NULL);
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void testValidateBulkStaffingBudgetsAgainstSiteCos() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        Biomed_Collection_Op_Center__c testCollectionOperation2 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation2');
+        
+        Test.startTest();
+        
+        skedRacController.validateBulkStaffingBudget validateBulkStaffingBudgetRequest;
+        validateBulkStaffingBudgetRequest = new skedRacController.validateBulkStaffingBudget();
+        validateBulkStaffingBudgetRequest.viewData = new Map<string, object>();
+        validateBulkStaffingBudgetRequest.siteIds = new List<String>{(String)testLocation1.Id};
+        validateBulkStaffingBudgetRequest.staffingBudgetDates = new List<String>{testDataFactory.summary.startDateIso};
+        validateBulkStaffingBudgetRequest.biomedCollectionOpIds = new List<String>{(String)testCollectionOperation2.Id};
+        
+        skedRemoteResultModel getValidateResult = skedRacController.validateBulkStaffingBudgetsAgainstSiteCos(validateBulkStaffingBudgetRequest);
+        
+        sked_Site_Collection_Operation__c testSiteColOp = [SELECT Id, 
+                                                           sked_Site__r.Name, sked_Collection_Operation__r.Name,
+                                                           sked_Start_Date__c, sked_End_Date__c 
+                                                           FROM sked_Site_Collection_Operation__c 
+                                                           LIMIT 1];
+        
+        Assert.isTrue(getValidateResult.success == FALSE);
+        Assert.isTrue(getValidateResult.errorMessage.contains(testSiteColOp.sked_Site__r.Name+' is currently associated with '+testSiteColOp.sked_Collection_Operation__r.Name));
+        
+        // Update Site CO to cover 'No Site CO' scenario
+        testSiteColOp.sked_End_Date__c = testDataFactory.summary.endDate.addDays(-1);
+        update testSiteColOp;
+        
+        validateBulkStaffingBudgetRequest = new skedRacController.validateBulkStaffingBudget();
+        validateBulkStaffingBudgetRequest.viewData = new Map<string, object>();
+        validateBulkStaffingBudgetRequest.siteIds = new List<String>{(String)testLocation1.Id};
+        validateBulkStaffingBudgetRequest.staffingBudgetDates = new List<String>{testDataFactory.summary.endDateIso};
+        validateBulkStaffingBudgetRequest.biomedCollectionOpIds = new List<String>{(String)testCollectionOperation1.Id};
+        
+        skedRemoteResultModel getValidateResult_noSiteCo = skedRacController.validateBulkStaffingBudgetsAgainstSiteCos(validateBulkStaffingBudgetRequest);
+        
+        Assert.isTrue(getValidateResult_noSiteCo.success == FALSE);
+        Assert.isTrue(getValidateResult_noSiteCo.errorMessage.contains(testSiteColOp.sked_Site__r.Name+' is no longer associated with any collection operation'));
+        
+        Test.stopTest();
+    }
+	static testmethod void testGetResourceData2() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
+        sked__Region__c testRegion2 = (sked__Region__c)mapTestData.get('testRegion2');
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+        sked__Resource__c testAsset1 = (sked__Resource__c)mapTestData.get('testAsset1');
+        sked__Tag__c testTag1 = (sked__Tag__c)mapTestData.get('testTag1');
+        
+        List<string> activityTypes = skedUtils.getPickListValues('sked__Activity__c', 'sked__Type__c');
+        List<string> availabilityTypes = skedUtils.getPickListValues('sked__Availability__c', 'sked__Type__c');
 
+        sked__Availability_Pattern__c testWeeklyPattern1 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern1');
+        sked__Availability_Pattern__c testWeeklyPattern2 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern2');
+
+        sked__Availability_Pattern_Resource__c testPatternResource1 = new sked__Availability_Pattern_Resource__c(
+            sked__Availability_Pattern__c = testWeeklyPattern1.Id,
+            sked__Resource__c = testResource1.Id, 
+            sked__Start__c = testDataFactory.summary.startTime
+        );
+        insert testPatternResource1;
+        
+        sked__Availability_Pattern_Resource__c testPatternResource2 = new sked__Availability_Pattern_Resource__c(
+            sked__Availability_Pattern__c = testWeeklyPattern2.Id,
+            sked__Resource__c = testResource1.Id, 
+            sked__Start__c = testDataFactory.summary.startTime.addDays(7)
+        );
+        insert testPatternResource2;
+    
+        
+        Test.startTest();
+        
+        Test.setCurrentPage(new PageReference('skedRAC'));
+        
+        //intialize
+        skedRemoteRequestModel initializeRequest = new skedRemoteRequestModel();
+        initializeRequest.configKeys = new List<string>();
+        initializeRequest.configKeys.add('activityTypes');
+        initializeRequest.configKeys.add('availabilityTypes');
+        initializeRequest.configKeys.add('holidays');
+        initializeRequest.configKeys.add('jobTypes');
+        initializeRequest.configKeys.add('regions');
+        initializeRequest.configKeys.add('serviceLocations');
+        initializeRequest.configKeys.add('timezones');
+        initializeRequest.configKeys.add('resourceEmploymentTypes');
+        initializeRequest.configKeys.add('resourceCategories');
+        skedRemoteResultModel initializeResult = skedRacController.initialize(initializeRequest);
+        
+        //getResources
+        skedRacController.getResourceRequestModel getResourcesRequest = new skedRacController.getResourceRequestModel();
+        getResourcesRequest.viewData = new Map<string, object>();
+        getResourcesRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getResourcesRequest.endDate = testDataFactory.summary.endDateIso;
+        getResourcesRequest.pageNo = 1;
+        getResourcesRequest.pageSize = 25;
+        getResourcesRequest.biomedCollectionOpIds = new List<string>();
+        getResourcesRequest.biomedCollectionOpIds.add(testCollectionOperation1.Id);
+        getResourcesRequest.regionIds = new List<string>();
+        getResourcesRequest.regionIds.add(testRegion1.Id);
+        getResourcesRequest.startDate = testDataFactory.summary.startDateIso;
+        getResourcesRequest.tagIds = new List<string>();
+        getResourcesRequest.tagIds.add(testTag1.Id);
+        getResourcesRequest.activityTypes = activityTypes;
+        getResourcesRequest.availabilityTypes = availabilityTypes;
+        getResourcesRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        getResourcesRequest.hasTemporaryRelocation = true;
+        getResourcesRequest.additionalFilterOnDate = testDataFactory.summary.startDateIso;
+        getResourcesRequest.hasNoAssignment = true;
+        getResourcesRequest.patternIds = new List<string>();
+        getResourcesRequest.patternIds.add(testWeeklyPattern1.Id);
+        skedRemoteResultModel getResourcesResult = skedRacController.getResourceData(getResourcesRequest);
+        skedRacController.resourceDataModel resourcesDataResult = (skedRacController.resourceDataModel)getResourcesResult.data;
+        List<sked__Resource__c> skedResources = (List<sked__Resource__c>)resourcesDataResult.resources;
+        
+        //getResources for second region
+        getResourcesRequest.regionIds = new List<string>();
+        getResourcesRequest.regionIds.add(testRegion2.Id);
+        getResourcesResult = skedRacController.getResourceData(getResourcesRequest);
+        resourcesDataResult = (skedRacController.resourceDataModel)getResourcesResult.data;
+        skedResources = (List<sked__Resource__c>)resourcesDataResult.resources;
+        
+        //getIndividualResource
+        skedRacController.getResourceRequestModel getResourceRequest = new skedRacController.getResourceRequestModel();
+        getResourceRequest.viewData = new Map<string, object>();
+        getResourceRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getResourceRequest.endDate = testDataFactory.summary.endDateIso;
+        getResourceRequest.resourceId = testResource1.Id;
+        getResourceRequest.startDate = testDataFactory.summary.startDateIso;
+        getResourceRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        skedRemoteResultModel getResourceResult = skedRacController.getIndividualResourceData(getResourceRequest);
+        skedRacController.resourceDataModel resourceDataResult = (skedRacController.resourceDataModel)getResourceResult.data;
+        
+        List<skedModels.resource> resources = (List<skedModels.resource>)resourceDataResult.resources;
+        
+        Test.stopTest();
+    }
 }

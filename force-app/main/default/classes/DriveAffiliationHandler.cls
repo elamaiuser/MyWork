@@ -43,8 +43,10 @@ public without sharing class DriveAffiliationHandler{
     //The run() method is the only public method for this class to initiate the Drive Affiliations creation process
     public void run(){
         
-        if(oppList != null)
+        if(oppList != null) {
+        system.debug('inside DriveAffiliationHandler ');
                 createAffiliations();
+        }
         else if(eventList != null)
                 processEvents();
     }
@@ -52,12 +54,14 @@ public without sharing class DriveAffiliationHandler{
     //Listed below are the private methods of this class which continues different oparations for the Drive Affiliations creation process
     @TestVisible
     private void createAffiliations(){
-
+		system.debug('inside DriveAffiliationHandler: createAffiliations');
         getTemplateMap();
-        
+        system.debug('inside DriveAffiliationHandler: getTemplateMap '+templateMap);
         if(createViaEvent){
+            system.debug('inside DriveAffiliationHandler:createViaEvent : true ');
                 createEvents();
         }else{
+            system.debug('inside DriveAffiliationHandler:createViaEvent : false ');
                 getDriveAffiliations();
                 insertAffiliations();
         }
@@ -72,6 +76,7 @@ public without sharing class DriveAffiliationHandler{
 
     @TestVisible
     private void createEvents(){
+        system.debug('inside DriveAffiliationHandler:  createEvents');
         eventList = new List<Clone_Drive_Affiliations_Event__e>();
 
         for(String oppId                    :                   templateMap.keySet()){
@@ -81,7 +86,7 @@ public without sharing class DriveAffiliationHandler{
             );
             eventList.add(event);
         }
-        
+        system.debug('inside DriveAffiliationHandler eventList '+eventList);
         if(!eventList.isEmpty()){
             List<Database.SaveResult> results = EventBus.publish(eventList);
         }
@@ -100,6 +105,7 @@ public without sharing class DriveAffiliationHandler{
 
     @TestVisible
     private List<Drive_Marketing_Programs__c> cloneDriveAffiliation(String oppId){
+        system.debug('inside DriveAffiliationHandler: cloneDriveAffiliation '+oppId+' and driveAffiliationMap '+driveAffiliationMap);
         List<Drive_Marketing_Programs__c> affiliationList = new List<Drive_Marketing_Programs__c>();
         if(driveAffiliationMap.get(templateMap.get(oppId)) != NULL) {
             for(Drive_Marketing_Programs__c affiliation : driveAffiliationMap.get(templateMap.get(oppId)))
@@ -141,11 +147,14 @@ public without sharing class DriveAffiliationHandler{
 
     @TestVisible
     private void insertAffiliations(){
+        system.debug('inside DriveAffiliationHandler : insertAffiliations ');
         List<Drive_Marketing_Programs__c> newDriveAffiliationList = new List<Drive_Marketing_Programs__c>();
 
-        for(String oppId : templateMap.keySet())
+        for(String oppId : templateMap.keySet()) {
+            
                 newDriveAffiliationList.addAll(cloneDriveAffiliation(oppId));
-        
+        }
+        system.debug('inside DriveAffiliationHandler : insertAffiliations '+newDriveAffiliationList);
         if(!newDriveAffiliationList.isEmpty())
                 List<Database.SaveResult> results = Database.insert(newDriveAffiliationList,false);
     }

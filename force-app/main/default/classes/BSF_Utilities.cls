@@ -13,6 +13,9 @@
 * 09/18/2024				 Priti Jana				 Added an utility boolean to forcibly generate exceptions, especially during test class run (HRP-12706)
 * 09/24/2024				 Fitsum Worku			 Fix for HRP-13435
 * 10/18/2024				 Balaji N				 HRP-13489 Methods isWbFixedSiteOpportunity
+* 12/10/2024				 Priti Jana				 Logic for HRP-13190
+* 02/26/2025                 Krapy Tuli              HRP-14286 - logic update
+ *03/05/2025                 Harika  Bolisetti       Logic for  HRP-12481//Taxo Process 
  *********************************************************************************************************************************************************************
 */
 
@@ -558,7 +561,140 @@ public with sharing class BSF_Utilities {
                 'Number_of_2RBC_Assets__c, Number_of_Plasma_Assets__c, Number_of_Platelet_Assets__c,Direct_Donors_To__c, '+
                 'No_Publicity_Needed__c, Publish_to_Call_Center__c, Web_Scheduling_Enabled__c, Send_Emails__c, Send_Mailers__c, '+
                 'Web_Scheduling_End_Date_Offset__c, Web_Scheduling_End_Time_Offset__c, Web_Scheduling_Start_Date_Offset__c, Platelet_Projected_Procedures__c, '+
-                'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c '+ //HRP-12011 
-                'FROM Opportunity';
+                'Plasma_Pheresis_Projected_Procedures__c, Calendar_Build_Parent_Opportunity__c, Type, DriveStatus__c, Slot_Generator__c, Related_Scheduled_Drive__c, '+ //HRP-12011 
+                //'FROM Opportunity';
+                'APT_Quantity__c, APT_Required__c, Booking_Strategy__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity'; //Added APT fields HRP-13190; Added Volunteer fields HRP-13146
     }
+    
+    /* HRP-13190 -> Starts Here
+     * @Description -> This method will calculate the APT Quantity based on action performed and Total procedures value
+    */
+    
+    public static List<Opportunity> getAPTQuantity(List<Opportunity> oppList, String action) {
+        Set<String> includedAccindustryCodes = new Set<String>{BSF_Constants.ACCOUNT_INDUSTRY_CODE_COLLEGE_OR_UNIVERSITY, BSF_Constants.ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL};//HRP-14286
+        Set<Id> accountIds = new Set<Id>();
+        
+        for(Opportunity opp : oppList) {
+            accountIds.add(opp.AccountId);
+        }
+        
+        Map<Id, Account> map_accountId_accountInfo = new Map<Id, Account>([SELECT Id, Industry_Code__c FROM Account WHERE ID IN: accountIds]);
+        
+        for(Opportunity opp : oppList) {
+            Boolean isAptNotNeededRule1 = !String.isBlank(opp.Type_of_Drive__c) && opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE);
+            Boolean isAptNotNeededRule2 = !String.isBlank(opp.Source__c) && opp.Source__c.equalsIgnoreCase(BSF_Constants.BATCH_CALENDAR_BUILD) && action == 'Insert';//HRP-14286
+            Boolean isAptNotNeededRule3 = opp.APT_Required__c == FALSE ? TRUE : FALSE;//HRP-14286
+            if (isAptNotNeededRule1 || isAptNotNeededRule2 || isAptNotNeededRule3) continue;//HRP-14286
+            Decimal aptQuantity = 1;//HRP-14286
+            if(!String.isBlank(opp.Account_Type__c) && opp.Account_Type__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_TYPE_EDUCATION)) {
+                if(map_accountId_accountInfo.get(opp.AccountId) != NULL && !String.isBlank(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {
+                    if(includedAccindustryCodes.contains(map_accountId_accountInfo.get(opp.AccountId).Industry_Code__c)) {//HRP-14286
+                        aptQuantity = Math.floor(opp.Total_Projected_Procedures__c / 40);
+                        aptQuantity = aptQuantity == 0 ? 1 : aptQuantity;//HRP-14286
+                    }
+                }
+            } else {
+                if(opp.Total_Projected_Procedures__c >= 40) {
+                    aptQuantity = 1;
+                }
+            }
+            if(action == 'Insert' && opp.APT_Required__c) { // HRP-14286
+                opp.APT_Quantity__c = aptQuantity;
+            } else {
+                opp.APT_Quantity__c = aptQuantity == 0 && opp.APT_Required__c ? 1 : aptQuantity;
+                opp.APT_Required__c = opp.APT_Required__c || aptQuantity > 0;
+                opp.APT_Change_Reason__c = (opp.Is_Template__c ? 'Template' : 'Opportunity') + ' APT changed by ' + userInfo.getName() + ' on '+system.now();
+            }
+        }
+        return oppList;
+    }
+    //HRP-13190 -> Ends Here
+
+    public static String capitalizeName(String unformatedName, Boolean isForPDF){
+        String formatedName = '';        
+        if(String.isNotBlank(unformatedName)){
+            List<String> words = unformatedName.split(' ');
+            for(String word : words){
+                if(String.isNotBlank(word)){
+                    if(String.isNotBlank(formatedName)){
+                        String lastChar = formatedName.substring(formatedName.length()-1);
+                        if(lastChar != ' '){
+                            formatedName += ' ';
+                        }
+                    }
+                    if(!word.isNumeric()){
+                        Integer str_len = word.length();
+                        word = word.left(1).toUpperCase() + word.right(str_len - 1).toLowerCase();
+                    }
+                    if(isForPDF){
+                        formatedName += String.join(getTextParts(word,Integer.valueOf(Custom_Report_Config__mdt.getInstance('RoleTimeReportCharacterSplit').Value__c)),' ');
+                    }
+                    else {
+                        formatedName += word;
+                    }
+                }
+            }
+            formatedName = formatedName.trim(); 
+        } 
+        return formatedName;
+    }
+    public static List<String> getTextParts(String text, Integer partitionSize) {
+        List<String> parts = new List<String>();
+        Integer len = text.length();
+        for (Integer i=0; i<len; i+=partitionSize)
+        {
+            parts.add(text.substring(i, Math.min(len, i + partitionSize)));
+        }
+        return parts;
+    }
+
+    public static String getStringWithinLimit(String text, Integer charLimit) {
+        return (text != NULL && String.isNotBlank(text) && text.length() > charLimit) ? text.subString(0, charLimit) : (text == NULL ? '' : text);
+    }
+
+    //HRP-701 Utility Methods
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagRemoved(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            if(opp.Special_Circumstances__c == null) continue;
+
+            List<String> updatedSpecialCircumstances = new List<String>(); 
+            for(String value : opp.Special_Circumstances__c.split(';')) {
+                if(value != BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE) {
+                    updatedSpecialCircumstances.add(value);
+                }
+            }
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+    public static List<Opportunity> getOpportunitiesWithFirstTimeFlagAdded(List<Opportunity> opportunities) {
+        for(Opportunity opp : opportunities) {
+            List<String> updatedSpecialCircumstances = 
+                opp.Special_Circumstances__c == null 
+                ? new List<String>() 
+                : new List<String>(opp.Special_Circumstances__c.split(';'));
+            updatedSpecialCircumstances.add(BSF_Constants.SSBS_BADGE_FIRST_TIME_DRIVE);
+            
+            opp.Special_Circumstances__c = String.join(updatedSpecialCircumstances, ';');
+        }
+        return opportunities;
+    }
+
+
+     //Error log without exception
+     //HRP-12481
+    public static BSF_Error_Log__c createBsfErrorLogwithoutExceptions(String className,String methodName,String processName,String objectName,String error) {
+        String errorDescription = error;
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = className,
+            Method__c = methodName,
+            Type__c = 'Error',
+            Error_Description__c = errorDescription.length() > 255 ? errorDescription.subString(0, 255) : errorDescription,
+            Process_Name__c = processName,
+            Object_Name__c = objectName
+        );
+        return errorLog;
+    }
+    
 }

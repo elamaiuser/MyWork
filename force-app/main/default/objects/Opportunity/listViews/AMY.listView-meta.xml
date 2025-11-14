@@ -15,14 +15,19 @@
     <columns>DriveStatus__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>Do_Not_Roll__c</field>
+        <field>Drive_Date__c</field>
         <operation>equals</operation>
-        <value>1</value>
+        <value>N_DAYS_AGO:51</value>
     </filters>
     <filters>
-        <field>Source__c</field>
+        <field>DriveStatus__c</field>
         <operation>equals</operation>
-        <value>Calendar Build</value>
+        <value>Complete</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Mobile_Opp</value>
     </filters>
     <label>Calendar Build Past 9/1/2024</label>
 </ListView>

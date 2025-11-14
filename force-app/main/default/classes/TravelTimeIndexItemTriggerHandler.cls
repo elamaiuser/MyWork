@@ -1,20 +1,20 @@
 public without sharing class TravelTimeIndexItemTriggerHandler extends TriggerHandler{
     public override void afterInsert(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSiteCO') == -1) { 
-        	updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.new, null);
+        	//updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.new, null);
         }
     }
     public override void afterUpdate(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSiteCO') == -1) {
-        	updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.new, (Map<Id,sked_Travel_Time_Index_Item__c>)trigger.oldMap);
+        	//updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.new, (Map<Id,sked_Travel_Time_Index_Item__c>)trigger.oldMap);
         }
     }
     public override void afterDelete(){
         if(super.getTriggerMethodsToBypass().indexOf('updateOverrideFlagOnSiteCO') == -1) {
-        	updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.old, null);
+        	//updateOverrideFlagOnSiteCO((List<sked_Travel_Time_Index_Item__c>)trigger.old, null);
         }
     }
-    public static void updateOverrideFlagOnSiteCO(List<sked_Travel_Time_Index_Item__c> newList, Map<Id,sked_Travel_Time_Index_Item__c> oldMap){
+    /*public static void updateOverrideFlagOnSiteCO(List<sked_Travel_Time_Index_Item__c> newList, Map<Id,sked_Travel_Time_Index_Item__c> oldMap){
         if(newList == null || newList.isEmpty() ){
             return;
         }
@@ -167,5 +167,5 @@ public without sharing class TravelTimeIndexItemTriggerHandler extends TriggerHa
             System.debug('Site CO SOQL Data: '+siteCollectionOperationsList.size());
         }
         return siteCollectionOperationsList;
-    }
+    }*/
 }

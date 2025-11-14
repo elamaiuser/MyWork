@@ -19,9 +19,26 @@
                     </template>
                 </div>
                 <template if:false={isFixedSiteDrive}>
+                    <template if:true={shift.timeBlock}>
+                        <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                            <template if:false={masterData.fieldReadonlyMap.driveShifts}>
+                                <lightning-input type="text" name="timeBlock" label="Time Block" value={shift.timeBlock.name} readonly>
+                                </lightning-input>
+                            </template>
+                            <template if:true={masterData.fieldReadonlyMap.driveShifts}>
+                                <div class="slds-form-element slds-form-element_readonly">
+                                    <span class="slds-form-element__label">Time Block</span>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-form-element__static slds-truncate">{shift.timeBlock.name}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
                     <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
                         <template if:false={masterData.fieldReadonlyMap.driveShifts}>
-                            <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} readonly>
+                            <lightning-input type="number" name="APTSetup" label="APT Quantity" value={shift.APTSetup} onchange={handleOnChange} readonly={masterData.fieldReadonlyMap.aptQuantity}>
                             </lightning-input>
                         </template>
                         <template if:true={masterData.fieldReadonlyMap.driveShifts}>
@@ -176,20 +193,17 @@
         <div class="slds-p-bottom_medium">
             <h3 class="slds-section-title--divider">Maximum Staff Shift Length</h3>
             <div class="slds-grid slds-wrap slds-p-right_small">
-                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_4-of-12 slds-size_1-of-1 slds-p-left_small">
+                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_5-of-12 slds-size_1-of-1 slds-p-left_small">
                     <template if:false={masterData.fieldReadonlyMap.driveShifts}>
                         <div class="slds-form-element__label slds-no-flex" title="Start">Start</div>
                         <c-slwc-time-input-with-timezone 
-                            no-label
-                            disabled
+                        read-only
                             input-date={shift.start}
                             timezone={masterData.timezoneSidId}>
-                            <lightning-input 
+                        <lightning-formatted-date-time 
                                 slot="input"
-                                variant="label-hidden"
-                                class="inputStart" type="datetime" name="start" timezone={masterData.timezoneSidId} disabled label="Start"
-                                value={shift.start} autocomplete="off">
-                            </lightning-input>
+                            value={shift.start} year="numeric" month="numeric" day="numeric" hour="numeric"
+                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
                         </c-slwc-time-input-with-timezone>
                     </template>
                     <template if:true={masterData.fieldReadonlyMap.driveShifts}>
@@ -215,16 +229,13 @@
                     <template if:false={masterData.fieldReadonlyMap.driveShifts}>
                         <div class="slds-form-element__label slds-no-flex" title="Finish">Finish</div>
                         <c-slwc-time-input-with-timezone 
-                            no-label
-                            disabled
+                        read-only
                             input-date={shift.finish}
                             timezone={masterData.timezoneSidId}>
-                            <lightning-input 
+                        <lightning-formatted-date-time 
                                 slot="input"
-                                variant="label-hidden"
-                                class="inputFinish" type="datetime" name="finish" timezone={masterData.timezoneSidId} disabled label="Finish" 
-                                value={shift.finish} autocomplete="off">
-                            </lightning-input>
+                            value={shift.finish} year="numeric" month="numeric" day="numeric" hour="numeric"
+                            minute="2-digit" time-zone={masterData.timezoneSidId}></lightning-formatted-date-time>
                         </c-slwc-time-input-with-timezone>                        
                     </template>
                     <template if:true={masterData.fieldReadonlyMap.driveShifts}>
@@ -396,7 +407,7 @@
         <div class="slds-p-bottom_medium">
             <h3 class="slds-section-title--divider">Staff Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={personJobs} resource-type="Person"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={personJobs} resource-type="Person"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -418,8 +429,32 @@
                         </div>
                     </template>
                 </div>
+                <template if:true={isMobileDrive}>
+                    <div class="slds-col slds-medium-size_1-of-2 slds-large-size_3-of-12 slds-size_1-of-1 slds-p-left_small">
+                        <template if:false={masterData.fieldReadonlyMap.redcrossVolunteerRequired}>
+                            <div class="slds-form-element__label slds-no-flex" title="Red Cross Volunteer Required">Red Cross Volunteer Required</div>
+                            <lightning-input type="checkbox" name="redcrossVolunteerRequired" label="Red Cross Volunteer Required" variant="label-hidden" value={drive.redcrossVolunteerRequired} 
+                                            checked={drive.redcrossVolunteerRequired} onchange={handleOnChange}></lightning-input>
+                        </template>
+                        <template if:true={masterData.fieldReadonlyMap.redcrossVolunteerRequired}>
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Red Cross Volunteer Required</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static slds-truncate">
+                                        <template if:true={drive.redcrossVolunteerRequired}>
+                                            <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                        </template>
+                                        <template if:false={drive.redcrossVolunteerRequired}>
+                                            <lightning-icon icon-name="utility:steps" size="x-small"></lightning-icon>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
                 
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.volunteerJobs} drive={drive} master-data={masterData} shift={shift} jobs={volunteerJobs} resource-type="Volunteer"
                                           is-creatable is-deletable is-editable style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -427,7 +462,7 @@
         <div class="slds-p-bottom_medium" if:true={vehicleEnabled}>
             <h3 class="slds-section-title--divider">Vehicle Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
+                <c-slwc-shift-jobs is-readonly={masterData.fieldReadonlyMap.driveShifts} drive={drive} master-data={masterData} shift={shift} jobs={vehicleJobs} resource-type="Vehicle"
                                         is-editable={equipmentComplementEditable} style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
@@ -435,7 +470,7 @@
         <div class="slds-p-bottom_medium" if:true={equipmentEnabled}>
             <h3 class="slds-section-title--divider">Equipment Complement</h3>
             <div class="slds-grid slds-wrap slds-p-top_small">
-                <c-slwc-shift-jobs  drive={drive}  is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
+                <c-slwc-shift-jobs  drive={drive}  master-data={masterData} is-readonly={masterData.fieldReadonlyMap.driveShifts} shift={shift} jobs={equipmentJobs} resource-type="Equipment" style="width:100%">
                 </c-slwc-shift-jobs>
             </div>
         </div>

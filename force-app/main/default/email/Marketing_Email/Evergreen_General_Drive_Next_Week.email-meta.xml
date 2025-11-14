@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>An email to BPLs with tips on how to prepare for their upcoming drive.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>ARC_Logo_Test</letterhead>
+    <name>Evergreen_General_Drive Next Week</name>
+    <style>formalLetter</style>
+    <subject>Get ready for your blood drive next week</subject>
+    <textOnly>Dear [BPL Name],
+
+**Add personal introduction**
+
+I am excited to help you save lives at your blood drive next week. I wanted to make sure you felt prepared to have a successful drive – please see some reminders below to help you make that happen. You currently have XXX online appointments. Are all of the appointments added online, or do you also have some on a paper schedule? If you do, let’s get those added online so we don’t have any overbooking.
+
+Drive Logistics Reminders:
+
+· Goal: XXX units, Sign Up Goal: XXX donors.
+
+· Number of Power Red Machines: X! These count 2 towards your goal, so please make a special effort to recruit these. The blood types needed are O-, O+, A- and B-. Men (5&#39;1” AND 130 lbs.) Women (5&#39;3” AND 150 lbs.).
+
+· Supervisor: [Name]. They are one of your regular team supervisors, so I&#39;m sure you&#39;ll recognize them. [add personal information to give confidence to the team]
+
+· Staff will arrive at [time]. Please have the room unlocked, and the AC turned down to 68 degrees upon arrival so there is no delay in setting up.
+
+· Please ensure the donation site is clear (including parking spots) and the appropriate number (per your planning guide) of tables and chairs are set up in the space before the staff arrives.
+
+· Have a paper copy of the schedule available for staff.
+
+
+Recruiting Reminders:
+
+· Recruit First Time Donors: Ask your current appointments to bring a friend. Use the BPL resources for tips and tricks.
+
+· Call or email all donors 1-2 days before your blood drive to remind of appointments.
+
+· Please inform donors about RapidPass, which allows you to start the blood donation process from the comfort of your home or office and save time at the donation site. RapidPass must be completed on the day of the drive!
+
+· Encourage donors to schedule their next appt before leaving the blood drive either through the Book Now App or a personal device via the Blood Donor App.
+
+
+***Use For High School Drives***
+
+Recruiting Reminders:
+
+· Keep me informed of appointment counts more often than not throughout the process. The more I know, the more I can try to find more staff for you if needed!
+
+· Encourage all 16-year-old donors to turn in their parent consent before signing up.
+
+· Refer to the height and weight chart while recruiting. Don&#39;t sign up students who do not meet these requirements.
+
+· Remind donors to eat a good breakfast/lunch, drink plenty of water and bring a form of picture ID with them to the drive.
+
+Make sure to have the students complete the hall passes for about 5 minutes before their appointment, so students arrive on time. Students arriving at their appointment time helps to decrease wait times drastically!
+
+· Please inform donors about RapidPass, which allows you to start the blood donation process from the comfort of your home or office and save time at the donation site. RapidPass must be completed on the day of the drive!
+
+· Encourage donors to schedule their next appt before leaving the blood drive either through the Book Now App or a personal device via the Blood Donor App.
+
+******
+
+
+For help with online scheduling or login information, please contact customer care at 1-855-210-1278 (or customercare@redcross.org) from 8:30 a.m. to 9 p.m. ET to assist you. Additional tools for as a Blood Program Leader are available at RedCrossBlood.org and your BPL portal.
+
+
+Thank you for your help in recruiting donors and planning for this blood drive!
+
+
+Best regards,
+
+[Your Name]
+
+[Your Title]
+
+
+[Your Email]</textOnly>
+    <type>html</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

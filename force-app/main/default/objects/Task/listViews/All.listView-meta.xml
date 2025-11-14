@@ -13,10 +13,5 @@
     <columns>STATUS</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>SUBJECT</field>
-        <operation>contains</operation>
-        <value>sponsor introduction</value>
-    </filters>
     <label>All</label>
 </ListView>

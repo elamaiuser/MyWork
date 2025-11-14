@@ -220,4 +220,8 @@
         <name>EDW_Informatica_User</name>
         <type>ConnectedApp</type>
     </appMenuItems>
+    <appMenuItems>
+        <name>EDA_Service_User</name>
+        <type>ConnectedApp</type>
+    </appMenuItems>
 </AppMenu>

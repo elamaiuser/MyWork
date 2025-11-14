@@ -9,12 +9,13 @@ export default class SlwcCustomModal extends LightningElement {
     @api disabledSave = false;
     @api cancelBtnLabel = null;
     @api compactView = false;
+    @api modalSize = '';
     @api overflowInitial = false;
 
     get customClass() {
         return {
-            modal: slwcUtils.classNames('slds-modal slds-fade-in-open', {
-                'compact-view': this.compactView
+            modal: slwcUtils.classNames(`slds-modal slds-fade-in-open slds-modal_${this.modalSize}`, {
+                'compact-view': this.compactView,
             }),
             content: slwcUtils.classNames('slds-modal__content slds-p-around_medium slds-scrollable_y', {
                 'overflow-initial': this.overflowInitial

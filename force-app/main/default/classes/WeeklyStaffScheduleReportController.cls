@@ -1,7 +1,8 @@
 /*
-* Date					Developer Name			Comments
+*    Date					Developer Name			          Comments
  * ***************************************************************************************************************************************************************************
- * 07/15/2024			Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 07/15/2024				Barnojit Sharma				Weekly Staffing Schedule by Employee & Weekly Staffing Role Time Back up Reports shift start and end times are incorrect (HRP-13091)
+ * 12/30/2024				Priti Jana					Logic for HRP-13121
  *****************************************************************************************************************************************************************************
 */
 public without sharing class WeeklyStaffScheduleReportController {
@@ -48,8 +49,8 @@ public without sharing class WeeklyStaffScheduleReportController {
         } 
     }
     
-    @AuraEnabled
-    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType){
+    @AuraEnabled(cacheable=true)
+    public static DatableConfigWrapper searchReport(Date startDate, Date endDate, String drivedispatch, String collOpIdList, String driveType, Boolean isForPDF){
 
         DatableConfigWrapper data = new DatableConfigWrapper();
         data.dataWrapper = new List<Map<String,String>>();
@@ -58,13 +59,16 @@ public without sharing class WeeklyStaffScheduleReportController {
         Map<Id,Map<Date,String>> resourceDetailsMap = new  Map<Id,Map<Date,String>>();
         Map<Id,Decimal> resourceHoursMap = new  Map<Id,Decimal>();
         Map<Id,sked__Resource__c> resourceMap = new Map<Id,sked__Resource__c>();
-
+        
         List<String> driveTypes= new List<String>();
         Set<String> collOpIds= new Set<String>();
         List<String> driveDispatchedStatus= new List<String>();
         List<Boolean> driveDispatchedCheckBox= new List<Boolean>();
         
-        Integer recordCount = BSFWeeklyStaffingRoleTimeController.validateInputs(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        //HRP-13121 -> Starts Here
+        StaffInfoWrapper staffInfoWrapper = new StaffInfoWrapper();
+        staffInfoWrapper = BSFWeeklyStaffingRoleTimeController.validateInputsAndGetStaffInfo(startDate, endDate, drivedispatch, collOpIdList, driveType);
+        //HRP-13121 -> Ends Here
         
         Map<String,String> driveDispatchedMap = new Map<String,String>();
         driveDispatchedMap.put('Yes',Custom_Report_Config__mdt.getInstance('DriveDispatchedYes').Value__c);
@@ -116,11 +120,11 @@ public without sharing class WeeklyStaffScheduleReportController {
 
         data.columnsInfo.add(new Map<String,Object>{'label'=>'Total Hours','fieldName'=>'total','type'=>'text','wrapText'=>true,'hideDefaultActions'=>true});
 
-		List<sked__Job_Allocation__c> jobAllocations =  BSFWeeklyStaffingRoleTimeController.getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
+		//List<sked__Job_Allocation__c> jobAllocations =  BSFWeeklyStaffingRoleTimeController.getJobAllocations(startDate, endDate, driveDispatchedStatus, collOpIds, driveTypes, driveDispatchedCheckBox);
 
-        for(sked__Job_Allocation__c jba : jobAllocations){
+        for(sked__Job_Allocation__c jba : staffInfoWrapper.jobAllocationList) { //HRP-13121: Using wrapper class info
             resourceMap.put(jba.sked__Resource__c,jba.sked__Resource__r);
-            if(!resourceDetailsMap.containsKey(jba.sked__Resource__c)){
+            if(!resourceDetailsMap.containsKey(jba.sked__Resource__c)) {
                 resourceDetailsMap.put(jba.sked__Resource__c, new Map<Date,String>());
                 resourceHoursMap.put(jba.sked__Resource__c,0);
             }
@@ -137,7 +141,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 allRoles = String.join(roleListNoDupes,', ');
             }
             Decimal timeDifference = getTimeDifference(jba.sked_Start_Time__c,jba.sked_Set_End_Time__c);//Changed for HRP-13091
-            String details = jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name;
+            String details = addLineBreaks(jba.sked__Job__r.sked_Drive__r.sked_Account__r.Name,Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH));
             String siteAddress = '';
             if(String.isNotBlank(jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c)){
                 siteAddress = jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_City__c;
@@ -149,7 +153,7 @@ public without sharing class WeeklyStaffScheduleReportController {
                 siteAddress += jba.sked__Job__r.sked_Drive__r.sked_Drive_Site__r.sked_State__c;
             }
             if(String.isNotBlank(siteAddress)){
-                details += '\n' + siteAddress;
+                details += '\n' + addLineBreaks(siteAddress,Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_DESCRIPTION_LENGTH));
             }
             details += '\n' + getFormattedTime(jba.sked_Start_Time__c) + ' - ' + //Changed for HRP-13091
                         getFormattedTime(jba.sked_Set_End_Time__c)+'\n'+ //Changed for HRP-13091
@@ -164,10 +168,10 @@ public without sharing class WeeklyStaffScheduleReportController {
             timeDifference = timeDifference + resourceHoursMap.get(jba.sked__Resource__c);
             resourceHoursMap.put(jba.sked__Resource__c,timeDifference);                 
         }
-
-        List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate,endDate,collOpIds);
+ 
+        //List<sked__Activity_Resource__c> activityList = BSFWeeklyStaffingRoleTimeController.getActivities(startDate, endDate, territoryKeys); //HRP-13121 -> Changed Method Parameter */
         
-        for(sked__Activity_Resource__c act : activityList){
+        for(sked__Activity_Resource__c act : staffInfoWrapper.activityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(act.sked__Resource__c,act.sked__Resource__r);
             if(!resourceDetailsMap.containsKey(act.sked__Resource__c)){
                 resourceDetailsMap.put(act.sked__Resource__c, new Map<Date,String>());
@@ -180,21 +184,22 @@ public without sharing class WeeklyStaffScheduleReportController {
             if(String.isNotBlank(act.sked__Activity__r.sked__Notes__c)){
                 notes = '-' + act.sked__Activity__r.sked__Notes__c;
             }
+            details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n';
+            Boolean isCountable = String.isBlank(act.sked__Activity__r.sked__Type__c) ||
+                            !(act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('On Call') ||
+                            act.sked__Activity__r.sked__Type__c.equalsIgnoreCase('After Hours Call Out Management'));
+            if (act.sked_Start_Date__c == act.sked_End_Date__c) {
                 if(act.sked_Start_Time__c != NULL && act.sked_End_Time__c != NULL){
                     timeDifference = getTimeDifference(act.sked_Start_Time__c,act.sked_End_Time__c);
-                    details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n'+
-                                        getFormattedTime(act.sked_Start_Time__c) + ' - ' + 
+                    details += getFormattedTime(act.sked_Start_Time__c) + ' - ' + 
                                         getFormattedTime(act.sked_End_Time__c)+'\n'+
                                         String.valueOf(timeDifference) +' hrs';
-                }
-                else{
+                }else{
                     timeDifference = getTimeDifference(act.sked__Activity__r.sked_Start_Time__c,act.sked__Activity__r.sked_End_Time__c);
-                     details = act.sked__Activity__r.sked__Type__c + '\n' + notes + '\n'+
-                                getFormattedTime(act.sked__Activity__r.sked_Start_Time__c) + ' - ' + 
+                    details += getFormattedTime(act.sked__Activity__r.sked_Start_Time__c) + ' - ' + 
                                 getFormattedTime(act.sked__Activity__r.sked_End_Time__c)+'\n'+
                                 String.valueOf(timeDifference) +' hrs';
                 }
-            if (act.sked_Start_Date__c == act.sked_End_Date__c) {
                 if(!resourceDetailsMap.get(act.sked__Resource__c).containsKey(act.sked__Activity__r.sked_Start_Date__c)){
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,details);
                 }else{
@@ -202,61 +207,92 @@ public without sharing class WeeklyStaffScheduleReportController {
                     allDetails += '\n\n'+details;
                     resourceDetailsMap.get(act.sked__Resource__c).put(act.sked__Activity__r.sked_Start_Date__c,allDetails);
                 }
-                timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                resourceHoursMap.put(act.sked__Resource__c,timeDifference);          
+                if (isCountable) {
+                    timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
+                    resourceHoursMap.put(act.sked__Resource__c,timeDifference);
+                }       
         }else {
                 Date currentDate = act.sked_Start_Date__c;
                 while (currentDate <= act.sked_End_Date__c && currentDate <= endDate) {
+                    Decimal timeDiff = 0.0;
+                    String detailswithTime = details;
                     if (currentDate >= startDate) {
+                            if(act.sked_Start_Time__c != NULL && act.sked_End_Time__c != NULL){
+                                timeDiff = getTimeDifference(act.sked_Start_Date__c, act.sked_Start_Time__c,
+                                                        act.sked_End_Date__c, act.sked_End_Time__c, 
+                                                        currentDate);
+                                detailswithTime += getFormattedTime(act.sked_Start_Date__c,act.sked_Start_Time__c,currentDate,true) + ' - ' + 
+                                        getFormattedTime(act.sked_End_Date__c,act.sked_End_Time__c,currentDate,false)+'\n'+
+                                        String.valueOf(timeDiff) +' hrs';
+                                
+                            }else{
+                                timeDiff = getTimeDifference(act.sked_Start_Date__c, act.sked__Activity__r.sked_Start_Time__c,
+                                                        act.sked_End_Date__c, act.sked__Activity__r.sked_End_Time__c, 
+                                                        currentDate);
+                                detailswithTime += getFormattedTime(act.sked_Start_Date__c,act.sked__Activity__r.sked_Start_Time__c,currentDate,true) + ' - ' + 
+                                    getFormattedTime(act.sked_End_Date__c,act.sked__Activity__r.sked_End_Time__c,currentDate,false)+'\n'+
+                                    String.valueOf(timeDiff) +' hrs';
+                                
+                            }
                             if(!resourceDetailsMap.get(act.sked__Resource__c).containsKey(currentDate)){
-                                resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,details);
+                                resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,detailswithTime);
                             }else{
                                 String allDetails = resourceDetailsMap.get(act.sked__Resource__c).get(currentDate);
-                                allDetails += '\n\n'+details;
+                                allDetails += '\n\n'+detailswithTime;
                                 resourceDetailsMap.get(act.sked__Resource__c).put(currentDate,allDetails);
                             }
-                            timeDifference = timeDifference + resourceHoursMap.get(act.sked__Resource__c);
-                            resourceHoursMap.put(act.sked__Resource__c,timeDifference);
-                                    }
+                            if (isCountable) {
+                                timeDiff = timeDiff + resourceHoursMap.get(act.sked__Resource__c);
+                                resourceHoursMap.put(act.sked__Resource__c,timeDiff);
+                            } 
+                    }
                     currentDate = currentDate.addDays(1);
                 }
              }
             //HRP-12921 --> Continues          
         }
         
-        List<sked__Availability__c> availabilityList = BSFWeeklyStaffingRoleTimeController.getavailabilities(startDate,endDate,availabilityType,collOpIds);
+        //List<sked__Availability__c> availabilityList = BSFWeeklyStaffingRoleTimeController.getavailabilities(startDate,endDate,availabilityType,collOpIds);
         
-        for(sked__Availability__c avl : availabilityList){
+        for(sked__Availability__c avl : staffInfoWrapper.availabilityList) { //HRP-13121: Using wrapper class info
             resourceMap.put(avl.sked__Resource__c,avl.sked__Resource__r);
             if(!resourceDetailsMap.containsKey(avl.sked__Resource__c)){
                 resourceDetailsMap.put(avl.sked__Resource__c, new Map<Date,String>());
                 resourceHoursMap.put(avl.sked__Resource__c,0);
             }
              //HRP-12921 --> Continues
-            Decimal timeDifference = 0;
-            if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
-                timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
-            }else{
-                timeDifference = getTimeDifference(avl.sked_Start_Time__c,avl.sked_Finish_Time__c);
-            }
-            String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
-            if (avl.sked_Start_Date__c == avl.sked_Finish_Date__c) {
             
-            if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(avl.sked_Start_Date__c)){
-                resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,details);
-            }else{
-                String allDetails = resourceDetailsMap.get(avl.sked__Resource__c).get(avl.sked_Start_Date__c);
-                allDetails += '\n\n'+details;
-                resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,allDetails);
+            if (avl.sked_Start_Date__c == avl.sked_Finish_Date__c) {
+                Decimal timeDifference = 0;
+                if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
+                    timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
+                }else{
+                    timeDifference = getTimeDifference(avl.sked_Start_Time__c,avl.sked_Finish_Time__c);
+                }
+                String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
+                if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(avl.sked_Start_Date__c)){
+                    resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,details);
+                }else{
+                    String allDetails = resourceDetailsMap.get(avl.sked__Resource__c).get(avl.sked_Start_Date__c);
+                    allDetails += '\n\n'+details;
+                    resourceDetailsMap.get(avl.sked__Resource__c).put(avl.sked_Start_Date__c,allDetails);
+                }
+                timeDifference = timeDifference + resourceHoursMap.get(avl.sked__Resource__c);
+                resourceHoursMap.put(avl.sked__Resource__c,timeDifference); 
             }
-            timeDifference = timeDifference + resourceHoursMap.get(avl.sked__Resource__c);
-            resourceHoursMap.put(avl.sked__Resource__c,timeDifference); 
-        }
             else {
                     // Create wrapper instances for all dates within the range
                     Date currentDate = avl.sked_Start_Date__c;
                     while (currentDate <= avl.sked_Finish_Date__c && currentDate <= endDate) {
                         if (currentDate >= startDate) {
+                            Decimal timeDifference = 0;
+                            if(avl.sked_Is_All_Day__c && avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c != null){
+                                timeDifference = avl.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
+                            }else{
+                                timeDifference = getTimeDifference(avl.sked_Start_Date__c,avl.sked_Start_Time__c,
+                                                avl.sked_Finish_Date__c,avl.sked_Finish_Time__c,currentDate);
+                            }
+                            String details = avl.sked__Type__c + '\n' + String.valueOf(timeDifference) +' hrs';
                             if(!resourceDetailsMap.get(avl.sked__Resource__c).containsKey(currentDate)){
                                 resourceDetailsMap.get(avl.sked__Resource__c).put(currentDate,details);
                             }else{
@@ -275,8 +311,8 @@ public without sharing class WeeklyStaffScheduleReportController {
 
         for(Id resourceId : resourceDetailsMap.keySet()){
             Map<String,String> wrapperMap = new Map<String,String>();
-            wrapperMap.put('Id',resourceId);
-            wrapperMap.put('Name',BSFWeeklyStaffingRoleTimeController.capitalizeName(resourceMap.get(resourceId).Name));
+            wrapperMap.put('Id',resourceId);            
+            wrapperMap.put('Name',addLineBreaks(capitalizeTexts(resourceMap.get(resourceId).Name),Integer.valueOf(label.WEEKLY_STAFF_SCHEDULE_REPORT_NAME_LENGTH)));
             wrapperMap.put('total',String.valueOf(resourceHoursMap.get(resourceId)));
             for(Date dt : dateMap.keySet()){
                 if(resourceDetailsMap.get(resourceId).containsKey(dt)){
@@ -299,7 +335,7 @@ public without sharing class WeeklyStaffScheduleReportController {
         List<Date> dateList = new List<Date>();
         Integer indx = 0;
 
-        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType);
+        DatableConfigWrapper configWrapper = searchReport(startDate,endDate,drivedispatch,collOpIdList,driveType, true);
         
         wrapper.headerWrapper = new List<String>();
         wrapper.headerWrapper.add('Resource');
@@ -362,6 +398,9 @@ public without sharing class WeeklyStaffScheduleReportController {
             System.debug('startHour --> '+startHour);
             Decimal endHour = endTime.hour() + (endTime.minute()/60.0);
             System.debug('endHour --> '+endHour);
+            if(endHour < startHour){
+                endHour += 24;
+            }
             timeDifference = endHour - startHour;
             System.debug('timeDifference --> '+timeDifference);
         }
@@ -393,4 +432,122 @@ public without sharing class WeeklyStaffScheduleReportController {
         public List<String> headerWrapper { get; set; }
         public List<List<String>> dataWrapper { get; set; }
     }
+    
+    public class StaffInfoWrapper {
+        public List<sked__Activity_Resource__c> activityList { get; set; }
+        public List<sked__Job_Allocation__c> jobAllocationList { get; set; }
+        public List<sked__Availability__c> availabilityList { get; set; }
+        public Integer totalRecords { get; set; }
+        
+        public StaffInfoWrapper() {
+            activityList = new List<sked__Activity_Resource__c>();
+            jobAllocationList = new List<sked__Job_Allocation__c>();
+            availabilityList = new List<sked__Availability__c>();
+            totalRecords = 0;
+        }
+    }
+
+    public static String addLineBreaks(String input, Integer maxLineLength) {
+        String result = '';
+        List<String> words = input.split(' ');
+        Integer currentLineLength = 0;
+
+        for (String word : words) {
+            if (word.length() > maxLineLength && word.contains('-')) {
+                List<String> parts = word.split('(?<=-)');
+                for (String part : parts) {
+                    if (currentLineLength + part.length() > maxLineLength) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    } else if (currentLineLength != 0) {
+                        result = result + ' ';
+                        currentLineLength += 1;
+                    }
+                    result = result + part;
+                    currentLineLength += part.length();
+                }
+            }else if (word.length() > maxLineLength) {
+                Integer index = 0;
+                while (index < word.length()) {
+                    Integer endIndex = Math.min(index + maxLineLength, word.length());
+                    if (currentLineLength != 0) {
+                        result = result + '\n';
+                        currentLineLength = 0;
+                    }
+                    result = result + word.substring(index, endIndex) + '\n';
+                    index = endIndex;
+                }
+                currentLineLength = 0;
+            }
+            else {
+                if (currentLineLength + word.length() > maxLineLength) {
+                    result = result + '\n';
+                    currentLineLength = 0;
+                } else if (currentLineLength != 0) {
+                    result = result + ' ';
+                    currentLineLength += 1;
+                }
+                result = result + word;
+                currentLineLength += word.length();
+            }
+        }
+
+        return result;
+    }
+    public static String capitalizeTexts(String input){
+        String result = '';
+        Integer i = 0;
+        List<String> words = input.split('\\s+');
+        for (String word : words) {
+            if(String.isNotBlank(word)){
+                if(word.isAlpha() || (!word.isNumeric() && !word.isAlphanumeric())){
+                    word =  word.capitalize();
+                }
+                if (i > 0) {
+                    result = result + ' ';
+                }
+                result = result + word;
+                i++;
+            }
+        }
+        return result.trim();
+    }
+    public static Decimal getTimeDifference( Date startDate, Time startTime, Date endDate, Time endTime, Date calculationDate) {
+        Decimal totalHours = 0;
+
+        if (calculationDate == null || startDate == null || endDate == null || startTime == null || endTime == null) {
+            return 0;
+        }
+        if (calculationDate < startDate || calculationDate > endDate) {
+            return 0;
+        }
+
+        if (startDate == endDate) {
+            totalHours = getTimeDifference(startTime, endTime);
+        } else if (calculationDate == startDate) {
+            totalHours = getTimeDifference(startTime, Time.newInstance(23, 59, 59, 999));
+        } else if (calculationDate == endDate) {
+            totalHours = getTimeDifference(Time.newInstance(0, 0, 0, 0), endTime);
+        } else {
+            totalHours = 24.0;
+        }
+
+        return totalHours.setScale(2, RoundingMode.HALF_UP);
+    }
+    public static String getFormattedTime(Date scheduledate, Time scheduletime, Date calculationDate, Boolean startDay) {
+        if (calculationDate == null || startDay == null) {
+            return '';
+        }
+
+        Time resolvedTime;
+
+        if (scheduledate != null && scheduledate.equals(calculationDate) && scheduletime != null) {
+            resolvedTime = scheduletime;
+        } else {
+            resolvedTime = startDay ? Time.newInstance(0, 0, 0, 0) : Time.newInstance(23, 59, 59, 999);
+        }
+
+        return getFormattedTime(resolvedTime);
+    }
+
 }

@@ -134,6 +134,7 @@ export default class SlwcActivityModal extends LightningElement {
     if(!event || !event.detail || !event.detail.placeDetails) return;
 
     let placeDetails = event.detail.placeDetails;
+    this.model.postalCode = placeDetails.addressComponents.postalCode;//HRP-13791
     this.model.address = placeDetails.formattedAddress;
     this.model.geoLocationLatitude = placeDetails.geometry && placeDetails.geometry.lat;
     this.model.geoLocationLongitude = placeDetails.geometry && placeDetails.geometry.lng;
@@ -182,13 +183,13 @@ export default class SlwcActivityModal extends LightningElement {
       isGroupActivity: true,
       showOnCalendar: true
     }
-
     this.showLoading();
     let service = new collectionOperationService();
-    service.getSkedRegionId({
+    service.getSkedRegionIdUsingTaxonomy({
       collectionOperationId: this.drive.collectionOperationId,
-      latitude: modelToSave.geoLocationLatitude,
-      longitude: modelToSave.geoLocationLongitude
+      postalCode: modelToSave.postalCode,
+      start: modelToSave.start,
+      finish: modelToSave.finish
     })
     .then(result => {
       if(!result || !result.returnedData) {

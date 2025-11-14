@@ -4,6 +4,7 @@
  * ***********************************************************************************************************************************************
  *  03/08/2023				 Kishore Das		        Users other than System Admin should not have any delete record permissions(Logic for HRP-10572 --> Deleted)
  *  02/14/2024				 Balaji N				    logic for HRP-11138(Method :updatePortfolioAssignments, isBackEndDelete)
+*  08/16/2024				 Balaji N					Logic for HRP-13270 (Method:updatePortfolioAssignments; Account specialist portfolio assignments are only update from Account specialist portfolio updates)
  *************************************************************************************************************************************************
 */
 
@@ -105,20 +106,21 @@ public with sharing class BsfPortfolioService {
     public static void updatePortfolioAssignments(List<Bsf_Portfolio__c> newItems,Map<id,Bsf_Portfolio__c> newMap,Map<id,Bsf_Portfolio__c> oldMap)
     {
         system.debug('updatePortfolioAssignments');
-        set<id> bsfId = new set<id>();
-        set<id> bsfIdDm = new set<id>();
-        set<string> dmPortCode = new set<string>();
-        map<string,Bsf_Portfolio__c> portcodeBSfMap= new map<string,Bsf_Portfolio__c>();
-        set<id> bsfIdBioAccPort = new set<id>();
-        
+        set<id> bsfIdSet = new set<id>();
+        //set<id> bsfIdDm = new set<id>();
+        //set<string> dmPortCode = new set<string>();
+        //map<string,Bsf_Portfolio__c> portcodeBSfMap= new map<string,Bsf_Portfolio__c>();
+        //set<id> bsfIdBioAccPort = new set<id>();
+        List<BSF_Error_Log__c> logList = new List<BSF_Error_Log__c>();
         
         // checking end date change
         for(Bsf_Portfolio__c bsf : newItems)
         {
             if(bsf.End_Date__c != oldMap.get(bsf.id).End_Date__c)
             {
+            bsfIdSet.add(bsf.id);
                 //system.debug('Endatechanged');
-                
+                /* commented part of HRP-13270
                 // DM
                 if(bsf.Portfolio_Type__c == BSF_Constants.DISTRICT_MANAGER || bsf.Portfolio_Type__c == BSF_Constants.AREA_BOOKING_MANAGER )
                 {
@@ -132,30 +134,35 @@ public with sharing class BsfPortfolioService {
                     //system.debug('other Portfolio');
                     bsfId.add(bsf.id);
                 }
-                
+                commented part of HRP-13270 */
             }
         }
         //updating portfolio assignments
-        List<portfolio_Assignment__c> portfoliAssignList = [select id,Start_Date__c,End_Date__c,Bsf_portfolio__c,Bsf_portfolio__r.portfolio_code__c,BSF_Portfolio__r.Taxonomy_Type__c from portfolio_Assignment__c where Bsf_portfolio__c IN:bsfId or Bsf_portfolio__c IN:bsfIdDm or (Bsf_portfolio__r.Portfolio_Code__c In:dmPortCode and Bsf_portfolio__r.Taxonomy_Type__c=: BSF_Constants.ACCOUNT_SPECIALIST)];
-        //system.debug('portfoliAssignList');
+        List<portfolio_Assignment__c> portfoliAssignList = [select id,Start_Date__c,End_Date__c,Bsf_portfolio__c,Bsf_portfolio__r.portfolio_code__c,BSF_Portfolio__r.Taxonomy_Type__c from portfolio_Assignment__c where Bsf_portfolio__c IN:bsfIdSet]; //or Bsf_portfolio__c IN:bsfIdDm or (Bsf_portfolio__r.Portfolio_Code__c In:dmPortCode and Bsf_portfolio__r.Taxonomy_Type__c=: BSF_Constants.ACCOUNT_SPECIALIST)];
+    
         List<portfolio_Assignment__c> updatePortfoliAssignList = new List<portfolio_Assignment__c>();
         List<portfolio_Assignment__c> deletePortfoliAssignList = new List<portfolio_Assignment__c>();
         for(portfolio_Assignment__c pa:portfoliAssignList)
         {
-            if(oldMap!= null && (pa.Bsf_portfolio__r.Taxonomy_Type__c!=BSF_Constants.ACCOUNT_SPECIALIST ||oldMap.get(pa.Bsf_portfolio__c)!= null) ) // active ones only, already ended one we don't consider
+        if(oldMap!= null && oldMap.containsKey(pa.Bsf_portfolio__c)) //removed (pa.Bsf_portfolio__r.Taxonomy_Type__c!=BSF_Constants.ACCOUNT_SPECIALIST HRP-13270; // active ones only, already ended one we don't consider
+        {
+            if(newMap != null && newMap.containsKey(pa.Bsf_portfolio__c))
             {
-                if(pa.End_Date__c > newMap.get(pa.Bsf_portfolio__c).End_Date__c && pa.Start_Date__c < newMap.get(pa.Bsf_portfolio__c).End_Date__c &&  pa.End_Date__c >= system.today())
+                Bsf_portfolio__c newBsfPortfolio = newMap.get(pa.Bsf_portfolio__c);
+                if(pa.End_Date__c >= system.today() && pa.End_Date__c > newBsfPortfolio.End_Date__c && pa.Start_Date__c < newBsfPortfolio.End_Date__c)
                 {
-                    //system.debug(' Portfolio assignments there'+pa.id);
-                    pa.End_Date__c = newMap.get(pa.Bsf_portfolio__c).End_Date__c;
+                    pa.End_Date__c = newBsfPortfolio.End_Date__c;
                     updatePortfoliAssignList.add(pa);
                 }
-                else if(pa.Start_Date__c > newMap.get(pa.Bsf_portfolio__c).End_Date__c)
+                else if(pa.Start_Date__c > newBsfPortfolio.End_Date__c)
                 {
                     deletePortfoliAssignList.add(pa);
                 }
             }
+            
+        }
             system.debug('Portfolio assignments'+pa);
+        /* commented part of HRP-13270
             if(pa.Bsf_portfolio__r.Taxonomy_Type__c==BSF_Constants.ACCOUNT_SPECIALIST && portcodeBSfMap!=null && portcodeBSfMap.get(pa.Bsf_portfolio__r.portfolio_code__c) != null
                && oldMap.get(portcodeBSfMap.get(pa.Bsf_portfolio__r.portfolio_code__c).id) !=null)
             {
@@ -171,76 +178,59 @@ public with sharing class BsfPortfolioService {
                     deletePortfoliAssignList.add(pa);
                 }
             }
-            
-            
-            
-        }
+        commented part of HRP-13270 */
         
         
-        if(!updatePortfoliAssignList.isEmpty())
-        {
-            //triggerhandler.bypass('PortfolioAssignmentTriggerHandler');
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.Update(updatePortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','updating BSFPortfolio Endate');
-            InsertBsfErrorLog.insertBsfErrors(logList);
-            //triggerhandler.clearbypass('PortfolioAssignmentTriggerHandler');
-        }
-        if(!deletePortfoliAssignList.isEmpty())
-        {
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.delete(deletePortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','deleting BSFPortfolio');
-            InsertBsfErrorLog.insertBsfErrors(logList);
-        }
+    }
+    
+    
+    
         
         //account portfolio assignment update
-        List<Account_portfolio_Assignment__c> accportfoliAssignList = [select id,Start_Date__c,End_Date__c,Bsf_portfolio__c,Bsf_portfolio__r.Portfolio_Type__c,account__c from Account_portfolio_Assignment__c where Bsf_portfolio__c IN:bsfId];
+        List<Account_portfolio_Assignment__c> accportfoliAssignList = [select id,Start_Date__c,End_Date__c,Bsf_portfolio__c,Bsf_portfolio__r.Portfolio_Type__c,account__c from Account_portfolio_Assignment__c where Bsf_portfolio__c IN:bsfIdSet];
         system.debug('accportfoliAssignList'+accportfoliAssignList);
         List<Account_portfolio_Assignment__c> updateAccPortfoliAssignList = new List<Account_portfolio_Assignment__c>();
         List<Account_portfolio_Assignment__c> deleteAccPortfoliAssignList = new List<Account_portfolio_Assignment__c>();
-        List<Account_portfolio_Assignment__c> recAccPortfoliAssignList = new List<Account_portfolio_Assignment__c>();
+        //List<Account_portfolio_Assignment__c> recAccPortfoliAssignList = new List<Account_portfolio_Assignment__c>();//HRP-13270
         for(Account_portfolio_Assignment__c ap:accportfoliAssignList)
         {
-            bsf_Portfolio__c  bsf = newMap.get(ap.Bsf_portfolio__c);
-            if(ap.End_Date__c > newMap.get(ap.Bsf_portfolio__c).End_Date__c && ap.Start_Date__c < newMap.get(ap.Bsf_portfolio__c).End_Date__c && ap.End_Date__c >= system.today()) // active ones only, already ended one we don't consider
+        if(newMap != null && newMap.containsKey(ap.Bsf_portfolio__c))
+        {
+            Bsf_Portfolio__c  newBsfPortfolio = new Bsf_Portfolio__c();
+            newBsfPortfolio = newMap.get(ap.Bsf_portfolio__c);
+            if(ap.End_Date__c >= system.today() && ap.End_Date__c > newBsfPortfolio.End_Date__c && ap.Start_Date__c < newBsfPortfolio.End_Date__c) // active ones only, already ended one we don't consider
             {
-                //if territory
                 
+                /* commented part of HRP-13270
                 if(bsf.Portfolio_Type__c == BSF_Constants.ACCOUNT_MANAGER && bsf.Taxonomy_Type__c == BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE)
                 {
-                    //ap.End_Date__c = newMap.get(ap.Bsf_portfolio__c).End_Date__c;
-                    //system.debug('recAccPortfoliAssignList'+ap);
                     recAccPortfoliAssignList.add(ap);
                 }
-                else //if(bsf.Portfolio_Type__c == BSF_Constants.ACCOUNT_MANAGER && bsf.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE )
-                {
-                    //system.debug('adding  portfolios:'+ ap);
-                    ap.End_Date__c = newMap.get(ap.Bsf_portfolio__c).End_Date__c;
+                commented part of HRP-13270 */
+                ap.End_Date__c = newBsfPortfolio.End_Date__c;
                     updateAccPortfoliAssignList.add(ap);
-                    
-                }
-                
             }
-            else if(ap.Start_Date__c > newMap.get(ap.Bsf_portfolio__c).End_Date__c)
+            else if(ap.Start_Date__c > newBsfPortfolio.End_Date__c)
             {
-                //system.debug('adding  portfolios to delete:'+ ap);
                 deleteAccPortfoliAssignList.add(ap);
             }
         }
         
-        /*for(Account_Portfolio_Assignment__c ap:updateAccPortfoliAssignList)
-{
-system.debug('updateAccPortfoliAssignList-1-1'+ap);
-}*/
+    }
+    
         
         // territory account portfolio update and next account based update
         if(!deleteAccPortfoliAssignList.isEmpty())
         {
             BSF_Constants.isBackEndDelete=true;//HRP-11138
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.delete(deleteAccPortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','deleting AccportfolioAssignments');
-            InsertBsfErrorLog.insertBsfErrors(logList);
+            logList.addAll(BSF_Utilities.createErrorLog(Database.delete(deleteAccPortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','deleting AccportfolioAssignments'));
+            //InsertBsfErrorLog.insertBsfErrors(logList);
             BSF_Constants.isBackEndDelete=false;//HRP-11138
         }
+        /* commented part of HRP-13270
         if(!recAccPortfoliAssignList.isEmpty())
         {
-            system.debug('recAccPortfoliAssignList is not null');
+            /*system.debug('recAccPortfoliAssignList is not null');
             set<id> accIdSet = new set<id>();
             set<id> accPortIdSet = new set<id>();
             map<id,Account_portfolio_Assignment__c> accIdTerrAccportMap = new map<id,Account_portfolio_Assignment__c>();
@@ -286,6 +276,7 @@ system.debug('updateAccPortfoliAssignList-1-1'+ap);
                 updateAccPortfoliAssignList.add(ap);
             }
         }
+        commented part of HRP-13270 */
         
         /*for(Account_Portfolio_Assignment__c ap:updateAccPortfoliAssignList)
 {
@@ -293,6 +284,7 @@ system.debug('updateAccPortfoliAssignListfinal-1'+ap);
 }*/
         
         // DM and account specilaist
+        /* commented part of HRP-13270
         if(!dmPortCode.isEmpty())
         {
             list<Bsf_Portfolio__c> accSpecialistPortList = [select id,Start_Date__c,End_Date__c,Portfolio_Code__c,Taxonomy_Type__c from Bsf_Portfolio__c where Portfolio_Code__c In:dmPortCode and Taxonomy_Type__c=: BSF_Constants.ACCOUNT_SPECIALIST];
@@ -411,18 +403,6 @@ system.debug('updateAccPortfoliAssignListfinal-1'+ap);
                     atm.End_Date__c = bsf.End_Date__c < Ap.End_Date__c ? bsf.End_Date__c:Ap.End_Date__c;
                     UpdatedDmAtmList.add(atm);
                 }
-                /*if(idbsfMap!= null && idbsfMap.get(atm.Bsf_portfolio__c) != null)
-{
-bsf = newMap.get(idbsfMap.get(atm.Bsf_portfolio__c).Portfolio_Code__c);
-if(bsf!= null && atm.End_Date__c >= bsf.End_Date__c  && atm.End_Date__c >= system.today())
-{
-
-if(bsf != null && atm.End_Date__c >= bsf.End_Date__c  && atm.End_Date__c >= system.today())
-{
-UpdatedDmAtmList.add(atm);
-}
-}
-}*/
                 
             }
             
@@ -432,22 +412,41 @@ UpdatedDmAtmList.add(atm);
                 //InsertBsfErrorLog.insertBsfErrors(logList);
                 
             }
-        }
+        } commented part of HRP-13270 */
         
         
         if(!updateAccPortfoliAssignList.isEmpty())
         {
             map<id,account_portfolio_assignment__c> updateAccPortfoliAssignMap = new map<id,account_portfolio_assignment__c>();
+            Set<Id> accIdSet = new Set<Id>();
             for(account_portfolio_assignment__c apa:updateAccPortfoliAssignList)
             {
                 updateAccPortfoliAssignMap.put(apa.id,apa);
+                accIdSet.add(apa.account__c);
             }
             triggerhandler.bypass('AccountPortfolioAssignmentTriggerHandler');
-            
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(Database.Update(updateAccPortfoliAssignMap.values(),false),'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','updateAccPortfoliAssignList Endate');
-            InsertBsfErrorLog.insertBsfErrors(logList);
+            AccountPortfolioAssignmentService.HandleAccountSpecialist(accIdSet);//HRP-13270
+            logList.addAll(BSF_Utilities.createErrorLog(Database.Update(updateAccPortfoliAssignMap.values(),false),'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','updateAccPortfoliAssignList Endate'));
+            //InsertBsfErrorLog.insertBsfErrors(logList);
             //triggerhandler.clearBypass('AccountPortfolioAssignmentTriggerHandler');
         }
+
+        //HRP-13270
+        if(!updatePortfoliAssignList.isEmpty())
+        {
+            //triggerhandler.bypass('PortfolioAssignmentTriggerHandler');
+            logList.addAll(BSF_Utilities.createErrorLog(Database.Update(updatePortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','updating BSFPortfolio Endate'));
+            //InsertBsfErrorLog.insertBsfErrors(logList);
+            //triggerhandler.clearbypass('PortfolioAssignmentTriggerHandler');
+        }
+        if(!deletePortfoliAssignList.isEmpty())
+        {
+            logList.addAll(BSF_Utilities.createErrorLog(Database.delete(deletePortfoliAssignList,false), 'Create Portfolio','BSFPortfolioService','updatePortfolioAssignments','Error','deleting BSFPortfolio'));
+            //InsertBsfErrorLog.insertBsfErrors(logList);
+        }
+        if(!logList.isEmpty())
+        {InsertBsfErrorLog.insertBsfErrors(logList);}
+        //HRP-13270
     }
 
 }

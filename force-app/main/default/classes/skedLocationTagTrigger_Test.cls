@@ -483,4 +483,26 @@ private class skedLocationTagTrigger_Test {
         Test.stopTest();
     }
     
+    static testMethod void updateRealIDFlagOnLocations_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today(), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        
+        sked__Location__c testLocation1 = (sked__Location__c) mapTestData.get('testLocation1');
+        sked__Tag__c testTag1 = [SELECT Id FROM sked__Tag__c WHERE Name = 'REAL ID'];
+        
+        Test.startTest();
+        
+        sked_Location_Tag__c testNonRequiredLocationTag1 = new sked_Location_Tag__c(
+            sked_Location__c = testLocation1.Id,
+            sked_Tag__c = testTag1.Id,
+            sked_Required__c = false,
+            sked_Minimum_Quantity__c = 5
+        );
+        insert testNonRequiredLocationTag1;
+      
+        delete testNonRequiredLocationTag1;
+        
+        Test.stopTest();
+    }
+    
 }

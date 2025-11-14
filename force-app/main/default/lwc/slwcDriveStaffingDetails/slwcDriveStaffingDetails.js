@@ -405,7 +405,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     ])
                     .then(() => {
                         this.availator1.setupDriverJobs();
-                        return this.availator1.buildScheduledAllocations()
+                        return this.availator1.buildScheduledAllocations({
+                            ignoreDedicatedSiteRule: true
+                        });
                     })
                     .then((result) => {
                         if (result.possibleAllocations) {
@@ -417,7 +419,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             this.updateDriveShiftTagExceptions(this.driveDetail1);
                         }
                         if (result.resources) {
-                            this.resources = this.buildResources(result.resources);
+                            this.resources = this.buildResources(result.resources, this.driveDetail1);
                             this.handleFilter();
                         }
                         
@@ -509,8 +511,10 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         } = this.getNumberOfDotAndCdlDrivers(drive);
 
         drive.driveShifts.forEach(driveShift => {
-            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
-            
+            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, true));
+            if(!driverJob) {
+                driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, false));
+            };
             if(!driverJob) return;
 
             let dotDriverJob = driveShift.jobs.find(job => job.id.startsWith('driverdot'));
@@ -728,7 +732,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
             if(indexDriveShift <= this.driveDetail1.driveShifts.length){
                 this.availator1.updateData(job, indexDriveShift);
-                return this.availator1.buildScheduledAllocations()
+                return this.availator1.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -747,7 +753,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 })
             } else {
                 this.availator2.updateData(job, indexDriveShift - this.driveDetail1.driveShifts.length);
-                return this.availator2.buildScheduledAllocations()
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -1367,10 +1375,12 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 each(itemDriveShifts.jobs, jobItem => {
                     let exceptionLogList = []
                     let jobAllocations = this.getJobAllocations(jobItem);
+
                     each(jobAllocations, jaItem => {
                         exceptionLogList = exceptionLogList.concat((jaItem.exceptionLog || []).filter(ex => ex.status != 'Resolved').map(exception => ({
                             exception: exception.exception,
                             exceptionCode: exception.exceptionCode,
+                            eventURL: exception.eventURL,
                             id: exception.id,
                             key: uniqueId('exception_ja'),
                             resource: jaItem.resource,
@@ -1542,7 +1552,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             this.showSpinnerCount = 0;
         }
     }
-    buildResource(item) {
+    buildResource(item, drive) {
         const hasLinkedDrive = this.linkedDriveResourceMap[item.id];
         const resourceAllocated = this.getListResourceAllocated(this.driveDetail1 ? this.driveDetail1.driveShifts: []);
         const resourceAllocated2 = this.getListResourceAllocated(this.driveDetail2 ? this.driveDetail2.driveShifts: []);
@@ -1587,7 +1597,11 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     return {
                         value: item.tag && item.tag.name,
                         key: item.key + item.name,
-                        id: item.tag.id
+                        id: item.tag.id,
+                        isRestricted: item.tag.type === 'Role' && slwcAvailator.isResourceTagRestricted(item, {
+                            startDate: drive?.driveDate,
+                            endDate: drive?.driveDate,
+                        })
                     }
                 }), ['value'], ['asc'])
             }
@@ -1663,9 +1677,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             isTemporaryCO
         }
     }
-    buildResources(result) {
+    buildResources(result, drive) {
         const res = result.map(item => {
-            return this.buildResource(item);
+            return this.buildResource(item, drive);
         })
 
         this.resourceTagsOption = uniqWith(this.resourceTagsOption, isEqual)
@@ -1773,7 +1787,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             isDeleted: itemJa.status === JOB_ALLOCATION_STATUS.DELETED,
                             icon: this.getResourceIcon(itemJa.resource),
                             timezoneSidId: this.timezoneSidId,
-                            resource: this.buildResource(itemJa.resource),
+                            resource: this.buildResource(itemJa.resource, {
+                                ...driveDetail
+                            }),
                             resourceId: itemJa.resourceId,
                             exceptionLog: exceptionLog,
                             hasDriveShiftTrade: !!itemJa.driveShiftTradeId,
@@ -1948,13 +1964,15 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this.resourceFilters = {
             callOut: false,
             onCall: false,
+            prevCancelled: false,
             assignedToLinkedDrives: false,
+            weeklyHours: false,
             selectedResourcesTag: [],
             selectedResourceRoles: [],
             selectedResourceEmploymentTypes: [],
             weeklyHoursRange: {
                 start: 0,
-                end: 40
+                end: 100
             },
             queryText: ''
         }
@@ -2045,6 +2063,21 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 });
             }
 
+            if (filter.cancelledDriveQueryText) {
+                this.resourcesFilterList = this.resourcesFilterList.filter(item => {
+                    const result = (item.prevCancelledJobAllocations || []).filter(ja => (ja.job.driveUfid && ja.job.driveUfid.includes(filter.cancelledDriveQueryText)));
+                    return result?.length;
+                });
+
+                if (!this.resourcesFilterList?.length) {
+                    this.dispatchEvent(new ShowToastEvent({
+                        message: 'UFID does not belong to a cancelled drive. Please search with a cancelled drive UFID.',
+                        variant: 'error',
+                        mode: 'dismissable',
+                    }));
+                }
+            }
+
             if (filter.selectedResourcesTag.length > 0) {
                 const selectedResourcesTag = filter.selectedResourcesTag.map(item => item.selected && item.value);
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
@@ -2079,13 +2112,19 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 });
             }
 
+            if (filter.prevCancelled) {
+                this.resourcesFilterList = this.resourcesFilterList.filter(item => {
+                    return item.isPrevCancelled;
+                });
+            }
+
             if (filter.assignedToLinkedDrives) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
                     return item.hasLinkedDrive;
                 });
             }
 
-            if (filter.weeklyHoursRange) {
+            if (filter.weeklyHours && filter.weeklyHoursRange) {
                 this.resourcesFilterList = this.resourcesFilterList.filter(item => {
                     return item.resourceType !== TYPE_RESOURCE.RESOURCE || item.weeklyHours >= filter.weeklyHoursRange.start && item.weeklyHours <= filter.weeklyHoursRange.end;
                 });
@@ -2379,7 +2418,10 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         } = this.getNumberOfDotAndCdlDrivers(drive, includeDeleted);
 
         driveToSave.driveShifts.forEach(driveShift => {
-            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job));
+            let driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, true));
+            if (!driverJob) {
+                driverJob = driveShift.jobs.find(job => this.driveHelper.isDriverJob(job, false));
+            }
 
             if(driverJob) {
                 driveShift.jobs.forEach(job => {
@@ -2647,7 +2689,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         this.availator2.fetchData()
             .then(() => {
                 this.availator2.setupDriverJobs();
-                return this.availator2.buildScheduledAllocations();
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                });
             })
             .then((result) => {
                 if (result.possibleAllocations) {
@@ -2660,7 +2704,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     this.buildException();
                 }
                 if (result.resources) {
-                    this.resources = [...this.buildResources(result.resources), ...this.resources];
+                    this.resources = [...this.buildResources(result.resources, this.driveDetail2), ...this.resources];
                     this.resources = uniqBy(this.resources, item => item.id)
                     this.handleFilter();
                 }
@@ -2777,7 +2821,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             if(indexDriveShift <= this.driveDetail1.driveShifts.length){
                 this.availator1.updateData(job, indexDriveShift);
 
-                return this.availator1.buildScheduledAllocations()
+                return this.availator1.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -2796,7 +2842,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 })
             } else {
                 this.availator2.updateData(job, indexDriveShift - this.driveDetail1.driveShifts.length);
-                return this.availator2.buildScheduledAllocations()
+                return this.availator2.buildScheduledAllocations({
+                    ignoreDedicatedSiteRule: true
+                })
                 .then((result) => {
                     if (result.possibleAllocations) {
                         this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
@@ -2868,7 +2916,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
     handleSaveAddRoleModal(event) {
         let { jobId, jobAllocation } = this.addRoleModalData;
         let [ job ] = this.getJobById(jobId);
-        let ja =  find(job.jobAllocations, item => item.id == jobAllocation.id)
+        let ja = find(job.jobAllocations, item => item.key == jobAllocation.key)
         ja.additionalRoles = event.detail.roles
         ja.additionalRolesString = ja.additionalRoles ? ja.additionalRoles.split(';').join(', ') : null;
     }

@@ -15,6 +15,9 @@
  * 06/06/2024                Barnojit Sharma          Post Drive Analysis task Enhancements (Logic for HRP-12142)
  * 06/20/2024				 Raktim Ghosal			  Sync Publicity Ordering Material from template to Opportunity (HRP-12664) 
  * 10/24/2024				 Barnojit Sharma		  Template Order products not cascading to Opportunity Order (Logic for HRP-13521)
+ * 12/10/2024			     Priti Jana			      Logic for HRP-13190
+ * 04/29/2025                Satyendra V              HRP-14565 - Logic added to identify the latest closed drive on Opportunity Insert/Update/Delete.
+ * 05/05/2025                Priti Jana               Logic for HRP-13146
  ************************************************************************************************************************************************
 */
 
@@ -60,7 +63,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.assignDefaultSiteDataIfNotPresent() Bypassed');
         }
          
-         if(super.getTriggerMethodsToBypass().indexOf('primaryDriveContactRequired') == -1) {
+        if(super.getTriggerMethodsToBypass().indexOf('primaryDriveContactRequired') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.primaryDriveContactRequired() Executing...');
                 OpportunityService.primaryDriveContactRequired((Map<Id,Opportunity>)trigger.newMap,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
@@ -73,22 +76,22 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }else{
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateDriveDateDay() Bypassed');
         }
-      //HRP-10416 Start ->>  
-	if(super.getTriggerMethodsToBypass().indexOf('updateOppProjUnitFields') == -1) {
+        //HRP-10416 Start ->>  
+        if(super.getTriggerMethodsToBypass().indexOf('updateOppProjUnitFields') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateOppProjUnitFields() Executing...');
             OpportunityService.updateOppProjUnitFields((Map<Id,Opportunity>)trigger.oldMap,(List<Opportunity>)trigger.new);
         }else{
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateOppProjUnitFields() Bypassed');
         }
-	//HRP-10416 <<-End
-	//HRP-12143 Start ->> 
-	if(super.getTriggerMethodsToBypass().indexOf('restrictFieldChangeWhenPendingActionIsOpen') == -1) {
+        //HRP-10416 <<-End
+	    //HRP-12143 Start ->> 
+        if(super.getTriggerMethodsToBypass().indexOf('restrictFieldChangeWhenPendingActionIsOpen') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateOppProjUnitFields() Executing...');
             OpportunityService.restrictFieldChangeWhenPendingActionIsOpen((Map<Id,Opportunity>)trigger.newMap,(Map<Id,Opportunity>)trigger.oldMap);
         }else{
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.restrictFieldChangeWhenPendingActionIsOpen() Bypassed');
         }
-    //HRP-12143 <<-End   
+        //HRP-12143 <<-End   
         /* Commented as part of HRP - 9887 --> Start
         if(super.getTriggerMethodsToBypass().indexOf('validateOnlineDonorMessage') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.validateOnlineDonorMessage() Executing...');
@@ -188,15 +191,15 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }
         //HRP-5002 :Global Web Scheduling,HRP-4987=SF TimeZone Objects
         if(super.getTriggerMethodsToBypass().indexOf('updateWebSchedulingStart_EndDates') == -1){
-        System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateWebSchedulingStart_EndDates() Executing...');
-        OpportunityService.updateWebSchedulingStart_EndDates((List<Opportunity>) trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+            System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateWebSchedulingStart_EndDates() Executing...');
+            OpportunityService.updateWebSchedulingStart_EndDates((List<Opportunity>) trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
         } else {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateWebSchedulingStart_EndDates() Bypassed');
         }
         //HRP-4987=SF TimeZone Objects
-          if(super.getTriggerMethodsToBypass().indexOf('updateWebSchedulingStartEndDates_WithoutGlobalSchedules') == -1) {	
-          OpportunityService.updateWebSchedulingStart_EndDates_WithoutGlobalSchedules((List<Opportunity>) trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
-         } else{
+        if(super.getTriggerMethodsToBypass().indexOf('updateWebSchedulingStartEndDates_WithoutGlobalSchedules') == -1) {	
+            OpportunityService.updateWebSchedulingStart_EndDates_WithoutGlobalSchedules((List<Opportunity>) trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+        } else{
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.updateWebSchedulingStart_EndDates_WithoutGlobalSchedules() Bypassed');
         } 
         
@@ -275,6 +278,33 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }   
         //End HRP-12142 
             
+        
+        //HRP-13190
+        if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        //HRP-14399
+        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+        //HRP-13146
+        if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
+            OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
+        //HRP-6051
+        if(super.getTriggerMethodsToBypass().indexOf('validateTheARD') == -1) {
+            OpportunityService.validateTheARD((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('validateManualFirstTimeFlagSelection') == -1) {
+            OpportunityService.validateManualFirstTimeFlagSelection((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         System.debug('Exiting method beforeUpdate');
     }
     
@@ -441,6 +471,30 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.syncDoNotRollFields((List<Opportunity>)trigger.new, null);
         }   
         //End HRP-12142
+        
+        //HRP-13190
+         if(super.getTriggerMethodsToBypass().indexOf('captureAPTRequirements') == -1) {
+           OpportunityService.captureAPTRequirements((List<Opportunity>)trigger.new, NULL);
+        }
+
+        //HRP-14399
+        if(super.getTriggerMethodsToBypass().indexOf('updateVolunteerRequired') == -1) {
+            OpportunityService.updateVolunteerRequired((List<Opportunity>)trigger.new, NULL);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('calculateVolunteerQuantity') == -1) {
+            OpportunityService.calculateVolunteerQuantity((List<Opportunity>)trigger.new, NULL);
+        }
+        
+        //HRP-13146
+        if(super.getTriggerMethodsToBypass().indexOf('handleRedcrossVolunteerRequirementValidation') == -1) {
+            OpportunityService.handleRedcrossVolunteerRequirementValidation((List<Opportunity>)trigger.new, NULL);
+        }
+
+        //HRP-701
+        if(super.getTriggerMethodsToBypass().indexOf('populateSpecialCircumstancesBadgeData') == -1) {
+            OpportunityService.populateSpecialCircumstancesBadgeData((List<Opportunity>)trigger.new);
+        }
+       
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
     }
@@ -501,7 +555,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }else{
             System.debug('#### OpportunityTriggerHandler.afterInsert() - OpportunityService.updateOppStage() Bypassed');
         }
-System.debug('getCpuTime()'+limits.getCpuTime());        
+        System.debug('getCpuTime()'+limits.getCpuTime());        
 		//12/9 FWO added to replace the workflows "Update Opportunity name with No Site & Update Opportunity Name with Site Building"
         if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.GenerateOpportunityName() Executing...');
@@ -519,8 +573,7 @@ System.debug('getCpuTime()'+limits.getCpuTime());
         {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.syncTemplateOrdertoOpportunity() Bypassed');
         }
-		//HRP-12664
-		System.debug('getCpuTime()'+limits.getCpuTime());
+		//HRP-12664        
         System.debug('Exiting method AfterInsert');
     }
     
@@ -676,7 +729,8 @@ System.debug('getCpuTime()'+limits.getCpuTime());
             	System.debug('OpportunityTriggerHandler.afterUpdate() - BSFTaskChecklistTriggerHandler.updateTaskChecklist() Executing...');
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap); 
             }
-            // HRP- 12142 --> Ends Here
+            // HRP- 12142 --> Ends Here        
+            
             System.debug('Exiting method AfterUpdate');
         }
         
@@ -695,7 +749,6 @@ System.debug('getCpuTime()'+limits.getCpuTime());
                 System.debug('OpportunityTriggerHandler.beforeDelete - BSF_Utilities.restrictNonAdminUsersForSobjectDeletion() Bypassed');  
             }
          // Part of HRP-10115 --> Ends Here
-            System.debug('Exiting method beforeDelete');
-       
+            System.debug('Exiting method beforeDelete');       
     }
 }
