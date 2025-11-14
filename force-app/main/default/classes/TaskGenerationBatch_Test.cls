@@ -11,7 +11,6 @@ private class TaskGenerationBatch_Test {
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('TaskTriggerHandler');
 
-        //Create Account
         Account acc = new Account(
             Name = 'Test Account',
             Account_Manager__c = UserInfo.getUserId(),
@@ -19,7 +18,6 @@ private class TaskGenerationBatch_Test {
         );
         insert acc;
 
-        //Create Contact
         Contact con = new Contact(
             FirstName = 'Test',
             LastName = 'Contact',
@@ -31,7 +29,6 @@ private class TaskGenerationBatch_Test {
         );
         insert con;
 
-        //Create Account Service Role
         Account_Service_Role__c asr = new Account_Service_Role__c(
             Account__c = acc.Id,
             Contact__c = con.Id,
@@ -39,7 +36,6 @@ private class TaskGenerationBatch_Test {
         );
         insert asr;
 
-        //Create Site
         sked__Location__c site = new sked__Location__c(
             Name = 'testSite',
             sked_Floor_Description__c = 'test Floor',
@@ -71,7 +67,6 @@ private class TaskGenerationBatch_Test {
         );
         insert site;
 
-        //Create Opportunities
         Id mobileRTId = Opportunity.SObjectType.getDescribe()
             .getRecordTypeInfosByName()
             .get('Mobile Opp')

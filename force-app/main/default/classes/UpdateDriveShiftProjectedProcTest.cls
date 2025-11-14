@@ -52,7 +52,7 @@ public class UpdateDriveShiftProjectedProcTest {
         Opportunity opp = [SELECT Id FROM Opportunity WHERE RecordType.DeveloperName = 'Fixed_Site_Opp'  LIMIT 1];
         Test.startTest();
 
-        // 🔹 Bypass triggers for drive creation
+        //Bypass triggers for drive creation
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');

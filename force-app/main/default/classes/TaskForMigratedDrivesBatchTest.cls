@@ -11,11 +11,9 @@ public class TaskForMigratedDrivesBatchTest {
         TriggerHandler.bypass('TaskTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
 
-        //Create Account
         Account acc = new Account(Name = 'Test Account');
         insert acc;
 
-        //Create Contact
         Contact con = new Contact(
             AccountId=acc.Id,
             FirstName='contact122',
@@ -41,7 +39,6 @@ public class TaskForMigratedDrivesBatchTest {
         );
         insert u;
 
-        //Create Site (sked__Location__c)
         sked__Location__c loc = new sked__Location__c(
             sked_National_Name__c='national',
             sked_Physical_Location_Type__c='inside',
@@ -77,7 +74,6 @@ public class TaskForMigratedDrivesBatchTest {
             .get('Mobile Opp')
             .getRecordTypeId();
 
-        //Create Opportunities (3)
         List<Opportunity> oppList = new List<Opportunity>();
         oppList.add(new Opportunity(
             Name = 'Test Opp 1',

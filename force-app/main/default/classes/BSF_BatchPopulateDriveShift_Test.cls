@@ -3,17 +3,15 @@ public class BSF_BatchPopulateDriveShift_Test {
 
     @testSetup
     static void setupData() {
-        // ✅ Temporarily bypass heavy triggers for setup data
+        //Temporarily bypass heavy triggers for setup data
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
 
-        // 🔹 Use existing utility for consistent base data
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<String, SObject> testData = testDataSetup.createAndInsertCommonObjects();
 
-        // 🔹 Insert key objects
         Account testAccount = (Account)testData.get('MOBILE_ACCOUNT');
         insert testAccount;
 
@@ -34,7 +32,7 @@ public class BSF_BatchPopulateDriveShift_Test {
         mobileOpp.Is_Template__c = false;
         insert mobileOpp;
 
-        // 🔹 Create a sked_Drive and its shifts
+        //Create a sked_Drive and its shifts
         sked_Drive__c drive = new sked_Drive__c(
             sked_Account__c = testAccount.Id,
             sked_Drive_Site__c = site.Id,
@@ -56,7 +54,7 @@ public class BSF_BatchPopulateDriveShift_Test {
         };
         insert shifts;
 
-        // ✅ Clear trigger bypass after setup
+        //Clear trigger bypass after setup
         TriggerHandler.clearBypass('AccountTriggerHandler');
         TriggerHandler.clearBypass('OpportunityTriggerHandler');
         skedHubBase.BypassInsertTriggers = false;
@@ -65,7 +63,7 @@ public class BSF_BatchPopulateDriveShift_Test {
 
     @isTest
     static void test_BSF_BatchPopulateDriveShift() {
-        // 🔹 Fetch existing drive and shifts created in setup
+        //Fetch existing drive and shifts created in setup
         sked_Drive__c drive = [SELECT Id FROM sked_Drive__c LIMIT 1];
         List<sked_Drive_Shift__c> beforeShifts = [
             SELECT Id, sked_Donors_Scheduled__c
@@ -74,20 +72,17 @@ public class BSF_BatchPopulateDriveShift_Test {
         ];
         System.assertEquals(2, beforeShifts.size(), 'Two drive shifts should exist before batch run.');
 
-        // 🔹 Run the batch
         Test.startTest();
         Date cutoffDate = System.today().addDays(-10);
         Database.executeBatch(new BSF_BatchPopulateDriveShift(cutoffDate), 200);
         Test.stopTest();
 
-        // 🔹 Re-query updated shifts
         List<sked_Drive_Shift__c> afterShifts = [
             SELECT Id, sked_Donors_Scheduled__c
             FROM sked_Drive_Shift__c
             WHERE sked_Drive__c = :drive.Id
         ];
 
-        // 🔹 Validate meaningful outcome
         Boolean anyUpdated = false;
         for (sked_Drive_Shift__c s : afterShifts) {
             if (s.sked_Donors_Scheduled__c != null) {
@@ -102,7 +97,7 @@ public class BSF_BatchPopulateDriveShift_Test {
         );
     }
 
-    // ✅ Utility method to get record type dynamically
+    //Utility method to get record type dynamically
     private static Map<String, Id> recordTypeMap(String sObjectName) {
         Map<String, Id> mapNameId = new Map<String, Id>();
         if (sObjectName != null) {
