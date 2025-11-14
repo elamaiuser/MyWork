@@ -9,5 +9,6 @@ ISCHANGED(sked_Status__c),
 ISBLANK(sked_Opportunity__r.Account.Internal_Name__c),
 ISPICKVAL(sked_Type_of_Drive__c, &quot;Mobile&quot;) , 
 ISPICKVAL(sked_Status__c, &quot;Confirmed&quot;))</errorConditionFormula>
+    <errorDisplayField>sked_No_of_Allocated_Buses__c</errorDisplayField>
     <errorMessage>Please populate Account Internal Name before moving this mobile drive to &#39;Confirmed&#39; Status</errorMessage>
 </ValidationRule>

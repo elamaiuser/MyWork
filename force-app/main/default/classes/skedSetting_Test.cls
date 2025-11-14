@@ -11,7 +11,11 @@ private class skedSetting_Test {
         skedSetting.skedRacSetting racSetting = skedSetting.instance.RAC;
         skedSetting.skedEmailSetting emailSetting = skedSetting.instance.Email;
         skedSetting.skedTravelTimeManager travelTimeSetting = skedSetting.instance.TravelTime;
+        skedSetting.skedTTIRRStuckJobConfigSetting stuckTTIRRSetting = skedSetting.instance.stuckTTIRR;
         Map<String, Set<Date>> holidays = appSetting.mapHoliday;
+        appSetting.setTimezoneSidId(UserInfo.getTimeZone().getID());
+        appSetting.detectDaylightSaving(system.today(), system.today().addDays(10));
+        appSetting.detectDaylightSaving(system.now(), system.now().addHours(10));
     }
 
     @TestSetup
@@ -65,5 +69,21 @@ private class skedSetting_Test {
         	sked_Manual_Refresh_Priority__c = 10
         );
         insert testTravelTimeManager;
+        
+        sked_User_Filter__c testUserFilter = new sked_User_Filter__c(
+        	sked_User__c = UserInfo.getUserId(),
+        	sked_Category__c = 'RAC',
+        	sked_JSON_Data__c = ''
+        );
+        insert testUserFilter;
+
+        sked_TTIRR_Stuck_Job_Config_Setting__c testTTIRRStuckJobSetting = new sked_TTIRR_Stuck_Job_Config_Setting__c(
+        	sked_Enable_Auto_Reschedule__c = true,
+        	sked_Is_Active__c = true,
+        	sked_Maximum_Retries__c = 3,
+        	sked_Reschedule_Interval_Minutes__c = 5,
+        	sked_Stuck_Threshold_Minutes__c = 0
+        );
+        insert testTTIRRStuckJobSetting;
     }
 }

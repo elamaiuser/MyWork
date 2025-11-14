@@ -1,3 +1,13 @@
+/* 
+ * @Description: This class is used to serve different Account affiliation object related functionalities and is called from AccountAffiliationTriggerHandler.
+ 
+ * Modification Log 
+ * Date					     Developer Name			     Comments
+ * *********************************************************************************
+ * 02/15/2025				   Priti Jana		      Logic for HRP-14275
+ ***********************************************************************************
+ */ 
+
 public with sharing class AccountAffiliationService {
     
      public static void createHistoryOnAccAffiliation( list<Account_Marketing_Program__c> accAffiliatonCreatedList, String triggerContext){
@@ -139,62 +149,119 @@ public with sharing class AccountAffiliationService {
            }  
                     
        }
-    public static void AccountFlagForPumpItUpCurrent(list<Account_Marketing_Program__c> accAffiliationList, String triggerContext){
-        String pumpitupBonusCurrent =system.label.Premier_Bonus_Current;
-        String PremierCurrent = system.label.PremierCurrent;
-        list<String> priorList=new list<String>{pumpitupBonusCurrent,PremierCurrent};
-        if(triggerContext=='Insert'){
-            map<id,list<id>> marketingProgramMap = new map<id,list<id>>();
-            
-            for(Account_Marketing_Program__c ac : accAffiliationList){
-                if(marketingProgramMap.containskey(ac.Marketing_Program__c)) {
-                    list<id> accList=marketingProgramMap.get(ac.Marketing_Program__c);
-                    accList.add(ac.Account__c);
-                    marketingProgramMap.put(ac.Marketing_Program__c,accList);
-                } else{
-                    marketingProgramMap.put(ac.Marketing_Program__c,new list<id>{ac.Account__c});
-                }  
-            }
-            system.debug('keys '+marketingProgramMap.keyset()+ 'values '+ marketingProgramMap.values());
-            //Id RccognitionId = Schema.SObjectType.Marketing_Program__c.getRecordTypeInfosByName().get('Recognition Affiliation').getRecordTypeId();
-            list<Marketing_Program__c> accMkting=[select id,name from Marketing_Program__c where id in :marketingProgramMap.keyset() and RecordType.Name = :BSF_Constants.AFFILIATION_RECORD_TYPE
-                                                  and Name =: priorList];//and Start_Date__c = THIS_YEAR
-            system.debug('accMkting '+accMkting.size());
-            
-            Map<Id,Account> accountMap= new Map<Id,Account>();
-            
-            for(Marketing_Program__c mpc:accMkting){
-                if(mpc.name== label.Premier_Bonus_Current){
-                    List<Id> newAcccList=marketingProgramMap.get(mpc.id);
-                    if(newAcccList == null)
-                        continue;
-                    for(Id acctId : newAcccList){
-                        if(!accountMap.containsKey(acctId)){
-                            accountMap.put(acctId,new Account(Id=acctId,IsPumpedItUpCurrent__c = true));
-                        }else{
-                            accountMap.get(acctId).IsPumpedItUpCurrent__c = true;
-                        }
+    public static void AccountFlagForPumpItUpCurrent(list<Account_Marketing_Program__c> accAffiliationList, List<String> priorList, List<String> recordTypeNames){
+        map<id,list<id>> marketingProgramMap = new map<id,list<id>>();
+        
+        for(Account_Marketing_Program__c ac : accAffiliationList){
+            if(marketingProgramMap.containskey(ac.Marketing_Program__c)) {
+                list<id> accList=marketingProgramMap.get(ac.Marketing_Program__c);
+                accList.add(ac.Account__c);
+                marketingProgramMap.put(ac.Marketing_Program__c,accList);
+            } else{
+                marketingProgramMap.put(ac.Marketing_Program__c,new list<id>{ac.Account__c});
+            }  
+        }
+
+        system.debug('keys '+marketingProgramMap.keyset()+ 'values '+ marketingProgramMap.values());
+        //Id RccognitionId = Schema.SObjectType.Marketing_Program__c.getRecordTypeInfosByName().get('Recognition Affiliation').getRecordTypeId();
+        list<Marketing_Program__c> accMkting=[select id,name from Marketing_Program__c where id in :marketingProgramMap.keyset() and RecordType.Name = :recordTypeNames
+                                                and Name =: priorList];//and Start_Date__c = THIS_YEAR
+        system.debug('accMkting '+accMkting.size());        
+        Map<Id,Account> accountMap= new Map<Id,Account>();
+        
+        for(Marketing_Program__c mpc:accMkting){
+            if(mpc.name== label.Premier_Bonus_Current){
+                List<Id> newAcccList=marketingProgramMap.get(mpc.id);
+                if(newAcccList == null)
+                    continue;
+                for(Id acctId : newAcccList){
+                    if(!accountMap.containsKey(acctId)){
+                        accountMap.put(acctId,new Account(Id=acctId,IsPumpedItUpCurrent__c = true));
+                    }else{
+                        accountMap.get(acctId).IsPumpedItUpCurrent__c = true;
                     }
-                }else if(mpc.name == label.PremierCurrent){
-                    List<Id> newAcccList=marketingProgramMap.get(mpc.id);
-                    if(newAcccList == null)
-                        continue;
-                    for(Id acctId : newAcccList){
-                        if(!accountMap.containsKey(acctId)){
-                            accountMap.put(acctId,new Account(Id=acctId,IsPremierCurrent__c = true));
-                        }else{
-                            accountMap.get(acctId).IsPremierCurrent__c = true;
-                        }
+                }
+            }else if(mpc.name == label.PremierCurrent){
+                List<Id> newAcccList=marketingProgramMap.get(mpc.id);
+                if(newAcccList == null)
+                    continue;
+                for(Id acctId : newAcccList){
+                    if(!accountMap.containsKey(acctId)){
+                        accountMap.put(acctId,new Account(Id=acctId,IsPremierCurrent__c = true));
+                    }else{
+                        accountMap.get(acctId).IsPremierCurrent__c = true;
+                    }
+                }
+            }else if(mpc.name == BSF_Constants.HOSPITAL_CONTRACT_PARTNER){
+                List<Id> newAcccList=marketingProgramMap.get(mpc.id);
+                if(newAcccList == null)
+                    continue;
+                for(Id acctId : newAcccList){
+                    if(!accountMap.containsKey(acctId)){
+                        accountMap.put(acctId,new Account(Id=acctId,Is_Hospital_Contract_Partner__c = true));
+                    }else{
+                        accountMap.get(acctId).Is_Hospital_Contract_Partner__c = true;
                     }
                 }
             }
+        }
             
             AccountTeamMemberHelper.skipAccountTrigger=true;
             update accountMap.values();
-            AccountTeamMemberHelper.skipAccountTrigger=false;
-			
-            
+            AccountTeamMemberHelper.skipAccountTrigger=false;        
+    }
+
+    public static void AccountFlagForAffiliationList(list<Account_Marketing_Program__c> accAffiliationList, String triggerContext){
+        String pumpitupBonusCurrent = system.label.Premier_Bonus_Current;
+        String PremierCurrent = system.label.PremierCurrent;
+        String hospitalContractPartner = BSF_Constants.HOSPITAL_CONTRACT_PARTNER;
+        list<String> affiliationProgramName=new list<String>{pumpitupBonusCurrent,PremierCurrent, hospitalContractPartner};
+        list<String> affiliationProgramRecordType = new List<String>{BSF_Constants.AFFILIATION_RECORD_TYPE,BSF_Constants.AFFILIATION_RECORD_TYPE2};
+
+        if(triggerContext == 'Insert'){
+            AccountFlagForPumpItUpCurrent(accAffiliationList,affiliationProgramName, affiliationProgramRecordType);
+        }else if(triggerContext == 'Update'){            
+            RemovalOfAffiliationList(accAffiliationList, hospitalContractPartner);
         }
+    }
+
+    public static void RemovalOfAffiliationList(list<Account_Marketing_Program__c> accAffiliationList, String programName){
+        Set<Id> accountIds = new Set<Id>();
+        Set<Id> otherAccountIds = new Set<Id>();
+        List<Account> accountsToUpdate = new List<Account>();
+        List<Marketing_Program__c> marketingPgms = [SELECT Id FROM Marketing_Program__c WHERE Name = :programName AND RecordType.Name = :BSF_Constants.AFFILIATION_RECORD_TYPE2 LIMIT 1];
+
+        for(Account_Marketing_Program__c amp : accAffiliationList){
+            if(amp.Date_Removed__c != null && 
+               amp.Date_Removed__c <= System.today() && 
+               amp.Marketing_Program__c == marketingPgms[0].Id){
+                accountIds.add(amp.Account__c);
+            }else if(amp.Marketing_Program__c == marketingPgms[0].Id && (amp.Date_Removed__c == null || amp.Date_Removed__c > System.today())){
+                otherAccountIds.add(amp.Account__c);
+            }
+        }       
+
+        if(!accountIds.isEmpty()){            
+            for(Id accId : accountIds){
+                accountsToUpdate.add(new Account(
+                    Id = accId,
+                    Is_Hospital_Contract_Partner__c = false
+                ));
+            }
+        }
+        
+        if(!otherAccountIds.isEmpty()){            
+            for(Id accId : otherAccountIds){
+                accountsToUpdate.add(new Account(
+                    Id = accId,
+                    Is_Hospital_Contract_Partner__c = true
+                ));
+            }
+        }
+
+        AccountTeamMemberHelper.skipAccountTrigger=true;
+        update accountsToUpdate;
+        AccountTeamMemberHelper.skipAccountTrigger=false;
     }
     
     public static void SetUniqueAccountAffiliationKey(list<Account_Marketing_Program__c> accAffiliationList, String triggerContext){
@@ -224,7 +291,6 @@ public with sharing class AccountAffiliationService {
     }
    public static void AccountAffiliationDateValidation(list<Account_Marketing_Program__c> accAffiliatonCreatedList)
     {
-        system.debug('Its here');
         set<String> affKeySet = new set<String>();
         for(Account_Marketing_Program__c amp : accAffiliatonCreatedList)
         {
@@ -237,7 +303,6 @@ public with sharing class AccountAffiliationService {
         map<String,Account_Marketing_Program__c> affKeyAffiliationMap = new map<string,Account_Marketing_Program__c>();
         for(Account_Marketing_Program__c amp : existingAffiliationList)
         {
-             system.debug('Its here 138');
             affKeyAffiliationMap.put(amp.Account_Affiliation_External_Key__c,amp);
         }
         
@@ -245,52 +310,47 @@ public with sharing class AccountAffiliationService {
         list<Account_Marketing_Program__c> updatedAffList = new list<Account_Marketing_Program__c>();
         for(Account_Marketing_Program__c amp : accAffiliatonCreatedList)
         {
-            if(affKeyAffiliationMap!=null){
-                   Account_Marketing_Program__c accMp = new Account_Marketing_Program__c();
-                   accMp = affKeyAffiliationMap.get(amp.Account_Affiliation_External_Key__c);
-                   system.debug('Its here 146:'+accMp);
-                   Date oldDassign = accMp.Date_Assigned__c;
-                   Date newDassign = amp.Date_Assigned__c;
-                   Date oldDremove = accMp.Date_Removed__c;
-                   Date newDremove = amp.Date_Removed__c;
-                   boolean isupdate = false;
+            if(affKeyAffiliationMap!=null) {
+                Account_Marketing_Program__c accMp = new Account_Marketing_Program__c();
+                accMp = affKeyAffiliationMap.get(amp.Account_Affiliation_External_Key__c);
+                Date oldDassign = accMp.Date_Assigned__c;
+                Date newDassign = amp.Date_Assigned__c;
+                Date oldDremove = accMp.Date_Removed__c;
+                Date newDremove = amp.Date_Removed__c;
+                boolean isupdate = false;
+            
+                amp.Date_Assigned__c = oldDassign;
+                amp.Date_Removed__c  = oldDremove;
+
+                if(oldDassign != newDassign) {
+
+                    if(oldDassign > system.today() || oldDassign == NULL) { //HRP-14275
+                        amp.Date_Assigned__c = newDassign;
+                        isupdate = true;
+                    }
+                }
                 
-                   amp.Date_Assigned__c = oldDassign;
-                   amp.Date_Removed__c  = oldDremove;
-                   if(oldDassign != newDassign)
-                   {
-                     if((oldDassign > system.today()))
-                     {
-                         system.debug('Its here 138');
-                       amp.Date_Assigned__c = newDassign;
-                       isupdate = true;
-                     }
-                   }
-                   
-                   if(oldDremove != newDremove)
-                   {
-                       system.debug('Its here 138');
-                       amp.Date_Removed__c = newDremove;
-                       isupdate = true;
-                   }
-                   if(oldDremove < system.today())
-                   {
-                       system.debug('Its here 138');
-                     amp.Date_Assigned__c =  newDassign;
-                     amp.Date_Removed__c  =  newDremove; 
-                     isupdate = true;
-                   }
-                   if(isupdate)
+                if(oldDremove != newDremove)
+                {
+                    amp.Date_Removed__c = newDremove;
+                    isupdate = true;
+                }
+                if(oldDremove < system.today())
+                {
+                    amp.Date_Assigned__c =  newDassign;
+                    amp.Date_Removed__c  =  newDremove; 
+                    isupdate = true;
+                }
+                if(isupdate)
                 {
                     updatedAffList.add(amp);
                 }
-                }
-            system.Debug(amp);
-              }
+            }
+        }
         
         if(!updatedAffList.isEmpty())
         {
             createHistoryOnAccAffiliation(updatedAffList, 'Update'); 
         }
-        }
+    }
 }

@@ -38,27 +38,9 @@
         <won>true</won>
     </standardValue>
     <standardValue>
-        <fullName>Withdrawn</fullName>
-        <default>false</default>
-        <label>Withdrawn</label>
-        <closed>true</closed>
-        <forecastCategory>Omitted</forecastCategory>
-        <probability>0</probability>
-        <won>false</won>
-    </standardValue>
-    <standardValue>
         <fullName>Cancelled</fullName>
         <default>false</default>
         <label>Cancelled</label>
-        <closed>true</closed>
-        <forecastCategory>Omitted</forecastCategory>
-        <probability>0</probability>
-        <won>false</won>
-    </standardValue>
-    <standardValue>
-        <fullName>Excluded</fullName>
-        <default>false</default>
-        <label>Excluded</label>
         <closed>true</closed>
         <forecastCategory>Omitted</forecastCategory>
         <probability>0</probability>

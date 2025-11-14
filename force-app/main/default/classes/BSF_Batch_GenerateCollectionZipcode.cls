@@ -3,8 +3,8 @@
 * Modification Log                                                                                                             *
 *  Date                          Developer Name                 Comments                                                       *
 * ******************************************************************************************************************************
-* 05/15/2024                     Balaji N                   This batch is created part of HRP-12054
-*
+* 05/15/2024                      Balaji N                    This batch is created part of HRP-12054
+* 03/14/2024                      Harika Bolisetti            Logic for HRP-14435//Taxo Run Chaining in finish method
 */
 global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<SObject>,Database.Stateful
 {
@@ -12,27 +12,48 @@ global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<S
     global Date startDate;
     global Date endDate;
     global Set<Id> upsertedSiteCollectionOperationIds = new Set<Id>();
+    global boolean allowChaining = false;//HRP-14435
     global BSF_Batch_GenerateCollectionZipcode (Decimal taxVer,Date startDate,Date endDate)
     {
         this.taxVer=taxVer;
         this.startDate=startDate;
         this.endDate=endDate;
     }
+    //HRP-14435
+     global BSF_Batch_GenerateCollectionZipcode (Decimal taxVer,Date startDate,Date endDate,Boolean allowChaining)
+    {
+        this(taxVer,startDate,endDate);
+        this.allowChaining = allowChaining;
+    }
     
     global database.querylocator start(Database.BatchableContext bc)
     {
-        String query='SELECT Id, Collection_Operation_Name__c,Collection_Operation_Code__c, End_Date__c, Start_Date__c, Zip_Code__c,Time_Zone__c FROM Taxonomy__c WHERE RecordType.Name = \'Bio Collection BSF\' AND Version_Key__c = :taxVer order by Zip_Code__c';
-        
-        
-        return Database.getqueryLocator(query);
-    }
+        //HRP-14435
+        try{
+            String query='SELECT Id, Collection_Operation_Name__c,Collection_Operation_Code__c, End_Date__c, Start_Date__c, Zip_Code__c,Time_Zone__c FROM Taxonomy__c WHERE RecordType.Name = \'Bio Collection BSF\' AND Version_Key__c = :taxVer order by Zip_Code__c';
+            //Capture start method entry in Error Log
+            List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
+            BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Taxo Run - Collection',ApexClass__c='BSF_Batch_GenerateCollectionZipcode',Method__c='start',Type__c='Success',Error_Description__c='Batch Process Started',Error_Description_Long__c= query);
+            errorLogList.add(errorLog);
+           
+            Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
+            Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_GenerateCollectionZipcode','Start','Error',
+                                     'Error occurred while inserting the error Record',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
+            return Database.getqueryLocator(query);
+        } catch (Exception e) { //HRP-14435
+            System.debug('Error in start method: ' + e.getMessage());
+            Taxo_Utilities.logErrorForException(e, 'BSF_Batch_GenerateCollectionZipcode', 'Start', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
+            return null;
+        }
+}
     
     global void Execute(Database.BatchableContext bc,List<Taxonomy__c> taxoList)
     {
         Set<String> externalKeySet = new Set<String>();
         Set<String> collectionOpCodeSet = new Set<String>();
         Set<String> zipCodeSet = new Set<String>();
-        for(Taxonomy__c tx:taxoList)
+       try{//HRP-14435
+         for(Taxonomy__c tx:taxoList)
         {
             externalKeySet.add('Bio_Collection_BSF_CollZip_'+tx.Zip_Code__c+'_'+tx.Collection_Operation_Code__c);
             collectionOpCodeSet.add(tx.Collection_Operation_Code__c);
@@ -77,9 +98,7 @@ global class BSF_Batch_GenerateCollectionZipcode implements Database.Batchable<S
         {
             extIdSiteCollMap.put(SiteCo.External_Id_BackEnd__c, SiteCo);
         }
-        
-        
-        
+         
         //Upsert Lists
         Map<String,Collections_Territory__c> extIdCollectionZipUpsertListMap = new Map<String,Collections_Territory__c>();
         Map<String,sked_Site_Collection_Operation__c> extIdSiteCollZipUpsertListMap = new Map<String,sked_Site_Collection_Operation__c>();
@@ -178,28 +197,42 @@ extIdSiteCollZipUpsertListMap.put('Bio_Collection_BSF_SiteCo_'+tx.Collection_Ope
                         extIdSiteCollZipUpsertListMap.put('Bio_Collection_BSF_SiteCo_'+tx.Collection_Operation_Code__c+'_'+site.Id,newSiteCO);
                     }
                 }
-                
-                
             }
-            
         }
-        List<BSF_Error_Log__c> logList = new List<BSF_Error_Log__c>();
-        logList.addAll(BSF_Utilities.createErrorLog(Database.upsert(extIdCollectionZipUpsertListMap.values(), Collections_Territory__c.External_Id__c, false), 'Generate Coll Zip','BSF_Batch_GenerateCollectionZipcode','Execute','Error','Error during Coll Zip Upsert'));
-        logList.addAll(BSF_Utilities.createErrorLog(Database.upsert(extIdSiteCollZipUpsertListMap.values(), sked_Site_Collection_Operation__c.External_Id__c, false), 'Generate Coll Zip','BSF_Batch_GenerateCollectionZipcode','Execute','Error','Error during Coll Zip Upsert'));
-        
-        InsertBsfErrorLog.insertBsfErrors(logList);
-        
-        
-        for(sked_Site_Collection_Operation__c siteCo:extIdSiteCollZipUpsertListMap.values())
-        {
-            this.upsertedSiteCollectionOperationIds.add(siteCo.Id);
-        }
+           List<BSF_Error_Log__c> logList = new List<BSF_Error_Log__c>();
+           logList.addAll(BSF_Utilities.createErrorLog(Database.upsert(extIdCollectionZipUpsertListMap.values(), Collections_Territory__c.External_Id__c, false), 'Generate Coll Zip','BSF_Batch_GenerateCollectionZipcode','Execute','Error','Error during Coll Zip Upsert'));
+           logList.addAll(BSF_Utilities.createErrorLog(Database.upsert(extIdSiteCollZipUpsertListMap.values(), sked_Site_Collection_Operation__c.External_Id__c, false), 'Generate Coll Zip','BSF_Batch_GenerateCollectionZipcode','Execute','Error','Error during Coll Zip Upsert'));
+           
+           InsertBsfErrorLog.insertBsfErrors(logList);
+           for(sked_Site_Collection_Operation__c siteCo:extIdSiteCollZipUpsertListMap.values())
+           {
+               this.upsertedSiteCollectionOperationIds.add(siteCo.Id);
+           }
+       } catch (Exception e) { //HRP-14435
+           System.debug('Error in execute method: ' + e.getMessage());
+           Taxo_Utilities.logErrorForException(e, 'BSF_Batch_GenerateCollectionZipcode', 'Execute', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
+       }
     }
     
     global void Finish(Database.BatchableContext bc)
     {
-        BSF_Batch_EndCollectionZip batch = new BSF_Batch_EndCollectionZip(taxVer,this.upsertedSiteCollectionOperationIds);
-        Database.executeBatch(batch,50);
+        //HRP-14435
+        try{
+            //Capture finish method entry in Error Log
+            List<BSF_Error_Log__c> errorLogList = new List<BSF_Error_Log__c>();
+            BSF_Error_Log__c errorLog = new BSF_Error_Log__c(Process_Name__c='Taxo Run - Collection',ApexClass__c='BSF_Batch_GenerateCollectionZipcode',Method__c='finish',Type__c='Success',Error_Description__c='Batch Process Completed' ,Error_Description_Long__c='');
+            errorLogList.add(errorLog);
+            //insert errorLog;
+            
+            Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
+            Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_BSFPortfolio','Finish','Error',
+                                     'Error occurred while inserting the error Record',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
+            Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'BSF_Batch_EndCollectionZip');   
+            BSF_Batch_EndCollectionZip batch = new BSF_Batch_EndCollectionZip(taxVer,this.upsertedSiteCollectionOperationIds,this.allowChaining);
+            Database.executeBatch(batch,batchSize);
+        } catch (Exception e) { //HRP-14435
+            Taxo_Utilities.logErrorForException(e, 'BSF_Batch_GenerateCollectionZipcode', 'Finish', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
+        }
     }
     
 }

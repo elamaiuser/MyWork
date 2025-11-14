@@ -3,19 +3,22 @@
  * Date					   Developer Name			    Comments
  * ****************************************************************************
  * 10/18/2024               Priti Jana              Logic for HRP-9815
+ * 12/26/2024               Priti Jana              Logic for HRP-13882
  ******************************************************************************
 */
 
 public with sharing class UserTriggerHandler extends TriggerHandler{
     
     public override void beforeInsert() {
+        checkRecursive.firstCallForRecordCreation = TRUE; //HRP-13882
         if(super.getTriggerMethodsToBypass().indexOf('formatMobilePhone') == -1) {
             System.debug('UserTriggerHandler.beforeInsert() - userService.formatMobilePhone Executing...');
             userService.formatMobilePhone((List<User>) Trigger.new);
             System.debug('Number of Queries used in this apex code so far: ' + Limits.getQueries());
-        }else{
+        } else {
             System.debug('UserTriggerHandler.beforeInsert() - UserTriggerHandler.beforeInsert() Bypassed');
         }
+
     }
     
     public override void beforeUpdate() {
@@ -23,8 +26,8 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
             System.debug('UserTriggerHandler.beforeUpdate() - userService.formatMobilePhone Executing...');
             userService.formatMobilePhone((List<User>) Trigger.new);
             System.debug('Number of Queries used in this apex code so far: ' + Limits.getQueries());
-        }else{
-            System.debug('UserTriggerHandler.beforeUpadte() - UserTriggerHandler.beforeInsert() Bypassed');
+        } else {
+            System.debug('UserTriggerHandler.beforeUpadte() - userService.formatMobilePhone Bypassed');
         }
     }
     
@@ -37,7 +40,7 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
             else {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Bypassed');
             }
-                        
+
             //HRP-9815 --> Starts Here
             if(super.getTriggerMethodsToBypass().indexOf('updateDrdRepContactOnOpRecordUponPhoneChange') == -1) {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.updateDrdRepContactOnOpRecordUponPhoneChange Executing...');

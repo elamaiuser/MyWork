@@ -430,6 +430,8 @@ global class slwcDriveService {
         map_oppField_driveField.put('Number_of_2RBC_Assets__c', 'sked_Number_of_2RBC_Assets__c');
         map_oppField_driveField.put('Number_of_Plasma_Assets__c', 'sked_Number_of_Plasma_Assets__c');
         map_oppField_driveField.put('Number_of_Platelet_Assets__c', 'sked_Number_of_Platelet_Assets__c');
+        map_oppField_driveField.put('Red_Cross_Volunteer_Required__c', 'sked_Redcross_Volunteer_Required__c');
+        map_oppField_driveField.put('Red_Cross_Volunteer_Quantity__c', 'sked_Redcross_Volunteer_Quantity__c');
         
         List<driveChangeRequestModel> filteredRequests = new List<driveChangeRequestModel>();
         
@@ -461,7 +463,8 @@ global class slwcDriveService {
                                           sked_Drive_Date__c, sked_Start_Time__c, sked_End_Time__c, sked_Drive_Site__c, sked_Projected_Registered_Donors__c,
                                           sked_WB_Projected_Procedures__c, sked_2RBC_Projected_Procedures__c, sked_Platelet_Projected_Procedures__c,
                                           sked_Plasma_Projected_Procedures__c, sked_Number_of_2RBC_Assets__c, sked_Number_of_Plasma_Assets__c,
-                                          sked_Number_of_Platelet_Assets__c, sked_APT_Required__c
+                                          sked_Number_of_Platelet_Assets__c, sked_APT_Required__c,
+                                          sked_Redcross_Volunteer_Required__c, sked_Redcross_Volunteer_Quantity__c //HRP-13146
                                           FROM sked_Drive__c
                                           WHERE sked_Opportunity__c IN :oppIds];
         Map<Id, sked_Drive__c> map_oppId_drive = new Map<Id, sked_Drive__c>();

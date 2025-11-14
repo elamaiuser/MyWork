@@ -13,7 +13,7 @@ public class contactService_Test
         insert acc1;
         
         list<contact> cList = new list<Contact>();
-        Contact contact1 = new Contact (firstname='Test Contact First 1',lastname='Test Contact Last 1');
+        Contact contact1 = new Contact (firstname='Test Contact First 1',lastname='TestContactLast1');
         contact1.Active__c = TRUE;
         contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact1.MailingCity = 'Herndon';
@@ -25,7 +25,7 @@ public class contactService_Test
         contact1.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         cList.add( contact1);
         
-        Contact contact2 = new Contact (firstname='Test Contact First 2',lastname='Test Contact Last 2');
+        Contact contact2 = new Contact (firstname='Test Contact First 2',lastname='TestContactLast2');
         contact2.Active__c = TRUE;
         contact2.MailingStreet = '2204 Westcrt ln, Apt 213'; 
         contact2.MailingCity = 'Herndon';
@@ -33,7 +33,7 @@ public class contactService_Test
         contact2.MailingPostalCode = '48093';
         contact2.AccountId = acc1.id;
         contact2.Primary_Phone__c='Mobile Phone';
-        contact2.Email='avs1@dfh.com';
+        contact2.Email='avs2@dfh.com';
         contact2.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         cList.add( contact2);
 		insert cList;
@@ -56,23 +56,24 @@ public class contactService_Test
         testMobileOpp.CloseDate = system.today().addDays(-20);
         insert testMobileOpp;
     }
+    @isTest
     public static void testContactService()
     {
-        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='Test Contact Last 3');
+        Contact contact1 = new Contact (firstname='Test Contact First 3',lastname='ContactLast3');
         contact1.Active__c = TRUE;
-        contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
+        contact1.MailingStreet = '2204 Henry ln, Apt 213'; 
         contact1.MailingCity = 'Herndon';
         contact1.MailingStateCode = 'MI';
-        contact1.MailingPostalCode = '48093';
+        contact1.MailingPostalCode = '48095';
         contact1.AccountId = [select id from Account where Name ='Test Account 2'].id;
         contact1.Primary_Phone__c='Mobile Phone';
-        contact1.Email='avs2@dfh.com';
+        contact1.Email='avs3@dfh.com';
         contact1.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
         
         insert contact1;
         
         
-        system.assertEquals(1, [select count() from contact where Email='avs2@dfh.com']);
+        system.assertEquals(1, [select count() from contact where Email='avs3@dfh.com']);
         
        
     }
@@ -158,7 +159,9 @@ public class contactService_Test
         conObj.Active__c = false;
         
         try{
+            test.startTest();
             update conObj;
+            test.stopTest();
         }Catch(Exception ex)
         {
             String errormsg = ex.getMessage();
@@ -196,5 +199,21 @@ public class contactService_Test
         	Test.stopTest();
         
     	}
+    }
+    
+    @isTest
+    static void testPhoneUpdateTriggersFormulaCopy() {
+        Contact con = [select id, HomePhone, MobilePhone, OtherPhone, Phone,Primary_Phone__c, Primary_Phone_Number_New__c from contact where lastname='TestContactLast2' limit 1];
+        con.MobilePhone = '1234567890';
+        con.Primary_Phone__c='Mobile Phone';
+		test.startTest();
+        update con;
+		test.stopTest();
+        // Fetch the inserted contact to get the formula value populated
+        con = [SELECT Id, MobilePhone, HomePhone, Phone, 
+                      Primary_Phone_Number_New__c
+               FROM Contact 
+               WHERE Id = :con.Id];
+		System.assertEquals(con.Phone,con.Primary_Phone_Number_New__c,'The formula field phone number should be copied to the phone field when phone fields are updated');
     }
 }

@@ -11,19 +11,39 @@
         <valueSetDefinition>
             <sorted>true</sorted>
             <value>
+                <fullName>72 Hour Check-In</fullName>
+                <default>false</default>
+                <label>72 Hour Check-In</label>
+            </value>
+            <value>
                 <fullName>Post Drive Analysis</fullName>
-                <default>true</default>
+                <default>false</default>
                 <label>Post Drive Analysis</label>
             </value>
             <value>
-                <fullName>Post Drive FollowUp</fullName>
+                <fullName>Post Drive Analysis AM</fullName>
                 <default>false</default>
+                <label>Post Drive Analysis AM</label>
+            </value>
+            <value>
+                <fullName>Post Drive Analysis SBPM</fullName>
+                <default>false</default>
+                <label>Post Drive Analysis SBPM</label>
+            </value>
+            <value>
+                <fullName>Post Drive FollowUp</fullName>
+                <default>true</default>
                 <label>Post Drive FollowUp</label>
             </value>
             <value>
                 <fullName>Recruitment Planning Meeting</fullName>
                 <default>false</default>
                 <label>Recruitment Planning Meeting</label>
+            </value>
+            <value>
+                <fullName>Sponsor Planning Meeting</fullName>
+                <default>false</default>
+                <label>Sponsor Planning Meeting</label>
             </value>
         </valueSetDefinition>
     </valueSet>

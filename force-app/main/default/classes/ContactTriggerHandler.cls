@@ -7,6 +7,7 @@
  * 31/07/2023				 Barnojit Sharma		  Phone Numbers must be limited to 10 Numbers (Logic for HRP-10394)
  * 03/08/2023				 Kishore Das		      Users other than System Admin should not have any delete record permissions(Logic for HRP-10572)
  * 10/03/2023                Priti Jana               Restricting non-admin users from contact deletion (Logic for HRP-HRP-10115)
+ * 04/08/2025                Anil Kumar               HRP-13798, populate standard phone field, whenever contact is created or any of phone numbers are updated
  *****************************************************************************************************************************************************************
 */
 /*
@@ -37,6 +38,29 @@ public with sharing class ContactTriggerHandler extends TriggerHandler{
             System.debug('FormatPhoneNumbers Bypassed');
         }
         //Logic for HRP-10394 **Ends here**
+        if(super.getTriggerMethodsToBypass().indexOf('handlePhoneUpdate') == -1) {
+           handlePhoneUpdate((List<Contact>)trigger.new, (map<Id, Contact>)trigger.oldMap);//HRP-13798
+        }
+    }
+
+
+    public static void handlePhoneUpdate(List<Contact> newList, Map<Id, Contact> oldMap) {
+        System.debug('handlePhoneUpdate');
+        for (Contact con : newList) {
+            Contact oldCon = oldMap.get(con.Id);
+
+            // Check if any of the phone fields are changed
+            if (con.MobilePhone != oldCon.MobilePhone ||
+                con.HomePhone != oldCon.HomePhone ||
+                con.OtherPhone != oldCon.OtherPhone
+                || con.Phone==null) {
+                // Copy formula field phone to standard phone
+                if (!String.isBlank(con.Primary_Phone_Number_New__c)) {
+    				con.Phone = con.Primary_Phone_Number_New__c;
+				}
+            }
+
+        }
     }
     
     public override void beforeInsert() {
@@ -51,6 +75,9 @@ public with sharing class ContactTriggerHandler extends TriggerHandler{
             System.debug('FormatPhoneNumbers Bypassed');
         }
         //Logic for HRP-10394 **Ends here**
+        for (Contact con : (List<Contact>)trigger.new) {
+            con.phone = con.Primary_Phone_Number_New__c;
+        }
     }
     
     public override void afterUpdate(){

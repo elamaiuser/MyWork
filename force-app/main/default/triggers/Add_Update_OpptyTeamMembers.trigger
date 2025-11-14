@@ -4,6 +4,8 @@
 * Date					     Developer Name			     Comments
 * ***********************************************************************************************************************************************
 * 01/03/2024                 Balaji N					 Logic for HRP-10569 (Method call AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates to get the future team info)
+* 08/28/2024				 Balaji N					 Logic for HRP-13340
+* 20/06/2025                 Harika Bolisetti            Logic for HRP-15121
 ************************************************************************************************************************************************
 */
 trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
@@ -12,9 +14,22 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
     Set<Id> setOfacctTeamMemberIdsUpdate = new Set<Id>();
     Set<string> accountIds = new Set<string>();
     Map<Id,List<AccountTeamMember>> mapOfAcctsWithTeamMembers=new Map<Id,List<AccountTeamMember>>();    
-    
-    for (UpdateOpptyTeamEvent__e event : Trigger.New) {
+    Date startDate;
+    Date endDate;
+    for (UpdateOpptyTeamEvent__e event : Trigger.New) 
+    {
         accountIds.add(string.valueof(event.AcctTeamMemberId__c));
+        //HRP-13340 start
+        if(startDate == null || (startDate != null && event.Start_Date__c < startDate))
+            {
+                startDate = event.Start_Date__c;
+            }
+            
+            if(endDate == null || (endDate != null && event.End_Date__c > endDate))
+            {
+                endDate = event.End_Date__c;
+            }
+        //HRP-13340 end
     }
     
     if(!accountIds.isEmpty()){        
@@ -56,13 +71,36 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
                 mapOfAcctsWithTeamMembers.get(i).addAll(accIdFutureAccTeamMap.get(i));
             }
         }
-        //HRP-10569 End
-        Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size()),100);
+        //HRP-15121
+        if(!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)
+        {
+            System.debug('HRP-Sync add_update 74:'+!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c);
+            //HRP-10569 End
+            Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+        }
     } 
+    //HRP-15205 --> In case of accounts with no team members
+    else {
+        Integer runningJobCount = 0;
+        if(String.isNotBlank(System.label.PortfolioAssignmentBatchNames)) {
+            List<String> portfolioAssignmentBatches = System.label.PortfolioAssignmentBatchNames.split(',');
+            List<String> batch_Status = Custom_Messages__mdt.getInstance('BSF_BatchProcessingStatuses').value__c.split(',');
+            runningJobCount = [SELECT Count() 
+                                FROM AsyncApexJob 
+                                WHERE ApexClass.Name IN: portfolioAssignmentBatches
+                                AND Status IN: batch_Status];
+        }
         
+        List<Portfolio_Accounts_Processing__c> portfolioAccProcessingRecord = [SELECT Id, Portfolio_progress_for_Accounts__c, 
+                                                                               Records_Processed__c, Portfolio_Assignment_Updated__c 
+                                                                               FROM Portfolio_Accounts_Processing__c];
+        if((Test.isRunningTest() || runningJobCount == 0) && portfolioAccProcessingRecord != NULL && !portfolioAccProcessingRecord.isEmpty()) {
+            update new Portfolio_Accounts_Processing__c(
+                Id = portfolioAccProcessingRecord[0].Id,
+                Records_Processed__c = portfolioAccProcessingRecord[0].Records_Processed__c ?? 0 + Trigger.New.size()
+            );
+        }
     }
-    
-   
-    
-    
+        
+    }  
 }

@@ -4,8 +4,9 @@ import { DateTime } from 'c/luxon';
 import { fireEvent } from 'c/pubsub';
 import { CurrentPageReference } from 'lightning/navigation';
 import * as slwcUtils from 'c/slwcUtils';
+import * as slwcDateUtils from 'c/slwcDateUtils';
 import { calendarMonthHelper } from "c/slwcHelpers";
-import { cloneDeep, pick } from 'c/lodash';
+import { cloneDeep, pick, omit } from 'c/lodash';
 
 const DEFAULT_CALENDAR_SETTINGS = {
     timezone: TIME_ZONE,
@@ -21,6 +22,12 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             this._calendarHelper = new calendarMonthHelper(DEFAULT_CALENDAR_SETTINGS);
         }
         return this._calendarHelper;
+    }
+
+    get dateUtils() {
+        return slwcDateUtils.getInstance({
+          timezone: TIME_ZONE
+        })
     }
 
     get pageName() {
@@ -50,14 +57,29 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
     
         const selectedMonth = this.filters.selectedMonth || DateTime.local().toISODate()
         let { startDate, endDate } = this.calendarHelper.getDateRange(selectedMonth);
-        startDate = DateTime.fromFormat(startDate, 'yyyy-MM-dd').startOf('week').toISODate();
-        endDate = DateTime.fromFormat(endDate, 'yyyy-MM-dd').endOf('week').toISODate();
+        startDate = this.dateUtils.startOf(startDate, 'week');
+        endDate = this.dateUtils.endOf(endDate, 'week');
 
         return {
             startDate: startDate,
             endDate: endDate
         }
     }
+
+    get timeBlockEnabled() {
+        return this.displayMode === 'productGoalCalendar';
+    }
+
+		get driveCalendarFilter() {
+			let result = this.filters;
+			if (this.displayMode == "productGoalCalendar") {
+				result = omit(this.filters, ['driveTypes']);
+			}
+			else if (this.displayMode == "productivityCalendar") {
+				result = omit(this.filters, ['driveOperationTypes']);
+			}
+			return result;
+		}
 
     initialized = false;
     @wire(CurrentPageReference) pageRef;
@@ -68,7 +90,8 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             divisions: [],
             arcRegions: [],
             districts: [],
-            territoryCollectionOperations: []
+            territoryCollectionOperations: [],
+            timeBlocks: []
         },
         selectedMonth: DateTime.local().toISODate()
     }
@@ -102,7 +125,7 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
 
     handleSelectDate(event) {
         const selectedDateIso = event.detail.selectedDate;
-        let filters = cloneDeep(event.detail.filters);
+        let filters = cloneDeep(this.driveCalendarFilter);
         
         if (this.displayMode == "productGoalCalendar") {
             fireEvent(this.pageRef, 'driveCalendar:showDayModal', {startDate: selectedDateIso, endDate: selectedDateIso, filters: filters});
@@ -115,7 +138,7 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
     handleSelectWeek(event) {
         const startDateIso = event.detail.weekStartDate;
         let endDateIso = DateTime.fromFormat(startDateIso, 'yyyy-MM-dd').plus({day: 6}).toISODate();
-        let filters = cloneDeep(event.detail.filters);
+        let filters = cloneDeep(this.driveCalendarFilter);
 
         if (this.displayMode == "productGoalCalendar") {
             fireEvent(this.pageRef, 'driveCalendar:showDayModal', {startDate: startDateIso, endDate: endDateIso, filters: filters});
@@ -132,9 +155,21 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             districts: event.detail.selectedDistricts,
             territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations
         }
-    
+        
         this.handleSearch();
     }
+
+    handleTimeBlockChanged(event) {
+        this.filters.collectionOperationValues = {
+            divisions: event.detail.selectedDivisions,
+            arcRegions: event.detail.selectedARCRegions,
+            districts: event.detail.selectedDistricts,
+            territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
+            timeBlocks: event.detail.selectedTimeBlocks
+        }
+    
+        this.handleSearch();
+      }
 
     handleSearch(event = {
         detail: {}

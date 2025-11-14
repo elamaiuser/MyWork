@@ -46,6 +46,11 @@
         <label>Competent Driver</label>
     </customValue>
     <customValue>
+        <fullName>CT1</fullName>
+        <default>false</default>
+        <label>CT1</label>
+    </customValue>
+    <customValue>
         <fullName>Drive Lead</fullName>
         <default>false</default>
         <label>Drive Lead</label>
@@ -54,11 +59,6 @@
         <fullName>Driver</fullName>
         <default>false</default>
         <label>Driver</label>
-    </customValue>
-    <customValue>
-        <fullName>Driver CDL A</fullName>
-        <default>false</default>
-        <label>Driver CDL A</label>
     </customValue>
     <customValue>
         <fullName>Driver CDL B</fullName>
@@ -86,11 +86,6 @@
         <label>Driver Tech Trainee</label>
     </customValue>
     <customValue>
-        <fullName>Float</fullName>
-        <default>false</default>
-        <label>Float</label>
-    </customValue>
-    <customValue>
         <fullName>FS Supplies</fullName>
         <default>false</default>
         <label>FS Supplies</label>
@@ -99,11 +94,6 @@
         <fullName>HH</fullName>
         <default>false</default>
         <label>HH</label>
-    </customValue>
-    <customValue>
-        <fullName>Lead Donor Ambassador</fullName>
-        <default>false</default>
-        <label>Lead Donor Ambassador</label>
     </customValue>
     <customValue>
         <fullName>Licensed Nurse</fullName>
@@ -206,11 +196,6 @@
         <label>VOL Limited HH</label>
     </customValue>
     <customValue>
-        <fullName>Volunteer Donor Ambassador</fullName>
-        <default>false</default>
-        <label>Volunteer Donor Ambassador</label>
-    </customValue>
-    <customValue>
         <fullName>VP</fullName>
         <default>false</default>
         <label>VP</label>
@@ -221,8 +206,18 @@
         <label>VP/HH</label>
     </customValue>
     <customValue>
+        <fullName>Float</fullName>
+        <default>false</default>        
+        <label>Float</label>
+    </customValue>
+    <customValue>
+        <fullName>Volunteer Donor Ambassador</fullName>
+        <default>false</default>        
+        <label>Volunteer Donor Ambassador</label>
+    </customValue>
+    <customValue>
         <fullName>Work Restriction</fullName>
-        <default>false</default>
+        <default>false</default>        
         <label>Work Restriction</label>
     </customValue>
     <customValue>
@@ -254,6 +249,18 @@
         <default>false</default>
         <isActive>false</isActive>
         <label>Sponsor Volunteer Donor Ambassador</label>
+    </customValue>        
+    <customValue>
+        <fullName>Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Lead Donor Ambassador</label>
+    </customValue>
+    <customValue>
+        <fullName>Driver CDL A</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Driver CDL A</label>
     </customValue>
     <customValue>
         <fullName>Redcross Volunteer Donor Ambassador</fullName>

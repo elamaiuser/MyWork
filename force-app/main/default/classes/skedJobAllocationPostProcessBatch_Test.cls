@@ -67,7 +67,7 @@ private class skedJobAllocationPostProcessBatch_Test {
             sked__Resource__c = testResource.Id,
             sked__Type__c = 'Administration',
             sked__Start__c = testDataFactory.summary.startTime.addHours(9),
-            sked__End__c = testDataFactory.summary.startTime.addHours(10),
+            sked__End__c = testDataFactory.summary.startTime.addHours(13),
             sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom',
             sked__GeoLocation__Latitude__s = 51.508105,
             sked__GeoLocation__Longitude__s = -0.132901,
@@ -77,13 +77,13 @@ private class skedJobAllocationPostProcessBatch_Test {
         );
         insert new List<SObject>{testResourceJob, testVehicleJob, testActivity};
             
-            sked__Job_Allocation__c testResourceJobAllocation = new sked__Job_Allocation__c(
-                sked__Job__c = testResourceJob.Id,
-                sked__Resource__c = testResource.Id,
-                sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH,
-                sked_Roles_Assignment_Str__c = '2RBC',
-                sked_Additional_Roles__c = '2RBC Sign-off'
-            );
+        sked__Job_Allocation__c testResourceJobAllocation = new sked__Job_Allocation__c(
+            sked__Job__c = testResourceJob.Id,
+            sked__Resource__c = testResource.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_PENDING_DISPATCH,
+            sked_Roles_Assignment_Str__c = '2RBC',
+            sked_Additional_Roles__c = '2RBC Sign-off'
+        );
         
         sked__Job_Allocation__c testVehicleJobAllocation = new sked__Job_Allocation__c(
             sked__Job__c = testVehicleJob.Id,
@@ -97,9 +97,20 @@ private class skedJobAllocationPostProcessBatch_Test {
             sked__Resource__c = testResource.Id,
             sked__Activity__c = testActivity.Id
         );
-        insert new List<SObject>{testActivityResource, testResourceJobAllocation, testVehicleJobAllocation};
+        
+        sked__Availability__c testUnavailability = new sked__Availability__c(
+            sked__Resource__c = testVehicle.Id,
+            sked__Is_Available__c = FALSE,
+            sked__Status__c = 'Pending',
+            sked__Start__c = testDataFactory.summary.startTime.addHours(9),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(13),
+            sked_Bypass_Auto_Approval_Process__c = FALSE,
+            sked_Custom_Status__c = 'Pending'
+        );
+        
+        insert new List<SObject>{testActivityResource, testUnavailability, testResourceJobAllocation, testVehicleJobAllocation};
             
-            List<sked__Job_Allocation__c> testJobAllocations = [SELECT Id FROM sked__Job_Allocation__c];
+        List<sked__Job_Allocation__c> testJobAllocations = [SELECT Id FROM sked__Job_Allocation__c];
         Set<Id> jobAllocationIds = new Set<Id>();
         for (sked__Job_Allocation__c testJobAllocation : testJobAllocations) {
             jobAllocationIds.add(testJobAllocation.Id);

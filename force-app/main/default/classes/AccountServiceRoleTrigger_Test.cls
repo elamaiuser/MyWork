@@ -178,13 +178,9 @@ public class AccountServiceRoleTrigger_Test {
         optyObj.X2RBC_Projected_Procedures__c = 1;
         optyObj.Anticipated_Registered_Donors__c = 1;
         
-        oppsobjlist.add( optyObj );
-        
-        
-        insert oppsobjlist;
-        
+        oppsobjlist.add( optyObj );   
+        insert oppsobjlist;   
     }
-    
     
     @isTest 
     static void AccountServiceRoleTrigger_Test1(){
@@ -216,8 +212,9 @@ public class AccountServiceRoleTrigger_Test {
         Contact__c=con.Id,
         Account_Service_Role__c = 'Blood Program Leader',
         Start_Date__c = Dt);
-        insert asr;
         Test.startTest();
+        insert asr;
+        
             asr.End_Date__c = Date.Today();
             asr.Account_Service_End_Reason__c = 'No longer associated with Account';
             Update asr;
@@ -234,6 +231,7 @@ public class AccountServiceRoleTrigger_Test {
         Start_Date__c = Dt,
         End_Date__c = Date.Today(),
         Account_Service_End_Reason__c = 'No longer associated with Account');
+        Test.startTest();
         insert asr;
         dt = Date.Today().addDays(1);
         Account_Service_Role__c asr2 = new Account_Service_Role__c(Account__c=mobileOpportunity.AccountId,
@@ -241,7 +239,9 @@ public class AccountServiceRoleTrigger_Test {
         Account_Service_Role__c = 'Blood Program Leader',
         Start_Date__c = Dt);
         insert asr2;
-        Test.startTest();
+        
+        update asr2; //blank update
+        
             delete asr;
         Test.stopTest();
     }
@@ -257,13 +257,14 @@ public class AccountServiceRoleTrigger_Test {
         Start_Date__c = Dt
         
         );
+        Test.startTest();
         insert asr;
         Account_Service_Role__c asrNew= asr.clone();
         asrNew.Account_Service_Role__c = 'Call List Recipient';
         Map<Id, Account_Service_Role__c> oldMap = new Map<Id, Account_Service_Role__c>{asr.Id => asr};
         List<Account_Service_Role__c> newList = new List<Account_Service_Role__c>{asrNew};
     
-        Test.startTest();
+        
         AccountServiceRoleService.updateCallListRecipientFlagOnOpp(oldMap, newList);
         Test.stopTest();
         
@@ -271,4 +272,5 @@ public class AccountServiceRoleTrigger_Test {
     	assert.areequal(false, updatedOpportunity.Call_List_Recipient_Exist__c, 'Call List Recipient flag should be set to true');
     }
 	//Logic for test class for HRP-11103 ***ends here***
+
 }

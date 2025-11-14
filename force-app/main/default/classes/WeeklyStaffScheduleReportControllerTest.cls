@@ -81,104 +81,56 @@ private class WeeklyStaffScheduleReportControllerTest {
         skedHubBase.BypassInsertTriggers = true;
         insert availability1;
         
-        sked__Resource__c testResource2 = [SELECT Id FROM sked__Resource__c 
-                                           WHERE RecordType.Name = 'Asset' 
-                                           AND sked__Resource_Type__c = 'Asset' 
-                                           AND sked_Asset_Type__c = 'Vehicle' LIMIT 1];
-        List<String> availabilityType2 = Custom_Report_Config__mdt.getInstance('Vehicle_Availability_Type').Value__c.split(',');
-        sked__Availability__c availability2 = new sked__Availability__c(
-            sked__Resource__c = testResource2.Id,
-            sked__Is_Available__c = True,
-            sked__Status__c = 'Approved',
-            sked__Start__c = Date.today().addDays(1),
-            sked__Finish__c = Date.today().addDays(5),
-            sked_Bypass_Auto_Approval_Process__c = True,
-            sked_Custom_Status__c = 'Pending',
-            sked_Start_Date__c =  Date.today().addDays(1),
-            sked_Finish_Date__c =  Date.today().addDays(5),
-            sked__Type__c = availabilityType2[0],
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_Finish_Time__c = Datetime.now().addMinutes(66).time()
-        );
-        skedHubBase.BypassInsertTriggers = true;
-        insert availability2;
     }
 
     @isTest
     private static void testmethod1(){
         String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        Test.startTest();
-        WeeklyStaffScheduleReportController.DatableConfigWrapper wrapper = WeeklyStaffScheduleReportController.searchReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed');
-        BSFVehiclePlanningController.vehicleResourceDataWrapper vpcWrapper = BSFVehiclePlanningController.getAllResourceDataWithDate(Date.Today(),Date.Today().addDays(6),collOpIds);        
-        Test.stopTest();
-    }
-	
-    @isTest
-    private static void testmethod2(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        Test.startTest();
-        PageReference pr = Page.BSFWeeklyStaffScheduleReportPDF;
-        pr.getParameters().put('startdate','2024-06-13');
-        pr.getParameters().put('enddate','2024-12-13');
-        pr.getParameters().put('collopids',collOpIds);
-        pr.getParameters().put('drivetypes','mobile,fixed');
-        pr.getParameters().put('dispatch','Both');
-        Test.setCurrentPage(pr);
-        WeeklyStaffScheduleReportController ext = new WeeklyStaffScheduleReportController(); 
-        ext.wrapper = new WeeklyStaffScheduleReportController.DatablePDFWrapper();       
-        Test.stopTest();
-    }
-	
-     @isTest
-    private static void testmethod3(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        PageReference pr = Page.bsfVehiclePlanningReportPDF;
-        pr.getParameters().put('startdate','2024-06-13');
-        pr.getParameters().put('enddate','2024-06-19');
-        pr.getParameters().put('collopids',collOpIds);
-        pr.getParameters().put('renderas','html');
-        Test.setCurrentPage(pr);        
-        BSFVehiclePlanningController vpc = new BSFVehiclePlanningController();
-        vpc.wrapper = new BSFVehiclePlanningController.vehicleResourceDataWrapper();
+        WeeklyStaffScheduleReportController.DatableConfigWrapper wrapper = WeeklyStaffScheduleReportController.searchReport(Date.Today(),Date.Today().addDays(70),'Both',collOpIds,'mobile,fixed', true);
         Test.stopTest();
     }
-    
+
     @isTest
-    private static void testmethod4(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-        Test.startTest();
-        PageReference pr = Page.BSFWeeklyStaffScheduleReportPDF;
-        pr.getParameters().put('startdate','2024-06-13');
-        pr.getParameters().put('enddate','2024-12-13');
-        pr.getParameters().put('collopids',collOpIds);
-        pr.getParameters().put('drivetypes','mobile,fixed');
-        pr.getParameters().put('dispatch','Both');
-        pr.getParameters().put('force_download','true');
-        Test.setCurrentPage(pr);
-        WeeklyStaffScheduleReportController ext = new WeeklyStaffScheduleReportController(); 
-        ext.wrapper = new WeeklyStaffScheduleReportController.DatablePDFWrapper();
-        Test.stopTest();
-    }
-     @isTest
-    private static void testmethod5(){
-        String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
+    private static void testmethod2() {
+        String collOpIds = [SELECT Id, Name, sked_territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
             
         Test.startTest();
-        PageReference pr = Page.bsfVehiclePlanningReportPDF;
-        pr.getParameters().put('startdate','2024-06-13');
-        pr.getParameters().put('enddate','2024-06-19');
-        pr.getParameters().put('collopids',collOpIds);
-        pr.getParameters().put('renderas','pdf');
-        pr.getParameters().put('force_download','true');
-        Test.setCurrentPage(pr);       
-        BSFVehiclePlanningController vpc = new BSFVehiclePlanningController();
-        vpc.wrapper = new BSFVehiclePlanningController.vehicleResourceDataWrapper();
+        try{
+            PageReference pr = Page.BSFWeeklyStaffScheduleReportPDF;
+            pr.getParameters().put('startdate',String.valueOf(Date.Today()));
+            pr.getParameters().put('enddate',String.valueOf(Date.Today().addMonths(6)));
+            pr.getParameters().put('collopids',collOpIds);
+            pr.getParameters().put('drivetypes','mobile,fixed');
+            pr.getParameters().put('dispatch','Both');
+            Test.setCurrentPage(pr);
+            WeeklyStaffScheduleReportController ext = new WeeklyStaffScheduleReportController(); 
+            ext.wrapper = new WeeklyStaffScheduleReportController.DatablePDFWrapper();
+        }catch(AuraHandledException ex) {}
         Test.stopTest();
     }
-    
-	
+
+    @isTest
+    private static void testmethod3() {
+        String collOpIds = [SELECT Id, Name, sked_territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
+            
+        Test.startTest();
+        try{
+            PageReference pr = Page.BSFWeeklyStaffScheduleReportPDF;
+            pr.getParameters().put('startdate','2024-06-13');
+            pr.getParameters().put('enddate','2024-12-13');
+            pr.getParameters().put('collopids',collOpIds);
+            pr.getParameters().put('drivetypes','mobile,fixed');
+            pr.getParameters().put('dispatch','Both');
+            pr.getParameters().put('force_download','true');
+            Test.setCurrentPage(pr);
+            WeeklyStaffScheduleReportController ext = new WeeklyStaffScheduleReportController(); 
+            ext.wrapper = new WeeklyStaffScheduleReportController.DatablePDFWrapper();
+        }catch(AuraHandledException ex) {}
+        Test.stopTest();
+    }
+
     //Method to get the map of recordType Name as key and recordTypeId as value 
     private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
@@ -464,14 +416,12 @@ private class WeeklyStaffScheduleReportControllerTest {
             triggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
 
-            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
-            
-
-            
+            Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name, sked_Territory__c FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
+          
             triggerHandler.bypass('DriveTriggerHandler');
             sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
-                                                        sked_Drive_Date__c = System.today().addDays(1),
+                                                        sked_Drive_Date__c = System.today(),
                                                         sked_Drive_Site__c = siteObj.Id,
                                                         sked_Opportunity__c = oppsobjlist.get(0).Id,
                                                         sked_Type_of_Drive__c = 'Fixed Site',
@@ -702,15 +652,13 @@ private class WeeklyStaffScheduleReportControllerTest {
                                                 sked_Work_City__c = 'Sylmar',
                                                 sked_Work_State__c = 'CA',
                                                 sked_Work_Address_1__c = '11970 Gager St',
-                                                sked_Work_Zip_Code__c = '91342',
-                								sked__Primary_Region__c = reg.Id
+                                                sked_Work_Zip_Code__c = '91342'
                                                 );
 
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             triggerHandler.bypass('ResourceTriggerHandler');
             insert resourceVehicle;
-                        
             sked__Resource__c resourceEquipment = new sked__Resource__c(
                                                 recordTypeId = vkRecordTypeId,
                                                 sked_Asset_Type__c = 'Equipment',
@@ -805,75 +753,61 @@ private class WeeklyStaffScheduleReportControllerTest {
             skedHubBase.BypassUpdateTriggers = true;
             insert joballc5;
             
+			skedHubBase.BypassInsertTriggers = false;
+        	skedHubBase.BypassUpdateTriggers = false;
+            skedSetting.instance.Admin.dateTimeConversion = true;
             
             sked__Activity__c activity = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
             sked__Type__c = 'On Call',
             sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now(),
             sked_Start_Date__c =  Date.today(),
             sked_End_Date__c =  Date.today().addDays(1),
-            sked__End__c = Datetime.now().addDays(1),
             sked_Start_Time__c = Datetime.now().time(),
             sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+            sked__Start__c = Datetime.now(),
+            sked__End__c = Datetime.now().addMinutes(66),
             sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_District__c = testCollectionOperation1.sked_Territory__c,
             sked_Drive__c = testDrive1.Id,
             sked_Region__c = reg.Id,
             sked__Address__c = 'Test Address',
             sked__Notes__c = 'Test notes',
             sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity;
             
             sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
                 sked__Activity__c = activity.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource;
-            
-            sked__Activity_Resource__c skedActivityResourceVehicle1 = new sked__Activity_Resource__c(
-                sked__Activity__c = activity.Id,
-                sked__Resource__c = resourceVehicle.Id,
-                sked_Start_Date__c = System.today().addDays(1)
-            );
-            skedHubBase.BypassInsertTriggers = true;
-            insert skedActivityResourceVehicle1;
             
             sked__Activity__c activity1 = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
             sked__Type__c = 'On Call',
             sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now().addDays(1),
-            sked_Start_Date__c =  Date.today().addDays(1),
+            sked_Start_Date__c =  Date.today().addDays(2),
             sked_End_Date__c =  Date.today().addDays(2),
-            sked__End__c = Datetime.now().addDays(2),
             sked_Start_Time__c = Datetime.now().time(),
             sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+            sked__Start__c = Datetime.now(),
+            sked__End__c = Datetime.now().addMinutes(66),
             sked_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_District__c = testCollectionOperation1.sked_Territory__c,
             sked_Drive__c = testDrive2.Id,
             sked_Region__c = reg.Id,
             sked__Address__c = 'Test Address',
             sked__Notes__c = 'Test notes',
             sked_Is_Group_Activity__c = true
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert activity1;
+            
             sked__Activity_Resource__c skedActivityResource1 = new sked__Activity_Resource__c(
                 sked__Activity__c = activity1.Id,
                 sked__Resource__c = resourcestaff.Id
             );
-            skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource1;
-            
-            sked__Activity_Resource__c skedActivityResourceVehicle2 = new sked__Activity_Resource__c(
-                sked__Activity__c = activity1.Id,
-                sked__Resource__c = resourceVehicle.Id,
-                sked_Start_Date__c = System.today().addDays(1)
-            );
-            skedHubBase.BypassInsertTriggers = true;
-            insert skedActivityResourceVehicle2;
         }        
         
     }

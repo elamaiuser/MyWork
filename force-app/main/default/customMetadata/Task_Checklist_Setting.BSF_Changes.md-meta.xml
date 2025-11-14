@@ -7,8 +7,12 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
-        <value xsi:type="xsd:string">If logistics for the drive are impacted or if the drive is cancelled, DS Recruitment should follow Notifying Donors of Drive Changes and Cancellations Policy in the Managing Donor Appointments Playbook - found in Important Links.</value>
+        <value xsi:type="xsd:string">If logistics for the drive are impacted or if the drive is cancelled, DS Recruitment should follow Notifying Donors of Drive Changes and Cancellations Policy in the Managing Donor Appointments Playbook</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
@@ -28,7 +32,7 @@
     </values>
     <values>
         <field>Order__c</field>
-        <value xsi:type="xsd:double">16.0</value>
+        <value xsi:type="xsd:double">18.0</value>
     </values>
     <values>
         <field>Parent__c</field>
@@ -52,7 +56,7 @@
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">BSF updated with any necessary changes/updates.</value>
+        <value xsi:type="xsd:string">BSF updated with any necessary changes/updates</value>
     </values>
     <values>
         <field>Unique_Name__c</field>
