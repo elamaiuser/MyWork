@@ -33,6 +33,12 @@
                                 default-values={filters.priorities}>
                             </c-slwc-multi-picklist>
                         </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-input label="Created Start Date" name="submissionStartDate" type="date" value={filters.submissionStartDate} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <lightning-input label="Created End Date" name="submissionEndDate" type="date" value={filters.submissionEndDate} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                        </div>
                         <div class="slds-form-element slds-form-element_stacked slds-m-top_medium slds-text-align_right">
                             <lightning-button label="Save" title="Save" variant="brand" onclick={handleSearch}></lightning-button>
                         </div>

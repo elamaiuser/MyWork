@@ -1,4 +1,4 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, track, api, wire } from 'lwc';
 import * as slwcUtils from 'c/slwcUtils';
 import driveSchedulingFiltersTemplate from './driveSchedulingFilters.html';
 import productGoalCalendarFiltersTemplate from './productGoalCalendarFilters.html';
@@ -15,6 +15,9 @@ import pendingActionDriveFiltersTemplate from './pendingActionDriveFilters.html'
 import callOutsFiltersTemplate from './callOutsFilters.html';
 import { accountService, bsfPortfolioQueryModel, bsfPortfolioService } from 'c/dataService';
 import { DRIVE_TYPE, OPERATION_TYPE, PENDING_ACTION, PROCEDURE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TRADE_STATUS, DRIVE_APPROVAL_STATUS, OPPORTUNITY_STAGE, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_CONTENTION} from 'c/slwcConstants';
+import { getObjectInfo, getPicklistValues } from 'lightning/uiObjectInfoApi';
+import JOB_OBJECT from '@salesforce/schema/sked__Job__c';
+import JOB_TYPE_FIELD from '@salesforce/schema/sked__Job__c.sked__Type__c';
 
 const MODE = {
   PRODUCT_GOAL_CALENDAR: {
@@ -58,6 +61,8 @@ const MODE = {
       driveTypes: [DRIVE_TYPE.MOBILE, DRIVE_TYPE.FIXED_SITE],
       operationTypes: [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_WB, OPERATION_TYPE.NON_INTEGRATED_APH],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       searchText: "",
       searchField: "sked_Drive__r.Name",
       exceptionCodes: [
@@ -109,6 +114,9 @@ const MODE = {
       statuses: ["Open"],
       searchText: "",
       searchField: "sked_Drive__r.Name",
+      jobTypes: [],
+      submissionStartDate: null,
+      submissionEndDate: null,
       exceptionCodes: [
         "CDL_DOT_HOURS_VIOLATION",
         "CERT_ADDED_42DAYS",
@@ -153,6 +161,8 @@ const MODE = {
     defaultModel: {
       priorities: ["High", "Medium", "Low"],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       exceptionCodes: [
         "LINKED_DRIVE_MISMATCHING_ASSETS",
       ],
@@ -196,7 +206,9 @@ const MODE = {
     template: resourceExceptionLogFiltersTemplate,
     defaultModel: {
       priorities: ["High", "Medium", "Low"],
-      statuses: ["Open"]
+      statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null
     }
   },
   ACTIVITY_EXCEPTION_LOG: {
@@ -207,6 +219,8 @@ const MODE = {
       activityTypes: [],
       activitySubTypes: [],
       statuses: ["Open"],
+      submissionStartDate: null,
+      submissionEndDate: null,
       searchText: "",
       searchField: "skedHC__Activity__r.sked_Activity_Title__c"
     },
@@ -337,6 +351,25 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
     { label: 'NIFS', value: 'NIFS' },
     { label: 'Fixed Site', value: 'Fixed Site' }
   ];
+  @track jobTypes;
+
+  @wire(getObjectInfo, {objectApiName: JOB_OBJECT})
+  jobObjectInfo;
+
+  @wire(getPicklistValues, {
+    recordTypeId: '$jobObjectInfo.data.defaultRecordTypeId',
+    fieldApiName: JOB_TYPE_FIELD
+  })
+    wiredJobTypes({error, data}) {
+      if(data) {
+        this.jobTypes = data.values.map(picklistValue => picklistValue.value);
+        if(this.mode === MODE.DRIVE_EXCEPTION_LOG.id && this.selectedAllByDefault) {
+          this.filters.jobTypes = [...this.jobTypes];
+        }
+      } else if(error) {
+        console.error('Error retrieving job types: ', error);
+      }
+    }
 
   get modeSettings() {
     return Object.values(MODE).find(mode => mode.id === this.mode);
@@ -379,7 +412,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
         ...(this.modeSettings || {}).defaultModel
       }
 
-      let lastSearchQuery = this.getLastQuery();
+      const lastSearchQuery = this.getLastQuery();
       if (lastSearchQuery) {
         this.filters = {
           ...this.filters,
@@ -422,7 +455,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
   }
 
   handleSearchMarket(event) {
-    let svc = new accountService();
+    const svc = new accountService();
 
     return svc.searchMarket({
       queryText: event.searchTerm
@@ -476,7 +509,7 @@ export default class SlwcDriveSchedulingFilters extends LightningElement {
   }
 
   getLastQuery() {
-    let tabQuery = slwcUtils.getLastQuery(this.filterName);
+    const tabQuery = slwcUtils.getLastQuery(this.filterName);
     return tabQuery;
   }
 }
