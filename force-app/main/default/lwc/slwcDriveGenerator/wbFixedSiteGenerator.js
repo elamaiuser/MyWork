@@ -762,11 +762,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, { ignoreLunchBreak: ignoreLunchBreak, useDriveShift: true }));
 
     return driveShiftStaffCapacity;
   }
-  
+
   calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
     const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
     return drawHours;
@@ -1096,7 +1096,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   calculateEquipmentQuantity() {
     let noOfEquipments = this.drive.numberOf2rbcAssets || 0;
-    console.log('noOfEquipments'+noOfEquipments);
     this.mapAssetQuantity.set('Equipment', noOfEquipments);
   }
 
@@ -1146,7 +1145,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
         this.drive,
         driveShiftMetadata,
         this.mapResourceQuantity,
-        this.masterData
+        this.masterData,
+        { ignoreLunchBreak: false, useDriveShift: false }
       )
 
       const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1181,7 +1181,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
       driveShiftMetadata,
       new Map()
         .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
+      this.masterData,
+      { ignoreLunchBreak: false, useDriveShift: false }
     )
 
     const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1994,7 +1995,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   handleEquipmentRequestedChanged() {
-      if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
+    if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
 
     const { equipmentJobsMap, lockedEquipments = [] } = this.drive.totalEquipmentRequestedChanged;
     //allocate equipments to jobs 
