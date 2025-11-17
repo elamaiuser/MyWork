@@ -37,7 +37,7 @@ const isJobBelongToDrivingRolesGroup = (job, {
   resourceRoleGroups
 }) => {
   const resourceRoleGroup = Object.keys(resourceRoleGroups).find(resourceRoleGroup => {
-    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole);
+    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole || item === job.dualRole);
   })
   return resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES;
 }
