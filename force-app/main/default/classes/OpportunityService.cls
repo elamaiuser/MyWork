@@ -3983,62 +3983,58 @@ opp.StageName = 'Closed';
         for(Opportunity newOpp: oppList)
         {
             Opportunity oldOpp = oldOppMap.get(newOpp.Id);
-            if(oldOpp != NULL && oldOpp.Open_to_Public__c != newOpp.Open_to_Public__c)
-            {
-                relatedFieldsMap.put('sked_Open_to_Public__c', newOpp.Open_to_Public__c);
-                //oppFieldsRelatedToDOCMap.put(newOpp.Id, relatedFieldsMap);
-                //oppIds.add(newOpp.Id);
+            if(oldOpp != null) {
+                if(oldOpp.Open_to_Public__c != newOpp.Open_to_Public__c) {
+                    relatedFieldsMap.put('sked_Open_to_Public__c', newOpp.Open_to_Public__c);
+                }
+                if(oldOpp.Security_Escort_Name__c != newOpp.Security_Escort_Name__c) {
+                    relatedFieldsMap.put('sked_Security_Escort_Name__c', newOpp.Security_Escort_Name__c);                
+                }
+                if(oldOpp.Cancellation_Detail__c != newOpp.Cancellation_Detail__c) {
+                    relatedFieldsMap.put('sked_Cancellation_Detail__c', newOpp.Cancellation_Detail__c); 
+                }
             }
-            if(oldOpp != NULL && oldOpp.Security_Escort_Name__c != newOpp.Security_Escort_Name__c)
-            {
-                relatedFieldsMap.put('sked_Security_Escort_Name__c', newOpp.Security_Escort_Name__c);                
-            }
-            if(!relatedFieldsMap.isEmpty())
-            {
+            if(!relatedFieldsMap.isEmpty()) {
                 oppFieldsRelatedToDOCMap.put(newOpp.Id, relatedFieldsMap);
             }
-            //count++;
         }
         
-        if(!oppFieldsRelatedToDOCMap.isEmpty())
-        {
-            List<sked_Drive__c> drvList = [SELECT Id, 
-                                           sked_Opportunity__c, sked_Security_Escort_Name__c, sked_Open_to_Public__c
+        if(!oppFieldsRelatedToDOCMap.isEmpty()) {
+            List<sked_Drive__c> drvList = [SELECT Id, sked_Opportunity__c, 
+                                           sked_Security_Escort_Name__c, sked_Open_to_Public__c,
+                                           sked_Cancellation_Detail__c
                                            FROM sked_Drive__c 
                                            WHERE sked_Opportunity__c IN: oppFieldsRelatedToDOCMap.keySet()];
-            if(drvList.size() > 0)
-            {
-                for(sked_Drive__c drive : drvList)
-                {
-                    if(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).containsKey('sked_Open_to_Public__c'))
-                    {
-                        updateFlag = TRUE;
-                        drive.sked_Open_to_Public__c = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Open_to_Public__c');
-                        system.debug(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Open_to_Public__c'));
-                    }
-                    if(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).containsKey('sked_Security_Escort_Name__c'))
-                    {
-                        updateFlag = TRUE;
-                        drive.sked_Security_Escort_Name__c = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Security_Escort_Name__c');
-                        system.debug(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Security_Escort_Name__c'));
-                    }
-                    if(updateFlag)
-                    {
+            if(!drvList.isEmpty()) {
+                for(sked_Drive__c drive : drvList) {
+                    Map<String, String> map_fieldName_fieldValueToUpdate = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c);
+                    if(map_fieldName_fieldValueToUpdate != null && !map_fieldName_fieldValueToUpdate.isEmpty()) {
+                        for(String fieldToUpdate : map_fieldName_fieldValueToUpdate.keySet()) {
+                            String existingFieldValueOnDrive = (String)drive.get(fieldToUpdate);
+                        	if(existingFieldValueOnDrive != null && existingFieldValueOnDrive.equals(map_fieldName_fieldValueToUpdate.get(fieldToUpdate))) continue;
+                            
+                            drive.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
+                        }
                         driveListToBeUpdatedList.add(drive);
-                    }
+                    }   
                 }
             }
         }
             
-           if(driveListToBeUpdatedList.size() > 0)
-           {
-               skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
-               Database.saveResult[] updateList = Database.update(driveListToBeUpdatedList, false);
-               List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLog(updateList, 'Update Open to public/security escort name', 'OpportunityService', 'populateRelatedFieldsOnDOC', 'Error', 'Error in drive update');
-               Insert errorLogList;
-           }
-            
-        }
+        if(!driveListToBeUpdatedList.isEmpty()) {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
+            Database.saveResult[] updateList = Database.update(driveListToBeUpdatedList, false);
+            List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLogWithObjectId(
+                updateList, 
+                'Update Open to public/security escort name/cancellation detail on DOC', 
+                'OpportunityService', 
+                'populateRelatedFieldsOnDOC', 
+                'Error', 
+                'Error in drive update'
+            );
+            insert errorLogList;
+        }   
+    }
     //HRP-9439
     public static void sendOpportunityPromotionDisassociatEmail(Map<Opportunity_Promotion__c,OpportunityTeamMember> oppPromotionMap){
         System.debug('sendOpportunityPromotionDisassociatEmail==>');
