@@ -78,6 +78,8 @@
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_No_of_Jobs_in_Flex_Queue__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
+        <members>Opportunity.City__c</members>
+        <members>sked_Drive__c.City__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -99,6 +101,8 @@
         <members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set_Read</members>
 		<members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
+        <members>BSF_Access_Control_Rule.HRP_14122_1_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14122_2_Field_Permission_Set</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -136,7 +140,8 @@
         <members>slwcDriveChangeRequestApproval</members>
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
-		<members>slwcDriveManagement</members>        
+		<members>slwcDriveManagement</members>
+        <members>slwcDriveSchedulingConsole</members>
         <members>slwcDriveSchedulingFilters</members>
 		<members>slwcDriveShift</members>
 		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>

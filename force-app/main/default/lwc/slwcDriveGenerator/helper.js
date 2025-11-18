@@ -472,6 +472,7 @@ class DriveHelper {
         
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
+          vphhQuantity: job.vphhQuantity || 0,
           dualRole: job.dualRole
         });
       }

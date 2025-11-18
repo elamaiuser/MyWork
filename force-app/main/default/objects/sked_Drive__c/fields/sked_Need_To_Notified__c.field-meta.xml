@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Need_To_Notified__c</fullName>
     <defaultValue>false</defaultValue>
-    <externalId>false</externalId>
     <label>Need to Notified</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

@@ -1,11 +1,11 @@
-/**
+/** (Depricated) Contact Trigger related classes will be covered by contactService_Test
  * This Class contains testMethods for ContactTriggerHandler and Contact Service
  * 
  * */
 @isTest
 public class Test_ContactTriggerHandler {
     
-    @testSetup static void setUpData() {
+   /* @testSetup static void setUpData() {
         
         Account acc = new Account(name='Test Account');
         insert acc;
@@ -66,8 +66,5 @@ public class Test_ContactTriggerHandler {
         contact.Do_Not_Contact__c = true;
         contact.Do_Not_Contact_Reason__c = 'ARC Decision';      
               
-    }
-    
-    
-
+    }*/
 }

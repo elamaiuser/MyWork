@@ -10,6 +10,7 @@ private class TemplateService_Test {
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('ContactTriggerHandler');
         TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
         skedHubBase.BypassInsertTriggers = true;
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
@@ -42,8 +43,7 @@ private class TemplateService_Test {
         	MailingStateCode = 'MI',
         	MailingPostalCode = '48420',
             Primary_Phone__c = 'Mobile Phone',
-            MobilePhone = '752-781-0091',
-            AccountId = testFixedSiteAccount.Id
+            MobilePhone = '752-781-0091'
         );
         testContacts.add(testContact);
         insert testContacts;
