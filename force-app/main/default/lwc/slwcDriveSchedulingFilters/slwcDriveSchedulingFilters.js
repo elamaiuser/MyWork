@@ -334,7 +334,8 @@ const MODE = {
   }
 }
 export default class SlwcDriveSchedulingFilters extends LightningElement {
-  @api mode = null;  
+  @api mode = null;
+  @api showDriveNameSearch = false;  
 
   @track initialized = false;
   @track filters = {};
