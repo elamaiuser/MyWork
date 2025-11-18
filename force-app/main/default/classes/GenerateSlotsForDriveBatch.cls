@@ -1165,16 +1165,32 @@ global class GenerateSlotsForDriveBatch implements Database.Batchable<sObject>,D
             //HRP-10474 Start
             decimal drawHours = driveShiftModelMobile.drawHours;
             
+            Decimal total2RBCResources = 0;
+            for (String role : capacityNeededFor) {
+                if (role != null && role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
+                    Decimal qty = map_role_resourceQuantity.containsKey(role) && map_role_resourceQuantity.get(role) != NULL
+                        ? map_role_resourceQuantity.get(role)
+                        : 0;
+                    total2RBCResources += qty;
+                }
+            }
+
+            Decimal noOf2RBCAssets = driveShiftModelMobile.numberOf2rbcEquipments != null ? driveShiftModelMobile.numberOf2rbcEquipments : 0;
+            Decimal resourcesHaveEnough2RBCAssetsCount = Math.min(total2RBCResources, Math.floor(noOf2RBCAssets / 2));
+            Decimal resourcesNotHaveEnough2RBCAssetsCount = Math.max(total2RBCResources - resourcesHaveEnough2RBCAssetsCount, 0);
+
             for (String role : capacityNeededFor) {
                 Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role) && donorCapacityMap.get(role) != NULL ? donorCapacityMap.get(role) : 0;
                 Decimal resourceQuantity = map_role_resourceQuantity.containsKey(role) && map_role_resourceQuantity.get(role) != NULL ? map_role_resourceQuantity.get(role) : 0;
-                if (role.equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
-                    Decimal noOf2RBCAssets = driveShiftModelMobile.numberOf2rbcEquipments;
-                    Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, Math.floor(noOf2RBCAssets / 2));
-                    Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.max(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, 0);
+                if (role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
+                    Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, resourcesHaveEnough2RBCAssetsCount);
+                    Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.min(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, resourcesNotHaveEnough2RBCAssetsCount);
                     Decimal capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * driveShiftModelMobile.drawHours;
                     Decimal capacity2 = noOfResourcesNotHaveEnough2RBCAssets * sdmRoleCapacity * driveShiftModelMobile.drawHours;
                     staffCapacity += capacity1 + capacity2;
+
+                    resourcesHaveEnough2RBCAssetsCount -= noOfResourcesHaveEnough2RBCAssets;
+                    resourcesNotHaveEnough2RBCAssetsCount -= noOfResourcesNotHaveEnough2RBCAssets;
                 } else {
                     staffCapacity += resourceQuantity * sdmRoleCapacity *  drawHours;
                 }                       
