@@ -7,6 +7,11 @@
         <members>TaskGenerationBatch_Test</members>
         <members>UpdateDriveShiftProjectedProcTest</members>
         <members>UpdateOpportunityStageBatchTest</members>
+        <members>BSF_BatchTaskSyncTest</members>
+        <members>GeneratePendingDCRControllerTest</members>
+        <members>OpportunityServiceControllerTest</members>
+        <members>OpportunityTriggerTest</members>
+        <members>RemoveDuplicateTagBatchTest</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
