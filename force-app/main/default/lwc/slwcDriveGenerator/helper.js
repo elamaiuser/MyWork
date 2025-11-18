@@ -449,16 +449,6 @@ class DriveHelper {
       return job.quantity;
     }
   }
-
-  getJobvphhQuantity(job) {
-    if (!job) return null;
-
-    if (job.resourceRole === 'VP/HH') {
-      return job.vphhQuantity;
-    } else {
-      return 0;
-    }
-  }
   
   getResourceRoleGroup(resourceRole, {
     resourceRoleGroups
@@ -482,7 +472,7 @@ class DriveHelper {
         
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
-          vphhQuantity: this.getJobvphhQuantity(job) || 0,
+          vphhQuantity: job.vphhQuantity || 0,
           dualRole: job.dualRole
         });
       }
