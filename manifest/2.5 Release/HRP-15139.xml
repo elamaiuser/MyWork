@@ -21,5 +21,12 @@
     	<members>sked_HLT_Dist</members>     
     	<name>StaticResource</name>
  	</types>
+    <types>
+        <members>autoMapper</members>
+        <members>slwcPopoverContent</members>
+        <members>slwcDriveStaffingReasonModal</members>
+        <members>slwcDriveStaffingDetails</members>
+        <name>LightningComponentBundle</name>
+    </types>
     <version>64.0</version>
 </Package>

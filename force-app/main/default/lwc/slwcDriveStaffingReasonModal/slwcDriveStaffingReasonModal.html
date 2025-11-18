@@ -1,0 +1,32 @@
+<template>
+    <template if:true={isOpen}>
+        <c-slwc-custom-modal 
+            onclosecustommodal={handleCancel} 
+            onsavecustommodal={handleSave}
+            cancel-btn-label="Cancel"
+            save-btn-label="Save"
+            disabled-save={disabledSave}
+            header="Staffing Reason">
+            <div slot="content">
+                <div class="slds-is-relative">
+                    <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
+
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                            <c-slwc-picklist
+                                required
+                                name="staffingReason"
+                                label="Staffing Reason"
+                                unique-key={selectedStaffingReason} 
+                                selected-value={selectedStaffingReason}  
+                                object-api-name="sked__Job_Allocation__c" 
+                                pick-listfield-api-name="sked_Staffing_Reason__c"
+                                onpicklistchange={handleOnChange}>
+                            </c-slwc-picklist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c-slwc-custom-modal>
+    </template>
+</template>
