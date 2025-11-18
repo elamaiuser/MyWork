@@ -140,7 +140,8 @@
         <members>slwcDriveChangeRequestApproval</members>
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
-		<members>slwcDriveManagement</members>        
+		<members>slwcDriveManagement</members>
+        <members>slwcDriveSchedulingConsole</members>
         <members>slwcDriveSchedulingFilters</members>
 		<members>slwcDriveShift</members>
 		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
