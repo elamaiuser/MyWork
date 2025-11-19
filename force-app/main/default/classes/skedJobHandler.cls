@@ -39,6 +39,7 @@ public class skedJobHandler extends skedTriggerHub {
             onJobStatusChanged(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
         updateDriveShiftResourceAllocated(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
+        updateDriveShiftVolunteerSetup(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         if (!skedSetting.instance.Admin.migrationMode) {
             sendNotification(this.context.newRecords, (Map<Id, sked__Job__c>)this.context.oldMap);
         }
@@ -543,6 +544,43 @@ public class skedJobHandler extends skedTriggerHub {
                         }
                     }
                 }
+            }
+            update driveShifts;
+        }
+    }
+
+    private void updateDriveShiftVolunteerSetup(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
+        Set<Id> driveShiftIds = new Set<Id>();
+        List<sked_Drive_Shift__c> driveShifts = new List<sked_Drive_Shift__c>();
+        for (sked__Job__c newRecord : newRecords) {
+            sked__Job__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Volunteer_Role__c == null) {
+                continue;
+            }
+            Boolean isRedcrossVolunteerQuantityChanged = newRecord.sked_Redcross_Volunteer_Quantity__c != oldData.sked_Redcross_Volunteer_Quantity__c;
+            Boolean isQuantityChanged = newRecord.sked__Quantity__c != oldData.sked__Quantity__c;
+
+            if(isRedcrossVolunteerQuantityChanged || isQuantityChanged) {
+                driveShiftIds.add(newRecord.sked_Drive_Shift__c);
+            }
+        }
+        if (!driveShiftIds.isEmpty()) {
+            List<AggregateResult> sumOfVolunteerJobs = [SELECT sked_Drive_Shift__c shiftId, SUM(sked__Quantity__c) jobQuantity
+                                                        FROM sked__Job__c
+                                                        WHERE sked_Drive_Shift__c IN :driveShiftIds
+                                                        AND sked_Volunteer_Role__c != null
+                                                        AND sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+                                                        GROUP BY sked_Drive_Shift__c];
+
+            Map<Id, Decimal> sumOfVolunteerJobsByShift = new Map<Id, Decimal>();
+
+            for (AggregateResult sumOfVolunteerJob : sumOfVolunteerJobs) {
+                sumOfVolunteerJobsByShift.put((Id) sumOfVolunteerJob.get('shiftId'), (Decimal) sumOfVolunteerJob.get('jobQuantity'));
+            }
+
+            for (Id driveShiftId : driveShiftIds) {
+                Decimal total = sumOfVolunteerJobsByShift.get(driveShiftId);
+                driveShifts.add(new sked_Drive_Shift__c (Id = driveShiftId, sked_Volunteer_Setup__c = (total == null ? 0 : total)));
             }
             update driveShifts;
         }
