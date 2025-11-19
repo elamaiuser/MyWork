@@ -24,9 +24,9 @@ export default class SlwcDriveStaffingReasonModal extends LightningElement {
     @track errorMessages = [];
 
     /**
-     * Determine if save button should be disabled
+     * Determine if continue button should be disabled
      */
-    get disabledSave() {
+    get disabledContinue() {
         return !this.selectedStaffingReason;
     }
 
@@ -50,10 +50,10 @@ export default class SlwcDriveStaffingReasonModal extends LightningElement {
     }
 
     /**
-     * Handle save button click
+     * Handle continue button click
      * Validates selection and dispatches event with selected value
      */
-    handleSave() {
+    handleContinue() {
         // Validate that a staffing reason is selected
         if (!this.selectedStaffingReason) {
             this.errorMessages = [{

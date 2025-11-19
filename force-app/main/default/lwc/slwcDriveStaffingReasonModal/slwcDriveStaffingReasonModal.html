@@ -2,16 +2,30 @@
     <template if:true={isOpen}>
         <c-slwc-custom-modal 
             onclosecustommodal={handleCancel} 
-            onsavecustommodal={handleSave}
+            onsavecustommodal={handleContinue}
             cancel-btn-label="Cancel"
-            save-btn-label="Save"
-            disabled-save={disabledSave}
+            save-btn-label="Continue"
+            disabled-save={disabledContinue}
+            overflow-initial="true"
             header="Staffing Reason">
             <div slot="content">
                 <div class="slds-is-relative">
+                    <!-- Warning text -->
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning"
+                        role="alert">
+                        <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small">
+                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                            </svg>
+                        </span>
+                        <span class="slds-text-body_small">Availability Pattern Exception. Staffing Reason is required.</span>
+                    </div>
+
+                    <!-- Error messages -->
                     <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
 
-                    <div class="slds-grid slds-wrap slds-gutters">
+                    <!-- Staffing Reason picklist -->
+                    <div class="slds-grid slds-wrap slds-gutters slds-m-top_x-small">
                         <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
                             <c-slwc-picklist
                                 required
