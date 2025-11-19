@@ -431,13 +431,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.sked_Site_Contact__c</fieldItem>
                 <identifier>Recordsked_Site_Contact_cField</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!Record.RecordType.Name}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Mobile Site</rightValue>
-                    </criteria>
-                </visibilityRule>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -448,13 +441,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.sked_Site_Contact_Email__c</fieldItem>
                 <identifier>Recordsked_Site_Contact_Email_cField</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!Record.RecordType.Name}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Mobile Site</rightValue>
-                    </criteria>
-                </visibilityRule>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -465,13 +451,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.sked_Site_Contact_Phone__c</fieldItem>
                 <identifier>Recordsked_Site_Contact_Phone_cField</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!Record.RecordType.Name}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Mobile Site</rightValue>
-                    </criteria>
-                </visibilityRule>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
