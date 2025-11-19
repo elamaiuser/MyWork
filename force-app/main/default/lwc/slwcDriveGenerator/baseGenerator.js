@@ -1470,6 +1470,7 @@ class BaseGenerator {
             mapJobsToSave[job.id] = {
               id: job.id,
               isLocked: !!sourceJob.isLocked,
+              quantity: sourceJob.quantity,
             }
 
             if(!isNullOrEmpty(sourceJob.volunteerRole)) {
