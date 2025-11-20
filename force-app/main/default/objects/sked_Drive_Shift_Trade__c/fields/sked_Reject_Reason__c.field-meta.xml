@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Reject_Reason__c</fullName>
+    <label>Reject Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Rejected (hours)</fullName>
+                <default>false</default>
+                <label>Rejected (hours)</label>
+            </value>
+            <value>
+                <fullName>Rejected (role)</fullName>
+                <default>false</default>
+                <label>Rejected (role)</label>
+            </value>
+            <value>
+                <fullName>Rejected (travel distance)</fullName>
+                <default>false</default>
+                <label>Rejected (travel distance)</label>
+            </value>
+            <value>
+                <fullName>Rejected (cutoff days)</fullName>
+                <default>false</default>
+                <label>Rejected (cutoff days)</label>
+            </value>
+            <value>
+                <fullName>Rejected (cancelled)</fullName>
+                <default>false</default>
+                <label>Rejected (cancelled)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
