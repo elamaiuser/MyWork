@@ -82,6 +82,12 @@
                         {exception.exception}
                     </p>
                 </div>
+
+                <div if:true={popoverData.staffingReason} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                    <p class="color-default-text slds-m-vertical_xx-small" style="white-space: normal;">
+                        Staffing Reason: {popoverData.staffingReason}
+                    </p>
+                </div>
             </div>
 
             <div class="slds-m-top_x-small trade-shift-section" if:true={popoverData.hasDriveShiftTrade}>
