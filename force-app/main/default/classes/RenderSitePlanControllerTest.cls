@@ -15,42 +15,59 @@ private class RenderSitePlanControllerTest {
         mapTestData = testDataFactory.setupDriveData();
     }
 
-    @isTest static void getImageTestSuccess() {
+    @isTest static void getImageTestSuccess_test() {
         
         Test.startTest();
         Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenerator());
         String img = RenderSitePlanController.getImage('0068I000002pBodQAE');
         Test.stopTest();
-        System.assertEquals('test', img);
+        
+        Assert.isTrue('test' == img);
     }
 
-    @isTest static void getOperationTemplateIdSuccess() {
+    @isTest static void getOperationTemplateIdSuccess_test() {
         Test.startTest();
-        Account acc = new Account();
-        acc.Name = 'Test Account';
-        insert acc;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        
+        Opportunity opp = [SELECT Id, Parent_Template_Id__c, AccountId, Drive_Site__c FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+		Opportunity testTemplate = new Opportunity(
+            Name = 'Test Template',
+            Is_Template__c = true,
+            StageName = 'Discovery',
+            CloseDate = system.today(),
+            AccountId = opp.AccountId,
+            Drive_Site__c = opp.Drive_Site__c
+        );
+        insert testTemplate;
 
-        Opportunity template = new Opportunity();
-        template.Name = 'Template';
-        template.StageName = 'Discovery';
-        template.CloseDate = Date.today();
-        template.Is_Template__c = true;
-        template.AccountId = acc.Id;
-        template.Data_Source__c = 'BSFApplication';
-        insert template;
+        opp.Parent_Template_Id__c = testTemplate.Id;
+        update opp;
+      
+        sked_Drive__c drive = [SELECT Id FROM sked_Drive__c LIMIT 1];
+        
+        sked_Drive_Shift__c driveShift = new sked_Drive_Shift__c();
+        driveShift.sked_Drive__c = drive.Id;
+        insert driveShift;
 
-        Opportunity driveOpp = new Opportunity();
-        driveOpp.Name = 'Drive Opportunity';
-        driveOpp.StageName = 'Discovery';
-        driveOpp.CloseDate = Date.today();
-        driveOpp.Parent_Template_Id__c = template.Id;
-        driveOpp.AccountId = acc.Id;
-        driveOpp.Data_Source__c = 'BSFApplication';
-        insert driveOpp;
+        sked_Operation_Record__c opr = new sked_Operation_Record__c();
+        opr.sked_Drive__c = drive.Id;
+        opr.sked_Drive_Shift__c = driveShift.Id;
+        insert opr;
 
-        sked_Drive__c drive  = new sked_Drive__c();
-        drive.sked_Opportunity__c = driveOpp.Id;
-        insert drive;
+        TriggerHandler.clearAllBypasses();
+        Test.stopTest();
+        
+        String response = RenderSitePlanController.getOperationTemplateId(opr.Id);
+        Assert.isTrue(response == [SELECT Id FROM Opportunity WHERE Is_Template__c = true].Id);
+    }
+
+    @isTest static void getOperationTemplateIdNull_test() {
+        Test.startTest();
+        
+        sked_Drive__c drive = [SELECT Id FROM sked_Drive__c LIMIT 1];
 
         sked_Drive_Shift__c driveShift = new sked_Drive_Shift__c();
         driveShift.sked_Drive__c = drive.Id;
@@ -63,38 +80,6 @@ private class RenderSitePlanControllerTest {
 
         Test.stopTest();
         String response = RenderSitePlanController.getOperationTemplateId(opr.Id);
-        System.assertEquals(template.Id, response);
-    }
-
-    @isTest static void getOperationTemplateIdNull() {
-        Test.startTest();
-        Account acc = new Account();
-        acc.Name = 'Test Account';
-        insert acc;
-
-        Opportunity driveOpp = new Opportunity();
-        driveOpp.Name = 'Drive Opportunity';
-        driveOpp.StageName = 'Discovery';
-        driveOpp.CloseDate = Date.today();
-        driveOpp.AccountId = acc.Id;
-        driveOpp.Data_Source__c = 'BSFApplication';
-        insert driveOpp;
-
-        sked_Drive__c drive  = new sked_Drive__c();
-        drive.sked_Opportunity__c = driveOpp.Id;
-        insert drive;
-
-        sked_Drive_Shift__c driveShift = new sked_Drive_Shift__c();
-        driveShift.sked_Drive__c = drive.Id;
-        insert driveShift;
-
-        sked_Operation_Record__c opr = new sked_Operation_Record__c();
-        opr.sked_Drive__c = drive.Id;
-        opr.sked_Drive_Shift__c = driveShift.Id;
-        insert opr;
-
-        Test.stopTest();
-        String response = RenderSitePlanController.getOperationTemplateId(opr.Id);
-        System.assertEquals(null, response);
+        Assert.isTrue(response == null);
     }
 }

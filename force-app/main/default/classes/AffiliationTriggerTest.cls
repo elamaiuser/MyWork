@@ -107,7 +107,12 @@ private class AffiliationTriggerTest {
         TriggerHandler.bypass('AccountAffiliationTriggerHandler');
         TriggerHandler.bypass('DriveMarketingProgramTriggerHandler');
         
-        User testUser = [SELECT Id FROM User LIMIT 1];
+        User testUser = [SELECT Id, IsActive FROM User LIMIT 1];
+        TriggerHandler.bypass('UserTriggerHandler');
+        skedHubBase.BypassUpdateTriggers = true;
+        update new User(Id = testUser.Id, IsActive = true);
+        skedHubBase.BypassUpdateTriggers = false;
+        TriggerHandler.clearBypass('UserTriggerHandler');
 
         System.runAs(testUser) {
         	AffiliationService.populateEndDateInAccountAffiliation([SELECT Id FROM Marketing_Program__c], 'Update');
