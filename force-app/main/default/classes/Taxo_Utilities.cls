@@ -210,5 +210,96 @@ public class Taxo_Utilities {
         );
         System.schedule(jobNamePrefix + '-' + recordTypeName + '-' + Datetime.now().getTime(), cron, job);
     }
-    
+    public static void markTaxonomyStarted() {
+        try {
+            Taxonomy_Run_Config__mdt cfg = [
+                SELECT Id,DeveloperName,MasterLabel, Is_Taxonomy_Running__c,
+                Taxonomy_Automation_Start_DateTime__c,Taxonomy_Automation_End_DateTime__c
+                FROM Taxonomy_Run_Config__mdt
+                WHERE DeveloperName = 'Taxo_Run_Date_Override'
+                LIMIT 1
+            ];
+            System.debug('markTaxonomyStarted cfg ==>'+cfg);
+            if (!cfg.Is_Taxonomy_Running__c) {
+                Metadata.CustomMetadata md = new Metadata.CustomMetadata();
+                md.fullName = 'Taxonomy_Run_Config__mdt.' + cfg.DeveloperName;
+                md.label = cfg.MasterLabel;
+
+                Metadata.CustomMetadataValue v1 = new Metadata.CustomMetadataValue();
+                v1.field = 'Is_Taxonomy_Running__c';
+                v1.value = true;
+                md.values.add(v1);
+
+                Metadata.CustomMetadataValue v2 = new Metadata.CustomMetadataValue();
+                v2.field = 'Taxonomy_Automation_Start_DateTime__c';
+                v2.value = System.now();
+                md.values.add(v2);
+
+                Metadata.DeployContainer dc = new Metadata.DeployContainer();
+                dc.addMetadata(md);
+
+                if(!Test.isRunningTest()){
+                    Metadata.Operations.enqueueDeployment(dc, null);
+                 }
+                System.debug('markTaxonomyStarted Updated successfully!!!');
+            }
+        }
+        catch (Exception e) {
+            System.debug('Failed to Update Taxonomy_Run_Config__mdt: ' + e.getMessage());
+        }
+    }
+    public static void markTaxonomyEnded() {
+        try {
+            Taxonomy_Run_Config__mdt cfg = [
+                SELECT Id,DeveloperName,MasterLabel, Is_Taxonomy_Running__c,
+                Taxonomy_Automation_Start_DateTime__c,Taxonomy_Automation_End_DateTime__c
+                FROM Taxonomy_Run_Config__mdt
+                WHERE DeveloperName = 'Taxo_Run_Date_Override'
+                LIMIT 1
+            ];
+            System.debug('markTaxonomyEnded cfg ==>'+cfg);
+            if (cfg.Is_Taxonomy_Running__c) {
+                Metadata.CustomMetadata md = new Metadata.CustomMetadata();
+                md.fullName = 'Taxonomy_Run_Config__mdt.' + cfg.DeveloperName;
+                md.label = cfg.MasterLabel;
+
+                Metadata.CustomMetadataValue v1 = new Metadata.CustomMetadataValue();
+                v1.field = 'Is_Taxonomy_Running__c';
+                v1.value = false;
+                md.values.add(v1);
+
+                Metadata.CustomMetadataValue v2 = new Metadata.CustomMetadataValue();
+                v2.field = 'Taxonomy_Automation_End_DateTime__c';
+                v2.value = System.now();
+                md.values.add(v2);
+
+                Metadata.DeployContainer dc = new Metadata.DeployContainer();
+                dc.addMetadata(md);
+
+                if(!Test.isRunningTest()){
+                    Metadata.Operations.enqueueDeployment(dc, null);
+                }
+                System.debug('markTaxonomyEnded Updated successfully!!!');
+            }
+        }
+        catch (Exception e) {
+            System.debug('Failed to Update Taxonomy_Run_Config__mdt: ' + e.getMessage());
+        }   
+    }
+    //Returns TRUE if taxonomy is currently running
+    public static Boolean isTaxonomyRunning() {
+        try {
+            Taxonomy_Run_Config__mdt cfg = [
+                SELECT Is_Taxonomy_Running__c
+                FROM Taxonomy_Run_Config__mdt
+                WHERE DeveloperName = 'Taxo_Run_Date_Override'
+                LIMIT 1
+            ];
+            return cfg.Is_Taxonomy_Running__c;
+        }
+        catch (Exception e) {
+            System.debug('Failed to read Taxonomy_Run_Config__mdt: ' + e.getMessage());
+            return false; // safe default
+        }
+    }
 }
