@@ -1059,6 +1059,11 @@
             <field>Drive_Site__c.sked_County__c</field>
             <table>Opportunity</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Opportunity</table>
+        </columns>
         <masterLabel>Opportunities</masterLabel>
     </sections>
     <sections>
@@ -1680,6 +1685,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Stage_Options__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Cancellation_Detail__c</field>
             <table>Opportunity.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>
