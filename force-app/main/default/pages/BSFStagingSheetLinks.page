@@ -4,17 +4,19 @@
             <apex:pageMessages rendered="true" />
         </apex:pageBlock>
         <div style="{!IF(enableAllLinks, 'display:block', 'display:none')}" align="center" draggable="false">
+            <!--
             <div style="{!IF(enableNonMOELinks, 'display:block', 'display:none')}" draggable="false">
                 <br/><br/><br/><br/><br/>
                 <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetStandard}" value="Staging Sheet - Standard"></apex:commandLink>
                 <br/><br/><br/>
                 <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetAppeal}" value="Staging Sheet - Appeal"></apex:commandLink>
             </div>
+            -->
             <div style="{!IF(enableMOELinks, 'display:block', 'display:none')}" draggable="false">
                 <br/><br/><br/><br/><br/>
-                <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetMOEStandard}" value="Staging Sheet (MOE) - Standard"></apex:commandLink>
+                <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetMOEStandard}" value="Staging Sheet - Standard"></apex:commandLink>
                 <br/><br/><br/>
-                <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetMOEAppeal}" value="Staging Sheet (MOE) - Appeal"></apex:commandLink>
+                <apex:commandlink style="font-size:15px !important;" action="{!OpenStagingSheetMOEAppeal}" value="Staging Sheet - Appeal"></apex:commandLink>
             </div>
         </div>
     </apex:form>
