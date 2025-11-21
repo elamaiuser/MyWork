@@ -6,10 +6,5 @@
         <minorNumber>56</minorNumber>
         <namespace>sked</namespace>
     </packageVersions>
-    <packageVersions>
-        <majorNumber>100</majorNumber>
-        <minorNumber>3</minorNumber>
-        <namespace>skedHC</namespace>
-    </packageVersions>
     <status>Active</status>
 </ApexClass>

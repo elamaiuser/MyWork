@@ -1,6 +1,10 @@
+/* (Depricated)
+ * UpdateAllOpportunityForCollectionZip is covered by BSF_BatchUpdateOpportunityForZipCodeTest
+*/
+
 @isTest
 public class UpdateAllOpportunityForCollectionZipTest {
-    static testMethod void test(){
+    /*static testMethod void test(){
         Account a=new Account();
         a.name='account1';
         insert a;
@@ -120,5 +124,5 @@ public class UpdateAllOpportunityForCollectionZipTest {
         UpdateAllOpportunityForCollectionZip ba= new UpdateAllOpportunityForCollectionZip();
         Id jobid= Database.executeBatch(ba,5);
         Test.stopTest();
-    }
+    }*/
 }

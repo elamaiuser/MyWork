@@ -2,76 +2,40 @@
  * This Test class covering following class
  * GenericCustomLookup
  */
+
 @isTest(SeeAllData=false)
-public class GenericCustomLookupTest {
+private class GenericCustomLookupTest {
     
-	public static String rolename = 'West_BDM';
-    public static String mobileAccRecType = 'Mobile Account';
-    public static Map<String,Id> recordTypeMap  = new Map<String,Id>();
-	
     @testSetup 
-    public static void prepareDataset(){
-        recordTypeMap = recordTypeMap( 'Account' );
-    }
-    
-    //Method to get the map of recordType Name as key and recordTypeId as value 
-    public static Map<String,Id> recordTypeMap(string obj){
-        Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
-        if(obj!= null){
-            for(Schema.RecordTypeInfo recInfo : Schema.getGlobalDescribe().get(obj).getDescribe().getRecordTypeInfosByName().values()){
-                recTypeNameWithIdMap.put(recInfo.getName(),recInfo.getRecordTypeId());
-            }
+    static void prepareDataset() {
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('UserTriggerHandler');
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        //insert DRD User
+        User testDrdUser = (User)mapTestData.get('DRD_USER');
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            insert testDrdUser;
         }
-        return recTypeNameWithIdMap;
     }
-    
+  
     @isTest static void findUser() {
-        
-        
-        User AdminUser = new User(
-             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
-            FirstName='SystemAdmin',
-             LastName = 'last',
-             Email = 'puser000@amamama.com',
-             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
-             CompanyName = 'TEST',
-             Title = 'title',
-             Alias = 'alias',
-             TimeZoneSidKey = 'America/Los_Angeles',
-             EmailEncodingKey = 'UTF-8',
-             LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US'
-             
-        );
-        
-        UserRole urole  = [select id from userrole where developername =: rolename ];
-        
-        User DRDAMUser = new User(
-             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
-             FirstName = 'Amy',
-             LastName = 'Brown',
-             Email = 'puser000@amamama.com',
-             Username = 'puser000@amamama.com' + System.currentTimeMillis(),
-             CompanyName = 'TEST',
-             Title = 'title',
-             Alias = 'alias',
-             TimeZoneSidKey = 'America/Los_Angeles',
-             EmailEncodingKey = 'UTF-8',
-             LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
-        );
-        
-        
-        System.runAs( AdminUser ){
-            insert DRDAMUser;
+        Test.startTest();
+        User testDrdUser = [SELECT Id FROM User LIMIT 1];
+        TriggerHandler.bypass('UserTriggerHandler');
+        skedHubBase.BypassUpdateTriggers = true;
+        update new User(Id = testDrdUser.Id, IsActive = true);
+        skedHubBase.BypassUpdateTriggers = false;
+        TriggerHandler.clearBypass('UserTriggerHandler');
+  
+        System.runAs(testDrdUser) {
+            List<User> sobjectlist = GenericCustomLookup.findRecords('DRD', 'User', 'Name');
+            Assert.isTrue(sobjectlist.size() > 1);
         }
         
-        System.runAs( DRDAMUser ){
-            List<User> sobjectlist = GenericCustomLookup.findRecords('amy', 'User', 'Name');
-            //System.debug( 'sobjectlist is:' + sobjectlist );
-            System.assert(sobjectlist.size() > 1);
-        }
-    }
-    
+        Test.stopTest();
+    }   
 }

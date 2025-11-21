@@ -76,8 +76,10 @@ trigger Add_Update_OpptyTeamMembers on UpdateOpptyTeamEvent__e (After Insert) {
         if(!BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c)
         {
             System.debug('HRP-Sync add_update 78:'+BSF_Utilities.metaDataupdate(null,null,null,'Opportunity_Team_Sync_Batch').By_Pass_Batch__c);
-            //HRP-10569 End
-            Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+            if(!Taxo_Utilities.isTaxonomyRunning()){
+                //HRP-10569 End
+                Database.executeBatch(new BSF_Batch_OpportunityTeamSync(mapOfAcctsWithTeamMembers,Trigger.New.size(),startDate,endDate),Integer.Valueof(System.Label.OpportunityTeamSyncTriggerSize));//HRP-13340
+            }
             
         }
     } 
