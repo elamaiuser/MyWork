@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>APComplianceReportController</members>
         <members>skedBaseController</members>
         <members>skedExceptionLogService</members>
         <members>skedMappingConfigContainer</members>
         <members>skedModels</members>
         <members>skedRacController</members>
 		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>APComplianceExcel</members>
+		<members>BSFAPComplianceReportPDF</members>
+		<name>ApexPage</name>
 	</types>
     <types>
 		<members>sked__Activity_Resource__c.sked_Staffing_Reason__c</members>
@@ -27,6 +33,6 @@
         <members>slwcDriveStaffingReasonModal</members>
         <members>slwcDriveStaffingDetails</members>
         <name>LightningComponentBundle</name>
-    </types>
+    </types>    
     <version>64.0</version>
 </Package>
