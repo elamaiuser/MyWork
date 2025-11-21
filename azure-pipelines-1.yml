@@ -1,0 +1,45 @@
+trigger: none 
+pr: none      # We don't need any branch/PR triggers here as we'll control it with Build Policies
+
+schedules:
+  - cron: "45 20 * * *" # Modify this accordingly to run on the right schedule
+    displayName: "Daily 21:45 BST run"
+    branches:
+      include:
+        - BSFReleaseQA_SFCA # Change this to be the full branch you want to scan, e.g 'main' or 'staging'
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+    fetchDepth: 0 # Make sure we're overriding 'shallow fetch' here to retrieve all git history
+
+  # Run this only if it's a PR
+  - task: run-salesforce-code-analyzer@1
+    displayName: Run SFCA for PR
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    inputs:
+      stopOnViolations: true
+      useSeverityThreshold: true
+      severityThreshold: '3'
+      extensionsToScan: "cls|trigger|js|html|page|cmp|component|(?:page|cls|trigger|component|js|flow)-meta\\.xml"
+      postStatusCheckToPR: true
+      postCommentsToPR: true
+      configFilePath: './config/code-analyzer-full.yml'
+      ruleSelector: '(pmd,eslint)'
+      outputFileTypes: 'html,json,sarif'
+      postInlineCommentsToPR: true
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  # Run this only if it's *not* a PR (manual/CI/schedule) - this is dynamically determined
+  - task: run-salesforce-code-analyzer@1
+    displayName: Run SFCA for Manual/CI/Scheduled
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    inputs:
+      stopOnViolations: false
+      useSeverityThreshold: true
+      severityThreshold: '3'
+      scanFullBranch: true
