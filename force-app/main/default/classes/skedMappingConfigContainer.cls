@@ -199,6 +199,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked__Resource__c', 'resourceId', 'direct');
             mappingConfig.addFieldConfig('sked__Resource__r', 'resource', 'related', skedModels.resource.class, 'sked__Resource__c');
             mappingConfig.addFieldConfig('sked_End__c', 'end', 'datetime');
+            mappingConfig.addFieldConfig('sked_Staffing_Reason__c', 'staffingReason', 'direct');
             mappingConfig.addFieldConfig('sked_Start1__c', 'start', 'datetime');
             mappingConfig.addFieldConfig('sked_Timezone__c', 'timezoneSidId', 'direct');
 
@@ -739,6 +740,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Call_Out_Type__c', 'calloutType', 'direct');
             mappingConfig.addFieldConfig('sked_DateTime_Call_Out_Received__c', 'callOutReceived', 'datetime');
             mappingConfig.addFieldConfig('sked_Guarded__c', 'guarded', 'direct');
+            mappingConfig.addFieldConfig('sked_Staffing_Reason__c', 'staffingReason', 'direct');
             mappingConfig.addFieldConfig('jobAllocation', 'objectType', 'value');
 
             mappingConfig.addFieldConfig('sked_Drive_Shift_Trade__r', 'driveShiftTrade', 'related', skedModels.driveShiftTrade.class, 'sked_Drive_Shift_Trade__c');
