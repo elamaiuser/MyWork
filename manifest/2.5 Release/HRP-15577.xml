@@ -17,13 +17,17 @@
 		<members>Add_Update_OpptyTeamMembers</members>
 		<name>ApexTrigger</name>
 	</types>
-  <types>
-		<members>Taxonomy_Run_Config__mdt.Is_Taxonomy_Running__c</members>
-		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
-		<members>Taxonomy_Run_Config__mdt.Taxonomy_Automation_Start_DateTime__c</members>
-		<members>Taxonomy_Run_Config__mdt.Taxonomy_Automation_End_DateTime__c</members>		
+  <types>		
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>		
+		<members>Taxonomy_Automation_Runtime_Check__c.Is_Taxonomy_Running__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_Start_DateTime__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>
 		<name>CustomField</name>
 	</types>
+	<types>
+        <members>Taxonomy_Automation_Runtime_Check__c</members>
+        <name>CustomObject</name>
+  </types>
 	<types>
 		<members>Taxonomy_Run_Config__mdt.Taxonomy_Run_Config</members>
 		<name>ListView</name>
