@@ -1169,6 +1169,11 @@
             <field>sked_Replacement_Drive__c</field>
             <table>Opportunity</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Opportunity</table>
+        </columns>
         <masterLabel>Opportunities</masterLabel>
     </sections>
     <sections>
@@ -1639,11 +1644,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Shadow_Drive__c</field>
-            <table>Opportunity.sked_Drives__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Staff_Capacity__c</field>
             <table>Opportunity.sked_Drives__r</table>
         </columns>
@@ -1862,6 +1862,11 @@
             <field>sked_Stage_Options__c</field>
             <table>Opportunity.sked_Drives__r</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Cancellation_Detail__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
         <masterLabel>Drives on Calendar</masterLabel>
     </sections>
     <sections>
@@ -2028,11 +2033,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Procedure_Capacity__c</field>
-            <table>Opportunity.sked_Drives__r.sked_Drive_Shifts__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_RBC_Procedure_Projection__c</field>
             <table>Opportunity.sked_Drives__r.sked_Drive_Shifts__r</table>
         </columns>
         <columns>
