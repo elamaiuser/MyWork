@@ -210,96 +210,66 @@ public class Taxo_Utilities {
         );
         System.schedule(jobNamePrefix + '-' + recordTypeName + '-' + Datetime.now().getTime(), cron, job);
     }
+    
+    // --------- Get Org Default Row of Custom Setting ---------
+    private static Taxonomy_Automation_Runtime_Check__c getRuntimeCfg() {
+        Taxonomy_Automation_Runtime_Check__c cfg =
+            Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
+        System.debug('getRuntimeCfg cfg==>>'+cfg);
+        if (cfg == null) {
+            cfg = new Taxonomy_Automation_Runtime_Check__c();
+        }
+        return cfg;
+    }
+    // --------- Utility Method to Check Flag ---------
+    public static Boolean isTaxonomyRunning() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+            return cfg.Is_Taxonomy_Running__c;
+        } catch (Exception e) {
+            System.debug('isTaxonomyRunning ERROR: ' + e.getMessage());
+            return false;  // fail-open
+        }
+    }
+    // --------- Mark START of Taxonomy Automation ---------
     public static void markTaxonomyStarted() {
         try {
-            Taxonomy_Run_Config__mdt cfg = [
-                SELECT Id,DeveloperName,MasterLabel, Is_Taxonomy_Running__c,
-                Taxonomy_Automation_Start_DateTime__c,Taxonomy_Automation_End_DateTime__c
-                FROM Taxonomy_Run_Config__mdt
-                WHERE DeveloperName = 'Taxo_Run_Date_Override'
-                LIMIT 1
-            ];
-            System.debug('markTaxonomyStarted cfg ==>'+cfg);
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+
             if (!cfg.Is_Taxonomy_Running__c) {
-                Metadata.CustomMetadata md = new Metadata.CustomMetadata();
-                md.fullName = 'Taxonomy_Run_Config__mdt.' + cfg.DeveloperName;
-                md.label = cfg.MasterLabel;
+                cfg.Is_Taxonomy_Running__c = true;
+                cfg.Taxonomy_Automation_Start_DateTime__c = System.now();
+                cfg.Taxonomy_Automation_End_DateTime__c = null;
 
-                Metadata.CustomMetadataValue v1 = new Metadata.CustomMetadataValue();
-                v1.field = 'Is_Taxonomy_Running__c';
-                v1.value = true;
-                md.values.add(v1);
-
-                Metadata.CustomMetadataValue v2 = new Metadata.CustomMetadataValue();
-                v2.field = 'Taxonomy_Automation_Start_DateTime__c';
-                v2.value = System.now();
-                md.values.add(v2);
-
-                Metadata.DeployContainer dc = new Metadata.DeployContainer();
-                dc.addMetadata(md);
-
-                if(!Test.isRunningTest()){
-                    Metadata.Operations.enqueueDeployment(dc, null);
-                 }
-                System.debug('markTaxonomyStarted Updated successfully!!!');
+                upsert cfg;
+                System.debug('START: Taxonomy set to RUNNING.');
+            } else {
+                System.debug('START: Taxonomy already running, no update performed.');
             }
-        }
-        catch (Exception e) {
-            System.debug('Failed to Update Taxonomy_Run_Config__mdt: ' + e.getMessage());
+        } catch (Exception e) {
+            System.debug('markTaxonomyStarted ERROR: ' + e.getMessage());
         }
     }
     public static void markTaxonomyEnded() {
         try {
-            Taxonomy_Run_Config__mdt cfg = [
-                SELECT Id,DeveloperName,MasterLabel, Is_Taxonomy_Running__c,
-                Taxonomy_Automation_Start_DateTime__c,Taxonomy_Automation_End_DateTime__c
-                FROM Taxonomy_Run_Config__mdt
-                WHERE DeveloperName = 'Taxo_Run_Date_Override'
-                LIMIT 1
-            ];
-            System.debug('markTaxonomyEnded cfg ==>'+cfg);
-            if (cfg.Is_Taxonomy_Running__c) {
-                Metadata.CustomMetadata md = new Metadata.CustomMetadata();
-                md.fullName = 'Taxonomy_Run_Config__mdt.' + cfg.DeveloperName;
-                md.label = cfg.MasterLabel;
+            Taxonomy_Automation_Runtime_Check__c cfg =
+                Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
 
-                Metadata.CustomMetadataValue v1 = new Metadata.CustomMetadataValue();
-                v1.field = 'Is_Taxonomy_Running__c';
-                v1.value = false;
-                md.values.add(v1);
-
-                Metadata.CustomMetadataValue v2 = new Metadata.CustomMetadataValue();
-                v2.field = 'Taxonomy_Automation_End_DateTime__c';
-                v2.value = System.now();
-                md.values.add(v2);
-
-                Metadata.DeployContainer dc = new Metadata.DeployContainer();
-                dc.addMetadata(md);
-
-                if(!Test.isRunningTest()){
-                    Metadata.Operations.enqueueDeployment(dc, null);
-                }
-                System.debug('markTaxonomyEnded Updated successfully!!!');
+            if (cfg == null) {
+                cfg = new Taxonomy_Automation_Runtime_Check__c();
             }
+
+            // Always mark as false and set end datetime
+            cfg.Is_Taxonomy_Running__c = false;
+            cfg.Taxonomy_Automation_End_DateTime__c = System.now();
+
+            upsert cfg;
+
+            System.debug('Taxonomy Automation marked as FINISHED.');
         }
         catch (Exception e) {
-            System.debug('Failed to Update Taxonomy_Run_Config__mdt: ' + e.getMessage());
-        }   
-    }
-    //Returns TRUE if taxonomy is currently running
-    public static Boolean isTaxonomyRunning() {
-        try {
-            Taxonomy_Run_Config__mdt cfg = [
-                SELECT Is_Taxonomy_Running__c
-                FROM Taxonomy_Run_Config__mdt
-                WHERE DeveloperName = 'Taxo_Run_Date_Override'
-                LIMIT 1
-            ];
-            return cfg.Is_Taxonomy_Running__c;
-        }
-        catch (Exception e) {
-            System.debug('Failed to read Taxonomy_Run_Config__mdt: ' + e.getMessage());
-            return false; // safe default
+            System.debug('markTaxonomyFinished ERROR: ' + e.getMessage());
         }
     }
+    
 }
