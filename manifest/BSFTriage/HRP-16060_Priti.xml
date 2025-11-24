@@ -52,6 +52,8 @@
 		<members>skedTTIndexRefreshRequestTrigger_Test</members>
 		<members>skedTTIRefreshGroupTrigger_Test</members>
 		<members>skedTestDataFactory</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
+        <members>skedSetting_Test</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
