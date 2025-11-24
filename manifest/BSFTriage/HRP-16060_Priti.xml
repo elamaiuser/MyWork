@@ -38,6 +38,22 @@
         <members>populateDriveSupervisoryRoleTriggerTest</members>
         <members>skedExpireSiteFeedbacks_Test</members>
         <members>skedOppDriveSyncBatch_Test</members>
+		<members>OpportunitySplitTriggerTest</members>
+		<members>OpportunityTeamMemberTriggerTest</members>
+		<members>OpportunityTriggerTest</members>
+		<members>skedCreateDCRForRTDBatch_Test</members>
+		<members>skedUserHandler_Test</members>
+		<members>skedDriveTrigger_Test</members>
+		<members>skedJobAllocationTravelTimeBatch_Test</members>
+		<members>TestskedJobNonDeclinable_batch</members>
+		<members>BatchAccoutsOpptyUpdateOnCZipCodeTest</members>
+		<members>BSF_Batch_OpportunityTeamMember_Test</members>
+		<members>AddTeamMemberToAccountTest</members>
+		<members>skedTTIndexRefreshRequestTrigger_Test</members>
+		<members>skedTTIRefreshGroupTrigger_Test</members>
+		<members>skedTestDataFactory</members>
+        <members>skedJobAllocationPostProcessBatch_Test</members>
+        <members>skedSetting_Test</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>

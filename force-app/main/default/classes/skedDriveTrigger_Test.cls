@@ -1,5 +1,5 @@
 @isTest
-private class skedDriveTrigger_Test {
+private class skedDriveTrigger_Test { 
 
     static testmethod void testApproveDrive() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
@@ -71,6 +71,7 @@ private class skedDriveTrigger_Test {
         sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
+        Time_Block__c testTimeBlock = (Time_Block__c)mapTestData.get('testTimeBlock1');
         
         Test.startTest();
 
@@ -92,7 +93,8 @@ private class skedDriveTrigger_Test {
             sked_Sign_Up_Reduction__c = 0,
             sked_Staff_Setup__c = 1,
             sked_Vehicles_Needed__c = 1,
-            sked_Volunteer_Setup__c = 1
+            sked_Volunteer_Setup__c = 1,
+            sked_Time_Block__c = testTimeBlock.Id
         );
         insert driveShift;
         
@@ -155,6 +157,7 @@ private class skedDriveTrigger_Test {
         sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
+        Time_Block__c testTimeBlock = (Time_Block__c)mapTestData.get('testTimeBlock1');
         
         Test.startTest();
 
@@ -176,7 +179,8 @@ private class skedDriveTrigger_Test {
             sked_Sign_Up_Reduction__c = 0,
             sked_Staff_Setup__c = 1,
             sked_Vehicles_Needed__c = 1,
-            sked_Volunteer_Setup__c = 1
+            sked_Volunteer_Setup__c = 1,
+            sked_Time_Block__c = testTimeBlock.Id
         );
         insert driveShift;
         
@@ -224,7 +228,7 @@ private class skedDriveTrigger_Test {
                                AND IsActive = TRUE 
                                LIMIT 1];
         if (!drdUsers.isEmpty()) {
-            System.runAs(new User(Id = drdUsers.get(0).Id)){
+            System.runAs(new User(Id = drdUsers[0].Id)) {
                 testDrive1.sked_End_Time__c = testDrive1.sked_End_Time__c.addMinutes(15);
                 testDrive1.sked_Need_To_Notified__c = TRUE;
                 testDrive1.sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED;
@@ -325,6 +329,7 @@ private class skedDriveTrigger_Test {
         sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
         Account testAccount1 = (Account)mapTestData.get('testAccount1');
+        Time_Block__c testTimeBlock = (Time_Block__c)mapTestData.get('testTimeBlock1');
         
         System.runAs(new User(Id = UserInfo.getUserId())){
             Set<string> coNames = new Set<string>();
@@ -353,7 +358,8 @@ private class skedDriveTrigger_Test {
             sked_Sign_Up_Reduction__c = 0,
             sked_Staff_Setup__c = 1,
             sked_Vehicles_Needed__c = 1,
-            sked_Volunteer_Setup__c = 1
+            sked_Volunteer_Setup__c = 1,
+            sked_Time_Block__c = testTimeBlock.Id
         );
         insert driveShift;
         

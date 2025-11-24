@@ -1,10 +1,10 @@
 public class skedJobAllocationHandler extends skedTriggerHub implements Callable {
     private static final List<String> PERMITTED_INSERT_EDIT_PROFILES = new List<String>{
-        'Global Admin', 'System Administrator', 'APS Admin', 'Collections', 'Collection Management'
+        'Global Admin', 'System Administrator', 'Integration User', 'APS Admin', 'Collections', 'Collection Management'
     };
 
     private static final List<String> PERMITTED_DELETE_PROFILES = new List<String>{
-        'Global Admin', 'System Administrator', 'APS Admin'
+        'Global Admin', 'System Administrator', 'Integration User', 'APS Admin'
     };
     
     public static boolean isRunningPostProcess = FALSE;

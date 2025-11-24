@@ -2187,6 +2187,11 @@
             <field>IsWon</field>
             <table>Account.Opportunities</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
         <masterLabel>Opportunities</masterLabel>
     </sections>
     <sections>
@@ -2862,11 +2867,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Shadow_Drive__c</field>
-            <table>Account.Opportunities.sked_Drives__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Site_Building_Name__c</field>
             <table>Account.Opportunities.sked_Drives__r</table>
         </columns>
@@ -3078,6 +3078,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Zip_Code__c</field>
+            <table>Account.Opportunities.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Cancellation_Detail__c</field>
             <table>Account.Opportunities.sked_Drives__r</table>
         </columns>
         <masterLabel>Drives on Calendar</masterLabel>

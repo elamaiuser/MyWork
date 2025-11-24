@@ -1,4 +1,4 @@
-@isTest
+@isTest(SeeAllData = false)
 private class TestOneTimeFlowTimeFieldUpdateBatch {
 
     @testSetup
@@ -80,7 +80,7 @@ private class TestOneTimeFlowTimeFieldUpdateBatch {
 
         Test.stopTest();
         
-        User testUser = [SELECT Id, Email FROM User LIMIT 1];
+        User testUser = [SELECT Id, Email FROM User WHERE Profile.Name = 'DRD Profile' AND Email LIKE 'DRDUser@test%' LIMIT 1];
         Assert.isTrue(String.valueOf(testUser.email).contains('invalid') == false); 
     }
 }
