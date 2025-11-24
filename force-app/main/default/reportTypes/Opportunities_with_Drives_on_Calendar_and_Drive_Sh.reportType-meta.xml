@@ -1644,11 +1644,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Shadow_Drive__c</field>
-            <table>Opportunity.sked_Drives__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Staff_Capacity__c</field>
             <table>Opportunity.sked_Drives__r</table>
         </columns>
