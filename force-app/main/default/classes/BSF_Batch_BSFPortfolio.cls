@@ -57,7 +57,7 @@ global class BSF_Batch_BSFPortfolio implements Database.Batchable<sObject>,Sched
             this.runAssignmentBatch = runAssignmentBatch;
             
             BSF_Utilities.metaDataupdate(System.now(),null,true,'Opportunity_Team_Sync_Batch');//HRP-10890
-            Taxo_Utilities.markTaxonomyStarted();
+            
        
         }  catch (Exception e) {//HRP-14316
             Taxo_Utilities.logErrorForException( e,'BSF_Batch_BSFPortfolio', 'Constructor', e.getMessage(),e.getMessage(),'Taxonomy_Run__c',recordType,taxoVerKey);  
@@ -110,6 +110,7 @@ global class BSF_Batch_BSFPortfolio implements Database.Batchable<sObject>,Sched
             Database.SaveResult[] insertResult = Database.insert(errorLogList, false);
             Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_BSFPortfolio','Start','Error',
                                      'Error occurred while inserting the error Record',recordType,taxoVerKey);
+            Taxo_Utilities.markTaxonomyStarted();
             return Database.getQueryLocator(query);
             
         } catch (Exception e) {////HRP-14316

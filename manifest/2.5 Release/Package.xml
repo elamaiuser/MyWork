@@ -83,9 +83,9 @@
         <members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
         <members>Opportunity.City__c</members>
         <members>sked_Drive__c.City__c</members>
-        <members>Taxonomy_Run_Config__mdt.Is_Taxonomy_Running__c</members>
-		<members>Taxonomy_Run_Config__mdt.Taxonomy_Automation_Start_DateTime__c</members>
-		<members>Taxonomy_Run_Config__mdt.Taxonomy_Automation_End_DateTime__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c.Is_Taxonomy_Running__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_Start_DateTime__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -114,6 +114,7 @@
     <types>
         <members>BSF_Access_Control_Rule__mdt</members>
         <members>sked_JA_Post_Process_Config__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c</members>
         <name>CustomObject</name>
     </types>
 	<types>
