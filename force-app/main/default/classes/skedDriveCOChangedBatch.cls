@@ -46,14 +46,21 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
             Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_BSFPortfolio','Start','Error',
                                      'Error occurred while inserting the error Record',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
             
+            Integer batchLimit = 50000;
+            try {
+                batchLimit = Integer.valueOf(Label.skedDriveCOBatchLimit);
+                System.debug('Label skedDriveCOBatchLimit value: ' + batchLimit);
+            } catch (Exception e) {
+                // default stays 50000
+                System.debug('Error in reading label skedDriveCOBatchLimit: ' + e.getMessage());
+            }
             return [SELECT Id, sked_Collection_Operation__c, sked_Collection_Operation__r.Name, sked_End_Date__c, 
                     sked_Site__c, sked_Start_Date__c, sked_Region__c
                     FROM sked_Site_Collection_Operation__c
                     WHERE Id IN :this.sitecollectionOperationIds
                     AND Id > :this.lastId
                     ORDER BY Id ASC
-                    LIMIT 50000];
-                    
+                    LIMIT :batchLimit];
         } catch (Exception e) { //HRP-14438
             System.debug('Error in start method: ' + e.getMessage());
             Taxo_Utilities.logErrorForException(e, 'skedDriveCOChangedBatch', 'Start', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);

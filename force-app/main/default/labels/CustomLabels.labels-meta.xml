@@ -868,4 +868,12 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
         <value>Time Block is not associated with this Collection Operation.</value>
     </labels>
+    <labels>
+        <fullName>skedDriveCOBatchLimit</fullName>
+        <categories>Batch Query Limit</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>skedDriveCOBatchLimit</shortDescription>
+        <value>50000</value>
+    </labels>
 </CustomLabels>
