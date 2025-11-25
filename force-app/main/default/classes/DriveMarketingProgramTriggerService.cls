@@ -1,4 +1,4 @@
-public  with sharing class DriveMarketingProgramTriggerService {
+public with sharing class DriveMarketingProgramTriggerService {
 
     /*
     * JIRA Ticket: HRP - 1614,
@@ -71,7 +71,6 @@ public  with sharing class DriveMarketingProgramTriggerService {
 			AND Blood_Drive_Opportunity__r.Is_Template__c = false
 			AND Blood_Drive_Opportunity__r.Type_of_Drive__c = :BSF_Constants.MOBILE_DRIVE
 			AND Blood_Drive_Opportunity__r.StageName != :BSF_Constants.STAGE_CANCELLED
-			WITH USER_MODE
 			ORDER BY Blood_Drive_Opportunity__c
 			ALL ROWS
 		];
