@@ -5,5 +5,9 @@
         <members>BSF_Batch_TaxonomyEndDateHelper</members>
 		<name>ApexClass</name>
 	</types>
+    <types>
+        <members>skedDriveCOBatchLimit</members>
+        <name>CustomLabel</name>
+    </types>
     <version>64.0</version>
 </Package>

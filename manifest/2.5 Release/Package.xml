@@ -196,5 +196,9 @@
 		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
 		<name>ValidationRule</name>
 	</types>
+    <types>
+        <members>skedDriveCOBatchLimit</members>
+        <name>CustomLabel</name>
+    </types>
     <version>64.0</version>
 </Package>
