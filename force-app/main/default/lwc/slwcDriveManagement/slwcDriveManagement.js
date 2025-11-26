@@ -855,6 +855,11 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         }
         
         let drivesToSave = [];
+        let driveName = '';
+        if (this.drive.hasOwnProperty('name')) {
+            driveName = this.drive.name;
+            delete this.drive.name;
+        }
         let model = { ...this.drive };
         drivesToSave.push(model);
 
@@ -965,7 +970,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     })
             })
             .then(() => {
-                let message = `Drive ${this.drive.name} was ${this.drive.id ? 'saved' : 'created'}.`;
+                let message = `Drive ${driveName} was ${this.drive.id ? 'saved' : 'created'}.`;
           
                 this.dispatchEvent(new ShowToastEvent({
                     message: message,
