@@ -83,8 +83,8 @@ global class skedUpdateJobTimeVarianceBatch implements Database.Batchable<sObjec
                             for (sked__Job__c job : jobs) {
                                 if (job.sked_Asset_Type__c != null || job.sked_Volunteer_Role__c != null) {
                                     assetOrVolunteerJobIds.add(job.Id);
-                                } else if (affectedResourceRoles.contains(job.sked_Resource_Role__c) || affectedResourceRoles.contains(job.sked_Dual_Role__c)
-                                    && job.sked_Start_Date__c >= rtvAdjustment.startDate && job.sked_Finish_Date__c <= rtvAdjustment.endDate
+                                } else if ((affectedResourceRoles.contains(job.sked_Resource_Role__c) || affectedResourceRoles.contains(job.sked_Dual_Role__c))
+                                    && (job.sked_Start_Date__c <= rtvAdjustment.endDate && job.sked_Finish_Date__c >= rtvAdjustment.startDate)
                                 ) {
                                     if(hasDrivingRoleAsPrimaryOrSecondaryRole(job.sked_Resource_Role__c, job.sked_Dual_Role__c) 
                                         && !rtvAdjustment.resourceRoleGroup.split(';').contains(skedConstants.RESOURCE_ROLE_GROUP_DRIVING_ROLES)) continue;
