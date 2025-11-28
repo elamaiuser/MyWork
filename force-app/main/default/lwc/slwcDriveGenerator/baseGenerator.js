@@ -953,13 +953,12 @@ class BaseGenerator {
   }
 
   saveJob(shiftKey, job) {
+    console.log('saveJob() called');
     if (!shiftKey || !job) return;
 
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
-    let newList = job.volunteerRole ? this.helper.getDriveShiftJobs(shift, {
+    let newList = this.helper.getDriveShiftJobs(shift, {
       excludeManuallyCreatedFromStaffingModal : false 
-    }) : this.helper.getDriveShiftJobs(shift, {
-      excludeManuallyCreatedFromStaffingModal : true 
     });
     let target = job;
     let jobsToBeGenerated = [];
@@ -969,7 +968,7 @@ class BaseGenerator {
     const backupJobs = (backupDriveShift.jobs || []).filter(j =>
       !(j.isManuallyCreated && j.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL)
     );
-
+    console.log('saveJob() backupJobs',backupJobs);
     // detect if job is a manual Staffing Modal job
     const isManualStaffingModalJob =
       target.isManuallyCreated &&
@@ -1003,14 +1002,12 @@ class BaseGenerator {
 
         const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
         if(dualRoleJobIndex !== -1) {
-          if (
-            !(newList[dualRoleJobIndex].isManuallyCreated &&
-              newList[dualRoleJobIndex].manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL)
-          ) {
-          newList.splice(dualRoleJobIndex, 1);
+          const dualJob = newList[dualRoleJobIndex];
+          if (!dualJob.isManuallyCreated ||
+              dualJob.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL) {
+              newList.splice(dualRoleJobIndex, 1);
           }
         }
-
         const backupDualRoleJob = 
         backupJobs.find(
           (item) =>
@@ -1046,16 +1043,16 @@ class BaseGenerator {
           );
           target.quantity += totalQuantity;
 
-          for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
-            const idx = otherPrimaryRoleJobIndexes[i];
-            if (
-              !(newList[idx].isManuallyCreated &&
-                newList[idx].manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL)
-            ) {
-              newList.splice(idx, 1);
+          otherPrimaryRoleJobIndexes
+          .sort((a, b) => b - a)
+          .forEach(idx => {
+            const candidate = newList[idx];
+            if (!candidate.isManuallyCreated ||
+                candidate.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL) {
+                newList.splice(idx, 1);
             }
-          }
-        }
+          });
+      }
       } else if (target.reducedDualRoleQuantity) {
         const backupDualRoleJob = 
         backupJobs.find(
@@ -1082,9 +1079,9 @@ class BaseGenerator {
         const dualRoleJobIndex = newList.findIndex((item) => item.resourceRole && item.resourceRole === target.dualRole);
         if(dualRoleJobIndex !== -1) {
           const dualRoleAsPrimaryRoleJob = newList[dualRoleJobIndex];
-          if(dualRoleAsPrimaryRoleJob?.quantity <= target.quantity && 
-            !(dualRoleAsPrimaryRoleJob.isManuallyCreated &&
-              dualRoleAsPrimaryRoleJob.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL)) {
+          if (dualRoleAsPrimaryRoleJob?.quantity <= target.quantity &&
+              (!dualRoleAsPrimaryRoleJob.isManuallyCreated ||
+              dualRoleAsPrimaryRoleJob.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL)) {
                 newList.splice(dualRoleJobIndex, 1);
           }
           else {
@@ -1141,7 +1138,7 @@ class BaseGenerator {
     }
 
     this.onJobChanged(shift, job, originalJob);
-
+    console.log('saveJob()1 shift',shift);
     return this.notifyDriveChanged();
   }
 
