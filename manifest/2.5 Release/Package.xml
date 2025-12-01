@@ -49,7 +49,10 @@
         <members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
         <members>slwcDriveService</members>
-        <members>slwcDriveService_Test</members>				
+        <members>slwcDriveService_Test</members>
+        <members>Taxo_Utilities</members>     
+        <members>BSF_Batch_BSFPortfolio</members>  
+        <members>skedDriveShiftTradeDistrictBatch</members> 				
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -80,10 +83,17 @@
         <members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
         <members>Opportunity.City__c</members>
         <members>sked_Drive__c.City__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c.Is_Taxonomy_Running__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_Start_DateTime__c</members>
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
 		<members>Create_New_Template</members>
+		<members>Affiliation_Program_Management</members>
+		<members>Affiliation_Program_Management_Daily_Job</members>
+		<members>Affiliation_Program_Management_Event_Triggered</members>
+		<members>Affiliation_Staging_Record_Resolve_References</members>
 		<name>Flow</name>
     </types>
     <types>
@@ -111,16 +121,13 @@
     <types>
         <members>BSF_Access_Control_Rule__mdt</members>
         <members>sked_JA_Post_Process_Config__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c</members>
 		<members>Affiliation_Program_Management_Event__e</members>
 		<members>Affiliation_Staging_Record__c</members>
         <name>CustomObject</name>
     </types>
 	<types>
 		<members>Create_New_Template</members>
-		<members>Affiliation_Program_Management</members>
-		<members>Affiliation_Program_Management_Daily_Job</members>
-		<members>Affiliation_Program_Management_Event_Triggered</members>
-		<members>Affiliation_Staging_Record_Resolve_References</members>
 		<name>Flow</name>
 	</types>
     <types>
@@ -180,6 +187,19 @@
     </types>
     <types>
         <members>Site_Collection_Operations</members>
+        <members>Account_With_Opportunity_with_opportunity_split</members>
+		<members>Accounts_With_Opportunity_With_Contact_Role</members>
+		<members>Accounts_with_Opportunity_with_Contact_Role_V2</members>
+		<members>Accounts_with_Opportunity_with_OpportunityTeam</members>
+		<members>Accounts_with_or_without_Opportunities_and_Drives</members>
+		<members>Opportunities_with_Calendar_Build_Opportunities</members>
+		<members>Opportunities_with_Drives_on_Calendar_and_Drive_Sh</members>
+		<members>Opportunity_with_Drives_on_Calender</members>
+		<members>Pickup_Schedule_ReportType</members>
+		<members>opportunity_with_account_and_drives</members>
+		<members>opportunity_with_contact_role</members>
+		<members>opportunity_with_order_with_ordering_product</members>
+		<members>opportunity_with_promotion_with_opportunity_promo</members>
         <name>ReportType</name>
     </types>
 	<types>
@@ -193,6 +213,10 @@
 		<members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
 		<name>ValidationRule</name>
 	</types>
+    <types>
+        <members>skedDriveCOBatchLimit</members>
+        <name>CustomLabel</name>
+    </types>
 	<types>
 		<members>Affiliation_Staging_Record__c</members>
 		<name>CustomTab</name>
