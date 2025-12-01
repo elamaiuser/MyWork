@@ -102,15 +102,24 @@
         <members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set_Read_CO</members>
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
+		<members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set_Read</members>
+		<members>BSF_Access_Control_Rule.HRP_15948_Object_Permission_Set</members>
         <name>CustomMetadata</name>
     </types>
     <types>
         <members>BSF_Access_Control_Rule__mdt</members>
         <members>sked_JA_Post_Process_Config__c</members>
+		<members>Affiliation_Program_Management_Event__e</members>
+		<members>Affiliation_Staging_Record__c</members>
         <name>CustomObject</name>
     </types>
     <types>
         <members>Create_New_Template</members>
+		<members>Affiliation_Program_Management</members>
+		<members>Affiliation_Program_Management_Daily_Job</members>
+		<members>Affiliation_Program_Management_Event_Triggered</members>
+		<members>Affiliation_Staging_Record_Resolve_References</members>
         <name>Flow</name>
     </types>
     <types>
@@ -126,6 +135,9 @@
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<members>Affiliation_Staging_Record__c-Affiliation Staging Record Layout</members>
+		<members>Affiliation_Staging_Record__c-Log Entry Layout</members>
+		<members>Affiliation_Staging_Record__c-Toggled Affiliation Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -150,6 +162,11 @@
     <types>
         <members>BSF_Access_Control_Rule__mdt.Release_Tag_View</members>
         <members>Taxonomy_Run_Config__mdt.Taxonomy_Run_Config</members>
+		<members>Affiliation_Staging_Record__c.Affiliation_Program_Management_Debug_Log</members>
+		<members>Affiliation_Staging_Record__c.All</members>
+		<members>Affiliation_Staging_Record__c.Qualified_Affiliations</members>
+		<members>Affiliation_Staging_Record__c.References_Update_Required</members>
+		<members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
         <name>ListView</name>
     </types>
     <types>
@@ -172,5 +189,15 @@
         <members>sked_Drive__c.Restrict_DriveConfirm_wo_TimeBlock</members>
         <name>ValidationRule</name>
     </types>
+	<types>
+		<members>Affiliation_Staging_Record__c</members>
+		<name>CustomTab</name>
+	</types>
+	<types>
+		<members>Affiliation_Staging_Record__c.Log_Entry</members>
+		<members>Affiliation_Staging_Record__c.Qualified_Affiliation</members>
+		<members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
+		<name>RecordType</name>
+	</types>
     <version>64.0</version>
 </Package>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Qualified_Affiliation</fullName>
+    <active>true</active>
+    <label>Qualified Affiliation</label>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Pending</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Processed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for Processing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>References Update Required</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>
