@@ -9,6 +9,11 @@
 		<name>ApexClass</name>
 	</types>
     <types>
+		<members>APComplianceExcel</members>
+		<members>BSFAPComplianceReportPDF</members>
+		<name>ApexPage</name>
+	</types>
+    <types>
 		<members>sked__Activity_Resource__c.sked_Staffing_Reason__c</members>
 		<members>sked__Job_Allocation__c.sked_Staffing_Reason__c</members>
 		<name>CustomField</name>
