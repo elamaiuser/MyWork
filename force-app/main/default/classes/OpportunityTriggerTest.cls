@@ -1781,52 +1781,31 @@ public class OpportunityTriggerTest
         Assert.isTrue(oppAfterUpdate[1].WholeBloodProceduresProjectedTemplate__c== oppAfterUpdate[0].WB_Projected_Procedures__c);        
     }
     
-    static testmethod void testInsertOrUpdateCovRecruiterOpportunitySplit()
-    {
-        /* DRD Users */
-        List<User> userList = new List<User>();
-        User drdUser1 = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        User drdUser2 = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Manager'].Id,
-            LastName = 'DRDLastName2',
-            Email = 'DRDUser2@test.com',
-            Username = 'DRDUser2@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany2',
-            Title = 'TestTitle2',
-            Alias = 'Tal2',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        userList.add(drdUser1);
-        userList.add(drdUser2);
-        
-        system.runAs(new User(Id=UserInfo.getUserId()))
-        {
-            insert userList;
-        }
+    static testmethod void testInsertOrUpdateCovRecruiterOpportunitySplit() {
+        TriggerHandler.bypass('UserTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        Triggerhandler.bypass('AccountTeamMemberTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
+        //insert DRD Users
+        List<User> testUsers = new List<User>();
+        testUsers.add((User)mapTestData.get('DRD_USER'));
+        testUsers.add((User)mapTestData.get('DRD_MANAGER_USER'));
+        system.runAs(new User(Id=UserInfo.getUserId())) {
+            for(User testUser : testUsers) {
+                testUser.IsActive = true;
+            }
+            insert testUsers;
+        }
+        
         // insert fixed site acc
         Account testFixedSiteAccount = (Account)mapTestData.get('FIXED_SITE_ACCOUNT');
-        testFixedSiteAccount.Account_Manager__c = userList[0].Id;
+        testFixedSiteAccount.Account_Manager__c = testUsers[0].Id;
         insert testFixedSiteAccount;
         
         // insert fixed Acc Team member - Coverage Recruiter 1
@@ -1835,14 +1814,14 @@ public class OpportunityTriggerTest
         	AccountAccessLevel = 'Edit',
             CaseAccessLevel = 'Edit',
             OpportunityAccessLevel = 'Edit',
-            UserId = userList[0].Id,
+            UserId = testUsers[0].Id,
             TeamMemberRole = 'Account Manager',
             Start_Date__c = System.today(),
             End_Date__c = System.today().addDays(20),
             Is_Covering_Recruiter__c = true,
-            Coverage_Reason__c = 'Leave of Absence (LOA)'
+            Coverage_Reason__c = 'Leave of Absence (LOA)',
+            AccountId = testFixedSiteAccount.Id
         );
-        fixedAccTeamMember1.AccountId = testFixedSiteAccount.Id;
         accTeamList.add(fixedAccTeamMember1);
         
         // insert fixed Acc Team member - Coverage Recruiter 2
@@ -1850,18 +1829,15 @@ public class OpportunityTriggerTest
         	AccountAccessLevel = 'Edit',
             CaseAccessLevel = 'Edit',
             OpportunityAccessLevel = 'Edit',
-            UserId = userList[1].Id,
+            UserId = testUsers[1].Id,
             TeamMemberRole = 'Account Manager',
             Start_Date__c = System.today(),
             End_Date__c = System.today().addDays(10),
             Is_Covering_Recruiter__c = true,
-            Coverage_Reason__c = 'Vacant Territory'
+            Coverage_Reason__c = 'Vacant Territory',
+            AccountId = testFixedSiteAccount.Id
         );
-        fixedAccTeamMember2.AccountId = testFixedSiteAccount.Id;
         accTeamList.add(fixedAccTeamMember2);
-        
-        Triggerhandler.bypass('AccountTriggerhandler');
-        Triggerhandler.bypass('AccountTeamMemberTriggerHandler');
         insert accTeamList;
         
         // insert fixed site
@@ -1876,7 +1852,6 @@ public class OpportunityTriggerTest
         testFixedSiteOpp.Anticipated_Registered_Donors__c = 10;
         oppList.add(testFixedSiteOpp);
         insert oppList;
-        
         
         // insert Affiliation - to cover deleteDriveAffiliationOnDriveDateChange method
         Marketing_Program__c affL = new Marketing_Program__c(Name = 'Test Affiliation 1', External_Name__c = 'TESTAFF',Booking_Start_Date__c = system.today().addDays(3), Booking_End_Date__c = system.today().addDays(10), Scope__c = 'Drive');
@@ -1913,7 +1888,7 @@ public class OpportunityTriggerTest
         Task testTask = new Task();
         testTask.subject = 'Test';
         testTask.status = 'Not Started';
-        testTask.OwnerId = userList[0].Id;
+        testTask.OwnerId = testUsers[0].Id;
         testTask.whatId = oppAfterUpdate.Id;
         testTask.ActivityDate = oppAfterUpdate.Drive_Date__c.addDays(4);
         TriggerHandler.bypass('TaskTriggerHandler');

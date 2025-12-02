@@ -317,14 +317,21 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             return this.handleSaveStep1();
         }
                 
+        const updatedVolunteerRole = !slwcUtils.isNullOrEmpty(this.model.volunteerRole) ? this.model.volunteerRole : this.job.volunteerRole;
+        const updatedRedCrossVolunteerQuantity = !slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity)
+        ? Number(this.model.redcrossVolunteerQuantity): Number(this.job.redcrossVolunteerQuantity || 0);
+        const sponsorVolunteerQuantity = Number(this.job.sponsorVolunteerQuantity || 0);
+        const quantity = updatedRedCrossVolunteerQuantity + sponsorVolunteerQuantity;
+                
         let eventValues = {
             action: this.action, 
             shiftKey: this.driveShift.key, 
             job: {
                 ...this.job,
                 isLocked: !!this.model.isLocked,
-                volunteerRole: this.model.volunteerRole,
-                redcrossVolunteerQuantity: this.model.redcrossVolunteerQuantity,
+                volunteerRole: updatedVolunteerRole,
+                redcrossVolunteerQuantity: updatedRedCrossVolunteerQuantity,
+                quantity: quantity,
                 volunteerAdjustmentReason: this.model.volunteerAdjustmentReason,
                 otherVolunteerAdjustmentReason: this.model.otherVolunteerAdjustmentReason,
                 bulkEditVolunteerJobsSelectedDays: this.model.daysWithJobs.filter(day => {

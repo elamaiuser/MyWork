@@ -211,4 +211,65 @@ public class Taxo_Utilities {
         System.schedule(jobNamePrefix + '-' + recordTypeName + '-' + Datetime.now().getTime(), cron, job);
     }
     
+    // --------- Get Org Default Row of Custom Setting ---------
+    private static Taxonomy_Automation_Runtime_Check__c getRuntimeCfg() {
+        Taxonomy_Automation_Runtime_Check__c cfg =
+            Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
+        System.debug('getRuntimeCfg cfg==>>'+cfg);
+        if (cfg == null) {
+            cfg = new Taxonomy_Automation_Runtime_Check__c();
+        }
+        return cfg;
+    }
+    // --------- Utility Method to Check Flag ---------
+    public static Boolean isTaxonomyRunning() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+            return cfg.Is_Taxonomy_Running__c;
+        } catch (Exception e) {
+            System.debug('isTaxonomyRunning ERROR: ' + e.getMessage());
+            return false;  // fail-open
+        }
+    }
+    // --------- Mark START of Taxonomy Automation ---------
+    public static void markTaxonomyStarted() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+
+            if (!cfg.Is_Taxonomy_Running__c) {
+                cfg.Is_Taxonomy_Running__c = true;
+                cfg.Taxonomy_Automation_Start_DateTime__c = System.now();
+                cfg.Taxonomy_Automation_End_DateTime__c = null;
+
+                upsert cfg;
+                System.debug('START: Taxonomy set to RUNNING.');
+            } else {
+                System.debug('START: Taxonomy already running, no update performed.');
+            }
+        } catch (Exception e) {
+            System.debug('markTaxonomyStarted ERROR: ' + e.getMessage());
+        }
+    }
+    public static void markTaxonomyEnded() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg =
+                Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
+
+            if (cfg == null) {
+                cfg = new Taxonomy_Automation_Runtime_Check__c();
+            }
+
+            // Always mark as false and set end datetime
+            cfg.Is_Taxonomy_Running__c = false;
+            cfg.Taxonomy_Automation_End_DateTime__c = System.now();
+
+            upsert cfg;
+
+            System.debug('Taxonomy Automation marked as FINISHED.');
+        }
+        catch (Exception e) {
+            System.debug('markTaxonomyFinished ERROR: ' + e.getMessage());
+        }
+    }
+    
 }

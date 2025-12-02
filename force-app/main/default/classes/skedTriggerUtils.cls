@@ -167,7 +167,7 @@ public class skedTriggerUtils {
     }
 
     public static void validateServiceEntry(List<SObject> newRecords, String errorMessage) {
-        validateServiceEntry(newRecords, errorMessage, new List<String>{'Global Admin', 'System Administrator'}, true);
+        validateServiceEntry(newRecords, errorMessage, new List<String>{'Global Admin', 'System Administrator', 'Integration User'}, true);
     }
 
     public static void validateServiceEntry(List<SObject> newRecords, String errorMessage, List<String> allowedProfiles) {
