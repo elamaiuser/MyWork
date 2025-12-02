@@ -222,7 +222,7 @@
                                                                             <span class="indicator ja-indicator"
                                                                                 if:true={jobAllocation.exceptionLog.length}></span>
                                                                             <span class="indicator shift-trade-indicator"
-                                                                                if:true={jobAllocation.hasDriveShiftTrade}></span>
+                                                                                if:true={jobAllocation.hasAnyDriveShiftTrade}></span>
                                                                             <span class="indicator locked-indicator"
                                                                                 if:true={jobAllocation.locked}>
                                                                                 <lightning-icon
@@ -580,7 +580,7 @@
                                                                             <span class="indicator ja-indicator"
                                                                                 if:true={jobAllocation.exceptionLog.length}></span>
                                                                             <span class="indicator shift-trade-indicator"
-                                                                                if:true={jobAllocation.hasDriveShiftTrade}></span>
+                                                                                if:true={jobAllocation.hasAnyDriveShiftTrade}></span>
                                                                             <span class="indicator locked-indicator"
                                                                                 if:true={jobAllocation.locked}>
                                                                                 <lightning-icon
@@ -1180,7 +1180,8 @@
         title={confirmModalData.title}
         message={confirmModalData.message}
         handle-on-close={confirmModalData.onClose}
-        confirm-btn-label="Yes"
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
         layer-index="999"
         size='x-small'>
     </c-slwc-confirm-modal>
