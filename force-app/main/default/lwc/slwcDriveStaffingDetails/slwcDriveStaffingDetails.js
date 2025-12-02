@@ -2446,7 +2446,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             onClose: (result) => {
                 this.hideConfirmModal();
                 if (result) {
-                    const { driveUpdate, jobsToSave } = this.buildSaveParams();
+                    const { jobsToSave } = this.buildSaveParams();
 
                     let service = new jobService();
                     this.showLoading()
@@ -2856,6 +2856,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 result
             }
         }));
+        
+        this.initialized = false;
     }
 
     /* Call out modal */
