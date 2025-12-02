@@ -82,6 +82,12 @@
                         {exception.exception}
                     </p>
                 </div>
+
+                <div if:true={popoverData.staffingReason} class="slds-text-body_small slds-grid_vertical-align-center slds-has-flexi-truncate">
+                    <p class="color-default-text slds-m-vertical_xx-small" style="white-space: normal;">
+                        Staffing Reason: {popoverData.staffingReason}
+                    </p>
+                </div>
             </div>
 
             <div class="slds-m-top_x-small trade-shift-section" if:true={popoverData.hasDriveShiftTrade}>
@@ -122,79 +128,79 @@
             </div>
         </div>
 
-        <template if:false={readOnly}>
-            <footer class="slds-popover__footer slds-text-align_right">
-                <div class="slds-grid slds-wrap slds-grid--align-spread direction-rtl">
-                    <template if:false={popoverData.isLocked}>
-                        <span if:true={isPerson}>
-                            <button class="slds-button direction-ltr"
-                                data-action="unallocate"
-                                onclick={handleAddRolePopoverAction}>
-                                <lightning-icon icon-name="utility:add" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Add Role
-                            </button>
-                        </span>
-                        <template if:true={isPerson}>
-                            <span>
+            <template if:false={readOnly}>
+                <footer class="slds-popover__footer slds-text-align_right">
+                    <div class="slds-grid slds-wrap slds-grid--align-spread direction-rtl">
+                        <template if:false={popoverData.isLocked}>
+                            <span if:true={isPerson}>
                                 <button class="slds-button direction-ltr"
-                                    data-action="edit"
-                                    onclick={handleJobAllocationPopoverAction}>
-                                    <lightning-icon icon-name="utility:edit" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Edit Times
+                                    data-action="unallocate"
+                                    onclick={handleAddRolePopoverAction}>
+                                    <lightning-icon icon-name="utility:add" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Add Role
                                 </button>
                             </span>
-                        </template>
-                    </template>
-                    <span if:true={popoverData.locked}>
-                        <button class="slds-button direction-ltr"
-                            data-action="lock"
-                            onclick={handleJobAllocationPopoverAction}>
-                            <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unlock
-                        </button>
-                    </span>
-                    <span if:true={popoverData.guarded}>
-                        <button class="slds-button direction-ltr"
-                            data-action="guard"
-                            onclick={handleJobAllocationPopoverAction}>
-                            <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unguard
-                        </button>
-                    </span>
-                    <template if:false={popoverData.isLocked}>
-                        <span>
-                            <button class="slds-button direction-ltr"
-                                data-action="lock"
-                                onclick={handleJobAllocationPopoverAction}>
-                                <lightning-icon icon-name="utility:lock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Lock
-                            </button>
-                        </span>
-                        <span>
-                            <button class="slds-button direction-ltr"
-                                data-action="guard"
-                                onclick={handleJobAllocationPopoverAction}>
-                                <lightning-icon icon-name="utility:shield" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Guard
-                            </button>
-                        </span>
-                    </template>
-                    <template if:false={popoverData.isLocked}>
-                        <span class="btn-delete">
-                            <button class="slds-button direction-ltr"
-                                data-action="unallocate"
-                                onclick={handleJobAllocationPopoverAction}>
-                                <lightning-icon icon-name="utility:delete" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unallocate
-                            </button>
-                        </span>
-                        <template if:false={disabledCallOut}>
                             <template if:true={isPerson}>
-                                <span if:true={isShowCallOut} class="btn-delete">
+                                <span>
                                     <button class="slds-button direction-ltr"
-                                        data-action="callOut"
+                                        data-action="edit"
                                         onclick={handleJobAllocationPopoverAction}>
-                                        <lightning-icon icon-name="utility:outbound_call" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Call Out
+                                        <lightning-icon icon-name="utility:edit" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Edit Times
                                     </button>
                                 </span>
                             </template>
                         </template>
-                    </template>
-                </div>
-            </footer>
+                        <span if:true={popoverData.locked}>
+                            <button class="slds-button direction-ltr"
+                                data-action="lock"
+                                onclick={handleJobAllocationPopoverAction}>
+                                <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unlock
+                            </button>
+                        </span>
+                        <span if:true={popoverData.guarded}>
+                            <button class="slds-button direction-ltr"
+                                data-action="guard"
+                                onclick={handleJobAllocationPopoverAction}>
+                                <lightning-icon icon-name="utility:unlock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unguard
+                            </button>
+                        </span>
+                        <template if:false={popoverData.isLocked}>
+                            <span>
+                                <button class="slds-button direction-ltr"
+                                    data-action="lock"
+                                    onclick={handleJobAllocationPopoverAction}>
+                                    <lightning-icon icon-name="utility:lock" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Lock
+                                </button>
+                            </span>
+                            <span>
+                                <button class="slds-button direction-ltr"
+                                    data-action="guard"
+                                    onclick={handleJobAllocationPopoverAction}>
+                                    <lightning-icon icon-name="utility:shield" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Guard
+                                </button>
+                            </span>
+                        </template>
+                        <template if:false={popoverData.isLocked}>
+                            <span class="btn-delete">
+                                <button class="slds-button direction-ltr"
+                                    data-action="unallocate"
+                                    onclick={handleJobAllocationPopoverAction}>
+                                    <lightning-icon icon-name="utility:delete" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Unallocate
+                                </button>
+                            </span>
+                            <template if:false={disabledCallOut}>
+                                <template if:true={isPerson}>
+                                    <span if:true={isShowCallOut} class="btn-delete">
+                                        <button class="slds-button direction-ltr"
+                                            data-action="callOut"
+                                            onclick={handleJobAllocationPopoverAction}>
+                                            <lightning-icon icon-name="utility:outbound_call" class="slds-current-color" size="xx-small"></lightning-icon>&nbsp;Call Out
+                                        </button>
+                                    </span>
+                                </template>
+                            </template>
+                        </template>
+                    </div>
+                </footer>
         </template>
     </div>
 </template>
