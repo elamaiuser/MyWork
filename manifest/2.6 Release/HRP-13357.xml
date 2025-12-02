@@ -5,9 +5,9 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
-    	<members>jobAllocationPopover</members>
     	<members>slwcAvailator</members>
     	<members>slwcDriveStaffingDetails</members>
+    	<members>slwcPopoverContent</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>64.0</version>
