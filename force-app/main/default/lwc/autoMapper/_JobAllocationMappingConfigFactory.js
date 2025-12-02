@@ -54,6 +54,7 @@ export class JobAllocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Optimization_Run__r', 'optimizationRun', MAPPING_TYPE.related, 'sked_Optimization_Run__c');
       mappingConfig.addFieldConfig('sked_Guarded__c', 'guarded', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Is_Locked__c', 'isLocked', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Staffing_Reason__c', 'staffingReason', MAPPING_TYPE.direct);
       
       mappingConfig.addFieldConfigWithRelatedList('skedHC__Exception_Log__r', 'exceptionLog', 'skedHC__Exception__c', 'skedHC__Job_Allocation__c');
 

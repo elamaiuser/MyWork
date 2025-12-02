@@ -418,15 +418,17 @@ global class skedExceptionLogService extends skedDataService {
         upsertTimeBlockExceptionLog(driveShifts, mapActiveException);
     }
     
-    public void captureAPExceptionLogs(List<sked__Activity_Resource__c> newRecords) {
+    public List<skedHC__Exception__c> generateAPExceptionLogs(List<skedModels.activityResource> activityResources) {
+        List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+        
         Set<Id> resourceIds = new Set<Id>();
         Map<Id, skedModels.resource> mapResource = new Map<Id, skedModels.resource>();
         DateTime minStart;
         DateTime maxEnd;
         Set<Date> inputDates = new Set<Date>();
         
-        for (sked__Activity_Resource__c newRecord : newRecords) {
-            resourceIds.add(newRecord.sked__Resource__c);
+        for (skedModels.activityResource activityResource : activityResources) {
+            resourceIds.add(activityResource.resourceId);
         }
         
         Map<Id, sked__Resource__c> mapSkedResource = new Map<Id, sked__Resource__c>([
@@ -435,8 +437,8 @@ global class skedExceptionLogService extends skedDataService {
             WHERE Id IN :resourceIds
         ]);
         
-        for (sked__Activity_Resource__c newRecord : newRecords) {
-            sked__Resource__c skedResource = mapSkedResource.get(newRecord.sked__Resource__c);
+        for (skedModels.activityResource activityResource : activityResources) {
+            sked__Resource__c skedResource = mapSkedResource.get(activityResource.resourceId);
             
             skedModels.resource resource = new skedModels.resource();
             resource.id = skedResource.Id;
@@ -444,31 +446,27 @@ global class skedExceptionLogService extends skedDataService {
             
             mapResource.put(resource.id, resource);
             
-            if (minStart == NULL || minStart > newRecord.sked_Start1__c) {
-                minStart = newRecord.sked_Start1__c;
+            if (minStart == NULL || minStart > activityResource.start) {
+                minStart = activityResource.start;
             }
-            if (maxEnd == NULL || maxEnd < newRecord.sked_End__c) {
-                maxEnd = newRecord.sked_End__c;
+            if (maxEnd == NULL || maxEnd < activityResource.finish) {
+                maxEnd = activityResource.finish;
             }
             
-            inputDates.add(newRecord.sked_Start_Date__c);
-            inputDates.add(newRecord.sked_End_Date__c);
+            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.startDate));
+            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.endDate));
         }
         
         if (minStart != NULL && maxEnd != NULL) {
-            List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
-            
             DateTime startTime = skedDateTimeUtils.getStartOfDate(minStart, UserInfo.getTimeZone().getID());
             DateTime endTime = skedDateTimeUtils.getEndOfDate(maxEnd, UserInfo.getTimeZone().getID());
 
             skedResourceService resourceService = (skedResourceService)skedServiceFactory.instance.resolve('sked__Resource__c');
             resourceService.populateNonWorkingEvents(mapResource.values(), inputDates, startTime, endTime);
             
-            for (sked__Activity_Resource__c newRecord : newRecords) {
-                skedModels.resource resource = mapResource.get(newRecord.sked__Resource__c);
+            for (skedModels.activityResource activityResource : activityResources) {
+                skedModels.resource resource = mapResource.get(activityResource.resourceId);
                 string resourceTimezoneSidId = resource.timezoneSidId != NULL ? resource.timezoneSidId : UserInfo.getTimeZone().getID();
-                
-                system.debug('#resourceTimezoneSidId#' + resourceTimezoneSidId);
                 
                 boolean conflictNonWorkingTime = false;
                 for (skedModels.event event : resource.availability) {
@@ -482,26 +480,16 @@ global class skedExceptionLogService extends skedDataService {
                         resourceEventFinish = resourceEventFinish.addMinutes(event.endTimeInMinutes);
                     }
 
-                    system.debug('#resourceEventStart#' + resourceEventStart.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
-                    system.debug('#resourceEventFinish#' + resourceEventFinish.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
-                    system.debug('#newRecord.sked_Start1__c#' + newRecord.sked_Start1__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
-                    system.debug('#newRecord.sked_End__c#' + newRecord.sked_End__c.format('dd/MM/yyyy hh:mm a z', resourceTimezoneSidId));
-                    
                     if (resourceEventStart != NULL && resourceEventFinish != NULL) {
-                        if (resourceEventStart < newRecord.sked_End__c && resourceEventFinish > newRecord.sked_Start1__c) {
-
-                            
-
-                            conflictNonWorkingTime = TRUE;
+                        if (resourceEventStart < activityResource.finish && resourceEventFinish > activityResource.start) {
+							conflictNonWorkingTime = TRUE;
                             break;
                         }
                     }
                 }
-                system.debug('#conflictNonWorkingTime#' + conflictNonWorkingTime);
                 if (conflictNonWorkingTime) {
                     skedHC__Exception__c skedException = new skedHC__Exception__c (
-                        skedHC__Activity__c = newRecord.sked__Activity__c,
-                        //skedHC__Job_Allocation__c = newRecord.Id,
+                        skedHC__Activity__c = activityResource.activityId,
                         skedHC__Resource__c = resource.id,
                         sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN,
                         skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
@@ -509,10 +497,27 @@ global class skedExceptionLogService extends skedDataService {
                     exceptionLog.add(skedException);
                 }
             }
+        }
+        
+        return exceptionLog;
+    }
+    
+    public void captureAPExceptionLogs(List<sked__Activity_Resource__c> newRecords) {
+        List<skedModels.activityResource> activityResources = new List<skedModels.activityResource>();
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            skedModels.activityResource activityResource = new skedModels.activityResource();
+            activityResource.activityId = newRecord.sked__Activity__c;
+            activityResource.resourceId = newRecord.sked__Resource__c;
+            activityResource.start = newRecord.sked_Start1__c;
+            activityResource.finish = newRecord.sked_End__c;
+            activityResource.startDate = JSON.serialize(newRecord.sked_Start_Date__c).replace('"', '');
+            activityResource.endDate = JSON.serialize(newRecord.sked_End_Date__c).replace('"', '');
             
-            if (!exceptionLog.isEmpty()) {
-                insert exceptionLog;
-            }
+            activityResources.add(activityResource);
+        }
+        List<skedHC__Exception__c> exceptionLog = generateAPExceptionLogs(activityResources);
+        if (!exceptionLog.isEmpty()) {
+            insert exceptionLog;
         }
     }
     
