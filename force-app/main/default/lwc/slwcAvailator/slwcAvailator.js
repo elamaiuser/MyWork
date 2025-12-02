@@ -409,6 +409,12 @@ class SlwcAvailator {
     return jobAllocations;
   }
 
+  doTransformDriveShiftTrades(data) {
+    return (data || []).map((skedDriveShiftTrade) => {
+      return autoMapper.autoMapperInstance.mapTo('sked_Drive_Shift_Trade__c', skedDriveShiftTrade);
+    });
+  }
+
   doTransformResourceOverrides(data) {
     let resourceOverrides = (data || []).map((skedResourceOverride) => {
       let resourceOverride = autoMapper.autoMapperInstance.mapTo('sked__Resource_Override__c', skedResourceOverride);
@@ -572,6 +578,16 @@ fetchJobTags(driveId){
           returnResourceHoursRecordDetails
         );
         this.resources = this.resources.concat(returnedResources);
+
+        // Inject pending trades to job allocation
+        let pendingTrades = this.doTransformDriveShiftTrades(result.returnedData.pendingTrades) || [];
+        if (pendingTrades?.length > 0) {
+          this.jobs.forEach(job => {
+            (job.jobAllocations || []).forEach(jobAllocation => {
+              jobAllocation.pendingTrades = pendingTrades.filter(trade => trade.requestingStaffJobAllocationId === jobAllocation.id || trade.tradingStaffJobAllocationId === jobAllocation.id);
+            });
+          });
+        }
 
         if (pageNo == 1) {
           totalRecords = result.returnedData.totalRecords;
