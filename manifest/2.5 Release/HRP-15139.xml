@@ -19,6 +19,13 @@
 		<members>sked__Job_Allocation__c.sked_Staffing_Reason__c</members>
 		<name>CustomField</name>
 	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_1</members>
+		<members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_2</members>
+		<members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_Read_1</members>
+		<members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_Read_2</members>
+		<name>CustomMetadata</name>
+	</types>
     <types>
         <members>sked_Staffing_Reasons</members>
         <name>GlobalValueSet</name>
@@ -33,6 +40,6 @@
         <members>slwcDriveStaffingReasonModal</members>
         <members>slwcDriveStaffingDetails</members>
         <name>LightningComponentBundle</name>
-    </types>    
+    </types>
     <version>64.0</version>
 </Package>
