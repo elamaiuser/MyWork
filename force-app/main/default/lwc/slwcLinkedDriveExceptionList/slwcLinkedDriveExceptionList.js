@@ -366,14 +366,16 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     const reverse = sortDirection === 'asc' ? 1 : -1;
     const getSortValue = (obj) => {
       switch (fieldName) {                
-        case 'recordUrl': return obj.createdDate;
-        case 'driveUrl': return obj.driveName;
-        case 'conflictedDriveUrl': return obj.conflictedDriveName;
-        case 'conflictedActivityUrl': return obj.activityTitle;
-        case 'activityUrl': return obj.activityTitle;
-        case 'resourceUrl': return obj.resourceName;                
-        case 'startTimeStr': return obj.driveShiftStartTime ?? obj.driveStartTime;
-        case 'endTimeStr': return obj.driveShiftEndTime ?? obj.driveEndTime;
+        case 'recordUrl': return obj.createdDate ? obj.createdDate.substring(0,10) : '';
+        case 'linkedDriveUrl': return obj.linkedDriveName;
+        case 'linkedDrive':
+          if (obj.linkedDrive) {
+            const drivesList = obj.linkedDrive.drives || [];
+            if (drivesList.length > 0 && drivesList[0].name) {
+              return drivesList[0].name;
+            }
+          }
+          return '';
         default: return obj[fieldName];
       }
     };
