@@ -103,19 +103,21 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     get columns() {
+        let columns = [];
         if (this.exceptionType === "drive") {
-            return DRIVE_EXCEPTION_COLUMNS;
+            columns = DRIVE_EXCEPTION_COLUMNS;
         }
         else if (this.exceptionType === "resource") {
-            return  RESOURCE_EXCEPTION_COLUMNS;
+            columns =  RESOURCE_EXCEPTION_COLUMNS;
         }
         else if (this.exceptionType === "tbs") {
-            return  TBS_EXCEPTION_COLUMNS;
+            columns =  TBS_EXCEPTION_COLUMNS;
         }
         else if (this.exceptionType === "activity") {
-            return  ACTIVITY_EXCEPTION_COLUMNS;
+            columns =  ACTIVITY_EXCEPTION_COLUMNS;
         }
-        return null;
+        // This fixes the "Weak Map" error by giving the table mutable column objects.
+        return columns ? JSON.parse(JSON.stringify(columns)) : [];
     }
 
     get isValidQueryModel() {
@@ -397,19 +399,25 @@ export default class SlwcExceptionList extends LightningElement {
         event.target.isLoading = true;
         
         const target = event.target;
+        const LIMIT = 20;
         this.fetchExceptionData()
             .then((result) => {
-                if (result.length == 0) {
+                // If you have duplicates, sorting (Shallow OR Deep) will eventually crash the table.
+                const currentIds = new Set(this.exceptionLog.map(row => row.id));
+                const newUniqueData = result.filter(item => !currentIds.has(item.id));
+                if (result.length < LIMIT || newUniqueData.length === 0) {
                     this.enableInfiniteLoading = false;
                 }
-                else {
-                    const currentData = this.exceptionLog;
-                    const newData = currentData.concat(result);
-                    this.exceptionLog = newData;
+                if (newUniqueData.length > 0) {
+                    this.exceptionLog = [...this.exceptionLog, ...newUniqueData];
                     if (this.sortedBy && this.sortedDirection) {
                         this.sortData(this.sortedBy, this.sortedDirection);
                     }
                 }
+            })
+            .catch((error) => {
+                console.error(error);
+                this.enableInfiniteLoading = false;
             })
             .finally(() => {
                 target.isLoading = false;
@@ -478,7 +486,7 @@ export default class SlwcExceptionList extends LightningElement {
     }
 
     sortData(fieldName, sortDirection) {        
-        const dataToSort = JSON.parse(JSON.stringify(this.exceptionLog));
+        const dataToSort = [...this.exceptionLog];
         const reverse = sortDirection === 'asc' ? 1 : -1;
         const getSortValue = (obj) => {
             switch (fieldName) {                
