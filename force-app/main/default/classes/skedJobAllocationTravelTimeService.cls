@@ -472,7 +472,7 @@ public class skedJobAllocationTravelTimeService {
             boolean isTravelTimeIncludedAllRoles = (jobAllocationModel.jobDriveType == 'Mobile' && jobAllocationModel.jobDriveTravelTimeIncluded == 'All Roles')
                 || (jobAllocationModel.jobDriveType == 'Fixed Site' && jobAllocationModel.jobDriveTravelTimeIncluded == 'All Roles');
             boolean isDrivingRoleJob = drivingRoles.contains(jobAllocationModel.jobResourceRole) ||  drivingRoles.contains(jobAllocationModel.jobDualRole);
-            System.debug('jobAllocationModel.jobDualRole)'+jobAllocationModel.jobDualRole);
+        
             boolean recalculateTravelTimeRule1 = isDrivingRoleJob;
             boolean recalculateTravelTimeRule2 = !isDrivingRoleJob && !isCoNoTravelTime && (isTravelTimeIncludedAllRoles || isRelocatedResource);            
             boolean requireRecalculateTravelTime = recalculateTravelTimeRule1 || recalculateTravelTimeRule2;
