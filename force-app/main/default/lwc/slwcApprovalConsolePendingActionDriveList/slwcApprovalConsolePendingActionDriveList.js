@@ -178,7 +178,7 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
     let query = new driveQueryModel();
     query.territoryKeys = territoryKeys;
     query.approvalStatuses = this.filters.approvalStatuses;
-    query.driveTypes = this.filters.driveTypes;
+    query.eventTypes = this.filters.driveTypes;
     query.pendingActions = this.filters.pendingActions;
     query.startDate = this.filters.startDate;
     query.endDate = this.filters.endDate;
