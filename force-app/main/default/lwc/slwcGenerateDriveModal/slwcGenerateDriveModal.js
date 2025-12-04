@@ -995,7 +995,8 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         driveSiteId: opty.driveSiteId,
         opportunityId: opty.id,
         surrogateDriveForId: null,
-        status: DRIVE_STATUS.CONFIRMED
+        status: DRIVE_STATUS.CONFIRMED,
+        typeOfDrive: opty.typeOfDrive //HRP-16053
       }
 
       this.drive = pastDrive;
