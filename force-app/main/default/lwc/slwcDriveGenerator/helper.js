@@ -952,8 +952,9 @@ class DriveHelper {
   generateDriveChangesFromDCR(drive, driveChangeRequest) {
     let opportunity = drive.opportunity;
     let isFixedSiteDrive = this.isFixedSiteDrive(drive);
+    const isWbFixedSiteDrive = this.isWbFixedSiteDrive(drive);
     let driveFields = [];
-    if(isFixedSiteDrive) {
+    if(isFixedSiteDrive || isWbFixedSiteDrive) {
       driveFields = [
         'status',
         'driveDate',
@@ -3545,6 +3546,9 @@ class DriveHelper {
   isJobRequireTravelTimes(isTemporaryCO, job, drive, {
     resourceRoleGroups
   }) {
+    console.log('helperjob',job);
+     console.log('helperjobAlloc',job.jobAllocations);
+    
     return slwcAvailator.isJobRequireTravelTimes(isTemporaryCO, job, drive, {
       resourceRoleGroups
     });
