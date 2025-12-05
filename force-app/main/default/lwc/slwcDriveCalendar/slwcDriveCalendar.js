@@ -20,6 +20,8 @@ import {
     operationDriveLimitService,
     operationDriveLimitQueryModel,
     sObjectType,
+    territoryQueryModel,
+    territoryService,
     userService
 } from 'c/dataService';
 import productGoalCalendar from './productGoalCalendar.html';
@@ -70,6 +72,8 @@ export default class SlwcDriveCalendar extends LightningElement {
     @track isTimeBlockApplied;
 
     @track confirmModalData = {};
+
+    territoriesMapById = null;
 
     driveHelper = new DriveHelper();
     contentMap = {
@@ -717,12 +721,14 @@ export default class SlwcDriveCalendar extends LightningElement {
                 day.slot.totalDriveProductivity += driveProductivityPlanned;
                 let territoryCollectionOperation = ((this.filters.collectionOperationValues || {}).territoryCollectionOperations || []).find(item => item.territoryId == drive.territoryId);
 
-                if(territoryCollectionOperation) {
-                    if (driveProductivityPlanned < territoryCollectionOperation.midDriveProductivityThreshold) {
+                const territory = this.territoriesMapById[territoryCollectionOperation.territoryId];
+
+                if(territory) {
+                    if (driveProductivityPlanned < territory.midDriveProductivityThreshold) {
                         day.slot.noOfLowProductivityDrives++;
                         day.slot.totalLowProductivity += driveProductivityPlanned;
                     }
-                    else if (driveProductivityPlanned < territoryCollectionOperation.highDriveProductivityThreshold) {
+                    else if (driveProductivityPlanned < territory.highDriveProductivityThreshold) {
                         day.slot.noOfMidProductivityDrives++;
                         day.slot.totalMidProductivity += driveProductivityPlanned;
                     }
@@ -953,6 +959,8 @@ export default class SlwcDriveCalendar extends LightningElement {
             return;
         }
 
+        const territoryIds = territoryKeys.map(key => key.split(':')[0]);
+
         this.showSpinner = true;
         Promise.resolve()
             .then(() => {
@@ -971,20 +979,30 @@ export default class SlwcDriveCalendar extends LightningElement {
                 });
                 // driveQuery.daysOfWeek = this.filters.daysOfWeek;
                 
+                let territoryQuery = new territoryQueryModel();
+                territoryQuery.recordIds = territoryIds;
+
                 let driveSvc = new driveService();
                 let holidaySvc = new holidayService();
                 let calendarMessageSvc = new calendarMessageService();
+                let territorySvc = new territoryService();
 
                 return Promise.all([
                     driveSvc.query(driveQuery),
                     holidaySvc.getHolidays(collectionOpIds, startDate, endDate),
-                    calendarMessageSvc.getCalendarMessages(collectionOpIds, startDate, endDate)
+                    calendarMessageSvc.getCalendarMessages(collectionOpIds, startDate, endDate),
+                    territorySvc.query(territoryQuery)
                 ])
             })
-            .then(([driveResult, holidayResult, calendarMessageResult]) => {
+            .then(([driveResult, holidayResult, calendarMessageResult, territoryResult]) => {
                 this.drivesMapByDate = groupBy(driveResult, 'driveDate');
                 this.holidays = holidayResult;
                 this.calendarMessages = calendarMessageResult;
+                this.territoriesMapById = territoryResult.reduce((map, territory) => {
+                    map[territory.id] = territory;
+                    return map;
+                }, {});
+
 
                 this.calendarWeeks = this.buildCalendarWeeks();
                 this.monthSummary = this.buildMonthSummary();
