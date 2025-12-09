@@ -467,6 +467,7 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
     /**************************************** EXCEPTION LOG PRIVATE METHOD ********************************************/
     private skedExceptionMasterModel initializeMasterModel(List<sked__Job_Allocation__c> skedAllocations) {
         skedExceptionMasterModel master = new skedExceptionMasterModel();
+        master.newExceptionUniqueKeys = new Set<string>();
         master.jobAllocations = skedAllocations;
         Set<Id> jobIds = new Set<Id>();
         Set<Id> resourceIds = new Set<Id>();
@@ -554,18 +555,6 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
         for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
             if (skedAllocation.sked_Additional_Roles__c != NULL && !string.isBlank(skedAllocation.sked_Additional_Roles__c)) {
                 List<string> additionalRoles = skedAllocation.sked_Additional_Roles__c.split(';');
-
-                sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
-                if(job.sked_Dual_Role__c != null && !String.isEmpty(job.sked_Dual_Role__c)) {
-                    for(sked__Job_Tag__c dualRoleTag : job.sked__JobTags__r) {
-                        if(job.sked_Dual_Role__c == dualRoleTag.sked__Tag__r.Name && additionalRoles.contains(job.sked_Dual_Role__c)) {
-                            // Avoid generating duplicate exceptions
-                            additionalRoles.remove(additionalRoles.indexOf(job.sked_Dual_Role__c));
-                            break;
-                        }
-                    }
-                }
-                
                 sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
                 
                 for (string additionalRole : additionalRoles) {
@@ -577,9 +566,14 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                         }
                     }
                     if (!isValid) {
-                        string exceptionText = 'Missing required tag ' + additionalRole;
-                        skedHC__Exception__c skedException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionText);
-                        exceptionLog.add(skedException);
+                        string exceptionStr = 'Missing required tag ' + additionalRole;
+                        string uniqueKey = skedAllocation.Id + ':' + exceptionStr;
+                        if (!master.newExceptionUniqueKeys.contains(uniqueKey)) {
+                            skedHC__Exception__c skedException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionStr);
+                            
+                            exceptionLog.add(skedException);
+                            master.newExceptionUniqueKeys.add(uniqueKey);
+                        }
                     }
                 }
             }
@@ -716,8 +710,14 @@ global class skedJobAllocationPostProcessBatch implements Database.Batchable<sOb
                         }
                         
                         if (!resourceTagIds.contains(tagId)) {
-                            skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, 'Missing required tag ' + tagName);
-                            exceptionLog.add(newException);
+                            string exceptionStr = 'Missing required tag ' + tagName;
+                            string uniqueKey = skedAllocation.Id + ':' + exceptionStr;
+                            if (!master.newExceptionUniqueKeys.contains(uniqueKey)) {
+                                skedHC__Exception__c newException = skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionStr);
+                                
+                                exceptionLog.add(newException);
+                                master.newExceptionUniqueKeys.add(uniqueKey);
+                            }
                         }
                     }
                 }
