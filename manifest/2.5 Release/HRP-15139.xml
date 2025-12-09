@@ -4,6 +4,7 @@
         <members>APComplianceReportController</members>
         <members>skedBaseController</members>
         <members>skedExceptionLogService</members>
+        <members>skedHCExceptionHandler</members>
         <members>skedMappingConfigContainer</members>
         <members>skedModels</members>
         <members>skedRacController</members>
