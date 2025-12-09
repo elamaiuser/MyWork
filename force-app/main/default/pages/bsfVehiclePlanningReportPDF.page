@@ -47,7 +47,7 @@
                         <tr>
                             <apex:repeat value="{!rowdata}" var="coldata"> 
                                 <td style="font-size:12px !important;hyphens: auto !important;word-wrap: break-word !important; overflow-wrap: break-word !important;vertical-align: top;white-space:pre-line;padding-left:1px;padding-right:1px;">
-                                    <apex:outputText value="{!coldata}" escape="false" />
+                                    <apex:outputText value="{!coldata}" escape="true" />
                                 </td>
                             </apex:repeat>
                         </tr>

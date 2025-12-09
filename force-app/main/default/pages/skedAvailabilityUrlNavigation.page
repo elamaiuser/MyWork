@@ -14,7 +14,10 @@
         if(isMobile()) {
             window.location.href = 'skedulox://customform/skedPTORequestSubmission'
         } else {
-            window.location.href = '{!$Setup.sked_Admin_Setting__c.sked_My_Availability_Console_URL__c}?availabilityId={!$CurrentPage.parameters.availabilityId}&startDate={!$CurrentPage.parameters.startDate}';
+            var baseUrl = '{!JSENCODE($Setup.sked_Admin_Setting__c.sked_My_Availability_Console_URL__c)}';
+            var availabilityId = '{!JSENCODE($CurrentPage.parameters.availabilityId)}';
+            var startDate = '{!JSENCODE($CurrentPage.parameters.startDate)}';
+            window.location.href = baseUrl + '?availabilityId=' + availabilityId + '&startDate=' + startDate;
         }
     </script>
 </apex:page>
