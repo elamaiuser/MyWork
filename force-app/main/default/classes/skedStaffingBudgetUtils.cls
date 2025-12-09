@@ -68,10 +68,12 @@ public class skedStaffingBudgetUtils implements Callable {
                     resourceCollectionOpId = resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
                 }
                 if (resource.sked__ResourceTags__r != NULL && !resource.sked__ResourceTags__r.isEmpty()) {
-                    Decimal priority = resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;  
-                    if(priority != NULL){
+                    Decimal priority =
+                            resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c != null ?
+                            resource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c : 0;
+
                         for(sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r){
-                        if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                        if(resourceTag.sked__Tag__r.Name != null && (priority == 0 || resourceTag.sked__Tag__r.sked_Priority__c == priority) ){
                             resourcePrimaryRole.add(resourceTag.sked__Tag__r.Name);
                         }
                     }
