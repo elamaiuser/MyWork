@@ -77,8 +77,7 @@ public class skedStaffingBudgetUtils implements Callable {
                             resourcePrimaryRole.add(resourceTag.sked__Tag__r.Name);
                         }
                     }
-                    }    
-                }
+                }    
                 if (resource.sked_FCC_Code__c != NULL) {
                     List<string> resourceFccCodes = new List<string>();
                     resourceFccCodes = resource.sked_FCC_Code__c.split(';');
