@@ -1779,6 +1779,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             id: item.id,
             mobilePhone: item.mobilePhone,
             name: item.name,
+            hasPendingTrades: (item.pendingTrades || []).some(trade => (trade.requestingStaffId === item.id && trade.requestingStaffTradingEventDate === drive.driveDate) || (trade.tradingStaffId === item.id && trade.tradingStaffTradingEventDate === drive.driveDate)),
             hasLinkedDrive: hasLinkedDrive,
             categoryText: compact([item.category, item.employmentType]).join(' - '),
             isPerson: item.resourceType === TYPE_RESOURCE.RESOURCE,
@@ -2296,7 +2297,6 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
                     item.isCallOut = item.callOutJobIds.includes(this.jobIdPin);
                     item.isTraded = item.tradedJobIds.includes(this.jobIdPin);
-                    // item.hasPendingTrades = (item.pendingTrades || []).some(pt => pt.tradingStaffJobId === this.jobIdPin || pt.requestingStaffJobId === this.jobIdPin);
                 }
                 return result;
             })

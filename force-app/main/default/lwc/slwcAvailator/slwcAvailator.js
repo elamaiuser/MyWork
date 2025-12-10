@@ -590,7 +590,6 @@ fetchJobTags(driveId){
 
           this.resources.forEach(resource => {
             resource.pendingTrades = pendingTrades.filter(trade => trade.requestingStaffId === resource.id || trade.tradingStaffId === resource.id);
-            resource.hasPendingTrades = (resource.pendingTrades || []).length > 0;
           });
         }
 
