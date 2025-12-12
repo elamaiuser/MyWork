@@ -5,7 +5,6 @@ public class skedDriveShiftHandler extends skedTriggerHub {
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords);
         }
-        setIsTimeBlockMissingFlag(this.context.newRecords);
     }
     
     public override void onAfterInsert() {
@@ -22,7 +21,6 @@ public class skedDriveShiftHandler extends skedTriggerHub {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
         }
         autoPopulateDriveProjProductFields(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
-        setIsTimeBlockMissingFlag(this.context.newRecords);
     }
     
     public override void onAfterUpdate() {
@@ -155,15 +153,4 @@ public class skedDriveShiftHandler extends skedTriggerHub {
 			service.captureFSWBException(driveIdsToValidate);
         }
     }
-
-    /**
-     * @description Sets a number flag to 1 if the Time Block lookup is null, otherwise 0.
-     * This helper field can then be used in a Roll-Up Summary field on the parent Drive.
-     * @param newRecords The list of records from the trigger context.
-     */
-    private void setIsTimeBlockMissingFlag(List<sked_Drive_Shift__c> newRecords) {        
-        for (sked_Drive_Shift__c shift : newRecords) {
-            shift.sked_Is_Time_Block_Missing__c = (shift.sked_Time_Block__c == null) ? 1 : 0;
-        }
-    }    
 }
