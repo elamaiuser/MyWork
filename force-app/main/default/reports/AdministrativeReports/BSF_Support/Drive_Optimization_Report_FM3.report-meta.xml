@@ -97,6 +97,12 @@
     <columns>
         <field>sked_Drive__c$sked_Dispatched_By__c</field>
     </columns>
+    <columns>
+        <field>sked_Drive__c$Id</field>
+    </columns>
+    <columns>
+        <field>sked_Drive__c$sked_UFID__c</field>
+    </columns>
     <description>Drive Optimization Report for Collection Op/ ARC Region/Divison</description>
     <filter>
         <criteriaItems>
