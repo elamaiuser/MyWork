@@ -322,6 +322,12 @@ public class skedDriveHandler extends skedTriggerHub {
     private void onConfirmDrives_validateTimeBlock(Map<Id, sked_Drive__c> mapConfirmedDrives, Map<Id, sked_Drive__c> newRecordsById, Map<Id, sked_Drive__c> oldMap) {
         Set<Id> collectionOperationIds = new Set<Id>();
         Date minDate, maxDate;
+        Custom_Messages__mdt customMessage = [
+            SELECT Id, Value__c 
+            FROM Custom_Messages__mdt
+            WHERE DeveloperName = 'Time_Block_Validation_From_DOC'
+        ];
+        String errorMessage = customMessage.Value__c;
         for (sked_Drive__c confirmedDrive : mapConfirmedDrives.values()) {
             collectionOperationIds.add(confirmedDrive.sked_Collection_Operation__c);
             minDate = (minDate == NULL || minDate > confirmedDrive.sked_Drive_Date__c) ? confirmedDrive.sked_Drive_Date__c : minDate;
@@ -363,8 +369,8 @@ public class skedDriveHandler extends skedTriggerHub {
                 }
                 
                 if (!usedCOTBs.isEmpty()) {
-                    sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);
-                    newRecordDrive.addError('Time block(s) must be assigned to drive shifts and any contentions resolved in order to confirm the drive (go to Opportunity > Drive Scheduling, or DOC > Drive Shifts)');
+                    sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);                    
+                    newRecordDrive.addError(errorMessage);
                 }
             }
         }
