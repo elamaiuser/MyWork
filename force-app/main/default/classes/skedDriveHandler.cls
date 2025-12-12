@@ -363,8 +363,8 @@ public class skedDriveHandler extends skedTriggerHub {
                 }
                 
                 if (!usedCOTBs.isEmpty()) {
-                    sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);
-                    newRecordDrive.addError(Custom_Messages__mdt.getInstance('Time_Block_Validation_From_DOC').value__c);
+                    sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);                    
+                    newRecordDrive.addError('Time block(s) must be assigned to drive shifts in order to confirm the drive. Go to DOC > Drive Shifts tab to assign Time Blocks and resolve any contentions.');
                 }
             }
         }
