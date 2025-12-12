@@ -2824,7 +2824,7 @@ if(ds.isDeletable()){}*/
                            || expMsg.contains(Custom_Messages__mdt.getInstance('Pending_DCR_Opportunity').value__c)
                            || expMsg.contains('Unable to confirm drive with active Drive Change Request for a change in Drive Date. Please Approve or Reject the Request before continuing.')){
                                 expMsg = Custom_Messages__mdt.getInstance('Pending_DCR_Opportunity').value__c;
-                    }
+                    }                    
                     if(expMsg.contains(Custom_Messages__mdt.getInstance('Time_Block_Validation_From_DOC').value__c)) {
                         expMsg = Custom_Messages__mdt.getInstance('Time_Block_Validation_From_Opportunity').value__c;
                     }
