@@ -18,7 +18,7 @@ export default class SlwcJobDetailsForm extends LightningElement {
         return this.jobAllocation.additionalRoles ? this.jobAllocation.additionalRoles.split(';').join(', ') : null;
     } 
 
-    anitizeText(value) {
+    sanitizeText(value) {
         if (!value) {
             return value;
         }
