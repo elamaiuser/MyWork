@@ -133,6 +133,11 @@
             <field>sked_Optimization_Run__c.CreatedBy</field>
             <table>sked_Drive__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_UFID__c</field>
+            <table>sked_Drive__c</table>
+        </columns>
         <masterLabel>Drive Information</masterLabel>
     </sections>
     <sections>
