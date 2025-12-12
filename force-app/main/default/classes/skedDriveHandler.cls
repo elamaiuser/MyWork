@@ -258,9 +258,10 @@ public class skedDriveHandler extends skedTriggerHub {
             }
             if (!mapConfirmedDrives.isEmpty()) {
                 onConfirmDrives_validateDCR(mapConfirmedDrives, newRecordsById, oldMap);
-                onConfirmDrives_validateTimeBlock(mapConfirmedDrives, newRecordsById, oldMap);
             }
         }
+
+        onConfirmDrives_validateTimeBlock(mapConfirmedDrives, newRecordsById, oldMap);
     }
     
     private void onConfirmDrives_validateDCR(Map<Id, sked_Drive__c> mapConfirmedDrives, Map<Id, sked_Drive__c> newRecordsById, Map<Id, sked_Drive__c> oldMap) {
@@ -345,7 +346,7 @@ public class skedDriveHandler extends skedTriggerHub {
         ];
         
         for (sked_Drive_Shift__c driveShift : driveShifts) {
-            if (driveShift.sked_Time_Block__c == NULL) {
+            if (driveShift.sked_Time_Block__c == NULL || (driveShift.sked_Time_Block__c != NULL && driveShift.sked_Contention__c != NULL && driveShift.sked_Contention_Resolution__c == NULL))
                 sked_Drive__c drive = mapConfirmedDrives.get(driveShift.sked_Drive__c);
                 
                 Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
