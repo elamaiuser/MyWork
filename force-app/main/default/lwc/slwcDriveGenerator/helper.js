@@ -4169,7 +4169,8 @@ class DriveHelper {
           }
         }
       } else {
-        if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+        // Always validate missing time block first as long as there is at least one available CO time block
+        if (availableCOTimeBlocks.length >= 1 && !availableTimeBlocks.length) {
           return {
             driveShiftKey: driveShift.key,
             driveShift: driveShift,
