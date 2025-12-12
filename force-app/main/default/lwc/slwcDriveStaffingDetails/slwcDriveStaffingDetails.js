@@ -928,11 +928,20 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             }, false, clonedDriveDetails1, clonedDriveDetails2);
         });
       
+        // Check if resource has pending trades - if so, disable all jobs
+        const hasPendingTrades = resourceDetail && resourceDetail.hasPendingTrades;
         const listJobAvailable = this.getListJobAvailable(resourceId);
         const listJobUnavailable = this.getListJobUnavailable(resourceId);
         listjobEl.forEach(el => {
             const jobId = el.dataset.id
             const [jobDetail, driveShift] = this.getJobById(jobId);
+            
+            // Disable all jobs if resource has pending trades
+            if (hasPendingTrades) {
+                el.classList.add('job-hover-disabled');
+                return;
+            }
+
             if((resourceDetail.resourceType == TYPE_RESOURCE.RESOURCE && jobDetail.resourceRole) || (resourceDetail.assetType && resourceDetail.assetType == jobDetail.assetType)){
                 const isResourceAllocated = this.isResourceAllocatedToDriveShift(resourceDetail, driveShift);
                 if (
@@ -1770,6 +1779,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             id: item.id,
             mobilePhone: item.mobilePhone,
             name: item.name,
+            hasPendingTrades: (item.pendingTrades || []).some(trade => (trade.requestingStaffId === item.id && trade.requestingStaffTradingEventDate === drive.driveDate) || (trade.tradingStaffId === item.id && trade.tradingStaffTradingEventDate === drive.driveDate)),
             hasLinkedDrive: hasLinkedDrive,
             categoryText: compact([item.category, item.employmentType]).join(' - '),
             isPerson: item.resourceType === TYPE_RESOURCE.RESOURCE,

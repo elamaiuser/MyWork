@@ -587,6 +587,10 @@ fetchJobTags(driveId){
               jobAllocation.pendingTrades = pendingTrades.filter(trade => trade.requestingStaffJobAllocationId === jobAllocation.id || trade.tradingStaffJobAllocationId === jobAllocation.id);
             });
           });
+
+          this.resources.forEach(resource => {
+            resource.pendingTrades = pendingTrades.filter(trade => trade.requestingStaffId === resource.id || trade.tradingStaffId === resource.id);
+          });
         }
 
         if (pageNo == 1) {
