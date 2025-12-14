@@ -968,6 +968,9 @@ global virtual class skedRacController extends skedBaseController {
                 sked__Activity__c skedActivity = mapActivity.get(activityResource.activityId);
                 service.setTimezoneSidId(skedActivity.sked__Timezone__c);
                 sked__Activity_Resource__c skedActivityResource = (sked__Activity_Resource__c)service.mapTosObject(activityResource);
+                if(activityResource.staffingReason == null) {
+                    skedActivityResource.sked_Staffing_Reason__c = null;
+                }
                 skedActivityResources.add(skedActivityResource);
             }
             
