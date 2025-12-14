@@ -28,6 +28,7 @@ public class skedDriveHandler extends skedTriggerHub {
         'sked_Number_of_2RBC_Assets__c' => 'Number_of_2RBC_Assets__c',
         'sked_Number_of_Plasma_Assets__c' => 'Number_of_Plasma_Assets__c',
         'sked_Number_of_Platelet_Assets__c' => 'Number_of_Platelet_Assets__c',
+        'sked_Cancellation_Detail__c' => 'Cancellation_Detail__c',
         'sked_Cancellation_Reason__c' => 'sked_Cancellation_Reason__c',
         'sked_Initiated_By__c' => 'Initiated_By__c',
         'sked_APT_Required__c' => 'APT_Required__c',
@@ -39,6 +40,9 @@ public class skedDriveHandler extends skedTriggerHub {
     public override void onBeforeInsert() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
         List<sked_Drive__c> newRecords = filterDrives(this.context.newRecords);
+        if (skedSetting.instance.Admin.dateTimeConversion) {
+            doDateTimeConversion(this.context.newRecords);
+        }
         populateDriveName(newRecords);
         populateCollectionOperationData(newRecords);
         populateData(newRecords);
@@ -58,6 +62,9 @@ public class skedDriveHandler extends skedTriggerHub {
     public override void onBeforeUpdate() {
         skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE);
         List<sked_Drive__c> newRecords = filterDrives(this.context.newRecords);
+        if (skedSetting.instance.Admin.dateTimeConversion) {
+            doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
+        }
         onConfirmDrives((Map<Id, sked_Drive__c>) this.context.newMap, (Map<Id, sked_Drive__c>)this.context.oldMap);
         onApprovedRejected(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
         repopulateDistrict(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
@@ -238,68 +245,133 @@ public class skedDriveHandler extends skedTriggerHub {
         boolean isAPS = !isAutomatedProcess && loginUser.Profile.Name.startsWith('APS');
         boolean canBypass = isAdmin || isAPS || isAutomatedProcess;
 
-        if (!canBypass) {
-            Map<Id, sked_Drive__c> mapConfirmedDrives = new Map<Id, sked_Drive__c>();
-            for (Id newRecordId : newRecordsById.keySet()) {
-                sked_Drive__c newRecord = newRecordsById.get(newRecordId);
-                sked_Drive__c oldData = oldMap.get(newRecord.Id);
-                if (newRecord.sked_Status__c != oldData.sked_Status__c) {
-                    if (newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_CONFIRMED) {
-                        mapConfirmedDrives.put(newRecord.Id, newRecord);
-                    }
+        Map<Id, sked_Drive__c> mapConfirmedDrives = new Map<Id, sked_Drive__c>();
+        for (Id newRecordId : newRecordsById.keySet()) {
+            sked_Drive__c newRecord = newRecordsById.get(newRecordId);
+            sked_Drive__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Status__c != oldData.sked_Status__c) {
+                if (newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_CONFIRMED) {
+                    mapConfirmedDrives.put(newRecord.Id, newRecord);
                 }
             }
-            if (!mapConfirmedDrives.isEmpty()) {
-                List<sked_Drive_Change_request__c> existingDcrs = [
-                    SELECT Id, sked_Drive__c, sked_Drive_Contention__c,
-                    (SELECT Id, sked_Field_API_Name__c FROM sked_Drive_Change_Request_Items__r WHERE sked_Field_API_Name__c LIKE '%Drive_Date__c')
-                    FROM sked_Drive_Change_request__c
-                    WHERE sked_Drive__c IN :mapConfirmedDrives.keySet()
-                    AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED
-                    AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM
-                    AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED
-                    AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED
-                ];
-                Map<Id, sked_Drive_Change_request__c> map_driveId_DCR = new Map<Id, sked_Drive_Change_request__c>();
-                for (sked_Drive_Change_request__c existingDcr : existingDcrs) {
-                    map_driveId_DCR.put(existingDcr.sked_Drive__c, existingDcr);
+        }
+        
+        if (!mapConfirmedDrives.isEmpty()) {
+            if (!canBypass) {
+                onConfirmDrives_validateDCR(mapConfirmedDrives, newRecordsById, oldMap);
+            }
+            onConfirmDrives_validateTimeBlock(mapConfirmedDrives, newRecordsById, oldMap);
+        }
+    }
+    
+    private void onConfirmDrives_validateDCR(Map<Id, sked_Drive__c> mapConfirmedDrives, Map<Id, sked_Drive__c> newRecordsById, Map<Id, sked_Drive__c> oldMap) {
+        List<sked_Drive_Change_request__c> existingDcrs = [
+            SELECT Id, sked_Drive__c, sked_Drive_Contention__c,
+            (SELECT Id, sked_Field_API_Name__c 
+             FROM sked_Drive_Change_Request_Items__r 
+             WHERE sked_Field_API_Name__c LIKE '%Drive_Date__c')
+            FROM sked_Drive_Change_request__c
+            WHERE sked_Drive__c IN :mapConfirmedDrives.keySet()
+            AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED
+            AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM
+            AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED
+            AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED
+        ];
+        Map<Id, sked_Drive_Change_request__c> map_driveId_DCR = new Map<Id, sked_Drive_Change_request__c>();
+        for (sked_Drive_Change_request__c existingDcr : existingDcrs) {
+            map_driveId_DCR.put(existingDcr.sked_Drive__c, existingDcr);
+        }
+        
+        skedDriveHandler.confirmedDriveNewDCR = new List<sked_Drive_Change_Request__c>();
+        skedDriveHandler.confirmedDriveExistingDCR = new List<sked_Drive_Change_Request__c>();
+        
+        Date currentDate = system.today();
+        
+        for (sked_Drive__c confirmedDrive : mapConfirmedDrives.values()) {
+            sked_Drive__c newRecordDrive = newRecordsById.get(confirmedDrive.Id);
+            sked_Drive_Change_Request__c dcr = map_driveId_DCR.get(confirmedDrive.Id);
+            boolean isAlreadyCaptured = dcr != NULL && dcr.sked_Drive_Contention__c != NULL
+                && dcr.sked_Drive_Contention__c.contains('Confirmed within 42 days');
+            
+            integer daysBetween = currentDate.daysBetween(confirmedDrive.sked_Drive_Date__c);
+            boolean isResolvedContention = confirmedDrive.sked_Contention_Resolution__c != NULL 
+                && confirmedDrive.sked_Contention_Resolution__c.contains('Elect to approve the drive that is confirmed within 42 days');
+            
+            if (dcr != null && dcr.sked_Drive_Change_Request_Items__r != null && !dcr.sked_Drive_Change_Request_Items__r.isEmpty()) {
+                newRecordDrive.addError('Unable to confirm drive with active Drive Change Request for a change in Drive Date. Please Approve or Reject the Request before continuing.');
+            }
+            
+            if (daysBetween <= 42 && !isResolvedContention && !isAlreadyCaptured) {
+                sked_Drive__c oldData = oldMap.get(confirmedDrive.Id);
+                confirmedDrive.sked_Status__c = oldData.sked_Status__c;
+                
+                if (dcr == NULL) {
+                    dcr = new sked_Drive_Change_Request__c(
+                        sked_Drive__c = confirmedDrive.Id
+                    );
+                    skedDriveHandler.confirmedDriveNewDCR.add(dcr);
+                }
+                else {
+                    skedDriveHandler.confirmedDriveExistingDCR.add(dcr);
+                }
+            }
+        }
+        skedDriveHandler.processConfirmedDriveDCRs = !skedDriveHandler.confirmedDriveNewDCR.isEmpty() || !skedDriveHandler.confirmedDriveExistingDCR.isEmpty();
+    }
+    
+    private void onConfirmDrives_validateTimeBlock(Map<Id, sked_Drive__c> mapConfirmedDrives, Map<Id, sked_Drive__c> newRecordsById, Map<Id, sked_Drive__c> oldMap) {
+        Set<Id> collectionOperationIds = new Set<Id>();
+        Date minDate, maxDate;
+        Custom_Messages__mdt customMessage = [
+            SELECT Id, Value__c 
+            FROM Custom_Messages__mdt
+            WHERE DeveloperName = 'Time_Block_Validation_From_DOC'
+        ];
+        String errorMessage = customMessage.Value__c;
+        for (sked_Drive__c confirmedDrive : mapConfirmedDrives.values()) {
+            collectionOperationIds.add(confirmedDrive.sked_Collection_Operation__c);
+            minDate = (minDate == NULL || minDate > confirmedDrive.sked_Drive_Date__c) ? confirmedDrive.sked_Drive_Date__c : minDate;
+            maxDate = (maxDate == NULL || maxDate < confirmedDrive.sked_Drive_Date__c) ? confirmedDrive.sked_Drive_Date__c : maxDate;
+        }
+        
+        Map<Id, Biomed_Collection_Op_Center__c> mapCO = new Map<Id, Biomed_Collection_Op_Center__c>([
+            SELECT Id, sked_Minimum_Drive_Start_Time__c, sked_Maximum_Drive_End_Time__c,
+            (SELECT Id, Collection_Operation__c, Time_Block__c, Effective_Start_Date__c, Effective_End_Date__c,
+             Time_Block__r.Days_of_Week__c, Time_Block__r.Start_Time__c, Time_Block__r.End_Time__c
+             FROM Collection_Operation_Time_Blocks__r
+             WHERE Effective_Start_Date__c <= :maxDate
+             AND Effective_End_Date__c >= :minDate)
+            FROM Biomed_Collection_Op_Center__c
+            WHERE Id IN :collectionOperationIds
+        ]);
+        
+        List<sked_Drive_Shift__c> driveShifts = [
+            SELECT Id, sked_Drive__c, sked_Time_Block__c, sked_Contention__c , sked_Contention_Resolution__c 
+            FROM sked_Drive_Shift__c
+            WHERE sked_Drive__c IN :mapConfirmedDrives.keySet()
+        ];
+        
+        for (sked_Drive_Shift__c driveShift : driveShifts) {
+            if (driveShift.sked_Time_Block__c == NULL || (driveShift.sked_Time_Block__c != NULL && driveShift.sked_Contention__c != NULL && driveShift.sked_Contention_Resolution__c == NULL)) {
+                sked_Drive__c drive = mapConfirmedDrives.get(driveShift.sked_Drive__c);
+                
+                Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
+                
+                List<Collection_Operation_Time_Block__c> usedCOTBs = new List<Collection_Operation_Time_Block__c>();
+                
+                for (Collection_Operation_Time_Block__c coTB : collectionOperation.Collection_Operation_Time_Blocks__r) {
+                    boolean isWeekdayMatched = coTB.Time_Block__r.Days_of_Week__c.contains(drive.sked_Day_of_Week__c);
+                    boolean isEffective = coTB.Effective_Start_Date__c <= drive.sked_Drive_Date__c && drive.sked_Drive_Date__c <= coTB.Effective_End_Date__c;
+                    
+                    if (isEffective && isWeekdayMatched) {
+                        usedCOTBs.add(coTB);
+                    }
                 }
                 
-                skedDriveHandler.confirmedDriveNewDCR = new List<sked_Drive_Change_Request__c>();
-                skedDriveHandler.confirmedDriveExistingDCR = new List<sked_Drive_Change_Request__c>();
-                
-                Date currentDate = system.today();
-                
-                for (sked_Drive__c confirmedDrive : mapConfirmedDrives.values()) {
-                    sked_Drive__c newRecordDrive = newRecordsById.get(confirmedDrive.Id);
-                    sked_Drive_Change_Request__c dcr = map_driveId_DCR.get(confirmedDrive.Id);
-                    boolean isAlreadyCaptured = dcr != NULL && dcr.sked_Drive_Contention__c != NULL
-                        && dcr.sked_Drive_Contention__c.contains('Confirmed within 42 days');
-                    
-                    integer daysBetween = currentDate.daysBetween(confirmedDrive.sked_Drive_Date__c);
-                    boolean isResolvedContention = confirmedDrive.sked_Contention_Resolution__c != NULL 
-                        && confirmedDrive.sked_Contention_Resolution__c.contains('Elect to approve the drive that is confirmed within 42 days');
-
-                    if (dcr != null && dcr.sked_Drive_Change_Request_Items__r != null && !dcr.sked_Drive_Change_Request_Items__r.isEmpty()) {
-                        newRecordDrive.addError('Unable to confirm drive with active Drive Change Request for a change in Drive Date. Please Approve or Reject the Request before continuing.');
-                    }
-                    
-                    if (daysBetween <= 42 && !isResolvedContention && !isAlreadyCaptured) {
-                        sked_Drive__c oldData = oldMap.get(confirmedDrive.Id);
-                        confirmedDrive.sked_Status__c = oldData.sked_Status__c;
-                        
-                        if (dcr == NULL) {
-                            dcr = new sked_Drive_Change_Request__c(
-                                sked_Drive__c = confirmedDrive.Id
-                            );
-                            skedDriveHandler.confirmedDriveNewDCR.add(dcr);
-                        }
-                        else {
-                            skedDriveHandler.confirmedDriveExistingDCR.add(dcr);
-                        }
-                    }
+                if (!usedCOTBs.isEmpty()) {
+                    sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);                    
+                    newRecordDrive.addError(errorMessage);
                 }
-                skedDriveHandler.processConfirmedDriveDCRs = !skedDriveHandler.confirmedDriveNewDCR.isEmpty() || !skedDriveHandler.confirmedDriveExistingDCR.isEmpty();
             }
         }
     }
@@ -1094,7 +1166,8 @@ public class skedDriveHandler extends skedTriggerHub {
             if (!mapJobAllocation.isEmpty()) {
                 if (!System.isBatch() && !Test.isRunningTest()) {
                     skedJobAllocationPostProcessBatch.batchSetting batchSetting = new skedJobAllocationPostProcessBatch.batchSetting();
-                    Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
+                    skedJobAllocationPostProcessBatch.schedule(batchSetting, mapJobAllocation.keyset(), 200, 0);
+                    //Database.executeBatch(new skedJobAllocationPostProcessBatch(batchSetting, mapJobAllocation.keyset()), 200);
                 }
             }
         }
@@ -1218,6 +1291,25 @@ public class skedDriveHandler extends skedTriggerHub {
                 'updateLinkedDriveDetails',
                 linkedDrivesToUpdate
             );
+        }
+    }
+    
+    private void doDateTimeConversion(List<sked_Drive__c> newRecords) {
+        for (sked_Drive__c newRecord : newRecords) {
+            skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Min_Shift_Start__c', 'sked_Min_Shift_Start_Date__c', 'sked_Min_Shift_Start_Time__c', 'sked_Timezone__c', NULL);
+            skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Max_Shift_End__c', 'sked_Max_Shift_End_Date__c', 'sked_Max_Shift_End_Time__c', 'sked_Timezone__c', NULL);
+        }
+    }
+    
+    private void doDateTimeConversion(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+        for (sked_Drive__c newRecord : newRecords) {
+            sked_Drive__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Min_Shift_Start__c != oldData.sked_Min_Shift_Start__c) {
+                skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Min_Shift_Start__c', 'sked_Min_Shift_Start_Date__c', 'sked_Min_Shift_Start_Time__c', 'sked_Timezone__c', NULL);
+            }
+            if (newRecord.sked_Max_Shift_End__c != oldData.sked_Max_Shift_End__c) {
+                skedDateTimeUtils.convertDateTimeToDateAndTime(newRecord, 'sked_Max_Shift_End__c', 'sked_Max_Shift_End_Date__c', 'sked_Max_Shift_End_Time__c', 'sked_Timezone__c', NULL);
+            }
         }
     }
     

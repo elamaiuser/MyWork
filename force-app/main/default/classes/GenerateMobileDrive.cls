@@ -744,17 +744,34 @@ public with sharing class GenerateMobileDrive {
                 drawHours = driveShift.drawHourswithLunchBreak != null ? driveShift.drawHourswithLunchBreak : drawHours;
             }
             //HRP-10474 End
+
+            Decimal total2RBCResources = 0;
+            for (String role : capacityNeededFor) {
+                if (role != null && role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
+                    Decimal qty = staffingComplement.map_role_resourceQuantity.containsKey(role) && 
+                                staffingComplement.map_role_resourceQuantity.get(role) != NULL ?
+                                staffingComplement.map_role_resourceQuantity.get(role) : 0;
+                    total2RBCResources += qty;
+                }
+            }
+
+            Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments!=null? driveShift.numberOf2rbcEquipments:0;
+            Decimal resourcesHaveEnough2RBCAssetsCount = Math.min(total2RBCResources, Math.floor(noOf2RBCAssets / 2));
+            Decimal resourcesNotHaveEnough2RBCAssetsCount = Math.max(total2RBCResources - resourcesHaveEnough2RBCAssetsCount, 0);
             
             for (String role : capacityNeededFor) {
                 Decimal resourceQuantity = staffingComplement.map_role_resourceQuantity.containsKey(role) && staffingComplement.map_role_resourceQuantity.get(role) != NULL ? staffingComplement.map_role_resourceQuantity.get(role) : 0;
                 Decimal sdmRoleCapacity = donorCapacityMap.containsKey(role.split('-')[0]) && donorCapacityMap.get(role.split('-')[0]) != NULL ? donorCapacityMap.get(role.split('-')[0]) : 0;
                 if (role.split('-')[0].equalsIgnorecase(Constants.PROCEDURE_TYPE_2RBC)) {
-                    Decimal noOf2RBCAssets = driveShift.numberOf2rbcEquipments!=null? driveShift.numberOf2rbcEquipments:0;
-                    Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, Math.floor(noOf2RBCAssets / 2));
-                    Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.max(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, 0);
+                    
+                    Decimal noOfResourcesHaveEnough2RBCAssets = Math.min(resourceQuantity, resourcesHaveEnough2RBCAssetsCount);
+                    Decimal noOfResourcesNotHaveEnough2RBCAssets = Math.min(resourceQuantity - noOfResourcesHaveEnough2RBCAssets, resourcesNotHaveEnough2RBCAssetsCount);
                     Decimal capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * driveShift.drawHours;
                     Decimal capacity2 = noOfResourcesNotHaveEnough2RBCAssets * sdmRoleCapacity * driveShift.drawHours;
                     staffCapacity += capacity1 + capacity2;
+
+                    resourcesHaveEnough2RBCAssetsCount -= noOfResourcesHaveEnough2RBCAssets;
+                    resourcesNotHaveEnough2RBCAssetsCount -= noOfResourcesNotHaveEnough2RBCAssets;
                 } else {
                     staffCapacity += resourceQuantity * sdmRoleCapacity *  drawHours;
                 }                       

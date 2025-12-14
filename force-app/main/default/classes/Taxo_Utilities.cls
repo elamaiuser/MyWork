@@ -173,5 +173,103 @@ public class Taxo_Utilities {
         // Return the batch size if found; otherwise, return the default value
         return (config != null && config.Batch_Size__c !=null) ? Integer.valueOf(config.Batch_Size__c) : defaultBatchSize;
     }
+    // Read per-record-type delay; fall back to 5 minutes if not set/found.
+    public static Integer getScheduleDelayMinutes(String recordTypeName) {
+        try {
+            Taxonomy_Run_Config__mdt cfg = [
+                SELECT Schedule_Delay_Minutes__c
+                FROM Taxonomy_Run_Config__mdt
+                WHERE Is_Active__c = true
+                  AND Category__c = 'Taxo Run Sequence'
+                  AND Taxo_Record_Type_Name__c = :recordTypeName
+                LIMIT 1
+            ];
+            return (cfg.Schedule_Delay_Minutes__c == null) ? 5 : Integer.valueOf(cfg.Schedule_Delay_Minutes__c);  // falls back to 5
+        } catch (Exception e) {
+            System.debug('Exception at getScheduleDelayMinutes :'+e.getMessage());
+            return 5;
+        }
+    }
+    
+    public static void scheduleAfterDelay(
+        Schedulable job,
+        String recordTypeName,
+        String jobNamePrefix
+    ){
+        Integer delay = getScheduleDelayMinutes(recordTypeName);
+        Datetime dt = Datetime.now().addMinutes(delay);
+        String cron = String.format('{0} {1} {2} {3} {4} ? {5}',
+            new String[]{
+                String.valueOf(dt.second()),
+                String.valueOf(dt.minute()),
+                String.valueOf(dt.hour()),
+                String.valueOf(dt.day()),
+                String.valueOf(dt.month()),
+                String.valueOf(dt.year())
+            }
+        );
+        System.schedule(jobNamePrefix + '-' + recordTypeName + '-' + Datetime.now().getTime(), cron, job);
+    }
+    
+    // --------- Get Org Default Row of Custom Setting ---------
+    private static Taxonomy_Automation_Runtime_Check__c getRuntimeCfg() {
+        Taxonomy_Automation_Runtime_Check__c cfg =
+            Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
+        System.debug('getRuntimeCfg cfg==>>'+cfg);
+        if (cfg == null) {
+            cfg = new Taxonomy_Automation_Runtime_Check__c();
+        }
+        return cfg;
+    }
+    // --------- Utility Method to Check Flag ---------
+    public static Boolean isTaxonomyRunning() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+            return cfg.Is_Taxonomy_Running__c;
+        } catch (Exception e) {
+            System.debug('isTaxonomyRunning ERROR: ' + e.getMessage());
+            return false;  // fail-open
+        }
+    }
+    // --------- Mark START of Taxonomy Automation ---------
+    public static void markTaxonomyStarted() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg = getRuntimeCfg();
+
+            if (!cfg.Is_Taxonomy_Running__c) {
+                cfg.Is_Taxonomy_Running__c = true;
+                cfg.Taxonomy_Automation_Start_DateTime__c = System.now();
+                cfg.Taxonomy_Automation_End_DateTime__c = null;
+
+                upsert cfg;
+                System.debug('START: Taxonomy set to RUNNING.');
+            } else {
+                System.debug('START: Taxonomy already running, no update performed.');
+            }
+        } catch (Exception e) {
+            System.debug('markTaxonomyStarted ERROR: ' + e.getMessage());
+        }
+    }
+    public static void markTaxonomyEnded() {
+        try {
+            Taxonomy_Automation_Runtime_Check__c cfg =
+                Taxonomy_Automation_Runtime_Check__c.getOrgDefaults();
+
+            if (cfg == null) {
+                cfg = new Taxonomy_Automation_Runtime_Check__c();
+            }
+
+            // Always mark as false and set end datetime
+            cfg.Is_Taxonomy_Running__c = false;
+            cfg.Taxonomy_Automation_End_DateTime__c = System.now();
+
+            upsert cfg;
+
+            System.debug('Taxonomy Automation marked as FINISHED.');
+        }
+        catch (Exception e) {
+            System.debug('markTaxonomyFinished ERROR: ' + e.getMessage());
+        }
+    }
     
 }

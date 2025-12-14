@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSF_TravelTimePanelController</members>
+		<members>BSF_TravelTimePanelControllerTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>travelTimeBreakdown</members>
+		<name>LightningComponentBundle</name>
+	</types>	
+	<version>60.0</version>
+</Package>

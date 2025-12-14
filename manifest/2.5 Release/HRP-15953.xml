@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSF_Access_Control_Rule__mdt.Component_API_Names__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Field_API_Names__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Is_Enabled__c</members>
+		<members>BSF_Access_Control_Rule__mdt.PermissionsCreate__c</members>
+		<members>BSF_Access_Control_Rule__mdt.PermissionsDelete__c</members>
+		<members>BSF_Access_Control_Rule__mdt.PermissionsEdit__c</members>
+		<members>BSF_Access_Control_Rule__mdt.PermissionsRead__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Release_Tag__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Rule_Type__c</members>
+		<members>BSF_Access_Control_Rule__mdt.SObject_API_Name__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Target_API_Names__c</members>
+		<members>BSF_Access_Control_Rule__mdt.Target_Type__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set_Read</members>
+		<members>BSF_Access_Control_Rule.HRP_13448_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_14427_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_14511_Class_Component</members>
+		<members>BSF_Access_Control_Rule.HRP_14511_Visual_Force_Page</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule__mdt</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+        <members>BSF_Access_Control_Rule__mdt-Access Control Rule Layout</members>		
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule__mdt.Release_Tag_View</members>
+		<name>ListView</name>
+	</types>
+	<version>65.0</version>
+</Package>

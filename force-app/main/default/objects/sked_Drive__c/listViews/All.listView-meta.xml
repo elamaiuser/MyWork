@@ -6,19 +6,31 @@
     <columns>sked_Opportunity__c</columns>
     <columns>sked_District__c</columns>
     <columns>sked_Drive_Productivity_Banding__c</columns>
-    <columns>sked_Productivity_Metric__c</columns>
     <columns>sked_WB_Projected_Procedures__c</columns>
     <columns>sked_2RBC_Projected_Procedures__c</columns>
     <columns>sked_Status__c</columns>
     <columns>CREATED_DATE</columns>
     <columns>sked_Type_of_Drive__c</columns>
     <columns>Site_Building_Name__c</columns>
+    <columns>sked_Drive_Has_Change_Request__c</columns>
+    <columns>sked_Staff_Delta__c</columns>
+    <columns>sked_Assigned_Staff_Count__c</columns>
     <columns>sked_Zip_Code__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Drive_Date__c</field>
         <operation>greaterOrEqual</operation>
-        <value>7/1/2024</value>
+        <value>11/23/2024</value>
+    </filters>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>equals</operation>
+        <value>Confirmed</value>
+    </filters>
+    <filters>
+        <field>sked_Collection_Operation__c</field>
+        <operation>equals</operation>
+        <value>Toledo OH</value>
     </filters>
     <label>All</label>
 </ListView>

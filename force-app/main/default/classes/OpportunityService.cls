@@ -2798,6 +2798,7 @@ if(ds.isDeletable()){}*/
 
                                    driveModelRecTemp.status = 'Cancel';
                                    driveModelRecTemp.cancellationReason = newOpportunity.sked_Cancellation_Reason__c;
+                                   driveModelRecTemp.cancellationDetail = newOpportunity.Cancellation_Detail__c;
                                    driveModelRecTemp.id = skedDr.id;
                                    lstOfDrives.add(driveModelRecTemp);//HRP 11393-adding all matching drives, when cancelled status
                                 }
@@ -2823,6 +2824,9 @@ if(ds.isDeletable()){}*/
                            || expMsg.contains(Custom_Messages__mdt.getInstance('Pending_DCR_Opportunity').value__c)
                            || expMsg.contains('Unable to confirm drive with active Drive Change Request for a change in Drive Date. Please Approve or Reject the Request before continuing.')){
                                 expMsg = Custom_Messages__mdt.getInstance('Pending_DCR_Opportunity').value__c;
+                    }
+                    if(expMsg.contains(Custom_Messages__mdt.getInstance('Time_Block_Validation_From_DOC').value__c)) {
+                        expMsg = Custom_Messages__mdt.getInstance('Time_Block_Validation_From_Opportunity').value__c;
                     }
                     for(slwcDriveService.driveModel drvM : driveUpdateRequest.drives){
                         oppIdSet.add(mapDOCToOppId.get(drvM.Id));
@@ -2934,10 +2938,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
         try{
             //HRP-10514 : added Platelet_Projected_Procedures__c for 'DriveSync' issue.
             Map<Id, Opportunity> mapOfOpportunity = new Map<Id, Opportunity>([SELECT Id, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
+                                                                              WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, APT_Quantity__c, APT_Required__c, APT_Change_Reason__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c, Cancellation_Detail__c FROM Opportunity WHERE Id In :lstOpps]);//HRP-12063
             //HRP-10515-Query latest values on DOC for changed fields and update on Opportunity, when request comes from DOC update
             List<sked_Drive__c> docList = [SELECT sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,
-                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c,sked_Opportunity__c,
+                                           sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Cancellation_Reason__c, sked_Cancellation_Detail__c, sked_Opportunity__c,
                                            sked_APT_Required__c, sked_APT_Quantity__c,
                                            sked_Redcross_Volunteer_Required__c, sked_Redcross_Volunteer_Quantity__c //HRP-13146
                                            FROM sked_Drive__c 
@@ -3215,6 +3219,14 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                             oppField.Parent_Template_Id = null;
                         }//HRP-10312 end
                     }
+                    if(data.containsKey('Cancellation_Detail__c')) {
+                        if(data.get('Cancellation_Detail__c') != null && oppRec.Cancellation_Detail__c != null) {
+                            oppField.Cancellation_Detail = (doc != null && doc.sked_Cancellation_Detail__c != oppField.Cancellation_Detail) ? doc.sked_Cancellation_Detail__c : oppRec.Cancellation_Detail__c;
+                        }
+                        else {
+                            oppField.Cancellation_Detail = '';
+                        }
+                    }
                     if(data.containsKey('sked_Cancellation_Reason__c') == true){//HRP-10312 
                         if(data.get('sked_Cancellation_Reason__c') != null && oppRec.sked_Cancellation_Reason__c != null && doc.sked_Cancellation_Reason__c != oppField.sked_Cancellation_Reason) {
                             oppField.sked_Cancellation_Reason = doc != null? doc.sked_Cancellation_Reason__c : oppRec.sked_Cancellation_Reason__c;
@@ -3258,8 +3270,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                                if(mapOfOpportunity.get(oppRec.Id).Initiated_By__c != null) {
                                    oppField.Sked_Cancellation_Reason = '';
                                    oppField.Initiated_By = '';
+                                   oppField.Cancellation_Detail = '';
                                    oppField.updatedDataKeys.add('Initiated_By__c');    
                                    oppField.updatedDataKeys.add('sked_Cancellation_Reason__c');
+                                   oppField.updatedDataKeys.add('Cancellation_Detail__c');
                                }
                            }
                            if(latestDriveStatus == 'Confirmed' && mapOfOpportunity.get(oppRec.Id).StageName != 'Closed') {
@@ -3268,8 +3282,10 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                                if(mapOfOpportunity.get(oppRec.Id).Initiated_By__c != null) {
                                    oppField.Sked_Cancellation_Reason = '';
                                    oppField.Initiated_By = '';
+                                   oppField.Cancellation_Detail = '';
                                    oppField.updatedDataKeys.add('Initiated_By__c');    
                                    oppField.updatedDataKeys.add('sked_Cancellation_Reason__c');
+                                   oppField.updatedDataKeys.add('Cancellation_Detail__c');
                                }
                            }
                            if((mapOfOpportunity.get(oppRec.Id).Drive_Status__c == 'Draft' && latestDriveStatus == 'Hold') || 
@@ -3970,62 +3986,58 @@ opp.StageName = 'Closed';
         for(Opportunity newOpp: oppList)
         {
             Opportunity oldOpp = oldOppMap.get(newOpp.Id);
-            if(oldOpp != NULL && oldOpp.Open_to_Public__c != newOpp.Open_to_Public__c)
-            {
-                relatedFieldsMap.put('sked_Open_to_Public__c', newOpp.Open_to_Public__c);
-                //oppFieldsRelatedToDOCMap.put(newOpp.Id, relatedFieldsMap);
-                //oppIds.add(newOpp.Id);
+            if(oldOpp != null) {
+                if(oldOpp.Open_to_Public__c != newOpp.Open_to_Public__c) {
+                    relatedFieldsMap.put('sked_Open_to_Public__c', newOpp.Open_to_Public__c);
+                }
+                if(oldOpp.Security_Escort_Name__c != newOpp.Security_Escort_Name__c) {
+                    relatedFieldsMap.put('sked_Security_Escort_Name__c', newOpp.Security_Escort_Name__c);                
+                }
+                if(oldOpp.Cancellation_Detail__c != newOpp.Cancellation_Detail__c) {
+                    relatedFieldsMap.put('sked_Cancellation_Detail__c', newOpp.Cancellation_Detail__c); 
+                }
             }
-            if(oldOpp != NULL && oldOpp.Security_Escort_Name__c != newOpp.Security_Escort_Name__c)
-            {
-                relatedFieldsMap.put('sked_Security_Escort_Name__c', newOpp.Security_Escort_Name__c);                
-            }
-            if(!relatedFieldsMap.isEmpty())
-            {
+            if(!relatedFieldsMap.isEmpty()) {
                 oppFieldsRelatedToDOCMap.put(newOpp.Id, relatedFieldsMap);
             }
-            //count++;
         }
         
-        if(!oppFieldsRelatedToDOCMap.isEmpty())
-        {
-            List<sked_Drive__c> drvList = [SELECT Id, 
-                                           sked_Opportunity__c, sked_Security_Escort_Name__c, sked_Open_to_Public__c
+        if(!oppFieldsRelatedToDOCMap.isEmpty()) {
+            List<sked_Drive__c> drvList = [SELECT Id, sked_Opportunity__c, 
+                                           sked_Security_Escort_Name__c, sked_Open_to_Public__c,
+                                           sked_Cancellation_Detail__c
                                            FROM sked_Drive__c 
                                            WHERE sked_Opportunity__c IN: oppFieldsRelatedToDOCMap.keySet()];
-            if(drvList.size() > 0)
-            {
-                for(sked_Drive__c drive : drvList)
-                {
-                    if(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).containsKey('sked_Open_to_Public__c'))
-                    {
-                        updateFlag = TRUE;
-                        drive.sked_Open_to_Public__c = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Open_to_Public__c');
-                        system.debug(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Open_to_Public__c'));
-                    }
-                    if(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).containsKey('sked_Security_Escort_Name__c'))
-                    {
-                        updateFlag = TRUE;
-                        drive.sked_Security_Escort_Name__c = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Security_Escort_Name__c');
-                        system.debug(oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c).get('sked_Security_Escort_Name__c'));
-                    }
-                    if(updateFlag)
-                    {
+            if(!drvList.isEmpty()) {
+                for(sked_Drive__c drive : drvList) {
+                    Map<String, String> map_fieldName_fieldValueToUpdate = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c);
+                    if(map_fieldName_fieldValueToUpdate != null && !map_fieldName_fieldValueToUpdate.isEmpty()) {
+                        for(String fieldToUpdate : map_fieldName_fieldValueToUpdate.keySet()) {
+                            String existingFieldValueOnDrive = (String)drive.get(fieldToUpdate);
+                        	if(existingFieldValueOnDrive != null && existingFieldValueOnDrive.equals(map_fieldName_fieldValueToUpdate.get(fieldToUpdate))) continue;
+                            
+                            drive.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
+                        }
                         driveListToBeUpdatedList.add(drive);
-                    }
+                    }   
                 }
             }
         }
             
-           if(driveListToBeUpdatedList.size() > 0)
-           {
-               skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
-               Database.saveResult[] updateList = Database.update(driveListToBeUpdatedList, false);
-               List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLog(updateList, 'Update Open to public/security escort name', 'OpportunityService', 'populateRelatedFieldsOnDOC', 'Error', 'Error in drive update');
-               Insert errorLogList;
-           }
-            
-        }
+        if(!driveListToBeUpdatedList.isEmpty()) {
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
+            Database.saveResult[] updateList = Database.update(driveListToBeUpdatedList, false);
+            List<BSF_Error_Log__c> errorLogList = BSF_Utilities.createErrorLogWithObjectId(
+                updateList, 
+                'Update Open to public/security escort name/cancellation detail on DOC', 
+                'OpportunityService', 
+                'populateRelatedFieldsOnDOC', 
+                'Error', 
+                'Error in drive update'
+            );
+            insert errorLogList;
+        }   
+    }
     //HRP-9439
     public static void sendOpportunityPromotionDisassociatEmail(Map<Opportunity_Promotion__c,OpportunityTeamMember> oppPromotionMap){
         System.debug('sendOpportunityPromotionDisassociatEmail==>');
@@ -4993,7 +5005,6 @@ opp.StageName = 'Closed';
         }    
     }
     //HRP-6051 Ends Here
-    
     public static Decimal getVolunteerQuantity(Integer anticipatedRegisteredDonors, Boolean highSchool, List<Volunteer_Staffing_Matrix__mdt> matrixRecords) {
         Integer volunteers = 0;
         Integer maxRange = 0;
@@ -5258,4 +5269,15 @@ opp.StageName = 'Closed';
         }
     } 
     //HRP-701 --> Ends Here
+
+    //HRP-7470
+    public static void createPrimaryContactRoleAfterTemplateCreation(List<Opportunity> newOppList) {
+        List<Opportunity> templates = new List<Opportunity>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c) templates.add(opp);
+        }
+
+        if(!templates.isEmpty()) TemplateService.createPrimaryContactDriveServiceRole(templates);
+    }
 }

@@ -46,6 +46,17 @@
                             </c-slwc-dependent-picklist>
                         </div>
 
+                         <div class="slds-m-top_x-small">
+                            <lightning-input 
+                                type="text" 
+                                max-length="255" 
+                                name="cancellationDetail"
+                                label="Cancellation Detail" 
+                                value={cancellationDetail} 
+                                onchange={handleCancellationDetailChanged}>
+                            </lightning-input>
+                         </div>
+
                         <div class="slds-m-top_x-small">
                             <c-slwc-advanced-lookup
                                 lookup-label="Replacement Drive"
