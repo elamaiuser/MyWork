@@ -550,6 +550,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                  - Start Time: ${driveStartTime}
                  - End Time: ${driveEndTime}
                  - Opportunity: ${this.drive.opportunity.name}
+                 - Type Of Drive: ${this.drive.typeOfDrive}
 
                 Do you want to continue?`,
 
@@ -576,7 +577,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             driveSiteId: this.drive.driveSiteId,
             opportunityId: this.drive.opportunityId,
             surrogateDriveForId: this.drive.id,
-            status: DRIVE_STATUS.CONFIRMED
+            status: DRIVE_STATUS.CONFIRMED,
+            typeOfDrive: this.drive.typeOfDrive //HRP-16053
         }
         let service = new driveService();
         service.save(surrogateDrive)
