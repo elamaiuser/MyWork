@@ -352,7 +352,7 @@ public class skedDriveHandler extends skedTriggerHub {
         ];
         
         for (sked_Drive_Shift__c driveShift : driveShifts) {
-            if (driveShift.sked_Time_Block__c == NULL || (driveShift.sked_Time_Block__c != NULL && driveShift.sked_Contention__c != NULL && driveShift.sked_Contention_Resolution__c == NULL)) {
+            if (driveShift.sked_Time_Block__c == NULL || (driveShift.sked_Time_Block__c != NULL && driveShift.sked_Contention__c != NULL && driveShift.sked_Contention__c != skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS && driveShift.sked_Contention_Resolution__c == NULL)) {
                 sked_Drive__c drive = mapConfirmedDrives.get(driveShift.sked_Drive__c);
                 
                 Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
