@@ -1396,9 +1396,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                         newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WB_Projected_Procedures__c;
                         newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.X2RBC_Projected_Procedures__c;
                         newOpportunity.Anticipated_Registered_Donors_Template__c = templateOpportunity.Anticipated_Registered_Donors__c;
-                        newOpportunity.WholeBloodProcedureProjectedChangeReason__c = templateChangedText;
-                        newOpportunity.DoubleRedProceduresProjectedChangeReason__c = templateChangedText;
-                        newOpportunity.AnticipatedRegisterDonorChangeReason__c = templateChangedText;
                         newOpportunity.Direct_Donors_To__c = templateOpportunity.Direct_Donors_To__c;
                     }
                 }
