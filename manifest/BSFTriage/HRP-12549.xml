@@ -3,6 +3,7 @@
 	<types>
 		<members>autoMapper</members>
 		<members>slwcDriveCalendar</members>
+		<members>slwcDriveProductivityDriveList</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>64.0</version>
