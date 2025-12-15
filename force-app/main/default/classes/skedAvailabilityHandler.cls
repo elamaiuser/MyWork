@@ -106,15 +106,20 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
-            captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            syncToStaffingBudgetAvailabilities(this.context.newRecords);
-            cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            skedWorkdayUtils.initiateFullWorkdaySync(this.context.newRecords, (Map<Id, sked__Availability__c>) this.context.oldMap);
-            if (!System.isBatch()) {
-                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+            try {
+                captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                syncToStaffingBudgetAvailabilities(this.context.newRecords);
+                cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                skedWorkdayUtils.initiateFullWorkdaySync(this.context.newRecords, (Map<Id, sked__Availability__c>) this.context.oldMap);
+                if (!System.isBatch()) {
+                    skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+                }
+            } catch (skedException ex) {
+                sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Update', ex, (Set<Id>)this.context.newMap.keySet());
+                insert debugLog;
             }
         }
     }
