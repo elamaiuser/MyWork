@@ -87,15 +87,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
             {
                 Taxonomy__c tx = new Taxonomy__c();
                 tx = taxIdExternalKeysMap.get(exKey);
-                Taxonomy__c newTx = newTaxIdExternalKeysMap.get(exKey);
-                System.debug('HRP-15653 - newTx:'+newTx);
-                if( !externalKeySetNew.contains(exKey) ||
-                    ( newTx !=null && 
-                        (   newTx.Collection_Operation_Code__c != tx.Collection_Operation_Code__c || 
-                            newTx.Collection_Operation_Name__c != tx.Collection_Operation_Name__c 
-                        )
-                    )
-                )
+                if(!externalKeySetNew.contains(exKey))
                 {
                     system.debug('exKey '+exKey);
                     system.debug('tx '+tx);
