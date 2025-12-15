@@ -115,9 +115,14 @@ public class skedWorkdayUtils implements Callable {
             WHERE Id IN :resourceIds
         ]);
 
-        publishWorkdayApprovalsEvent(getApprovedRecordIds(newRecords, oldMap));
-        publishWorkdayAdjustmentsEvent(getAdjustmentsContainer(newRecords, oldMap, resourceById));
-        publishWorkdayCancellationsEvent(getCancellationsContainer(newRecords, oldMap, resourceById));
+        try {
+            publishWorkdayApprovalsEvent(getApprovedRecordIds(newRecords, oldMap));
+            publishWorkdayAdjustmentsEvent(getAdjustmentsContainer(newRecords, oldMap, resourceById));
+            publishWorkdayCancellationsEvent(getCancellationsContainer(newRecords, oldMap, resourceById));
+        } catch (skedException ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Full Workday Sync Initiation', ex, new Set<Id>(new Map<Id, sked__Availability__c>(newRecords).keySet()));
+            insert debugLog;
+        }
     }
 
     public static Set<Id> getApprovedRecordIds(List<sked__Availability__c> records) {
@@ -233,132 +238,142 @@ public class skedWorkdayUtils implements Callable {
 
     @future(Callout=true)
     public static void handleWorkdayApprovals(Set<Id> recordIds) {
-        if (skedSetting.instance.admin.workdayIntegration && !recordIds.isEmpty()) {
-            List<sked__Availability__c> timeOffRequests = [
-                SELECT Id, sked_Start_Date__c, sked_Finish_Date__c, sked__Notes__c,
-                    sked__Resource__c, sked__Is_Available__c, sked_Is_All_Day__c, sked_Duration__c,
-                    sked__Type__c, sked__Resource__r.sked_Employee_Id__c, sked__Resource__r.Name,
-                    sked__Resource__r.sked_Daily_Time_Off_Hours__c, sked__Finish__c, sked__Start__c,
-                    sked_Time_Off_Reason_Code__c, sked_Time_Off_Plan__c
-                FROM sked__Availability__c
-                WHERE Id IN :recordIds
-                AND sked_Workday_Sync_Status__c NOT IN :NON_SYNC_WORKDAY_STATUSES
-            ];
+        try {
+            if (skedSetting.instance.admin.workdayIntegration && !recordIds.isEmpty()) {
+                List<sked__Availability__c> timeOffRequests = [
+                    SELECT Id, sked_Start_Date__c, sked_Finish_Date__c, sked__Notes__c,
+                        sked__Resource__c, sked__Is_Available__c, sked_Is_All_Day__c, sked_Duration__c,
+                        sked__Type__c, sked__Resource__r.sked_Employee_Id__c, sked__Resource__r.Name,
+                        sked__Resource__r.sked_Daily_Time_Off_Hours__c, sked__Finish__c, sked__Start__c,
+                        sked_Time_Off_Reason_Code__c, sked_Time_Off_Plan__c
+                    FROM sked__Availability__c
+                    WHERE Id IN :recordIds
+                    AND sked_Workday_Sync_Status__c NOT IN :NON_SYNC_WORKDAY_STATUSES
+                ];
 
-            Map<Id, skedWorkdayEnterTimeOffResponse> resultById = new Map<Id, skedWorkdayEnterTimeOffResponse>();
-            for (sked__Availability__c timeOffRequest : timeOffRequests) {
-                skedWorkdayEnterTimeOffRequest enterTimeOffRequest = new skedWorkdayEnterTimeOffRequest();
-                enterTimeOffRequest.employeeId = timeOffRequest.sked__Resource__r.sked_Employee_Id__c;
-                enterTimeOffRequest.resourceId = timeOffRequest.sked__Resource__c;
-                skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry timeOffEntry = new skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry();
-                timeOffEntry.comment = timeOffRequest.sked__Notes__c;
-                timeOffEntry.ptoDate = timeOffRequest.sked_Start_Date__c;
-                timeOffEntry.hoursRequested = getWorkdayPtoHours(timeOffRequest, timeOffRequest.sked__Resource__r); 
-                timeOffEntry.ptoEntryId = timeOffRequest.Id;
-                timeOffEntry.timeOffType = getWorkdayTimeOffType(timeOffRequest);
-                timeOffEntry.ptoReason = timeOffRequest.sked_Time_Off_Reason_Code__c;
-                enterTimeOffRequest.timeOffEntries.add(timeOffEntry);
-                
-                resultById.put(timeOffRequest.Id, skedWorkdayApiManager.EnterTimeOff(enterTimeOffRequest));
-            }
-
-            List<sked__Availability__c> failedApprovals = new List<sked__Availability__c>();
-
-            List<SObject> recordsToUpsert = new List<SObject>();
-            for (sked__Availability__c timeOffRequest : timeOffRequests) {
-                skedWorkdayEnterTimeOffResponse result = resultById.get(timeOffRequest.Id);
-                
-                if (!result.isSuccess) {
-                    timeOffRequest.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_FAILED;
-                    timeOffRequest.sked_Workday_Sync_Message__c = result.message;
-                    timeOffRequest.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_SYNC_FAILURE;
-                    timeOffRequest.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
-                    failedApprovals.add(timeOffRequest);
-                } else {
-                    timeOffRequest.sked_Approved_Via_Automation__c = true;
-                    timeOffRequest.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_SUCCESS;
-                    timeOffRequest.sked_Workday_Sync_Message__c = null;
-                    timeOffRequest.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                Map<Id, skedWorkdayEnterTimeOffResponse> resultById = new Map<Id, skedWorkdayEnterTimeOffResponse>();
+                for (sked__Availability__c timeOffRequest : timeOffRequests) {
+                    skedWorkdayEnterTimeOffRequest enterTimeOffRequest = new skedWorkdayEnterTimeOffRequest();
+                    enterTimeOffRequest.employeeId = timeOffRequest.sked__Resource__r.sked_Employee_Id__c;
+                    enterTimeOffRequest.resourceId = timeOffRequest.sked__Resource__c;
+                    skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry timeOffEntry = new skedWorkdayEnterTimeOffRequest.skedWorkdayTimeOffEntry();
+                    timeOffEntry.comment = timeOffRequest.sked__Notes__c;
+                    timeOffEntry.ptoDate = timeOffRequest.sked_Start_Date__c;
+                    timeOffEntry.hoursRequested = getWorkdayPtoHours(timeOffRequest, timeOffRequest.sked__Resource__r); 
+                    timeOffEntry.ptoEntryId = timeOffRequest.Id;
+                    timeOffEntry.timeOffType = getWorkdayTimeOffType(timeOffRequest);
+                    timeOffEntry.ptoReason = timeOffRequest.sked_Time_Off_Reason_Code__c;
+                    enterTimeOffRequest.timeOffEntries.add(timeOffEntry);
+                    
+                    resultById.put(timeOffRequest.Id, skedWorkdayApiManager.EnterTimeOff(enterTimeOffRequest));
                 }
 
-                recordsToUpsert.add(timeOffRequest);
+                List<sked__Availability__c> failedApprovals = new List<sked__Availability__c>();
 
-                if (skedSetting.instance.admin.enableWorkdayLogging) {
-                    sked__Debug_Log__c debugLog = getDebugLogFromResponse('Enter Time Off', timeOffRequest, result);
-                    recordsToUpsert.add(debugLog);
+                List<SObject> recordsToUpsert = new List<SObject>();
+                for (sked__Availability__c timeOffRequest : timeOffRequests) {
+                    skedWorkdayEnterTimeOffResponse result = resultById.get(timeOffRequest.Id);
+                    
+                    if (!result.isSuccess) {
+                        timeOffRequest.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_FAILED;
+                        timeOffRequest.sked_Workday_Sync_Message__c = result.message;
+                        timeOffRequest.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_SYNC_FAILURE;
+                        timeOffRequest.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PENDING;
+                        failedApprovals.add(timeOffRequest);
+                    } else {
+                        timeOffRequest.sked_Approved_Via_Automation__c = true;
+                        timeOffRequest.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_SUCCESS;
+                        timeOffRequest.sked_Workday_Sync_Message__c = null;
+                        timeOffRequest.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                    }
+
+                    recordsToUpsert.add(timeOffRequest);
+
+                    if (skedSetting.instance.admin.enableWorkdayLogging) {
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Enter Time Off', timeOffRequest, result);
+                        recordsToUpsert.add(debugLog);
+                    }
+                }
+
+                upsert recordsToUpsert;
+                
+                if (!failedApprovals.isEmpty()) {
+                    new skedCustomNotificationService(new List<String>{
+                        'sked_Workday_Approval_Failed_Resource'
+                    }).generateNotifications(failedApprovals);
                 }
             }
-
-            upsert recordsToUpsert;
-            
-            if (!failedApprovals.isEmpty()) {
-                new skedCustomNotificationService(new List<String>{
-                    'sked_Workday_Approval_Failed_Resource'
-                }).generateNotifications(failedApprovals);
-            }
+        } catch (skedException ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Handle Workday Approvals', ex, recordIds);
+            insert debugLog;
         }
     }
 
     @future(Callout=true)
     public static void handleWorkdayAdjustments(List<Id> availabilityIds, Map<Id, Decimal> adjustmentById, Map<Id, Id> resourceIdByAvailId,
             Map<Id, String> employeeIdByResourceId, Boolean isCancellation) {
-        if (skedSetting.instance.admin.workdayIntegration && !availabilityIds.isEmpty()) {
+        try {
+            if (skedSetting.instance.admin.workdayIntegration && !availabilityIds.isEmpty()) {
 
-            Map<Id, skedWorkdayAdjustTimeOffResponse> resultById = new Map<Id, skedWorkdayAdjustTimeOffResponse>();
-            for (Id availabilityId : availabilityIds) {
-                Id resourceId = resourceIdByAvailId.get(availabilityId);
-                skedWorkdayAdjustTimeOffRequest adjustTimeOffRequest = new skedWorkdayAdjustTimeOffRequest();
-                adjustTimeOffRequest.employeeId = employeeIdByResourceId.get(resourceId);
-                adjustTimeOffRequest.resourceId = resourceId;
-                
-                skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustTimeOffEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
-                adjustTimeOffEntry.ptoEntryId = availabilityId;
-                adjustTimeOffEntry.adjustment = adjustmentById.get(availabilityId);
-                adjustTimeOffRequest.adjustTimeOffEntries.add(adjustTimeOffEntry);
-                resultById.put(availabilityId, skedWorkdayApiManager.AdjustTimeOff(adjustTimeOffRequest));
-            }
-
-            Map<Id, sked__Availability__c> availabilityById = new Map<Id, sked__Availability__c>([
-                SELECT Id, sked__Resource__c FROM sked__Availability__c WHERE Id IN :availabilityIds
-            ]);
-
-            List<sked__Availability__c> failedAdjustments = new List<sked__Availability__c>();
-
-            List<SObject> recordsToUpsert = new List<SObject>();
-            for (Id availabilityId : resultById.keySet()) {
-                if (!availabilityById.containsKey(availabilityId)) continue;
-                skedWorkdayAdjustTimeOffResponse result = resultById.get(availabilityId);
-                sked__Availability__c availabilityRecord = availabilityById.get(availabilityId);
-                if (!result.isSuccess) {
-                    availabilityRecord.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_FAILED;
-                    availabilityRecord.sked_Workday_Sync_Message__c = result.message;
-                    availabilityRecord.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_SYNC_FAILURE;
-                    availabilityRecord.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-                    failedAdjustments.add(availabilityRecord);
-                } else {
-                    availabilityRecord.sked_Approved_Via_Automation__c = true;
-                    availabilityRecord.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_SUCCESS;
-                    availabilityRecord.sked_Workday_Sync_Message__c = null;
-                    availabilityRecord.sked_Custom_Status__c = isCancellation ? 
-                        skedConstants.AVAILABILITY_STATUS_CANCELLED : skedConstants.AVAILABILITY_STATUS_APPROVED;
+                Map<Id, skedWorkdayAdjustTimeOffResponse> resultById = new Map<Id, skedWorkdayAdjustTimeOffResponse>();
+                for (Id availabilityId : availabilityIds) {
+                    Id resourceId = resourceIdByAvailId.get(availabilityId);
+                    skedWorkdayAdjustTimeOffRequest adjustTimeOffRequest = new skedWorkdayAdjustTimeOffRequest();
+                    adjustTimeOffRequest.employeeId = employeeIdByResourceId.get(resourceId);
+                    adjustTimeOffRequest.resourceId = resourceId;
+                    
+                    skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustTimeOffEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
+                    adjustTimeOffEntry.ptoEntryId = availabilityId;
+                    adjustTimeOffEntry.adjustment = adjustmentById.get(availabilityId);
+                    adjustTimeOffRequest.adjustTimeOffEntries.add(adjustTimeOffEntry);
+                    resultById.put(availabilityId, skedWorkdayApiManager.AdjustTimeOff(adjustTimeOffRequest));
                 }
 
-                recordsToUpsert.add(availabilityRecord);
-                
-                if (skedSetting.instance.admin.enableWorkdayLogging) {
-                    sked__Debug_Log__c debugLog = getDebugLogFromResponse('Adjust Time Off', availabilityRecord, result);
-                    recordsToUpsert.add(debugLog);
+                Map<Id, sked__Availability__c> availabilityById = new Map<Id, sked__Availability__c>([
+                    SELECT Id, sked__Resource__c FROM sked__Availability__c WHERE Id IN :availabilityIds
+                ]);
+
+                List<sked__Availability__c> failedAdjustments = new List<sked__Availability__c>();
+
+                List<SObject> recordsToUpsert = new List<SObject>();
+                for (Id availabilityId : resultById.keySet()) {
+                    if (!availabilityById.containsKey(availabilityId)) continue;
+                    skedWorkdayAdjustTimeOffResponse result = resultById.get(availabilityId);
+                    sked__Availability__c availabilityRecord = availabilityById.get(availabilityId);
+                    if (!result.isSuccess) {
+                        availabilityRecord.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_FAILED;
+                        availabilityRecord.sked_Workday_Sync_Message__c = result.message;
+                        availabilityRecord.sked_Approval_Reason__c = skedConstants.AVAILABILITY_APPROVAL_REASON_WORKDAY_SYNC_FAILURE;
+                        availabilityRecord.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                        failedAdjustments.add(availabilityRecord);
+                    } else {
+                        availabilityRecord.sked_Approved_Via_Automation__c = true;
+                        availabilityRecord.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WD_SYNC_STATUS_SUCCESS;
+                        availabilityRecord.sked_Workday_Sync_Message__c = null;
+                        availabilityRecord.sked_Custom_Status__c = isCancellation ? 
+                            skedConstants.AVAILABILITY_STATUS_CANCELLED : skedConstants.AVAILABILITY_STATUS_APPROVED;
+                    }
+
+                    recordsToUpsert.add(availabilityRecord);
+                    
+                    if (skedSetting.instance.admin.enableWorkdayLogging) {
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Adjust Time Off', availabilityRecord, result);
+                        recordsToUpsert.add(debugLog);
+                    }
+                }
+
+                upsert recordsToUpsert;
+
+                if (!failedAdjustments.isEmpty()) {
+                    String failedTemplateResource = isCancellation ? 'sked_Workday_Cancel_Failed_Resource' : 'sked_Workday_Adjustment_Failed_Resource';
+                    new skedCustomNotificationService(new List<String>{
+                        failedTemplateResource
+                    }).generateNotifications(failedAdjustments);
                 }
             }
-
-            upsert recordsToUpsert;
-
-            if (!failedAdjustments.isEmpty()) {
-                String failedTemplateResource = isCancellation ? 'sked_Workday_Cancel_Failed_Resource' : 'sked_Workday_Adjustment_Failed_Resource';
-                new skedCustomNotificationService(new List<String>{
-                    failedTemplateResource
-                }).generateNotifications(failedAdjustments);
-            }
+        } catch (skedException ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Handle Workday Adjustments', ex, new Set<Id>(availabilityIds));
+            insert debugLog;
         }
     }
 
