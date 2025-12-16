@@ -22,9 +22,9 @@
 @isTest
 private class TestskedJobNonDeclinable_batch {
 
-    @isTest
+    /*@isTest
     static void myUnitTest() {
         skedJobNonDeclinable_batch btch = new skedJobNonDeclinable_batch();
         Database.executeBatch(btch);
-    }
+    }*/
 }

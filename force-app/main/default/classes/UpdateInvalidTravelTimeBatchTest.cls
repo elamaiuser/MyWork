@@ -1,8 +1,7 @@
 @isTest
 private class UpdateInvalidTravelTimeBatchTest {
     @TestSetup
-    static void makeData(){
-        UserRole urole  = [select id from userrole where developername ='West_BDM' ];
+    static void makeData() {
         Profile drdpr = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'];
         RecordType accountRecType = [SELECT Id FROM RecordType WHERE sObjectType='Account' AND Name = 'Mobile Account'];
         RecordType siteRecType = [SELECT Id FROM RecordType WHERE sObjectType='sked__Location__c' AND Name = 'Mobile Site'];
@@ -74,8 +73,7 @@ private class UpdateInvalidTravelTimeBatchTest {
              TimeZoneSidKey = 'America/Los_Angeles',
              EmailEncodingKey = 'UTF-8',
              LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US',
-             UserRoleId = urole.Id
+             LocaleSidKey = 'en_US'
         );
         User AdminUser = [SELECT id FROM User WHERE Id =:UserInfo.getUserId()];   
         System.runAs( AdminUser ){
