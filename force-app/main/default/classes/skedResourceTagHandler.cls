@@ -267,9 +267,10 @@ public class skedResourceTagHandler extends skedTriggerHub {
             }
             
             skedResourceTag.sked__Expiry_Date__c = NULL;
-            if (skedResourceTag.sked_Expiry_Date__c != NULL) {
+            skedResourceTag.sked_Expiry_Date__c = NULL;
+            /*if (skedResourceTag.sked_Expiry_Date__c != NULL) {
                 skedResourceTag.sked__Expiry_Date__c = skedDateTimeUtils.getEndOfDate(skedResourceTag.sked_Expiry_Date__c, timezoneSidId);
-            }
+            }*/
         }
     }
     

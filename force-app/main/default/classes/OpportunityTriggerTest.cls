@@ -83,6 +83,9 @@ public class OpportunityTriggerTest
     static testMethod void testUpdateDriveDateDay()
     {
         Test.startTest();
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
@@ -98,9 +101,9 @@ public class OpportunityTriggerTest
         // insert templates
         Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
         testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;        
         insert testTemplate;
-        
+
         List<Opportunity> oppList = new List<Opportunity>();
          // insert Mobile Opp 1
         Opportunity testMobileOpp1 = new Opportunity(
@@ -254,9 +257,7 @@ public class OpportunityTriggerTest
         oppList.add(testMobileOpp6);
         
 		insert oppList;
-        
-       
-        
+
         List<Opportunity> oppListAfterInsert = [Select Id, Drive_Date_Day__c,Direct_Donors_To__c from Opportunity];
         Id id_acc = OpportunityService.getOrCreateDefaultAccount();
         Account accObj = [select name from Account where Id=:id_acc LIMIT 1];
@@ -554,6 +555,12 @@ public class OpportunityTriggerTest
     }
 
     static testMethod void testTemplateImpactingRegionCheck() {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        Triggerhandler.bypass('OpportunitySplitTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -602,15 +609,15 @@ public class OpportunityTriggerTest
         testMobileOpp.AccountId = testMobileAccount.Id;
         testMobileOpp.Drive_Site__c = testMobileSite1.Id;
         testMobileOpp.Parent_Template_Id__c = testTemplate1.Id;
-        Triggerhandler.bypass('OpportunitySplitTriggerHandler');
         insert testMobileOpp;
                 
         testMobileOpp.Parent_Template_Id__c = testTemplate2.Id;
-        try{
+        try {
         	Update testMobileOpp; 
-        }catch(Exception ex) {
+        } catch(Exception ex) {
             Assert.isTrue(ex.getMessage().contains('Change requires Cancel/Rebook due to the Site changing regions'));
-        }     
+        }   
+        Test.stopTest();
     }
     
     static testMethod void testGetTaskOwner()
@@ -1101,7 +1108,6 @@ public class OpportunityTriggerTest
         // insert mobile opp
         TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('TaskTriggerHandler');
         
         List<Opportunity> oppList = new List<Opportunity>();
     
@@ -1141,7 +1147,36 @@ public class OpportunityTriggerTest
         task1.Priority = 'High';
         taskList.add(task1);
         
+        /*Task task2 = new Task();
+        task2.whatId = oppList[0].Id;
+        task2.subject = '72 Hour Check in - System Generated';
+        task2.OwnerId = userInfo.getUserId();
+        task2.ActivityDate = oppList[0].Drive_Date__c;
+        task2.Status = 'Not Started';
+        task2.Priority = 'High';
+        taskList.add(task2);
+        
+        Task task3 = new Task();
+        task3.whatId = oppList[0].Id;
+        task3.subject = 'Recruitment Task - System Generated';
+        task3.OwnerId = userInfo.getUserId();
+        task3.ActivityDate = oppList[0].Drive_Date__c;
+        task3.Status = 'Not Started';
+        task3.Priority = 'High';
+        taskList.add(task3);
+        
+        Task task4 = new Task();
+        task4.whatId = oppList[0].Id;
+        task4.subject = 'Security Information Completion';
+        task4.OwnerId = userInfo.getUserId();
+        task4.ActivityDate = oppList[0].Drive_Date__c;
+        task4.Status = 'Not Started';
+        task4.Priority = 'High';
+        taskList.add(task4);*/
+        
+        TriggerHandler.bypass('TaskTriggerHandler');
         insert taskList;
+        TriggerHandler.clearBypass('TaskTriggerHandler');
         Test.startTest();
         Date dDate = oppList[0].Drive_Date__c;
         oppList[0].Drive_Date__c = dDate.adddays(20);
@@ -1747,52 +1782,31 @@ public class OpportunityTriggerTest
         Assert.isTrue(oppAfterUpdate[1].WholeBloodProceduresProjectedTemplate__c== oppAfterUpdate[0].WB_Projected_Procedures__c);        
     }
     
-    static testmethod void testInsertOrUpdateCovRecruiterOpportunitySplit()
-    {
-        /* DRD Users */
-        List<User> userList = new List<User>();
-        User drdUser1 = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Profile'].Id,
-            LastName = 'DRDLastName',
-            Email = 'DRDUser@test.com',
-            Username = 'DRDUser@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany',
-            Title = 'TestTitle',
-            Alias = 'Tal',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        User drdUser2 = new User(
-            ProfileId = [select Id from Profile where name = 'DRD Manager'].Id,
-            LastName = 'DRDLastName2',
-            Email = 'DRDUser2@test.com',
-            Username = 'DRDUser2@test.com' + System.currentTimeMillis(),
-            CompanyName = 'TestCompany2',
-            Title = 'TestTitle2',
-            Alias = 'Tal2',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
-        );
-        userList.add(drdUser1);
-        userList.add(drdUser2);
-        
-        system.runAs(new User(Id=UserInfo.getUserId()))
-        {
-            insert userList;
-        }
+    static testmethod void testInsertOrUpdateCovRecruiterOpportunitySplit() {
+        TriggerHandler.bypass('UserTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        Triggerhandler.bypass('AccountTeamMemberTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
+        //insert DRD Users
+        List<User> testUsers = new List<User>();
+        testUsers.add((User)mapTestData.get('DRD_USER'));
+        testUsers.add((User)mapTestData.get('DRD_MANAGER_USER'));
+        system.runAs(new User(Id=UserInfo.getUserId())) {
+            for(User testUser : testUsers) {
+                testUser.IsActive = true;
+            }
+            insert testUsers;
+        }
+        
         // insert fixed site acc
         Account testFixedSiteAccount = (Account)mapTestData.get('FIXED_SITE_ACCOUNT');
-        testFixedSiteAccount.Account_Manager__c = userList[0].Id;
+        testFixedSiteAccount.Account_Manager__c = testUsers[0].Id;
         insert testFixedSiteAccount;
         
         // insert fixed Acc Team member - Coverage Recruiter 1
@@ -1801,14 +1815,14 @@ public class OpportunityTriggerTest
         	AccountAccessLevel = 'Edit',
             CaseAccessLevel = 'Edit',
             OpportunityAccessLevel = 'Edit',
-            UserId = userList[0].Id,
+            UserId = testUsers[0].Id,
             TeamMemberRole = 'Account Manager',
             Start_Date__c = System.today(),
             End_Date__c = System.today().addDays(20),
             Is_Covering_Recruiter__c = true,
-            Coverage_Reason__c = 'Leave of Absence (LOA)'
+            Coverage_Reason__c = 'Leave of Absence (LOA)',
+            AccountId = testFixedSiteAccount.Id
         );
-        fixedAccTeamMember1.AccountId = testFixedSiteAccount.Id;
         accTeamList.add(fixedAccTeamMember1);
         
         // insert fixed Acc Team member - Coverage Recruiter 2
@@ -1816,18 +1830,15 @@ public class OpportunityTriggerTest
         	AccountAccessLevel = 'Edit',
             CaseAccessLevel = 'Edit',
             OpportunityAccessLevel = 'Edit',
-            UserId = userList[1].Id,
+            UserId = testUsers[1].Id,
             TeamMemberRole = 'Account Manager',
             Start_Date__c = System.today(),
             End_Date__c = System.today().addDays(10),
             Is_Covering_Recruiter__c = true,
-            Coverage_Reason__c = 'Vacant Territory'
+            Coverage_Reason__c = 'Vacant Territory',
+            AccountId = testFixedSiteAccount.Id
         );
-        fixedAccTeamMember2.AccountId = testFixedSiteAccount.Id;
         accTeamList.add(fixedAccTeamMember2);
-        
-        Triggerhandler.bypass('AccountTriggerhandler');
-        Triggerhandler.bypass('AccountTeamMemberTriggerHandler');
         insert accTeamList;
         
         // insert fixed site
@@ -1842,7 +1853,6 @@ public class OpportunityTriggerTest
         testFixedSiteOpp.Anticipated_Registered_Donors__c = 10;
         oppList.add(testFixedSiteOpp);
         insert oppList;
-        
         
         // insert Affiliation - to cover deleteDriveAffiliationOnDriveDateChange method
         Marketing_Program__c affL = new Marketing_Program__c(Name = 'Test Affiliation 1', External_Name__c = 'TESTAFF',Booking_Start_Date__c = system.today().addDays(3), Booking_End_Date__c = system.today().addDays(10), Scope__c = 'Drive');
@@ -1879,7 +1889,7 @@ public class OpportunityTriggerTest
         Task testTask = new Task();
         testTask.subject = 'Test';
         testTask.status = 'Not Started';
-        testTask.OwnerId = userList[0].Id;
+        testTask.OwnerId = testUsers[0].Id;
         testTask.whatId = oppAfterUpdate.Id;
         testTask.ActivityDate = oppAfterUpdate.Drive_Date__c.addDays(4);
         TriggerHandler.bypass('TaskTriggerHandler');
@@ -2172,162 +2182,114 @@ public class OpportunityTriggerTest
     @isTest
     //HRP-10312- Addressed issues for opportunities being out of sync when drive change request is rejected 
     public static void testSyncOppWithDrivesGivenNullValues() {
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-         
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        skedHubBase.BypassUpdateTriggers = TRUE;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
-        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         Test.startTest();
-        GenerateMobileDrive.generateDrives(config);
-                         
-        List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
-        List<Opportunity> updateOppList = new List<Opportunity>();
+        
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+        
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('testOpportunity');
         Opportunity oppRec = new Opportunity(
-                Id = oppRecordList[0].Id,
-                Anticipated_Registered_Donors__c = null,
-                WB_Projected_Procedures__c = null,
-                X2RBC_Projected_Procedures__c = null,
-                Platelet_Projected_Procedures__c= null,//HRP-10514
-                Plasma_Pheresis_Projected_Procedures__c = null,
-                AnticipatedRegisterDonorChangeReason__c = null,
-                WholeBloodProcedureProjectedChangeReason__c = null,
-                DoubleRedProceduresProjectedChangeReason__c = null,
-                Anticipated_Registered_Donors_Template__c=null,
-                Parent_Template_Id__c =null,
-                Account_Manager__c = NULL, // new
-                Apheresis_Projected_Units__c = null,
-                Other_Projected_Units__c = null,
-                Number_of_2RBC_Assets__c = null,
-                Number_of_Plasma_Assets__c = null,
-                Number_of_Platelet_Assets__c =null,
-                Drive_Status__c = 'Tentative',
-                StageName = 'Committed',
-                Drive_Date__c = System.today().addDays(-5),
-                Start_Time__c = Time.newInstance(12, 0, 0, 0),
-                End_Time__c = Time.newInstance(21, 0, 0, 0),
-                Flow_Start_Time_Label_Text__c = Helper.getStartEndTimeLabelText('0000'),
-                Is_Recursion_On__c = true,
-                sked_Cancellation_Reason__c = null,
-                Initiated_By__c = null
-                
-            ); 
-        updateOppList.add(oppRec);
-        Triggerhandler.clearAllBypasses();
-        if (!updateOppList.isEmpty())
-        {
-           opportunityService.syncOppsWithDrives(updateOppList);
-        }
-                Test.stopTest();       
-       Opportunity opp = [select id,Anticipated_Registered_Donors__c,WB_Projected_Procedures__c,Platelet_Projected_Procedures__c from opportunity where id=:oppRecordList[0].id limit 1];
-       
-       Assert.isTrue(opp.Anticipated_Registered_Donors__c == null);
-
+            Id = mobileOpportunity.Id,
+            Anticipated_Registered_Donors__c = null,
+            WB_Projected_Procedures__c = null,
+            X2RBC_Projected_Procedures__c = null,
+            Platelet_Projected_Procedures__c= null,//HRP-10514
+            Plasma_Pheresis_Projected_Procedures__c = null,
+            AnticipatedRegisterDonorChangeReason__c = null,
+            WholeBloodProcedureProjectedChangeReason__c = null,
+            DoubleRedProceduresProjectedChangeReason__c = null,
+            Anticipated_Registered_Donors_Template__c=null,
+            Parent_Template_Id__c =null,
+            Account_Manager__c = NULL, // new
+            Apheresis_Projected_Units__c = null,
+            Other_Projected_Units__c = null,
+            Number_of_2RBC_Assets__c = null,
+            Number_of_Plasma_Assets__c = null,
+            Number_of_Platelet_Assets__c =null,
+            Drive_Status__c = 'Tentative',
+            StageName = 'Committed',
+            Drive_Date__c = System.today().addDays(-5),
+            Start_Time__c = Time.newInstance(12, 0, 0, 0),
+            End_Time__c = Time.newInstance(21, 0, 0, 0),
+            Flow_Start_Time_Label_Text__c = Helper.getStartEndTimeLabelText('0000'),
+            Is_Recursion_On__c = true,
+            sked_Cancellation_Reason__c = null,
+            Initiated_By__c = null                
+        ); 
+        
+        OpportunityService.syncOppsWithDrives(new List<Opportunity>{oppRec});
+        
+        TriggerHandler.clearAllBypasses();
+        Test.stopTest(); 
+        
+       	Opportunity opp = [select id,Anticipated_Registered_Donors__c,WB_Projected_Procedures__c,Platelet_Projected_Procedures__c from opportunity where id = :mobileOpportunity.id limit 1];
+       	Assert.isTrue(opp.Anticipated_Registered_Donors__c == null);
     }
      //HRP-10312 Ends   
      
-     static testMethod void testSyncOppWithDrives2()
-     {
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
+     static testMethod void testSyncOppWithDrives2() {
+         Test.startTest();
          
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        skedHubBase.BypassUpdateTriggers = TRUE;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
-        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        Test.startTest();
-        GenerateMobileDrive.generateDrives(config);
-                    	
-        List<sked_Drive__c> drivesList = [SELECT Id FROM sked_Drive__c];
-
-        if(drivesList != null && drivesList.size() > 0)
-        {
-        	List<FieldIdentifiers> docFields = new List<FieldIdentifiers>();
-        	FieldIdentifiers fi = new FieldIdentifiers();
-        	fi.Sked_Drive_Id = drivesList[0].Id;
-        	fi.Sked_Cancellation_Reason = '';
-        	fi.sked_Drive_Owner = userinfo.getUserId();
-        	fi.sked_Historical_Registered_Donors = 1;
-        	docFields.add(fi);
-        
-        	UpdateEvent objDoc = new UpdateEvent();
-        	objDoc.objectName = 'DrivesOnCalendar';
-        	objDoc.objectFields = docFields;
-              
-        	string jsonObj = Json.serialize(objDoc);
-            List<Update_Event__e> updateEventList = new List<Update_Event__e>(); 
-            
-            //Prepare platform event to publish
-            Update_Event__e event = new Update_Event__e(
-                Object_Data__c = jsonObj
-            );
-            updateEventList.add(event);
-            
-            if(!updateEventList.isEmpty())
-            {
-                List<Database.SaveResult> eventPubResultList = EventBus.publish(updateEventList);
-            }
-            
-        Test.stopTest();
-            
-        Assert.isTrue(config != null);
-        }
+         TriggerHandler.bypass('DriveTriggerHandler');
+         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+         mapTestData = testDataFactory.setupDriveData();
+         
+         Opportunity mobileOpportunity = (Opportunity)mapTestData.get('testOpportunity');
+         sked_Drive__c drive = [SELECT Id FROM sked_Drive__c WHERE sked_Opportunity__c = :mobileOpportunity.Id LIMIT 1];
+         
+         List<FieldIdentifiers> docFields = new List<FieldIdentifiers>();
+         FieldIdentifiers fi = new FieldIdentifiers();
+         fi.Sked_Drive_Id = drive.Id;
+         fi.Sked_Cancellation_Reason = '';
+         fi.sked_Drive_Owner = userinfo.getUserId();
+         fi.sked_Historical_Registered_Donors = 1;
+         docFields.add(fi);
+         
+         UpdateEvent objDoc = new UpdateEvent();
+         objDoc.objectName = 'DrivesOnCalendar';
+         objDoc.objectFields = docFields;
+         
+         string jsonObj = Json.serialize(objDoc);
+         List<Update_Event__e> updateEventList = new List<Update_Event__e>(); 
+         
+         //Prepare platform event to publish
+         Update_Event__e event = new Update_Event__e(
+             Object_Data__c = jsonObj
+         );
+         updateEventList.add(event);
+         
+         if(!updateEventList.isEmpty()) {
+             List<Database.SaveResult> eventPubResultList = EventBus.publish(updateEventList);
+         }
+         
+         TriggerHandler.clearAllBypasses();
+         Test.stopTest();
      }
     
     // New Version
-    static testMethod void testSyncOppWithDrives3()
-    {
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-         
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        skedHubBase.BypassUpdateTriggers = TRUE;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
-        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+    static testMethod void testSyncOppWithDrives3() {
         Test.startTest();
-        GenerateMobileDrive.generateDrives(config);
         
-        //List<Opportunity> oppRecordList = [SELECT Id FROM Opportunity];        
-        List<Opportunity> updateOppList = new List<Opportunity>();
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();      
+        
+        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('testOpportunity');
         Opportunity oppRec = new Opportunity(
-                Id = mobileOpportunity.Id,
-                Drive_Status__c = 'Confirmed',
-                StageName = 'Committed',
-                Initiated_By__c = 'ARC_Initiated_Mobile'
-            ); 
-        updateOppList.add(oppRec);
-        Triggerhandler.clearAllBypasses();
-        if (!updateOppList.isEmpty())
-        {
-            opportunityService.syncOppsWithDrives(updateOppList);
-        }         
+            Id = mobileOpportunity.Id,
+            Drive_Status__c = 'Confirmed',
+            StageName = 'Committed',
+            Initiated_By__c = 'ARC_Initiated_Mobile'
+        ); 
+        
+        opportunityService.syncOppsWithDrives(new List<Opportunity>{oppRec});
+          
+        TriggerHandler.clearAllBypasses();
         Test.stopTest();
-        Assert.isTrue(config != null);
     }
     
     // HRP- 10115 --> Covering BSF_Utilities.restrictNonAdminUsersForSobjectDeletion() in OpportunityTriggerHandler

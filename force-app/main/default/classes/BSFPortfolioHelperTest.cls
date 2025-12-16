@@ -1,6 +1,6 @@
 @isTest
 public class BSFPortfolioHelperTest {
-public static String rolename = 'West_BDM';
+
     @testSetup static void createData(){
         List<Taxonomy__c> taxonomies = PortfolioTestDataFactory.createTaxonomies('48420','48421');
         insert taxonomies;
@@ -27,10 +27,7 @@ public static String rolename = 'West_BDM';
         Test.stopTest();
     }
     
-    @isTest static void testPortfolioGeneration1(){
-        
-        
-        
+    @isTest static void testPortfolioGeneration1(){     
         /*BSFPortfolioHelper.processTaxonomyData(1000,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1001,BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1002,BSF_Constants.TAXO_SUPERVISOR_RECORD_TYPE);
@@ -53,6 +50,7 @@ public static String rolename = 'West_BDM';
         update portfolios[0];
         
         delete portfolios[0];
+        
         Test.stopTest();
     }
     
@@ -69,6 +67,10 @@ public static String rolename = 'West_BDM';
         BSFPortfolioHelper.processTaxonomyData(694,BSF_Constants.TAXO_RELATIONSHIP_MGR_RECORD_TYPE);
         BSFPortfolioHelper.processTaxonomyData(1317,BSF_Constants.TAXO_SICKLE_CELL_RECORD_TYPE);*/
         
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        
         List<Taxonomy__c> taxoList = [SELECT Division_Code__c,Division_Key__c,Division_Name__c,DRD_Territory_Code__c,DRD_Territory_Key__c,DRD_Territory_Name__c,DS_Region_Code__c,DS_Region_Key__c,DS_Region_Name__c,
                                             Team_Code__c,Team_Key__c,Team_Name__c,ABM_Code__c,ABM_Name__c,Type_Key__c,Type__c,Start_Date__c,End_Date__c,
         									RecordType.Name,District_Code__c,District_Name__c,Collection_Operation_Code__c,Collection_Operation_Name__c,Supervisor_Code__c,Supervisor_Name__c,Portfolio_Code__c,Portfolio_Name__c,
@@ -79,21 +81,20 @@ public static String rolename = 'West_BDM';
         
         account acc = [select id from account Limit 1];
         bsf_portfolio__c bsf  = [select id,start_date__c,End_date__c from bsf_Portfolio__c where Portfolio_type__c ='Account Manager' and Taxonomy_Type__c='Bio Recruitment CD' limit 1];
-        Date mydt=system.today();
-        account_portfolio_Assignment__c aplist= new account_portfolio_Assignment__c(account__c=acc.id,BSF_Portfolio__c=bsf.id,start_date__c =bsf.Start_Date__c,end_date__c = bsf.End_Date__c) ;
         
+        Date mydt = system.today();
+        account_portfolio_Assignment__c aplist= new account_portfolio_Assignment__c(account__c=acc.id,BSF_Portfolio__c=bsf.id,start_date__c =bsf.Start_Date__c,end_date__c = bsf.End_Date__c) ;
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         insert aplist;
-        //List<BSF_Portfolio__c> portfolios = [Select Id,Name,Portfolio_Code__c , Portfolio_Name__c ,Taxonomy_Type__c,Portfolio_Type__c,External_Key__c,Parent_Portfolio__c,Parent_Portfolio__r.Portfolio_Type__c,Account_Based_Portfolio__c,Territory_Portfolio__c  FROM BSF_Portfolio__c];
+        
         bsf.End_Date__c = system.today().addDays(10);
         update bsf;
-        
-        
-        
+
         Test.stopTest();
     }
     
-    @isTest static void testPortfolioGeneration3(){
-        
+    @isTest static void testPortfolioGeneration3() {
+
         User AdminUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
             LastName = 'last',
@@ -105,8 +106,7 @@ public static String rolename = 'West_BDM';
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
+            LocaleSidKey = 'en_US'    
         );
         
         User DRDAMUser = new User(
@@ -122,8 +122,7 @@ public static String rolename = 'West_BDM';
             LanguageLocaleKey = 'en_US',
             LocaleSidKey = 'en_US'
         );
-        
-        
+
         System.runAs( AdminUser ){
             insert DRDAMUser;
         }
@@ -151,17 +150,18 @@ public static String rolename = 'West_BDM';
         bsf_portfolio__c bsfDm  = [select id,start_date__c,End_date__c,parent_Portfolio__c from bsf_Portfolio__c where id=:bsf.parent_Portfolio__c limit 1];
         Portfolio_assignment__c ps = new Portfolio_assignment__c(user__c=DRDAMUser.id,bsf_portfolio__c = bsfDm.id,start_date__c=bsfDm.Start_Date__c,end_date__c=bsfDm.End_Date__c,Assignment_Type__c='Area Booking Manager');
         insert ps;
-        Date mydt=system.today();
+        
+        Date mydt = system.today();
         account_portfolio_Assignment__c aplist= new account_portfolio_Assignment__c(account__c=acc.id,BSF_Portfolio__c=bsf.id,start_date__c =bsf.Start_Date__c,end_date__c = bsf.End_Date__c) ;
         AccountTeamMember atm = new AccountTeamMember(accountId=acc.id,userid=DRDAMUser.id,bsf_portfolio__c = bsfDm.id,start_date__c=bsfDm.Start_Date__c,end_date__c=bsfDm.End_Date__c,TeamMemberRole='Area Booking Manager',is_covering_recruiter__c=false);
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         insert aplist;
+        
         triggerHandler.bypass('AccountTeamMemberTriggerHandler');
         insert atm;
         bsfDm.End_Date__c = system.today().addDays(10);
         update bsfDm;
-        
-        
-        
+
         Test.stopTest();
     }
     
@@ -178,8 +178,7 @@ public static String rolename = 'West_BDM';
             TimeZoneSidKey = 'America/Los_Angeles',
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US'
-            
+            LocaleSidKey = 'en_US' 
         );
         
         User DRDAMUser = new User(
@@ -195,8 +194,7 @@ public static String rolename = 'West_BDM';
             LanguageLocaleKey = 'en_US',
             LocaleSidKey = 'en_US'
         );
-        
-        
+
         System.runAs( AdminUser ){
             insert DRDAMUser;
         }
@@ -225,17 +223,12 @@ public static String rolename = 'West_BDM';
         Portfolio_assignment__c ps = new Portfolio_assignment__c(user__c=DRDAMUser.id,bsf_portfolio__c = bsf.id,start_date__c=bsf.Start_Date__c,end_date__c=bsf.End_Date__c,Assignment_Type__c=BSF_Constants.ACCOUNT_SPECIALIST);
         insert ps;
         Date mydt=system.today();
-        account_portfolio_Assignment__c aplist= new account_portfolio_Assignment__c(account__c=acc.id,BSF_Portfolio__c=bsf.id,start_date__c =bsf.Start_Date__c,end_date__c = bsf.End_Date__c) ;
-        
-        
+        account_portfolio_Assignment__c aplist= new account_portfolio_Assignment__c(account__c=acc.id,BSF_Portfolio__c=bsf.id,start_date__c =bsf.Start_Date__c,end_date__c = bsf.End_Date__c) ;    
         insert aplist;
-        
-            
+    
         DMBSf.End_Date__c = system.today().addDays(10);
         update DMBSf;
-        
-        
-        
+
         Test.stopTest();
     }
 }

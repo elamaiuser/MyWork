@@ -88,6 +88,16 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_Site2CO__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_CO2Site__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked_Key__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
@@ -119,6 +129,61 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Is_Duplicate__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Site__c.sked_Active__c</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Collection_Operation__c.Name</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Site__c.sked__GeoLocation__Latitude__s</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Site__c.sked__GeoLocation__Longitude__s</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Site__c.LastModifiedDate</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Collection_Operation__c.Staging_Location_Geolocation__Latitude__s</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Collection_Operation__c.Staging_Location_Geolocation__Longitude__s</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Collection_Operation__c.LastModifiedDate</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_CO2Site__c.LastModifiedDate</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Travel_Time_Index_Site2CO__c.LastModifiedDate</field>
+            <table>sked_Site_Collection_Operation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Site__c.sked_Site_Building_Name__c</field>
             <table>sked_Site_Collection_Operation__c</table>
         </columns>
         <masterLabel>Site Collection Operations</masterLabel>

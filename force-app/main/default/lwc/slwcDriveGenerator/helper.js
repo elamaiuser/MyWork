@@ -212,7 +212,8 @@ class DriveHelper {
     timezoneSidId,
     cancellationReason,
     initiatedBy,
-    replacementDriveId
+    replacementDriveId,
+    cancellationDetail
   }) {
     if(!drive) return null;
 
@@ -233,7 +234,8 @@ class DriveHelper {
         pendingActionReasonCode: DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
         cancellationReason: cancellationReason,
         initiatedBy: initiatedBy,
-        replacementDriveId: replacementDriveId
+        replacementDriveId: replacementDriveId,
+        cancellationDetail: cancellationDetail
       }
     } else {
       if(needToCheckForApproval && diff <= 42) {
@@ -244,7 +246,8 @@ class DriveHelper {
           pendingActionReasonCode: '',
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       } else {
         return {
@@ -253,7 +256,8 @@ class DriveHelper {
           cancellationReason: cancellationReason,
           initiatedBy: initiatedBy,
           pendingActionReasonCode: '',
-          replacementDriveId: replacementDriveId
+          replacementDriveId: replacementDriveId,
+          cancellationDetail: cancellationDetail
         }
       }
     }
@@ -468,6 +472,7 @@ class DriveHelper {
         
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
+          vphhQuantity: job.vphhQuantity || 0,
           dualRole: job.dualRole
         });
       }
@@ -780,6 +785,7 @@ class DriveHelper {
           startTime: true,
           endTime: true,
           driveSite: true,
+          timeBlock: true,
           projectedRegisteredDonors: true,
           driveShiftsMetadata: true,
           driveShiftsConfiguration: true,
@@ -807,6 +813,7 @@ class DriveHelper {
             startTime: true,
             endTime: true,
             driveSite: true,
+            timeBlock: true,
             projectedRegisteredDonors: true,
             driveShiftsMetadata: true,
             driveShiftsConfiguration: true, 
@@ -841,6 +848,7 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
+            timeBlock: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
             redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
@@ -864,6 +872,7 @@ class DriveHelper {
       startTime: isReadonly,
       endTime: isReadonly,
       driveSite: isReadonly,
+      timeBlock: isReadonly,
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
@@ -899,6 +908,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
           fieldReadonlyMap.redcrossVolunteerRequired = false;
+          fieldReadonlyMap.timeBlock = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -1822,13 +1832,21 @@ class DriveHelper {
   calculateStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
     timezoneSidId 
-  }, ignoreLunchBreak = false) {
+  }, { ignoreLunchBreak = false, useDriveShift = false } = {}) {
     const resourceRoleCapacityFieldMap = {
       'Driver': 'driverCapacity',
       'Driver Support': 'driverSupportCapacity',
       '2RBC': 'x2RbcStaffCapacity',
       'Charge': 'chargeCapacity',
       'VP/HH': 'vpHhCapacity'
+    }
+    let lunchBreakSettings = driveShiftMetadata.lunchBreakSettings;
+    if (useDriveShift) {
+      const driveShift = drive.driveShifts?.find(item => item.driveShiftMetadata.key === driveShiftMetadata.key);
+      if (driveShift) {
+        lunchBreakSettings.lunchBreak = driveShift.lunchBreak;
+        lunchBreakSettings.lunchBreakBeforeDrawHours = driveShift.lunchBreakBeforeDrawHours;
+      }
     }
 
     const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
@@ -1844,6 +1862,19 @@ class DriveHelper {
       drawHours = drawHoursWithoutLunchBreak;
     }
 
+    let total2RBCResources = 0;
+    resourceQuantity.forEach((data, key) => {
+      let baseRole = key.split('-')[0];
+      if (baseRole === RESOURCE_ROLE.x2RBC) {
+        let qty = isObject(data) ? (data.quantity || 0) : data || 0;
+        total2RBCResources += qty;
+      }
+    });
+
+    const noOf2RBCAssets = drive.numberOf2rbcAssets || 0;
+    let resourcesHaveEnough2RBCAssetsCount = Math.min(total2RBCResources, Math.floor(noOf2RBCAssets / 2));
+    let resourcesNotHaveEnough2RBCAssetsCount = Math.max(total2RBCResources - resourcesHaveEnough2RBCAssetsCount, 0);
+
     let staffCapacity = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
       const data = resourceQuantity.get(resourceRole);
@@ -1851,6 +1882,9 @@ class DriveHelper {
       let dualRole = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
+        if (resourceRole === 'VP/HH') {
+          noOfResources = data.vphhQuantity || 0;
+        }
         dualRole = data.dualRole;
       }
 
@@ -1859,14 +1893,17 @@ class DriveHelper {
 
       if(resourceRoles.includes(role)) {
         if(role === RESOURCE_ROLE.x2RBC) {
-          const noOf2RBCAssets = drive.numberOf2rbcAssets || 0;
-          const noOfResourcesHaveEnough2RBCAssets = Math.min(noOfResources, Math.floor(noOf2RBCAssets / 2));
-          const noOfResourcesNotHaveEnough2RBCAssets = Math.max(noOfResources - noOfResourcesHaveEnough2RBCAssets, 0);
+          
+          const noOfResourcesHaveEnough2RBCAssets = Math.min(noOfResources, resourcesHaveEnough2RBCAssetsCount);
+          const noOfResourcesNotHaveEnough2RBCAssets = Math.min(noOfResources - noOfResourcesHaveEnough2RBCAssets, resourcesNotHaveEnough2RBCAssetsCount);
           const x2RBCRoleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[RESOURCE_ROLE.x2RBC]] || 0;
           
           const capacity1 = noOfResourcesHaveEnough2RBCAssets * 2 * drawHoursWithoutLunchBreak;
           const capacity2 = noOfResourcesNotHaveEnough2RBCAssets * x2RBCRoleCapacity * drawHoursWithoutLunchBreak;
           staffCapacity += capacity1 + capacity2;
+
+          resourcesHaveEnough2RBCAssetsCount -= noOfResourcesHaveEnough2RBCAssets;
+          resourcesNotHaveEnough2RBCAssetsCount -= noOfResourcesNotHaveEnough2RBCAssets;
         } else {
           staffCapacity += noOfResources * roleCapacity * drawHours;
         }
@@ -2282,6 +2319,27 @@ class DriveHelper {
     return false;
   }
 
+  checkForChangesToDriveShifts(drive, backupDrive) {
+    if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
+      return true;
+    }
+
+    let requiresAssetValidation = false;
+    for (let i = 0; i < drive.driveShifts.length; i++) {
+      let driveShift = drive.driveShifts[i];
+      let backupDriveShift = backupDrive.driveShifts[i];
+      
+      const triggeringFields = ['timeBlockId'];
+      triggeringFields.forEach(field => {
+        if (driveShift[field] !== backupDriveShift?.[field]) {
+          requiresAssetValidation = true;
+        }
+      });
+    }
+    
+    return requiresAssetValidation;
+  }
+
   findDriveLimitByDay = (dateIso, driveLimits = [], type = null) => {
     if (!dateIso) return null;
 
@@ -2406,7 +2464,7 @@ class DriveHelper {
           passed: !violated
         }
       });
-
+      
       result.data = {
         driveLimit: isNullOrEmpty(driveLimit) ? '∞' : driveLimit,
         noOfCurrentDrives: noOfConfirmedDrives,
@@ -2663,7 +2721,7 @@ class DriveHelper {
           passed: !violated
         }
       });
-
+      
       result.data = {
         operationalLimit: isNullOrEmpty(operationalLimit) ? '∞' : operationalLimit,
         noOfCDLRequested,
@@ -3363,7 +3421,7 @@ class DriveHelper {
       } else {
         return ['Donor Ambassador'].includes(job.volunteerRole);
       }
-    }
+      }
 
     return false;
   }
@@ -4111,7 +4169,8 @@ class DriveHelper {
           }
         }
       } else {
-        if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+        // Always validate missing time block first as long as there is at least one available CO time block
+        if (availableCOTimeBlocks.length >= 1 && !availableTimeBlocks.length) {
           return {
             driveShiftKey: driveShift.key,
             driveShift: driveShift,

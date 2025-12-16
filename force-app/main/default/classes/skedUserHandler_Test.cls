@@ -85,7 +85,7 @@ private class skedUserHandler_Test {
     @TestSetup
     static void makeData() {
         List<Biomed_Collection_Op_Center__c> opCenters = new List<Biomed_Collection_Op_Center__c>();
-        Set<String> collectionOpNames = new Set<String>{'Adrian MI', 'Alameda CA', 'Albany NY', 'Altoona PA'};
+        Set<String> collectionOpNames = new Set<String>{'Austin TX', 'Atlanta GA', 'Albany NY', 'Altoona PA'};
         for (String collectionOpName : collectionOpNames) {
             opCenters.add(new Biomed_Collection_Op_Center__c(
                 Name = collectionOpName,
