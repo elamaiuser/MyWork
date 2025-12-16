@@ -339,13 +339,14 @@ TriggerHandler.clearbypass('AccountTriggerHandler');
         AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new list<id>{acc.id},null,new Set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());
         TriggerHandler.clearbypass('AccountTeamMemberTriggerHandler');
         test.StopTest();
-        
-         
-        
-        
+
     }
+    
     @isTest
     static void testEnsureTerritoryCoverage() {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        triggerHandler.bypass('TaskTriggerHandler');
+        
         Account acc = new Account(Name='Coverage Test Account', BillingPostalCode='99999');
         insert acc;
 
@@ -377,6 +378,7 @@ TriggerHandler.clearbypass('AccountTriggerHandler');
             DRD_Territory_Code__c='TERR_001'
         );
         insert taxo;
+        
         BSF_Portfolio__c terrPortfolio = new BSF_Portfolio__c(
             Portfolio_Name__c='Territory Portfolio',
             Portfolio_Code__c='TERR_001',
@@ -405,7 +407,4 @@ TriggerHandler.clearbypass('AccountTriggerHandler');
         System.assertEquals(terrPortfolio.Id, result[0].BSF_Portfolio__c);
         System.assertEquals(Date.newInstance(4000, 12, 31), result[0].End_Date__c);
     }
-
-
-
 }
