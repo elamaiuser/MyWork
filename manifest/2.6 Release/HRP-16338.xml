@@ -8,6 +8,7 @@
         <members>skedTriggerUtils_Test</members>
         <members>skedWorkdayUtils</members>
         <members>skedWorkdayUtils_Test</members>
+        <members>skedTestDataFactory</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
