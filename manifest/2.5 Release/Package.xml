@@ -1,54 +1,141 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>APComplianceReportController</members>
+        <members>ARCSearchAffiliationsClassTest</members>
         <members>AccountBasedPortfolioClass</members>
         <members>AccountBasedPortfolioClass_Test</members>
+        <members>AccountPortfolioAssignmentBatch_Test</members>
         <members>AccountPortfolioAssignmentService</members>
         <members>AccountPortfolioAssignmentTrigger_Test</members>
+        <members>AddTeamMemberToAccountExtensionTest</members>
+        <members>AddTeamMemberToAccountTest</members>
+        <members>AddTeamMemberToOpportunityExtensionTest</members>
+        <members>AddTeamMemberToOpportunityTest</members>
+        <members>AffiliationInvokable_Test</members>
+        <members>AffiliationTriggerTest</members>
+        <members>AutoCompleteServiceTest</members>
         <members>BSFBatchPortfolio_Test</members>
+        <members>BSFPortfolioHelperTest</members>
+        <members>BSFTaskChecklistTrigger_Test</members>
         <members>BSF_AccessControlManager</members>
         <members>BSF_AccessControlManagerTest</members>
+        <members>BSF_BatchPopulateDriveShift_Test</members>
+        <members>BSF_BatchTaskSyncTest</members>
         <members>BSF_BatchUpdateAccountForZipCode</members>
+        <members>BSF_BatchUpdateOpportunityForZipCodeTest</members>
+        <members>BSF_Batch_BSFPortfolio</members>
         <members>BSF_Batch_BSFPortfolioScheduler</members>
+        <members>BSF_Batch_OpportunitySplitDelete_Test</members>
+        <members>BSF_Batch_OpportunityTeamMember_Test</members>
         <members>BSF_Batch_PopulateCORegionScheduler</members>
+        <members>BSF_Batch_RemoveDriveSpecialAffiliations</members>
+        <members>BSF_Batch_RemoveSpecialAffiliations_Test</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
+        <members>BSF_Batch_UpdateSiteAsInactiveHelperTest</members>
         <members>BSF_Constants</members>
+        <members>BSF_TestDataSetup</members>
+        <members>BatchAccoutsOpptyUpdateOnCZipCodeTest</members>
+        <members>CloneOpportunityControllerTest</members>
+        <members>CreateDriveAffiliationsBatch_test</members>
+        <members>CreateSkedFixedSiteDriveBatchTest</members>
         <members>DelayedTaxonomyBatchScheduler</members>
         <members>DeleteExpiredTaxoVersionBatchTest</members>
+        <members>DriveMarketingProgramTriggerHandler</members>
+        <members>DriveMarketingProgramTriggerService</members>
+        <members>DriveMarketingProgramTriggerService_Test</members>
+        <members>DriveServiceTest</members>
         <members>FieldIdentifiers</members>
+        <members>GenerateMobileDrive</members>
+        <members>GeneratePendingDCRControllerTest</members>
+        <members>GenerateSlotsForDriveBatch</members>
+        <members>GenericCustomLookupTest</members>
+        <members>LookupClass_Test</members>
+        <members>MassAssignUserToRMPortfolioClassTest</members>
+        <members>MassUpdateOpportunityControllerTest</members>
         <members>OpportunityService</members>
+        <members>OpportunityServiceControllerTest</members>
+        <members>OpportunitySplitTriggerTest</members>
+        <members>OpportunityTeamMemberTriggerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
         <members>OrderCloningService</members>
+        <members>PowerBIProxyController_test</members>
+        <members>RemoveDuplicateTagBatchTest</members>
+        <members>RenderSitePlanControllerTest</members>
+        <members>ResourceTriggerTest</members>
+        <members>SitePlanForTemplatesHelper_Test</members>
+        <members>SponsorPlanningReportController_Test</members>
+        <members>TaskForMigratedDrivesBatchTest</members>
+        <members>TaskGenerationBatch_Test</members>
         <members>Taxo_Utilities</members>
         <members>TemplateService</members>
         <members>TemplateService_Test</members>
+        <members>TestAddressUtility</members>
+        <members>TestBSFPortfolioHelper</members>
+        <members>TestOneTimeFlowTimeFieldUpdateBatch</members>
+        <members>Test_AccountContactHistoryService</members>
+        <members>Test_BatchDeleteFromAccountServiceRole</members>
+        <members>Test_ContactTriggerHandler</members>
+        <members>TestskedJobNonDeclinable_batch</members>
+        <members>UpdateAMAndDMPortfolioBatchTest</members>
         <members>UpdateAccountTeamMemberDailyBatchHelper</members>
+        <members>UpdateAllOpportunityForCollectionZipTest</members>
+        <members>UpdateDriveShiftProjectedProcTest</members>
+        <members>UpdateDrivesVehicleAllocationFieldsTest</members>
+        <members>UpdateInvalidTravelTimeBatchTest</members>
+        <members>UpdateOpportunityStageBatchTest</members>
+        <members>calculateOrderDueDateTest</members>
+        <members>createPublicityTaskTest</members>
+        <members>createdPreDriveTaskScheduleTest</members>
+        <members>populateDriveSupervisoryRoleTriggerTest</members>
+        <members>skedBaseController</members>
         <members>skedCaptureJobIMPACTBatch</members>
         <members>skedCaptureJobIMPACTBatch_Test</members>
+        <members>skedCreateDCRForRTDBatch_Test</members>
         <members>skedDriveDataUpdateOneTimeBatch</members>
         <members>skedDriveDataUpdateOneTimeBatch_Test</members>
         <members>skedDriveHandler</members>
         <members>skedDriveShiftHandler</members>
+        <members>skedDriveShiftTradeDistrictBatch</members>
         <members>skedDriveTrigger_Test</members>
+        <members>skedExceptionLogService</members>
+        <members>skedExceptionMasterModel</members>
+        <members>skedExpireSiteFeedbacks_Test</members>
+        <members>skedHCExceptionHandler</members>
         <members>skedJobAllocationHandler</members>
         <members>skedJobAllocationPostProcessBatch</members>
         <members>skedJobAllocationPostProcessBatch_Test</members>
         <members>skedJobAllocationTravelTimeBatch</members>
+        <members>skedJobAllocationTravelTimeBatch_Test</members>
         <members>skedJobAllocationTrigger_Test</members>
+        <members>skedJobHandler</members>
+        <members>skedMappingConfigContainer</members>
+        <members>skedModels</members>
+        <members>skedOppDriveSyncBatch_Test</members>
+        <members>skedRacController</members>
         <members>skedResourceHoursRecordHandler</members>
         <members>skedResourceHoursRecordHandler_test</members>
         <members>skedResourceTagHandler</members>
         <members>skedSetting</members>
         <members>skedSetting_Test</members>
+        <members>skedTTIRefreshGroupTrigger_Test</members>
+        <members>skedTTIndexRefreshRequestTrigger_Test</members>
+        <members>skedTestDataFactory</members>
         <members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
+        <members>skedUserHandler_Test</members>
         <members>skedWeeklyHoursCorrectionBatch</members>
         <members>skedWeeklyHoursCorrection_Test</members>
         <members>slwcDriveService</members>
         <members>slwcDriveService_Test</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>APComplianceExcel</members>
+        <members>BSFAPComplianceReportPDF</members>
+        <name>ApexPage</name>
     </types>
     <types>
         <members>Add_Update_OpptyTeamMembers</members>
@@ -69,60 +156,90 @@
         <members>BSF_Access_Control_Rule__mdt.SObject_API_Name__c</members>
         <members>BSF_Access_Control_Rule__mdt.Target_API_Names__c</members>
         <members>BSF_Access_Control_Rule__mdt.Target_Type__c</members>
-        <members>Biomed_Collection_Op_Center__c.sked_Time_Block_Count__c</members>
         <members>Opportunity.Cancellation_Detail__c</members>
+        <members>Opportunity.City__c</members>
         <members>Opportunity.Primary_Drive_Contact__c</members>
+        <members>Opportunity.Special_Affiliations__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c.Is_Taxonomy_Running__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>
+        <members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_Start_DateTime__c</members>
         <members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
-        <members>sked_Drive_Shift__c.sked_Is_Time_Block_Missing__c</members>
-        <members>sked_Drive__c.sked_CO_Time_Block_Count__c</members>
+        <members>sked_Drive__c.City__c</members>
         <members>sked_Drive__c.sked_Cancellation_Detail__c</members>
         <members>sked_Drive__c.sked_Max_Shift_End_Date__c</members>
         <members>sked_Drive__c.sked_Max_Shift_End_Time__c</members>
         <members>sked_Drive__c.sked_Min_Shift_Start_Date__c</members>
         <members>sked_Drive__c.sked_Min_Shift_Start_Time__c</members>
-        <members>sked_Drive__c.sked_Shifts_Missing_Time_Blocks__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_Maximum_Retries__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Allowed_No_of_Jobs_in_Flex_Queue__c</members>
         <members>sked_JA_Post_Process_Config__c.sked_Reschedule_Interval_Sec_Flex_Queue__c</members>
+        <members>sked__Activity_Resource__c.sked_Staffing_Reason__c</members>
+        <members>sked__Job_Allocation__c.sked_Staffing_Reason__c</members>
+        <members>sked__Job__c.sked__Type__c</members>
+        <members>sked__Location__c.sked_Max_Auto_Machines__c</members>
         <name>CustomField</name>
     </types>
     <types>
         <members>BSF_Access_Control_Rule.HRP_10985_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_10985_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_11431_DOC_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_13448_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_14122_1_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14122_2_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_14427_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_14511_Class_Component</members>
         <members>BSF_Access_Control_Rule.HRP_14511_Visual_Force_Page</members>
+        <members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_1</members>
+        <members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_2</members>
+        <members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_Read_1</members>
+        <members>BSF_Access_Control_Rule.HRP_15139_Field_Permission_Set_Read_2</members>
+        <members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_15432_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_15686_Field_Permission_Set_Read</members>
-        <members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set</members>
-        <members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set_Read</members>
-        <members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set_Read_CO</members>
+        <members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_15948_Object_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_7470_11431_Field_Permission_Set_Read</members>
-		<members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set</members>
-		<members>BSF_Access_Control_Rule.HRP_15948_Field_Permission_Set_Read</members>
-		<members>BSF_Access_Control_Rule.HRP_15948_Object_Permission_Set</members>
+        <members>Custom_Messages.Opportunity_Banner_Message</members>
+        <members>Custom_Messages.Opportunity_Validation_Message</members>
+        <members>Custom_Messages.Time_Block_Validation_From_DOC</members>
+        <members>Custom_Messages.Time_Block_Validation_From_Opportunity</members>
+        <members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
         <name>CustomMetadata</name>
     </types>
     <types>
+        <members>Affiliation_Program_Management_Event__e</members>
+        <members>Affiliation_Staging_Record__c</members>
         <members>BSF_Access_Control_Rule__mdt</members>
+        <members>Taxonomy_Automation_Runtime_Check__c</members>
         <members>sked_JA_Post_Process_Config__c</members>
-		<members>Affiliation_Program_Management_Event__e</members>
-		<members>Affiliation_Staging_Record__c</members>
         <name>CustomObject</name>
     </types>
     <types>
+        <members>Affiliation_Staging_Record__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Affiliation_Program_Management</members>
+        <members>Affiliation_Program_Management_Daily_Job</members>
+        <members>Affiliation_Program_Management_Event_Triggered</members>
+        <members>Affiliation_Staging_Record_Resolve_References</members>
         <members>Create_New_Template</members>
-		<members>Affiliation_Program_Management</members>
-		<members>Affiliation_Program_Management_Daily_Job</members>
-		<members>Affiliation_Program_Management_Event_Triggered</members>
-		<members>Affiliation_Staging_Record_Resolve_References</members>
         <name>Flow</name>
     </types>
     <types>
+        <members>sked_Staffing_Reasons</members>
+        <name>GlobalValueSet</name>
+    </types>
+    <types>
+        <members>Affiliation_Staging_Record__c-Affiliation Staging Record Layout</members>
+        <members>Affiliation_Staging_Record__c-Log Entry Layout</members>
+        <members>Affiliation_Staging_Record__c-Toggled Affiliation Layout</members>
         <members>BSF_Access_Control_Rule__mdt-Access Control Rule Layout</members>
         <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
         <members>Opportunity-APS Planner Mobile Opp Layout</members>
@@ -135,13 +252,12 @@
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
-		<members>Affiliation_Staging_Record__c-Affiliation Staging Record Layout</members>
-		<members>Affiliation_Staging_Record__c-Log Entry Layout</members>
-		<members>Affiliation_Staging_Record__c-Toggled Affiliation Layout</members>
         <name>Layout</name>
     </types>
     <types>
         <members>autoMapper</members>
+        <members>dataService</members>
+        <members>showSpecialCircumstanceBadgesOnOpportunity</members>
         <members>slwcAvailator</members>
         <members>slwcCancelDriveModal</members>
         <members>slwcDriveCalendarActivityList</members>
@@ -149,55 +265,72 @@
         <members>slwcDriveDetails</members>
         <members>slwcDriveGenerator</members>
         <members>slwcDriveManagement</members>
+        <members>slwcDriveSchedulingConsole</members>
         <members>slwcDriveSchedulingFilters</members>
         <members>slwcDriveShift</members>
         <members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
         <members>slwcDriveShiftJobTable</members>
         <members>slwcDriveStaffingDetails</members>
+        <members>slwcDriveStaffingReasonModal</members>
+        <members>slwcExceptionList</members>
+        <members>slwcLinkedDriveExceptionList</members>
         <members>slwcPlanDrive</members>
+        <members>slwcPopoverContent</members>
         <members>slwcResolveDriveContentions</members>
         <members>slwcSchedulingConsoleDriveList</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>BSF_Access_Control_Rule__mdt.Release_Tag_View</members>
+        <members>Affiliation_Staging_Record__c.Affiliation_Program_Management_Debug_Log</members>
+        <members>Affiliation_Staging_Record__c.All</members>
+        <members>Affiliation_Staging_Record__c.Qualified_Affiliations</members>
+        <members>Affiliation_Staging_Record__c.References_Update_Required</members>
+        <members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
         <members>Taxonomy_Run_Config__mdt.Taxonomy_Run_Config</members>
-		<members>Affiliation_Staging_Record__c.Affiliation_Program_Management_Debug_Log</members>
-		<members>Affiliation_Staging_Record__c.All</members>
-		<members>Affiliation_Staging_Record__c.Qualified_Affiliations</members>
-		<members>Affiliation_Staging_Record__c.References_Update_Required</members>
-		<members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
         <name>ListView</name>
+    </types>
+    <types>
+        <members>Affiliation_Staging_Record__c.Log_Entry</members>
+        <members>Affiliation_Staging_Record__c.Qualified_Affiliation</members>
+        <members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
+        <name>RecordType</name>
     </types>
     <types>
         <members>BSF_Support/Site_CO_without_Travel_Time</members>
         <name>Report</name>
     </types>
     <types>
+        <members>Account_With_Opportunity_with_opportunity_split</members>
+        <members>Accounts_With_Opportunity_With_Contact_Role</members>
+        <members>Accounts_with_Opportunity_with_Contact_Role_V2</members>
+        <members>Accounts_with_Opportunity_with_OpportunityTeam</members>
+        <members>Accounts_with_or_without_Opportunities_and_Drives</members>
+        <members>Opportunities_with_Calendar_Build_Opportunities</members>
+        <members>Opportunities_with_Drives_on_Calendar_and_Drive_Sh</members>
+        <members>Opportunity_with_Drives_on_Calender</members>
+        <members>Pickup_Schedule_ReportType</members>
         <members>Site_Collection_Operations</members>
+        <members>opportunity_with_account_and_drives</members>
+        <members>opportunity_with_contact_role</members>
+        <members>opportunity_with_order_with_ordering_product</members>
+        <members>opportunity_with_promotion_with_opportunity_promo</members>
         <name>ReportType</name>
     </types>
     <types>
+        <members>Special_Affiliations_Badge_Logo</members>
         <members>skedLWCCustomStyle</members>
         <members>sked_HLT_Dist</members>
         <name>StaticResource</name>
     </types>
     <types>
+        <members>Account.Fixed_Site_Owner_Transfer_Restriction</members>
         <members>Opportunity.Cancellation_Detail_wo_Drive_Cancel</members>
+        <members>Opportunity.Close_Date_Only_DRD_System_Admin</members>
+        <members>Opportunity.Targeted_Ask_Date_Only_DRD_System_Admin</members>
+        <members>Product2.Restrict_Product_Access_for_Different_Us</members>
         <members>sked_Drive_Change_Request__c.Restrict_Status_Change_For_DRD_Profiles</members>
         <members>sked_Drive__c.Cancellation_Detail_wo_Drive_Cancel</members>
-        <members>sked_Drive__c.Restrict_DriveConfirm_wo_TimeBlock</members>
         <name>ValidationRule</name>
     </types>
-	<types>
-		<members>Affiliation_Staging_Record__c</members>
-		<name>CustomTab</name>
-	</types>
-	<types>
-		<members>Affiliation_Staging_Record__c.Log_Entry</members>
-		<members>Affiliation_Staging_Record__c.Qualified_Affiliation</members>
-		<members>Affiliation_Staging_Record__c.Toggled_Affiliations</members>
-		<name>RecordType</name>
-	</types>
-    <version>64.0</version>
+    <version>65.0</version>
 </Package>
