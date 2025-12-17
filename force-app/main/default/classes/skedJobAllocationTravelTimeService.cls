@@ -108,7 +108,8 @@ public class skedJobAllocationTravelTimeService {
                 sked__Job__r.sked_Drive__r.sked_Drive_Site__c,
                 sked__Job__r.sked_Drive__r.sked_Travel_Time_Included__c,
                 sked__Job__r.sked_Drive__r.sked_Collection_Operation__c,
-                sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c
+                sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+                 sked__Job__r.sked_Dual_Role__c
             FROM sked__Job_Allocation__c
             WHERE Id IN :jobAllocationIds
             AND sked__Job__r.sked_Drive__r.sked_Collection_Operation__c != NULL
@@ -129,6 +130,7 @@ public class skedJobAllocationTravelTimeService {
             SELECT Id,sked_Travel_Time__c, sked_Travel_Time2__c,
                 sked__Start__c, sked__Finish__c, sked__Duration__c,
                 sked_Resource_Role__c, 
+                sked_Dual_Role__c,
                 sked_Drive__r.sked_Type_of_Drive__c,
                 sked_Drive__r.sked_Drive_Date__c,
                 sked_Drive__r.sked_Drive_Site__c,
@@ -235,7 +237,7 @@ public class skedJobAllocationTravelTimeService {
         
         for (jobAllocationModel jobAllocationModel : jobAllocationModels) {
             Date driveDate = jobAllocationModel.jobDriveDate;
-            boolean isDrivingRoleJob = drivingRoles.contains(jobAllocationModel.jobResourceRole);
+            boolean isDrivingRoleJob = drivingRoles.contains(jobAllocationModel.jobResourceRole) ||  drivingRoles.contains(jobAllocationModel.jobDualRole);
             
             Id driveCollectionOperationId = jobAllocationModel.jobDriveCollectionOperationId;
             Biomed_Collection_Op_Center__c driveCo = mapCollectionOperationById.get(driveCollectionOperationId);
@@ -469,8 +471,8 @@ public class skedJobAllocationTravelTimeService {
             
             boolean isTravelTimeIncludedAllRoles = (jobAllocationModel.jobDriveType == 'Mobile' && jobAllocationModel.jobDriveTravelTimeIncluded == 'All Roles')
                 || (jobAllocationModel.jobDriveType == 'Fixed Site' && jobAllocationModel.jobDriveTravelTimeIncluded == 'All Roles');
-            boolean isDrivingRoleJob = drivingRoles.contains(jobAllocationModel.jobResourceRole);
-            
+            boolean isDrivingRoleJob = drivingRoles.contains(jobAllocationModel.jobResourceRole) ||  drivingRoles.contains(jobAllocationModel.jobDualRole);
+        
             boolean recalculateTravelTimeRule1 = isDrivingRoleJob;
             boolean recalculateTravelTimeRule2 = !isDrivingRoleJob && !isCoNoTravelTime && (isTravelTimeIncludedAllRoles || isRelocatedResource);            
             boolean requireRecalculateTravelTime = recalculateTravelTimeRule1 || recalculateTravelTimeRule2;
@@ -582,6 +584,7 @@ public class skedJobAllocationTravelTimeService {
         public String jobDriveTravelTimeIncluded;
         public String jobDriveCollectionOperationId;
         public String resourcePrimaryCollectionOperationId;
+        public String jobDualRole;
 
         public jobAllocationModel(sked__Job_Allocation__c jobAllocation) {
             this.id = jobAllocation.Id;
@@ -609,6 +612,7 @@ public class skedJobAllocationTravelTimeService {
             this.jobDriveTravelTimeIncluded = jobAllocation.sked__Job__r.sked_Drive__r.sked_Travel_Time_Included__c;
             this.jobDriveCollectionOperationId = jobAllocation.sked__Job__r.sked_Drive__r.sked_Collection_Operation__c;
             this.resourcePrimaryCollectionOperationId = jobAllocation.sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
+            this.jobDualRole = jobAllocation.sked__Job__r.sked_Dual_Role__c;//HRP-15933
         }
 
         public jobAllocationModel(sked__Resource__c resource, sked__Job__c job) {
@@ -629,6 +633,7 @@ public class skedJobAllocationTravelTimeService {
             this.start = job.sked__Start__c;
             this.setEnd = job.sked__Finish__c;
             this.duration = job.sked__Duration__c;
+            this.jobDualRole = job.sked_Dual_Role__c;//HRP-15933
         }
 
         public String getKey() {
