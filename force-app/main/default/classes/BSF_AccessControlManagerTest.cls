@@ -1,10 +1,10 @@
 @IsTest
 private class BSF_AccessControlManagerTest {
     // Test constants provided by user
-    private static final String PS_NAME = 'sked_APS';
+    private static final String PS_NAME = 'sked_Global_Admin';
     private static final String RELEASE_TAG_NO_RULES = 'REL_NO_RULES';
-    private static final String RELEASE_TAG_OBJECT_FIELD = 'REL_OBJ_FLD';
-    private static final String RELEASE_TAG_APEXCLASS = 'REL_APEX';
+    private static final String RELEASE_TAG_OBJECT_FIELD = '2.5 Release';//'REL_OBJ_FLD';
+    private static final String RELEASE_TAG_APEXCLASS = '2.4 Release';//'REL_APEX';
     private static final String RELEASE_TAG_VFPAGE = 'REL_VF';
     private static final String RELEASE_TAG_DMLERROR = 'REL_DML_ERR';
 
