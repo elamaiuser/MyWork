@@ -84,14 +84,19 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     }
     
     public override void onAfterInsert() {
-        populateStaffingBudgetAvailabilities(this.context.newRecords);
-        captureExceptionLogs(this.context.newRecords);
-        syncToResourceHoursRecord(this.context.newRecords);
-        if (!skedSetting.instance.Admin.migrationMode) {
-            if (!System.isBatch()) {
-                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
-                skedWorkdayUtils.publishWorkdayApprovalsEvent(skedWorkdayUtils.getApprovedRecordIds(this.context.newRecords));
+        try {
+            populateStaffingBudgetAvailabilities(this.context.newRecords);
+            captureExceptionLogs(this.context.newRecords);
+            syncToResourceHoursRecord(this.context.newRecords);
+            if (!skedSetting.instance.Admin.migrationMode) {
+                if (!System.isBatch()) {
+                    skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+                    skedWorkdayUtils.publishWorkdayApprovalsEvent(skedWorkdayUtils.getApprovedRecordIds(this.context.newRecords));
+                }
             }
+        } catch (Exception ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Insert', ex, (Set<Id>)this.context.newMap.keySet());
+            insert debugLog;
         }
     }
 
@@ -117,7 +122,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                 if (!System.isBatch()) {
                     skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
                 }
-            } catch (skedException ex) {
+            } catch (Exception ex) {
                 sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Update', ex, (Set<Id>)this.context.newMap.keySet());
                 insert debugLog;
             }
@@ -133,9 +138,14 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     }
 
     public override void onAfterDelete() {
-        skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.oldRecords);
-        deleteCallOut(this.context.oldRecords);
-        skedWorkdayUtils.publishWorkdayCancellationsEvent(skedWorkdayUtils.getCancellationsContainer(this.context.oldRecords));
+        try {
+            skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.oldRecords);
+            deleteCallOut(this.context.oldRecords);
+            skedWorkdayUtils.publishWorkdayCancellationsEvent(skedWorkdayUtils.getCancellationsContainer(this.context.oldRecords));
+        } catch (Exception ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Delete', ex, (Set<Id>)this.context.oldMap.keySet());
+            insert debugLog;
+        }
     }
 
     /*********************************************************** Private methods ***********************************************************/
