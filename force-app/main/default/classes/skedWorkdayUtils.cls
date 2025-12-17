@@ -119,7 +119,7 @@ public class skedWorkdayUtils implements Callable {
             publishWorkdayApprovalsEvent(getApprovedRecordIds(newRecords, oldMap));
             publishWorkdayAdjustmentsEvent(getAdjustmentsContainer(newRecords, oldMap, resourceById));
             publishWorkdayCancellationsEvent(getCancellationsContainer(newRecords, oldMap, resourceById));
-        } catch (skedException ex) {
+        } catch (Exception ex) {
             sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Full Workday Sync Initiation', ex, new Set<Id>(new Map<Id, sked__Availability__c>(newRecords).keySet()));
             insert debugLog;
         }
@@ -303,7 +303,7 @@ public class skedWorkdayUtils implements Callable {
                     }).generateNotifications(failedApprovals);
                 }
             }
-        } catch (skedException ex) {
+        } catch (Exception ex) {
             sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Handle Workday Approvals', ex, recordIds);
             insert debugLog;
         }
@@ -371,7 +371,7 @@ public class skedWorkdayUtils implements Callable {
                     }).generateNotifications(failedAdjustments);
                 }
             }
-        } catch (skedException ex) {
+        } catch (Exception ex) {
             sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Handle Workday Adjustments', ex, new Set<Id>(availabilityIds));
             insert debugLog;
         }

@@ -202,7 +202,7 @@ public class skedTriggerUtils {
         return isLimitReached;
     }
 
-    public static sked__Debug_Log__c prepareErrorLogEntry(String operation, skedException ex, Set<Id> recordIds) {
+    public static sked__Debug_Log__c prepareErrorLogEntry(String operation, Exception ex, Set<Id> recordIds) {
         sked__Debug_Log__c debugLog = new sked__Debug_Log__c();
         debugLog.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_ERROR_LOG;
         debugLog.sked__Summary__c = operation;
