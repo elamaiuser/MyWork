@@ -10,14 +10,11 @@
  */
 
 @isTest(SeeAllData = false)
-public class BSF_Batch_CreatePublicityTasksTest
-{
-    public static String mobileOppRecType = 'Mobile Opp';
-    public static Map<String,Id> recordTypeMap  = new Map<String,Id>();
-    
+private class BSF_Batch_CreatePublicityTasksTest {
+ 
     @testSetup
-    public static void prepareDataSetup()
-    {
+    static void prepareDataSetup() {
+        TriggerHandler.Bypass('UserTriggerHandler');
         TriggerHandler.Bypass('AccountTriggerHandler');
         TriggerHandler.Bypass('OpportunityTriggerHandler');
         TriggerHandler.Bypass('SiteTriggerHandler');
@@ -30,8 +27,7 @@ public class BSF_Batch_CreatePublicityTasksTest
         
         // insert DRD User
         User drdUser = (User)mapTestData.get('DRD_USER');
-        System.runAs( new User(Id = UserInfo.getUserId()))
-        {
+        System.runAs( new User(Id = UserInfo.getUserId())) {
             insert drdUser;
         }
                
@@ -51,10 +47,8 @@ public class BSF_Batch_CreatePublicityTasksTest
         insert testTemplate;
         
         //insert opportunity
-        recordTypeMap = recordTypeMap( 'Opportunity' );
-		Id optyRecTypeId = recordTypeMap.get(mobileOppRecType);
-		opportunity testMobileOpp =new opportunity();
-		testMobileOpp.RecordTypeId = optyRecTypeId;        
+		opportunity testMobileOpp = new opportunity();
+		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
         testMobileOpp.AccountId=testMobileAccount.Id;
         testMobileOpp.name='testOpp1';
         testMobileOpp.StageName= 'Closed';
@@ -69,13 +63,14 @@ public class BSF_Batch_CreatePublicityTasksTest
         insert testMobileOpp;
         
         // insert team member
-        OpportunityTeamMember oppTeammember = new OpportunityTeamMember(OpportunityId = testMobileOpp.Id, 
-                                                                        Start_Date__c = system.today(), 
-                                                                        TeamMemberRole = 'District Manager',
-                                                                        OpportunityAccessLevel = 'Edit',
-                                                                        UserId = drdUser.Id);
-        insert oppTeammember;
-        
+        OpportunityTeamMember oppTeammember = new OpportunityTeamMember(
+            OpportunityId = testMobileOpp.Id, 
+            Start_Date__c = system.today(), 
+            TeamMemberRole = 'District Manager',
+            OpportunityAccessLevel = 'Edit',
+            UserId = drdUser.Id
+        );
+        insert oppTeammember;   
     }
     
     static testMethod void testBatchToCreateTasksForNoOrders() {
@@ -178,17 +173,4 @@ public class BSF_Batch_CreatePublicityTasksTest
         batchable.execute(scon);
         Test.stopTest();
     }
-
-    //Method to get the map of recordType Name as key and recordTypeId as value 
-    public static Map<String,Id> recordTypeMap(string obj) {
-        Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
-        if(obj!= null)
-        {
-            for(Schema.RecordTypeInfo recInfo : Schema.getGlobalDescribe().get(obj).getDescribe().getRecordTypeInfosByName().values()){
-                recTypeNameWithIdMap.put(recInfo.getName(),recInfo.getRecordTypeId());
-            }
-        }
-        return recTypeNameWithIdMap;
-    }
-
 }

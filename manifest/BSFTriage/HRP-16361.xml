@@ -7,6 +7,8 @@
         <members>PowerBIProxyController_test</members>
         <members>UpdateDrivesVehicleAllocationFieldsTest</members>
         <members>UpdateInvalidTravelTimeBatchTest</members>
+        <members>BSF_Batch_CreatePublicityTasksTest</members>
+        <members>skedResourceHandler_Test</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
