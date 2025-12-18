@@ -1107,7 +1107,7 @@ fetchJobTags(driveId){
   }
 
   overrideTravelTimeData(travelTimeMapData) {
-    console.log('travelTimeMapData'+JSON.stringify(travelTimeMapData));
+   
     if(!travelTimeMapData) return;
 
     const driverJob = this.jobs.find(job => {
@@ -1635,7 +1635,7 @@ fetchJobTags(driveId){
         }
       }
     }
-    console.log('result'+JSON.stringify(result));
+   
     return result;
   }
 
