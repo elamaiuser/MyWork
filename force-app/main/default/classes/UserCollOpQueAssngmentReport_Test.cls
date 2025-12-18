@@ -80,7 +80,7 @@ public class UserCollOpQueAssngmentReport_Test
     
     @isTest
     public static void testReportController() {
-        Test.startTest();
+        //Test.startTest();
         
         user u =[select id,Name,sked_Collection_Operations__c from user WHERE LastName = 'testingLastDRD' AND Profile.Name = 'DRD Profile' Limit 1];
         user AdminUser=[select id,Name,sked_Collection_Operations__c from user where LastName = 'last' AND profile.name='System Administrator' Limit 1];
@@ -107,7 +107,7 @@ public class UserCollOpQueAssngmentReport_Test
         reportController.clear();
         reportController.searchUser = u.Name;
         reportController.searchCollOpp = u.sked_Collection_Operations__c;
-        
+        Test.startTest();
         reportController.search();
   
         UserCollOpQueAssngmentReportController.getRoleSubordinateUsers(u.Id);
