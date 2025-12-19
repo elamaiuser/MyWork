@@ -36,8 +36,9 @@ const MAX_TRAVEL_TIME_ORIGIN_CHUNK_SIZE = 100;
 const isJobBelongToDrivingRolesGroup = (job, {
   resourceRoleGroups
 }) => {
+
   const resourceRoleGroup = Object.keys(resourceRoleGroups).find(resourceRoleGroup => {
-    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole);
+    return !!resourceRoleGroups[resourceRoleGroup].find(item => item === job.resourceRole || item === job.dualRole);
   })
   return resourceRoleGroup === RESOURCE_ROLE_GROUP.DRIVING_ROLES;
 }
@@ -214,16 +215,20 @@ class SlwcAvailator {
     }
     
     const locationKey = this.getLocationKey(location1, location2);
+ 
     if(this.travelTimeMap[locationKey] && !slwcUtils.isNullOrEmpty(this.travelTimeMap[locationKey].travelTime)) {
       return this.travelTimeMap[locationKey].travelTime;
     }
-    
+   
     if (this.travelTimeVelocity <= 0) {
       return 0;
     }
     let travelTime = -1;
+    
     let dist = this.calculateDistance(location1, location2);
+    
     travelTime = +Number((dist / this.travelTimeVelocity) * 60).toFixed(0);
+   
     return travelTime;
   }
 
@@ -1102,6 +1107,7 @@ fetchJobTags(driveId){
   }
 
   overrideTravelTimeData(travelTimeMapData) {
+   
     if(!travelTimeMapData) return;
 
     const driverJob = this.jobs.find(job => {
@@ -1520,7 +1526,7 @@ fetchJobTags(driveId){
     if (requiresTravelTime) {
       travelTimeTo = !slwcUtils.isNullOrEmpty(travelRoute.travelTimeTo) ? Math.ceil(travelRoute.travelTimeTo) : null;
       travelTimeBack = !slwcUtils.isNullOrEmpty(travelRoute.travelTimeBack) ? + Math.ceil(travelRoute.travelTimeBack) : null;
-
+    
       if(_isJobBelongToDrivingRolesGroup && 
         (!isTemporaryCO || relocatedDriverTTFromDriveCO)) {
         if(!slwcUtils.isNullOrEmpty(job.travelTime)) {
@@ -1532,6 +1538,8 @@ fetchJobTags(driveId){
         }
       }
     }
+   
+   
     return {
       travelTimeTo: travelTimeTo,
       travelTimeBack: travelTimeBack
@@ -1568,6 +1576,7 @@ fetchJobTags(driveId){
       longitude: resourceStagingLocationLongitude
     });
     
+
     if (isTemporaryAllocated) {
       if (relocatedDriverTTFromDriveCO) {
         result[RESOURCE_ROLE_GROUP.DRIVING_ROLES] = {
@@ -1626,7 +1635,7 @@ fetchJobTags(driveId){
         }
       }
     }
-    
+   
     return result;
   }
 
@@ -2184,6 +2193,7 @@ fetchJobTags(driveId){
               if(travelRoutes[RESOURCE_ROLE_GROUP.DRIVING_ROLES] && travelRoutes[RESOURCE_ROLE_GROUP.STAFF_ROLES]) {
                 const drivingRoleTravelRoute = travelRoutes[RESOURCE_ROLE_GROUP.DRIVING_ROLES];
                 const staffRoleTravelRoute = travelRoutes[RESOURCE_ROLE_GROUP.STAFF_ROLES];
+     
                 travelTimeGroup = {
                   [RESOURCE_ROLE_GROUP.DRIVING_ROLES]: {
                     travelTimeTo: this.getTravelTime(drivingRoleTravelRoute.origin, drivingRoleTravelRoute.destination),
@@ -2191,6 +2201,7 @@ fetchJobTags(driveId){
                     travelTimeBack: this.getTravelTime(drivingRoleTravelRoute.destination, drivingRoleTravelRoute.origin),
                     travelDistanceBack: this.calculateDistance(drivingRoleTravelRoute.destination, drivingRoleTravelRoute.origin)
                   },
+                
                   [RESOURCE_ROLE_GROUP.STAFF_ROLES]: {
                     travelTimeTo: this.getTravelTime(staffRoleTravelRoute.origin, staffRoleTravelRoute.destination),
                     travelDistanceTo: this.calculateDistance(staffRoleTravelRoute.origin, staffRoleTravelRoute.destination),
@@ -2198,6 +2209,7 @@ fetchJobTags(driveId){
                     travelDistanceBack: this.calculateDistance(staffRoleTravelRoute.destination, staffRoleTravelRoute.origin)
                   }
                 }
+              
                 const travelData = this.calculateDefaultEstimatedTravelTimeForJobAllocation(travelTimeGroup, job, isTemporaryCO, this.drive);
                 estimatedTravelTimeTo = travelData?.travelTimeTo;
                 estimatedTravelTimeBack = travelData?.travelTimeBack;
@@ -2221,13 +2233,14 @@ fetchJobTags(driveId){
               possibleAllocation.estimatedTravelTimeTo = estimatedTravelTimeTo;
               possibleAllocation.estimatedTravelTimeBack = estimatedTravelTimeBack;
               possibleAllocation.estimatedTravelData = estimatedTravelData;
+            
               if (possibleAllocation.nextEvent) {
                 possibleAllocation.travelTimeTo = travelTimeTo;
                 possibleAllocation.goToLocation = goToLocation;
               }
               possibleAllocation.travelTimeGroup = travelTimeGroup;
               possibleAllocation.exceptionLog = exceptionLog;
-              
+            
               job.possibleAllocations.push(possibleAllocation);
               numberOfValidJobs++;
             });
