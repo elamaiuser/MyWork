@@ -803,7 +803,9 @@ global virtual class skedRacController extends skedBaseController {
                                                                 WHERE sked_Is_Group_Activity__c = TRUE
                                                                 AND Id != :request.event.id
                                                                 AND DAY_ONLY(sked__Start__c) = :selectedDate
-                                                                AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :request.event.biomedCollectionOpId];
+                                                                AND sked_Region__r.sked_Biomed_Collection_Op_Center__c = :request.event.biomedCollectionOpId
+                                                                AND sked_Reduce_From_Staffing_Constraint__c = true];
+
                         decimal totalFixedSiteStaffConstraints = 0;
                         decimal totalMobileStaffConstraints = 0;
                         for (sked_Staffing_Constraint__c  staffingConstraint : staffingConstraints) {
