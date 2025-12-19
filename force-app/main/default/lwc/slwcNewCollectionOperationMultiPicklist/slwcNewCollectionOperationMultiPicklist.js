@@ -12,8 +12,6 @@ const TERRITORY_TYPE = {
   COLLECTION_OPERATION: 'Collection Operation'
 };
 
-const MISSING_TIME_BLOCK = 'Missing Time Block';
-
 export default class SlwcNewCollectionOperationMultiPicklist extends LightningElement {
   @api container;
   @api collectionOperationSingleSelect = false;
@@ -87,6 +85,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   @track timeBlockState = {
     timeBlockOptions: [],
     selectedTimeBlocks: [],
+    isFilteringMissingTimeBlock: false,
     disabled: false
   };
 
@@ -462,17 +461,6 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
     let timeBlockOptions = [];
     let selectedTimeBlocks = [];
-    
-    // Add 'Missing Time Block' option at the beginning
-    const missingTimeBlockOption = {
-      label: MISSING_TIME_BLOCK,
-      value: MISSING_TIME_BLOCK,
-      selected: selectedTimeBlockIds.includes(MISSING_TIME_BLOCK)
-    };
-    timeBlockOptions.push(missingTimeBlockOption);
-    if (missingTimeBlockOption.selected) {
-      selectedTimeBlocks.push(missingTimeBlockOption);
-    }
 
     timeBlocks.forEach(timeBlock => {
       let option = {
@@ -494,27 +482,22 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   }
 
   handleTimeBlockChanged = (event) => {
-    let selectedValues = cloneDeep(event.detail.selectedValues);
-    
-    // Implement mutual exclusivity between 'Missing Time Block' and other options
-    const hasMissingTimeBlock = selectedValues.some(item => item.value === MISSING_TIME_BLOCK);
-    const hasOtherOptions = selectedValues.some(item => item.value !== MISSING_TIME_BLOCK);
-    
-    if (hasMissingTimeBlock && hasOtherOptions) {
-      // Check which was just selected by comparing with previous state
-      const previousValues = this.timeBlockState.selectedTimeBlocks || [];
-      const previousHadMissingTimeBlock = previousValues.some(item => item.value === MISSING_TIME_BLOCK);
-      
-      if (!previousHadMissingTimeBlock && hasMissingTimeBlock) {
-        // 'Missing Time Block' was just selected, unselect all others
-        selectedValues = selectedValues.filter(item => item.value === MISSING_TIME_BLOCK);
-      } else {
-        // Another option was selected, unselect 'Missing Time Block'
-        selectedValues = selectedValues.filter(item => item.value !== MISSING_TIME_BLOCK);
-      }
+    this.timeBlockState.selectedTimeBlocks = cloneDeep(event.detail.selectedValues);
+
+    this.applyTimeBlock();
+  }
+
+  handleMissingTimeBlockToggle = (event) => {
+    const isFilteringMissingTimeBlock = event.target.checked;
+
+    event.stopPropagation(); // Prevent bubbling up to parent elements that may cause unwanted side effects due to event `onchange`
+    this.timeBlockState = {
+      ...this.timeBlockState,
+      timeBlockOptions: this.timeBlockState.timeBlockOptions.map(x => ({ ...x, selected: false })),
+      selectedTimeBlocks: [],
+      isFilteringMissingTimeBlock: isFilteringMissingTimeBlock,
+      disabled: isFilteringMissingTimeBlock
     }
-    
-    this.timeBlockState.selectedTimeBlocks = selectedValues;
 
     this.applyTimeBlock();
   }
@@ -524,7 +507,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     const selectedDivisions = this.territoryPopverState.selectedDivisions;
     const selectedARCRegions = this.territoryPopverState.selectedARCRegions;
     const selectedDistricts = this.territoryPopverState.selectedDistricts;
-    const isFilteringMissingTimeBlock = this.timeBlockState.selectedTimeBlocks?.some(item => item.value === MISSING_TIME_BLOCK) || false;
+    const isFilteringMissingTimeBlock = this.timeBlockState.isFilteringMissingTimeBlock;
     const selectedTimeBlocks = isFilteringMissingTimeBlock ? [] : this.timeBlockState.selectedTimeBlocks;
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations = cloneDeep(selectedTerritoryCollectionOperations);
 

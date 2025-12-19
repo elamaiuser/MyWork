@@ -2,6 +2,15 @@
     <div class="slds-grid slds-gutters_direct-x-small">
 
         <template if:true={timeBlockEnabled}>
+            <div class="slds-col slds-align-bottom">
+                <lightning-input
+                    type="checkbox"
+                    label="Missing Time Block"
+                    checked={timeBlockState.isFilteringMissingTimeBlock}
+                    onchange={handleMissingTimeBlockToggle}>
+                </lightning-input>
+            </div>
+
             <c-slwc-multi-picklist
                 class="slds-col"
                 name="timeBlocks"
@@ -10,6 +19,7 @@
                 pick-list-values={timeBlockState.timeBlockOptions}
                 default-values={timeBlockState.selectedTimeBlocks}
                 onpicklistchange={handleTimeBlockChanged}
+                is-readonly={timeBlockState.disabled}
                 disabled={timeBlockState.disabled}>
             </c-slwc-multi-picklist>
         </template>
