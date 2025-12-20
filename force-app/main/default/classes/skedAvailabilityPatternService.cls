@@ -235,6 +235,64 @@ global class skedAvailabilityPatternService extends skedDataService {
         	saveResullt.errorMessage = string.join(errorMessages, ' ');
         }
     }
+
+    public void validateOverlappingPatternResources(skedModels.availabilityPattern model) {
+        if(model.availabilityPatternResources != NULL && !model.availabilityPatternResources.isEmpty()) {
+            Set<Id> resourceIds = new Set<Id>();
+            string minDateStr, maxDateStr;
+
+            for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
+                resourceIds.add(patternResource.resourceId);
+
+                minDateStr = minDateStr == NULL || patternResource.startDate < minDateStr ? patternResource.startDate : minDateStr;
+                maxDateStr = maxDateStr == NULL || patternResource.endDate > maxDateStr ? patternResource.endDate : maxDateStr;
+            }
+
+            Date minDate = skedDateTimeUtils.getDateFromIsoString(minDateStr);
+            Date maxDate = skedDateTimeUtils.getDateFromIsoString(maxDateStr);
+
+            List<sked__Availability_Pattern_Resource__c> patternResources = [
+                SELECT Id, sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
+                sked__Availability_Pattern__r.Name
+                FROM sked__Availability_Pattern_Resource__c
+                WHERE sked__Resource__c IN :resourceIds
+                AND sked_Start_Date__c <= :maxDate
+                AND sked_End_Date__c >= :minDate
+            ];
+            
+            Map<Id, List<sked__Availability_Pattern_Resource__c>> map_resourceId_patternResource = new Map<Id, List<sked__Availability_Pattern_Resource__c>>();
+            
+            for (sked__Availability_Pattern_Resource__c patternResource : patternResources) {
+                if (!map_resourceId_patternResource.containsKey(patternResource.sked__Resource__c)) {
+                    map_resourceId_patternResource.put(patternResource.sked__Resource__c, new List<sked__Availability_Pattern_Resource__c>());
+                }
+                map_resourceId_patternResource.get(patternResource.sked__Resource__c).add(patternResource);
+            }
+            
+            for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
+                Date prStartDate = skedDateTimeUtils.getDateFromIsoString(patternResource.startDate);
+                Date prEndDate = skedDateTimeUtils.getDateFromIsoString(patternResource.endDate);
+                
+                patternResource.isOverlapping = false;
+                patternResource.overlappingPatternResources = new List<skedModels.overlappingPatternResource>();
+                
+                if (map_resourceId_patternResource.containsKey(patternResource.resourceId)) {
+                    for (sked__Availability_Pattern_Resource__c existingPattern : map_resourceId_patternResource.get(patternResource.resourceId)) {
+                        if (prStartDate <= existingPattern.sked_End_Date__c && prEndDate >= existingPattern.sked_Start_Date__c) {
+                            patternResource.isOverlapping = true;
+                            
+                            skedModels.overlappingPatternResource overlap = new skedModels.overlappingPatternResource();
+                            overlap.startDate = JSON.serialize(existingPattern.sked_Start_Date__c).replace('"', '');
+                            overlap.endDate = JSON.serialize(existingPattern.sked_End_Date__c).replace('"', '');
+                            overlap.patternName = existingPattern.sked__Availability_Pattern__r.Name;
+                            
+                            patternResource.overlappingPatternResources.add(overlap);
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     public skedDataService.saveResult saveAvailabilityPattern(skedModels.availabilityPattern model) {
         skedDataService.saveResult saveResullt = new skedDataService.saveResult();

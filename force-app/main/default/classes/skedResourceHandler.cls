@@ -63,6 +63,7 @@ public class skedResourceHandler extends skedTriggerHub {
             cancelTimeOffOnResourceTerminationOrLeave(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
             populateGeoLocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
             captureWorkDaysPerWeekException(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+            onDeactivateResources(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
     }
 
@@ -1406,6 +1407,31 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (newRecord.sked_Anticipated_Leave_Return_Date__c != null) {
                     newRecord.sked_Anticipated_Leave_Return_Date__c = null;
                 }
+            }
+        }
+    }
+
+    private void onDeactivateResources(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
+        Set<Id> deactivatedResourceIds = new Set<Id>();
+        for (sked__Resource__c newRecord : newRecords) {
+            sked__Resource__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c && newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE) {
+                deactivatedResourceIds.add(newRecord.Id);
+            }
+        }
+        if (!deactivatedResourceIds.isEmpty()) {
+            List<sked__Availability_Pattern_Resource__c> patternResources = [
+                SELECT Id, sked__End__c
+                FROM sked__Availability_Pattern_Resource__c
+                WHERE sked__Resource__c IN :deactivatedResourceIds
+            ];
+
+            if (!patternResources.isEmpty()) {
+                DateTime currentTime = system.now();
+                for (sked__Availability_Pattern_Resource__c patternResource : patternResources) {
+                    patternResource.sked__End__c = currentTime;
+                }
+                update patternResources;
             }
         }
     }
