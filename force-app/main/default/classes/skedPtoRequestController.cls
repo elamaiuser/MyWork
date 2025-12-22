@@ -238,10 +238,14 @@ global class skedPtoRequestController extends skedBaseController {
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
                  ORDER BY sked__Tag__r.sked_Priority__c ASC NULLS LAST
-                ) //HRP-15634
+                ), //HRP-15634
+                (SELECT Id, sked__Location__c, sked_Location_Resource_Relationship__c
+                 FROM sked__Location_Resource_Scores__r
+                 WHERE sked_Location_Resource_Relationship__c = 'Preferred'
+                 AND sked__Location__r.RecordType.Name = 'Fixed Site')
                 FROM sked__Resource__c 
                 WHERE Id = :request.event.resourceId
-            ];
+            ];//HRP-16283
 
             Map<Id, sked__Resource__c> resourceById = new Map<Id, sked__Resource__c>{request.event.resourceId => skedResource};
             Map<Id, Set<Date>> datesByResourceId = new Map<Id, Set<Date>>{request.event.resourceId => inputDates};
