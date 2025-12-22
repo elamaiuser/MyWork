@@ -43,6 +43,12 @@ public with sharing class APComplianceReportController {
         'apLink'         => 'apName'
     };
 
+    private static final Map<String, String> SORT_KEY_FIELD = new Map<String, String>{
+        'workDate'  => 'workDate_sort',
+        'startTime' => 'startTime_sort',
+        'endTime'   => 'endTime_sort'
+    };
+
     public APComplianceReportController() {
         String startParam = ApexPages.currentPage().getParameters().get('startdate');
         String endParam   = ApexPages.currentPage().getParameters().get('enddate');
@@ -436,16 +442,20 @@ public with sharing class APComplianceReportController {
 
         return wrapper;
     }
-
+		@TestVisible
     private static void sortDataList(List<Map<String, String>> dataList, String fieldName, String direction) {
         if (dataList == null || dataList.size() < 2) return;
         Boolean isAscending = String.isBlank(direction) || direction.equalsIgnoreCase('asc');
-        List<Map<String, String>> sorted = mergeSortMaps(dataList, fieldName, isAscending);
+
+        String actualField = SORT_KEY_FIELD.containsKey(fieldName) ? SORT_KEY_FIELD.get(fieldName) : fieldName;
+        Boolean isKeyField = SORT_KEY_FIELD.containsKey(fieldName);
+
+        List<Map<String, String>> sorted = mergeSortMaps(dataList, actualField, isAscending, isKeyField);
         dataList.clear();
         dataList.addAll(sorted);
     }
-
-    private static List<Map<String, String>> mergeSortMaps(List<Map<String, String>> input, String fieldName, Boolean isAscending) {
+	@TestVisible
+    private static List<Map<String, String>> mergeSortMaps(List<Map<String, String>> input, String fieldName, Boolean isAscending, Boolean isKeyField) {
         Integer n = input.size();
         if (n <= 1) return input;
 
@@ -456,24 +466,28 @@ public with sharing class APComplianceReportController {
         for (Integer i = 0; i < mid; i++) left.add(input[i]);
         for (Integer i = mid; i < n; i++) right.add(input[i]);
 
-        left = mergeSortMaps(left, fieldName, isAscending);
-        right = mergeSortMaps(right, fieldName, isAscending);
+        left = mergeSortMaps(left, fieldName, isAscending, isKeyField);
+        right = mergeSortMaps(right, fieldName, isAscending, isKeyField);
 
-        return mergeMaps(left, right, fieldName, isAscending);
+        return mergeMaps(left, right, fieldName, isAscending, isKeyField);
     }
-
+	@TestVisible
     private static List<Map<String, String>> mergeMaps(
         List<Map<String, String>> left,
         List<Map<String, String>> right,
         String fieldName,
-        Boolean isAscending
+        Boolean isAscending,
+        Boolean isKeyField
     ) {
         List<Map<String, String>> outList = new List<Map<String, String>>();
         Integer i = 0, j = 0;
 
         while (i < left.size() && j < right.size()) {
-            String a = normalizeSortValue(left[i].get(fieldName));
-            String b = normalizeSortValue(right[j].get(fieldName));
+            String aRaw = left[i].get(fieldName);
+            String bRaw = right[j].get(fieldName);
+
+            String a = isKeyField ? normalizeKeySortValue(aRaw) : normalizeTextSortValue(aRaw);
+            String b = isKeyField ? normalizeKeySortValue(bRaw) : normalizeTextSortValue(bRaw);
 
             Integer cmp = a.compareTo(b);
             Boolean takeLeft = isAscending ? (cmp <= 0) : (cmp >= 0);
@@ -486,9 +500,13 @@ public with sharing class APComplianceReportController {
 
         return outList;
     }
-
-    private static String normalizeSortValue(String v) {
+	@TestVisible
+    private static String normalizeTextSortValue(String v) {
         return v == null ? '' : v.toLowerCase();
+    }
+	@TestVisible
+    private static String normalizeKeySortValue(String v) {
+        return v == null ? '' : v;
     }
 
     private static Map<String, String> buildRow(
@@ -525,11 +543,18 @@ public with sharing class APComplianceReportController {
         row.put('co', coName != null ? coName : '');
 
         row.put('workDate', workDate != null ? workDate.format() : '');
+        row.put('workDate_sort', workDate != null ? dateSortKey(workDate) : '');
+
         row.put('type', type);
         row.put('role', Role != null ? Role : '');
         row.put('status', status != null ? status : '');
+
         row.put('startTime', startTime != null ? formatTime(startTime) : '');
+        row.put('startTime_sort', startTime != null ? timeSortKey(startTime) : '');
+
         row.put('endTime', endTime != null ? formatTime(endTime) : '');
+        row.put('endTime_sort', endTime != null ? timeSortKey(endTime) : '');
+
         row.put('apName', activePattern != null ? activePattern.patternName : '');
         row.put('violation', String.valueOf(violation));
         row.put('StaffingReason', StaffingReason != null ? StaffingReason : '');
@@ -599,6 +624,22 @@ public with sharing class APComplianceReportController {
         String h = t.hour() < 10 ? '0' + t.hour() : String.valueOf(t.hour());
         String m = t.minute() < 10 ? '0' + t.minute() : String.valueOf(t.minute());
         return h + ':' + m;
+    }
+
+    private static String dateSortKey(Date d) {
+        Integer y = d.year();
+        Integer m = d.month();
+        Integer day = d.day();
+        String mm = m < 10 ? '0' + String.valueOf(m) : String.valueOf(m);
+        String dd = day < 10 ? '0' + String.valueOf(day) : String.valueOf(day);
+        return String.valueOf(y) + mm + dd;
+    }
+
+    private static String timeSortKey(Time t) {
+        Integer mins = (t.hour() * 60) + t.minute();
+        String s = String.valueOf(mins);
+        while (s.length() < 4) s = '0' + s;
+        return s;
     }
 
     private static String getWeekday(Date dt) {

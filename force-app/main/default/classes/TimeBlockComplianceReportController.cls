@@ -24,7 +24,17 @@ public with sharing class TimeBlockComplianceReportController {
         'divisionLink' => 'division',
         'regionLink' => 'region',
         'districtLink' => 'district'
+    };
 
+    // Fields that need special sort keys (date/time)
+    private static final Map<String, String> SORT_KEY_OVERRIDES = new Map<String, String>{
+        'driveDate'       => 'driveDate__sort',
+        'shiftStartTime'  => 'shiftStartTime__sort',
+        'shiftEndTime'    => 'shiftEndTime__sort',
+        'tbStartTime'     => 'tbStartTime__sort',
+        'tbEndTime'       => 'tbEndTime__sort',
+        'tbEffStart'      => 'tbEffStart__sort',
+        'tbEffEnd'        => 'tbEffEnd__sort'
     };
 
     public Map<String, String> getSummary() {
@@ -102,7 +112,7 @@ public with sharing class TimeBlockComplianceReportController {
                 },
                 'sortable' => true
             },
-           new Map<String, Object>{
+            new Map<String, Object>{
                 'label' => 'Division',
                 'fieldName' => 'divisionLink',
                 'type' => 'url',
@@ -249,6 +259,7 @@ public with sharing class TimeBlockComplianceReportController {
 
             String violationReason = '';
             String matchedStart = '', matchedEnd = '', effStart = '', effEnd = '', tbName = '';
+            Date effStartDate, effEndDate;
             Boolean isViolation = false;
 
             Time_Block__c assignedTB = tbMap.get(shift.sked_Time_Block__c);
@@ -261,8 +272,10 @@ public with sharing class TimeBlockComplianceReportController {
                 if (cotbs != null) {
                     for (Collection_Operation_Time_Block__c cotb : cotbs) {
                         if (cotb.Time_Block__c == shift.sked_Time_Block__c) {
-                            effStart = String.valueOf(cotb.Effective_Start_Date__c);
-                            effEnd = String.valueOf(cotb.Effective_End_Date__c);
+                            effStartDate = cotb.Effective_Start_Date__c;
+                            effEndDate   = cotb.Effective_End_Date__c;
+                            effStart = effStartDate != null ? String.valueOf(effStartDate) : '';
+                            effEnd   = effEndDate != null ? String.valueOf(effEndDate) : '';
                             break;
                         }
                     }
@@ -319,12 +332,28 @@ public with sharing class TimeBlockComplianceReportController {
             }
 
             if (!onlyViolations || isViolation) {
-                Map<String, String> row = buildRow(shift, !isViolation, matchedStart, matchedEnd, effStart, effEnd, tbName, violationReason);
+                Map<String, String> row = buildRow(
+                    shift,
+                    !isViolation,
+                    matchedStart,
+                    matchedEnd,
+                    effStart,
+                    effEnd,
+                    tbName,
+                    violationReason,
+                    driveDate,
+                    effStartDate,
+                    effEndDate,
+                    shift.sked_Start_Time__c,
+                    shift.sked_End_Time__c,
+                    assignedTB != null ? assignedTB.Start_Time__c : null,
+                    assignedTB != null ? assignedTB.End_Time__c : null
+                );
+
                 wrapper.dataWrapper.add(row);
                 if (isViolation) violations++;
             }
         }
-
         if (String.isNotBlank(sortField)) {
             String mappedSortField = SORT_FIELD_MAPPING.containsKey(sortField) ? SORT_FIELD_MAPPING.get(sortField) : sortField;
             if (ALLOWED_SORT_FIELDS.contains(mappedSortField)) {
@@ -344,31 +373,67 @@ public with sharing class TimeBlockComplianceReportController {
         };
         return wrapper;
     }
+	@TestVisible
+    private static void sortDataList(List<Map<String, String>> dataList, String fieldName, String direction) {
+        if (dataList == null || dataList.size() < 2) return;
 
-   private static void sortDataList(List<Map<String, String>> dataList, String fieldName, String direction) {
-    Boolean isAscending = String.isBlank(direction) || direction.equalsIgnoreCase('asc');
+        Boolean isAscending = String.isBlank(direction) || direction.equalsIgnoreCase('asc');
 
-    Integer n = dataList.size();
-    for (Integer i = 0; i < n - 1; i++) {
-        for (Integer j = 0; j < n - i - 1; j++) {
-            String valueA = dataList[j].get(fieldName);
-            String valueB = dataList[j + 1].get(fieldName);
+        String effectiveField = SORT_KEY_OVERRIDES.containsKey(fieldName)
+            ? SORT_KEY_OVERRIDES.get(fieldName)
+            : fieldName;
 
-            // null safe + case-insensitive normalize
-            valueA = valueA == null ? '' : valueA.trim().toLowerCase();
-            valueB = valueB == null ? '' : valueB.trim().toLowerCase();
-
-            Integer comparison = valueA.compareTo(valueB);
-            Boolean shouldSwap = isAscending ? (comparison > 0) : (comparison < 0);
-
-            if (shouldSwap) {
-                Map<String, String> temp = dataList[j];
-                dataList[j] = dataList[j + 1];
-                dataList[j + 1] = temp;
-            }
-        }
+        List<Map<String, String>> sorted = mergeSortMaps(dataList, effectiveField, isAscending);
+        dataList.clear();
+        dataList.addAll(sorted);
     }
-}
+	@TestVisible
+    private static List<Map<String, String>> mergeSortMaps(List<Map<String, String>> input, String fieldName, Boolean isAscending) {
+        Integer n = input.size();
+        if (n <= 1) return input;
+
+        Integer mid = n / 2;
+        List<Map<String, String>> left = new List<Map<String, String>>();
+        List<Map<String, String>> right = new List<Map<String, String>>();
+
+        for (Integer i = 0; i < mid; i++) left.add(input[i]);
+        for (Integer i = mid; i < n; i++) right.add(input[i]);
+
+        left = mergeSortMaps(left, fieldName, isAscending);
+        right = mergeSortMaps(right, fieldName, isAscending);
+
+        return mergeMaps(left, right, fieldName, isAscending);
+    }
+		@TestVisible
+    private static List<Map<String, String>> mergeMaps(
+        List<Map<String, String>> left,
+        List<Map<String, String>> right,
+        String fieldName,
+        Boolean isAscending
+    ) {
+        List<Map<String, String>> outList = new List<Map<String, String>>();
+        Integer i = 0, j = 0;
+
+        while (i < left.size() && j < right.size()) {
+            String a = normalizeSortValue(left[i].get(fieldName));
+            String b = normalizeSortValue(right[j].get(fieldName));
+
+            Integer cmp = a.compareTo(b);
+            Boolean takeLeft = isAscending ? (cmp <= 0) : (cmp >= 0);
+
+            if (takeLeft) { outList.add(left[i]); i++; }
+            else { outList.add(right[j]); j++; }
+        }
+
+        while (i < left.size()) { outList.add(left[i]); i++; }
+        while (j < right.size()) { outList.add(right[j]); j++; }
+
+        return outList;
+    }
+	@TestVisible
+    private static String normalizeSortValue(String v) {
+        return v == null ? '' : v.trim().toLowerCase();
+    }
 
     private static Map<String, String> buildRow(
         sked_Drive_Shift__c shift,
@@ -378,11 +443,17 @@ public with sharing class TimeBlockComplianceReportController {
         String effStart,
         String effEnd,
         String tbName,
-        String contentionResolution
+        String contentionResolution,
+        Date driveDate,
+        Date tbEffStartDate,
+        Date tbEffEndDate,
+        Time shiftStart,
+        Time shiftEnd,
+        Time tbStartTime,
+        Time tbEndTime
     ) {
         Map<String, String> row = new Map<String, String>();
 
-        // ✅ UNIQUE KEY FOR DATATABLE (fixes WeakMap error)
         row.put('rowId', (String)shift.Id);
 
         row.put('driveId', shift.sked_Drive__c);
@@ -393,9 +464,11 @@ public with sharing class TimeBlockComplianceReportController {
 
         row.put('driveName', shift.sked_Drive__r.Name);
         row.put('status', shift.sked_Drive__r.sked_Status__c);
-        row.put('driveDate', String.valueOf(shift.sked_Drive__r.sked_Drive_Date__c));
-        row.put('shiftStartTime', formatTime(shift.sked_Start_Time__c));
-        row.put('shiftEndTime', formatTime(shift.sked_End_Time__c));
+
+        // display strings
+        row.put('driveDate', driveDate != null ? String.valueOf(driveDate) : '');
+        row.put('shiftStartTime', formatTime(shiftStart));
+        row.put('shiftEndTime', formatTime(shiftEnd));
 
         row.put('tbStartTime', tbStart);
         row.put('tbEndTime', tbEnd);
@@ -421,45 +494,56 @@ public with sharing class TimeBlockComplianceReportController {
 
         row.put('violation', matched ? 'false' : 'true');
         row.put('contentionResolution', contentionResolution);
+
+        // ✅ hidden sort keys (CPU efficient: computed once per row)
+        row.put('driveDate__sort', dateSortKey(driveDate));
+        row.put('tbEffStart__sort', dateSortKey(tbEffStartDate));
+        row.put('tbEffEnd__sort', dateSortKey(tbEffEndDate));
+
+        row.put('shiftStartTime__sort', timeSortKey(shiftStart));
+        row.put('shiftEndTime__sort', timeSortKey(shiftEnd));
+
+        row.put('tbStartTime__sort', timeSortKey(tbStartTime));
+        row.put('tbEndTime__sort', timeSortKey(tbEndTime));
+
         Id districtTerrId = shift.sked_Drive__r.sked_Collection_Operation__r?.sked_Territory__r?.Id;
         Id regionTerrId   = shift.sked_Drive__r.sked_Collection_Operation__r?.sked_Territory__r?.sked_Parent__r?.Id;
         Id divisionTerrId = shift.sked_Drive__r.sked_Collection_Operation__r?.sked_Territory__r?.sked_Parent__r?.sked_Parent__r?.Id;
-        
-        if (districtTerrId != null) {
-            row.put('districtLink', '/lightning/r/sked_Territory__c/' + districtTerrId + '/view');
-        }
-        if (regionTerrId != null) {
-            row.put('regionLink', '/lightning/r/sked_Territory__c/' + regionTerrId + '/view');
-        }
-        if (divisionTerrId != null) {
-            row.put('divisionLink', '/lightning/r/sked_Territory__c/' + divisionTerrId + '/view');
-        }
 
+        if (districtTerrId != null) row.put('districtLink', '/lightning/r/sked_Territory__c/' + districtTerrId + '/view');
+        if (regionTerrId != null) row.put('regionLink', '/lightning/r/sked_Territory__c/' + regionTerrId + '/view');
+        if (divisionTerrId != null) row.put('divisionLink', '/lightning/r/sked_Territory__c/' + divisionTerrId + '/view');
 
-        if (shift.sked_Drive__c != null) {
-            row.put('driveLink', '/lightning/r/sked_Drive__c/' + shift.sked_Drive__c + '/view');
-        }
-        if (shift.sked_Time_Block__c != null) {
-            row.put('tbLink', '/lightning/r/Time_Block__c/' + shift.sked_Time_Block__c + '/view');
-        }
-        if (shift.sked_Drive__r.sked_Collection_Operation__c != null) {
-            row.put('coLink', '/lightning/r/Collection_Operation__c/' + shift.sked_Drive__r.sked_Collection_Operation__c + '/view');
-        }
-        if (shift.sked_Drive__r.sked_Drive_Site__c != null) {
-            row.put('siteLink', '/lightning/r/sked_Drive_Site__c/' + shift.sked_Drive__r.sked_Drive_Site__c + '/view');
-        }
-        if (shift.sked_Drive__r.Account_Manager__c != null) {
-            row.put('accountManagerLink', '/lightning/r/User/' + shift.sked_Drive__r.Account_Manager__c + '/view');
-        }
+        if (shift.sked_Drive__c != null) row.put('driveLink', '/lightning/r/sked_Drive__c/' + shift.sked_Drive__c + '/view');
+        if (shift.sked_Time_Block__c != null) row.put('tbLink', '/lightning/r/Time_Block__c/' + shift.sked_Time_Block__c + '/view');
+        if (shift.sked_Drive__r.sked_Collection_Operation__c != null) row.put('coLink', '/lightning/r/Collection_Operation__c/' + shift.sked_Drive__r.sked_Collection_Operation__c + '/view');
+        if (shift.sked_Drive__r.sked_Drive_Site__c != null) row.put('siteLink', '/lightning/r/sked_Drive_Site__c/' + shift.sked_Drive__r.sked_Drive_Site__c + '/view');
+        if (shift.sked_Drive__r.Account_Manager__c != null) row.put('accountManagerLink', '/lightning/r/User/' + shift.sked_Drive__r.Account_Manager__c + '/view');
 
         return row;
     }
-
+    @TestVisible
     private static String formatTime(Time t) {
         if (t == null) return '';
         String h = t.hour() < 10 ? '0' + t.hour() : String.valueOf(t.hour());
         String m = t.minute() < 10 ? '0' + t.minute() : String.valueOf(t.minute());
         return h + ':' + m;
+    }
+	@TestVisible
+    private static String dateSortKey(Date d) {
+        if (d == null) return '';
+        String y = String.valueOf(d.year());
+        String m = d.month() < 10 ? '0' + d.month() : String.valueOf(d.month());
+        String day = d.day() < 10 ? '0' + d.day() : String.valueOf(d.day());
+        return y + m + day; // yyyyMMdd
+    }
+	@TestVisible
+    private static String timeSortKey(Time t) {
+        if (t == null) return '';
+        Integer mins = (t.hour() * 60) + t.minute();
+        String s = String.valueOf(mins);
+        while (s.length() < 5) s = '0' + s; // 00000..01439
+        return s;
     }
 
     @AuraEnabled(cacheable=true)
