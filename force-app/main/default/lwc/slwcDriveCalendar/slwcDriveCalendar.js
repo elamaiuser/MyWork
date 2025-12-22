@@ -820,6 +820,8 @@ export default class SlwcDriveCalendar extends LightningElement {
                     return districtManagerPortfolio.id;
                 })
                 driveQuery.daysOfWeek = this.filters.daysOfWeek;
+                driveQuery.missingTimeBlock = this.isFilteringMissingTimeBlock;
+
                 if (this.isTimeBlockApplied) {
                     driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
                 }

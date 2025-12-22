@@ -240,6 +240,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         })
 
         //driveQuery.operationTypes = this.filters.operationTypes;
+        driveQuery.missingTimeBlock = this.isFilteringMissingTimeBlock;
         driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
         driveQuery.subQueryIndicator = sObjectType.JOB | sObjectType.DRIVE_SHIFT;
 
