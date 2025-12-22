@@ -52,9 +52,13 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                             wrapper.biomedCollectionOpId = skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
 
                             List<String> primaryRoles = new List<String>();
-                            Decimal priority = skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;
+                            
+                            Decimal priority = 
+                            skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c != null ?
+                            skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c : 0;
+                            
                             for(sked__Resource_Tag__c resourceTag : skedResource.sked__ResourceTags__r){
-                             if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                                if (resourceTag.sked__Tag__r.Name != null && (priority == 0 || resourceTag.sked__Tag__r.sked_Priority__c == priority)) {
                             primaryRoles.add(resourceTag.sked__Tag__r.Name);
                              }
                             }
