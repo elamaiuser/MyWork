@@ -262,7 +262,7 @@ global class skedAvailabilityPatternService extends skedDataService {
                 FROM sked__Availability_Pattern_Resource__c
                 WHERE sked__Resource__c IN :resourceIds
                 AND sked_Start_Date__c <= :maxDate
-                AND sked_End_Date__c >= :minDate
+                AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :minDate)
             ];
             
             Map<Id, List<sked__Availability_Pattern_Resource__c>> map_resourceId_patternResource = new Map<Id, List<sked__Availability_Pattern_Resource__c>>();

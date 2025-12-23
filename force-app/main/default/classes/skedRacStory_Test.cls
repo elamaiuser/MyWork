@@ -917,7 +917,6 @@ private class skedRacStory_Test {
         savePatternRequest.viewData = new Map<string, object>();
         savePatternRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         savePatternRequest.availabilityPattern = availabilityPattern;
-        skedRemoteResultModel validatePatternResult = skedRacController.validatePattern(savePatternRequest);
         skedRemoteResultModel savePatternResult = skedRacController.savePattern(savePatternRequest);
         
         skedRacController.savePatternResourceRequestModel savePatternResourceRequest = new skedRacController.savePatternResourceRequestModel();
@@ -1513,6 +1512,8 @@ private class skedRacStory_Test {
 
         skedRemoteResultModel getGroupActivitiesResult = skedRacController.getGroupActivities(getGroupActivitiesRequest);
 
+        Assert.isTrue(getGroupActivitiesResult.success == TRUE);
+        
         Test.stopTest();
     }
 
@@ -1520,7 +1521,7 @@ private class skedRacStory_Test {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
-        
+        Time_Block__c testTimeBlock1 = (Time_Block__c)mapTestData.get('testTimeBlock1');
         Test.startTest();
         
         skedRacController.getCollectionOperationTimeBlocksRequestModel getCollectionOperationTimeBlocksRequest = new skedRacController.getCollectionOperationTimeBlocksRequestModel();
@@ -1535,6 +1536,58 @@ private class skedRacStory_Test {
 
         skedRemoteResultModel getCollectionOperationTimeBlocksResult = skedRacController.getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequest);
 
+        Assert.isTrue(getCollectionOperationTimeBlocksResult.success == TRUE);
+        
+        skedModels.collectionOperationTimeBlock cotb = ((List<skedModels.collectionOperationTimeBlock>)getCollectionOperationTimeBlocksResult.data).get(0);
+        Assert.isTrue(cotb.timeBlockId == testTimeBlock1.Id);
+        
+        Test.stopTest();
+    }
+    
+    static testmethod void testValidatePattern() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        sked__Availability_Pattern__c testWeeklyPattern1 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern1');
+        sked__Availability_Pattern__c testWeeklyPattern2 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern2');
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+        
+        sked__Availability_Pattern_Resource__c apResource1 = new sked__Availability_Pattern_Resource__c(
+            sked__Availability_Pattern__c = testWeeklyPattern1.Id,
+            sked__Resource__c = testResource1.Id,
+            sked__Start__c = testDataFactory.summary.startTime
+        );
+        insert apResource1;
+        
+        Test.startTest();
+        
+        skedMockTest mockTest = new skedMockTest();
+        Test.setMock(HttpCalloutMock.class, mockTest);
+        
+        skedModels.availabilityPattern availabilityPattern = new skedModels.availabilityPattern();
+        availabilityPattern.id = testWeeklyPattern2.Id;
+        availabilityPattern.pattern = testWeeklyPattern2.sked__Pattern__c;
+        availabilityPattern.hash = testWeeklyPattern2.sked__Hash__c;
+        availabilityPattern.validate2CDORule = FALSE;
+        availabilityPattern.availabilityPatternResources = new List<skedModels.availabilityPatternResource>();
+        skedModels.availabilityPatternResource patternResource = new skedModels.availabilityPatternResource();
+        patternResource.resourceId = testResource1.Id;
+        patternResource.startDate = testDataFactory.summary.startDateIso;
+        availabilityPattern.availabilityPatternResources.add(patternResource);
+        
+        skedRacController.savePatternRequestModel savePatternRequest = new skedRacController.savePatternRequestModel();
+        savePatternRequest.viewData = new Map<string, object>();
+        savePatternRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        savePatternRequest.availabilityPattern = availabilityPattern;
+
+        skedRemoteResultModel validatePatternResult = skedRacController.validatePattern(savePatternRequest);
+        Assert.isTrue(validatePatternResult.success == TRUE);
+        
+        skedModels.availabilityPatternResource returnedPatternResource = ((skedModels.availabilityPattern)validatePatternResult.data).availabilityPatternResources.get(0);
+        Assert.isTrue(returnedPatternResource.isOverlapping == TRUE);
+        
+        skedModels.overlappingPatternResource overlappingPatternResource = returnedPatternResource.overlappingPatternResources.get(0);
+        Assert.isTrue(overlappingPatternResource.patternName == 'Test Weekly Pattern 1');
+        
         Test.stopTest();
     }
 }
