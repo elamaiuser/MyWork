@@ -237,19 +237,24 @@ global class skedAvailabilityPatternService extends skedDataService {
     }
 
     public void validateOverlappingPatternResources(skedModels.availabilityPattern model) {
-        if(model.availabilityPatternResources != NULL && !model.availabilityPatternResources.isEmpty()) {
+        if (model.availabilityPatternResources != NULL && !model.availabilityPatternResources.isEmpty()) {
+            Date maxDateValue = skedDateTimeUtils.MAX_DATE;
+            string maxDateValueStr = skedDateTimeUtils.MAX_DATE_STR;
+            
             Set<Id> resourceIds = new Set<Id>();
             string minDateStr, maxDateStr;
 
             for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
                 resourceIds.add(patternResource.resourceId);
+                
+                string prEndDate = patternResource.endDate == NULL ? maxDateValueStr : patternResource.endDate;
 
                 minDateStr = minDateStr == NULL || patternResource.startDate < minDateStr ? patternResource.startDate : minDateStr;
-                maxDateStr = maxDateStr == NULL || patternResource.endDate > maxDateStr ? patternResource.endDate : maxDateStr;
+                maxDateStr = maxDateStr == NULL || prEndDate > maxDateStr ? prEndDate : maxDateStr;
             }
 
             Date minDate = skedDateTimeUtils.getDateFromIsoString(minDateStr);
-            Date maxDate = skedDateTimeUtils.getDateFromIsoString(maxDateStr);
+            Date maxDate = maxDateStr == NULL ? maxDateValue : skedDateTimeUtils.getDateFromIsoString(maxDateStr);
 
             List<sked__Availability_Pattern_Resource__c> patternResources = [
                 SELECT Id, sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
@@ -271,19 +276,20 @@ global class skedAvailabilityPatternService extends skedDataService {
             
             for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
                 Date prStartDate = skedDateTimeUtils.getDateFromIsoString(patternResource.startDate);
-                Date prEndDate = skedDateTimeUtils.getDateFromIsoString(patternResource.endDate);
+                Date prEndDate = patternResource.endDate != NULL ? skedDateTimeUtils.getDateFromIsoString(patternResource.endDate) : maxDateValue;
                 
                 patternResource.isOverlapping = false;
                 patternResource.overlappingPatternResources = new List<skedModels.overlappingPatternResource>();
                 
                 if (map_resourceId_patternResource.containsKey(patternResource.resourceId)) {
                     for (sked__Availability_Pattern_Resource__c existingPattern : map_resourceId_patternResource.get(patternResource.resourceId)) {
-                        if (prStartDate <= existingPattern.sked_End_Date__c && prEndDate >= existingPattern.sked_Start_Date__c) {
+                        Date existingPatternEndDate = existingPattern.sked_End_Date__c != NULL ? existingPattern.sked_End_Date__c : maxDateValue;
+                        if (prStartDate <= existingPatternEndDate && prEndDate >= existingPattern.sked_Start_Date__c) {
                             patternResource.isOverlapping = true;
                             
                             skedModels.overlappingPatternResource overlap = new skedModels.overlappingPatternResource();
                             overlap.startDate = JSON.serialize(existingPattern.sked_Start_Date__c).replace('"', '');
-                            overlap.endDate = JSON.serialize(existingPattern.sked_End_Date__c).replace('"', '');
+                            overlap.endDate = existingPattern.sked_End_Date__c != NULL ? JSON.serialize(existingPattern.sked_End_Date__c).replace('"', '') : '';
                             overlap.patternName = existingPattern.sked__Availability_Pattern__r.Name;
                             
                             patternResource.overlappingPatternResources.add(overlap);

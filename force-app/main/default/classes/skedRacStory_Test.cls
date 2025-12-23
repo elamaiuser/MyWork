@@ -297,7 +297,16 @@ private class skedRacStory_Test {
         event.timezoneSidId = testDataFactory.summary.timezoneSidId;
         saveActivityResourcesRequest.activityResources = new List<skedModels.activityResource>();
         saveActivityResourcesRequest.activityResources.add(event);
+        
+        skedRacController.validateActivityResources(saveActivityResourcesRequest);
         skedRacController.saveActivityResources(saveActivityResourcesRequest);
+        
+        skedRacController.saveActivityResourceRequestModel saveActivityResourceRequest = new skedRacController.saveActivityResourceRequestModel();
+        saveActivityResourceRequest.viewData = new Map<string, object>();
+        saveActivityResourceRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveActivityResourceRequest.activityResource = event;
+        
+        skedRacController.saveActivityResource(saveActivityResourceRequest);
         
         Test.stopTest();
     }
@@ -908,6 +917,7 @@ private class skedRacStory_Test {
         savePatternRequest.viewData = new Map<string, object>();
         savePatternRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
         savePatternRequest.availabilityPattern = availabilityPattern;
+        skedRemoteResultModel validatePatternResult = skedRacController.validatePattern(savePatternRequest);
         skedRemoteResultModel savePatternResult = skedRacController.savePattern(savePatternRequest);
         
         skedRacController.savePatternResourceRequestModel savePatternResourceRequest = new skedRacController.savePatternResourceRequestModel();
@@ -1214,6 +1224,12 @@ private class skedRacStory_Test {
         getCustomAvailabilityDetailsRequest.event.Id = customAvailability.Id;
         skedRemoteResultModel getCustomAvailabilityDetailsResult = skedRacController.getCustomAvailabilityDetails(getCustomAvailabilityDetailsRequest);
         
+        skedRacController.saveCustomAvailabilityRequestModel cancelCustomAvailabilityRequest = new skedRacController.saveCustomAvailabilityRequestModel();
+        cancelCustomAvailabilityRequest.viewData = new Map<string, object>();
+        cancelCustomAvailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        cancelCustomAvailabilityRequest.event = getCustomAvailabilityDetailsRequest.event;
+        skedRemoteResultModel cancelCustomAvailabilityResult = skedRacController.cancelCustomAvailability(cancelCustomAvailabilityRequest);
+
         skedRacController.saveCustomAvailabilityRequestModel deleteCustomAvailabilityRequest = new skedRacController.saveCustomAvailabilityRequestModel();
         deleteCustomAvailabilityRequest.viewData = new Map<string, object>();
         deleteCustomAvailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
@@ -1267,7 +1283,7 @@ private class skedRacStory_Test {
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
     }
 
-    static testmethod void testGetAVailatorData() {
+    static testmethod void testGetAvailatorData() {
         List<String> dates = new List<String>();
         Date startDate = System.today();
         Date endDate = System.today().addDays(10);
@@ -1315,7 +1331,7 @@ private class skedRacStory_Test {
         Test.stopTest();
     }
     
-    static testMethod void testGetFixedSitesRelatedToCo() {
+    static testmethod void testGetFixedSitesRelatedToCo() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         
@@ -1335,7 +1351,7 @@ private class skedRacStory_Test {
         Test.stopTest();
     }
     
-    static testMethod void testValidateBulkStaffingBudgetsAgainstSiteCos() {
+    static testmethod void testValidateBulkStaffingBudgetsAgainstSiteCos() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         
@@ -1476,6 +1492,49 @@ private class skedRacStory_Test {
         
         List<skedModels.resource> resources = (List<skedModels.resource>)resourceDataResult.resources;
         
+        Test.stopTest();
+    }
+
+    static testmethod void testGetGroupActivities() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        Test.startTest();
+        
+        skedRacController.getGroupActivitiesRequestModel getGroupActivitiesRequest = new skedRacController.getGroupActivitiesRequestModel();
+        getGroupActivitiesRequest.viewData = new Map<string, object>();
+        getGroupActivitiesRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getGroupActivitiesRequest.pageNo = 1;
+        getGroupActivitiesRequest.pageSize = 25;
+        getGroupActivitiesRequest.activityTypes = new List<string>();
+        getGroupActivitiesRequest.activityTypes.add('Administration');
+        getGroupActivitiesRequest.endDate = testDataFactory.summary.endDateIso;
+        getGroupActivitiesRequest.startDate = testDataFactory.summary.startDateIso;
+
+        skedRemoteResultModel getGroupActivitiesResult = skedRacController.getGroupActivities(getGroupActivitiesRequest);
+
+        Test.stopTest();
+    }
+
+    static testmethod void testGetCollectionOperationTimeBlocks() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        
+        Test.startTest();
+        
+        skedRacController.getCollectionOperationTimeBlocksRequestModel getCollectionOperationTimeBlocksRequest = new skedRacController.getCollectionOperationTimeBlocksRequestModel();
+        getCollectionOperationTimeBlocksRequest.viewData = new Map<string, object>();
+        getCollectionOperationTimeBlocksRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getCollectionOperationTimeBlocksRequest.pageNo = 1;
+        getCollectionOperationTimeBlocksRequest.pageSize = 25;
+        getCollectionOperationTimeBlocksRequest.collectionOperationIds = new List<string>();
+        getCollectionOperationTimeBlocksRequest.collectionOperationIds.add(testCollectionOperation1.Id);
+        getCollectionOperationTimeBlocksRequest.endDate = testDataFactory.summary.endDateIso;
+        getCollectionOperationTimeBlocksRequest.startDate = testDataFactory.summary.startDateIso;
+
+        skedRemoteResultModel getCollectionOperationTimeBlocksResult = skedRacController.getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequest);
+
         Test.stopTest();
     }
 }
