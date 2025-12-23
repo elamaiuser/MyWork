@@ -63,7 +63,7 @@ export default class ApComplianceReport extends LightningElement {
             co: [],
             violationOnly: false,
             driveStatusFilter: [],
-            includeTrades: true
+            includeTrades: false
         };
 
         this.hasError = false;
