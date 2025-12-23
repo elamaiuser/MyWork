@@ -83,6 +83,9 @@ public class OpportunityTriggerTest
     static testMethod void testUpdateDriveDateDay()
     {
         Test.startTest();
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
@@ -98,9 +101,9 @@ public class OpportunityTriggerTest
         // insert templates
         Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
         testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;        
         insert testTemplate;
-        
+
         List<Opportunity> oppList = new List<Opportunity>();
          // insert Mobile Opp 1
         Opportunity testMobileOpp1 = new Opportunity(
@@ -254,9 +257,7 @@ public class OpportunityTriggerTest
         oppList.add(testMobileOpp6);
         
 		insert oppList;
-        
-       
-        
+
         List<Opportunity> oppListAfterInsert = [Select Id, Drive_Date_Day__c,Direct_Donors_To__c from Opportunity];
         Id id_acc = OpportunityService.getOrCreateDefaultAccount();
         Account accObj = [select name from Account where Id=:id_acc LIMIT 1];

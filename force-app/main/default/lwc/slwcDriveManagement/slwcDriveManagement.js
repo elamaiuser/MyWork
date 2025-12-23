@@ -550,6 +550,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                  - Start Time: ${driveStartTime}
                  - End Time: ${driveEndTime}
                  - Opportunity: ${this.drive.opportunity.name}
+                 - Type Of Drive: ${this.drive.typeOfDrive}
 
                 Do you want to continue?`,
 
@@ -576,7 +577,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             driveSiteId: this.drive.driveSiteId,
             opportunityId: this.drive.opportunityId,
             surrogateDriveForId: this.drive.id,
-            status: DRIVE_STATUS.CONFIRMED
+            status: DRIVE_STATUS.CONFIRMED,
+            typeOfDrive: this.drive.typeOfDrive //HRP-16053
         }
         let service = new driveService();
         service.save(surrogateDrive)
@@ -671,10 +673,33 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         return requiresAssetValidation;
     }
 
+    requireTimeBlockValidation() {
+        let requireTimeBlockValidation = false;
+
+        // Check if drive uses time blocks and if any shift has empty TimeBlock
+        if (this.driveHelper.isDriveUseTimeBlock(this.drive, this.masterData)) {
+            requireTimeBlockValidation = this.drive.driveShifts.some(shift => !shift.timeBlockId);
+        }
+
+        // Check if any shift has "Out Of Time Block" contention without proper resolution
+        if (!requireTimeBlockValidation) {
+            requireTimeBlockValidation = this.drive.driveShifts.some(shift => {
+                const hasOutOfTimeBlockContention = shift.contention && 
+                    shift.contention.includes(DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK);
+                const hasAcknowledgementResolution = shift.contentionResolution && 
+                    shift.contentionResolution.includes('Elect to acknowledge the drive shift is out of Time Block');
+                
+                return hasOutOfTimeBlockContention && !hasAcknowledgementResolution;
+            });
+        }
+
+        return requireTimeBlockValidation;
+    }
+
     btnSaveClicked() {
         this.showErrors = true;
         if (this.isValid() === true) {
-            if (!this.requiresAssetValidation()) {
+            if (!this.requiresAssetValidation() && !this.requireTimeBlockValidation()) {
                 return this.handleSave();
             }
 

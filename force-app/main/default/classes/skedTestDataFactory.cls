@@ -29,11 +29,12 @@ public class skedTestDataFactory {
         List<sObject> predefinedData = new List<sObject>();
 
         List<string> roles = skedUtils.getPickListValues('sked__Resource__c', 'sked_Roles__c');
-        for (string role : roles) {
+        for (Integer i = 0; i < roles.size(); i++) {
             sked__Tag__c roleTag = new sked__Tag__c(
-                Name = role,
+                Name = roles[i],
                 sked__Type__c = 'Role',
-                sked_Priority__c = 9
+                sked_Priority__c = 9,
+                sked_Role_ID__c = 'SKED-T-' + i
             );
             predefinedData.add(roleTag);
         }

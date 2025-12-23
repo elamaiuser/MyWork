@@ -27,13 +27,6 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
         this(sitecollectionOperationIds);
         this.taxVer = taxVer;
     }
-    // HRP-15653 FIX: new constructor to retain taxVer during batch chaining
-    public skedDriveCOChangedBatch(String lastId, Set<Id> sitecollectionOperationIds, Decimal taxVer) {
-        this.lastId = lastId;
-        this.sitecollectionOperationIds = sitecollectionOperationIds;
-        this.taxVer = taxVer;
-    }
-
     global List<sked_Site_Collection_Operation__c> start(Database.BatchableContext BC) {
         //HRP-14438
         try{
@@ -46,21 +39,13 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
             Taxo_Utilities.logErrors(insertResult,'Taxonomy Run','BSF_Batch_BSFPortfolio','Start','Error',
                                      'Error occurred while inserting the error Record',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
             
-            Integer batchLimit = 50000;
-            try {
-                batchLimit = Integer.valueOf(Label.skedDriveCOBatchLimit);
-                System.debug('Label skedDriveCOBatchLimit value: ' + batchLimit);
-            } catch (Exception e) {
-                // default stays 50000
-                System.debug('Error in reading label skedDriveCOBatchLimit: ' + e.getMessage());
-            }
             return [SELECT Id, sked_Collection_Operation__c, sked_Collection_Operation__r.Name, sked_End_Date__c, 
                     sked_Site__c, sked_Start_Date__c, sked_Region__c
                     FROM sked_Site_Collection_Operation__c
                     WHERE Id IN :this.sitecollectionOperationIds
                     AND Id > :this.lastId
                     ORDER BY Id ASC
-                    LIMIT :batchLimit];
+                    LIMIT 50000];
         } catch (Exception e) { //HRP-14438
             System.debug('Error in start method: ' + e.getMessage());
             Taxo_Utilities.logErrorForException(e, 'skedDriveCOChangedBatch', 'Start', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
@@ -101,19 +86,18 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
                 ORDER BY Id ASC
                 LIMIT 1
             ];
-            System.debug('HRP-15653 : remainRecordQuery:'+!remainRecordQuery.isEmpty()+' this.lastId:'+this.lastId);
+            
             if (!remainRecordQuery.isEmpty()) {
                 if (!Test.isRunningTest()) {
                     //HRP-14438
                     Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedDriveCOChangedBatch');
-                    //HRP-15653 FIX: pass taxVer when chaining to next batch   
-                    Database.executeBatch(new skedDriveCOChangedBatch(this.lastId, this.sitecollectionOperationIds,this.taxVer), batchSize);
+                    Database.executeBatch(new skedDriveCOChangedBatch(this.lastId, this.sitecollectionOperationIds), batchSize);
                     runSkedDriveCOChangedBatch = true;
                 }
             }
-            System.debug('HRP-15653 :  this.taxVer:'+this.taxVer+':runSkedDriveCOChangedBatch '+runSkedDriveCOChangedBatch);
               //HRP-14438
             if(this.taxVer!=null && runSkedDriveCOChangedBatch == false){
+              
                 Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedActivityDistrictBatch');   
                 Database.executeBatch(new skedActivityDistrictBatch(taxver),batchSize);
                 

@@ -2,7 +2,7 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Close_Date_Only_DRD_System_Admin</fullName>
     <active>false</active>
-    <description>The close date field can only be edited by a DRD user or system admin.</description>
+    <description>The close date field can only be edited by a system admin.</description>
     <errorConditionFormula>AND(
 ISCHANGED(CloseDate),
  Bypass_Validation_Rule__c == FALSE,

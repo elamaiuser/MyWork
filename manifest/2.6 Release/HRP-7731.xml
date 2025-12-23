@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OpportunityService</members>
+        <members>OpportunityTriggerTest</members>
+        <members>OpportunityServiceController</members>
+        <members>OpportunityServiceControllerTest</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
+		<name>CustomMetadata</name>
+	</types>
+    <version>64.0</version>
+</Package>
