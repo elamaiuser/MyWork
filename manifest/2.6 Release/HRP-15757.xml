@@ -4,5 +4,14 @@
 		<members>APComplianceExcel</members>
 		<name>ApexPage</name>
 	</types>
+	<types>
+		<members>APComplianceReportController</members>
+		<members>APComplianceReportControllerTest</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>aPComplianceReport</members>
+		<name>LightningComponentBundle</name>
+	</types>
 	<version>65.0</version>
 </Package>
