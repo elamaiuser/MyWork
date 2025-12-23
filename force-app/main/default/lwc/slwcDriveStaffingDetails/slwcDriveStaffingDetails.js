@@ -2890,7 +2890,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let { job , jobAllocation } = this.jobAllocationModalData; 
 
         let [ tempJob ] = this.getJobById(job.id);
-        let tempJobAllocation =  find(job.jobAllocations, item => item.id == jobAllocation.id)
+        let tempJobAllocation =  find(job.jobAllocations, item => item.key == jobAllocation.key)
 
         tempJobAllocation = extend(tempJobAllocation, event.detail);
         tempJob = extend(tempJob, {
