@@ -392,7 +392,9 @@ public class TimeBlockComplianceReportControllerTest {
                 driveStatusList,
                 onlyViolations,
                 timeBlockIds,
-                accountManagerName
+                accountManagerName,
+                 'driveDate',
+            'asc'
             );
         Test.stopTest();
         System.debug('Returned Rows: ' + wrapper.dataWrapper.size());
@@ -460,4 +462,63 @@ public class TimeBlockComplianceReportControllerTest {
             System.assert(!pages[0].isEmpty(), 'Each page should contain rows if data exists');
         }
     }
+@isTest
+static void testCoverServerSideMergeSortPaths() {
+    List<Map<String, String>> data = new List<Map<String, String>>();
+
+    data.add(new Map<String, String>{
+        'driveDate' => '2024-12-15',
+        'driveDateSortKey' => '20241215',
+        'shiftStartTime' => '8:45',
+        'shiftStartTimeSortKey' => '084500',
+        'co' => '  Zeta  '
+    });
+
+    data.add(new Map<String, String>{
+        'driveDate' => '2023-01-02',
+        'driveDateSortKey' => '20230102',
+        'shiftStartTime' => '10:00',
+        'shiftStartTimeSortKey' => '100000',
+        'co' => null
+    });
+
+    data.add(new Map<String, String>{
+        'driveDate' => '2024-01-02',
+        'driveDateSortKey' => '20240102',
+        'shiftStartTime' => '09:30',
+        'shiftStartTimeSortKey' => '093000',
+        'co' => 'alpha'
+    });
+
+    data.add(new Map<String, String>{
+        'driveDate' => '2024-01-02',
+        'driveDateSortKey' => '20240102',
+        'shiftStartTime' => '09:30',
+        'shiftStartTimeSortKey' => '093000',
+        'co' => ' Alpha '
+    });
+
+    TimeBlockComplianceReportController.sortDataList(data, 'driveDate', 'asc');
+    TimeBlockComplianceReportController.sortDataList(data, 'driveDate', 'desc');
+
+    TimeBlockComplianceReportController.sortDataList(data, 'shiftStartTime', 'asc');
+    TimeBlockComplianceReportController.sortDataList(data, 'shiftStartTime', 'desc');
+
+    TimeBlockComplianceReportController.sortDataList(data, 'co', 'asc');
+    TimeBlockComplianceReportController.sortDataList(data, 'co', 'desc');
+
+    TimeBlockComplianceReportController.sortDataList(data, 'co', null);
+
+    List<Map<String, String>> single = new List<Map<String, String>>{
+        new Map<String, String>{ 'co' => 'only' }
+    };
+    TimeBlockComplianceReportController.sortDataList(single, 'co', 'asc');
+
+    TimeBlockComplianceReportController.normalizeSortValue(null);
+    TimeBlockComplianceReportController.normalizeSortValue('  AbC  ');
+}
+
+
+
+
 }
