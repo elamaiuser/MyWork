@@ -698,8 +698,10 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
     region.Id,
     coList,
     driveStatusList,
-    false, // violationOnly
-    false   // includeTrades
+    true, // violationOnly
+    true,
+    'driveName',
+    'asc'
 );
 
         Test.stopTest();
@@ -745,4 +747,47 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
         System.debug('>>> Paginated Pages Count: ' + pages.size());
         Test.stopTest();
     }
+    @isTest
+static void testSortHelpersCoverage_APCompliance() {
+    List<Map<String, String>> dataList = new List<Map<String, String>>();
+
+    dataList.add(new Map<String, String>{
+        'driveName' => 'bbb',
+        'co' => 'CO 2',
+        'division' => 'Div B',
+        'region' => 'Reg B',
+        'driveLink' => '/lightning/r/sked_Drive__c/001/view',
+        'rowId' => '1'
+    });
+
+    dataList.add(new Map<String, String>{
+        'driveName' => 'AAA',
+        'co' => null,
+        'division' => 'Div A',
+        'region' => 'Reg A',
+        'driveLink' => '/lightning/r/sked_Drive__c/002/view',
+        'rowId' => '2'
+    });
+
+    dataList.add(new Map<String, String>{
+        'driveName' => '  cCc  ',
+        'co' => 'co 1',
+        'division' => null,
+        'region' => 'reg c',
+        'driveLink' => '/lightning/r/sked_Drive__c/003/view',
+        'rowId' => '3'
+    });
+
+    Test.startTest();
+
+    APComplianceReportController.sortDataList(dataList, 'driveName', null);
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'asc');
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'DESC');
+
+    APComplianceReportController.sortDataList(dataList, 'driveLink', 'asc');
+
+    APComplianceReportController.sortDataList(dataList, 'co', '');
+
+    Test.stopTest();
+}
 }
