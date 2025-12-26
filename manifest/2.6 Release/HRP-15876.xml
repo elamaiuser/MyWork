@@ -9,5 +9,9 @@
 		<members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
 		<name>CustomField</name>
 	</types>
+    <types>
+        <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
+        <name>CustomMetadata</name>
+    </types>
     <version>64.0</version>
 </Package>
