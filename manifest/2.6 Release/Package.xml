@@ -15,6 +15,7 @@
 	</types>
 	<types>
 		<members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
+		<members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
