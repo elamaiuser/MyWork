@@ -880,6 +880,30 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
           .then(() => {
             if (isDrivePendingApproval) {
               const approvalSvc = new approvalService();
+              //HRP-15962
+              return approvalSvc.getLatestDriveApprovalState({ driveId: this.drive.id })
+                .then(result => {
+                  if (!result.success) {
+                    throw new Error(result.message || 'Failed to fetch approval state');
+                  }
+
+                  const state = result.returnedData || {};
+                  const approvalStatus = state.approvalStatus;
+                  const routeTo = state.routeApprovalRequestTo;
+                  const isWaitingForValidApproval =
+                    approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_APS_APPROVAL ||
+                    approvalStatus === DRIVE_APPROVAL_STATUS.WAITING_FOR_DM_APPROVAL;
+
+
+                  if (isWaitingForValidApproval && routeTo) {
+                    this.resultMessage =
+                      'This Drive was already submitted for approval. ' +
+                      'The page will be refreshed to show the latest status.';
+                    this.needToRefreshPage = true;
+                    this.hookAfterFinishedHandler(false, this.resultMessage);
+                    return Promise.reject('CONCURRENT_APPROVAL');
+                  }
+
               return approvalSvc.withdraw({
                 request: {
                   recordId: this.drive.id
@@ -896,6 +920,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
                       });
                   }, 3000, 100);
                 })
+              })
             }
           })
           .then(() => {
@@ -943,6 +968,13 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         else {
           return this.nextStep(null, STEP.SAVE_DRIVE);
         }
+      })
+      .catch(error => {
+        if (error === 'CONCURRENT_APPROVAL') {
+          return false;
+        }
+
+        throw error;
       })
       .finally(() => this.hideLoading())
 }

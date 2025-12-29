@@ -134,6 +134,43 @@ global class slwcApprovalService implements Callable {
         List<Approval.ProcessResult> removeProcessResults = removeWorkItems(recordIds);
         return result;
     }
+    //HRP-15962
+    @AuraEnabled
+    public static slwcAuraResult getLatestDriveApprovalState(Id driveId) {
+        slwcAuraResult result = new slwcAuraResult();
+        
+        try {
+            if (driveId == null) {
+                result.success = false;
+                result.message = 'Drive Id is required';
+                return result;
+            }
+            
+            sked_Drive__c drive = [
+             SELECT Id,
+                   sked_Approval_Status__c,
+                   sked_Route_Approval_Request_To__c
+            FROM sked_Drive__c
+            WHERE Id = :driveId
+            LIMIT 1
+        ];
+            
+            Map<String, Object> approvalState = new Map<String, Object>{
+                'approvalStatus' => drive.sked_Approval_Status__c,
+                'routeApprovalRequestTo' => drive.sked_Route_Approval_Request_To__c
+            };
+            
+            result.success = true;
+            result.returnedData = approvalState;
+            return result;
+            
+        } catch (Exception e) {
+            result.success = false;
+            result.message = e.getMessage();
+            return result;
+        }
+    }
+    
     
     @AuraEnabled
     public static slwcAuraResult saveDesignatedApprover(saveDesignatedApproverRequestModel request) {

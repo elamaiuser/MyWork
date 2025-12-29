@@ -8,6 +8,7 @@ class approvalService {
   saveDesignatedApprover = (params) => auraProxy.getInstance().saveDesignatedApprover(params);
   isPendingApproval = (params) => auraProxy.getInstance().isPendingApproval(params);
   withdraw = (params) => auraProxy.getInstance().withdraw(params);
+  getLatestDriveApprovalState = (params) => auraProxy.getInstance().getLatestDriveApprovalState(params);//HRP-15962
 }
 
 export {
