@@ -20,6 +20,8 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
     global Decimal oldTaxVersionKey;
     global Boolean allowChaining = false;//HRP-14298
     global Boolean runRecruitment = false;//HRP-14298
+    global Set<string> allNewTaxoVerExternalKeySet = new Set<string>(); //HRP-15653
+    global Set<String> allNewTaxoVerTcoKeySet = new Set<String>();
     
     global BSF_Batch_TaxonomyEndDateHandler (Decimal taxVer,string recordType,Boolean runAssignmentBatch,Date startDate,Date endDate)
     {
@@ -54,6 +56,7 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
             
             if(recordType=='Bio Collection BSF')
             {
+                
                 query = 'select Id,Division_Code__c,District_Code__c,DS_Region_Code__c,Collection_Operation_Code__c,skedulo_region_cd__c,End_Date__c,Start_Date__c,Time_Zone__c,'+
                     'RecordTypeId,Supervisor_Code__c,Version_Key__c,Zip_Code__c,RecordType.Name from Taxonomy__c where RecordType.Name =:recordType AND Version_Key__c != :taxVer order by Version_Key__c,District_Code__c desc';
             }
@@ -75,8 +78,9 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
         }
     }
     
-     global void execute(Database.BatchableContext BC, List<Taxonomy__c> taxonomyRecords) 
+    global void execute(Database.BatchableContext BC, List<Taxonomy__c> taxonomyRecords) 
     {
+        System.debug('HRP-15653 execute method');
         try { //HRP-14298
             BSF_Constants.isEndateBatch=true;
             //system.debug('taxonomyRecords'+taxonomyRecords);
@@ -86,6 +90,8 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
                 oldTaxVersionKey =txList[0].Version_Key__c;
                 //system.debug('oldTaxVersionKey'+oldTaxVersionKey);
             }
+            System.debug('HRP-15653 execute oldTaxVersionKey:'+oldTaxVersionKey);
+
             
             set<string> amCode = new set <String>();
             set<string> abmCode = new set <String>();
@@ -111,10 +117,11 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
                     districtCode.add(tx.District_Code__c);
                     arcRegionCode.add(tx.DS_Region_Code__c);
                     divisionCode.add(tx.Division_Code__c);
-                }
-                
+                } 
             }
+            System.debug('HRP-15653 execute districtCode:'+districtCode.size()+' arcRegionCode:'+arcRegionCode.size()+' divisionCode:'+divisionCode.size());
             List<Taxonomy__c> newVersionTaxList = new List<Taxonomy__c> ();
+            List<Taxonomy__c> newBioCollectionBsfTaxoVersions = new List<Taxonomy__c> ();
             
             if(recordType != BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE && recordType != BSF_Constants.BIO_COLLECTION_RECORD_TYPE)
             {
@@ -133,31 +140,48 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
             
             if(recordType == BSF_Constants.BIO_COLLECTION_RECORD_TYPE )
             {
+                System.debug('HRP-15653 execute BIO_COLLECTION_RECORD_TYPE:'+BSF_Constants.BIO_COLLECTION_RECORD_TYPE+' =>'+allNewTaxoVerExternalKeySet.isEmpty());
+                System.debug('HRP-15653 execute allNewTaxoVerExternalKeySet:'+allNewTaxoVerExternalKeySet.size());
                 newVersionTaxList = [select Id,Division_Code__c,District_Code__c,DS_Region_Code__c,Collection_Operation_Code__c,skedulo_region_cd__c,End_Date__c,Start_Date__c,Time_Zone__c,
                                      RecordTypeId,Supervisor_Code__c,Version_Key__c,Zip_Code__c,RecordType.Name from Taxonomy__c where RecordType.Name =:recordType AND Version_Key__c = :taxVer and
                                      (District_Code__c IN:districtCode or DS_Region_Code__c IN:arcRegionCode or Division_Code__c IN:divisionCode) order by Version_Key__c desc];
+
+                if(allNewTaxoVerExternalKeySet.isEmpty()){
+                    newBioCollectionBsfTaxoVersions = [select Id,Division_Code__c,District_Code__c,DS_Region_Code__c,
+                                                        Collection_Operation_Code__c,skedulo_region_cd__c,End_Date__c,Start_Date__c,
+                                                        Time_Zone__c,RecordTypeId,Supervisor_Code__c,Version_Key__c,Zip_Code__c,
+                                                        RecordType.Name 
+                                                        from Taxonomy__c 
+                                                        where RecordType.Name =:recordType 
+                                                        AND Version_Key__c = :taxVer order by Version_Key__c desc];
+                    System.debug('HRP-15653 newBioCollectionBsfTaxoVersions :'+newBioCollectionBsfTaxoVersions.size());
+                    //Prepare the keys for Territory endDating checking for all the new taxo
+                    Map<String,taxonomy__c> newTaxIdExternalKeysMap = BSF_Batch_TaxonomyEndDateHelper.getexternalKeyTaxonomyMap (newBioCollectionBsfTaxoVersions);
+                    allNewTaxoVerExternalKeySet.addAll(newTaxIdExternalKeysMap.keyset());
+                    System.debug('HRP-15653 allNewTaxoVerExternalKeySet :'+allNewTaxoVerExternalKeySet.size());
+                    //Prepare the keys for TCO endDating checking for all the new taxo
+                    for(Taxonomy__c newTaxo : newBioCollectionBsfTaxoVersions){
+                        String terrKey =
+                            'Bio_Collection_BSF_District_' +
+                            newTaxo.Division_Code__c + '_' +
+                            newTaxo.DS_Region_Code__c + '_' +
+                            newTaxo.District_Code__c;
+            
+                        String tcoKey = terrKey + '~' + newTaxo.Collection_Operation_Code__c;
+
+                        allNewTaxoVerTcoKeySet.add(tcoKey);
+                    }
+                }
             }
-            
-            
             List<Taxonomy__c> oldVersionTaxRecords = new List<Taxonomy__c>();
             for(Taxonomy__c tx : taxonomyRecords)
             {
-                /*if(this.oldTaxVersionKey == null)
-{
-this.oldTaxVersionKey =tx.Version_Key__c;
-system.debug('oldTaxVersionKey'+oldTaxVersionKey);
-}*/
                 if(tx.Version_Key__c  == this.oldTaxVersionKey)
                 {
-                 
                     oldVersionTaxRecords.add(tx);
-                    //system.debug('tx'+tx);
-                    
                 }
             }
-            //system.debug('oldVersionTaxRecords'+oldVersionTaxRecords);
-            //system.debug('newVersionTaxList'+newVersionTaxList);
-            BSF_Batch_TaxonomyEndDateHelper.endDateTaxonomy(newVersionTaxList,oldVersionTaxRecords);
+            BSF_Batch_TaxonomyEndDateHelper.endDateTaxonomy(newVersionTaxList,oldVersionTaxRecords,allNewTaxoVerExternalKeySet,allNewTaxoVerTcoKeySet);
           
         } catch (Exception e) { //HRP-14298
             System.debug('Error in execute method: ' + e.getMessage());
@@ -244,8 +268,6 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                     }
                 }
             }
-            
-             
             // If record type is Bio Collection BSF
             // 
             if(this.recordType == BSF_Constants.BIO_COLLECTION_RECORD_TYPE)
@@ -287,15 +309,10 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
                         database.executeBatch(batch, batchSize);
                     }
                 }
-            }
-            
-            
+            }  
         }catch (Exception e) {
-            Taxo_Utilities.logErrorForException(e, 'BSF_Batch_TaxonomyEndDateHandler', 'Finish', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',recordType,taxVer);
-            
-            
-        }
-        
+            Taxo_Utilities.logErrorForException(e, 'BSF_Batch_TaxonomyEndDateHandler', 'Finish', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',recordType,taxVer); 
+        }  
     }
     //if status is completed.    
     private void publishTaxonomyRunUpdateEvent(Id taxonomyRunId) {
@@ -363,10 +380,5 @@ system.debug('oldTaxVersionKey'+oldTaxVersionKey);
             Taxo_Utilities.logErrorForException(e, 'Taxonomy Run', 'TaxonomyRunBatchHandler', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',recordsToUpdate[0].Taxo_Record_Type__c, recordsToUpdate[0].Future_Version_Number__c);
             
         }
-        
-        
-    }
-    
-    
-    
+    }  
 }
