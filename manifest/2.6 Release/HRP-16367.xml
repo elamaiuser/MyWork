@@ -10,6 +10,8 @@
         <members>SiteService</members>
         <members>SiteServiceTest</members>
         <members>SiteTriggerHandler</members>
+        <members>UpdateOpportunityNameBatch</members>
+        <members>UpdateOpportunityNameBatchTest</members>
         <name>ApexClass</name>
     </types>
     <types>
