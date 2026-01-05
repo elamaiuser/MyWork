@@ -10,7 +10,7 @@ export default class ApComplianceReport extends LightningElement {
         co: [],
         violationOnly: false,
         driveStatusFilter: [],
-        includeTrades: false
+        includeTrades: true
     };
 
     @track dataArry = [];
@@ -22,10 +22,7 @@ export default class ApComplianceReport extends LightningElement {
     @track errorMessageToDisplay = '';
     @track totalRecords = 0;
     @track totalViolations = 0;
-    @track violationPercent = 0;
-
-    @track sortBy = null;
-    @track sortDirection = 'asc';
+    @track violationPercentage = 0;
 
     @track driveStatusOptions = [
         { label: 'Draft', value: 'Draft', selected: false },
@@ -63,20 +60,15 @@ export default class ApComplianceReport extends LightningElement {
             co: [],
             violationOnly: false,
             driveStatusFilter: [],
-            includeTrades: false
+            includeTrades: true
         };
-
         this.hasError = false;
         this.hasRecords = false;
-
-        this.sortBy = null;
-        this.sortDirection = 'asc';
-
         this.resetDriveStatusOptions();
     }
 
     resetDriveStatusOptions() {
-        this.driveStatusOptions.forEach(opt => (opt.selected = false));
+        this.driveStatusOptions.forEach(opt => opt.selected = false);
         const combobox = this.template.querySelector('c-bsf-multi-select-combobox[name="driveStatus"]');
         if (combobox) {
             combobox.selectedItems = '-Select-';
@@ -85,14 +77,25 @@ export default class ApComplianceReport extends LightningElement {
     }
 
     handleDriveStatusChange(event) {
+        let driveStatusList = [];
         const items = Array.isArray(event.detail) ? event.detail : JSON.parse(JSON.stringify(event.detail));
-        const driveStatusList = items.filter(i => i?.value).map(i => i.value);
+        for (let i in items) {
+            if (items[i] && items[i].value) {
+                driveStatusList.push(items[i].value);
+                this.driveStatusOptions
+                    .filter(item => item.value === items[i].value)
+                    .forEach(item => item.selected = true);
+            }
+        }
         this.wrapper.driveStatusFilter = driveStatusList;
+        console.log("Final driveStatusFilter:", this.wrapper.driveStatusFilter);
     }
 
     handleDriveStatusClick() {
         const combobox = this.template.querySelector('c-bsf-multi-select-combobox[name="driveStatus"]');
-        if (combobox) combobox.showOptions = true;
+        if (combobox) {
+            combobox.showOptions = true;
+        }
     }
 
     handleViolationToggleChange(event) {
@@ -103,80 +106,49 @@ export default class ApComplianceReport extends LightningElement {
         this.wrapper.includeTrades = event.target.checked;
     }
 
-    async handleSort(event) {
-        this.sortBy = event.detail.fieldName;
-        this.sortDirection = event.detail.sortDirection;
-
-        this.loaded = true;
-
-        await new Promise(resolve => window.requestAnimationFrame(resolve));
-
-        this.performSearch(true);
-    }
-
     handleSearch() {
-        this.loaded = true;
-        this.hasRecords = false;
-        this.hasError = false;
+    this.loaded = true;
+    this.hasRecords = false;
+    this.hasError = false;
+    this.dataArry = [];
+    this.totalRecords = 0;
+    this.totalViolations = 0;
+    this.violationPercent = 0;
 
-        this.dataArry = [];
-        this.totalRecords = 0;
-        this.totalViolations = 0;
-        this.violationPercent = 0;
-        this.sortBy = null;
-        this.sortDirection = 'asc';
+    const driveStatusClone = [...this.wrapper.driveStatusFilter];
 
-        this.performSearch(false);
-    }
+    searchReport({
+        startDt: this.wrapper.startDate,
+        endDt: this.wrapper.endDate,
+        division: this.wrapper.division,
+        region: this.wrapper.region,
+        coList: this.wrapper.co,
+        violationOnly: this.wrapper.violationOnly,
+        driveStatusFilter: driveStatusClone, // ✅ clone sent
+        includeTrades: this.wrapper.includeTrades
+    })
+    .then(result => {
+        this.loaded = false;
+        this.columns = result.columnsInfo;
+        this.dataArry = result.dataWrapper;
+        this.hasRecords = this.dataArry.length > 0;
+        this.hasError = !this.hasRecords;
+        this.errorMessageToDisplay = this.hasError ? 'No data found.' : '';
 
-    performSearch(isSort) {
-        this.loaded = true;
+        if (this.hasRecords) {
+            this.totalRecords = this.dataArry.length;
+            this.totalViolations = this.dataArry.filter(row => row.violation === 'true').length;
+            this.violationPercent = Math.round((this.totalViolations / this.totalRecords) * 100);
+        }
+    })
+    .catch(error => {
+        this.loaded = false;
+        this.hasError = true;
+        this.errorMessageToDisplay = error.body?.message || 'Unknown error';
+        console.error(error);
+    });
+}
 
-        const driveStatusClone = [...this.wrapper.driveStatusFilter];
-
-        searchReport({
-            startDt: this.wrapper.startDate,
-            endDt: this.wrapper.endDate,
-            division: this.wrapper.division,
-            region: this.wrapper.region,
-            coList: this.wrapper.co,
-            driveStatusFilter: driveStatusClone,
-            violationOnly: this.wrapper.violationOnly,
-            includeTrades: this.wrapper.includeTrades,
-            sortField: this.sortBy,
-            sortDirection: this.sortDirection
-        })
-            .then(result => {
-                // DO NOT keep Apex-returned proxies directly in datatable
-                const safeData = (result?.dataWrapper || []).map(r => ({ ...r }));
-                const safeCols = (result?.columnsInfo || []).map(c => ({ ...c }));
-
-                // columns should not be re-set on every sort (reduces datatable resize/weakmap crashes)
-                if (!this.columns || this.columns.length === 0 || !isSort) {
-                    this.columns = safeCols;
-                }
-
-                this.dataArry = safeData;
-
-                this.hasRecords = this.dataArry.length > 0;
-                this.hasError = !this.hasRecords;
-                this.errorMessageToDisplay = this.hasError ? 'No data found.' : '';
-
-                if (this.hasRecords) {
-                    this.totalRecords = this.dataArry.length;
-                    this.totalViolations = this.dataArry.filter(r => r.violation === 'true').length;
-                    this.violationPercent = Math.round((this.totalViolations / this.totalRecords) * 100);
-                }
-
-                this.loaded = false;
-            })
-            .catch(error => {
-                this.loaded = false;
-                this.hasError = true;
-                this.errorMessageToDisplay = error?.body?.message || 'Unknown error';
-                console.error(error);
-            });
-    }
 
     handleViewPdf() {
         this.showPopup = true;
@@ -191,31 +163,25 @@ export default class ApComplianceReport extends LightningElement {
     }
 
     exportToExcel() {
-        const driveStatusParam = encodeURIComponent((this.wrapper.driveStatusFilter || []).join(','));
-        const coParam = encodeURIComponent((this.wrapper.co || []).join(','));
-        window.open(
-            `/apex/APComplianceExcel?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}` +
-            `&division=${encodeURIComponent(this.wrapper.division || '')}&region=${encodeURIComponent(this.wrapper.region || '')}` +
-            `&co=${coParam}&violationOnly=${this.wrapper.violationOnly}` +
-            `&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`,
-            '_blank'
-        );
+        const driveStatusParam = this.wrapper.driveStatusFilter.join(',');
+        window.open(`/apex/APComplianceExcel?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}&violationOnly=${this.wrapper.violationOnly}&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`, '_blank');
+
     }
 
     get getPopUpRedirectUrl() {
-        const driveStatusParam = encodeURIComponent((this.wrapper.driveStatusFilter || []).join(','));
-        const coParam = encodeURIComponent((this.wrapper.co || []).join(','));
-        return `/apex/BSFAPComplianceReportPDF?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}` +
-            `&division=${encodeURIComponent(this.wrapper.division || '')}&region=${encodeURIComponent(this.wrapper.region || '')}` +
-            `&co=${coParam}&violationOnly=${this.wrapper.violationOnly}` +
-            `&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`;
+       const driveStatusParam = this.wrapper.driveStatusFilter.join(',');
+        return `/apex/BSFAPComplianceReportPDF?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}&division=${this.wrapper.division}&region=${this.wrapper.region}&co=${this.wrapper.co}&violationOnly=${this.wrapper.violationOnly}&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`;
+
+    }
+
+    convertToCSV(data) {
+        if (!data || !data.length) return '';
+        const header = Object.keys(data[0]).join(',');
+        const rows = data.map(row => Object.values(row).map(v => `"${v}"`).join(','));
+        return [header, ...rows].join('\n');
     }
 
     get disablePdfButton() {
         return !this.hasRecords;
-    }
-
-    get Hide() {
-        return true;
     }
 }
