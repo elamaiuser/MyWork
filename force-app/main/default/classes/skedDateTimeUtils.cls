@@ -27,7 +27,7 @@ public class skedDateTimeUtils {
     public static final String INT_TIME_FORMAT = 'Hmm';
     public static final Datetime MAX_DATETIME = Datetime.newInstance(4000, 1, 1, 0, 0, 0);
     public static final Datetime MIN_DATETIME = Datetime.newInstance(1970, 1, 1, 0, 0, 0);
-    public static final Date MAX_DATE = Date.newInstance(4000, 1, 1);
+    public static final Date MAX_DATE = Date.newInstance(4000, 12, 31);
     public static final Date MIN_DATE = Date.newInstance(1970, 1, 1);
 
     public static DateTime addDays(DateTime input, integer days, string timezoneSidId) {

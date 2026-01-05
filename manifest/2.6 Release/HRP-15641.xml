@@ -3,6 +3,7 @@
     <types>
         <members>skedAvailabilityPatternResourceHandler</members>
         <members>skedAvailabilityPatternService</members>
+        <members>skedDateTimeUtils</members>
         <members>skedModels</members>
         <members>skedRacController</members>
         <members>skedRacStory_Test</members>
