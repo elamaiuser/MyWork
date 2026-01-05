@@ -28,7 +28,7 @@ public with sharing class APComplianceReportController {
     public APComplianceReportController.DatableConfigWrapper wrapper { get; set; }
 
     private static final Set<String> ALLOWED_SORT_FIELDS = new Set<String>{
-        'name','supervisor','driveName','JName','division','region','co','workDate','type','role','status',
+        'name','supervisor','driveName','JName','division','region','co','workDate','type','JOT','role','status',
         'startTime','endTime','apTime','apName','violation','StaffingReason','exc','AType','Subtype','calloutTrade'
     };
 
@@ -171,6 +171,7 @@ public static DatableConfigWrapper searchReport(
 
         new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
+        new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'startTime', 'type' => 'text', 'sortable' => true },
@@ -302,10 +303,10 @@ public static DatableConfigWrapper searchReport(
         jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
 
-    jobSOQL +=
+    /*jobSOQL +=
         'AND (sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c LIKE \'%Non Integrated%\' ' +
         'OR sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\') ' +
-        'ORDER BY sked_Start_Date__c desc';
+        'ORDER BY sked_Start_Date__c desc';*/
 
     List<sked__Job_Allocation__c> jobAllocList = Database.query(jobSOQL);
     for (sked__Job_Allocation__c job : jobAllocList) {
@@ -347,6 +348,7 @@ public static DatableConfigWrapper searchReport(
             job.sked__Job__r.sked_Drive__c,
             job.sked__Job__r.sked_Drive__r != null ? job.sked__Job__r.sked_Drive__r.Name : '',
             job.sked__Job__c,
+            job.sked__Job__r.sked_Drive_Shift__r != null ? job.sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c : '',
             job.sked__Job__r != null ? job.sked__Job__r.Name : '',
             job.sked__Job__r != null ? job.sked__Job__r.sked__Type__c : '',
             job.sked_Staffing_Reason__c,
@@ -415,6 +417,7 @@ public static DatableConfigWrapper searchReport(
             null,
             '',
             act.sked__Activity__c,
+            '',
             act.sked__Activity__r != null ? act.sked__Activity__r.sked_Activity_Title__c : '',
             '',
             act.sked_Staffing_Reason__c,
@@ -528,6 +531,7 @@ public static DatableConfigWrapper searchReport(
         Id driveId,
         String driveName,
         Id jobOrActivityId,
+        String JOT,
         String JName,
         String Role,
         String StaffingReason,
@@ -571,6 +575,7 @@ public static DatableConfigWrapper searchReport(
 
         row.put('driveName', driveName != null ? driveName : '');
         row.put('JName', JName != null ? JName : '');
+         row.put('JOT', JOT != null ? JOT : '');
 
         if (activePattern != null && activePattern.weeklySchedule != null) {
             String wk = getWeekday(workDate);
