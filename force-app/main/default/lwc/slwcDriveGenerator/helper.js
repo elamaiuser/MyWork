@@ -944,7 +944,7 @@ class DriveHelper {
     let isFixedSiteDrive = this.isFixedSiteDrive(drive);
     const isWbFixedSiteDrive = this.isWbFixedSiteDrive(drive);
     let driveFields = [];
-    if(isFixedSiteDrive || isWbFixedSiteDrive) {
+    if(isFixedSiteDrive) {
       driveFields = [
         'status',
         'driveDate',
@@ -961,6 +961,21 @@ class DriveHelper {
         'plateletProjectedProcedures',
         'plasmaProjectedProcedures',
         'slotGenerator'
+      ]
+    } else if (isWbFixedSiteDrive) {
+      driveFields = [
+        'status',
+        'driveDate',
+        'startTime',
+        'endTime',
+        'driveSiteId',
+        'siteCollectionOperationId',
+        'collectionOperationId',
+        'wbProjectedProcedures',
+        'x2rbcProjectedProcedures',
+        'slotGenerator',
+        'numberOf2rbcAssets',
+        'projectedRegisteredDonors'
       ]
     } else {
       driveFields = [
