@@ -27,5 +27,9 @@
         <members>Task_Reassignment_Matrix.Template_Order_Task</members>
 		<name>CustomMetadata</name>
 	</types>
+    <types>
+        <members>BSF_Batch_UpdateTaskType</members>
+        <name>ApexClass</name>
+    </types>
     <version>64.0</version>
 </Package>
