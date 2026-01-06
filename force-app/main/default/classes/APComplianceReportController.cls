@@ -83,169 +83,91 @@ public with sharing class APComplianceReportController {
     }
 
     @AuraEnabled(cacheable=true)
-    public static DatableConfigWrapper searchReport(
-        Date startDt,
-        Date endDt,
-        String division,
-        String region,
-        List<String> coList,
-        List<String> driveStatusFilter,
-        Boolean violationOnly,
-        Boolean includeTrades,
-        String sortField,
-        String sortDirection
-    ) {
-        DatableConfigWrapper wrapper = new DatableConfigWrapper();
-        wrapper.dataWrapper = new List<Map<String, String>>();
-        wrapper.columnsInfo = new List<Map<String, Object>>{
-            new Map<String, Object>{
-                'label' => 'Resource',
-                'fieldName' => 'resourceLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'name' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+public static DatableConfigWrapper searchReport(
+    Date startDt,
+    Date endDt,
+    String division,
+    String region,
+    List<String> coList,
+    List<String> driveStatusFilter,
+    Boolean violationOnly,
+    Boolean includeTrades,
+    String sortField,
+    String sortDirection
+) {
+    DatableConfigWrapper wrapper = new DatableConfigWrapper();
+    wrapper.dataWrapper = new List<Map<String, String>>();
+    wrapper.columnsInfo = new List<Map<String, Object>>{
+        new Map<String, Object>{
+            'label' => 'Resource',
+            'fieldName' => 'resourceLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'name' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'Supervisor',
-                'fieldName' => 'supervisorLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'supervisor' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'Supervisor',
+            'fieldName' => 'supervisorLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'supervisor' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'Drive Name',
-                'fieldName' => 'driveLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'driveName' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'Drive Name',
+            'fieldName' => 'driveLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'driveName' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'Job/Activity Name',
-                'fieldName' => 'jobLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'JName' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'Job/Activity Name',
+            'fieldName' => 'jobLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'JName' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'Division',
-                'fieldName' => 'divisionLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'division' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'Division',
+            'fieldName' => 'divisionLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'division' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'Region',
-                'fieldName' => 'regionLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'region' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'Region',
+            'fieldName' => 'regionLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'region' },
+                'target' => '_blank'
             },
-            new Map<String, Object>{
-                'label' => 'CO',
-                'fieldName' => 'coLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'co' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
+            'sortable' => true
+        },
+        new Map<String, Object>{
+            'label' => 'CO',
+            'fieldName' => 'coLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'co' },
+                'target' => '_blank'
             },
-
-            new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'startTime', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'End Time', 'fieldName' => 'endTime', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Availability Pattern Time', 'fieldName' => 'apTime', 'type' => 'text', 'sortable' => true },
-
-            new Map<String, Object>{
-                'label' => 'Availability Pattern Name',
-                'fieldName' => 'apLink',
-                'type' => 'url',
-                'typeAttributes' => new Map<String, Object>{
-                    'label' => new Map<String, Object>{ 'fieldName' => 'apName' },
-                    'target' => '_blank'
-                },
-                'sortable' => true
-            },
-
-            new Map<String, Object>{ 'label' => 'AP Violation', 'fieldName' => 'violation', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Staffing Reason', 'fieldName' => 'StaffingReason', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Exception', 'fieldName' => 'exc', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Activity Type', 'fieldName' => 'AType', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Activity SubType', 'fieldName' => 'Subtype', 'type' => 'text', 'sortable' => true }
-        };
-
-        if (includeTrades) {
-            wrapper.columnsInfo.add(new Map<String, Object>{
-                'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
-            });
-        }
-
-        Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>([
-            SELECT Id, Name,
-                sked_Supervisor__c, sked_Supervisor__r.Name, sked_Supervisor_Name__c,
-                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Name,
-                sked__Primary_Region__r.sked_Territory__r.Id,
-                sked__Primary_Region__r.sked_Territory__r.Name,
-                sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.Id,
-                sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.Name,
-                sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__r.Id,
-                sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__r.Name
-            FROM sked__Resource__c
-            WHERE sked__Resource_Type__c = 'Person'
-            AND sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__c = :division
-            AND sked__Primary_Region__r.sked_Territory__r.sked_Parent__c = :region
-            AND sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :coList
-        ]);
-
-        if (resMap.isEmpty()) {
-            wrapper.summary = new Map<String, String>{
-                'totalRecords' => '0','jobViolations' => '0','activityViolations' => '0',
-                'totalViolations' => '0','violationPercentage' => '0'
-            };
-            return wrapper;
-        }
-
-        Set<Id> resourceIds = resMap.keySet();
-
-        Set<String> idStrings = new Set<String>();
-        for (Id i : resourceIds) idStrings.add('\'' + String.valueOf(i) + '\'');
-        String idClause = '(' + String.join(idStrings, ',') + ')';
-
-        Map<Id, List<PatternWithDateRange>> resourcePatternsMap = new Map<Id, List<PatternWithDateRange>>();
-        for (sked__Availability_Pattern_Resource__c apr : [
-            SELECT sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
-                   sked__Availability_Pattern__c,
-                   sked__Availability_Pattern__r.Name,
-                   sked__Availability_Pattern__r.sked__Pattern__c
-            FROM sked__Availability_Pattern_Resource__c
-            WHERE sked__Resource__c IN :resourceIds
-            AND sked_Start_Date__c <= :endDt
-            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :startDt)
-        ]) {
-            String jsonPattern = apr.sked__Availability_Pattern__r.sked__Pattern__c;
-            if (String.isBlank(jsonPattern)) continue;
+            'sortable' => true
+        },
 
         new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
@@ -256,195 +178,55 @@ public with sharing class APComplianceReportController {
         new Map<String, Object>{ 'label' => 'End Time', 'fieldName' => 'endTime', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Availability Pattern Time', 'fieldName' => 'apTime', 'type' => 'text', 'sortable' => true },
 
-            for (Object dayObj : (List<Object>) pattern.get('days')) {
-                Map<String, Object> day = (Map<String, Object>) dayObj;
-                String weekday = ((String) day.get('weekday')).toUpperCase();
-                List<TimeRange> ranges = new List<TimeRange>();
-                if (day.get('intervals') == null) continue;
-                for (Object i : (List<Object>) day.get('intervals')) {
-                    Map<String, Object> range = (Map<String, Object>) i;
-                    Time s = parseTime((String) range.get('startTime'));
-                    Time e = parseTime((String) range.get('endTime'));
-                    if (s != null && e != null) ranges.add(new TimeRange(s, e));
-                }
-                weeklyMap.put(weekday, ranges);
-            }
+        new Map<String, Object>{
+            'label' => 'Availability Pattern Name',
+            'fieldName' => 'apLink',
+            'type' => 'url',
+            'typeAttributes' => new Map<String, Object>{
+                'label' => new Map<String, Object>{ 'fieldName' => 'apName' },
+                'target' => '_blank'
+            },
+            'sortable' => true
+        },
 
-            PatternWithDateRange datedPattern = new PatternWithDateRange(
-                apr.sked_Start_Date__c,
-                apr.sked_End_Date__c,
-                apr.sked__Availability_Pattern__c,
-                apr.sked__Availability_Pattern__r.Name,
-                weeklyMap
-            );
+        new Map<String, Object>{ 'label' => 'AP Violation', 'fieldName' => 'violation', 'type' => 'text', 'sortable' => true },
+        new Map<String, Object>{ 'label' => 'Staffing Reason', 'fieldName' => 'StaffingReason', 'type' => 'text', 'sortable' => true },
+        new Map<String, Object>{ 'label' => 'Exception', 'fieldName' => 'exc', 'type' => 'text', 'sortable' => true },
+        new Map<String, Object>{ 'label' => 'Activity Type', 'fieldName' => 'AType', 'type' => 'text', 'sortable' => true },
+        new Map<String, Object>{ 'label' => 'Activity SubType', 'fieldName' => 'Subtype', 'type' => 'text', 'sortable' => true }
+    };
 
-            if (!resourcePatternsMap.containsKey(apr.sked__Resource__c)) {
-                resourcePatternsMap.put(apr.sked__Resource__c, new List<PatternWithDateRange>());
-            }
-            resourcePatternsMap.get(apr.sked__Resource__c).add(datedPattern);
-        }
+    if (includeTrades) {
+        wrapper.columnsInfo.add(new Map<String, Object>{
+            'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
+        });
+    }
 
-        Integer jobViolations = 0;
-        Integer activityViolations = 0;
-        Integer rowCounter = 0;
+    Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>([
+        SELECT Id, Name,
+            sked_Supervisor__c, sked_Supervisor__r.Name, sked_Supervisor_Name__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+            sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Name,
+            sked__Primary_Region__r.sked_Territory__r.Id,
+            sked__Primary_Region__r.sked_Territory__r.Name,
+            sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.Id,
+            sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.Name,
+            sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__r.Id,
+            sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__r.Name
+        FROM sked__Resource__c
+        WHERE sked__Resource_Type__c = 'Person'
+        AND sked__Primary_Region__r.sked_Territory__r.sked_Parent__r.sked_Parent__c = :division
+        AND sked__Primary_Region__r.sked_Territory__r.sked_Parent__c = :region
+        AND sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :coList
+    ]);
 
-        String jobSOQL =
-            'SELECT Name, sked__Job__c, sked__Job__r.Name, sked__Resource__c, sked__Job__r.sked__Type__c, ' +
-            'sked_Start_Date__c, sked_Start_Time__c, sked_Set_End_Time__c, ' +
-            'sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.sked_Status__c, ' +
-            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c, ' +
-            'sked_Drive_Shift_Trade__c, sked_Call_Out_Type__c, sked_Staffing_Reason__c ' +
-            'FROM sked__Job_Allocation__c ' +
-            'WHERE sked_Start_Date__c >= :startDt ' +
-            'AND sked_Start_Date__c <= :endDt ' +
-            'AND sked__Resource__c IN ' + idClause + ' ';
-
-        if (driveStatusFilter != null && !driveStatusFilter.isEmpty()) {
-            jobSOQL += 'AND sked__Job__r.sked_Drive__r.sked_Status__c IN :driveStatusFilter ';
-        }
-
-        if (!includeTrades) {
-            jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Call_Out_Type__c = null) ';
-        }
-
-        jobSOQL +=
-            'AND (sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c LIKE \'%Non Integrated%\' ' +
-            'OR sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\') ' +
-            'ORDER BY sked_Start_Date__c desc';
-
-        List<sked__Job_Allocation__c> jobAllocList = Database.query(jobSOQL);
-        for (sked__Job_Allocation__c job : jobAllocList) {
-            String day = getWeekday(job.sked_Start_Date__c);
-
-            PatternWithDateRange activePattern = null;
-            if (resourcePatternsMap.containsKey(job.sked__Resource__c)) {
-                for (PatternWithDateRange p : resourcePatternsMap.get(job.sked__Resource__c)) {
-                    if (job.sked_Start_Date__c >= p.startDate && job.sked_Start_Date__c <= p.endDate) {
-                        activePattern = p; break;
-                    }
-                }
-            }
-            if (activePattern == null) continue;
-
-            Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, activePattern.weeklySchedule);
-
-            String calloutTradeVal = '';
-            if (includeTrades) {
-                if (job.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Job - Trade';
-                else if (job.sked_Call_Out_Type__c != null) calloutTradeVal = 'Job - Callout';
-            }
-
-            if (violationOnly && !isViolation) continue;
-            if (isViolation) jobViolations++;
-
-            Map<String, String> row = buildRow(
-                resMap.get(job.sked__Resource__c),
-                job.sked_Start_Date__c,
-                'Job',
-                job.sked__Job__r.sked_Drive__r != null ? job.sked__Job__r.sked_Drive__r.sked_Status__c : '',
-                isViolation,
-                job.sked_Start_Time__c,
-                job.sked_Set_End_Time__c,
-                activePattern,
-                job.sked__Job__r.sked_Drive__c,
-                job.sked__Job__r.sked_Drive__r != null ? job.sked__Job__r.sked_Drive__r.Name : '',
-                job.sked__Job__c,
-                job.sked__Job__r != null ? job.sked__Job__r.Name : '',
-                job.sked__Job__r != null ? job.sked__Job__r.sked__Type__c : '',
-                job.sked_Staffing_Reason__c,
-                calloutTradeVal,
-                '',
-                ''
-            );
-            row.put('rowKey', String.valueOf(++rowCounter));
-            wrapper.dataWrapper.add(row);
-        }
-
-        List<String> excludedTypes = new List<String>{ 'After Hours Call Out Management', 'On Call', 'Training' };
-
-        String activityQuery =
-            'SELECT Id, sked_Drive_Shift_Trade__c, sked__Activity__c, sked__Activity__r.Name, sked__Activity__r.sked_Activity_Title__c, ' +
-            'sked__Activity__r.sked__Type__c, sked__Activity__r.sked_Subtype__c, sked__Resource__c, ' +
-            'sked_Start_Date__c, sked_Start_Time__c, sked_End_Time__c, sked_Staffing_Reason__c ' +
-            'FROM sked__Activity_Resource__c ' +
-            'WHERE sked_Start_Date__c >= :startDt ' +
-            'AND sked_Start_Date__c <= :endDt ' +
-            'AND sked__Activity__r.sked__Type__c NOT IN :excludedTypes ' +
-            'AND sked__Resource__c IN ' + idClause + ' ';
-
-        if (!includeTrades) {
-            activityQuery += 'AND sked_Drive_Shift_Trade__c = null ';
-        }
-        activityQuery += 'ORDER BY sked_Start_Date__c desc';
-
-        List<sked__Activity_Resource__c> Lact = Database.query(activityQuery);
-
-        for (sked__Activity_Resource__c act : Lact) {
-            String day = getWeekday(act.sked_Start_Date__c);
-
-            PatternWithDateRange activePattern = null;
-            if (resourcePatternsMap.containsKey(act.sked__Resource__c)) {
-                for (PatternWithDateRange p : resourcePatternsMap.get(act.sked__Resource__c)) {
-                    if (act.sked_Start_Date__c >= p.startDate && act.sked_Start_Date__c <= p.endDate) {
-                        activePattern = p; break;
-                    }
-                }
-            }
-            if (activePattern == null) continue;
-
-            Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, activePattern.weeklySchedule);
-
-            String calloutTradeVal = '';
-            if (includeTrades && act.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Activity - Trade';
-
-            if (violationOnly && !isViolation) continue;
-            if (isViolation) activityViolations++;
-
-            Map<String, String> row = buildRow(
-                resMap.get(act.sked__Resource__c),
-                act.sked_Start_Date__c,
-                'Activity',
-                '',
-                isViolation,
-                act.sked_Start_Time__c,
-                act.sked_End_Time__c,
-                activePattern,
-                null,
-                '',
-                act.sked__Activity__c,
-                act.sked__Activity__r != null ? act.sked__Activity__r.sked_Activity_Title__c : '',
-                '',
-                act.sked_Staffing_Reason__c,
-                calloutTradeVal,
-                act.sked__Activity__r != null ? act.sked__Activity__r.sked__Type__c : '',
-                act.sked__Activity__r != null ? act.sked__Activity__r.sked_Subtype__c : ''
-            );
-            row.put('rowKey', String.valueOf(++rowCounter));
-            wrapper.dataWrapper.add(row);
-        }
-
-        Integer totalRecords = wrapper.dataWrapper.size();
-        Integer totalViolations = jobViolations + activityViolations;
-        Integer violationPercentage = totalRecords > 0
-            ? Integer.valueOf(Math.round((Decimal)totalViolations * 100 / totalRecords))
-            : 0;
-
-        if (String.isNotBlank(sortField)) {
-            String mapped = SORT_FIELD_MAPPING.containsKey(sortField) ? SORT_FIELD_MAPPING.get(sortField) : sortField;
-            if (ALLOWED_SORT_FIELDS.contains(mapped)) {
-                sortDataList(wrapper.dataWrapper, mapped, sortDirection);
-            }
-        }
-
+    if (resMap.isEmpty()) {
         wrapper.summary = new Map<String, String>{
             'totalRecords' => '0','jobViolations' => '0','activityViolations' => '0',
             'totalViolations' => '0','violationPercentage' => '0'
         };
-
         return wrapper;
     }
-<<<<<<< HEAD
-=======
 
     Set<Id> resourceIds = resMap.keySet();
 
@@ -670,7 +452,6 @@ public with sharing class APComplianceReportController {
 
     return wrapper;
 }
->>>>>>> c48245b53 (HRP-16309:- TBS: Availability Pattern Compliance Report to apply to all staff)
 		@TestVisible
     private static void sortDataList(List<Map<String, String>> dataList, String fieldName, String direction) {
         if (dataList == null || dataList.size() < 2) return;
