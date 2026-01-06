@@ -13,7 +13,7 @@
  * *************************************************************************************************************/
 
 @isTest
-    public class AccountTriggerTest
+public class AccountTriggerTest
 {
     public static String mobileAccRecType = 'Mobile Account';
     public static String mobileOppRecType = 'Mobile Opp';
@@ -298,50 +298,32 @@
         
     }
     
-     @isTest static void testRestrictAccountDeletionForOtherUsers()
-     {    
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('UserTriggerHandler');
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassDeleteTriggers = true;
+     @isTest static void testRestrictAccountDeletionForOtherUsers() {   
          
-        recordTypeMap = recordTypeMap('Account');       
-        Id recTypeId = recordTypeMap.get(mobileAccRecType);
-        
-        Account accobj;
-        accobj = new Account();
-        accobj.RecordTypeId = recTypeId;
-        accobj.Name = 'TEst';
-        accobj.BillingPostalCode = '30652';
+         Test.startTest();
+         TriggerHandler.bypass('AccountTriggerHandler');
          
-        insert accobj;
-        
-        User AdminUser = new User(
-            ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
-            LastName = 'last',
-            Email = 'puser000@amamama.com',
-            Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
-            CompanyName = 'TEST',
-            Title = 'title',
-            Alias = 'alias',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            isActive=true  
-        );
+         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
          
-        insert AdminUser;
-        TriggerHandler.clearBypass('AccountTriggerHandler');
-        System.runAs( AdminUser ) {
-            Test.startTest();
-            try {
-                delete accobj;
+         User testDRDUser = (User)mapTestData.get('DRD_USER');
+         testDRDUser.IsActive = true;
+         System.runAs(new User(Id = UserInfo.getUserId())) {
+             insert testDRDUser;
+         }
+         
+         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+         insert testMobileAccount;
+         TriggerHandler.clearBypass('AccountTriggerHandler');
+         
+         System.runAs(testDRDUser) {
+              try {
+            	delete testMobileAccount;
             } catch (DmlException e) {
-                Assert.isTrue(e.getMessage().contains(System.Label.CannotDeleteRecordExceptSystemAdmin), 'Error message should match expected');
+                Assert.isTrue(e.getMessage().contains('You are not authorized to Delete or Merge Accounts'));
             }
-            Test.stopTest();
-        }       
+         }
+        Test.stopTest();       
     }
        
     @isTest
@@ -565,301 +547,141 @@
 	*/
     
     @isTest
-    static void testUpdateBloodDriveOpportunitiesForInternalNameChangeAsync() {
+    static void testUpdateOpportunitiesForInternalNameChangeAsync() {
         
         Test.startTest();
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.bypass('OpportunityTriggerHandler');
+        //TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('SiteTriggerHandler');
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        Account testMobileAccount1 = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        insert testMobileAccount1;
         
-        Contact testContact = (Contact)mapTestData.get('CONTACT');
-        testContact.AccountId = testMobileAccount1.Id;
-        insert testContact;
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        insert testMobileAccount;
         
-		sked__Location__c lc=new sked__Location__c();
-        lc.sked_National_Name__c='national';
-        lc.sked_Physical_Location_Type__c='inside';
-        lc.sked_Address_1__c='kolkata';
-        lc.sked_City__c='kolkata';
-        lc.sked_County__c='India';
-        lc.sked_Zip_Code__c='70456';
-        lc.sked_State__c='WB';
-        lc.sked_Site_Inspection_Completed_By__c=userInfo.getUserId();
-        lc.sked_Site_Building_Name__c='new site building';
-        lc.sked_Floor_Description__c='desc';
-        lc.sked_Room_Name__c='room name';
-        lc.sked_Room_Size__c='Bus';
-        lc.sked_Automation_Suitability__c='Suitable';
-        lc.sked_Wireless_Policy__c='Accepted';
-        lc.sked_Directions_From_CollectionOperation__c='sked_Directions_From_CollectionOperation__c';
-        lc.sked_ARC_Vehicle_Parking_Directions__c='sked_ARC_Vehicle_Parking_Directions__c';
-        lc.sked_Staff_Personal_Parking_Directions__c='sked_Staff_Personal_Parking_Directions__c';
-        lc.Source__c = 'Custom New Form';
-        lc.Name='site name';
-        lc.sked_Date_Site_Inspection_Completed__c = system.today();
-        insert lc;
-		
-        TriggerHandler.byPass('OpportunityTriggerHandler');
-        Opportunity mobileOpp = new Opportunity(
-            Name = 'Test Opportunity',
-        	StageName = 'Draft',
-           	Type_of_Drive__c = 'Mobile',
-        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive',
-        	Drive_Date__c = System.today(),
-        	CloseDate = System.today(),
-        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
-      		End_Time__c = Time.newInstance(15, 30, 0, 0),
-        	Flow_Start_Time_Field__c = '1000',
-        	Flow_End_Time_Field__c = '1530',
-        	WB_Projected_Procedures__c = 4,
-        	X2RBC_Projected_Procedures__c = 2,
-        	Anticipated_Registered_Donors__c = 25,
-            Online_Scheduling_Enabled__c = 'No'
-		);
-            mobileOpp.AccountId = testMobileAccount1.Id;
-            mobileOpp.Drive_Site__c = lc.id;
-			insert mobileOpp;  
+		sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;  
+        
+        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp.AccountId = testMobileAccount.Id;
+        testMobileOpp.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp;
+        
         TriggerHandler.clearAllBypasses();
         
-        testMobileAccount1.Internal_Name__c = 'Changed Test';
-        Update testMobileAccount1;
+        testMobileAccount.Internal_Name__c = 'Changed Test';
+        update testMobileAccount;
         Test.stopTest();
+        
+        Assert.isTrue([SELECT Id, Internal_Name__c FROM Account WHERE Id = :testMobileAccount.Id LIMIT 1].Internal_Name__c.contains('Changed Test'));
 		
     }
 	
     //test method for HRP-10085 ***starts here***
     @isTest
-    static void testupdateTemplateBloodDriveOpportunitiesForAccountNameChange() {
+    static void testUpdateTemplatesForAccountNameChange() {
        	
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        Account testMobileAccount1 = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        insert testMobileAccount1; 
-        Map<Id,account> testMobileAccountoldMap=new Map<Id,account>();
         
-        testMobileAccountoldMap.put(testMobileAccount1.id,testMobileAccount1);
-        
-        Account acc=testMobileAccount1;
-        acc.Internal_Name__c='test one account';
-        update acc;
-        list<account> accList= new list<account>();
-        accList.add(acc);
-        
-        contact c=new contact();
-        c.AccountId=accList[0].Id;
-        c.FirstName='contact11';
-        c.Email='abcds@gmail.com';
-        c.Primary_Phone__c='Mobile Phone';
-        c.Original_Service_Date__c=system.today();
-        c.LastName='contact24';
-        c.Phone='7474739';
-        insert c;
-        
-		sked__Location__c lc=new sked__Location__c();
-        lc.sked_National_Name__c='national';
-        lc.sked_Physical_Location_Type__c='inside';
-        lc.sked_Site_Contact__c=c.Id;
-        lc.sked_Site_Main_Phone__c='838-438-4367';
-        lc.sked_Start_Date__c=system.today();
-        lc.sked_End_Date__c=system.today()+1;
-        lc.sked_Address_1__c='kolkata';
-        lc.sked_City__c='kolkata';
-        lc.sked_County__c='India';
-        lc.sked_Zip_Code__c='70456';
-        lc.sked_State__c='WB';
-        lc.sked_Site_Inspection_Completed_By__c=userInfo.getUserId();
-        lc.sked_Site_Building_Name__c='new site building';
-        lc.sked_Floor_Description__c='desc';
-        lc.sked_Room_Name__c='room name1';
-        lc.sked_Room_Size__c='Bus';
-        lc.sked_Automation_Suitability__c='Suitable';
-        lc.sked_Wireless_Policy__c='Accepted';
-        lc.sked_Outside_stairs__c=3;
-        lc.sked_Base_Description__c='base desc';
-        lc.sked_Directions_From_CollectionOperation__c='sked_Directions_From_CollectionOperation__c';
-        lc.sked_ARC_Vehicle_Parking_Directions__c='sked_ARC_Vehicle_Parking_Directions__c';
-        lc.sked_Staff_Personal_Parking_Directions__c='sked_Staff_Personal_Parking_Directions__c';
-        lc.sked_Date_Site_Inspection_Completed__c=system.today();
-        lc.Source__c = 'Custom New Form';
-        lc.Name='site name1';
-        TriggerHandler.bypass('SiteTriggerHandler');
-        insert lc;
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test One Account';
+        insert testMobileAccount; 
+ 
+		sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
 
-        Opportunity mobileOpp = new Opportunity(
-            Name = 'Test Opportunity',
-        	StageName = 'Draft',
-           	Type_of_Drive__c = 'Mobile',
-        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive1',
-        	Drive_Date__c = System.today(),
-        	CloseDate = System.today(),
-        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
-      		End_Time__c = Time.newInstance(15, 30, 0, 0),
-        	Flow_Start_Time_Field__c = '1000',
-        	Flow_End_Time_Field__c = '1530',
-        	WB_Projected_Procedures__c = 4,
-        	X2RBC_Projected_Procedures__c = 2,
-        	Anticipated_Registered_Donors__c = 25,
-            Is_Template__c = true,
-            Online_Scheduling_Enabled__c = 'No'
-		);
-            mobileOpp.AccountId = accList[0].Id;
-            mobileOpp.Drive_Site__c = lc.id;
-            TriggerHandler.bypass('OpportunityTriggerHandler');
-			insert mobileOpp; 
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;  
         
-        system.debug('accountname$$$ '+accList[0].name);
-               
+        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp.AccountId = testMobileAccount.Id;
+        testMobileOpp.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp;
+      
     	Test.startTest();
-            Account acctToUpdate = new Account();
-            acctToUpdate.id = acc.id;
-            acctToUpdate.Internal_Name__c = 'New acc name';
-            TriggerHandler.clearAllBypasses();
-            update acctToUpdate;
-        AccountService.updateBloodDriveOpportunitiesForInternalNameChangeAsync(new Set<Id>{acctToUpdate.Id});
+
+        testMobileAccount.Name = 'New Acc Name';
+        TriggerHandler.clearAllBypasses();
+        update testMobileAccount;
+        
         Test.stopTest();
-        Account updatedAccount = [SELECT Internal_Name__c FROM Account WHERE Id = :acc.Id];
-    	Assert.areEqual('New acc name', updatedAccount.Internal_Name__c);
+        
+        Assert.isTrue([SELECT Id, Name FROM Account WHERE Id = :testMobileAccount.Id LIMIT 1].Name.contains('New Acc Name'));
     }
+    
     @isTest
-    static void testupdateTemplateBloodDriveOpportunitiesForAccountNameChange2() {
+    static void testupdateDrivesForAccountNameChange() {
        	
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('ContactTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
-        Account testMobileAccount1 = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        insert testMobileAccount1; 
-        Map<Id,account> testMobileAccountoldMap=new Map<Id,account>();
         
-        testMobileAccountoldMap.put(testMobileAccount1.id,testMobileAccount1);
-        
-        Account acc=testMobileAccount1;
-        acc.Internal_Name__c='test one account';
-        update acc;
-        list<account> accList= new list<account>();
-        accList.add(acc);
-        
-        contact c=new contact();
-        c.AccountId=accList[0].Id;
-        c.FirstName='contact11';
-        c.Email='abcds@gmail.com';
-        c.Primary_Phone__c='Mobile Phone';
-        c.Original_Service_Date__c=system.today();
-        c.LastName='contact24';
-        c.Phone='7474739';
-        insert c;
-        
-		sked__Location__c lc=new sked__Location__c();
-        lc.sked_National_Name__c='national';
-        lc.sked_Physical_Location_Type__c='inside';
-        lc.sked_Site_Contact__c=c.Id;
-        lc.sked_Site_Main_Phone__c='838-438-4367';
-        lc.sked_Start_Date__c=system.today();
-        lc.sked_End_Date__c=system.today()+1;
-        lc.sked_Address_1__c='kolkata';
-        lc.sked_City__c='kolkata';
-        lc.sked_County__c='India';
-        lc.sked_Zip_Code__c='70456';
-        lc.sked_State__c='WB';
-        lc.sked_Site_Inspection_Completed_By__c=userInfo.getUserId();
-        lc.sked_Site_Building_Name__c='new site building';
-        lc.sked_Floor_Description__c='desc';
-        lc.sked_Room_Name__c='room name1';
-        lc.sked_Room_Size__c='Bus';
-        lc.sked_Automation_Suitability__c='Suitable';
-        lc.sked_Wireless_Policy__c='Accepted';
-        lc.sked_Outside_stairs__c=3;
-        lc.sked_Base_Description__c='base desc';
-        lc.sked_Directions_From_CollectionOperation__c='sked_Directions_From_CollectionOperation__c';
-        lc.sked_ARC_Vehicle_Parking_Directions__c='sked_ARC_Vehicle_Parking_Directions__c';
-        lc.sked_Staff_Personal_Parking_Directions__c='sked_Staff_Personal_Parking_Directions__c';
-        lc.sked_Date_Site_Inspection_Completed__c=system.today();
-        lc.Source__c = 'Custom New Form';
-        lc.Name='site name1';
-        TriggerHandler.bypass('SiteTriggerHandler');
-        insert lc;
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c = 'Test One Account';
+        insert testMobileAccount; 
+ 
+		sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
 
-        Opportunity mobileOpp = new Opportunity(
-            Name = 'Test Opportunity',
-        	StageName = 'Draft',
-           	Type_of_Drive__c = 'Mobile',
-        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive1',
-        	Drive_Date__c = System.today(),
-        	CloseDate = System.today(),
-        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
-      		End_Time__c = Time.newInstance(15, 30, 0, 0),
-        	Flow_Start_Time_Field__c = '1000',
-        	Flow_End_Time_Field__c = '1530',
-        	WB_Projected_Procedures__c = 4,
-        	X2RBC_Projected_Procedures__c = 2,
-        	Anticipated_Registered_Donors__c = 25,
-            Is_Template__c = true,
-            Online_Scheduling_Enabled__c = 'No'
-		);
-            mobileOpp.AccountId = accList[0].Id;
-            mobileOpp.Drive_Site__c = lc.id;
-            TriggerHandler.bypass('OpportunityTriggerHandler');
-			insert mobileOpp; 
-          
-        List<sked_Drive__c> driveList=new List<sked_Drive__c>();
-        sked_Drive__c driveOnCalendar = new sked_Drive__c();
-        driveOnCalendar.Name = mobileOpp.Name;
-        driveOnCalendar.sked_Opportunity__c = mobileOpp.Id;
-        driveOnCalendar.sked_Zip_Code__c = '181124';
-        driveOnCalendar.sked_Account__c=acc.id;
-        //driveOnCalendar.sked_Account__r.name=acctToUpdate.name;
-        driveOnCalendar.sked_Drive_Site__c = lc.Id;
-        //driveOnCalendar.sked_Drive_Site__r.sked_Site_Building_Name__c=lc.sked_Site_Building_Name__c;
-        //driveOnCalendar.sked_Drive_Site__r.sked_Room_Name__c=lc.sked_Room_Name__c;
-        //driveOnCalendar.sked_Account__r.Internal_Name__c=acctToUpdate.Internal_Name__c;
-        driveOnCalendar.sked_Total_Procedures_Projected__c = mobileOpp.Total_Projected_Procedures__c;
-        driveOnCalendar.sked_Drive_Productivity_Planned__c = 24;
-        driveOnCalendar.sked_2RBC_Projected_Procedures__c=0;
-        //insert driveOnCalendar;
-        driveList.add(driveOnCalendar);
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        TriggerHandler.bypass('populateDriveWorksheetData');
-        TriggerHandler.bypass('updateReadyForNationalNameReview');
-        TriggerHandler.bypass('checkMilitaryAuthoritySetting');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('updateDivesOnCalenderForAccountInternalNameChange');
-        TriggerHandler.bypass('AccountTriggerHandler');
-       	insert driveList;
-        TriggerHandler.bypass('AccountTriggerHandler');
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;  
+        
+        Opportunity testMobileOpp = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp.AccountId = testMobileAccount.Id;
+        testMobileOpp.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp;
+
+        sked_Drive__c testDriveOnCalendar = new sked_Drive__c(
+            Name = testMobileOpp.Name,
+            sked_Opportunity__c = testMobileOpp.Id,
+            sked_Zip_Code__c = '181124',
+            sked_Account__c = testMobileAccount.Id,
+            sked_Drive_Site__c = testMobileSite.Id,
+            sked_Total_Procedures_Projected__c = testMobileOpp.Total_Projected_Procedures__c,
+            sked_Drive_Productivity_Planned__c = 24,
+            sked_2RBC_Projected_Procedures__c = 1);
+        insert testDriveOnCalendar;
         
         Test.startTest();
         
-            Account acctToUpdate = new Account();
-            acctToUpdate.id = acc.id;
-            acctToUpdate.Internal_Name__c = 'New acc name';
-            TriggerHandler.clearAllBypasses();
-            update acctToUpdate;
+        testMobileAccount.Name = 'New Acc Name';
+        TriggerHandler.clearAllBypasses();
+        update testMobileAccount;
+        
         Test.stopTest();
-        Account updatedAccount = [SELECT Internal_Name__c FROM Account WHERE Id = :acc.Id];
-    	Assert.areEqual('New acc name', updatedAccount.Internal_Name__c);
+        
+         Assert.isTrue([SELECT Id, Name FROM sked_Drive__c WHERE Id = :testDriveOnCalendar.Id LIMIT 1].Name.contains('New Acc Name'));
     }
     
     //Test method for HRP-10085 ***ends here***
