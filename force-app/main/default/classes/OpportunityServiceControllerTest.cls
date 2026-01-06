@@ -84,4 +84,33 @@ private class OpportunityServiceControllerTest {
         OpportunityServiceController.syncOppsWithDrives(lstOpps);
         Test.stopTest();
     }
+    
+    @isTest
+    static void populateLatestValuesUponTemplateChangeTest() {
+        Test.startTest();
+        Opportunity testOpp = [SELECT Id, WholeBloodProceduresProjectedTemplate__c, Anticipated_Registered_Donors_Template__c, 
+                               Double_Red_Procedures_Projected_Template__c, Drive_Site__c, Direct_Donors_To__c,
+                               Anticipated_Registered_Donors__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
+                               WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c,
+                               AnticipatedRegisterDonorChangeReason__c, AccountId
+                               FROM Opportunity
+                               LIMIT 1];
+        
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testOpp.AccountId;
+        testTemplate.Drive_Site__c = testOpp.Drive_Site__c;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert testTemplate;
+        
+        OpportunityServiceController.populateLatestValuesUponTemplateChange(testOpp, testTemplate, 'Test Template Change');
+        
+        TriggerHandler.clearAllBypasses();
+        Test.stopTest();
+        
+        Assert.isTrue(testOpp.Anticipated_Registered_Donors__c == testTemplate.Anticipated_Registered_Donors__c);
+        Assert.isTrue(testOpp.AnticipatedRegisterDonorChangeReason__c.equalsIgnoreCase('Test Template Change')); 
+    }
 }

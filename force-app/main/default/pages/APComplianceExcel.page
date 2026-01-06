@@ -34,6 +34,7 @@
                     <th>CO</th>
                     <th>Work Date</th>
                     <th>Type</th>
+                    <th> Drive Operation Type</th>
                     <th>Role</th>
                     <th>Drive Status</th>
                     <th>Start Time</th>
@@ -41,6 +42,8 @@
                     <th>AP Time</th>
                     <th>AP Name</th>
                     <th>AP Violation</th>
+                    <th>Activity Type</th>
+                    <th>Activity SubType</th>
                     <th>Staffing Reason</th>
                     <th>Exception</th>
                     <th>Callout/Trade</th>
@@ -58,6 +61,7 @@
                         <td>{!row['co']}</td>
                         <td>{!row['workDate']}</td>
                         <td>{!row['type']}</td>
+                        <td>{!row['JOT']}</td>
                         <td>{!row['role']}</td>
                         <td>{!row['status']}</td>
                         <td>{!row['startTime']}</td>
@@ -65,6 +69,8 @@
                         <td>{!row['apTime']}</td>
                         <td>{!row['apName']}</td>
                         <td>{!row['violation']}</td>
+                        <td>{!row['AType']}</td>
+                        <td>{!row['Subtype']}</td>
                         <td>{!row['StaffingReason']}</td>
                         <td>{!row['exc']}</td>
                         <td>{!row['calloutTrade']}</td>

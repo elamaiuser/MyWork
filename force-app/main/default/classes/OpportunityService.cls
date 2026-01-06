@@ -1322,7 +1322,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
     public static void autoPopulateOpportunityTemplateValues(Map<Id, Opportunity> oldOpportunityMap, List<Opportunity> newOpportunityList) {
         List<Opportunity> lstOppsWithTBDSite = new List<Opportunity>();
         Set<Id> templateOpportunityIds = new Set<Id>();
-        String templateChangedText = 'Template got changed. ' + system.now(); //HRP-12479
+        String templateChangedText = Custom_Messages__mdt.getInstance('Logistics_Chg_Rsn_Upon_Template_Change').value__c + ' ' + System.now();
         
         for (Opportunity newOpportunity : newOpportunityList) {
             if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
@@ -1346,7 +1346,6 @@ Note : It'll throw error if any sort of consequences happen when projection valu
             Map<Id, Opportunity> templateOpportunityMap = new Map<Id, Opportunity>([SELECT Id,X2RBC_Projected_Procedures__c, Anticipated_Registered_Donors__c, Drive_Site__c,Direct_Donors_To__c,Site_TBD__c,Procedure_Projections_Template__c, Projected_Registered_Donors_Template__c, Staffing_Template__c, Volunteers_Template__c, WholeBloodProceduresProjectedTemplate__c, WholeBloodProceduresProjectedOriginal__c, WB_Projected_Procedures__c, Double_Red_Procedures_Projected_Template__c, Anticipated_Registered_Donors_Template__c, APT_Required__c, APT_Quantity__c, Red_Cross_Volunteer_Required__c, Red_Cross_Volunteer_Quantity__c FROM Opportunity WHERE Id IN:templateOpportunityIds]);
             for (Opportunity newOpportunity : newOpportunityList) {
                 if (isInsertOrUpdateWithChangeInTemplate(oldOpportunityMap, newOpportunity)) {
-                    //System.debug('isInsertOrUpdateWithChangeInTemplate ->true');
                     Opportunity templateOpportunity = templateOpportunityMap.get(newOpportunity.Parent_Template_Id__c);
                     newOpportunity.Procedure_Projections_Template__c = templateOpportunity.Procedure_Projections_Template__c;
                     newOpportunity.Projected_Registered_Donors_Template__c = templateOpportunity.Projected_Registered_Donors_Template__c;
@@ -1393,13 +1392,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
                         newOpportunity.Direct_Donors_To__c = templateOpportunity.Direct_Donors_To__c;
                         
                     } else if (oldOpportunityMap?.get(newOpportunity.Id).Parent_Template_Id__c != newOpportunity.Parent_Template_Id__c) {
-                        newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WB_Projected_Procedures__c;
-                        newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.X2RBC_Projected_Procedures__c;
-                        newOpportunity.Anticipated_Registered_Donors_Template__c = templateOpportunity.Anticipated_Registered_Donors__c;
-                        newOpportunity.WholeBloodProcedureProjectedChangeReason__c = templateChangedText;
-                        newOpportunity.DoubleRedProceduresProjectedChangeReason__c = templateChangedText;
-                        newOpportunity.AnticipatedRegisterDonorChangeReason__c = templateChangedText;
-                        newOpportunity.Direct_Donors_To__c = templateOpportunity.Direct_Donors_To__c;
+                        OpportunityServiceController.populateLatestValuesUponTemplateChange(newOpportunity, templateOpportunity, templateChangedText);
                     }
                 }
             }
@@ -3862,62 +3855,44 @@ opp.StageName = 'Closed';
         List<Opportunity> finalOppList = new List<Opportunity>();
          Map <String,Schema.RecordTypeInfo> recordTypesOpportunity = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id mobileRecTypeId = recordTypesOpportunity.get('Mobile Opp').getRecordTypeId();
-        //If initiated from account internal name change or new opp being created; quering opps again b/c read-only
+   
         if(oppOldTmpMap == null) {
-            List<Opportunity> lstLastestOpps = [SELECT Id, Name, Is_Template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c,Drive_Site_Name__c,account.name
-                                                FROM Opportunity WHERE Id IN :lstNewOpps];//HRP-12136 added in query Drive_Site_Name__c
-            
-            finalOppList = checkOppNameChange(lstLastestOpps);
+            checkOppNameChange(lstNewOpps);
         }
         //If before update, then only check if template has changed
         else if(oppOldTmpMap != null) {
             Set<Id> oppsTemplateChangedIds = new Set<Id>();
             for(Opportunity opp : lstNewOpps){
                 if(opp.Is_Template__c == false && ((opp.RecordTypeId==mobileRecTypeId && (oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != Opp.Parent_Template_Id__c)) || (opp.RecordTypeId!=mobileRecTypeId &&(oppOldTmpMap.get(opp.Id).Drive_Site__c != Opp.Drive_Site__c)))){
-                    oppsTemplateChangedIds.add(opp.Id);
+                    finalOppList.add(opp);
                 } 
             }
-            if(!oppsTemplateChangedIds.isEmpty()) {
-                List<Opportunity> lstLastestOpps = [SELECT Id, Name, Is_Template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c,Drive_Site_Name__c,account.name 
-                                                    FROM Opportunity WHERE Id IN :oppsTemplateChangedIds];
-                finalOppList = checkOppNameChange(lstLastestOpps);
+            if(!finalOppList.isEmpty()) {
+                checkOppNameChange(finalOppList);
             }
-        }
-        
-        if(!system.isBatch() && !Test.isRunningTest() && !finalOppList.isEmpty()) {
-            UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(finalOppList, oppOldTmpMap);
-            Database.executeBatch(batchOppRecs, 1);
         }
     }
     
-    public static List<Opportunity> checkOppNameChange(List<Opportunity> incomingOppList) {
-        
-        List<Opportunity> finalOppList = new List<Opportunity>();
+    public static void checkOppNameChange(List<Opportunity> incomingOppList) {
         
         for (opportunity opp : incomingOppList) {
             if(opp.Is_Template__c == false && opp.Drive_Site__c == null) {
                 string tmpTbdOppName = opp.Account_Internal_Name__c + ', TBD';
                 if(opp.Name != tmpTbdOppName) {
                     opp.Name =  opp.Account_Internal_Name__c + ', TBD';   
-                    finalOppList.add(opp);
                 }
             }                    
             else if (opp.Is_Template__c == false && opp.Drive_Site__c != null) {
-                string tmpOppName = opp.account.name+', '+opp.Drive_Site_Name__c;// HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
-                tmpOppName = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
+                string tmpOppName = opp.Account_Name__c + ', ' + opp.Drive_Site_Name__c; // HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
+                opp.Name = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
                 //commented HRP-12136
                 /*if(tmpOppName.length() > 120) {
                     tmpOppName = tmpOppName.substring(0,120);
                 }
                 */
-                //commented HRP-12136
-                if(opp.Name != tmpOppName) {
-                    opp.Name = tmpOppName;
-                    finalOppList.add(opp);
-                }
+                //commented HRP-12136  
             }
         }
-        return finalOppList;
     }
     //HRP-9101
     public static void populateDriveWorksheetData(List<Opportunity> newItems)

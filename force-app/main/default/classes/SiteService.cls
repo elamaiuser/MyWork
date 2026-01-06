@@ -44,27 +44,38 @@ public with sharing class SiteService {
         }
     }
     
-    public static void updateOpportunitiesForSiteBuidlingNameChangeAsync(Set<Id> siteIds) {
-        if (!siteIds.isEmpty()) {
-            List<Opportunity> opportuntyUpdateList = new List<Opportunity>();
-            for (Opportunity opp : [SELECT Id, Name, Is_Template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c FROM Opportunity WHERE Drive_Site__c IN :siteIds AND Is_Template__c = FALSE]) {
-                opportuntyUpdateList.add(opp);
-            }
-            if (!opportuntyUpdateList.isEmpty()) {
-                OpportunityService.GenerateOpportunityName(opportuntyUpdateList, null);
-            }
-        }
-    }
-    
-    public static Set<Id> getSiteBuildingNameChangedAccounts(Map<Id, sked__Location__c> oldSiteMap, List<sked__Location__c> newSiteList){
+    public static void updateOpportunitiesForSiteBuidlingNameChangeAsync(List<sked__Location__c> newSiteList, Map<Id, sked__Location__c> oldSiteMap) {
         Set<Id> siteIds = new Set<Id>();
-        for (sked__Location__c newSite : newSiteList) {
-            sked__Location__c oldSite = oldSiteMap?.get(newSite.Id);
-            if ((newSite.Name != oldSite?.Name)) {//HRP-12136 sked_Site_Building_Name__c ---> Name
-                siteIds.add(newSite.Id);
+        List<Opportunity> opportuntyUpdateList = new List<Opportunity>();
+
+        if(newSiteList != null && !newSiteList.isEmpty()) {
+            for (sked__Location__c newSite : newSiteList) {
+                sked__Location__c oldSite = oldSiteMap?.get(newSite.Id);
+                if ((newSite.Name != oldSite?.Name)) { //HRP-12136 sked_Site_Building_Name__c ---> Name
+                    siteIds.add(newSite.Id);
+                }
             }
         }
-        return siteIds;
+        
+        if (!siteIds.isEmpty()) {
+            opportuntyUpdateList = [
+                SELECT Id, Name, Is_Template__c, 
+                Drive_Site__c, Drive_Site_Name__c,
+                Site_Building_Name__c, Account_Name__c,
+                Account_Internal_Name__c
+                FROM Opportunity 
+                WHERE Drive_Site__c IN :siteIds 
+                AND Is_Template__c = FALSE
+            ];
+            
+            if(!opportuntyUpdateList.isEmpty()) {
+                OpportunityService.GenerateOpportunityName(opportuntyUpdateList, null);
+                if(!system.isBatch() && !Test.isRunningTest()) {
+                    UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(opportuntyUpdateList, false);
+                    Database.executeBatch(batchOppRecs, 200);
+                }
+            }
+        }
     }
     
     /* Updating sked_Active__c = false when site end date = today
