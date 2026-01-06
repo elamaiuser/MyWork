@@ -7,7 +7,7 @@
     <lookupFilter>
         <active>true</active>
         <booleanFilter>1 AND 2 AND 6 AND (3 OR 4 OR 5)</booleanFilter>
-        <errorMessage>Only Templates related to the same Account are eligible and related site must be active</errorMessage>
+        <errorMessage>Only Templates related to the same Account are eligible and related site must be active.</errorMessage>
         <filterItems>
             <field>Opportunity.AccountId</field>
             <operation>equals</operation>
