@@ -30,6 +30,10 @@
     <types>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Constants</members>
+        <members>OpportunityService</members>
+        <members>createPreDriveTaskBatch</members>
+        <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
+        <members>BSF_TaskCreationBatch</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
