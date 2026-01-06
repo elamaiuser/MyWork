@@ -453,7 +453,6 @@ public class GenerateDriveTestData {
         );
         thirdList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);     
-        skedHubBase.BypassInsertTriggers = true;
         insert thirdList;
 
         /***** Forth list ****/
@@ -1189,7 +1188,7 @@ secondList.add(setting30definition3); */
         );
         thirdList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
-         skedHubBase.BypassInsertTriggers = true;    
+              
         insert thirdList;
         
         sked_Site_Collection_Operation__c siteCollectionOperationForMobile = new sked_Site_Collection_Operation__c(
@@ -1923,7 +1922,7 @@ secondList.add(setting30definition3); */
         );
         thirdList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
-          skedHubBase.BypassInsertTriggers = true;
+        
         insert thirdList;
         System.debug( 'site_location_id==' + testLocation1.Id );
         
@@ -2557,7 +2556,7 @@ secondList.add(setting30definition3); */
             thirdList.add(test2rbcAsset);
             mapTestData.put('test2rbcAsset' + i, test2rbcAsset);
         }
-         skedHubBase.BypassInsertTriggers = true; 
+        
         insert thirdList;
         System.debug( 'site_location_id==' + testLocation1.Id );
         
@@ -3293,7 +3292,7 @@ secondList.add(setting30definition3); */
             sked_Required__c = FALSE
         );
         forthList.add(driveSiteTag1);  */
-          skedHubBase.BypassInsertTriggers = true;
+        
         insert forthList;
         
         /*sked_Site_Collection_Operation__c siteCollectionOperation = new sked_Site_Collection_Operation__c(
@@ -3850,7 +3849,7 @@ sked_VP_HH_Capacity__c = 2.2,*/
         );
         forthList.add(testLocation2);
         mapTestData.put('testLocation2', testLocation2);
-          skedHubBase.BypassInsertTriggers = true;        
+        
         insert forthList;
         
         List<sObject> finalList = new List<sObject>();
@@ -4202,7 +4201,6 @@ sked_VP_HH_Capacity__c = 2.2,*/
             sked_Zip_Code__c = '18411'
         );
         thirdList.add(testLocation1);
-          skedHubBase.BypassInsertTriggers = true;
       	insert thirdList;
       
         /***** Forth list ****/
