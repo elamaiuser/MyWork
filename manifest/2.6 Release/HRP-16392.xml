@@ -29,6 +29,7 @@
 	</types>
     <types>
         <members>BSF_Batch_UpdateTaskType</members>
+        <members>BSF_Constants</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
