@@ -85,7 +85,7 @@ private class APComplianceReportControllerTest {
     }
     private static void prepareDataset(){
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
-        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        //Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
         String rolename = 'West_BDM';
@@ -544,9 +544,33 @@ for (sked__Job_Allocation__c alloc : allocCheck) {
 
          Time startTime = Time.newInstance(9, 0, 0, 0);
         Time endTime = Time.newInstance(12, 0, 0, 0);
-        sked__Availability_Pattern__c testWeeklyPattern1 = (sked__Availability_Pattern__c)mapTestData.get('testWeeklyPattern1');
+		skedAvailabilityPatternData customPatternData = new skedAvailabilityPatternData();
+        customPatternData.type = 'custom';
+        customPatternData.repeatWeeks = 1;
+        customPatternData.lengthDays = 1;
+        List<string> customWeekdays = new List<string> {'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'};
+        customPatternData.days = new List<skedAvailabilityPatternData.dayModel>();
+        for (integer index = 0; index < customWeekdays.size(); index++) {
+            string weekday = customWeekdays.get(index);
+            skedAvailabilityPatternData.dayModel day = new skedAvailabilityPatternData.dayModel();
+            day.weekday = weekday;
+            day.day = index;
+            day.intervals = new List<skedAvailabilityPatternData.intervalModel>();
+            skedAvailabilityPatternData.intervalModel interval = new skedAvailabilityPatternData.intervalModel();
+            interval.startTime = '09:00';
+            interval.endTime = '18:00';
+            day.intervals.add(interval);
+            customPatternData.days.add(day);
+        }
+        sked__Availability_Pattern__c testWeeklyPattern1 = new sked__Availability_Pattern__c(
+            Name = 'Test Weekly Pattern 2',
+            sked__Hash__c = 'customPatternHash',
+            sked_Validate_2CDO_Rule__c = FALSE,
+            sked__Pattern__c = Json.serialize(customPatternData)
+        );
+        insert testWeeklyPattern1;
             
-        Date futureDate = System.today().addDays(10);
+        Date futureDate = System.today();
         Time skedTime = Time.newInstance(9, 0, 0, 0); // 9:00 AM
         
         sked__Availability_Pattern_Resource__c testPatternResource1 = new sked__Availability_Pattern_Resource__c(
@@ -674,8 +698,10 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
     region.Id,
     coList,
     driveStatusList,
-    false, // violationOnly
-    false   // includeTrades
+    true, // violationOnly
+    true,
+    'driveName',
+    'asc'
 );
 
         Test.stopTest();
@@ -721,6 +747,47 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
         System.debug('>>> Paginated Pages Count: ' + pages.size());
         Test.stopTest();
     }
+    @isTest
+static void testSortHelpersCoverage_APCompliance() {
+    List<Map<String, String>> dataList = new List<Map<String, String>>();
 
+    dataList.add(new Map<String, String>{
+        'driveName' => 'bbb',
+        'co' => 'CO 2',
+        'division' => 'Div B',
+        'region' => 'Reg B',
+        'driveLink' => '/lightning/r/sked_Drive__c/001/view',
+        'rowId' => '1'
+    });
 
+    dataList.add(new Map<String, String>{
+        'driveName' => 'AAA',
+        'co' => null,
+        'division' => 'Div A',
+        'region' => 'Reg A',
+        'driveLink' => '/lightning/r/sked_Drive__c/002/view',
+        'rowId' => '2'
+    });
+
+    dataList.add(new Map<String, String>{
+        'driveName' => '  cCc  ',
+        'co' => 'co 1',
+        'division' => null,
+        'region' => 'reg c',
+        'driveLink' => '/lightning/r/sked_Drive__c/003/view',
+        'rowId' => '3'
+    });
+
+    Test.startTest();
+
+    APComplianceReportController.sortDataList(dataList, 'driveName', null);
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'asc');
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'DESC');
+
+    APComplianceReportController.sortDataList(dataList, 'driveLink', 'asc');
+
+    APComplianceReportController.sortDataList(dataList, 'co', '');
+
+    Test.stopTest();
+}
 }
