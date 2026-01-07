@@ -33,8 +33,12 @@
         <members>OpportunityService</members>
         <members>createPreDriveTaskBatch</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
-        <members>BSF_TaskCreationBatch</members>
+        <members>BSF_Batch_UpdateTaskType_Test</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Task_Creation_on_Drive_Status_Complete</members>
+        <name>Flow</name>
     </types>
     <version>64.0</version>
 </Package>
