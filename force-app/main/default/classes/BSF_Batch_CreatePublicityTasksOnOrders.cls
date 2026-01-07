@@ -111,6 +111,7 @@ global class BSF_Batch_CreatePublicityTasksOnOrders implements Database.Batchabl
                     publicityTask.Subject = BSF_Constants.PUBLICITY_REVIEW_NEEDED_TASK;
                     publicityTask.Status = BSF_Constants.STATUS_NOT_STARTED;
                     publicityTask.Priority = BSF_Constants.HIGH_PRIORITY_TASK;
+                    publicityTask.Type = BSF_Constants.PUBLICITY_REVIEW_NEEDED;
                     publicityTask.WhatId = orderObj.Id;
                     publicityTask.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Publicity_Review_Needed').Assigned_To__c); //HRP-9562;//HRP-12333 added 3rd paarameter
                     publicityTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700;
