@@ -128,6 +128,7 @@ public static DatableConfigWrapper searchReport(
             },
             'sortable' => true
         },
+            new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{
             'label' => 'Job/Activity Name',
             'fieldName' => 'jobLink',
@@ -171,7 +172,6 @@ public static DatableConfigWrapper searchReport(
 
         new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'startTime', 'type' => 'text', 'sortable' => true },
