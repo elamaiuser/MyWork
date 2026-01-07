@@ -1415,7 +1415,13 @@ public class skedResourceHandler extends skedTriggerHub {
         Set<Id> deactivatedResourceIds = new Set<Id>();
         for (sked__Resource__c newRecord : newRecords) {
             sked__Resource__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c && newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE) {
+            boolean isPersonResourceDeactivated = newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON  
+                && newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c
+                && newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE;
+            boolean isAssetResourceDeactivated = newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET
+                && newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c 
+                && newRecord.sked__Is_Active__c == FALSE;
+            if (isPersonResourceDeactivated || isAssetResourceDeactivated) {
                 deactivatedResourceIds.add(newRecord.Id);
             }
         }
