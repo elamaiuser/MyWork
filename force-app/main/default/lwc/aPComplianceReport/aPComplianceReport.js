@@ -10,7 +10,7 @@ export default class ApComplianceReport extends LightningElement {
         co: [],
         violationOnly: false,
         driveStatusFilter: [],
-        includeTrades: false
+        excludeTrades: false
     };
 
     @track dataArry = [];
@@ -63,7 +63,7 @@ export default class ApComplianceReport extends LightningElement {
             co: [],
             violationOnly: false,
             driveStatusFilter: [],
-            includeTrades: false
+            excludeTrades: false
         };
 
         this.hasError = false;
@@ -99,8 +99,8 @@ export default class ApComplianceReport extends LightningElement {
         this.wrapper.violationOnly = event.target.checked;
     }
 
-    handleIncludeTradesChange(event) {
-        this.wrapper.includeTrades = event.target.checked;
+    handleExcludeTradesChange(event) {
+        this.wrapper.excludeTrades = event.target.checked;
     }
 
     async handleSort(event) {
@@ -142,7 +142,7 @@ export default class ApComplianceReport extends LightningElement {
             coList: this.wrapper.co,
             driveStatusFilter: driveStatusClone,
             violationOnly: this.wrapper.violationOnly,
-            includeTrades: this.wrapper.includeTrades,
+            excludeTrades: this.wrapper.excludeTrades,
             sortField: this.sortBy,
             sortDirection: this.sortDirection
         })
@@ -197,7 +197,7 @@ export default class ApComplianceReport extends LightningElement {
             `/apex/APComplianceExcel?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}` +
             `&division=${encodeURIComponent(this.wrapper.division || '')}&region=${encodeURIComponent(this.wrapper.region || '')}` +
             `&co=${coParam}&violationOnly=${this.wrapper.violationOnly}` +
-            `&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`,
+            `&driveStatusFilter=${driveStatusParam}&excludeTrades=${this.wrapper.excludeTrades}`,
             '_blank'
         );
     }
@@ -208,7 +208,7 @@ export default class ApComplianceReport extends LightningElement {
         return `/apex/BSFAPComplianceReportPDF?startdate=${this.wrapper.startDate}&enddate=${this.wrapper.endDate}` +
             `&division=${encodeURIComponent(this.wrapper.division || '')}&region=${encodeURIComponent(this.wrapper.region || '')}` +
             `&co=${coParam}&violationOnly=${this.wrapper.violationOnly}` +
-            `&driveStatusFilter=${driveStatusParam}&includeTrades=${this.wrapper.includeTrades}`;
+            `&driveStatusFilter=${driveStatusParam}&excludeTrades=${this.wrapper.excludeTrades}`;
     }
 
     get disablePdfButton() {

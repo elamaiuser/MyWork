@@ -535,7 +535,9 @@ if(ds.isCreateable()){}*/
         }
         //part of ticket HRP-9562***ends here***
         //HRP-10788
-        list<Task> existingRecruitmentTaskList=[select id,whoId,whatId from task where subject = 'Recruitment Planning Meeting' and whatId in:oppIds];// Changes for HRP-7123
+        String taskSubject = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Task_Subject__c;//HRP-16392 changes
+        String taskType = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Task_Type__c;//HRP-16392 changes
+        list<Task> existingRecruitmentTaskList=[select id,whoId,whatId from task where Type = :taskType and whatId in:oppIds];// Changes for HRP-7123
         map<id,task> oppidTaskMap = new map<id,task>();
         for(Task t:existingRecruitmentTaskList)
         {
@@ -558,7 +560,8 @@ if(ds.isCreateable()){}*/
                 }
                 recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
-                recruitmentTask.subject = 'Recruitment Planning Meeting';
+                recruitmentTask.subject = taskSubject;
+                recruitmentTask.Type = taskType;
                 recruitmentTask.WhatId = opp.id;
                 recruitmentTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                 taskList.add(recruitmentTask);
@@ -628,7 +631,8 @@ if(ds.isCreateable()){}*/
         
         set<id> taskIds = new set<id>();
         String taskSubject = Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Task_Subject__c;//HRP-5337 changes
-        List<task> staskList = [select WhatId from task where Subject =: taskSubject And WhatId = :oppIds];//HRP-5337 changes
+        String taskType = Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Task_Type__c;//HRP-16392 changes
+        List<task> staskList = [select WhatId from task where Type =: taskType And WhatId = :oppIds];//HRP-5337 changes
         for(Task t : staskList) {
             taskIds.add(t.WhatId);
         }
@@ -662,7 +666,7 @@ if(ds.isCreateable()){}*/
                     sponsorPlanningTask.ActivityDate = opp.Drive_Date__c.addDays(-daysFromDriveDate);
                     sponsorPlanningTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter
                     sponsorPlanningTask.subject = taskSubject;//HRP-5337 changes
-                    sponsorPlanningTask.Type = 'Sponsor Planning Meeting';
+                    sponsorPlanningTask.Type = taskType;//HRP-16392 changes
                     sponsorPlanningTask.Status = 'Not Started';
                     sponsorPlanningTask.Priority = 'Normal';
                     sponsorPlanningTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
@@ -3575,9 +3579,10 @@ opp.StageName = 'Closed';
         if(!oppIds.isEmpty()){
             List<Task> taskList = [SELECT Id, 
                                         WhatId, 
-                                        Subject 
+                                        Subject,
+                                        Type 
                                     FROM Task 
-                                    WHERE Subject =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c
+                                    WHERE Type =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Type__c
                                     AND WhatId IN :oppIds];
             for(Task t : taskList){
                 checkOppHas72hourTask.put(t.WhatId,true);
@@ -3597,6 +3602,7 @@ opp.StageName = 'Closed';
                     Task newTask = new task();
                     newTask.RecordTypeId = recTypeId;
                     newTask.subject =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c;//HRP-12627
+                    newTask.Type =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Type__c;//HRP-16392
                     newTask.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
                     newTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                     newTask.WhatId = opp.id;

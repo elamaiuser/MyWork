@@ -58,19 +58,19 @@ public with sharing class APComplianceReportController {
         String coParam            = ApexPages.currentPage().getParameters().get('co');
         String statusParam        = ApexPages.currentPage().getParameters().get('driveStatusFilter');
         String violationOnlyParam = ApexPages.currentPage().getParameters().get('violationOnly');
-        String includeTradesParam = ApexPages.currentPage().getParameters().get('includeTrades');
+        String excludeTradesParam = ApexPages.currentPage().getParameters().get('excludeTrades');
 
         coList = String.isNotBlank(coParam) ? coParam.split(',') : new List<String>();
         List<String> driveStatusFilter = String.isNotBlank(statusParam) ? statusParam.split(',') : new List<String>();
 
         Boolean onlyViolations = (violationOnlyParam == 'true');
-        Boolean includeTrades  = (includeTradesParam == 'true');
+        Boolean excludeTrades  = (excludeTradesParam == 'true');
 
         if (String.isNotBlank(startParam)) startDate = Date.valueOf(startParam);
         if (String.isNotBlank(endParam))   endDate   = Date.valueOf(endParam);
 
         wrapper = APComplianceReportController.searchReport(
-            startDate, endDate, division, region, coList, driveStatusFilter, onlyViolations, includeTrades,
+            startDate, endDate, division, region, coList, driveStatusFilter, onlyViolations, excludeTrades,
             null, null
         );
         reportData = wrapper != null ? wrapper.dataWrapper : new List<Map<String, String>>();
@@ -91,7 +91,7 @@ public static DatableConfigWrapper searchReport(
     List<String> coList,
     List<String> driveStatusFilter,
     Boolean violationOnly,
-    Boolean includeTrades,
+    Boolean excludeTrades,
     String sortField,
     String sortDirection
 ) {
@@ -128,6 +128,7 @@ public static DatableConfigWrapper searchReport(
             },
             'sortable' => true
         },
+            new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{
             'label' => 'Job/Activity Name',
             'fieldName' => 'jobLink',
@@ -171,7 +172,6 @@ public static DatableConfigWrapper searchReport(
 
         new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
         new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'startTime', 'type' => 'text', 'sortable' => true },
@@ -196,7 +196,7 @@ public static DatableConfigWrapper searchReport(
         new Map<String, Object>{ 'label' => 'Activity SubType', 'fieldName' => 'Subtype', 'type' => 'text', 'sortable' => true }
     };
 
-    if (includeTrades) {
+    if (!excludeTrades) {
         wrapper.columnsInfo.add(new Map<String, Object>{
             'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
         });
@@ -299,7 +299,7 @@ public static DatableConfigWrapper searchReport(
         jobSOQL += 'AND sked__Job__r.sked_Drive__r.sked_Status__c IN :driveStatusFilter ';
     }
 
-    if (!includeTrades) {
+    if (excludeTrades) {
         jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
 
@@ -325,10 +325,10 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (job.sked_Drive_Shift_Trade__c != null) || (job.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, activePattern.weeklySchedule);
-        if (isTradeOrCallout) isViolation = false;
+        //if (isTradeOrCallout) isViolation = false;
 
         String calloutTradeVal = '';
-        if (includeTrades && isTradeOrCallout) {
+        if (!excludeTrades && isTradeOrCallout) {
             if (job.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Job - Trade';
             else calloutTradeVal = 'Job - Callout';
         }
@@ -372,7 +372,7 @@ public static DatableConfigWrapper searchReport(
         'AND sked__Activity__r.sked__Type__c NOT IN :excludedTypes ' +
         'AND sked__Resource__c IN ' + idClause + ' ';
 
-    if (!includeTrades) {
+    if (excludeTrades) {
         activityQuery += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
     activityQuery += 'ORDER BY sked_Start_Date__c desc';
@@ -394,10 +394,10 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (act.sked_Drive_Shift_Trade__c != null) || (act.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, activePattern.weeklySchedule);
-        if (isTradeOrCallout) isViolation = false;
+        //if (isTradeOrCallout) isViolation = false;
 
         String calloutTradeVal = '';
-        if (includeTrades && isTradeOrCallout) {
+        if (!excludeTrades && isTradeOrCallout) {
             if (act.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Activity - Trade';
             else calloutTradeVal = 'Activity - Callout';
         }

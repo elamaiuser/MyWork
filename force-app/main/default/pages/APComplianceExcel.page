@@ -28,13 +28,13 @@
                     <th>Resource</th>
                     <th>Supervisor</th>
                     <th>Drive Name</th>
+                    <th> Drive Operation Type</th>
                     <th>Division</th>
                     <th>Job/Activity Name</th>
                     <th>Region</th>
                     <th>CO</th>
                     <th>Work Date</th>
                     <th>Type</th>
-                    <th> Drive Operation Type</th>
                     <th>Role</th>
                     <th>Drive Status</th>
                     <th>Start Time</th>
@@ -55,13 +55,13 @@
                         <td>{!row['name']}</td>
                         <td>{!row['supervisor']}</td>
                         <td>{!row['driveName']}</td>
+                        <td>{!row['JOT']}</td>
                         <td>{!row['division']}</td>
                         <td>{!row['JName']}</td>
                         <td>{!row['region']}</td>
                         <td>{!row['co']}</td>
                         <td>{!row['workDate']}</td>
                         <td>{!row['type']}</td>
-                        <td>{!row['JOT']}</td>
                         <td>{!row['role']}</td>
                         <td>{!row['status']}</td>
                         <td>{!row['startTime']}</td>
