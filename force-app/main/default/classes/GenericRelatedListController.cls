@@ -6,6 +6,7 @@
 * 1.0    01/11/2020                             Initial Version
 **/
 public class GenericRelatedListController {
+
     /**
      * get result base on the soql paramaters
      * @param  recordId record id
@@ -16,13 +17,28 @@ public class GenericRelatedListController {
      * @return wrapperClass   return wrapper class of rcord and other values
      */ 
     @AuraEnabled
-    public static wrapperClass getRecords(String[] recordId, String columnName, String soqlQuery, Integer limits, Integer recordOffset,String fieldwithOrderBy){
+    public static wrapperClass getRecords(
+        String[] recordId, 
+        String columnName, 
+        String soqlQuery, 
+        Integer limits, 
+        Integer recordOffset,
+        String fieldwithOrderBy){
+            
         System.debug( 'recordId is in getRecord ' + recordId );
         List<sObject> sObjectList;
         wrapperClass wrapperClass = new wrapperClass();
         String[] recordIds = recordId;
         List<String> soqlQueryList = new List<String>();
         try {
+            // HRP-16273 & HRP-16417 SECURITY VALIDATION =================
+            DynamicSoqlUtil.validateSoql(soqlQuery);
+            // Extract object name safely
+            String objectName = DynamicSoqlUtil.extractObjectName(soqlQuery);
+
+            // Enforce object whitelist
+            DynamicSoqlUtil.validateObject('GenericRelatedListController',objectName);
+
             String soqlQueryForAll = soqlQuery;
             if(soqlQuery.contains('Task')||soqlQuery.contains('task'))
             {
@@ -49,9 +65,12 @@ public class GenericRelatedListController {
               soqlQuery = soqlQuery.substringBefore('(')+subquery+soqlQuery.substringAfter(')');
             }
             String orderByClause = '';
+            
             if(String.isNotBlank(fieldwithOrderBy)) {
                 // Assuming the format is 'fieldName ASC/DESC'
-                orderByClause = 'ORDER BY ' + fieldwithOrderBy;
+                //orderByClause = 'ORDER BY ' + fieldwithOrderBy;
+                //HRP-16273 & HRP-16417 Secure ORDER BY
+                orderByClause = DynamicSoqlUtil.getSafeOrderBy(fieldwithOrderBy, objectName);
             } else {
                 // Default ordering
                 orderByClause = 'ORDER BY CreatedDate DESC';
@@ -61,17 +80,11 @@ public class GenericRelatedListController {
             System.debug('soqlQuery is ' + soqlQuery );
             sObjectList = Database.Query(soqlQuery);
             system.debug( 'sObjectList is ' + sObjectList );
-            
-            
-            
-            
-			
             wrapperClass.sObjectList = sObjectList;
             System.debug('wrapperClass.sObjectList: ' + wrapperClass.sObjectList);
             //Integer recordCount = Database.Query(soqlQueryForAll).size();
             Integer recordCount = sObjectList.size();
             wrapperClass.counts = recordCount;
-            
             String[] firstSplit;
             if(soqlQuery.contains('select')){
                 firstSplit = soqlQuery.split('select');
@@ -80,7 +93,6 @@ public class GenericRelatedListController {
             }else if(soqlQuery.contains('SELECT')){
                 firstSplit = soqlQuery.split('SELECT');
             }
-            
             String[] secondSplit;
             if(soqlQuery.contains('from')){
                 secondSplit = firstSplit[1].split('from');
@@ -120,27 +132,23 @@ public class GenericRelatedListController {
             if( objectAPIName != 'ContentDocument' && objectAPIName !=  'Task' ){
                 obj = Database.Query('Select Name from '+objectAPIName+' where Id in:recordId limit 1');
             }
-            
             combineColumnName = combineColumnName.removeEnd(',');
             wrapperClass.columnNames = combineColumnName;
             wrapperClass.objectName = objectAPIName;
             wrapperClass.recordName = obj;
 			System.debug('Final wrapperClass: ' + wrapperClass);
-			
         } catch (Exception e) {
             System.debug( 'exception  msg:' + e.getMessage() + ' line number ' + e.getLineNumber() );
             throw new AuraHandledException(e.getMessage());
         }
-        
         return wrapperClass;
-
     }
 
     /**
      * Delete record on the actions
      * @param  lstRecordId record id
-     * @return void   
-     */ 
+     * @return void
+     */
     @AuraEnabled
     public static void deleteRecords(Id lstRecordId){
         try {
@@ -159,4 +167,5 @@ public class GenericRelatedListController {
         @AuraEnabled public String objectName {get; set;}
         @AuraEnabled public sObject recordName {get; set;}
     }
+
 }

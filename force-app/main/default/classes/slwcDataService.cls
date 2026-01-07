@@ -1,8 +1,10 @@
 public without sharing class slwcDataService {
-    
+
     @AuraEnabled(cacheable=false)
     public static Object executeQuery(String query) {
-        return Database.query(query);
+        //return Database.query(query);
+        return DynamicSoqlUtil.safeQuery(query,'slwcDataService');
+
     }
     
     @AuraEnabled(cacheable=false)
@@ -13,7 +15,8 @@ public without sharing class slwcDataService {
         for(queryModel query : request){
             queryResultModel result = new queryResultModel();
             result.key = query.key;
-            List<sObject> sObjects = Database.query(query.query);
+            //List<sObject> sObjects = Database.query(query.query);
+            List<sObject> sObjects = DynamicSoqlUtil.safeQuery(query.query,'slwcDataService');
             result.result = sObjects;
             for (sObject sObj : sObjects) {
                 if (string.isBlank(query.fieldToExtractId)) {
@@ -411,5 +414,4 @@ public without sharing class slwcDataService {
         @AuraEnabled public string label {get;set;}
         @AuraEnabled public string value {get;set;}
     }
-    
 }

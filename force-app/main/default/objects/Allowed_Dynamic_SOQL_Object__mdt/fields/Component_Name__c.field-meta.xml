@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Component_Name__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Component Name</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>GenericRelatedListController</fullName>
+                <default>true</default>
+                <label>GenericRelatedListController</label>
+            </value>
+            <value>
+                <fullName>slwcDataService</fullName>
+                <default>false</default>
+                <label>slwcDataService</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
