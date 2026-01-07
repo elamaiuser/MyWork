@@ -187,6 +187,7 @@
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_13448_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Remove_Read</members>
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_14122_1_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_14122_2_Field_Permission_Set</members>
