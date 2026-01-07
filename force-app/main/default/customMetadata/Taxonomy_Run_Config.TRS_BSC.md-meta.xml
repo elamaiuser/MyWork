@@ -23,6 +23,10 @@
         <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
+        <field>Schedule_Delay_Minutes__c</field>
+        <value xsi:type="xsd:double">5.0</value>
+    </values>
+    <values>
         <field>Sequence__c</field>
         <value xsi:type="xsd:double">2.0</value>
     </values>
