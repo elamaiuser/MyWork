@@ -210,6 +210,14 @@
         <members>Custom_Messages.Time_Block_Validation_From_DOC</members>
         <members>Custom_Messages.Time_Block_Validation_From_Opportunity</members>
         <members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
+        <members>Taxonomy_Run_Config.TRS_BAP</members>
+		<members>Taxonomy_Run_Config.TRS_BBS</members>
+		<members>Taxonomy_Run_Config.TRS_BCB</members>
+		<members>Taxonomy_Run_Config.TRS_BFS</members>
+		<members>Taxonomy_Run_Config.TRS_BRC</members>
+		<members>Taxonomy_Run_Config.TRS_BRM</members>
+		<members>Taxonomy_Run_Config.TRS_BRS</members>
+		<members>Taxonomy_Run_Config.TRS_BSC</members>
         <name>CustomMetadata</name>
     </types>
     <types>
