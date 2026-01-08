@@ -3,8 +3,8 @@
     <fullName>sked_Replacement_For__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <label>Replacement For</label>
-    <referenceTo>sked__Activity_Resource__c</referenceTo>
-    <relationshipLabel>Activity Resources</relationshipLabel>
+    <referenceTo>sked__Resource__c</referenceTo>
+    <relationshipLabel>Activity Resources (Replacement For)</relationshipLabel>
     <relationshipName>sked_Replacements</relationshipName>
     <required>false</required>
     <trackTrending>false</trackTrending>

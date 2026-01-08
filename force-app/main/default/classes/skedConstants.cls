@@ -351,6 +351,9 @@ public class skedConstants {
     public static final string STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK = 'Unavailability Day';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT = 'Bidding Period';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_STANDARD = 'Standard';
+    
+    public static final string STAFFING_REASON_CALLOUT_REPLACEMENT = 'Callout replacement';
+    public static final string STAFFING_REASON_TRADE = 'Trade';
 
     public static final string SUPPORT_PLAN_STATUS_ACTIVE = 'Active';
     public static final string SUPPORT_PLAN_STATUS_CLOSED = 'Closed';
