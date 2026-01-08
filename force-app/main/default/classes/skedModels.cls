@@ -285,6 +285,15 @@ global class skedModels {
         public string startDate;
         public integer startTime;
         public string status;
+
+        public boolean isOverlapping;
+        public List<overlappingPatternResource> overlappingPatternResources;
+    }
+
+    global virtual class overlappingPatternResource {
+        public string endDate;
+        public string startDate;
+        public string patternName;
     }
     
     global virtual class availabilityTemplate extends modelBase {
