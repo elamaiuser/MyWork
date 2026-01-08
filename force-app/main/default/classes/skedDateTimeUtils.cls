@@ -25,10 +25,11 @@ public class skedDateTimeUtils {
     public static final string SHORT_DATE_FORMAT = 'MM/dd';
     public static final string TIME_ISO_FORMAT = 'HH:mm:ss.SSS\'Z\'';
     public static final String INT_TIME_FORMAT = 'Hmm';
-    public static final Datetime MAX_DATETIME = Datetime.newInstance(4000, 1, 1, 0, 0, 0);
-    public static final Datetime MIN_DATETIME = Datetime.newInstance(1970, 1, 1, 0, 0, 0);
+    public static final Datetime MAX_DATETIME = Datetime.newInstanceGmt (4000, 12, 31, 0, 0, 0);
+    public static final Datetime MIN_DATETIME = Datetime.newInstanceGmt(1970, 1, 1, 0, 0, 0);
     public static final Date MAX_DATE = Date.newInstance(4000, 12, 31);
     public static final Date MIN_DATE = Date.newInstance(1970, 1, 1);
+    public static final string MAX_DATE_STR = '4000-12-31';
 
     public static DateTime addDays(DateTime input, integer days, string timezoneSidId) {
         DateTime result = input.addDays(days);
