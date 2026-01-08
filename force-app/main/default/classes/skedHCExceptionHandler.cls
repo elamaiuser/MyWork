@@ -6,6 +6,7 @@ public class skedHCExceptionHandler extends skedTriggerHub {
     
     public override void onAfterInsert() {
         updateDriveExceptionIndicator(this.context.newRecords);
+        populateStaffingReason(this.context.newRecords);
     }
     
     public override void onBeforeUpdate() {
@@ -234,6 +235,83 @@ public class skedHCExceptionHandler extends skedTriggerHub {
                 }
                 update skedDrives;
             }
+        }
+    }
+    
+    private void populateStaffingReason(List<skedHC__Exception__c> newRecords) {
+        Set<string> activityResourceKeys = new Set<string>();
+        Set<Id> jobAllocationIds = new Set<Id>();
+        
+        for (skedHC__Exception__c newRecord : newRecords) {
+            if (newRecord.sked_Exception_Code__c == '') {
+                boolean isOutsideAP = newRecord.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN;
+                boolean isNonWorkingTime = newRecord.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT 
+                    && newRecord.skedHC__Exception__c == 'Non-working time';
+                
+                if (isOutsideAP || isNonWorkingTime) {
+                    if (newRecord.skedHC__Job_Allocation__c != NULL) {
+                        jobAllocationIds.add(newRecord.skedHC__Job_Allocation__c);
+                    }
+                    if (newRecord.skedHC__Activity__c != NULL && newRecord.skedHC__Resource__c != NULL) {
+                        activityResourceKeys.add(newRecord.skedHC__Activity__c + ':' + newRecord.skedHC__Resource__c);
+                    }
+                }
+            }
+        }
+        
+        Map<Id, sked__Job_Allocation__c> mapJobAllocation = new Map<Id, sked__Job_Allocation__c>([
+            SELECT Id, sked_Drive_Shift_Trade__c, sked_Replacement_For__c
+            FROM sked__Job_Allocation__c
+            WHERE Id IN :jobAllocationIds
+        ]);
+        
+        Map<Id, sked__Activity_Resource__c> mapActivityResource = new Map<Id, sked__Activity_Resource__c>([
+            SELECT Id, sked_Drive_Shift_Trade__c, sked_Replacement_For__c
+            FROM sked__Activity_Resource__c
+            WHERE Id IN :activityResourceKeys
+        ]);
+        
+        List<sked__Activity_Resource__c> activityResourcesToUpdate = new List<sked__Activity_Resource__c>();
+        List<sked__Job_Allocation__c> jobAllocationsToUpdate = new List<sked__Job_Allocation__c>();
+        
+        for (skedHC__Exception__c newRecord : newRecords) {
+            if (newRecord.sked_Exception_Code__c == '') {
+                boolean isOutsideAP = newRecord.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN;
+                boolean isNonWorkingTime = newRecord.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT 
+                    && newRecord.skedHC__Exception__c == 'Non-working time';
+                
+                if (isOutsideAP || isNonWorkingTime) {
+                    if (newRecord.skedHC__Activity__c != NULL && newRecord.skedHC__Resource__c != NULL) {
+                        string activityResourceKey = newRecord.skedHC__Activity__c + ':' + newRecord.skedHC__Resource__c;
+                        if (mapActivityResource.containsKey(activityResourceKey)) {
+                            sked__Activity_Resource__c activityResource = mapActivityResource.get(activityResourceKey);
+                            if (activityResource.sked_Drive_Shift_Trade__c != NULL || activityResource.sked_Replacement_For__c != NULL) {
+                                activityResource.sked_Staffing_Reason__c = activityResource.sked_Drive_Shift_Trade__c != NULL 
+                                    ? skedConstants.STAFFING_REASON_TRADE
+                                    : skedConstants.STAFFING_REASON_CALLOUT_REPLACEMENT;
+                                activityResourcesToUpdate.add(activityResource);
+                            }
+                        }
+                    }
+                    if (newRecord.skedHC__Job_Allocation__c != NULL) {
+                        if (mapJobAllocation.containsKey(newRecord.skedHC__Job_Allocation__c)) {
+                            sked__Job_Allocation__c jobAllocation = mapJobAllocation.get(newRecord.skedHC__Job_Allocation__c);
+                            if (jobAllocation.sked_Drive_Shift_Trade__c != NULL || jobAllocation.sked_Replacement_For__c != NULL) {
+                                jobAllocation.sked_Staffing_Reason__c = jobAllocation.sked_Drive_Shift_Trade__c != NULL 
+                                    ? skedConstants.STAFFING_REASON_TRADE
+                                    : skedConstants.STAFFING_REASON_CALLOUT_REPLACEMENT;
+                                jobAllocationsToUpdate.add(jobAllocation);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!activityResourcesToUpdate.isEmpty()) {
+            update activityResourcesToUpdate;
+        }
+        if (!jobAllocationsToUpdate.isEmpty()) {
+            update jobAllocationsToUpdate;
         }
     }
 

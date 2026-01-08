@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>skedHCExceptionHandler</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>sked__Activity_Resource__c.sked_Replacement_For__c</members>
+		<members>sked__Activity_Resource__c.sked_UniqueKey__c</members>
+		<members>sked__Job_Allocation__c.sked_Replacement_For__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+        <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_2</members>
+        <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_2</members>
+        <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
+        <name>CustomMetadata</name>
+    </types>
+    <version>64.0</version>
+</Package>
