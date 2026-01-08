@@ -27,14 +27,26 @@ public with sharing class DynamicSoqlUtil {
         String objectApiName
     ) {
         Set<String> allowed = getAllowedObjects(componentName);
-
+        System.debug('HRP-16273 allowed :'+allowed);
         if (allowed.isEmpty()) {
+            System.debug('No allowed objects configured for component: ' + componentName);
             throw new AuraHandledException(
                 'No allowed objects configured for component: ' + componentName
             );
         }
 
-        if (!allowed.contains(objectApiName)) {
+        // Normalize allowed objects to lowercase
+        Set<String> allowedLower = new Set<String>();
+        for (String obj : allowed) {
+            if (obj != null) {
+                allowedLower.add(obj.toLowerCase());
+            }
+        }
+        // Normalize incoming object name
+        String incomingObject = objectApiName != null ? objectApiName.toLowerCase() : null;
+
+        if (!allowedLower.contains(incomingObject)) {
+            System.debug('Dynamic SOQL not allowed for object: ' + objectApiName);
             throw new AuraHandledException(
                 'Dynamic SOQL not allowed for object: ' + objectApiName
             );

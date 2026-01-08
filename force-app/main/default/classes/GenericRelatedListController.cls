@@ -139,6 +139,7 @@ public class GenericRelatedListController {
 			System.debug('Final wrapperClass: ' + wrapperClass);
         } catch (Exception e) {
             System.debug( 'exception  msg:' + e.getMessage() + ' line number ' + e.getLineNumber() );
+            System.debug( 'HRP-16273 Exception  Stack' + e.getStackTraceString() );
             throw new AuraHandledException(e.getMessage());
         }
         return wrapperClass;
