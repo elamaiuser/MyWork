@@ -975,7 +975,11 @@ class DriveHelper {
         'x2rbcProjectedProcedures',
         'slotGenerator',
         'numberOf2rbcAssets',
-        'projectedRegisteredDonors'
+        'projectedRegisteredDonors',
+        'aptRequired',
+        'aptQuantity',
+        'redcrossVolunteerRequired',
+        'redcrossVolunteerQuantity'
       ]
     } else {
       driveFields = [
