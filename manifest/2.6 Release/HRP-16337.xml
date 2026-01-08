@@ -20,5 +20,10 @@
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
         <name>CustomMetadata</name>
     </types>
+    <types>
+		<members>autoMapper</members>
+    	<members>slwcOnCallCallOutManagement</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>64.0</version>
 </Package>
