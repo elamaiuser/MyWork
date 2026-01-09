@@ -26,33 +26,34 @@ public class GenericRelatedListController {
         String fieldwithOrderBy){
             
         System.debug( 'recordId is in getRecord ' + recordId );
+        String sanitizedSoql = soqlQuery;
         List<sObject> sObjectList;
         wrapperClass wrapperClass = new wrapperClass();
-        String[] recordIds = recordId;
+        List<String> recordIds = recordId;
         List<String> soqlQueryList = new List<String>();
         try {
             // HRP-16273 & HRP-16417 SECURITY VALIDATION =================
-            DynamicSoqlUtil.validateSoql(soqlQuery);
+            DynamicSoqlUtil.validateSoql(sanitizedSoql);
             // Extract object name safely
-            String objectName = DynamicSoqlUtil.extractObjectName(soqlQuery);
+            String objectName = DynamicSoqlUtil.extractObjectName(sanitizedSoql);
 
             // Enforce object whitelist
             DynamicSoqlUtil.validateObject('GenericRelatedListController',objectName);
 
-            String soqlQueryForAll = soqlQuery;
-            if(soqlQuery.contains('Task')||soqlQuery.contains('task'))
+            //String soqlQueryForAll = sanitizedSoql;
+            if(sanitizedSoql.contains('Task')||sanitizedSoql.contains('task'))
             {
-              soqlQuery += ' recordIds OR Delegate__c IN: recordIds)';  
+              sanitizedSoql += ' recordIds OR Delegate__c IN: recordIds)';  
             } else
             {
-              soqlQuery += ' recordIds';
+              sanitizedSoql += ' recordIds';
             }
-            if ((soqlQuery.contains('(')) || soqlQuery.contains(')'))
+            if ((sanitizedSoql.contains('(')) || sanitizedSoql.contains(')'))
             { 
             String soqlQuery1;
-              if(soqlQuery.contains('('))
+              if(sanitizedSoql.contains('('))
               {
-                soqlQuery1 = soqlQuery.substringAfter('(');
+                soqlQuery1 = sanitizedSoql.substringAfter('(');
               }
               if(soqlQuery1.contains(')'))
               {
@@ -62,7 +63,7 @@ public class GenericRelatedListController {
                 soqlQuery1 += ' recordIds';
               }
               string subquery = '('+soqlQuery1+') ';
-              soqlQuery = soqlQuery.substringBefore('(')+subquery+soqlQuery.substringAfter(')');
+              sanitizedSoql = sanitizedSoql.substringBefore('(')+subquery+sanitizedSoql.substringAfter(')');
             }
             String orderByClause = '';
             
@@ -76,11 +77,11 @@ public class GenericRelatedListController {
                 orderByClause = 'ORDER BY CreatedDate DESC';
             }
            //soqlQuery += ' Order by CreatedDate DESC limit '+limits+' Offset '+recordOffset;
-            soqlQuery += ' ' + orderByClause + ' limit '+limits+' Offset '+recordOffset;
-            System.debug('soqlQuery is ' + soqlQuery );
-            String trustedSoql = soqlQuery;
+            sanitizedSoql += ' ' + orderByClause + ' limit :limits Offset :recordOffset';
+            System.debug('sanitizedSoql is ' + sanitizedSoql );
+            String trustedSoql = sanitizedSoql;
             //sObjectList = Database.Query(soqlQuery);
-            sObjectList = DynamicSoqlUtil.safeQuery(trustedSoql,'GenericRelatedListController');
+            sObjectList = DynamicSoqlUtil.safeQuery(trustedSoql,'GenericRelatedListController',recordIds,limits,recordOffset);
 
             system.debug( 'sObjectList is ' + sObjectList );
             wrapperClass.sObjectList = sObjectList;
@@ -89,19 +90,19 @@ public class GenericRelatedListController {
             Integer recordCount = sObjectList.size();
             wrapperClass.counts = recordCount;
             String[] firstSplit;
-            if(soqlQuery.contains('select')){
-                firstSplit = soqlQuery.split('select');
-            }else if(soqlQuery.contains('Select')){
-                firstSplit = soqlQuery.split('Select');
-            }else if(soqlQuery.contains('SELECT')){
-                firstSplit = soqlQuery.split('SELECT');
+            if(sanitizedSoql.contains('select')){
+                firstSplit = sanitizedSoql.split('select');
+            }else if(sanitizedSoql.contains('Select')){
+                firstSplit = sanitizedSoql.split('Select');
+            }else if(sanitizedSoql.contains('SELECT')){
+                firstSplit = sanitizedSoql.split('SELECT');
             }
             String[] secondSplit;
-            if(soqlQuery.contains('from')){
+            if(sanitizedSoql.contains('from')){
                 secondSplit = firstSplit[1].split('from');
-            }else if(soqlQuery.contains('From')){
+            }else if(sanitizedSoql.contains('From')){
                 secondSplit = firstSplit[1].split('From');
-            }else if(soqlQuery.contains('FROM')){
+            }else if(sanitizedSoql.contains('FROM')){
                 secondSplit = firstSplit[1].split('FROM');
             }
             String[] columnApiName = secondSplit[0].split(','); 
@@ -133,7 +134,8 @@ public class GenericRelatedListController {
 			sObject obj;
             System.debug( 'objectAPIName is ' + objectAPIName );
             if( objectAPIName != 'ContentDocument' && objectAPIName !=  'Task' ){
-                obj = Database.Query('Select Name from '+objectAPIName+' where Id in:recordId limit 1');
+                String queryStr = 'Select Name from '+ String.escapeSingleQuotes(objectAPIName) +' where Id in :recordIds limit 1';
+                obj = Database.Query(queryStr);
             }
             combineColumnName = combineColumnName.removeEnd(',');
             wrapperClass.columnNames = combineColumnName;

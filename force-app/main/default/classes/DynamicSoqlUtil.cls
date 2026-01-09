@@ -12,7 +12,7 @@ public with sharing class DynamicSoqlUtil {
             AND Is_Active__c = true
         ]) {
             if (String.isNotBlank(rec.Object_API_Name__c)) {
-                allowedObjects.add(rec.Object_API_Name__c);
+                allowedObjects.add(rec.Object_API_Name__c.toUpperCase());
             }
         }
         System.debug('HRP-16273  allowedObjects:'+allowedObjects);
@@ -69,7 +69,7 @@ public with sharing class DynamicSoqlUtil {
         }
 
         String afterFrom = soql.substring(fromIndex + 6).trim();
-        String objecName = afterFrom.split('\\s+')[0];
+        String objecName = afterFrom.split('\\s+')[0].toUpperCase();
         System.debug('HRP-16273  objecName:'+objecName);
         return objecName;
     }
@@ -81,8 +81,7 @@ public with sharing class DynamicSoqlUtil {
         // Hard blocks
         List<String> forbidden = new List<String>{
             'delete ', 'update ', 'insert ', 'merge ',
-            'union ', 'group by ', 'having ',
-            'limit ', 'offset ',
+            'union ', 'group by ', 'having ',            
             'select select', '--', '/*', '*/'
         };
 
@@ -125,7 +124,7 @@ public with sharing class DynamicSoqlUtil {
             throw new AuraHandledException('Invalid sort field');
         }
 
-        return 'ORDER BY ' + fieldwithOrderBy;
+        return 'ORDER BY ' + String.escapeSingleQuotes(fieldwithOrderBy.trim());
     }
 
      /**
@@ -133,7 +132,10 @@ public with sharing class DynamicSoqlUtil {
      */
     public static List<sObject> safeQuery(
         String soql,
-        String componentName
+        String componentName,
+        List<String> recordIds,
+        Integer limits,
+        Integer recordOffset
     ) {
         validateSoql(soql);
 
