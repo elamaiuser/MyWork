@@ -35,13 +35,6 @@ public class OpportunityTriggerHandler extends TriggerHandler{
     public override void beforeUpdate() {
         System.debug('Entered method beforeUpdate');
 
-        if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
-            System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.GenerateOpportunityName() Executing...');
-            OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
-        } else {
-            System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.GenerateOpportunityName() Bypassed');
-        }
-
         //Start HRP-10912
         if(super.getTriggerMethodsToBypass().indexOf('validateNoPendingDCR') == -1) {
             OpportunityService.validateNoPendingDCR((Map<Id,Opportunity>)trigger.newMap, (Map<Id,Opportunity>)trigger.oldMap);
@@ -180,8 +173,15 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('autoPopulateOpportunityTemplateValues') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.autoPopulateOpportunityTemplateValues() Executing...');
             OpportunityService.autoPopulateOpportunityTemplateValues((Map<Id, Opportunity>)trigger.oldMap, (List<Opportunity>)trigger.new);
-        }else{
+        } else {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.autoPopulateOpportunityTemplateValues() Bypassed');
+        }
+
+        if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
+            System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.GenerateOpportunityName() Executing...');
+            OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        } else {
+            System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.GenerateOpportunityName() Bypassed');
         }
         
         if(super.getTriggerMethodsToBypass().indexOf('updateOpportunityName') == -1) {
@@ -321,13 +321,6 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         System.debug('Entered method Opportunity beforeInsert');
 		System.debug('getCpuTime()'+limits.getCpuTime());
 
-        if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
-            System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.GenerateOpportunityName() Executing...');
-            OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, null);
-        } else {
-            System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.GenerateOpportunityName() Bypassed');
-        }
-
         // HRP-12011 --> Starts Here
         if(super.getTriggerMethodsToBypass().indexOf('populateSlotGeneratorOnOpportunity') == -1) {
             System.debug('#### OpportunityTriggerHandler.beforeInsert() - OpportunityService.populateSlotGeneratorOnOpportunity() Executing...');
@@ -381,9 +374,17 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('autoPopulateOpportunityTemplateValues') == -1) {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.autoPopulateOpportunityTemplateValues() Executing...');
             OpportunityService.autoPopulateOpportunityTemplateValues(null, (List<Opportunity>)trigger.new);
-        }else{
+        } else {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.autoPopulateOpportunityTemplateValues() Bypassed');
         }
+
+        if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
+            System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.GenerateOpportunityName() Executing...');
+            OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, null);
+        } else {
+            System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.GenerateOpportunityName() Bypassed');
+        }
+
         System.debug('getCpuTime()'+limits.getCpuTime());
         if(super.getTriggerMethodsToBypass().indexOf('updateOpportunityName') == -1) {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.updateOpportunityName() Executing...');
