@@ -78,7 +78,10 @@ public class GenericRelatedListController {
            //soqlQuery += ' Order by CreatedDate DESC limit '+limits+' Offset '+recordOffset;
             soqlQuery += ' ' + orderByClause + ' limit '+limits+' Offset '+recordOffset;
             System.debug('soqlQuery is ' + soqlQuery );
-            sObjectList = Database.Query(soqlQuery);
+            String trustedSoql = soqlQuery;
+            //sObjectList = Database.Query(soqlQuery);
+            sObjectList = DynamicSoqlUtil.safeQuery(trustedSoql,'GenericRelatedListController');
+
             system.debug( 'sObjectList is ' + sObjectList );
             wrapperClass.sObjectList = sObjectList;
             System.debug('wrapperClass.sObjectList: ' + wrapperClass.sObjectList);
