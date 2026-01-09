@@ -31,6 +31,7 @@ public with sharing class APComplianceReportController {
         'name','supervisor','driveName','JName','division','region','co','workDate','type','JOT','role','status',
         'startTime','endTime','apTime','apName','violation','StaffingReason','exc','AType','Subtype','calloutTrade'
     };
+        private static final String NON_INTEGRATED_WB_OPTYPE = 'Non Integrated WB';
 
     private static final Map<String, String> SORT_FIELD_MAPPING = new Map<String, String>{
         'resourceLink'   => 'name',
@@ -58,21 +59,26 @@ public with sharing class APComplianceReportController {
         String coParam            = ApexPages.currentPage().getParameters().get('co');
         String statusParam        = ApexPages.currentPage().getParameters().get('driveStatusFilter');
         String violationOnlyParam = ApexPages.currentPage().getParameters().get('violationOnly');
-        String includeTradesParam = ApexPages.currentPage().getParameters().get('includeTrades');
+        String excludeTradesParam = ApexPages.currentPage().getParameters().get('excludeTrades');
 
         coList = String.isNotBlank(coParam) ? coParam.split(',') : new List<String>();
         List<String> driveStatusFilter = String.isNotBlank(statusParam) ? statusParam.split(',') : new List<String>();
+        String opTypeParam = ApexPages.currentPage().getParameters().get('driveOperationTypeFilter');
+		List<String> driveOperationTypeFilter = String.isNotBlank(opTypeParam) ? opTypeParam.split(',') : new List<String>();
+
 
         Boolean onlyViolations = (violationOnlyParam == 'true');
-        Boolean includeTrades  = (includeTradesParam == 'true');
+        Boolean excludeTrades  = (excludeTradesParam == 'true');
 
         if (String.isNotBlank(startParam)) startDate = Date.valueOf(startParam);
         if (String.isNotBlank(endParam))   endDate   = Date.valueOf(endParam);
 
         wrapper = APComplianceReportController.searchReport(
-            startDate, endDate, division, region, coList, driveStatusFilter, onlyViolations, includeTrades,
-            null, null
-        );
+    startDate, endDate, division, region, coList, driveStatusFilter, driveOperationTypeFilter,
+        onlyViolations, excludeTrades,
+        null, null
+    );
+
         reportData = wrapper != null ? wrapper.dataWrapper : new List<Map<String, String>>();
     }
 
@@ -90,113 +96,201 @@ public static DatableConfigWrapper searchReport(
     String region,
     List<String> coList,
     List<String> driveStatusFilter,
+    List<String> driveOperationTypeFilter,
     Boolean violationOnly,
-    Boolean includeTrades,
+    Boolean excludeTrades,
     String sortField,
     String sortDirection
 ) {
     DatableConfigWrapper wrapper = new DatableConfigWrapper();
     wrapper.dataWrapper = new List<Map<String, String>>();
     wrapper.columnsInfo = new List<Map<String, Object>>{
-        new Map<String, Object>{
-            'label' => 'Resource',
-            'fieldName' => 'resourceLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'name' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+    new Map<String, Object>{
+        'label' => 'Resource',
+        'fieldName' => 'resourceLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'name' },
+            'target' => '_blank'
         },
-        new Map<String, Object>{
-            'label' => 'Supervisor',
-            'fieldName' => 'supervisorLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'supervisor' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 180
+    },
+    new Map<String, Object>{
+        'label' => 'Supervisor',
+        'fieldName' => 'supervisorLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'supervisor' },
+            'target' => '_blank'
         },
-        new Map<String, Object>{
-            'label' => 'Drive Name',
-            'fieldName' => 'driveLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'driveName' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 180
+    },
+    new Map<String, Object>{
+        'label' => 'Drive Name',
+        'fieldName' => 'driveLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'driveName' },
+            'target' => '_blank'
         },
-            new Map<String, Object>{ 'label' => 'Drive Operation Type', 'fieldName' => 'JOT', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{
-            'label' => 'Job/Activity Name',
-            'fieldName' => 'jobLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'JName' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 200
+    },
+    new Map<String, Object>{
+        'label' => 'Drive Operation Type',
+        'fieldName' => 'JOT',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 170
+    },
+    new Map<String, Object>{
+        'label' => 'Job/Activity Name',
+        'fieldName' => 'jobLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'JName' },
+            'target' => '_blank'
         },
-        new Map<String, Object>{
-            'label' => 'Division',
-            'fieldName' => 'divisionLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'division' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 200
+    },
+    new Map<String, Object>{
+        'label' => 'Division',
+        'fieldName' => 'divisionLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'division' },
+            'target' => '_blank'
         },
-        new Map<String, Object>{
-            'label' => 'Region',
-            'fieldName' => 'regionLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'region' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 140
+    },
+    new Map<String, Object>{
+        'label' => 'Region',
+        'fieldName' => 'regionLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'region' },
+            'target' => '_blank'
         },
-        new Map<String, Object>{
-            'label' => 'CO',
-            'fieldName' => 'coLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'co' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+        'sortable' => true,
+        'initialWidth' => 140
+    },
+    new Map<String, Object>{
+        'label' => 'CO',
+        'fieldName' => 'coLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'co' },
+            'target' => '_blank'
         },
+        'sortable' => true,
+        'initialWidth' => 160
+    },
 
-        new Map<String, Object>{ 'label' => 'Start Date', 'fieldName' => 'workDate', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Role', 'fieldName' => 'role', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'startTime', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'End Time', 'fieldName' => 'endTime', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Availability Pattern Time', 'fieldName' => 'apTime', 'type' => 'text', 'sortable' => true },
+    new Map<String, Object>{
+        'label' => 'Start Date',
+        'fieldName' => 'workDate',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 120
+    },
+    new Map<String, Object>{
+        'label' => 'Type',
+        'fieldName' => 'type',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 110
+    },
+    new Map<String, Object>{
+        'label' => 'Role',
+        'fieldName' => 'role',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 140
+    },
+    new Map<String, Object>{
+        'label' => 'Drive Status',
+        'fieldName' => 'status',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 130
+    },
+    new Map<String, Object>{
+        'label' => 'Start Time',
+        'fieldName' => 'startTime',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 110
+    },
+    new Map<String, Object>{
+        'label' => 'End Time',
+        'fieldName' => 'endTime',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 110
+    },
+    new Map<String, Object>{
+        'label' => 'Availability Pattern Time',
+        'fieldName' => 'apTime',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 190
+    },
 
-        new Map<String, Object>{
-            'label' => 'Availability Pattern Name',
-            'fieldName' => 'apLink',
-            'type' => 'url',
-            'typeAttributes' => new Map<String, Object>{
-                'label' => new Map<String, Object>{ 'fieldName' => 'apName' },
-                'target' => '_blank'
-            },
-            'sortable' => true
+    new Map<String, Object>{
+        'label' => 'Availability Pattern Name',
+        'fieldName' => 'apLink',
+        'type' => 'url',
+        'typeAttributes' => new Map<String, Object>{
+            'label' => new Map<String, Object>{ 'fieldName' => 'apName' },
+            'target' => '_blank'
         },
+        'sortable' => true,
+        'initialWidth' => 220
+    },
 
-        new Map<String, Object>{ 'label' => 'AP Violation', 'fieldName' => 'violation', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Staffing Reason', 'fieldName' => 'StaffingReason', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Exception', 'fieldName' => 'exc', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Activity Type', 'fieldName' => 'AType', 'type' => 'text', 'sortable' => true },
-        new Map<String, Object>{ 'label' => 'Activity SubType', 'fieldName' => 'Subtype', 'type' => 'text', 'sortable' => true }
-    };
+    new Map<String, Object>{
+        'label' => 'AP Violation',
+        'fieldName' => 'violation',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 120
+    },
+    new Map<String, Object>{
+        'label' => 'Staffing Reason',
+        'fieldName' => 'StaffingReason',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 180
+    },
+    new Map<String, Object>{
+        'label' => 'Exception',
+        'fieldName' => 'exc',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 140
+    },
+    new Map<String, Object>{
+        'label' => 'Activity Type',
+        'fieldName' => 'AType',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 140
+    },
+    new Map<String, Object>{
+        'label' => 'Activity SubType',
+        'fieldName' => 'Subtype',
+        'type' => 'text',
+        'sortable' => true,
+        'initialWidth' => 160
+    }
+};
 
-    if (includeTrades) {
+
+    if (!excludeTrades) {
         wrapper.columnsInfo.add(new Map<String, Object>{
             'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
         });
@@ -299,14 +393,13 @@ public static DatableConfigWrapper searchReport(
         jobSOQL += 'AND sked__Job__r.sked_Drive__r.sked_Status__c IN :driveStatusFilter ';
     }
 
-    if (!includeTrades) {
+    if (excludeTrades) {
         jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
 
-    /*jobSOQL +=
-        'AND (sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c LIKE \'%Non Integrated%\' ' +
-        'OR sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\') ' +
-        'ORDER BY sked_Start_Date__c desc';*/
+    if (driveOperationTypeFilter != null && !driveOperationTypeFilter.isEmpty()) {
+    jobSOQL += buildDriveOperationTypeWhere(driveOperationTypeFilter);
+	}
 
     List<sked__Job_Allocation__c> jobAllocList = Database.query(jobSOQL);
     for (sked__Job_Allocation__c job : jobAllocList) {
@@ -325,16 +418,18 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (job.sked_Drive_Shift_Trade__c != null) || (job.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, activePattern.weeklySchedule);
-        if (isTradeOrCallout) isViolation = false;
+        //if (isTradeOrCallout) isViolation = false;
 
         String calloutTradeVal = '';
-        if (includeTrades && isTradeOrCallout) {
+        if (!excludeTrades && isTradeOrCallout) {
             if (job.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Job - Trade';
             else calloutTradeVal = 'Job - Callout';
         }
 
         if (violationOnly && !isViolation) continue;
         if (isViolation) jobViolations++;
+        String jotDisplay = buildDriveOperationDisplay(job.sked__Job__r,job.sked__Job__r.sked_Drive_Shift__r);
+
 
         Map<String, String> row = buildRow(
             resMap.get(job.sked__Resource__c),
@@ -348,7 +443,7 @@ public static DatableConfigWrapper searchReport(
             job.sked__Job__r.sked_Drive__c,
             job.sked__Job__r.sked_Drive__r != null ? job.sked__Job__r.sked_Drive__r.Name : '',
             job.sked__Job__c,
-            job.sked__Job__r.sked_Drive_Shift__r != null ? job.sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c : '',
+            jotDisplay,
             job.sked__Job__r != null ? job.sked__Job__r.Name : '',
             job.sked__Job__r != null ? job.sked__Job__r.sked__Type__c : '',
             job.sked_Staffing_Reason__c,
@@ -372,7 +467,7 @@ public static DatableConfigWrapper searchReport(
         'AND sked__Activity__r.sked__Type__c NOT IN :excludedTypes ' +
         'AND sked__Resource__c IN ' + idClause + ' ';
 
-    if (!includeTrades) {
+    if (excludeTrades) {
         activityQuery += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
     activityQuery += 'ORDER BY sked_Start_Date__c desc';
@@ -394,10 +489,10 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (act.sked_Drive_Shift_Trade__c != null) || (act.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, activePattern.weeklySchedule);
-        if (isTradeOrCallout) isViolation = false;
+        //if (isTradeOrCallout) isViolation = false;
 
         String calloutTradeVal = '';
-        if (includeTrades && isTradeOrCallout) {
+        if (!excludeTrades && isTradeOrCallout) {
             if (act.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Activity - Trade';
             else calloutTradeVal = 'Activity - Callout';
         }
@@ -725,4 +820,58 @@ public static DatableConfigWrapper searchReport(
             this.weeklySchedule = schedule;
         }
     }
+    @TestVisible
+    private static String buildDriveOperationTypeWhere(List<String> driveOperationTypeFilter) {
+    if (driveOperationTypeFilter == null || driveOperationTypeFilter.isEmpty()) return '';
+
+    Set<String> sel = new Set<String>();
+    for (String s : driveOperationTypeFilter) {
+        if (String.isNotBlank(s)) sel.add(s.trim());
+    }
+    if (sel.isEmpty()) return '';
+
+    List<String> orParts = new List<String>();
+
+    if (sel.contains('Mobile')) {
+        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\'');
+    }
+    if (sel.contains('Fixed Site')) {
+        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Fixed Site\'');
+    }
+
+    if (sel.contains('Non Integrated WB')) {
+        orParts.add(
+            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c = \'' +
+            String.escapeSingleQuotes(NON_INTEGRATED_WB_OPTYPE) + '\''
+        );
+    }
+
+    if (orParts.isEmpty()) return '';
+    return ' AND (' + String.join(orParts, ' OR ') + ') ';
+}	@TestVisible
+    private static String buildDriveOperationDisplay(sked__Job__c jobRec,sked_Drive_Shift__c shiftRec) {
+    String driveType = jobRec != null && jobRec.sked_Drive__r != null
+        ? jobRec.sked_Drive__r.sked_Type_of_Drive__c
+        : null;
+
+    String opType = shiftRec != null
+        ? shiftRec.sked_Drive_Operation_Type__c
+        : null;
+
+    if (String.isNotBlank(driveType) && String.isNotBlank(opType)) {
+        return driveType + ' - ' + opType;
+    }
+
+    if (String.isNotBlank(driveType)) {
+        return driveType;
+    }
+
+    if (String.isNotBlank(opType)) {
+        return opType;
+    }
+
+    return '';
+}
+
+
 }
