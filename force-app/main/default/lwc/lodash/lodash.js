@@ -6,7 +6,6 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-;(function() {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -433,7 +432,7 @@
   var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
   /** Used as a reference to the global object. */
-  var root = freeGlobal || freeSelf || Function('return this')();
+  var root = freeGlobal || freeSelf || window;
 
   /** Detect free variable `exports`. */
   var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -17206,56 +17205,86 @@
     // Export to the global object.
     root._ = _;
   }
-}.call(this));
-/* 
- * LWC Compatibility Layer 
- * This allows 'import { x } from "c/lodash"' to keep working 
- */
-const _lodash = _.noConflict(); 
-
+  /* Salesforce LWC Safe Export */
+var _lodash = _.noConflict();
 export default _lodash;
-
-export const { 
-    add, after, ary, assign, assignIn, assignInWith, assignWith, at, attempt, 
-    before, bind, bindAll, bindKey, camelCase, capitalize, castArray, ceil, 
-    chain, chunk, clamp, clone, cloneDeep, cloneDeepWith, cloneWith, commit, 
-    compact, concat, cond, conforms, conformsTo, constant, countBy, create, 
-    curry, curryRight, debounce, deburr, defaultTo, defaults, defaultsDeep, 
-    defer, delay, difference, differenceBy, differenceWith, divide, drop, 
-    dropRight, dropRightWhile, dropWhile, each, eachRight, endsWith, entries, 
-    entriesIn, eq, escape, escapeRegExp, every, extend, extendWith, fill, 
-    filter, find, findIndex, findKey, findLast, findLastIndex, findLastKey, 
-    first, flatMap, flatMapDeep, flatMapDepth, flatten, flattenDeep, 
-    flattenDepth, flip, floor, flow, flowRight, forEach, forEachRight, forIn, 
-    forInRight, forOwn, forOwnRight, fromPairs, functions, functionsIn, get, 
-    groupBy, gt, gte, has, hasIn, head, identity, inRange, includes, indexOf, 
-    initial, intersection, intersectionBy, intersectionWith, invert, invertBy, 
-    invoke, invokeMap, isArguments, isArray, isArrayBuffer, isArrayLike, 
-    isArrayLikeObject, isBoolean, isBuffer, isDate, isElement, isEmpty, 
-    isEqual, isEqualWith, isError, isFinite, isFunction, isInteger, isLength, 
-    isMap, isMatch, isMatchWith, isNaN, isNative, isNil, isNull, isNumber, 
-    isObject, isObjectLike, isPlainObject, isRegExp, isSafeInteger, isSet, 
-    isString, isSymbol, isTypedArray, isUndefined, isWeakMap, isWeakSet, 
-    iteratee, join, kebabCase, keyBy, keys, keysIn, last, lastIndexOf, 
-    lowerCase, lowerFirst, lt, lte, map, mapKeys, mapValues, matches, 
-    matchesProperty, max, maxBy, mean, meanBy, memoize, merge, mergeWith, 
-    method, methodOf, min, minBy, mixin, multiply, negate, next, noop, now, 
-    nth, nthArg, omit, omitBy, once, orderBy, over, overArgs, overEvery, 
-    overSome, pad, padEnd, padStart, parseInt, partial, partialRight, 
-    partition, pick, pickBy, plant, property, propertyOf, pull, pullAll, 
-    pullAllBy, pullAllWith, pullAt, random, range, rangeRight, rearg, reduce, 
-    reduceRight, reject, remove, repeat, replace, rest, result, reverse, 
-    round, sample, sampleSize, set, setWith, shuffle, size, slice, snakeCase, 
-    some, sortBy, sortedIndex, sortedIndexBy, sortedIndexOf, sortedLastIndex, 
-    sortedLastIndexBy, sortedLastIndexOf, sortedUniq, sortedUniqBy, split, 
-    spread, startCase, startsWith, stubArray, stubFalse, stubObject, 
-    stubString, stubTrue, subtract, sum, sumBy, tail, take, takeRight, 
-    takeRightWhile, takeWhile, tap, template, templateSettings, throttle, 
-    thru, times, toArray, toFinite, toInteger, toIterator, toJSON, toLength, 
-    toLower, toNumber, toPairs, toPairsIn, toPath, toPlainObject, 
-    toSafeInteger, toString, toUpper, transform, trim, trimEnd, trimStart, 
-    truncate, unary, unescape, union, unionBy, unionWith, uniq, uniqBy, 
-    uniqWith, uniqueId, unset, unzip, unzipWith, update, updateWith, 
-    upperCase, upperFirst, value, valueOf, values, valuesIn, without, words, 
-    wrap, xor, xorBy, xorWith, zip, zipObject, zipObjectDeep, zipWith
-} = _lodash;
+export var 
+add=_lodash.add,after=_lodash.after,ary=_lodash.ary,assign=_lodash.assign,assignIn=_lodash.assignIn,
+assignInWith=_lodash.assignInWith,assignWith=_lodash.assignWith,at=_lodash.at,attempt=_lodash.attempt,
+before=_lodash.before,bind=_lodash.bind,bindAll=_lodash.bindAll,bindKey=_lodash.bindKey,
+camelCase=_lodash.camelCase,capitalize=_lodash.capitalize,castArray=_lodash.castArray,ceil=_lodash.ceil,
+chain=_lodash.chain,chunk=_lodash.chunk,clamp=_lodash.clamp,clone=_lodash.clone,cloneDeep=_lodash.cloneDeep,
+cloneDeepWith=_lodash.cloneDeepWith,cloneWith=_lodash.cloneWith,commit=_lodash.commit,compact=_lodash.compact,
+concat=_lodash.concat,cond=_lodash.cond,conforms=_lodash.conforms,conformsTo=_lodash.conformsTo,
+constant=_lodash.constant,countBy=_lodash.countBy,create=_lodash.create,curry=_lodash.curry,
+curryRight=_lodash.curryRight,debounce=_lodash.debounce,deburr=_lodash.deburr,defaultTo=_lodash.defaultTo,
+defaults=_lodash.defaults,defaultsDeep=_lodash.defaultsDeep,defer=_lodash.defer,delay=_lodash.delay,
+difference=_lodash.difference,differenceBy=_lodash.differenceBy,differenceWith=_lodash.differenceWith,
+divide=_lodash.divide,drop=_lodash.drop,dropRight=_lodash.dropRight,dropRightWhile=_lodash.dropRightWhile,
+dropWhile=_lodash.dropWhile,each=_lodash.each,eachRight=_lodash.eachRight,endsWith=_lodash.endsWith,
+entries=_lodash.entries,entriesIn=_lodash.entriesIn,eq=_lodash.eq,escape=_lodash.escape,
+escapeRegExp=_lodash.escapeRegExp,every=_lodash.every,extend=_lodash.extend,extendWith=_lodash.extendWith,
+fill=_lodash.fill,filter=_lodash.filter,find=_lodash.find,findIndex=_lodash.findIndex,findKey=_lodash.findKey,
+findLast=_lodash.findLast,findLastIndex=_lodash.findLastIndex,findLastKey=_lodash.findLastKey,first=_lodash.first,
+flatMap=_lodash.flatMap,flatMapDeep=_lodash.flatMapDeep,flatMapDepth=_lodash.flatMapDepth,flatten=_lodash.flatten,
+flattenDeep=_lodash.flattenDeep,flattenDepth=_lodash.flattenDepth,flip=_lodash.flip,floor=_lodash.floor,
+flow=_lodash.flow,flowRight=_lodash.flowRight,forEach=_lodash.forEach,forEachRight=_lodash.forEachRight,
+forIn=_lodash.forIn,forInRight=_lodash.forInRight,forOwn=_lodash.forOwn,forOwnRight=_lodash.forOwnRight,
+fromPairs=_lodash.fromPairs,functions=_lodash.functions,functionsIn=_lodash.functionsIn,get=_lodash.get,
+groupBy=_lodash.groupBy,gt=_lodash.gt,gte=_lodash.gte,has=_lodash.has,hasIn=_lodash.hasIn,head=_lodash.head,
+identity=_lodash.identity,inRange=_lodash.inRange,includes=_lodash.includes,indexOf=_lodash.indexOf,
+initial=_lodash.initial,intersection=_lodash.intersection,intersectionBy=_lodash.intersectionBy,
+intersectionWith=_lodash.intersectionWith,invert=_lodash.invert,invertBy=_lodash.invertBy,invoke=_lodash.invoke,
+invokeMap=_lodash.invokeMap,isArguments=_lodash.isArguments,isArray=_lodash.isArray,
+isArrayBuffer=_lodash.isArrayBuffer,isArrayLike=_lodash.isArrayLike,isArrayLikeObject=_lodash.isArrayLikeObject,
+isBoolean=_lodash.isBoolean,isBuffer=_lodash.isBuffer,isDate=_lodash.isDate,isElement=_lodash.isElement,
+isEmpty=_lodash.isEmpty,isEqual=_lodash.isEqual,isEqualWith=_lodash.isEqualWith,isError=_lodash.isError,
+isFinite=_lodash.isFinite,isFunction=_lodash.isFunction,isInteger=_lodash.isInteger,isLength=_lodash.isLength,
+isMap=_lodash.isMap,isMatch=_lodash.isMatch,isMatchWith=_lodash.isMatchWith,isNaN=_lodash.isNaN,
+isNative=_lodash.isNative,isNil=_lodash.isNil,isNull=_lodash.isNull,isNumber=_lodash.isNumber,
+isObject=_lodash.isObject,isObjectLike=_lodash.isObjectLike,isPlainObject=_lodash.isPlainObject,
+isRegExp=_lodash.isRegExp,isSafeInteger=_lodash.isSafeInteger,isSet=_lodash.isSet,isString=_lodash.isString,
+isSymbol=_lodash.isSymbol,isTypedArray=_lodash.isTypedArray,isUndefined=_lodash.isUndefined,
+isWeakMap=_lodash.isWeakMap,isWeakSet=_lodash.isWeakSet,iteratee=_lodash.iteratee,join=_lodash.join,
+kebabCase=_lodash.kebabCase,keyBy=_lodash.keyBy,keys=_lodash.keys,keysIn=_lodash.keysIn,last=_lodash.last,
+lastIndexOf=_lodash.lastIndexOf,lowerCase=_lodash.lowerCase,lowerFirst=_lodash.lowerFirst,lt=_lodash.lt,
+lte=_lodash.lte,map=_lodash.map,mapKeys=_lodash.mapKeys,mapValues=_lodash.mapValues,matches=_lodash.matches,
+matchesProperty=_lodash.matchesProperty,max=_lodash.max,maxBy=_lodash.maxBy,mean=_lodash.mean,
+meanBy=_lodash.meanBy,memoize=_lodash.memoize,merge=_lodash.merge,mergeWith=_lodash.mergeWith,
+method=_lodash.method,methodOf=_lodash.methodOf,min=_lodash.min,minBy=_lodash.minBy,mixin=_lodash.mixin,
+multiply=_lodash.multiply,negate=_lodash.negate,next=_lodash.next,noop=_lodash.noop,now=_lodash.now,
+nth=_lodash.nth,nthArg=_lodash.nthArg,omit=_lodash.omit,omitBy=_lodash.omitBy,once=_lodash.once,
+orderBy=_lodash.orderBy,over=_lodash.over,overArgs=_lodash.overArgs,overEvery=_lodash.overEvery,
+overSome=_lodash.overSome,pad=_lodash.pad,padEnd=_lodash.padEnd,padStart=_lodash.padStart,
+parseInt=_lodash.parseInt,partial=_lodash.partial,partialRight=_lodash.partialRight,
+partition=_lodash.partition,pick=_lodash.pick,pickBy=_lodash.pickBy,plant=_lodash.plant,
+property=_lodash.property,propertyOf=_lodash.propertyOf,pull=_lodash.pull,pullAll=_lodash.pullAll,
+pullAllBy=_lodash.pullAllBy,pullAllWith=_lodash.pullAllWith,pullAt=_lodash.pullAt,random=_lodash.random,
+range=_lodash.range,rangeRight=_lodash.rangeRight,rearg=_lodash.rearg,reduce=_lodash.reduce,
+reduceRight=_lodash.reduceRight,reject=_lodash.reject,remove=_lodash.remove,repeat=_lodash.repeat,
+replace=_lodash.replace,rest=_lodash.rest,result=_lodash.result,reverse=_lodash.reverse,
+round=_lodash.round,sample=_lodash.sample,sampleSize=_lodash.sampleSize,set=_lodash.set,
+setWith=_lodash.setWith,shuffle=_lodash.shuffle,size=_lodash.size,slice=_lodash.slice,
+snakeCase=_lodash.snakeCase,some=_lodash.some,sortBy=_lodash.sortBy,sortedIndex=_lodash.sortedIndex,
+sortedIndexBy=_lodash.sortedIndexBy,sortedIndexOf=_lodash.sortedIndexOf,sortedLastIndex=_lodash.sortedLastIndex,
+sortedLastIndexBy=_lodash.sortedLastIndexBy,sortedLastIndexOf=_lodash.sortedLastIndexOf,
+sortedUniq=_lodash.sortedUniq,sortedUniqBy=_lodash.sortedUniqBy,split=_lodash.split,spread=_lodash.spread,
+startCase=_lodash.startCase,startsWith=_lodash.startsWith,stubArray=_lodash.stubArray,
+stubFalse=_lodash.stubFalse,stubObject=_lodash.stubObject,stubString=_lodash.stubString,
+stubTrue=_lodash.stubTrue,subtract=_lodash.subtract,sum=_lodash.sum,sumBy=_lodash.sumBy,tail=_lodash.tail,
+take=_lodash.take,takeRight=_lodash.takeRight,takeRightWhile=_lodash.takeRightWhile,
+takeWhile=_lodash.takeWhile,tap=_lodash.tap,template=_lodash.template,
+templateSettings=_lodash.templateSettings,throttle=_lodash.throttle,thru=_lodash.thru,times=_lodash.times,
+toArray=_lodash.toArray,toFinite=_lodash.toFinite,toInteger=_lodash.toInteger,toIterator=_lodash.toIterator,
+toJSON=_lodash.toJSON,toLength=_lodash.toLength,toLower=_lodash.toLower,toNumber=_lodash.toNumber,
+toPairs=_lodash.toPairs,toPairsIn=_lodash.toPairsIn,toPath=_lodash.toPath,toPlainObject=_lodash.toPlainObject,
+toSafeInteger=_lodash.toSafeInteger,toString=_lodash.toString,toUpper=_lodash.toUpper,
+transform=_lodash.transform,trim=_lodash.trim,trimEnd=_lodash.trimEnd,trimStart=_lodash.trimStart,
+truncate=_lodash.truncate,unary=_lodash.unary,unescape=_lodash.unescape,union=_lodash.union,
+unionBy=_lodash.unionBy,unionWith=_lodash.unionWith,uniq=_lodash.uniq,uniqBy=_lodash.uniqBy,
+uniqWith=_lodash.uniqWith,uniqueId=_lodash.uniqueId,unset=_lodash.unset,unzip=_lodash.unzip,
+unzipWith=_lodash.unzipWith,update=_lodash.update,updateWith=_lodash.updateWith,upperCase=_lodash.upperCase,
+upperFirst=_lodash.upperFirst,value=_lodash.value,valueOf=_lodash.valueOf,values=_lodash.values,
+valuesIn=_lodash.valuesIn,without=_lodash.without,words=_lodash.words,wrap=_lodash.wrap,xor=_lodash.xor,
+xorBy=_lodash.xorBy,xorWith=_lodash.xorWith,zip=_lodash.zip,zipObject=_lodash.zipObject,
+zipObjectDeep=_lodash.zipObjectDeep,zipWith=_lodash.zipWith;
