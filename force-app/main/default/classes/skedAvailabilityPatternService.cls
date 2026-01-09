@@ -348,33 +348,35 @@ global class skedAvailabilityPatternService extends skedDataService {
 
                 if (map_resourceId_patternResource.containsKey(patternResource.resourceId)) {
                     for (sked__Availability_Pattern_Resource__c existingPatternResource : map_resourceId_patternResource.get(patternResource.resourceId)) {
-                        Date existingPatternResourceEndDate = existingPatternResource.sked_End_Date__c != NULL ? existingPatternResource.sked_End_Date__c : maxDateValue;
-
-                        // Check date range overlap
-                        if (prStartDate <= existingPatternResourceEndDate && prEndDate >= existingPatternResource.sked_Start_Date__c) {
-                            // Parse existing pattern data
-                            skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData) JSON.deserialize(
-                                existingPatternResource.sked__Availability_Pattern__r.sked__Pattern__c,
-                                skedAvailabilityPatternData.class
-                            );
-
-                            // Check pattern day overlap
-                            if (hasPatternsOverlap(
-                                modelPatternData,
-                                existingPatternData,
-                                prStartDate,
-                                prEndDate,
-                                existingPatternResource.sked_Start_Date__c,
-                                existingPatternResourceEndDate
-                            )) {
-                                patternResource.isOverlapping = true;
+                        if (patternResource.id != existingPatternResource.Id) {
+                            Date existingPatternResourceEndDate = existingPatternResource.sked_End_Date__c != NULL ? existingPatternResource.sked_End_Date__c : maxDateValue;
+                            
+                            // Check date range overlap
+                            if (prStartDate <= existingPatternResourceEndDate && prEndDate >= existingPatternResource.sked_Start_Date__c) {
+                                // Parse existing pattern data
+                                skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData) JSON.deserialize(
+                                    existingPatternResource.sked__Availability_Pattern__r.sked__Pattern__c,
+                                    skedAvailabilityPatternData.class
+                                );
                                 
-                                skedModels.overlappingPatternResource overlap = new skedModels.overlappingPatternResource();
-                                overlap.startDate = JSON.serialize(existingPatternResource.sked_Start_Date__c).replace('"', '');
-                                overlap.endDate = existingPatternResource.sked_End_Date__c != NULL ? JSON.serialize(existingPatternResource.sked_End_Date__c).replace('"', '') : '';
-                                overlap.patternName = existingPatternResource.sked__Availability_Pattern__r.Name;
-                                
-                                patternResource.overlappingPatternResources.add(overlap);
+                                // Check pattern day overlap
+                                if (hasPatternsOverlap(
+                                    modelPatternData,
+                                    existingPatternData,
+                                    prStartDate,
+                                    prEndDate,
+                                    existingPatternResource.sked_Start_Date__c,
+                                    existingPatternResourceEndDate
+                                )) {
+                                    patternResource.isOverlapping = true;
+                                    
+                                    skedModels.overlappingPatternResource overlap = new skedModels.overlappingPatternResource();
+                                    overlap.startDate = JSON.serialize(existingPatternResource.sked_Start_Date__c).replace('"', '');
+                                    overlap.endDate = existingPatternResource.sked_End_Date__c != NULL ? JSON.serialize(existingPatternResource.sked_End_Date__c).replace('"', '') : '';
+                                    overlap.patternName = existingPatternResource.sked__Availability_Pattern__r.Name;
+                                    
+                                    patternResource.overlappingPatternResources.add(overlap);
+                                }
                             }
                         }
                     }

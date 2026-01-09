@@ -29,6 +29,7 @@ public class skedDateTimeUtils {
     public static final Datetime MIN_DATETIME = Datetime.newInstanceGmt(1970, 1, 1, 0, 0, 0);
     public static final Date MAX_DATE = Date.newInstance(4000, 12, 31);
     public static final Date MIN_DATE = Date.newInstance(1970, 1, 1);
+    public static final string MAX_DATE_STR = '4000-12-31';
 
     public static DateTime addDays(DateTime input, integer days, string timezoneSidId) {
         DateTime result = input.addDays(days);
