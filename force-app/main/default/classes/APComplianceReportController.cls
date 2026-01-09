@@ -31,6 +31,7 @@ public with sharing class APComplianceReportController {
         'name','supervisor','driveName','JName','division','region','co','workDate','type','JOT','role','status',
         'startTime','endTime','apTime','apName','violation','StaffingReason','exc','AType','Subtype','calloutTrade'
     };
+        private static final String NON_INTEGRATED_WB_OPTYPE = 'Non Integrated WB';
 
     private static final Map<String, String> SORT_FIELD_MAPPING = new Map<String, String>{
         'resourceLink'   => 'name',
@@ -62,6 +63,9 @@ public with sharing class APComplianceReportController {
 
         coList = String.isNotBlank(coParam) ? coParam.split(',') : new List<String>();
         List<String> driveStatusFilter = String.isNotBlank(statusParam) ? statusParam.split(',') : new List<String>();
+        String opTypeParam = ApexPages.currentPage().getParameters().get('driveOperationTypeFilter');
+		List<String> driveOperationTypeFilter = String.isNotBlank(opTypeParam) ? opTypeParam.split(',') : new List<String>();
+
 
         Boolean onlyViolations = (violationOnlyParam == 'true');
         Boolean excludeTrades  = (excludeTradesParam == 'true');
@@ -70,9 +74,11 @@ public with sharing class APComplianceReportController {
         if (String.isNotBlank(endParam))   endDate   = Date.valueOf(endParam);
 
         wrapper = APComplianceReportController.searchReport(
-            startDate, endDate, division, region, coList, driveStatusFilter, onlyViolations, excludeTrades,
-            null, null
-        );
+    startDate, endDate, division, region, coList, driveStatusFilter, driveOperationTypeFilter,
+        onlyViolations, excludeTrades,
+        null, null
+    );
+
         reportData = wrapper != null ? wrapper.dataWrapper : new List<Map<String, String>>();
     }
 
@@ -90,6 +96,7 @@ public static DatableConfigWrapper searchReport(
     String region,
     List<String> coList,
     List<String> driveStatusFilter,
+    List<String> driveOperationTypeFilter,
     Boolean violationOnly,
     Boolean excludeTrades,
     String sortField,
@@ -390,10 +397,9 @@ public static DatableConfigWrapper searchReport(
         jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
     }
 
-    /*jobSOQL +=
-        'AND (sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c LIKE \'%Non Integrated%\' ' +
-        'OR sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\') ' +
-        'ORDER BY sked_Start_Date__c desc';*/
+    if (driveOperationTypeFilter != null && !driveOperationTypeFilter.isEmpty()) {
+    jobSOQL += buildDriveOperationTypeWhere(driveOperationTypeFilter);
+	}
 
     List<sked__Job_Allocation__c> jobAllocList = Database.query(jobSOQL);
     for (sked__Job_Allocation__c job : jobAllocList) {
@@ -422,6 +428,8 @@ public static DatableConfigWrapper searchReport(
 
         if (violationOnly && !isViolation) continue;
         if (isViolation) jobViolations++;
+        String jotDisplay = buildDriveOperationDisplay(job.sked__Job__r,job.sked__Job__r.sked_Drive_Shift__r);
+
 
         Map<String, String> row = buildRow(
             resMap.get(job.sked__Resource__c),
@@ -435,7 +443,7 @@ public static DatableConfigWrapper searchReport(
             job.sked__Job__r.sked_Drive__c,
             job.sked__Job__r.sked_Drive__r != null ? job.sked__Job__r.sked_Drive__r.Name : '',
             job.sked__Job__c,
-            job.sked__Job__r.sked_Drive_Shift__r != null ? job.sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c : '',
+            jotDisplay,
             job.sked__Job__r != null ? job.sked__Job__r.Name : '',
             job.sked__Job__r != null ? job.sked__Job__r.sked__Type__c : '',
             job.sked_Staffing_Reason__c,
@@ -812,4 +820,58 @@ public static DatableConfigWrapper searchReport(
             this.weeklySchedule = schedule;
         }
     }
+    @TestVisible
+    private static String buildDriveOperationTypeWhere(List<String> driveOperationTypeFilter) {
+    if (driveOperationTypeFilter == null || driveOperationTypeFilter.isEmpty()) return '';
+
+    Set<String> sel = new Set<String>();
+    for (String s : driveOperationTypeFilter) {
+        if (String.isNotBlank(s)) sel.add(s.trim());
+    }
+    if (sel.isEmpty()) return '';
+
+    List<String> orParts = new List<String>();
+
+    if (sel.contains('Mobile')) {
+        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\'');
+    }
+    if (sel.contains('Fixed Site')) {
+        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Fixed Site\'');
+    }
+
+    if (sel.contains('Non Integrated WB')) {
+        orParts.add(
+            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c = \'' +
+            String.escapeSingleQuotes(NON_INTEGRATED_WB_OPTYPE) + '\''
+        );
+    }
+
+    if (orParts.isEmpty()) return '';
+    return ' AND (' + String.join(orParts, ' OR ') + ') ';
+}	@TestVisible
+    private static String buildDriveOperationDisplay(sked__Job__c jobRec,sked_Drive_Shift__c shiftRec) {
+    String driveType = jobRec != null && jobRec.sked_Drive__r != null
+        ? jobRec.sked_Drive__r.sked_Type_of_Drive__c
+        : null;
+
+    String opType = shiftRec != null
+        ? shiftRec.sked_Drive_Operation_Type__c
+        : null;
+
+    if (String.isNotBlank(driveType) && String.isNotBlank(opType)) {
+        return driveType + ' - ' + opType;
+    }
+
+    if (String.isNotBlank(driveType)) {
+        return driveType;
+    }
+
+    if (String.isNotBlank(opType)) {
+        return opType;
+    }
+
+    return '';
+}
+
+
 }

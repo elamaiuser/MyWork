@@ -12,3 +12,11 @@
 .datatable-container lightning-datatable {
     min-width: 2000px;
 }
+.checkbox-row {
+    justify-content: flex-start;
+    gap: 24px;
+}
+
+.checkbox-item {
+    margin-top: 6px;
+}

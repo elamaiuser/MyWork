@@ -687,6 +687,7 @@ for (sked__Activity_Resource__c ar : acts) {
         Date endDate = Date.today().addDays(5);
         List<String> coList = new List<String>{testCO.Id};
         List<String> driveStatusList = new List<String>{ skedConstants.DRIVE_STATUS_DRAFT };
+            List<String> driveOpList   = new list<string>{'Mobile','Fixed Site','Non Integrated WB'};
 
         Test.startTest();
         
@@ -698,6 +699,7 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
     region.Id,
     coList,
     driveStatusList,
+    driveOpList,
     true, // violationOnly
     true,
     'driveName',
