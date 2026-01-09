@@ -27,9 +27,9 @@
                                 onchange={handleViolationToggleChange}>
                 </lightning-input>
                 <lightning-input type="checkbox"
-                                label="Include Trade/Callout"
-                                checked={wrapper.includeTrades}
-                                onchange={handleIncludeTradesChange}>
+                                label="Exclude Trade/Callout"
+                                checked={wrapper.excludeTrades}
+                                onchange={handleExcludeTradesChange}>
                 </lightning-input>
             </div>
         </div>
@@ -71,6 +71,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- IMPORTANT WRAPPER -->
+            <div class="datatable-container">
                 <lightning-datatable
                     key-field="rowKey"
                     data={dataArry}
@@ -79,10 +82,13 @@
                     sorted-direction={sortDirection}
                     onsort={handleSort}
                     hide-checkbox-column
-                    wrap-text-max-lines="5">
+                    wrap-text-max-lines="3"
+                    column-widths-mode="fixed"
+                    min-column-width="120">
                 </lightning-datatable>
-
+            </div>
         </template>
+
 
         <template if:true={showPopup}>
             <section class="slds-modal slds-fade-in-open slds-modal_large" role="dialog">

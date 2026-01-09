@@ -2,3 +2,13 @@
     overflow: scroll;
     overflow-y: scroll;
 }
+.datatable-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Force table to be wider than screen so scroll appears */
+.datatable-container lightning-datatable {
+    min-width: 2000px;
+}
