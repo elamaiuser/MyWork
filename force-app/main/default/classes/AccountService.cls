@@ -1152,7 +1152,7 @@ public static void updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync
             Drive_Site__c, Drive_Site_Name__c, Is_Account_Internal_Name_Changed__c,
             Account_Internal_Name__c, RecordTypeId, 
             Linked_Opportunity_Drives__c, Is_this_part_of_MultiDay_Drive__c,
-            Site_Building_Name__c, Account.Name 
+            Site_Building_Name__c, Account.Name, Account_Name__c 
             FROM Opportunity 
             WHERE AccountId IN :accountIds 
             AND Is_Template__c = FALSE
