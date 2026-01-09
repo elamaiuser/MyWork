@@ -152,6 +152,6 @@ public with sharing class DynamicSoqlUtil {
             );
         }
 
-        return Database.query(soql);
+        return Database.query(soql, AccessLevel.USER_MODE);
     }
 }
