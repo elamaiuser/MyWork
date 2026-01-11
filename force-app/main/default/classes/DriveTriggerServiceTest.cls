@@ -135,7 +135,7 @@ private class DriveTriggerServiceTest
             atm.End_Date__c = Date.Today().addDays(10);
             atm.Start_Date__c = Date.Today().addDays(-10);
             atmList.add(atm);
-            
+            TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
             insert atmList;
                         
             Contact conObj = new Contact();
@@ -194,6 +194,7 @@ private class DriveTriggerServiceTest
             siteObj.Source__c = 'Custom New Form';
             siteObj.Operation_type__c = 'Integrated';
             siteObj.sked_Date_Site_Inspection_Completed__c=system.today();
+            TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
             id_site = siteObj.Id;
             
@@ -228,6 +229,7 @@ private class DriveTriggerServiceTest
             siteObj1.Source__c = 'Custom New Form';
             //siteObj1.Operation_type__c = 'Integrated';
             siteObj1.sked_Date_Site_Inspection_Completed__c=system.today();
+            TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj1;
             id_site1 = siteObj1.Id;
             
@@ -276,7 +278,7 @@ private class DriveTriggerServiceTest
             Sickle_Cell_AM_04.Taxonomy_Type__c='Bio Sickle Cell Portfolio';
             Sickle_Cell_AM_04.Territory_Portfolio__c=false;
             bsfPortf.add(Sickle_Cell_AM_04);
-            
+            TriggerHandler.bypass('BsfPortfolioTriggerHandler');
             insert bsfPortf;
             
             List<Portfolio_Assignment__c> portfAssignList = new List<Portfolio_Assignment__c>();
@@ -296,7 +298,7 @@ private class DriveTriggerServiceTest
             assign2.Start_Date__c = Date.Today().addDays(-10);
             assign2.User__c = DRDAMUser.Id;
             portfAssignList.add(assign2);
-            
+            TriggerHandler.bypass('PortfolioAssignmentTriggerHandler');
             insert portfAssignList;
             
             List<Opportunity> oppsobjlist = new List<Opportunity>();
@@ -504,8 +506,9 @@ private class DriveTriggerServiceTest
                                                      	sked_2RBC_Projected_Procedures__c = 20,
                                                         sked_WB_Projected_Procedures__c = 20,
                                                         sked_Status__c = 'Draft');
-
+		TriggerHandler.bypass('DriveTriggerHandler');
         insert testDrive1;
+        TriggerHandler.clearBypass('DriveTriggerHandler');
         
         try{
             testDrive1.sked_Status__c = 'Tentative';

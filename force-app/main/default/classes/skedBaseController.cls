@@ -117,6 +117,9 @@ global virtual class skedBaseController {
             if (keys.contains('staffingBudgetRequestTypes')) {
                 result.put('staffingBudgetRequestTypes', skedUtils.getPickListValues('sked_Staffing_Budget__c', 'sked_Request_Type__c'));
             }
+            if (keys.contains('staffingReasons')) {
+                result.put('staffingReasons', skedUtils.getPickListValues('sked__Activity_Resource__c', 'sked_Staffing_Reason__c'));
+            }
             if (keys.contains('skeduloPermissionSets')) {
                 result.put('skeduloPermissionSets', commonService.getAllSkeduloPermissionSets());
             }

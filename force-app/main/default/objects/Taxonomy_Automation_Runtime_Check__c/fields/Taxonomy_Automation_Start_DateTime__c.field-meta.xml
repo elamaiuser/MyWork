@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Taxonomy_Automation_Start_DateTime__c</fullName>
+    <description>Stores the start timestamp of the most recent Taxonomy Automation run.</description>
+    <inlineHelpText>Stores the start timestamp of the most recent Taxonomy Automation run.</inlineHelpText>
+    <label>Taxonomy Automation Start DateTime</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

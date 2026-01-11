@@ -1202,4 +1202,11 @@
         onclose={handleCloseEditJobAllocationModal}
         onsave={handleSaveEditJobAllocationModal}
     ></c-slwc-job-allocation-modal>
+
+    <c-slwc-drive-staffing-reason-modal
+        if:true={staffingReasonModalData.isOpen}
+        is-open={staffingReasonModalData.isOpen}
+        onstaffingreasonselected={handleStaffingReasonSelected}
+        oncancel={handleStaffingReasonCancel}>
+    </c-slwc-drive-staffing-reason-modal>
 </template>

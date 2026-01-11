@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Account.Fixed_Site_Owner_Transfer_Restriction</members>
+		<members>Opportunity.Close_Date_Only_DRD_System_Admin</members>
+		<members>Opportunity.Targeted_Ask_Date_Only_DRD_System_Admin</members>
+		<members>Product2.Restrict_Product_Access_for_Different_Us</members>
+		<name>ValidationRule</name>
+	</types>
+	<version>65.0</version>
+</Package>

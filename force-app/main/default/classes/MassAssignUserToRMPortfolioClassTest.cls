@@ -1,45 +1,11 @@
-//Test Class For MassAssignUserToRMPortfolioClass class
+//Test Class For MassAssignUserToRMPortfolioClass 
+
 @isTest
-public class MassAssignUserToRMPortfolioClassTest {
-    
-    
-    @testSetup static void setUpData() {
-        Account acc = new Account(name='Test Account 1');
-        acc.BillingStreet = '2204 Westcrt ln, Apt 213'; 
-        acc.BillingCity = 'Herndon';
-        acc.BillingStateCode = 'MI';
-        acc.BillingPostalCode = '48093';
-        insert acc;
+private class MassAssignUserToRMPortfolioClassTest {
+
+    @testSetup static void prepareTestData() {
         
-        Contact contact = new Contact (firstname='Test Contact First 1',lastname='Test Contact Last 1');
-        contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-        contact.MailingCity = 'Herndon';
-        contact.MailingStateCode = 'MI';
-        contact.MailingPostalCode = '48420';
-        contact.AccountId = acc.id;
-        contact.Primary_Phone__c='Mobile Phone';
-        contact.Email='avs@dfh.com';
-        contact.Original_Service_Date__c=Date.newInstance(2022, 08, 01);
-        insert contact;
-        
-        Account acc1 = new Account(name='Test Account 2');
-        acc1.BillingStreet = '2205 Westcrt ln, Apt 215'; 
-        acc1.BillingCity = 'Herndon';
-        acc1.BillingStateCode = 'MI';
-        acc1.BillingPostalCode = '48093';
-        insert acc1;
-        
-        Contact contact1 = new Contact (firstname='Test Contact First 2',lastname='Test Contact Last 2');
-        contact1.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-        contact1.MailingCity = 'Herndon';
-        contact1.MailingStateCode = 'MI';
-        contact1.MailingPostalCode = '48093';
-        contact1.AccountId = acc1.id;
-        contact1.Primary_Phone__c='Mobile Phone';
-        contact1.Email='avs1@dfh.com';
-        contact1.Original_Service_Date__c=Date.newInstance(2022, 09, 01);
-        insert contact1;
-        
+        // Create taxonomy data
         Map <String,Schema.RecordTypeInfo> recordTypesadjustment = Taxonomy__c.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id RecTypeId = recordTypesadjustment.get(BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE).getRecordTypeId();
         
@@ -47,7 +13,6 @@ public class MassAssignUserToRMPortfolioClassTest {
         Date endDate1   = System.today().addMonths(4);    
         Date startDate2 = System.today().addMonths(2);
         Date endDate2   = System.today().addMonths(6);
-        
         
         List<Taxonomy__c> taxList = new List<Taxonomy__c>();
         Taxonomy__c tax1 = new Taxonomy__c(Division_Code__c ='BD34',Division_Name__c='North Central',DRD_Territory_Code__c='HProdSEMR_1836',DRD_Territory_Name__c='Detroit South 05',	DS_Region_Code__c='13Z18Z',	DS_Region_Name__c='Michigan',	End_Date__c = endDate1,	RecordTypeId=RecTypeId, Start_Date__c=startDate1, Team_Code__c='MICH_Detroit S',	Team_Name__c='MICH_Detroit S',		Type__c='Bio Recruitment',	Version_Key__c=108.0, Zip_Code__c='48093');
@@ -90,12 +55,8 @@ public class MassAssignUserToRMPortfolioClassTest {
         users.add(u6);
         
         insert users;
-    }
-    
-    @isTest static void testcreateAccountTeamMembers(){
-        Test.startTest();
         
-        //Insert Portfolios
+        //create Portfolios
         BSF_Portfolio__c DMPortfolio = new BSF_Portfolio__c();
         DMPortfolio.Portfolio_Code__c = 'MICH_Detroit S';
         DMPortfolio.Portfolio_Name__c = 'MICH_Detroit S';
@@ -111,22 +72,21 @@ public class MassAssignUserToRMPortfolioClassTest {
         AMPortfolio.Account_Based_Portfolio__c = false;
         AMPortfolio.Territory_Portfolio__c = true;
         AMPortfolio.Portfolio_Type__c = 'Account Manager';
-        AMPortfolio.Parent_Portfolio__c = [SELECT Id FROM BSF_Portfolio__c WHERE Portfolio_Code__c = 'MICH_Detroit S' AND Portfolio_Type__c = 'District Manager'].Id; 
+        AMPortfolio.Parent_Portfolio__c = DMPortfolio.Id; 
         
         insert AMPortfolio;
+    }
+    
+    @isTest static void test_createAccountTeamMembers() {
+        Test.startTest();
         
-        List<BSF_Portfolio__c> portfolioList = new List<BSF_Portfolio__c>();
-        portfolioList.add(DMPortfolio);
-        portfolioList.add(AMPortfolio);
+        List<BSF_Portfolio__c> portfolioList = [SELECT Id FROM BSF_Portfolio__c];
         
         ApexPages.StandardSetController sc = new ApexPages.StandardSetController(portfolioList);
         sc.setSelected(portfolioList);
         MassAssignUserToRMPortfolioClass controller = new MassAssignUserToRMPortfolioClass(sc);
         Test.setCurrentPage(Page.MassAssignUserToRMPortfolioPage);
-        
-        
-        
+
         Test.stopTest();
-    }
-    
+    }   
 }

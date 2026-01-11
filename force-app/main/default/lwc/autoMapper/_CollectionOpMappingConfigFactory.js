@@ -15,18 +15,18 @@ export class CollectionOpMappingConfigFactory {
       mappingConfig.addFieldConfig('Staging_Location_Geolocation__Latitude__s', 'stagingLocationGeolocationLatitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Staging_Location_Geolocation__Longitude__s', 'stagingLocationGeolocationLongitude', MAPPING_TYPE.direct);
 
-      mappingConfig.addFieldConfig('sked_Account_Preferences_Score__c', 'accountPreferencesScore', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Geographic_Preferences_Score__c', 'geographicPreferencesScore', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Location_Preferences_Score__c', 'locationPreferencesScore', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Seniority_Rank_Score__c', 'seniorityRankScore', MAPPING_TYPE.direct);
+      //mappingConfig.addFieldConfig('sked_Account_Preferences_Score__c', 'accountPreferencesScore', MAPPING_TYPE.direct);
+     //mappingConfig.addFieldConfig('sked_Geographic_Preferences_Score__c', 'geographicPreferencesScore', MAPPING_TYPE.direct);
+     // mappingConfig.addFieldConfig('sked_Location_Preferences_Score__c', 'locationPreferencesScore', MAPPING_TYPE.direct);
+     // mappingConfig.addFieldConfig('sked_Seniority_Rank_Score__c', 'seniorityRankScore', MAPPING_TYPE.direct);
 
-      mappingConfig.addFieldConfig('sked_Account_Restrictions__c', 'accountRestrictions', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Location_Restrictions__c', 'locationRestrictions', MAPPING_TYPE.direct);
+      //mappingConfig.addFieldConfig('sked_Account_Restrictions__c', 'accountRestrictions', MAPPING_TYPE.direct);
+      //mappingConfig.addFieldConfig('sked_Location_Restrictions__c', 'locationRestrictions', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Maximum_Weekly_Hours__c', 'maximumWeeklyHours', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_PTO_Availability__c', 'ptoAvailability', MAPPING_TYPE.direct);
+      //mappingConfig.addFieldConfig('sked_PTO_Availability__c', 'ptoAvailability', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Relocated_Driver_TT_from_Drive_CO__c', 'relocatedDriverTTFromDriveCO', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Role_Certification_Match__c', 'roleCertificationMatch', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('sked_Role_Priorities__c', 'rolePriorities', MAPPING_TYPE.direct);
+     // mappingConfig.addFieldConfig('sked_Role_Certification_Match__c', 'roleCertificationMatch', MAPPING_TYPE.direct);
+      //mappingConfig.addFieldConfig('sked_Role_Priorities__c', 'rolePriorities', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfig('sked_Breakdown_Time_Threshold__c', 'breakdownTimeThreshold', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Lunch_Break__c', 'lunchBreak', MAPPING_TYPE.direct);

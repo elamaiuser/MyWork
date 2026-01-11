@@ -136,8 +136,13 @@ public class skedTestDataFactory {
 
         sked_Notification_Manager__c skedNotificationManager = sked_Notification_Manager__c.getOrgDefaults();
         skedNotificationManager.sked_Notification_Generation_Enabled__c = true;
+        
+        sked_JA_Post_Process_Config__c testJobAllocPostProcessSetting = new sked_JA_Post_Process_Config__c();
+        testJobAllocPostProcessSetting.sked_Allowed_Maximum_Retries__c = 10;
+        testJobAllocPostProcessSetting.sked_Allowed_No_of_Jobs_in_Flex_Queue__c = 100;
+        testJobAllocPostProcessSetting.sked_Reschedule_Interval_Sec_Flex_Queue__c = 15;
 
-        upsert new List<SObject>{skedAdminSetting, skedWorkdayTokenCredentials, skedNotificationManager};
+        upsert new List<SObject>{skedAdminSetting, skedWorkdayTokenCredentials, skedNotificationManager, testJobAllocPostProcessSetting};
 
         Map<string, List<string>> mapResourceTypeCategories =
         skedPicklistFieldUtils.getMapDependentOptions(sked__Resource__c.sked__Resource_Type__c, sked__Resource__c.sked__Category__c);
@@ -1085,7 +1090,8 @@ public class skedTestDataFactory {
             CloseDate = driveStartDate,
             //Parent_Template_Id__c = parentOpp.Id,
             Online_Scheduling_Enabled__c = 'No',
-            Source__c = 'Calendar Build'
+            Source__c = 'Calendar Build',
+            Anticipated_Registered_Donors__c = 100
             //Split_Reason__c = 'RSMO Donations**'
         );
         firstList.add(testOpportunity3);

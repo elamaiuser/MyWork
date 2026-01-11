@@ -316,7 +316,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
                     resourceRoleGroups,
                     lunchBreakSettings,
                     adminSetting,
-                    staffSetupExcludedRoles
+                    staffSetupExcludedRoles,
+                    redcrossVolunteerMatrix
                   }]) => {
                     this.populateDriveCollectionOperation();
 
@@ -761,11 +762,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
     ], this.drive, driveShift.driveShiftMetadata, 
       new Map()
         .set(driveShift.driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift))
-    , this.masterData, ignoreLunchBreak));
+    , this.masterData, { ignoreLunchBreak: ignoreLunchBreak, useDriveShift: true }));
 
     return driveShiftStaffCapacity;
   }
-  
+
   calculateDriveShiftDrawHours(driveShift, ignoreLunchBreak = false) {
     const drawHours = this.helper.calculateDrawHours(driveShift.driveShiftMetadata, this.masterData, driveShift.driveShiftMetadata.lunchBreakSettings);
     return drawHours;
@@ -1095,7 +1096,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   calculateEquipmentQuantity() {
     let noOfEquipments = this.drive.numberOf2rbcAssets || 0;
-    console.log('noOfEquipments'+noOfEquipments);
     this.mapAssetQuantity.set('Equipment', noOfEquipments);
   }
 
@@ -1135,6 +1135,42 @@ class WbFixedSiteGenerator extends BaseGenerator {
     })
   }
 
+  calculateVpHhQuantity(resourceRoles = ['2RBC', 'Charge']) {
+    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
+
+    const driveShiftsMetadata = this.drive.driveShiftsMetadata;
+    driveShiftsMetadata.driveShifts.forEach(driveShiftMetadata => {
+      const staffCapacity = this.helper.calculateStaffCapacity(
+        resourceRoles,
+        this.drive,
+        driveShiftMetadata,
+        this.mapResourceQuantity,
+        this.masterData,
+        { ignoreLunchBreak: false, useDriveShift: false }
+      )
+
+      const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
+      let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
+      if (totalVpHhCapacity < 0) 
+        totalVpHhCapacity = 0;
+      
+      const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
+
+      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
+      let noOfAptStaffs = 0;
+
+      if(this.drive.aptRequired) {
+        noOfAptStaffs = 1;
+      }
+
+      let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
+      resourceQuantityMap.set('VP/HH', {
+        vphhQuantity: noOfVpHhStaffs,
+        aptQuantity: noOfAptStaffs
+      });
+    });
+  }
+
   recalculateVphhQuantity(driveShift, resourceRoles = ['2RBC', 'Charge']) {
     if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
 
@@ -1145,7 +1181,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
       driveShiftMetadata,
       new Map()
         .set(driveShiftMetadata.key, this.helper.getDriveShiftResourceQuantity(driveShift)),
-      this.masterData
+      this.masterData,
+      { ignoreLunchBreak: false, useDriveShift: false }
     )
 
     const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
@@ -1203,41 +1240,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
         }
       }
     }
-  }
-
-  calculateVpHhQuantity(resourceRoles = ['2RBC', 'Charge']) {
-    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.vpHhCapacity)) return;
-
-    const driveShiftsMetadata = this.drive.driveShiftsMetadata;
-    driveShiftsMetadata.driveShifts.forEach(driveShiftMetadata => {
-      const staffCapacity = this.helper.calculateStaffCapacity(
-        resourceRoles,
-        this.drive,
-        driveShiftMetadata,
-        this.mapResourceQuantity,
-        this.masterData
-      )
-
-      const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-      let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
-      if (totalVpHhCapacity < 0) 
-        totalVpHhCapacity = 0;
-      
-      const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
-
-      let noOfVpHhStaffs = Math.ceil(totalVpHhCapacity / vpHhCapacity / drawHours);
-      let noOfAptStaffs = 0;
-
-      if(this.drive.aptRequired) {
-        noOfAptStaffs = 1;
-      }
-
-      let resourceQuantityMap = this.mapResourceQuantity.get(driveShiftMetadata.key);
-      resourceQuantityMap.set('VP/HH', {
-        vphhQuantity: noOfVpHhStaffs,
-        aptQuantity: noOfAptStaffs
-      });
-    });
   }
 
   calculateChargeQuantity() {
@@ -1366,7 +1368,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         donorsScheduled: driveShiftMetadata.donorsScheduled
       };
 
-      this.populateDriveShiftTimeBlocks(proposedDriveShift);
+      this.populateDriveShiftTimeBlocks(proposedDriveShift, index);
       this.populateDriveShiftTags(proposedDriveShift);
       this.populateDriveShiftJobs(proposedDriveShift, index);
       this.updateShiftMobileSetup(proposedDriveShift);
@@ -1506,13 +1508,13 @@ class WbFixedSiteGenerator extends BaseGenerator {
       job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
-      if (volunteerRole === 'Donor Ambassador') {
+      if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {
         job.redcrossVolunteerQuantity = quantity || 0;
         job.sponsorVolunteerQuantity = job.sponsorVolunteerQuantity || 0;
         job.quantity = (job.redcrossVolunteerQuantity || 0) + (job.sponsorVolunteerQuantity || 0);
       }
       if (quantity > 0) {
-        if(!jobs.find(job => job.volunteerRole === 'Donor Ambassador')) jobs.push(job);
+        if(!jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR)) jobs.push(job);
       }
     });
 
@@ -1559,7 +1561,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
     if(anyManuallyCreatedJobsHoldCapacity) {
       this.recalculateVphhQuantity(driveShift);
     }
-
   }
 
   // To create new jobs /update existing jobs after dual role modification
@@ -1994,7 +1995,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
   }
 
   handleEquipmentRequestedChanged() {
-      if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
+    if (!this.drive.driveShifts || !this.drive.driveShifts.length || !this.drive.totalEquipmentRequestedChanged) return;
 
     const { equipmentJobsMap, lockedEquipments = [] } = this.drive.totalEquipmentRequestedChanged;
     //allocate equipments to jobs 
