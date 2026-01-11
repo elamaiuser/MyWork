@@ -77,6 +77,16 @@ class exceptionService extends dataService {
           )` });
         }
       }
+      if (query.jobTypes && query.jobTypes.length) {
+        queryBuilder.addCondition({template: "skedHC__Job__r.sked__Type__c IN {0}", value: query.jobTypes, type: "array_string"});
+      }
+      if (query.submissionStartDate) {
+            queryBuilder.addCondition({ template: `DAY_ONLY(CreatedDate) >= {0}`, value: query.submissionStartDate});
+        }
+
+      if (query.submissionEndDate) {
+          queryBuilder.addCondition({ template: `DAY_ONLY(CreatedDate) <= {0}`, value: query.submissionEndDate});
+      }
       
       if (query.exceptionType == "drive") {
         queryBuilder.orderClause = 'ORDER BY sked_Drive__r.sked_Drive_Date__c ASC, skedHC__Job__r.Name ASC NULLS LAST'
@@ -106,6 +116,9 @@ class exceptionQueryModel extends queryModelBase {
   startDate;
   statuses;
   exceptionType;
+  jobTypes;
+  submissionEndDate;
+  submissionStartDate;  
 }
 
 export {

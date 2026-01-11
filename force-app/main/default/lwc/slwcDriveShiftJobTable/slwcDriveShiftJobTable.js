@@ -56,13 +56,6 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
             columns.push({ label: 'Tag Names', fieldName: 'tagNames', type: 'text', wrapText: true, cellAttributes: { alignment: 'left' } });
             columns.push({ label: 'Quantity', fieldName: 'quantity', type: 'number', cellAttributes: { alignment: 'left' } });
         }
-        
-        if (this.isReadonly) {
-            if (this.resourceType != 'Volunteer') {
-                columns.push({ label: '# of Scheduled', fieldName: 'jobAllocationCount', type: 'number', cellAttributes: { alignment: 'left' } });
-            }
-        }
-
         if (this.resourceType == RESOURCE_TYPE.PERSON) {
             columns.push({ label: 'Lead Time', fieldName: 'leadTime', type: 'number', initialWidth: 85, cellAttributes: { alignment: 'left' } });
             columns.push({ label: 'Travel Time', fieldName: 'travelTime', type: 'number', initialWidth: 95, cellAttributes: { alignment: 'left' } });

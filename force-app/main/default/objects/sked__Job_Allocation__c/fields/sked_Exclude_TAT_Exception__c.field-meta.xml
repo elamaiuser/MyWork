@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Exclude_TAT_Exception__c</fullName>
-    <externalId>false</externalId>
     <formula>sked_Drive_Shift_Trade__c != NULL
 &amp;&amp; (sked_Drive_Shift_Trade__r.sked_TAT_Time_Traded_Into_Requester__c || sked_Drive_Shift_Trade__r.sked_TAT_Time_Traded_Into_Trading__c)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>

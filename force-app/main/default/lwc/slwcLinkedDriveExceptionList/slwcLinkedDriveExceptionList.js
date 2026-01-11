@@ -1,4 +1,4 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { exceptionQueryModel, exceptionService } from 'c/dataService';
@@ -17,14 +17,14 @@ const TERRITORY_TYPE = {
 };
 
 const LINKED_DRIVE_EXCEPTION_COLUMNS = [
-  { label: 'Name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 120, wrapText: true, typeAttributes: { label: { fieldName: 'name' }, target: '_blank' } },
-  { label: 'Linked Drive', fieldName: 'linkedDriveUrl', type: 'url', hideDefaultActions: false, initialWidth: 200, wrapText: true, typeAttributes: { label: { fieldName: 'linkedDriveName' }, target: '_blank' } },
-  { label: 'Earliest Drive Date', fieldName: 'linkedDriveEarliestDriveDate', type: 'date-local', initialWidth: 140, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
-  { label: 'Latest Drive Date', fieldName: 'linkedDriveLatestDriveDate', type: 'date-local', initialWidth: 140, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
-  { label: 'Drives', fieldName: 'linkedDrive', type: 'linkedDriveDrives', hideDefaultActions: true,  initialWidth: 450, wrapText: true, cellAttributes: { wrapText: true } },
-  { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, cellAttributes: { wrapText: true } },
-  { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 120, wrapText: true },
-  { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 120, wrapText: true }
+  { label: 'Created Date', fieldName: 'recordUrl', type: 'url', hideDefaultActions: false, initialWidth: 150, wrapText: true, sortable: true, typeAttributes: { label: { fieldName: 'createdDateStr' }, target: '_blank' } },
+  { label: 'Linked Drive', fieldName: 'linkedDriveUrl', type: 'url', hideDefaultActions: false, initialWidth: 200, wrapText: true, sortable: true, typeAttributes: { label: { fieldName: 'linkedDriveName' }, target: '_blank' } },
+  { label: 'Earliest Drive Date', fieldName: 'linkedDriveEarliestDriveDate', type: 'date-local', initialWidth: 140, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+  { label: 'Latest Drive Date', fieldName: 'linkedDriveLatestDriveDate', type: 'date-local', initialWidth: 140, sortable: true, typeAttributes: { year: "numeric", month: "short", day: "2-digit" }, hideDefaultActions: true },
+  { label: 'Drives', fieldName: 'linkedDrive', type: 'linkedDriveDrives', hideDefaultActions: true,  initialWidth: 450, wrapText: true, sortable: true, cellAttributes: { wrapText: true } },
+  { label: 'Exception', fieldName: 'exception', type: 'text', hideDefaultActions: true, wrapText: true, sortable: true, cellAttributes: { wrapText: true } },
+  { label: 'Priority', fieldName: 'priority', type: 'text', hideDefaultActions: true, initialWidth: 120, wrapText: true, sortable: true },
+  { label: 'Status', fieldName: 'status', type: 'text', hideDefaultActions: true, initialWidth: 120, wrapText: true, sortable: true }
 ];
 
 export default class SlwcLinkedDriveExceptionList extends LightningElement {
@@ -81,6 +81,8 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   @track exceptionLog = [];
   @track includesAdditionalDays = 0;
   @track arcRegionOptions = [];
+  @track sortedBy;
+  @track sortedDirection;
 
   showLoading() {
     this.showSpinner = true;
@@ -93,15 +95,15 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   filterValidTerritoryOptions = (territoryCollectionOperations, allTerritories) => {
     if (!territoryCollectionOperations || !territoryCollectionOperations.length) return [];
 
-    let validDistricts = allTerritories.filter(item => {
+    const validDistricts = allTerritories.filter(item => {
       return (territoryCollectionOperations.map(item => item.territoryId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.DISTRICT;
     });
 
-    let validARCRegions = allTerritories.filter(item => {
+    const validARCRegions = allTerritories.filter(item => {
       return (validDistricts.map(item => item.parentId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.ARC_REGION;
     });
 
-    let validDivisions = allTerritories.filter(item => {
+    const validDivisions = allTerritories.filter(item => {
       return (validARCRegions.map(item => item.parentId).includes(item.id)) && item.recordTypeName === TERRITORY_TYPE.DIVISION;
     });
 
@@ -147,7 +149,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   connectedCallback() {
     //init settings
     if (!this.initialized) {
-      let lastSearchQuery = this.getLastQuery();
+      const lastSearchQuery = this.getLastQuery();
       if (lastSearchQuery) {
         this.filters = {
           ...this.filters,
@@ -163,7 +165,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
       }
 
       this.showLoading();
-      let service = new collectionOperationService();
+      const service = new collectionOperationService();
       service.getCollectionOperationDataNew({
         startDate: this.filters.startDate,
         endDate: this.filters.endDate
@@ -191,7 +193,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   }
 
   fetchExceptionData() {
-    let query = new exceptionQueryModel();
+    const query = new exceptionQueryModel();
     const arcRegions = this.filters.arcRegions;
     if (!arcRegions.length) {
       return Promise.resolve([]);
@@ -202,11 +204,13 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     query.statuses = this.filters.statuses;
     query.startDate = this.filters.startDate;
     query.endDate = this.filters.endDate;
+    query.submissionStartDate = this.filters.submissionStartDate;
+    query.submissionEndDate = this.filters.submissionEndDate;
     query.exceptionType = 'linkedDrive';
     query.limit = 20;
     query.offset = (this.exceptionLog || []).length;
 
-    let service = new exceptionService();
+    const service = new exceptionService();
 
     return Promise.resolve()
       .then(() => {
@@ -215,6 +219,9 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
       .then((result) => {
         result.forEach((exception) => {
           exception.recordUrl = '/' + exception.id;
+          if (exception.createdDate) { 
+            exception.createdDateStr = DateTime.fromISO(exception.createdDate).toLocaleString({ month: 'short', day: '2-digit', year: 'numeric'});
+          }
           if (exception.linkedDriveId) {
             exception.linkedDriveUrl = '/' + exception.linkedDriveId;
           }
@@ -276,7 +283,10 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     this.exceptionLog = [];
     this.fetchExceptionData()
       .then(result => {
-        this.exceptionLog = result;
+        this.exceptionLog = result;        
+        if (this.sortedBy && this.sortedDirection) {
+          this.sortData(this.sortedBy, this.sortedDirection);
+        }
         this.enableInfiniteLoading = true;
       })
       .finally(() => {
@@ -294,7 +304,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     //Display a spinner to signal that data is being loaded
     event.target.isLoading = true;
 
-    let target = event.target;
+    const target = event.target;
     this.fetchExceptionData()
       .then((result) => {
         if (result.length == 0) {
@@ -312,7 +322,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   }
 
   handleCloseException() {
-    let exceptionLog = [];
+    const exceptionLog = [];
     this.selectedExceptionLog.forEach((item) => {
       exceptionLog.push({
         id: item.id,
@@ -320,9 +330,9 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
       });
     });
     this.showLoading();
-    let service = new exceptionService();
+    const service = new exceptionService();
     service.saveList(exceptionLog)
-      .then((result) => {
+      .then(() => {
         this.dispatchEvent(new ShowToastEvent({
           message: 'Exception log was closed successfully.',
           variant: 'success',
@@ -340,7 +350,61 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
   }
 
   getLastQuery() {
-    let tabQuery = slwcUtils.getLastQuery(this.pageName);
+    const tabQuery = slwcUtils.getLastQuery(this.pageName);
     return tabQuery;
+  }
+
+  handleSort(event) {
+    const { fieldName, sortDirection } = event.detail;
+    this.sortedBy = fieldName;
+    this.sortedDirection = sortDirection;
+    this.sortData(fieldName, sortDirection);
+  }
+
+  sortData(fieldName, sortDirection) {        
+    const dataToSort = JSON.parse(JSON.stringify(this.exceptionLog));
+    const reverse = sortDirection === 'asc' ? 1 : -1;
+    const getSortValue = (obj) => {
+      switch (fieldName) {                
+        case 'recordUrl': return obj.createdDate ? obj.createdDate.substring(0,10) : '';
+        case 'linkedDriveUrl': return obj.linkedDriveName;
+        case 'linkedDrive':
+          if (obj.linkedDrive) {
+            const drivesList = obj.linkedDrive.drives || [];
+            if (drivesList.length > 0 && drivesList[0].name) {
+              return drivesList[0].name;
+            }
+          }
+          return '';
+        default: return obj[fieldName];
+      }
+    };
+      
+    dataToSort.sort((a, b) => {
+      let valueA = getSortValue(a);
+      let valueB = getSortValue(b);
+      
+      const emptyA = valueA === null || valueA === undefined || valueA === '';
+      const emptyB = valueB === null || valueB === undefined || valueB === '';
+      if (emptyA && emptyB) return 0;
+      if (emptyA) return 1;
+      if (emptyB) return -1;
+      
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        valueA = valueA.toLowerCase();
+        valueB = valueB.toLowerCase();
+      }
+
+      let result = 0;
+      if (valueA < valueB) {
+        result = -1;
+      } else if (valueA > valueB) {
+        result = 1;
+      }
+
+      return result * reverse;
+    });
+      
+    this.exceptionLog = dataToSort;
   }
 }

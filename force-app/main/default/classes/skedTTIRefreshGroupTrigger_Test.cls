@@ -6,12 +6,12 @@ private class skedTTIRefreshGroupTrigger_Test {
         
         sked_Travel_Time_Index_Refresh_Group__c testTTIRefreshGroup;
         testTTIRefreshGroup = new sked_Travel_Time_Index_Refresh_Group__c(
-        	sked_Collection_Operations_To_Refresh__c = 'Adrian MI;Anaheim CA;Baltimore MD'
+        	sked_Collection_Operations_To_Refresh__c = 'Peru IL;Atlanta GA;Baltimore MD'
         );
         testTTIRefreshGroupList.add(testTTIRefreshGroup);
         
         testTTIRefreshGroup = new sked_Travel_Time_Index_Refresh_Group__c(
-        	sked_Collection_Operations_To_Refresh__c = 'Anaheim CA;Baltimore MD;Boise ID'
+        	sked_Collection_Operations_To_Refresh__c = 'Atlanta GA;Baltimore MD;Boise ID'
         );
         testTTIRefreshGroupList.add(testTTIRefreshGroup);
         
@@ -28,7 +28,7 @@ private class skedTTIRefreshGroupTrigger_Test {
         
         sked_Travel_Time_Index_Refresh_Group__c testTTIRefreshGroup;
         testTTIRefreshGroup = new sked_Travel_Time_Index_Refresh_Group__c(
-        	sked_Collection_Operations_To_Refresh__c = 'Adrian MI;Anaheim CA;Baltimore MD'
+        	sked_Collection_Operations_To_Refresh__c = 'Atlanta GA;Peru IL;Baltimore MD'
         );
         insert testTTIRefreshGroup;
         
