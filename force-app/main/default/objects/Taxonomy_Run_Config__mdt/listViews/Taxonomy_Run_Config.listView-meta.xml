@@ -9,6 +9,7 @@
     <columns>Batch_Size__c</columns>
     <columns>Category__c</columns>
     <columns>Is_Active__c</columns>
+    <columns>Schedule_Delay_Minutes__c</columns>
     <columns>Taxo_Run_Date_Override__c</columns>
     <columns>Taxo_Expiration_Offset__c</columns>
     <columns>Allow_Batch_Run__c</columns>

@@ -1,0 +1,16 @@
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Taxonomy_Run_Config.TRS_BAP</members>
+		<members>Taxonomy_Run_Config.TRS_BBS</members>
+		<members>Taxonomy_Run_Config.TRS_BCB</members>
+		<members>Taxonomy_Run_Config.TRS_BFS</members>
+		<members>Taxonomy_Run_Config.TRS_BRC</members>
+		<members>Taxonomy_Run_Config.TRS_BRM</members>
+		<members>Taxonomy_Run_Config.TRS_BRS</members>
+		<members>Taxonomy_Run_Config.TRS_BSC</members>
+		<name>CustomMetadata</name>
+	</types>	
+	<version>64.0</version>
+</Package>

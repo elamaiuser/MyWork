@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rule_Type__c</fullName>
+    <description>HRP-15953 A discriminator field that defines the type of component being permissioned. This determines which of the subsequent fields are relevant for this rule.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Rule Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Object/Field</fullName>
+                <default>true</default>
+                <label>Object/Field</label>
+            </value>
+            <value>
+                <fullName>Apex Class</fullName>
+                <default>false</default>
+                <label>Apex Class</label>
+            </value>
+            <value>
+                <fullName>Visualforce Page</fullName>
+                <default>false</default>
+                <label>Visualforce Page</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

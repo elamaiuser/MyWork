@@ -1,8 +1,14 @@
 @isTest
-public class PowerBIProxyController_test 
-{
-    @testSetup static void setUpData() 
-    {
+private class PowerBIProxyController_test {
+    
+    @testSetup static void setUpData() {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        triggerHandler.bypass('JobTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         Account testAccount1 = new Account(
             Name = 'Test Account1',
             Internal_Name__c  = 'Test Internal Name 1',
@@ -55,13 +61,10 @@ public class PowerBIProxyController_test
 			sked_Zip_Code__c = '532432',
             sked_Timezone__c = UserInfo.getTimezone().getID()
         );
-        triggerHandler.bypass('SiteTriggerHandler');
         insert testLocation1; 
-        
-       
-        
+
          opportunity opp = new opportunity(
-        Name = 'Test Opportunity',
+        	Name = 'Test Opportunity',
         	StageName = 'Draft',
            	Type_of_Drive__c = 'Mobile',
         	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
@@ -77,12 +80,10 @@ public class PowerBIProxyController_test
         	Anticipated_Registered_Donors__c = 25,
             Online_Scheduling_Enabled__c = 'No',
             //Drive_Site__c = mobileSite.id,
-            accountid= testAccount1.id);
-        
-        TriggerHandler.bypass('OpportunityTriggerHandler');
+            accountid= testAccount1.id
+         );
         insert opp;
-        TriggerHandler.clearBypass('OpportunityTriggerHandler');
-        
+ 
         sked__Region__c testRegion1 = new sked__Region__c(
             Name = 'Region 1',
             sked__Timezone__c = UserInfo.getTimeZone().getID(),
@@ -108,50 +109,49 @@ public class PowerBIProxyController_test
         );
         insert testDrive1;
         
-        sked__Job__c job3 = new sked__Job__c(
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        sked__Job__c testJob = new sked__Job__c(
             sked__Region__c = testRegion1.Id,
-            sked__Start__c = system.today(),
-            sked__Finish__c = system.today()+10,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
             sked__Duration__c = 60,
             sked_Drive__c = testDrive1.Id,
+            sked__Location__c = testLocation1.Id,
             sked_Asset_Type__c = 'Equipment',
             sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION
         );
-        triggerHandler.bypass('JobTriggerHandler');
-        insert job3;
+        insert testJob;
     }
     
     @isTest
-	public static void testMethod1()
-    {
+	static void testMethod1() {
         Test.startTest();
         PageReference pageRef = Page.StagingSheetReport;
         Test.setCurrentPage(pageRef);
         PowerBIProxyController controller = new PowerBIProxyController();
-        controller.jid=string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
+        controller.jid = string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
         controller.redirect();
         test.stopTest();
     }
     
     @isTest
-	public static void testMethod2()
-    {
+	static void testMethod2() {
         Test.startTest();
         PageReference pageRef = Page.WeeklyStaffingRoleReport;
         Test.setCurrentPage(pageRef);
         PowerBIProxyController controller = new PowerBIProxyController();
-        controller.jid=string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
+        controller.jid = string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
         controller.redirect();
         test.stopTest();
     }
+    
     @isTest
-	public static void testMethod3()
-    {
+	static void testMethod3() {
         Test.startTest();
         PageReference pageRef = Page.MOEStagingSheetReport;
         Test.setCurrentPage(pageRef);
         PowerBIProxyController controller = new PowerBIProxyController();
-        controller.jid=string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
+        controller.jid = string.valueof([select id from sked__Job__c where sked_Asset_Type__c='Equipment' limit 1].id);
         controller.redirect();
         test.stopTest();
     }

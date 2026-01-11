@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Release_Tag__c</fullName>
+    <description>HRP-15953 A unique identifier that groups all rules for a specific deployment or release. This is the primary key the AccessControlManager Class uses to select which rules to process.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>A unique identifier for the release</inlineHelpText>
+    <label>Release Tag</label>
+    <length>50</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

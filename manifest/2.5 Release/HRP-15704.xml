@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OpportunityService</members>
+        <members>skedDriveHandler</members>
+        <members>skedDriveShiftHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+		<members>Custom_Messages.Time_Block_Validation_From_DOC</members>
+		<members>Custom_Messages.Time_Block_Validation_From_Opportunity</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+        <members>slwcDriveGenerator</members>
+		<members>slwcDriveManagement</members>
+        <members>slwcDriveShift</members>
+        <members>slwcResolveDriveContentions</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <version>64.0</version>
+</Package>

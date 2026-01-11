@@ -1,7 +1,7 @@
 @isTest
 private class skedExpireSiteFeedbacks_Test {
     
-    static testmethod void skedExpireSiteFeedbacks_Test() {
+    @testSetup static void prepareTestData() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
         mapTestData = testDataFactory.setupDriveData();
@@ -9,8 +9,6 @@ private class skedExpireSiteFeedbacks_Test {
         sked__Region__c testRegion = (sked__Region__c)mapTestData.get('testRegion1');
         sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
         sked__Location__c testDriveSite = (sked__Location__c)mapTestData.get('testLocation1');
-        
-        Test.startTest();
         
         sked__Job__c testJob = new sked__Job__c(
             sked__Region__c = testRegion.Id,
@@ -39,9 +37,12 @@ private class skedExpireSiteFeedbacks_Test {
             sked_Variance_Applies_To__c = 'Setup Time',
             sked_Variance_Type__c = 'Parking'
         );
+        insert testSiteFeedback;   
+    }
+    
+    static testmethod void skedExpireSiteFeedbacks_Test() {
+        Test.startTest();
         
-        insert testSiteFeedback;
-            
         skedExpireSiteFeedbacksSchedulable schedulable = new skedExpireSiteFeedbacksSchedulable();
         String chron = '0 0 23 * * ?'; 
         System.schedule('Test schedulable' + Math.random(), chron, schedulable);

@@ -2,6 +2,7 @@ import { LightningElement, track, api, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import * as slwcUtils from 'c/slwcUtils';
 import { DriveHelper } from 'c/slwcDriveGenerator'
+import { DateTime } from 'c/luxon';
 
 const CMP_NAME = 'slwcDriveShifts';
 const DRIVE_DATA_CHANGED_EVENT = 'drivedatachanged';
@@ -116,6 +117,20 @@ export default class SlwcDriveShift extends LightningElement {
         return Math.ceil(Number(this.shift.maxDonorCapacity));
     }
 
+    get timeBlockOptions() {
+        return this.masterData?.collectionOperationTimeBlocks?.map(COTimeBlock => {
+            return {
+                label: `${COTimeBlock.timeBlock.name} (${this.formatTime(COTimeBlock.timeBlock.startTime)} - ${this.formatTime(COTimeBlock.timeBlock.endTime)})`,
+                value: COTimeBlock.timeBlock.id,
+                timeBlock: COTimeBlock.timeBlock
+            };
+        }) ?? []
+    }
+
+    get isDriveUseTimeBlock() {
+        return this.driveHelper.isDriveUseTimeBlock(this.drive, this.masterData);
+    }
+    
     @wire(CurrentPageReference) pageRef;
 
     renderedCallback() {
@@ -142,6 +157,25 @@ export default class SlwcDriveShift extends LightningElement {
         ]);
     }
 
+    handleOnTimeBlockChange(event) {
+        const timeBlockId = slwcUtils.getValueFromEvent(event);
+        const timeBlock = this.timeBlockOptions.find(option => option.value === timeBlockId);
+        this.handleDispatchEvent(DRIVE_DATA_CHANGED_EVENT, this.shift.key, [
+            {
+                targetName: 'timeBlock', 
+                targetValue: timeBlock
+            },
+            {
+                targetName: 'timeBlockId', 
+                targetValue: slwcUtils.getValueFromEvent(event)
+            },
+            {
+                targetName: 'timeBlockManuallyChanged', 
+                targetValue: true
+            }
+        ]);
+    }
+
     handleDispatchEvent(eventName, key, properties) {
         this.dispatchEvent(
             new CustomEvent(eventName, {
@@ -157,6 +191,10 @@ export default class SlwcDriveShift extends LightningElement {
     }
 
     /** Date Time Utils **/
+    formatTime(time) {
+        return DateTime.fromFormat(time, 'HH:mm:ss.SSS').toFormat('h:mm a');
+    }
+
     newDateTime(dateIso, timeIso, timezoneSidId) {
         let dateTimeIso = dateIso + 'T' + timeIso;
         let date = new Date(dateTimeIso);

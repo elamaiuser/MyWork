@@ -64,6 +64,9 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                 if(oppFields.updatedDataKeys.contains('sked_Cancellation_Reason__c')) { //HRP-10312
                     recOpp.sked_Cancellation_Reason__c = oppFields.Sked_Cancellation_Reason;
                 }
+                if(oppFields.updatedDataKeys.contains('Cancellation_Detail__c')) { //HRP-11431
+                    recOpp.Cancellation_Detail__c = oppFields.Cancellation_Detail;
+                }
                 if(oppFields.updatedDataKeys.contains('Initiated_By__c')) { //HRP-10312
                     recOpp.Initiated_By__c = oppFields.Initiated_By;
                 }
@@ -145,7 +148,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
                     recOpp.Slot_Generator_Change_Reason__c = oppFields.Slot_Generator_Change_Reason;
                 }
                 // HRP-12011 --> Ends here
-
+                
                 // HRP-13190 --> Starts here
                 if(oppFields.updatedDataKeys.contains('APT_Required__c')) { 
                     recOpp.APT_Required__c = oppFields.APT_Required;
@@ -193,6 +196,7 @@ trigger updateEventTrigger on Update_Event__e (After Insert) {
             }
         }
     }
+    system.debug('###FWO inside trigger for update event.  final opp list to update.' + mapOfOppToUpdate);
     if(!mapOfOppToUpdate.isEmpty()) {//HRP-12422 start
         Database.SaveResult[] lsOpp = Database.update(mapOfOppToUpdate.values(), false);//HRP-12422 end
         checkRecursive.skipVolunteerCalculation = false; //HRP-13146
