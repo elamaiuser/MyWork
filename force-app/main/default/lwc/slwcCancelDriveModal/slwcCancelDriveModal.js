@@ -25,6 +25,7 @@ export default class SlwcCancelDriveModal extends LightningElement {
   @api disableDriveReplacement = false;
 
   @track showSpinner = false;
+  @track cancellationDetail = null;
   @track cancellationReason = null;
   @track initiatedBy = null;
   @track replacementDrive = null;
@@ -99,9 +100,15 @@ export default class SlwcCancelDriveModal extends LightningElement {
   }
 
   init() {
+    this.cancellationDetail = null;
     this.cancellationReason = null;
     this.initiatedBy = null;
     this.replacementDrive = null;
+  }
+
+  handleCancellationDetailChanged = (event) => {
+    let value = getValueFromEvent(event);
+    this.cancellationDetail = value;
   }
 
   handleCancellationReasonChanged = (event) => {
@@ -125,7 +132,8 @@ export default class SlwcCancelDriveModal extends LightningElement {
         timezoneSidId: TIME_ZONE,
         cancellationReason: this.cancellationReason,
         initiatedBy: this.initiatedBy,
-        replacementDriveId: (!this.disableDriveReplacement && this.replacementDrive) ? this.replacementDrive.id : null
+        replacementDriveId: (!this.disableDriveReplacement && this.replacementDrive) ? this.replacementDrive.id : null,
+        cancellationDetail: this.cancellationDetail ?? ''
       });
     });
     let service = new driveService();

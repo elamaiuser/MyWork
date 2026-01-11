@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Field_API_Names__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>HRP-15953 Used only when Rule Type is &apos;Object/Field&apos;. A comma-separated list of field API names. If this field is blank, the rule applies to the entire object (OLS). If it is populated, the rule applies only to the specified fields (FLS).</inlineHelpText>
+    <label>Field API Names</label>
+    <length>131072</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

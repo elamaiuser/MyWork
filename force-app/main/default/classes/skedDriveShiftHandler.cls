@@ -20,7 +20,7 @@ public class skedDriveShiftHandler extends skedTriggerHub {
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
         }
-        autoPopulateDriveProjProductFields(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap); 
+        autoPopulateDriveProjProductFields(this.context.newRecords, (Map<Id, sked_Drive_Shift__c>)this.context.oldMap);
     }
     
     public override void onAfterUpdate() {
@@ -153,5 +153,4 @@ public class skedDriveShiftHandler extends skedTriggerHub {
 			service.captureFSWBException(driveIdsToValidate);
         }
     }
-    
 }

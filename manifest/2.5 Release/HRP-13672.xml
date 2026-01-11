@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>        
+		<members>skedExceptionMasterModel</members>
+		<members>skedJobAllocationHandler</members>
+		<members>skedJobAllocationPostProcessBatch</members>
+		<name>ApexClass</name>
+	</types>  
+	<types>
+		<members>slwcDriveStaffingDetails</members>
+		<name>LightningComponentBundle</name>
+	</types>  
+    <version>64.0</version>
+</Package>
