@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>All hands on deck day</fullName>
+        <default>false</default>
+        <label>All hands on deck day</label>
+    </customValue>
+    <customValue>
+        <fullName>Callout replacement</fullName>
+        <default>false</default>
+        <label>Callout replacement</label>
+    </customValue>
+    <customValue>
+        <fullName>Exception drive</fullName>
+        <default>false</default>
+        <label>Exception drive</label>
+    </customValue>
+    <customValue>
+        <fullName>Meeting</fullName>
+        <default>false</default>
+        <label>Meeting</label>
+    </customValue>
+    <customValue>
+        <fullName>Staffing shortage</fullName>
+        <default>false</default>
+        <label>Staffing shortage</label>
+    </customValue>
+    <customValue>
+        <fullName>Trade</fullName>
+        <default>false</default>
+        <label>Trade</label>
+    </customValue>
+    <customValue>
+        <fullName>Volunteer</fullName>
+        <default>false</default>
+        <label>Volunteer</label>
+    </customValue>
+    <masterLabel>Staffing Reasons</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Status_Change_For_DRD_Profiles</fullName>
+    <active>true</active>
+    <description>when a DCR status changed to Approved, Approved by system, Cancelled or Rejected then DRD Users will not be able to change the status.</description>
+    <errorConditionFormula>AND(
+    $Profile.Name = &quot;DRD Manager&quot; || $Profile.Name = &quot;DRD Profile&quot;,
+    ISCHANGED(sked_Status__c),
+    OR(
+        ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Approved&quot;),
+        ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Approved by System&quot;),
+        ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Cancelled&quot;),
+        ISPICKVAL(PRIORVALUE(sked_Status__c), &quot;Rejected&quot;)
+    )
+)</errorConditionFormula>
+    <errorDisplayField>sked_Status__c</errorDisplayField>
+    <errorMessage>Once the DCR is Approved, Approved by System, Rejected, or Cancelled, the user is not allowed to change the status.</errorMessage>
+</ValidationRule>

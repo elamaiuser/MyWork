@@ -1,32 +1,23 @@
 @istest
-public class OpportunityServiceControllerTest {
+private class OpportunityServiceControllerTest {
+    @testSetup
+    static void prepareTestData() {
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+    }
+    
     @istest
-    public static void OpportunityServiceControllerTest(){ 
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData1 =  testDataSetup.createAndInsertCommonObjects(); 
-        sked__Location__c testMobileSite2 = (sked__Location__c)mapTestData1.get('MOBILE_SITE2');
-        insert testMobileSite2;
-        
+    static void OpportunityServiceControllerTest() { 
         Test.startTest();
-        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
         skedHubBase.BypassUpdateTriggers = true;
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
         
-        AccountTeamMemberHelper.skipAccountTrigger = true;
-        TriggerHandler.bypass('AccountTriggerHandler');
-        triggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        try{
-            GenerateMobileDrive.generateDrives(config);
-        }catch(Exception ex){}
-        List<sked_Drive__c> drive = [SELECT Id, sked_Account__c, sked_Drive_Site__c, sked_Status__c FROM sked_Drive__c where sked_Opportunity__c =: mobileOpportunity.Id limit 1];
+        List<sked_Drive__c> drive = [SELECT Id, sked_Account__c, sked_Drive_Site__c, sked_Status__c, sked_Opportunity__c FROM sked_Drive__c limit 1];
         List<Opportunity> lstOpps = [SELECT Id, Is_Recursion_On__c, Drive_Date__c, Number_of_Platelet_Assets__c, Anticipated_Registered_Donors_Template__c, Number_of_Plasma_Assets__c, Start_Time__c, Drive_Site__c, Other_Projected_Units__c, Number_of_2RBC_Assets__c, End_Time__c, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-        WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, Apheresis_Projected_Units__c, AnticipatedRegisterDonorChangeReason__c, WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c, Account_Manager__c, Parent_Template_Id__c, sked_Cancellation_Reason__c FROM Opportunity WHERE Id =: mobileOpportunity.Id];
+        WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, Apheresis_Projected_Units__c, AnticipatedRegisterDonorChangeReason__c, WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c, Account_Manager__c, Parent_Template_Id__c, sked_Cancellation_Reason__c FROM Opportunity WHERE Id =: drive[0].sked_Opportunity__c];
         lstOpps[0].Number_of_Platelet_Assets__c = 2;
         lstOpps[0].Number_of_2RBC_Assets__c = 2;
         lstOpps[0].Number_of_Plasma_Assets__c = 2;
@@ -35,40 +26,31 @@ public class OpportunityServiceControllerTest {
         lstOpps[0].WholeBloodProcedureProjectedChangeReason__c = 'test';
         lstOpps[0].StageName = 'Discovery';
         lstOpps[0].DoubleRedProceduresProjectedChangeReason__c = 'test';
-        lstOpps[0].Initiated_By__c = 'ARC_Initiated_Mobile';
+        //lstOpps[0].Initiated_By__c = 'ARC_Initiated_Mobile';
         update lstOpps;
+        
         drive[0].sked_Status__c = 'Tentative';
         update drive;
+        
         OpportunityServiceController.syncOppsWithDrives(lstOpps);
+        
+        TriggerHandler.clearAllBypasses();
         Test.stopTest();
     }
+    
     @istest
-    public static void StatusChangeCoverageTest(){ 
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData1 =  testDataSetup.createAndInsertCommonObjects(); 
-        sked__Location__c testMobileSite2 = (sked__Location__c)mapTestData1.get('MOBILE_SITE2');
-        insert testMobileSite2;
-        
+    static void StatusChangeCoverageTest() { 
         Test.startTest();
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        Map<string, sObject> mapTestData = GenerateDriveTestData.testSetupForMobileDriveV2();
-        Opportunity mobileOpportunity = (Opportunity)mapTestData.get('mobileOpportunity');
-
-        MobileDriveGeneratorDMLService.driveGeneratorConfig config = new MobileDriveGeneratorDMLService.driveGeneratorConfig();
-        config.oppIds = new Set<Id>();
-        config.oppIds.add(mobileOpportunity.Id);
-        
-        AccountTeamMemberHelper.skipAccountTrigger = true;
         TriggerHandler.bypass('AccountTriggerHandler');
-        triggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        try{
-            GenerateMobileDrive.generateDrives(config);
-        }catch(Exception ex){}
-        List<sked_Drive__c> drive = [SELECT Id, sked_Account__c, sked_Drive_Site__c, sked_Status__c FROM sked_Drive__c where sked_Opportunity__c =: mobileOpportunity.Id limit 1];
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedHubBase.BypassUpdateTriggers = true;
+        
+        List<sked_Drive__c> drive = [SELECT Id, sked_Account__c, sked_Drive_Site__c, sked_Status__c, sked_Opportunity__c FROM sked_Drive__c limit 1];
         List<Opportunity> lstOpps = [SELECT Id, Is_Recursion_On__c, Drive_Date__c, Number_of_Platelet_Assets__c, Anticipated_Registered_Donors_Template__c, Number_of_Plasma_Assets__c, Start_Time__c, Drive_Site__c, Other_Projected_Units__c, Number_of_2RBC_Assets__c, End_Time__c, Drive_Status__c,Drive_Date_Change_Reason__c, Initiated_By__c, StageName,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c, Anticipated_Registered_Donors__c, 
-        WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, Apheresis_Projected_Units__c, AnticipatedRegisterDonorChangeReason__c, WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c, Account_Manager__c, Parent_Template_Id__c, sked_Cancellation_Reason__c FROM Opportunity WHERE Id =: mobileOpportunity.Id];
+        WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c, Accepts_Automation__c, Automation_Suitability__c, Apheresis_Projected_Units__c, AnticipatedRegisterDonorChangeReason__c, WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c, Account_Manager__c, Parent_Template_Id__c, sked_Cancellation_Reason__c FROM Opportunity WHERE Id =: drive[0].sked_Opportunity__c];
         List<Contact> conlist = new List<Contact>();
         Contact conObj = new Contact();
         conObj.AccountId = drive[0].sked_Account__c ;

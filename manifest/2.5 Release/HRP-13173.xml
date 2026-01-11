@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>slwcDriveCalendarDriveList</members>
+		<members>slwcDriveSchedulingConsole</members>
+		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcSchedulingConsoleDriveList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>skedLWCCustomStyle</members>
+		<name>StaticResource</name>
+	</types>
+	<version>64.0</version>
+</Package>
