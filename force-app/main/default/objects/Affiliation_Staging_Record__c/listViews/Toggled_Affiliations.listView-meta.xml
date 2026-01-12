@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Toggled_Affiliations</fullName>
+    <columns>NAME</columns>
+    <columns>Config_Toggled_Affiliation_Name__c</columns>
+    <columns>Config_Enabled_For_Scheduled_Processing__c</columns>
+    <columns>Config_Enabled_For_ReProcessing__c</columns>
+    <columns>Config_ReQueues__c</columns>
+    <columns>Config_Qualified_UFID__c</columns>
+    <columns>Config_UnQualified_UFID__c</columns>
+    <columns>CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Affiliation_Staging_Record__c.Toggled_Affiliations</value>
+    </filters>
+    <label>Toggled Affiliations</label>
+</ListView>

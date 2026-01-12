@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">Prior to Plan a Drive, the following fields need to be completed {objectName}: {errorFields}.</value>
+        <value xsi:type="xsd:string">Prior to Plan a Drive or further changes, please complete the required fields {objectName}: {errorFields}.</value>
     </values>
 </CustomMetadata>

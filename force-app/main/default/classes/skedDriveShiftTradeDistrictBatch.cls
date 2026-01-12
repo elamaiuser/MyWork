@@ -110,6 +110,7 @@ global class skedDriveShiftTradeDistrictBatch implements Database.Batchable<sObj
                 Taxo_Utilities.logErrors(updateResults,'Taxonomy Run','BSF_Batch_TaxoRunControlBatch','Execute','Error',
                                          'Error occured in while updating the Taxonomy Run Record',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
             }
+            Taxo_Utilities.markTaxonomyEnded();
         }catch (Exception e) {//HRP-14442
             Taxo_Utilities.logErrorForException(e, 'skedDriveShiftTradeDistrictBatch', 'Finish', e.getMessage(), e.getMessage(), 'Taxonomy_Run__c',BSF_Constants.BIO_COLLECTION_RECORD_TYPE,taxVer);
         } 

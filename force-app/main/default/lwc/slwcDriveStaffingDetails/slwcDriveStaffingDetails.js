@@ -195,6 +195,11 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
     @track addRoleModalData = {};
     @track jobAllocationModalData = {};
     @track confirmModalData = {};
+    @track staffingReasonModalData = {
+        isOpen: false,
+        resourceId: null,
+        jobId: null
+    };
 
     linkedDriveResourceMap = {};
     
@@ -1005,7 +1010,16 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         const {id} = jobItemEl && jobItemEl.dataset;
         if (id && !jobItemEl.classList.contains('job-disabled') && !jobItemEl.classList.contains('job-hover-disabled') && (jobItemEl.classList.contains('job-hover_warning') || jobItemEl.classList.contains('job-hover'))) {
             // this.dragSrcEl.style.background = '#D8EDFF';
-            this.allocate(e.dataTransfer.getData('resourceId'), id)
+            const resourceId = e.dataTransfer.getData('resourceId');
+            
+            // Check for non-working time exception
+            if (this.checkForNonWorkingTimeException(resourceId, id)) {
+                // Show staffing reason modal
+                this.showStaffingReasonModal(resourceId, id);
+            } else {
+                // Proceed with allocation immediately
+                this.allocate(resourceId, id);
+            }
         }
         return false;
     }
@@ -1169,7 +1183,72 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         });
     }
 
-    allocate(resourceId, jobId) {
+    /**
+     * Check if resource allocation has a non-working time exception
+     * @param {String} resourceId - Resource ID
+     * @param {String} jobId - Job ID
+     * @returns {Boolean} True if non-working time exception exists
+     */
+    checkForNonWorkingTimeException(resourceId, jobId) {
+        const posAl = this.listPossibleAllocations.find(
+            itemEx => itemEx.resourceId == resourceId && itemEx.jobId == jobId
+        ) || null;
+        
+        if (posAl && !posAl.isAvailable && posAl.exceptionLog) {
+            const exceptionLog = posAl.exceptionLog || [];
+            return exceptionLog.some(exception => 
+                exception.exception?.toLowerCase() === 'non-working time' ||
+                exception.exceptionType?.toLowerCase() === 'non-working time'
+            );
+        }
+        
+        return false;
+    }
+
+    /**
+     * Show staffing reason modal for non-working time allocation
+     * @param {String} resourceId - Resource ID
+     * @param {String} jobId - Job ID
+     */
+    showStaffingReasonModal(resourceId, jobId) {
+        this.staffingReasonModalData = {
+            isOpen: true,
+            resourceId: resourceId,
+            jobId: jobId
+        };
+    }
+
+    /**
+     * Handle staffing reason modal cancellation
+     */
+    handleStaffingReasonCancel() {
+        this.staffingReasonModalData = {
+            isOpen: false,
+            resourceId: null,
+            jobId: null
+        };
+    }
+
+    /**
+     * Handle staffing reason selection from modal
+     * @param {CustomEvent} event - Event containing selected staffing reason
+     */
+    handleStaffingReasonSelected(event) {
+        const staffingReason = event.detail.staffingReason;
+        const { resourceId, jobId } = this.staffingReasonModalData;
+        
+        // Close modal
+        this.staffingReasonModalData = {
+            isOpen: false,
+            resourceId: null,
+            jobId: null
+        };
+        
+        // Proceed with allocation including staffing reason
+        this.allocate(resourceId, jobId, staffingReason);
+    }
+
+    allocate(resourceId, jobId, staffingReason = null) {
         let [job, driveShift, jobIndex, drive] = this.getJobById(jobId);
         const resource = this.getResourceById(resourceId);
         const posAl = this.listPossibleAllocations.find(itemEx => itemEx.resourceId == resourceId && itemEx.jobId == jobId) || null;
@@ -1211,7 +1290,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 DOT: false,
                 CDL: false,
                 additionalRoles: job.dualRole,
-                additionalRolesString: job.dualRole
+                additionalRolesString: job.dualRole,
+                staffingReason: staffingReason
             };
             job.jobAllocations.push(newJobAllocation);
         } else {
@@ -1228,7 +1308,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     geoServiceTravelDistanceTo: posAl?.estimatedTravelData?.travelDistanceTo,
                     geoServiceTravelDistanceBack: posAl?.estimatedTravelData?.travelDistanceBack,
                     DOT: false,
-                    CDL: false
+                    CDL: false,
+                    staffingReason: staffingReason
                 })
                 delete existingJobAllocation.status;
                 delete existingJobAllocation.isDeleted;
@@ -1252,7 +1333,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
         const isResource = !newJobAllocation.resourceId;
         const resource = isResource ? newJobAllocation : newJobAllocation.resource;
-        if(resource.resourceType !== RESOURCE_TYPE.PERSON || !resource.resourceHoursRecord) return;
+        if(resource.resourceType !== RESOURCE_TYPE.PERSON) return;
 
         if(!isResource) {
             const currentPossibleAllocation = this.listPossibleAllocations.find(item => item.resourceId === newJobAllocation.resourceId && item.jobId === newJobAllocation.jobId);
@@ -1290,6 +1371,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             this.populateDefaultJobAllocationTimes(driveDetail1, resource);
             this.populateDefaultJobAllocationTimes(driveDetail2, resource);    
         }
+
+        const allocationExceptionLogMap = {};
+        const resourceTagNames = resource.resourceTags?.map(resourceTag => resourceTag.tag.name);
        
         allDriveShifts.forEach(driveShift => {
             driveShift.jobs.forEach(job => {
@@ -1312,14 +1396,37 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                         }
                     }
 
+                    const additionalRoles = jobAllocation.additionalRoles?.split(";") || [];
+                    const dualRoleJobTag = job.dualRole && (job.jobTags || []).find(jobTag => jobTag.tag.name === job.dualRole);
+                    if(!!dualRoleJobTag) {
+                        remove(additionalRoles, item => item === job.dualRole);
+                    }
+                    additionalRoles.forEach(additionalRole => {
+                        const havingAdditionalRole = resourceTagNames.find(tagName => tagName === additionalRole);
+                        if (!havingAdditionalRole) {
+                            const exceptionText = `Missing required tag ${additionalRole}`;
+
+                            const existingException = jobAllocation.exceptionLog.find(item => item.exceptionText === exceptionText);
+                            if (!existingException) {
+                                jobAllocation.exceptionLog.push({
+                                    exception: exceptionText,
+                                    exceptionCode: 'MISSING_REQUIRED_TAG',
+                                    key: uniqueId('exception_ja'),
+                                    resource: jobAllocation.resource,
+                                    icon: this.getResourceIcon(jobAllocation.resource),
+                                    isSelected:  false
+                                });
+                            }
+                        }
+                    })
+
                     allAllocationsNeedToUpdateExceptions.push(jobAllocation);
                 });
             });
         });
 
         const weeklyHoursInMinutes = currentWeeklyHoursInMinutes + totalMinutesOfNewAllocations - totalMinutesOfOldAllocationsDeleted;
-        const allocationExceptionLogMap = {};
-        if(weeklyHoursInMinutes > resourceMaxHoursPerWeekInMinutes) {
+        if(resourceHoursRecord && weeklyHoursInMinutes > resourceMaxHoursPerWeekInMinutes) {
             let exceptionText = this.availator1.getExceptionTextByCode('MAXIMUM_WEEKLY_HOURS_VIOLATION')
             if(exceptionText) {
                 exceptionText = exceptionText.replace('{{weekStartDate}}', DateTime.fromFormat(resourceHoursRecord.startDate, 'yyyy-MM-dd').toFormat('MM/dd/yyyy'))
@@ -2890,7 +2997,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let { job , jobAllocation } = this.jobAllocationModalData; 
 
         let [ tempJob ] = this.getJobById(job.id);
-        let tempJobAllocation =  find(job.jobAllocations, item => item.key == jobAllocation.key)
+        let tempJobAllocation =  find(job.jobAllocations, item => item.id == jobAllocation.key)
 
         tempJobAllocation = extend(tempJobAllocation, event.detail);
         tempJob = extend(tempJob, {

@@ -2862,11 +2862,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Shadow_Drive__c</field>
-            <table>Account.Opportunities.sked_Drives__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Site_Building_Name__c</field>
             <table>Account.Opportunities.sked_Drives__r</table>
         </columns>

@@ -100,6 +100,7 @@ public with sharing class APComplianceReportController {
             new Map<String, Object>{ 'label' => 'Availability Pattern Time', 'fieldName' => 'apTime', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'Availability Pattern Name', 'fieldName' => 'apName', 'type' => 'text' },
             new Map<String, Object>{ 'label' => 'AP Violation', 'fieldName' => 'violation', 'type' => 'text' },
+            new Map<String, Object>{ 'label' => 'Staffing Reason', 'fieldName' => 'StaffingReason', 'type' => 'text' }, 
             new Map<String, Object>{ 'label' => 'Exception', 'fieldName' => 'exc', 'type' => 'text' }    
         };
             
@@ -176,7 +177,7 @@ public with sharing class APComplianceReportController {
         String jobSOQL = 
             'SELECT Name,sked__Job__r.Name, sked__Resource__c, sked__Job__r.sked__Type__c, sked_Start_Date__c, sked_Start_Time__c, sked_Set_End_Time__c, ' +
             'sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked__Job_Status__c, sked__Job__r.sked_Drive__r.sked_Status__c, ' +
-            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c,sked_Drive_Shift_Trade__c,sked_Call_Out_Type__c ' +
+            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c,sked_Drive_Shift_Trade__c,sked_Call_Out_Type__c,sked_Staffing_Reason__c ' +
             'FROM sked__Job_Allocation__c ' +
             'WHERE sked_Start_Date__c >= :startDt ' +
             'AND sked_Start_Date__c <= :endDt ' +
@@ -235,13 +236,14 @@ public with sharing class APComplianceReportController {
                 job.sked__Job__r.sked_Drive__r.Name,
                 job.sked__Job__r.Name,
                 job.sked__Job__r.sked__Type__c,
+                job.sked_Staffing_Reason__c,
                 calloutTradeVal
             ));
         }
         
         String activityQuery = 
             'SELECT Id, sked_Drive_Shift_Trade__c, sked__Activity__r.Name,sked__Activity__r.sked_Activity_Title__c,sked__Resource__r.Name, sked__Resource__c, ' +
-            'sked_Start_Date__c, sked_Start_Time__c, sked_End_Time__c ' +
+            'sked_Start_Date__c, sked_Start_Time__c, sked_End_Time__c,sked_Staffing_Reason__c ' +
             'FROM sked__Activity_Resource__c ' +
             'WHERE sked_Start_Date__c >= :startDt AND sked_Start_Date__c <= :endDt ' +
             'AND sked__Resource__c IN ' + idClause + ' ';
@@ -295,6 +297,7 @@ public with sharing class APComplianceReportController {
                 null,
                 act.sked__Activity__r.sked_Activity_Title__c,
                 '',
+                act.sked_Staffing_Reason__c,
                 calloutTradeVal
             ));
         }
@@ -319,7 +322,7 @@ public with sharing class APComplianceReportController {
         return wrapper;
     }
     
-    private static Map<String, String> buildRow(sked__Resource__c res, Date workDate, String type, String status, Boolean violation, Time startTime, Time endTime, List<TimeRange> apRanges, String apName,String driveName,string JName,string Role,String calloutTradeVal) {
+    private static Map<String, String> buildRow(sked__Resource__c res, Date workDate, String type, String status, Boolean violation, Time startTime, Time endTime, List<TimeRange> apRanges, String apName,String driveName,string JName,string Role,string StaffingReason, String calloutTradeVal) {
         Map<String, String> row = new Map<String, String>();
         row.put('name', res?.Name);
         row.put('supervisor', res?.sked_Supervisor__r != null ? res.sked_Supervisor__r.Name : res.sked_Supervisor_Name__c);
@@ -337,6 +340,7 @@ public with sharing class APComplianceReportController {
         row.put('driveName', driveName != null ? driveName : '');
         row.put('role',Role);
         row.put('JName',JName);
+        row.put('StaffingReason',StaffingReason != null ? StaffingReason : '');
         row.put('calloutTrade', calloutTradeVal);
         
         if (apRanges != null && !apRanges.isEmpty()) {

@@ -2216,4 +2216,278 @@ if(asApa.Start_Date__c>accBsfIdAccportMap.get(key).End_Date__c)
         public Account_Portfolio_Assignment__c apaException;
         public Account_Portfolio_Assignment__c nextExAccPort;
     }
+
+    /**
+     * Ensure Territory coverage after inserting Account-Based AM APAs.
+     * For each Account in pendingAPAs, if there is at least one Account-Based AM (Taxonomy = "Bio Account Portfolio",
+     * Portfolio_Type = ACCOUNT_MANAGER) whose End_Date__c is before 4000-12-31
+     */
+    public static List<Account_Portfolio_Assignment__c> ensureTerritoryCoverage(List<Account_Portfolio_Assignment__c> pendingAMAPAs) {
+        System.debug('HRP-15803 ensureTerritoryCoverage: pendingAMAPAs = ' + pendingAMAPAs);
+        List<Account_Portfolio_Assignment__c> newTerrApaToBeCreated  = new List<Account_Portfolio_Assignment__c>();//toInsert
+
+        if (pendingAMAPAs == null || pendingAMAPAs.isEmpty()) {
+            return newTerrApaToBeCreated;
+        }
+        //Collect Accounts and BSF Ids from the pending set (we need taxonomy/role)
+        Set<Id> accountIds  = new Set<Id>();
+        Set<Id> bsfIds  = new Set<Id>();
+        for (Account_Portfolio_Assignment__c apa : pendingAMAPAs) {
+            if (apa == null) {
+                continue;
+            }
+            if (apa.Account__c != null){
+                accountIds.add(apa.Account__c);
+            } 
+            if (apa.BSF_Portfolio__c != null){
+                bsfIds.add(apa.BSF_Portfolio__c);
+            } 
+        }
+        System.debug('HRP-15803 accountIds :  = ' + accountIds );
+        System.debug('HRP-15803 bsfIds:  = ' + bsfIds);
+        if (accountIds.isEmpty()) {
+            return newTerrApaToBeCreated;
+        }
+        // Collect BSF_Portfolio__c We need taxonomy/role of the referenced BSFs bsfIdVsBsfMap
+        Map<Id, BSF_Portfolio__c> bsfIdVsBsfMap = new Map<Id, BSF_Portfolio__c>([
+            SELECT Id, Portfolio_Type__c, Taxonomy_Type__c
+            FROM BSF_Portfolio__c
+            WHERE Id IN :bsfIds
+        ]);
+        System.debug('HRP-15803 bsfIdVsBsfMap:  = ' + bsfIdVsBsfMap);
+        //For the Account, find the latest end among the pending *Account-Based AM* APAs We only care about AMs in the Account taxonomy (i.e., the exception window).
+        Map<Id, Date> tailStartByAccount = new Map<Id, Date>(); // Account -> (max pending AB-AM End) + 1
+        for (Account_Portfolio_Assignment__c apa : pendingAMAPAs) {
+            if (apa == null || apa.Account__c == null || apa.BSF_Portfolio__c == null){ 
+                continue;
+            }
+            BSF_Portfolio__c pendingApaPortfolio = bsfIdVsBsfMap.get(apa.BSF_Portfolio__c);
+            if (pendingApaPortfolio == null) {
+                continue;
+            } 
+            if (pendingApaPortfolio.Taxonomy_Type__c == BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE && 
+                pendingApaPortfolio.Portfolio_Type__c == BSF_Constants.ACCOUNT_MANAGER) {
+                if (apa.End_Date__c == null){
+                    continue;
+                } 
+                if (apa.End_Date__c < BSF_Constants.maxDate) {
+                    Date newTerrApaStartDate = apa.End_Date__c.addDays(1);//newTerrApaStartDate
+                    Date existing =null;
+                    if(tailStartByAccount.get(apa.Account__c) !=null){
+                        existing = tailStartByAccount.get(apa.Account__c);
+                    }
+                    if (existing == null || newTerrApaStartDate > existing) {
+                        tailStartByAccount.put(apa.Account__c, newTerrApaStartDate);
+                    }
+                }  
+            }
+        }
+        System.debug('HRP-15803 tailStartByAccount: '+tailStartByAccount);
+        if (tailStartByAccount.isEmpty()) {
+            return new List<Account_Portfolio_Assignment__c>(); // nothing to do; no AB-AM in this batch
+        }
+        //3) Get the Account zipCode //acctById
+        Map<Id, Account> acctIdVsAccMap = new Map<Id, Account>([
+            SELECT Id, BillingPostalCode, ShippingPostalCode
+            FROM Account
+            WHERE Id IN :accountIds
+        ]);
+        System.debug('HRP-15803 acctIdVsAccMap: '+acctIdVsAccMap);
+        // Build zip set + track min/max tailStart to scope the next queries
+        Set<String> zipSet = new Set<String>();
+        Date minTail = null;
+        Date maxTail = null;
+        for (Id accId : tailStartByAccount.keySet()) {
+            Account a = acctIdVsAccMap.get(accId);
+            String zip = (a != null && !String.isBlank(a.BillingPostalCode)) ? a.BillingPostalCode : null;
+            if (String.isBlank(zip)) {
+                continue; //skip if no zip (NCA or edge cases)
+            }
+            zipSet.add(zip);
+            if(tailStartByAccount!=null && tailStartByAccount.containsKey(accId)){
+                Date t = tailStartByAccount.get(accId);
+                if (minTail == null || t < minTail) {
+                    minTail = t;
+                }
+                if (maxTail == null || t > maxTail) {
+                    maxTail = t;
+                } 
+            }
+        }
+        System.debug('HRP15803 out minTail: '+minTail+'maxTail: '+maxTail);
+        System.debug('HRP15803 zipSet: '+zipSet);
+        if (zipSet.isEmpty()){
+            return newTerrApaToBeCreated;
+        } 
+        // 4) Pull Taxonomy for those zipCode that overlap any tailStart
+        List<Taxonomy__c> taxoRows = [
+            SELECT Id, Zip_Code__c, Start_Date__c, End_Date__c, DRD_Territory_Name__c,DRD_Territory_Code__c 
+            FROM Taxonomy__c
+            WHERE Zip_Code__c IN :zipSet and DRD_Territory_Code__c !=null 
+              AND Start_Date__c <= :maxTail
+              AND End_Date__c   >= :minTail
+        ];
+        System.debug('HRP-15803 taxoRows:'+taxoRows);
+        // Index taxonomy by zip
+        Map<String, List<Taxonomy__c>> taxoByZip = new Map<String, List<Taxonomy__c>>();
+        for (Taxonomy__c t : taxoRows) {
+            if (String.isBlank(t.Zip_Code__c)){
+                continue;
+            } 
+            if (!taxoByZip.containsKey(t.Zip_Code__c)){
+                taxoByZip.put(t.Zip_Code__c, new List<Taxonomy__c>());
+            } 
+            taxoByZip.get(t.Zip_Code__c).add(t);
+        }
+        System.debug('HRP-15803 taxoByZip:'+taxoByZip);
+        // 5) From the taxonomy windows, collect the territory names we need
+        Set<String> territoryNames = new Set<String>();
+        Set<String> territoryCodes = new Set<String>();
+        for (Id accId : tailStartByAccount.keySet()) {
+            Account acc = acctIdVsAccMap.get(accId);
+            String zip = (acc != null && !String.isBlank(acc.BillingPostalCode)) ? acc.BillingPostalCode : null;
+            if (String.isBlank(zip)) {
+                continue;
+            }
+            Date t = tailStartByAccount.get(accId);
+            List<Taxonomy__c> candidates = taxoByZip.get(zip);
+            if (candidates == null) {
+                continue;
+            }
+            for (Taxonomy__c row : candidates) {
+                if (row.Start_Date__c <= t && row.End_Date__c >= t && !String.isBlank(row.DRD_Territory_Code__c)) {
+                    territoryCodes.add(row.DRD_Territory_Code__c);
+                    break; // one row is enough
+                }
+            }
+        }
+        System.debug('HRP-15803 territoryCodes:'+territoryCodes);
+        if (territoryCodes.isEmpty()){
+            return newTerrApaToBeCreated;
+        } 
+        //6) Load Territory AM BSF segments for those territory names that can cover any tailStart
+        // We’re matching by Portfolio_Name__c to DRD_Territory_Code__c
+
+        List<BSF_Portfolio__c> terrSegs = [
+            SELECT Id, Portfolio_Name__c, Portfolio_Type__c,Portfolio_Code__c, Taxonomy_Type__c,
+                   Start_Date__c, End_Date__c
+            FROM BSF_Portfolio__c
+            WHERE Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER
+              AND Taxonomy_Type__c  = :BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE
+              AND Portfolio_Code__c  IN :territoryCodes
+              AND Start_Date__c     <= :maxTail
+              AND End_Date__c       >= :minTail
+        ];
+        System.debug('HRP-15803 terrSegs:'+terrSegs);
+        // Index Territory segments by Territory Name
+        Map<String, List<BSF_Portfolio__c>> terrByCode = new Map<String, List<BSF_Portfolio__c>>();
+        for (BSF_Portfolio__c seg : terrSegs) {
+            if (String.isBlank(seg.Portfolio_Code__c)) {
+                continue;
+            }
+            if (!terrByCode.containsKey(seg.Portfolio_Code__c)){
+                terrByCode.put(seg.Portfolio_Code__c, new List<BSF_Portfolio__c>());
+            } 
+            terrByCode.get(seg.Portfolio_Code__c).add(seg);
+        }
+        System.debug('HRP-15803 terrByCode:'+terrByCode);
+        //7) Existing Territory AM APAs covering any tail window (to avoid duplicates)
+        System.debug('HRP-15803 duplicate check maxTail: '+maxTail+':minTail: '+minTail);
+        List<Account_Portfolio_Assignment__c> existingTerr = [
+            SELECT Id, Account__c, Start_Date__c, End_Date__c, BSF_Portfolio__c,
+                    BSF_Portfolio__r.Portfolio_Type__c,BSF_Portfolio__r.Portfolio_Code__c, BSF_Portfolio__r.Taxonomy_Type__c
+                    FROM Account_Portfolio_Assignment__c
+                    WHERE Account__c IN :accountIds
+                    AND BSF_Portfolio__r.Portfolio_Type__c = :BSF_Constants.ACCOUNT_MANAGER
+                    AND BSF_Portfolio__r.Taxonomy_Type__c  = :BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE
+                    AND End_Date__c   = :BSF_Constants.maxDate];
+        System.debug('HRP-15803 1 existingTerr:'+existingTerr);
+        
+        Map<Id, List<Account_Portfolio_Assignment__c>> existingTerrByAcc = new Map<Id, List<Account_Portfolio_Assignment__c>>();
+        for (Account_Portfolio_Assignment__c e : existingTerr) {
+            if (!existingTerrByAcc.containsKey(e.Account__c)){
+                existingTerrByAcc.put(e.Account__c, new List<Account_Portfolio_Assignment__c>());
+            } 
+            existingTerrByAcc.get(e.Account__c).add(e);
+        }
+        System.debug('HRP-15803 existingTerrByAcc:'+existingTerrByAcc);
+
+        //8) Build the new Territory tails
+        for (Id accId : tailStartByAccount.keySet()) {
+            Date newCoveringTerrApaStartDate = tailStartByAccount.get(accId);
+            if (newCoveringTerrApaStartDate == null || newCoveringTerrApaStartDate > BSF_Constants.maxDate) {
+                continue;
+            }
+            Account a = acctIdVsAccMap.get(accId);
+            String zip = (a != null && !String.isBlank(a.BillingPostalCode)) ? a.BillingPostalCode : null;
+            if (String.isBlank(zip)) {
+                continue;
+            }
+            // Pick the taxonomy row covering tailStart
+            Taxonomy__c match = null;
+            List<Taxonomy__c> tRows = taxoByZip.get(zip);
+            if (tRows != null) {
+                for (Taxonomy__c row : tRows) {
+                    if (row.Start_Date__c <= newCoveringTerrApaStartDate && row.End_Date__c >= newCoveringTerrApaStartDate) { 
+                        match = row; 
+                        break; 
+                    }
+                }
+            }
+            System.debug('HRP-15803 match:'+match);
+            if (match == null || String.isBlank(match.DRD_Territory_Code__c)) {
+                continue;
+            }
+            // Pick Territory BSF segment (AM, Bio Recruitment CD) for that territory name that covers tailStart
+            BSF_Portfolio__c seg = null;
+            List<BSF_Portfolio__c> segs = terrByCode.get(match.DRD_Territory_Code__c);
+            if (segs != null) {
+                for (BSF_Portfolio__c s : segs) {
+                    if (s.Start_Date__c <= newCoveringTerrApaStartDate && s.End_Date__c >= newCoveringTerrApaStartDate) { 
+                        seg = s; 
+                        break; 
+                    }
+                }
+            }
+            System.debug('HRP-15803 seg:'+seg);
+            if (seg == null){
+                continue;
+            } 
+            // If a Territory AM already covers tailStart for this account, skip (no duplicates)
+            Boolean covered = false;
+            List<Account_Portfolio_Assignment__c> exList = existingTerrByAcc.get(accId);
+            System.debug('HRP-15803 exList:'+exList);
+            if (exList != null) {
+                for (Account_Portfolio_Assignment__c existingTerryBasedAPA : exList) {
+                    Boolean overlaps = false;
+                    for(Account_Portfolio_Assignment__c newlyInsertedAPA  : pendingAMAPAs){
+                        overlaps =  !(newlyInsertedAPA.start_Date__c > existingTerryBasedAPA.Start_Date__c || 
+                                        newlyInsertedAPA.end_Date__c > existingTerryBasedAPA.Start_Date__c );
+                        if (overlaps) { 
+                            break; 
+                        }
+                    }
+                    if (overlaps) { 
+                        covered = true; 
+                        break; 
+                    }
+                }
+            }
+            System.debug('HRP-15803 covered:'+covered);
+            if (covered) {
+                continue;
+            }
+            // Create the tail APA (Territory-Based AM)
+            Account_Portfolio_Assignment__c tailAPA = new Account_Portfolio_Assignment__c();
+            tailAPA.Account__c       = accId;
+            tailAPA.BSF_Portfolio__c = seg.Id;
+            tailAPA.Start_Date__c    = newCoveringTerrApaStartDate;
+            tailAPA.End_Date__c      = BSF_Constants.maxDate;
+
+            newTerrApaToBeCreated.add(tailAPA);
+            System.debug('HRP-15803 tailAPA:'+tailAPA);
+        }
+        System.debug('HRP-15803 newTerrApaToBeCreated:'+newTerrApaToBeCreated);
+        return newTerrApaToBeCreated;
+    }
 }
