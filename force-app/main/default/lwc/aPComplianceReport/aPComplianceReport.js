@@ -40,7 +40,7 @@ export default class ApComplianceReport extends LightningElement {
     ];
     @track driveOperationsOptions = [
     { label: 'Mobile', value: 'Mobile', selected: false },
-    { label: 'Non Integrated WB', value: 'Non Integrated WB', selected: false },
+    { label: 'NIFS', value: 'NIFS', selected: false },
     { label: 'Fixed Site', value: 'Fixed Site', selected: false }
 ];
 
