@@ -9,30 +9,54 @@
             enableviolationtoggle={showNothing}>
         </c-bsf-staffing-report-search-panel>
 
-        <div class="slds-grid slds-gutters slds-p-horizontal_medium slds-m-top_medium">
-            <div class="slds-col slds-size_1-of-2">
-                <c-bsf-multi-select-combobox 
-                        name="driveStatus" 
-                        label="Drive Status"
-                        placeholder="-Select-"
-                        options={driveStatusOptions}
-                        onchange={handleDriveStatusChange}
-                        onclickevent={handleDriveStatusClick}>
-                </c-bsf-multi-select-combobox>
-            </div>
-            <div class="slds-col slds-size_1-of-2">
-                <lightning-input type="checkbox"
-                                label="Show Violations Only"
-                                checked={wrapper.violationOnly}
-                                onchange={handleViolationToggleChange}>
+            <!-- Row 1: 2 column layout -->
+        <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_medium slds-m-top_medium">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+            <c-bsf-multi-select-combobox 
+                name="driveStatus" 
+                label="Drive Status"
+                placeholder="-Select-"
+                options={driveStatusOptions}
+                onchange={handleDriveStatusChange}
+                onclickevent={handleDriveStatusClick}>
+            </c-bsf-multi-select-combobox>
+        </div>
+
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+            <c-bsf-multi-select-combobox 
+                name="dot" 
+                label="Drive Operation Type"
+                placeholder="-Select-"
+                options={driveOperationsOptions}
+                onchange={handleOperationTypeChange}
+                onclickevent={handleOperationTypeClick}>
+            </c-bsf-multi-select-combobox>
+        </div>
+        </div>
+
+        <!-- Row 2: Checkboxes in separate row -->
+        <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_medium slds-m-top_small">
+        <div class="slds-col slds-size_1-of-1">
+            <div class="slds-grid slds-wrap slds-align_absolute-center checkbox-row">
+                <lightning-input 
+                    class="checkbox-item"
+                    type="checkbox"
+                    label="Show Violations Only"
+                    checked={wrapper.violationOnly}
+                    onchange={handleViolationToggleChange}>
                 </lightning-input>
-                <lightning-input type="checkbox"
-                                label="Exclude Trade/Callout"
-                                checked={wrapper.excludeTrades}
-                                onchange={handleExcludeTradesChange}>
+
+                <lightning-input 
+                    class="checkbox-item"
+                    type="checkbox"
+                    label="Exclude Trade/Callout"
+                    checked={wrapper.excludeTrades}
+                    onchange={handleExcludeTradesChange}>
                 </lightning-input>
             </div>
         </div>
+        </div>
+
 
         <div class="slds-m-top_medium slds-p-horizontal_medium">
             <lightning-button label="Search" variant="brand" onclick={handleSearch}></lightning-button>
@@ -71,6 +95,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- IMPORTANT WRAPPER -->
+            <div class="datatable-container">
                 <lightning-datatable
                     key-field="rowKey"
                     data={dataArry}
@@ -79,10 +106,13 @@
                     sorted-direction={sortDirection}
                     onsort={handleSort}
                     hide-checkbox-column
-                    wrap-text-max-lines="5">
+                    wrap-text-max-lines="3"
+                    column-widths-mode="fixed"
+                    min-column-width="120">
                 </lightning-datatable>
-
+            </div>
         </template>
+
 
         <template if:true={showPopup}>
             <section class="slds-modal slds-fade-in-open slds-modal_large" role="dialog">
