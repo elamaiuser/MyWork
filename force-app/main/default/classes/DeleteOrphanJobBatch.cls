@@ -35,7 +35,9 @@ global void execute(Database.BatchableContext bc, List<sked__Job_Allocation__c> 
         // Delete the Job allocation records
         if (!scope.isEmpty()) {
                 SendNotification(scope);
-            deleteResults = Database.delete(scope,false);    
+                skedHubBase.BypassDeleteTriggers = true;
+                deleteResults = Database.delete(scope,false);   
+                skedHubBase.BypassDeleteTriggers = false; 
         
         List<BSF_Error_Log__c> errorLog = BSF_Utilities.createErrorLog(deleteResults,'Delete Orphan Job Allocation','DeleteOrphanJobBatch','Execute','Error','Error occurred while deleting the job allocation record');
         Database.SaveResult[] insertResult = Database.insert(errorLog, false);
