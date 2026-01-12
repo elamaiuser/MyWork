@@ -73,10 +73,10 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
 		get driveCalendarFilter() {
 			let result = this.filters;
 			if (this.displayMode == "productGoalCalendar") {
-				result = omit(this.filters, ['driveTypes']);
+				result = omit(this.filters, ['driveTypes', 'searchText']);
 			}
 			else if (this.displayMode == "productivityCalendar") {
-				result = omit(this.filters, ['driveOperationTypes']);
+				result = omit(this.filters, ['driveOperationTypes', 'searchText']);
 			}
 			return result;
 		}

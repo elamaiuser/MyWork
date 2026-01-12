@@ -12,6 +12,7 @@ private class skedSetting_Test {
         skedSetting.skedEmailSetting emailSetting = skedSetting.instance.Email;
         skedSetting.skedTravelTimeManager travelTimeSetting = skedSetting.instance.TravelTime;
         skedSetting.skedTTIRRStuckJobConfigSetting stuckTTIRRSetting = skedSetting.instance.stuckTTIRR;
+        skedSetting.skedJAPostProcessBatchConfigSetting jaPostProcessSetting = skedSetting.instance.jaPostProcessBatchConfig;
         Map<String, Set<Date>> holidays = appSetting.mapHoliday;
         appSetting.setTimezoneSidId(UserInfo.getTimeZone().getID());
         appSetting.detectDaylightSaving(system.today(), system.today().addDays(10));
@@ -86,4 +87,5 @@ private class skedSetting_Test {
         );
         insert testTTIRRStuckJobSetting;
     }
+        
 }

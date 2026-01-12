@@ -253,7 +253,7 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
         
         String typeOfDrive = 'Mobile';
         UpdateDrivesVehicleAllocationSchedulable schedulerJob = new UpdateDrivesVehicleAllocationSchedulable(typeOfDrive);
-        System.schedule('update Drives Vehicle Allocation for all the future drive', cronExp, schedulerJob);
+        System.schedule('Test Schedule UpdateDrivesVehicleAllocationSchedulable', cronExp, schedulerJob);
         
         skedSetting.instance.Admin.migrationMode = FALSE;
 

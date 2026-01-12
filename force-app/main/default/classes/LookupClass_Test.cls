@@ -1,25 +1,27 @@
-@isTest(SeeAllData=false)
-public class LookupClass_Test {
+@isTest(SeeAllData = false)
+private class LookupClass_Test {
     
-    @testSetup static void setUpData() {
-        Account acc = new Account(name='Test Account 1');
-        acc.BillingStreet = '2204 Westcrt ln, Apt 213'; 
-        acc.BillingCity = 'Herndon';
-        acc.BillingStateCode = 'MI';
-        acc.BillingPostalCode = '48093';
-        acc.Exclude_from_sponsor_direct_marketing__c = false;
-        insert acc;
+    @testSetup static void prepareTestData() {
+      	skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
         
-        Contact contact = new Contact (firstname='Test Contact First 1',lastname='Test Contact Last 1');
-        contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-        contact.MailingCity = 'Herndon';
-        contact.MailingStateCode = 'MI';
-        contact.MailingPostalCode = '48420';
-        contact.AccountId = acc.id;
-        contact.Original_Service_Date__c=system.today();
-        contact.Primary_Phone__c='Mobile Phone';
-        insert contact;
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+       
+        //insert Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'Test Account';
+        testMobileAccount.BillingPostalCode = '30146';
+        insert testMobileAccount;
         
+        //insert Contact
+        Contact testContact = (Contact)mapTestData.get('CONTACT');
+        testContact.AccountId = testMobileAccount.Id;
+        insert testContact;
+        
+        //insert Portfolios
         BSF_Portfolio__c DMPortfolio = new BSF_Portfolio__c();
         DMPortfolio.Name = 'DM Portfolio';
         DMPortfolio.Portfolio_Code__c = 'MICH_Detroit S';
@@ -37,35 +39,34 @@ public class LookupClass_Test {
         AMPortfolioWithoutABM.Account_Based_Portfolio__c = false;
         AMPortfolioWithoutABM.Territory_Portfolio__c = true;
         AMPortfolioWithoutABM.Portfolio_Type__c = 'Account Manager';
-        AMPortfolioWithoutABM.Parent_Portfolio__c = [SELECT Id FROM BSF_Portfolio__c WHERE Portfolio_Code__c = 'MICH_Detroit S' AND Portfolio_Type__c = 'District Manager'].Id; 
+        AMPortfolioWithoutABM.Parent_Portfolio__c = DMPortfolio.Id; 
         
         insert AMPortfolioWithoutABM;
     }
 
-    @isTest static void lookupTestMethod()
-    {
+    @isTest static void lookupTestMethod() {
         // scenario 1 -> serach term != null , filter = '' for BSF_Portfolio__c
         List<sObject> searchListOnPortfolio = Lookup.search('Portfolio', 'BSF_Portfolio__c', ''); 
-        system.assertEquals(2, searchListOnPortfolio.size());
+        Assert.isTrue(searchListOnPortfolio.size() == 2);
         
         // scenario 2 -> serach term != null , filter = '' for Account
         List<sObject> searchListOnAccount = Lookup.search('Test', 'Account', '');  
-        system.assert(searchListOnAccount.size()==1);
+        Assert.isTrue(searchListOnAccount.size() == 1);
         
         // scenario 3 -> serach term == null , filter = '' for BSF_Portfolio__c
         List<sObject> searchListWithoutSearchTerm = Lookup.search('', 'BSF_Portfolio__c', ''); 
-        system.assert(searchListWithoutSearchTerm.size()==2);
+        Assert.isTrue(searchListWithoutSearchTerm.size() == 2);
         
         // scenario 4 -> serach term == null , filter = '' for Account
         List<sObject> searchListOnAccountWithoutSearchTerm = Lookup.search('', 'Account', ''); 
-        //system.assertEquals(1, searchListOnAccountWithoutSearchTerm.size(), searchListOnAccountWithoutSearchTerm.size());
-        system.assert(searchListOnAccountWithoutSearchTerm.size()!=null);
+        Assert.isTrue(searchListOnAccountWithoutSearchTerm.size() != null);
         
         // scenario 5 -> serach term != null , filter != for BSF_Portfolio__c
-        List<sObject> searchListForPortfolio = Lookup.search('Portfolio', 'BSF_Portfolio__c', 'Account_Based_Portfolio__c =false');
+        List<sObject> searchListForPortfolio = Lookup.search('Portfolio', 'BSF_Portfolio__c', 'Account_Based_Portfolio__c = false');
+        Assert.isTrue(!searchListForPortfolio.isEmpty());
         
         // scenario 5 -> serach term != null , filter != for Account
-        List<sObject> searchListForAccount = Lookup.search('Test', 'Account', 'Exclude_from_sponsor_direct_marketing__c =false');
-        
+        List<sObject> searchListForAccount = Lookup.search('Test', 'Account', 'Exclude_from_sponsor_direct_marketing__c = false');
+        Assert.isTrue(!searchListForAccount.isEmpty());  
     }
 }

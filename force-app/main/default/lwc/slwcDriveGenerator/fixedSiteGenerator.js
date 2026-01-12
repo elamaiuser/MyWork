@@ -501,7 +501,7 @@ class FixedSiteGenerator extends BaseGenerator {
       if (!allAssignedEquipmentsValid || currentAssignedEquipments.length < totalRequired) {
         //slots to be allocated
         let { slotsToAllocate, availableEquipmentsCanBeUsed } = this.helper.preProcessSuggestEquipments(totalRequired, availableEquipments, lockedEquipments);
-        console.log('availaEquip'+JSON.stringify(availableEquipments));
+        
         //try to assign new equipments 
         let drivesWithEquipments = this.helper.suggestEquipments([drive], availableEquipmentsCanBeUsed, slotsToAllocate);
         let newEquipmentJobsMap = {};

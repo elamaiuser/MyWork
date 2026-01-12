@@ -218,6 +218,8 @@ global class skedModels {
         public driveShiftTrade driveShiftTrade;
         public string resourceId;
         public resource resource;
+        public boolean isAPViolated;
+        public string staffingReason;
     }
     
     global virtual class availability extends event {
@@ -380,6 +382,7 @@ global class skedModels {
         public integer travelTimeTo;
         public decimal travelDistanceTo;
         public boolean guarded;
+        public string staffingReason;
         
         public transient event previousEvent;
         public transient event nextEvent;

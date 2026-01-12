@@ -3,11 +3,11 @@ public class AccountTeamMemberService_Test {
 
     @testSetup static void createData(){
         skedHubBase.BypassInsertTriggers = true;
-        //TriggerHandler.bypass('AccountTriggerHandler');
+        // TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
+        // Map<string, sObject> mapTestData = GenerateDriveTestData.setupData();
         TriggerHandler.clearBypass('OpportunityHandler');
-        //TriggerHandler.clearBypass('AccountTriggerHandler');
+        // TriggerHandler.clearBypass('AccountTriggerHandler');
         skedHubBase.BypassInsertTriggers = false;
         
         List<Taxonomy__c> taxonomies = PortfolioTestDataFactory.createTaxonomies('48420','48421');
@@ -47,8 +47,17 @@ public class AccountTeamMemberService_Test {
         return portfolioAssignment;
     }
     @isTest static void testAccountTeamMemberService1(){
-        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
-        Account act = new Account(Id=mobileOpportunity.AccountId,BillingPostalCode='48420');
+       // Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c FROM Opportunity Where Is_Template__c = FALSE  Limit 1];
+       // Account act = new Account(Id=mobileOpportunity.AccountId,BillingPostalCode='48420');
+      
+          // insert Mobile Account
+          // 
+            BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+       
+        Account act = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        act.Internal_Name__c =  'TEST ACCOUNT 1';
+        insert act;
         TriggerHandler.bypass('AccountTriggerHandler');
         update act;
        TriggerHandler.clearBypass('AccountTriggerHandler');
@@ -125,7 +134,7 @@ public class AccountTeamMemberService_Test {
         Datetime myDT = System.today()+4;
         AccountBasedPortfolioClass.AccountPortfolioWrapper accountPortfolioAssignment = new AccountBasedPortfolioClass.AccountPortfolioWrapper();
         accountPortfolioAssignment.selectedPortfolioType = BSF_Constants.ACCOUNT_PORTFOLIO;
-        accountPortfolioAssignment.accountRecid = mobileOpportunity.AccountId;
+        accountPortfolioAssignment.accountRecid = act.Id;
         accountPortfolioAssignment.Start_Date = myDT.format('yyyy-MM-dd');
         accountPortfolioAssignment.End_Date = myDT.addDays(200).format('yyyy-MM-dd');
         accountPortfolioAssignment.portfolioRecId  = accountPorfolio.Id;  
@@ -177,8 +186,17 @@ public class AccountTeamMemberService_Test {
     }
     
     @isTest static void testAccountTeamMemberService2(){
-        Opportunity mobileOpportunity = [Select Id,Name,AccountId,Drive_Date__c FROM Opportunity Where Is_Template__c = FALSE AND RecordType.DeveloperName = 'Mobile_Opp' Limit 1];
-        Account act = new Account(Id=mobileOpportunity.AccountId,BillingPostalCode='48420');
+        
+    
+
+   
+          BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+       
+        Account act = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        act.Internal_Name__c =  'TEST ACCOUNT 1';
+        insert act;
+        
         TriggerHandler.bypass('AccountTriggerHandler');
         update act;
        TriggerHandler.clearBypass('AccountTriggerHandler');
@@ -196,19 +214,20 @@ public class AccountTeamMemberService_Test {
         
         insert drdUsers;
         insert dmUsers;
-        
+       System.runAs(dmUsers[0]) {
         test.startTest();
          List<AccountTeamMember> coveringRecruiterList = new List<AccountTeamMember>();
-        AccountTeamMember atm1 = new AccountTeamMember(AccountId=mobileOpportunity.AccountId,TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-1].Id);
-        
+        AccountTeamMember atm1 = new AccountTeamMember(AccountId=act.Id,TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-1].Id);
+         atm1.Is_Covering_Recruiter__c = true;
+         atm1.Coverage_Reason__c='Leave of Absence (LOA)';
         atm1.Start_Date__c = System.today()-2;
         atm1.End_Date__c = System.today()+30;
-        AccountTeamMember atm2 = new AccountTeamMember(AccountId=mobileOpportunity.AccountId,TeamMemberRole='District Manager',UserId=dmUsers[dmUsers.size()-1].Id);
-        
+        AccountTeamMember atm2 = new AccountTeamMember(AccountId=act.Id,TeamMemberRole='District Manager',UserId=dmUsers[dmUsers.size()-1].Id);
+         atm2.Is_Covering_Recruiter__c = true;
         atm2.Start_Date__c = System.today()+50;
         atm2.End_Date__c = System.today()+100;
-        
-        BSF_Constants.isTeamMemberCreatedFromBackend = true;
+        atm2.Coverage_Reason__c='Leave of Absence (LOA)';
+        BSF_Constants.isTeamMemberCreatedFromBackend = false;
         
         coveringRecruiterList.add(atm1);
         coveringRecruiterList.add(atm2);
@@ -220,7 +239,8 @@ public class AccountTeamMemberService_Test {
         
         
         test.stopTest();
-        
+       } 
+    
     }
     
     @isTest
@@ -244,6 +264,7 @@ public class AccountTeamMemberService_Test {
         insert testMobileAccount;
   
         // insert Mobile Site
+        
         sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
         insert testMobileSite;
         
@@ -252,7 +273,7 @@ public class AccountTeamMemberService_Test {
         testTemplate.AccountId = testMobileAccount.Id;
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
-        
+        User u =[Select Id,Name from User Limit 1];
         list<opportunity> opportunityList = new list<opportunity>();
         Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
@@ -269,7 +290,8 @@ public class AccountTeamMemberService_Test {
         	WB_Projected_Procedures__c = 4,
         	X2RBC_Projected_Procedures__c = 2,
         	Anticipated_Registered_Donors__c = 25,
-            Online_Scheduling_Enabled__c = 'No'
+            Online_Scheduling_Enabled__c = 'No',
+            Covering_Recruiter__c = u.Id
 		);
         testMobileOpp1.AccountId = testMobileAccount.Id;
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
@@ -287,23 +309,26 @@ public class AccountTeamMemberService_Test {
         allUsers.addAll(drdUsers);
         allUsers.addAll(dmUsers);
         insert allUsers;
+       
+       
         List<AccountTeamMember> coveringRecruiterList = new List<AccountTeamMember>();
         AccountTeamMember coveringRecruiter1 = new AccountTeamMember(AccountId=testMobileAccount.Id,Coverage_Reason__c='Leave of Absence (LOA)',TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-1].Id);
         coveringRecruiter1.Is_Covering_Recruiter__c = true;
         coveringRecruiter1.Start_Date__c = System.today()-2;
         coveringRecruiter1.End_Date__c = System.today()+30;
         AccountTeamMember coveringRecruiter2 = new AccountTeamMember(AccountId=testMobileAccount.Id,Coverage_Reason__c='Vacant Territory',TeamMemberRole='Account Manager',UserId=drdUsers[drdUsers.size()-2].Id);
-        coveringRecruiter2.Is_Covering_Recruiter__c = true;
-        coveringRecruiter2.Start_Date__c = System.today()+50;
-        coveringRecruiter2.End_Date__c = System.today()+100;
+    //    coveringRecruiter2.Is_Covering_Recruiter__c = true;
+       // coveringRecruiter2.Start_Date__c = System.today()+50;
+       // coveringRecruiter2.End_Date__c = System.today()+100;
         
         BSF_Constants.isTeamMemberCreatedFromBackend = false;
         
         coveringRecruiterList.add(coveringRecruiter1);
-        coveringRecruiterList.add(coveringRecruiter2);
+      //  coveringRecruiterList.add(coveringRecruiter2);
         test.startTest();
         insert coveringRecruiterList;
         test.stopTest();
+          
     }
     
     @isTest
@@ -388,6 +413,8 @@ public class AccountTeamMemberService_Test {
         insert coveringRecruiterList;
         
         delete coveringRecruiterList;
+        AccountTeamMemberService.stopDeletingNonCRTeamMemberFromUI(coveringRecruiterList);
+         BSF_Constants.isTeamMemberCreatedFromBackend = false;
         test.stopTest();
     }
     

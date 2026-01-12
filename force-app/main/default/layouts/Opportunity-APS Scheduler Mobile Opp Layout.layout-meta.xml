@@ -83,6 +83,10 @@
                 <field>sked_Cancellation_Reason__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Cancellation_Detail__c</field>
+            </layoutItems>
+            <layoutItems>
                 <emptySpace>true</emptySpace>
             </layoutItems>
             <layoutItems>
