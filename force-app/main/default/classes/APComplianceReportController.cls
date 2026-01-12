@@ -31,7 +31,6 @@ public with sharing class APComplianceReportController {
         'name','supervisor','driveName','JName','division','region','co','workDate','type','JOT','role','status',
         'startTime','endTime','apTime','apName','violation','StaffingReason','exc','AType','Subtype','calloutTrade'
     };
-        private static final String NON_INTEGRATED_WB_OPTYPE = 'Non Integrated WB';
 
     private static final Map<String, String> SORT_FIELD_MAPPING = new Map<String, String>{
         'resourceLink'   => 'name',
@@ -382,7 +381,7 @@ public static DatableConfigWrapper searchReport(
         'SELECT Name, sked__Job__c, sked__Job__r.Name, sked__Resource__c, sked__Job__r.sked__Type__c, ' +
         'sked_Start_Date__c, sked_Start_Time__c, sked_Set_End_Time__c, ' +
         'sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.sked_Status__c, ' +
-        'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c, ' +
+        'sked__Job__r.sked_Drive__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c, ' +
         'sked_Drive_Shift_Trade__c, sked_Call_Out_Type__c, sked_Staffing_Reason__c ' +
         'FROM sked__Job_Allocation__c ' +
         'WHERE sked_Start_Date__c >= :startDt ' +
@@ -428,7 +427,10 @@ public static DatableConfigWrapper searchReport(
 
         if (violationOnly && !isViolation) continue;
         if (isViolation) jobViolations++;
-        String jotDisplay = buildDriveOperationDisplay(job.sked__Job__r,job.sked__Job__r.sked_Drive_Shift__r);
+        String jotDisplay = (job.sked__Job__r != null && job.sked__Job__r.sked_Drive__r != null)
+        ? job.sked__Job__r.sked_Drive__r.sked_Drive_Operation_Type__c
+        : '';
+
 
 
         Map<String, String> row = buildRow(
@@ -821,7 +823,7 @@ public static DatableConfigWrapper searchReport(
         }
     }
     @TestVisible
-    private static String buildDriveOperationTypeWhere(List<String> driveOperationTypeFilter) {
+private static String buildDriveOperationTypeWhere(List<String> driveOperationTypeFilter) {
     if (driveOperationTypeFilter == null || driveOperationTypeFilter.isEmpty()) return '';
 
     Set<String> sel = new Set<String>();
@@ -829,49 +831,7 @@ public static DatableConfigWrapper searchReport(
         if (String.isNotBlank(s)) sel.add(s.trim());
     }
     if (sel.isEmpty()) return '';
-
-    List<String> orParts = new List<String>();
-
-    if (sel.contains('Mobile')) {
-        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Mobile\'');
-    }
-    if (sel.contains('Fixed Site')) {
-        orParts.add('sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c = \'Fixed Site\'');
-    }
-
-    if (sel.contains('Non Integrated WB')) {
-        orParts.add(
-            'sked__Job__r.sked_Drive_Shift__r.sked_Drive_Operation_Type__c = \'' +
-            String.escapeSingleQuotes(NON_INTEGRATED_WB_OPTYPE) + '\''
-        );
-    }
-
-    if (orParts.isEmpty()) return '';
-    return ' AND (' + String.join(orParts, ' OR ') + ') ';
-}	@TestVisible
-    private static String buildDriveOperationDisplay(sked__Job__c jobRec,sked_Drive_Shift__c shiftRec) {
-    String driveType = jobRec != null && jobRec.sked_Drive__r != null
-        ? jobRec.sked_Drive__r.sked_Type_of_Drive__c
-        : null;
-
-    String opType = shiftRec != null
-        ? shiftRec.sked_Drive_Operation_Type__c
-        : null;
-
-    if (String.isNotBlank(driveType) && String.isNotBlank(opType)) {
-        return driveType + ' - ' + opType;
-    }
-
-    if (String.isNotBlank(driveType)) {
-        return driveType;
-    }
-
-    if (String.isNotBlank(opType)) {
-        return opType;
-    }
-
-    return '';
+    return ' AND sked__Job__r.sked_Drive__r.sked_Drive_Operation_Type__c IN :driveOperationTypeFilter ';
 }
-
 
 }
