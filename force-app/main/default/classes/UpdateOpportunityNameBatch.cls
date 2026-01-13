@@ -31,12 +31,12 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
             if(isOnlyTemplates) {
                 OpportunityService.generateTemplateOppName(clonedOldOppsList, null);
             } else {
+                clonedOldOppsList = OpportunityService.checkOppNameChange(new Map<Id, Opportunity>(clonedOldOppsList).keySet());
+
                 for (Opportunity opp : clonedOldOppsList) {
                     opp.Is_Account_Internal_Name_Changed__c = true;
                 }
-
                 OpportunityService.updateOpportunityName(clonedOldOppsList, new Map<Id, Opportunity>(lstOpportunities));
-                OpportunityService.GenerateOpportunityName(clonedOldOppsList, null);
             }
         }
 

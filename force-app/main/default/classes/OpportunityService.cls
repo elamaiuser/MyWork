@@ -3856,33 +3856,24 @@ opp.StageName = 'Closed';
     //12/9 FWO - Method used to generate opportunity name (name field of non-template opportunities).  This is replacing the following workflow rules:
     //"Update Opportunity Name with No Site" and "Update Opportunity Name with Site Building"
     public static void GenerateOpportunityName(List<Opportunity> lstNewOpps, map<Id, Opportunity> oppOldTmpMap) {
-        
-        System.debug('### inside opportunity service GenerateOpportunityName');
         List<Opportunity> finalOppList = new List<Opportunity>();
-         Map <String,Schema.RecordTypeInfo> recordTypesOpportunity = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName();
+        Set<Id> oppIdsToCheckOppNameFor = new Set<Id>();
+
+        Map <String,Schema.RecordTypeInfo> recordTypesOpportunity = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id mobileRecTypeId = recordTypesOpportunity.get('Mobile Opp').getRecordTypeId();
-   
-        if(oppOldTmpMap == null) {
-            checkOppNameChange(lstNewOpps);
+        
+        for (opportunity opp : lstNewOpps) {
+            if(opp.Is_Template__c) continue;
+
+            if(oppOldTmpMap == null || (oppOldTmpMap != null && 
+               (opp.RecordTypeId == mobileRecTypeId && oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != opp.Parent_Template_Id__c) || 
+               (opp.RecordTypeId != mobileRecTypeId && oppOldTmpMap.get(opp.Id).Drive_Site__c != opp.Drive_Site__c))) {
+                oppIdsToCheckOppNameFor.add(opp.Id);
+            }
         }
-        //If before update, then only check if template has changed
-        else if(oppOldTmpMap != null) {
-            Set<Id> oppsTemplateChangedIds = new Set<Id>();
-            for(Opportunity opp : lstNewOpps){
-                if(opp.Is_Template__c == false && ((opp.RecordTypeId == mobileRecTypeId && (oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != Opp.Parent_Template_Id__c)) || (opp.RecordTypeId != mobileRecTypeId &&(oppOldTmpMap.get(opp.Id).Drive_Site__c != Opp.Drive_Site__c)))){
-                    oppsTemplateChangedIds.add(opp.Id);
-                } 
-            }
-            if(!oppsTemplateChangedIds.isEmpty()) {
-                List<Opportunity> lstLastestOpps = [
-                    SELECT Id, Name, Is_Template__c, Drive_Site__c, 
-                    Account_Internal_Name__c, Site_Building_Name__c, 
-                    Drive_Site_Name__c, Account_Name__c 
-                    FROM Opportunity 
-                    WHERE Id IN :oppsTemplateChangedIds
-                ];
-                finalOppList = checkOppNameChange(lstLastestOpps);
-            }
+        
+        if(!oppIdsToCheckOppNameFor.isEmpty()) { 
+            finalOppList = checkOppNameChange(oppIdsToCheckOppNameFor);
         }
         
         if(!system.isBatch() && !Test.isRunningTest() && !finalOppList.isEmpty()) {
@@ -3891,11 +3882,22 @@ opp.StageName = 'Closed';
         }
     }
     
-    public static List<Opportunity> checkOppNameChange(List<Opportunity> incomingOppList) {
+    public static List<Opportunity> checkOppNameChange(Set<Id> incomingOppIds) {
         List<Opportunity> finalOppList = new List<Opportunity>();
-        
-        for (opportunity opp : incomingOppList) {
-            if(opp.Is_Template__c == false) { 
+
+        List<Opportunity> lstLastestOpps = [
+            SELECT Id, Name, Is_Template__c, Drive_Site__c, 
+            Account_Internal_Name__c, Site_Building_Name__c, 
+            Drive_Site_Name__c, Account_Name__c, Drive_Name__c,
+            Is_Account_Internal_Name_Changed__c, Drive_Date__c,
+            RecordTypeId, Linked_Opportunity_Drives__c, 
+            Is_this_part_of_MultiDay_Drive__c 
+            FROM Opportunity 
+            WHERE Id IN :incomingOppIds
+        ];
+
+        if(lstLastestOpps != null && !lstLastestOpps.isEmpty()) {
+            for(Opportunity opp : lstLastestOpps) {
                 string tmpOppName;
                 if(opp.Drive_Site__c == null) {
                     tmpOppName = opp.Account_Internal_Name__c + ', TBD';
@@ -3910,6 +3912,7 @@ opp.StageName = 'Closed';
                 }
             }
         }
+
         return finalOppList;
     }
         
