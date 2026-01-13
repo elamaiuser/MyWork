@@ -1130,7 +1130,7 @@ public static void updateTemplateBloodDriveOpportunitiesForAccountNameChange(Lis
     }
 
     if(!system.isBatch() && !Test.isRunningTest() && !oppList.isEmpty()) {
-        UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(oppList, true);
+        UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(oppList, true, true);
         Database.executeBatch(batchOppRecs, 200);
     }
 }
@@ -1158,21 +1158,9 @@ public static void updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync
             AND Is_Template__c = FALSE
         ]);
 
-        Map<Id, Opportunity> clonedOldOppMap; 
-        if (map_oppId_opps != null && !map_oppId_opps.isEmpty()) {
-            clonedOldOppMap = map_oppId_opps.deepClone();
-
-            for (Opportunity opp : clonedOldOppMap.values()) {
-                opp.Is_Account_Internal_Name_Changed__c = true;
-            }
-       
-            OpportunityService.updateOpportunityName(clonedOldOppMap.values(), map_oppId_opps);
-            OpportunityService.GenerateOpportunityName(clonedOldOppMap.values(), null);
-
-            if(!system.isBatch() && !Test.isRunningTest()) {
-                UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(clonedOldOppMap.values(), false);
-                Database.executeBatch(batchOppRecs, 1);
-            }
+        if(!system.isBatch() && !Test.isRunningTest() && map_oppId_opps != null && !map_oppId_opps.isEmpty()) {
+            UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(map_oppId_opps.values(), false, true);
+            Database.executeBatch(batchOppRecs, 1);
         }
     }
 }

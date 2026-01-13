@@ -61,19 +61,18 @@ public with sharing class SiteService {
             opportuntyUpdateList = [
                 SELECT Id, Name, Is_Template__c, 
                 Drive_Site__c, Drive_Site_Name__c,
-                Site_Building_Name__c, Account_Name__c,
-                Account_Internal_Name__c
+                Account_Name__c, Drive_Date__c,
+                Account_Internal_Name__c, RecordTypeId,
+                Is_Account_Internal_Name_Changed__c, Linked_Opportunity_Drives__c,
+                Is_this_part_of_MultiDay_Drive__c
                 FROM Opportunity 
                 WHERE Drive_Site__c IN :siteIds 
                 AND Is_Template__c = FALSE
             ];
             
-            if(!opportuntyUpdateList.isEmpty()) {
-                OpportunityService.GenerateOpportunityName(opportuntyUpdateList, null);
-                if(!system.isBatch() && !Test.isRunningTest()) {
-                    UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(opportuntyUpdateList, false);
-                    Database.executeBatch(batchOppRecs, 200);
-                }
+            if(!system.isBatch() && !Test.isRunningTest() && !opportuntyUpdateList.isEmpty()) {
+                UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(opportuntyUpdateList, false, true);
+                Database.executeBatch(batchOppRecs, 200);
             }
         }
     }
