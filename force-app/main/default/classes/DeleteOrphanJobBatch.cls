@@ -34,50 +34,51 @@ global void execute(Database.BatchableContext bc, List<sked__Job_Allocation__c> 
         Database.deleteResult[] deleteResults;  
         // Delete the Job allocation records
         if (!scope.isEmpty()) {
-                SendNotification(scope);
-            deleteResults = Database.delete(scope,false);    
+            SendNotification(scope);
+            skedHubBase.BypassDeleteTriggers = true;
+            deleteResults = Database.delete(scope,false);
+            skedHubBase.BypassDeleteTriggers = false;
         
-        List<BSF_Error_Log__c> errorLog = BSF_Utilities.createErrorLog(deleteResults,'Delete Orphan Job Allocation','DeleteOrphanJobBatch','Execute','Error','Error occurred while deleting the job allocation record');
-        Database.SaveResult[] insertResult = Database.insert(errorLog, false);
+            List<BSF_Error_Log__c> errorLog = BSF_Utilities.createErrorLog(deleteResults,'Delete Orphan Job Allocation','DeleteOrphanJobBatch','Execute','Error','Error occurred while deleting the job allocation record');
+            Database.SaveResult[] insertResult = Database.insert(errorLog, false);
 
-        //Store the deleted records.
-        //
-        for (Integer i = 0; i < deleteResults.size(); i++) {
-            Database.DeleteResult result = deleteResults[i];
-            if (result.isSuccess()) {
-                sked__Job_Allocation__c deletedRecord = scope[i];
-                String msg = 'Successfully deleted Job Allocation record. ' +
-                    'Id: ' + deletedRecord.Id +
-                    ', Start Time: ' + deletedRecord.sked_Start_Time__c +
-                    ', End Time: ' + deletedRecord.sked_Set_End_Time__c +
-                    // ',Resource Role: ' + deletedRecord.sked_Resource_Role__c +
-                    //',Dual Role: ' + deletedRecord.sked_Dual_Role__c +
-                    // ', Additional Roles: ' + deletedRecord.sked_Additional_Roles__c +
-                    ', Job Id: ' + deletedRecord.sked__Job__c ;
-                    //  ',Drive Name: ' + deletedRecord.sked_Drive_Name__c +
-                    //  ',Drive Date: ' + deletedRecord.sked_Drive_Date__c 
-                
-    
-                BSF_Error_Log__c log = BSF_Utilities.getErrorLog('Delete Orphan Job Allocation','DeleteOrphanJobBatch', 'Execute', 'Success', 'Deleted Job Allocation record',msg);
-                insertErrorLog.add(log);       
-                
+            //Store the deleted records.
+            //
+            for (Integer i = 0; i < deleteResults.size(); i++) {
+                Database.DeleteResult result = deleteResults[i];
+                if (result.isSuccess()) {
+                    sked__Job_Allocation__c deletedRecord = scope[i];
+                    String msg = 'Successfully deleted Job Allocation record. ' +
+                        'Id: ' + deletedRecord.Id +
+                        ', Start Time: ' + deletedRecord.sked_Start_Time__c +
+                        ', End Time: ' + deletedRecord.sked_Set_End_Time__c +
+                        // ',Resource Role: ' + deletedRecord.sked_Resource_Role__c +
+                        //',Dual Role: ' + deletedRecord.sked_Dual_Role__c +
+                        // ', Additional Roles: ' + deletedRecord.sked_Additional_Roles__c +
+                        ', Job Id: ' + deletedRecord.sked__Job__c ;
+                        //  ',Drive Name: ' + deletedRecord.sked_Drive_Name__c +
+                        //  ',Drive Date: ' + deletedRecord.sked_Drive_Date__c 
+                    
+        
+                    BSF_Error_Log__c log = BSF_Utilities.getErrorLog('Delete Orphan Job Allocation','DeleteOrphanJobBatch', 'Execute', 'Success', 'Deleted Job Allocation record',msg);
+                    insertErrorLog.add(log);       
+                    
+                }
+            }
+            if (!insertErrorLog.isEmpty()) {
+                Database.insert(insertErrorLog, false);
             }
         }
-if (!insertErrorLog.isEmpty()) {
-    Database.insert(insertErrorLog, false);
-}
-}
-} catch( Exception ex){
+    } catch( Exception ex){
     List<BSF_Error_Log__c> errorLogToInsert = new List<BSF_Error_Log__c>{
         BSF_Utilities.createBsfErrorLogForExceptions( ex, 'DeleteOrphanJobBatch', 'Execute', 'Error', 'Deleting Job Allocation got failed.', 'sked__Job_Allocation__c', null )};
         Database.SaveResult[] logInsertResult = Database.insert(errorLogToInsert, FALSE);
-}
-
-}
-
-    global void finish(Database.BatchableContext bc) {
-    
     }
+}
+
+global void finish(Database.BatchableContext bc) {
+    
+}
 public void SendNotification(List<sked__Job_Allocation__c> orphanJobAllocationRecords) {
     
         String subject = 'Orphan Job Allocations Found';
