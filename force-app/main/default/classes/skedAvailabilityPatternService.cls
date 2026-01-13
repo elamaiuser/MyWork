@@ -298,6 +298,256 @@ global class skedAvailabilityPatternService extends skedDataService {
         upsert skedPatternResource;
     }
     
+    public void validateOverlappingPatternResources(skedModels.availabilityPattern model) {
+        if (model.availabilityPatternResources != NULL && !model.availabilityPatternResources.isEmpty()) {
+            Date maxDateValue = skedDateTimeUtils.MAX_DATE;
+            string maxDateValueStr = skedDateTimeUtils.MAX_DATE_STR;
+            
+            Set<Id> resourceIds = new Set<Id>();
+            string minDateStr, maxDateStr;
+            
+            for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
+                resourceIds.add(patternResource.resourceId);
+                
+                string prEndDate = patternResource.endDate == NULL ? maxDateValueStr : patternResource.endDate;
+                
+                minDateStr = minDateStr == NULL || patternResource.startDate < minDateStr ? patternResource.startDate : minDateStr;
+                maxDateStr = maxDateStr == NULL || prEndDate > maxDateStr ? prEndDate : maxDateStr;
+            }
+            
+            Date minDate = skedDateTimeUtils.getDateFromIsoString(minDateStr);
+            Date maxDate = maxDateStr == NULL ? maxDateValue : skedDateTimeUtils.getDateFromIsoString(maxDateStr);
+            
+            List<sked__Availability_Pattern_Resource__c> patternResources = [
+                SELECT Id, sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
+                sked__Availability_Pattern__r.Name, sked__Availability_Pattern__r.sked__Pattern__c
+                FROM sked__Availability_Pattern_Resource__c
+                WHERE sked__Resource__c IN :resourceIds
+                AND sked_Start_Date__c <= :maxDate
+                AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :minDate)
+            ];
+            
+            Map<Id, List<sked__Availability_Pattern_Resource__c>> map_resourceId_patternResource = new Map<Id, List<sked__Availability_Pattern_Resource__c>>();
+            
+            for (sked__Availability_Pattern_Resource__c patternResource : patternResources) {
+                if (!map_resourceId_patternResource.containsKey(patternResource.sked__Resource__c)) {
+                    map_resourceId_patternResource.put(patternResource.sked__Resource__c, new List<sked__Availability_Pattern_Resource__c>());
+                }
+                map_resourceId_patternResource.get(patternResource.sked__Resource__c).add(patternResource);
+            }
+            
+            // Parse model pattern once before the loop
+            skedAvailabilityPatternData modelPatternData = (skedAvailabilityPatternData) JSON.deserialize(model.pattern, skedAvailabilityPatternData.class);
+
+            for (skedModels.availabilityPatternResource patternResource : model.availabilityPatternResources) {
+                Date prStartDate = skedDateTimeUtils.getDateFromIsoString(patternResource.startDate);
+                Date prEndDate = patternResource.endDate != NULL ? skedDateTimeUtils.getDateFromIsoString(patternResource.endDate) : maxDateValue;
+
+                patternResource.isOverlapping = false;
+                patternResource.overlappingPatternResources = new List<skedModels.overlappingPatternResource>();
+
+                if (map_resourceId_patternResource.containsKey(patternResource.resourceId)) {
+                    for (sked__Availability_Pattern_Resource__c existingPatternResource : map_resourceId_patternResource.get(patternResource.resourceId)) {
+                        if (patternResource.id != existingPatternResource.Id) {
+                            Date existingPatternResourceEndDate = existingPatternResource.sked_End_Date__c != NULL ? existingPatternResource.sked_End_Date__c : maxDateValue;
+                            
+                            // Check date range overlap
+                            if (prStartDate <= existingPatternResourceEndDate && prEndDate >= existingPatternResource.sked_Start_Date__c) {
+                                // Parse existing pattern data
+                                skedAvailabilityPatternData existingPatternData = (skedAvailabilityPatternData) JSON.deserialize(
+                                    existingPatternResource.sked__Availability_Pattern__r.sked__Pattern__c,
+                                    skedAvailabilityPatternData.class
+                                );
+                                
+                                // Check pattern day overlap
+                                if (hasPatternsOverlap(
+                                    modelPatternData,
+                                    existingPatternData,
+                                    prStartDate,
+                                    prEndDate,
+                                    existingPatternResource.sked_Start_Date__c,
+                                    existingPatternResourceEndDate
+                                )) {
+                                    patternResource.isOverlapping = true;
+                                    
+                                    skedModels.overlappingPatternResource overlap = new skedModels.overlappingPatternResource();
+                                    overlap.startDate = JSON.serialize(existingPatternResource.sked_Start_Date__c).replace('"', '');
+                                    overlap.endDate = existingPatternResource.sked_End_Date__c != NULL ? JSON.serialize(existingPatternResource.sked_End_Date__c).replace('"', '') : '';
+                                    overlap.patternName = existingPatternResource.sked__Availability_Pattern__r.Name;
+                                    
+                                    patternResource.overlappingPatternResources.add(overlap);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean hasPatternsOverlap(
+        skedAvailabilityPatternData pattern1Data,
+        skedAvailabilityPatternData pattern2Data,
+        Date pattern1StartDate,
+        Date pattern1EndDate,
+        Date pattern2StartDate,
+        Date pattern2EndDate
+    ) {
+        if (pattern1Data == NULL || pattern2Data == NULL) {
+            return false;
+        }
+
+        if (pattern1Data.days == NULL || pattern1Data.repeatWeeks == NULL) {
+            return false;
+        }
+
+        if (pattern2Data.days == NULL || pattern2Data.repeatWeeks == NULL) {
+            return false;
+        }
+
+        // Build weekday maps for pattern1
+        Set<string> weekdays1 = new Set<string>();
+        Map<string, skedAvailabilityPatternData.dayModel> weekdayToDayData1 = new Map<string, skedAvailabilityPatternData.dayModel>();
+        for (skedAvailabilityPatternData.dayModel day : pattern1Data.days) {
+            if (day.weekday != NULL) {
+                weekdays1.add(day.weekday);
+                weekdayToDayData1.put(day.weekday, day);
+            }
+        }
+
+        // Build weekday maps for pattern2
+        Set<string> weekdays2 = new Set<string>();
+        Map<string, skedAvailabilityPatternData.dayModel> weekdayToDayData2 = new Map<string, skedAvailabilityPatternData.dayModel>();
+        for (skedAvailabilityPatternData.dayModel day : pattern2Data.days) {
+            if (day.weekday != NULL) {
+                weekdays2.add(day.weekday);
+                weekdayToDayData2.put(day.weekday, day);
+            }
+        }
+        
+        // Find common weekdays
+        Set<string> commonWeekdays = new Set<string>();
+        for (string weekday : weekdays1) {
+            if (weekdays2.contains(weekday)) {
+                commonWeekdays.add(weekday);
+            }
+        }
+        
+        // If no common weekdays, no overlap
+        if (commonWeekdays.isEmpty()) {
+            return false;
+        }
+        
+        // Calculate overlapping date range
+        Date overlapStartDate = pattern1StartDate > pattern2StartDate ? pattern1StartDate : pattern2StartDate;
+        Date overlapEndDate = pattern1EndDate < pattern2EndDate ? pattern1EndDate : pattern2EndDate;
+
+        Integer daysToCheck = (pattern1Data.repeatWeeks > pattern2Data.repeatWeeks ? pattern1Data.repeatWeeks : pattern2Data.repeatWeeks) * 7;
+        Date checkEndDate = overlapStartDate.addDays(daysToCheck - 1);
+        checkEndDate = checkEndDate < overlapEndDate ? checkEndDate : overlapEndDate;
+
+        // Check if patterns actually work on the same weeks considering repeatWeeks
+        return doPatternsWorkOnSameWeeks(
+            pattern1StartDate,
+            pattern1Data.repeatWeeks,
+            pattern2StartDate,
+            pattern2Data.repeatWeeks,
+            overlapStartDate,
+            checkEndDate,
+            commonWeekdays,
+            weekdayToDayData1,
+            weekdayToDayData2
+        );
+    }
+    
+    private boolean doPatternsWorkOnSameWeeks(
+        Date pattern1StartDate,
+        Integer repeatWeeks1,
+        Date pattern2StartDate,
+        Integer repeatWeeks2,
+        Date overlapStartDate,
+        Date overlapEndDate,
+        Set<string> commonWeekdays,
+        Map<string, skedAvailabilityPatternData.dayModel> weekdayToDayData1,
+        Map<string, skedAvailabilityPatternData.dayModel> weekdayToDayData2
+    ) {
+        Date currentDate = overlapStartDate;
+        while (currentDate <= overlapEndDate) {
+            string weekdayName = getWeekdayName(currentDate);
+
+            if (commonWeekdays.contains(weekdayName)) {
+                boolean pattern1Working = isPatternWorkingOnDate(currentDate, pattern1StartDate, repeatWeeks1);
+                boolean pattern2Working = isPatternWorkingOnDate(currentDate, pattern2StartDate, repeatWeeks2);
+
+                if (pattern1Working && pattern2Working) {
+                    // Both patterns work on this date, now check if their time intervals overlap
+                    skedAvailabilityPatternData.dayModel day1 = weekdayToDayData1.get(weekdayName);
+                    skedAvailabilityPatternData.dayModel day2 = weekdayToDayData2.get(weekdayName);
+
+                    if (doDayIntervalsOverlap(day1, day2)) {
+                        return true;
+                    }
+                }
+            }
+
+            currentDate = currentDate.addDays(1);
+        }
+
+        return false;
+    }
+    
+    private boolean isPatternWorkingOnDate(Date checkDate, Date patternStartDate, Integer repeatWeeks) {
+        Integer daysSinceStart = patternStartDate.daysBetween(checkDate);
+        Integer weekNumber = daysSinceStart / 7;
+        
+        return Math.mod(weekNumber, repeatWeeks) == 0;
+    }
+    
+    private string getWeekdayName(Date d) {
+        DateTime dt = DateTime.newInstance(d, Time.newInstance(0, 0, 0, 0));
+        return dt.format('EEE').toUpperCase();
+    }
+
+    private boolean doTimeIntervalsOverlap(skedAvailabilityPatternData.intervalModel interval1, skedAvailabilityPatternData.intervalModel interval2) {
+        // Convert time strings to minutes
+        integer start1Minutes = skedDateTimeUtils.convertTimeStrToMinutes(interval1.startTime);
+        integer end1Minutes = skedDateTimeUtils.convertTimeStrToMinutes(interval1.endTime);
+        integer start2Minutes = skedDateTimeUtils.convertTimeStrToMinutes(interval2.startTime);
+        integer end2Minutes = skedDateTimeUtils.convertTimeStrToMinutes(interval2.endTime);
+
+        // Handle the special case where "00:00" as end time means end of day (1440 minutes)
+        if (end1Minutes == 0) {
+            end1Minutes = 1440;
+        }
+        if (end2Minutes == 0) {
+            end2Minutes = 1440;
+        }
+
+        // Two intervals overlap if: start1 < end2 AND start2 < end1
+        return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
+    }
+
+    private boolean doDayIntervalsOverlap(skedAvailabilityPatternData.dayModel day1, skedAvailabilityPatternData.dayModel day2) {
+        if (day1 == null || day2 == null) {
+            return false;
+        }
+
+        if (day1.intervals == null || day2.intervals == null) {
+            return false;
+        }
+
+        // Check each interval from day1 against each interval from day2
+        for (skedAvailabilityPatternData.intervalModel interval1 : day1.intervals) {
+            for (skedAvailabilityPatternData.intervalModel interval2 : day2.intervals) {
+                if (doTimeIntervalsOverlap(interval1, interval2)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /*********************************************************** Private ***********************************************************/
     private skedSkeduloApiData.availabilityPatternPayload generateAvailabilityPatternPayload(skedModels.availabilityPattern model) {
         skedSkeduloApiData.availabilityPatternPayload payload = new skedSkeduloApiData.availabilityPatternPayload();

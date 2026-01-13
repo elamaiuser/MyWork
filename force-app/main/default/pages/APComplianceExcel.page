@@ -28,6 +28,7 @@
                     <th>Resource</th>
                     <th>Supervisor</th>
                     <th>Drive Name</th>
+                    <th> Drive Operation Type</th>
                     <th>Division</th>
                     <th>Job/Activity Name</th>
                     <th>Region</th>
@@ -54,6 +55,7 @@
                         <td>{!row['name']}</td>
                         <td>{!row['supervisor']}</td>
                         <td>{!row['driveName']}</td>
+                        <td>{!row['JOT']}</td>
                         <td>{!row['division']}</td>
                         <td>{!row['JName']}</td>
                         <td>{!row['region']}</td>

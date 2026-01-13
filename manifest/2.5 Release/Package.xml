@@ -187,6 +187,7 @@
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_13423_Object_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_13448_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Remove_Read</members>
         <members>BSF_Access_Control_Rule.HRP_14060_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_14122_1_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_14122_2_Field_Permission_Set</members>
@@ -210,6 +211,14 @@
         <members>Custom_Messages.Time_Block_Validation_From_DOC</members>
         <members>Custom_Messages.Time_Block_Validation_From_Opportunity</members>
         <members>Object_Specific_Setting.Drive_Affiliation_Settings</members>
+        <members>Taxonomy_Run_Config.TRS_BAP</members>
+		<members>Taxonomy_Run_Config.TRS_BBS</members>
+		<members>Taxonomy_Run_Config.TRS_BCB</members>
+		<members>Taxonomy_Run_Config.TRS_BFS</members>
+		<members>Taxonomy_Run_Config.TRS_BRC</members>
+		<members>Taxonomy_Run_Config.TRS_BRM</members>
+		<members>Taxonomy_Run_Config.TRS_BRS</members>
+		<members>Taxonomy_Run_Config.TRS_BSC</members>
         <name>CustomMetadata</name>
     </types>
     <types>
