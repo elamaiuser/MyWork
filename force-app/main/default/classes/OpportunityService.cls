@@ -3869,37 +3869,51 @@ opp.StageName = 'Closed';
         else if(oppOldTmpMap != null) {
             Set<Id> oppsTemplateChangedIds = new Set<Id>();
             for(Opportunity opp : lstNewOpps){
-                if(opp.Is_Template__c == false && ((opp.RecordTypeId==mobileRecTypeId && (oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != Opp.Parent_Template_Id__c)) || (opp.RecordTypeId!=mobileRecTypeId &&(oppOldTmpMap.get(opp.Id).Drive_Site__c != Opp.Drive_Site__c)))){
-                    finalOppList.add(opp);
+                if(opp.Is_Template__c == false && ((opp.RecordTypeId == mobileRecTypeId && (oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != Opp.Parent_Template_Id__c)) || (opp.RecordTypeId != mobileRecTypeId &&(oppOldTmpMap.get(opp.Id).Drive_Site__c != Opp.Drive_Site__c)))){
+                    oppsTemplateChangedIds.add(opp.Id);
                 } 
             }
-            if(!finalOppList.isEmpty()) {
-                checkOppNameChange(finalOppList);
+            if(!oppsTemplateChangedIds.isEmpty()) {
+                List<Opportunity> lstLastestOpps = [
+                    SELECT Id, Name, Is_Template__c, Drive_Site__c, 
+                    Account_Internal_Name__c, Site_Building_Name__c, 
+                    Drive_Site_Name__c, Account_Name__c 
+                    FROM Opportunity 
+                    WHERE Id IN :oppsTemplateChangedIds
+                ];
+                finalOppList = checkOppNameChange(lstLastestOpps);
             }
+        }
+        
+        if(!system.isBatch() && !Test.isRunningTest() && !finalOppList.isEmpty()) {
+            UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(finalOppList, false, false);
+            Database.executeBatch(batchOppRecs, 1);
         }
     }
     
-    public static void checkOppNameChange(List<Opportunity> incomingOppList) {
+    public static List<Opportunity> checkOppNameChange(List<Opportunity> incomingOppList) {
+        List<Opportunity> finalOppList = new List<Opportunity>();
         
         for (opportunity opp : incomingOppList) {
-            if(opp.Is_Template__c == false && opp.Drive_Site__c == null) {
-                string tmpTbdOppName = opp.Account_Internal_Name__c + ', TBD';
-                if(opp.Name != tmpTbdOppName) {
-                    opp.Name =  opp.Account_Internal_Name__c + ', TBD';   
+            if(opp.Is_Template__c == false) { 
+                string tmpOppName;
+                if(opp.Drive_Site__c == null) {
+                    tmpOppName = opp.Account_Internal_Name__c + ', TBD';
+                } else {
+                    tmpOppName = opp.Account_Name__c + ', ' + opp.Drive_Site_Name__c; // HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
+                    tmpOppName = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName; //HRP-12136
                 }
-            }                    
-            else if (opp.Is_Template__c == false && opp.Drive_Site__c != null) {
-                string tmpOppName = opp.Account_Name__c + ', ' + opp.Drive_Site_Name__c; // HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
-                opp.Name = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
-                //commented HRP-12136
-                /*if(tmpOppName.length() > 120) {
-                    tmpOppName = tmpOppName.substring(0,120);
+
+                if(opp.Name != tmpOppName) {
+                    opp.Name = tmpOppName;
+                    finalOppList.add(opp);
                 }
-                */
-                //commented HRP-12136  
             }
         }
+        return finalOppList;
     }
+        
+
     //HRP-9101
     public static void populateDriveWorksheetData(List<Opportunity> newItems)
     {
