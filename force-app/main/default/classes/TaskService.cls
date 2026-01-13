@@ -570,4 +570,48 @@ public with sharing class TaskService {
         return drdSystemUserId;
     }
     // HRP-13426 --> end
+    public static void populateTaskTypeFromMetadata(List<Task> newTasks) {
+
+        if(newTasks == null || newTasks.isEmpty()){
+            return;
+        }
+
+        Set<String> subjectsNeedingType = new Set<String>();
+
+        for(Task t : newTasks){
+            if(String.isBlank(t.Type) && String.isNotBlank(t.Subject)){
+                subjectsNeedingType.add(t.Subject.trim());
+            }
+        }
+
+        if(subjectsNeedingType.isEmpty()){
+            return;
+        }
+
+        Map<String, String> subjectToTypeMap = new Map<String, String>();
+
+        for(Task_Reassignment_Matrix__mdt mdt :
+            [
+                SELECT Task_Subject__c, Task_Type__c
+                FROM Task_Reassignment_Matrix__mdt
+                WHERE Task_Subject__c IN :subjectsNeedingType
+                AND Task_Type__c != null
+            ]
+        ){
+            subjectToTypeMap.put(mdt.Task_Subject__c, mdt.Task_Type__c);
+        }
+
+        if(subjectToTypeMap.isEmpty()){
+            return;
+        }
+
+        for(Task t : newTasks){
+            if(String.isBlank(t.Type) && String.isNotBlank(t.Subject)){
+                String resolvedType = subjectToTypeMap.get(t.Subject);
+                if(resolvedType != null){
+                    t.Type = resolvedType;
+                }
+            }
+        }
+    }
 }
