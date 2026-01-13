@@ -34,6 +34,8 @@
         <members>createPreDriveTaskBatch</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
+        <members>TaskService</members>
+        <members>TaskTriggerHandler</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -43,6 +45,11 @@
     <types>
         <members>TaskType</members>        
         <name>StandardValueSet</name>
+    </types>
+     <types>
+        <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>   
+        <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>        
+        <name>Layout</name>
     </types>
     <version>64.0</version>
 </Package>
