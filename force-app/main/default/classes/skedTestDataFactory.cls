@@ -409,7 +409,7 @@ public class skedTestDataFactory {
         skedAvailabilityPatternData weeklyPatternData = new skedAvailabilityPatternData();
         weeklyPatternData.type = 'weekly';
         weeklyPatternData.repeatWeeks = 1;
-        List<string> weekdays = new List<string> {'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'};
+        List<string> weekdays = new List<string> {'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'};
         weeklyPatternData.days = new List<skedAvailabilityPatternData.dayModel>();
         for (string weekday : weekdays) {
             skedAvailabilityPatternData.dayModel day = new skedAvailabilityPatternData.dayModel();
@@ -434,7 +434,7 @@ public class skedTestDataFactory {
         customPatternData.type = 'custom';
         customPatternData.repeatWeeks = 1;
         customPatternData.lengthDays = 1;
-        List<string> customWeekdays = new List<string> {'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'};
+        List<string> customWeekdays = new List<string> {'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'};
         customPatternData.days = new List<skedAvailabilityPatternData.dayModel>();
         for (integer index = 0; index < customWeekdays.size(); index++) {
             string weekday = customWeekdays.get(index);
