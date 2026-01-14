@@ -23,6 +23,10 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
         Set<Id> resourceIds = new Set<Id>();
         DateTime currentTime = system.now();
         
+        for (sked__Availability_Pattern_Resource__c newRecord : newRecords) {
+            resourceIds.add(newRecord.sked__Resource__c);
+        }
+        
         List<sked__Activity_Resource__c> skedActivityResources = [
             SELECT Id, sked_Start1__c, sked_End__c
             FROM sked__Activity_Resource__c
