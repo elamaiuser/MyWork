@@ -64,8 +64,7 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
             resourceIds.add(newRecord.sked__Resource__c);
             
             if (newRecord.sked__End__c == NULL && newRecord.sked_End_Date__c == NULL) {
-                newRecord.sked_End_Date__c = skedDateTimeUtils.MAX_DATE;
-                newRecord.sked_End_Time__c = Time.newInstance(0, 0, 0, 0);
+                newRecord.sked__End__c = skedDateTimeUtils.MAX_DATETIME;
             }
         }
         
@@ -86,8 +85,7 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
     private void populateData(List<sked__Availability_Pattern_Resource__c> newRecords, Map<Id, sked__Availability_Pattern_Resource__c> oldMap) {
         for (sked__Availability_Pattern_Resource__c newRecord : newRecords) {
             if (newRecord.sked__End__c == NULL && newRecord.sked_End_Date__c == NULL) {
-                newRecord.sked_End_Date__c = skedDateTimeUtils.MAX_DATE;
-                newRecord.sked_End_Time__c = Time.newInstance(0, 0, 0, 0);
+                newRecord.sked__End__c = skedDateTimeUtils.MAX_DATETIME;
             }
         }
     }
