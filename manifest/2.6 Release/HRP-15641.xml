@@ -8,6 +8,7 @@
         <members>skedRacController</members>
         <members>skedRacStory_Test</members>
         <members>skedResourceHandler</members>
+        <members>skedTestDataFactory</members>
         <name>ApexClass</name>
     </types>
 	<types>
