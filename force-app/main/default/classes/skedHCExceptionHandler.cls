@@ -208,11 +208,16 @@ public class skedHCExceptionHandler extends skedTriggerHub {
         if (record.skedHC__Job__c != NULL && !string.isBlank(record.skedHC__Exception__c)) {
             record.sked_UniqueKey__c = record.skedHC__Job__c + ':' + record.skedHC__Exception__c;
         }
-        if (record.sked_Resource_Hours_Record__c != NULL && !string.isBlank(record.sked_Exception_Code__c)) {
-            record.sked_UniqueKey__c = record.sked_Resource_Hours_Record__c + ':' + record.sked_Exception_Code__c;
-        }
-        if (record.sked_Drive_Shift__c != NULL && !string.isBlank(record.sked_Exception_Code__c)) {
-            record.sked_UniqueKey__c = record.sked_Drive_Shift__c + ':' + record.sked_Exception_Code__c;
+        if (!string.isBlank(record.sked_Exception_Code__c)) {
+            if (record.sked_Resource_Hours_Record__c != NULL) {
+                record.sked_UniqueKey__c = record.sked_Resource_Hours_Record__c + ':' + record.sked_Exception_Code__c;
+            }
+            if (record.sked_Drive_Shift__c != NULL) {
+                record.sked_UniqueKey__c = record.sked_Drive_Shift__c + ':' + record.sked_Exception_Code__c;
+            }
+            if (record.skedHC__Activity__c != NULL && record.skedHC__Resource__c != NULL ) {
+                record.sked_UniqueKey__c = record.skedHC__Activity__c + ':' + record.skedHC__Resource__c + ':' + record.sked_Exception_Code__c;
+            }
         }
     }
     
