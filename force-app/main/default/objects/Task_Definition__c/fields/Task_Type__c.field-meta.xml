@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Task_Type__c</fullName>
+    <label>Task Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>72 Hour Check-In</fullName>
+                <default>false</default>
+                <label>72 Hour Check-In</label>
+            </value>
+            <value>
+                <fullName>Announcement Coordination</fullName>
+                <default>false</default>
+                <label>Announcement Coordination</label>
+            </value>
+            <value>
+                <fullName>Annual Meeting</fullName>
+                <default>false</default>
+                <label>Annual Meeting</label>
+            </value>
+            <value>
+                <fullName>Appointment Schedule Maintenance</fullName>
+                <default>false</default>
+                <label>Appointment Schedule Maintenance</label>
+            </value>
+            <value>
+                <fullName>Award Recognition Planning</fullName>
+                <default>false</default>
+                <label>Award Recognition Planning</label>
+            </value>
+            <value>
+                <fullName>Contingency Planning</fullName>
+                <default>false</default>
+                <label>Contingency Planning</label>
+            </value>
+            <value>
+                <fullName>Continuous Engagement</fullName>
+                <default>false</default>
+                <label>Continuous Engagement</label>
+            </value>
+            <value>
+                <fullName>Coordinate Publicity &amp; Branding Needs</fullName>
+                <default>false</default>
+                <label>Coordinate Publicity &amp; Branding Needs</label>
+            </value>
+            <value>
+                <fullName>Day of Drive Collections Check</fullName>
+                <default>false</default>
+                <label>Day of Drive Collections Check</label>
+            </value>
+            <value>
+                <fullName>Dedicated Drive Authorization Form</fullName>
+                <default>false</default>
+                <label>Dedicated Drive Authorization Form</label>
+            </value>
+            <value>
+                <fullName>Drive Logistics Check</fullName>
+                <default>false</default>
+                <label>Drive Logistics Check</label>
+            </value>
+            <value>
+                <fullName>External Leadership Engagement</fullName>
+                <default>false</default>
+                <label>External Leadership Engagement</label>
+            </value>
+            <value>
+                <fullName>Internal Partners Engagement</fullName>
+                <default>false</default>
+                <label>Internal Partners Engagement</label>
+            </value>
+            <value>
+                <fullName>Marketing Program Review</fullName>
+                <default>false</default>
+                <label>Marketing Program Review</label>
+            </value>
+            <value>
+                <fullName>Mission Impact and Inclusion Planning</fullName>
+                <default>false</default>
+                <label>Mission Impact and Inclusion Planning</label>
+            </value>
+            <value>
+                <fullName>MOI COI TLA</fullName>
+                <default>false</default>
+                <label>MOI COI TLA</label>
+            </value>
+            <value>
+                <fullName>National Partnership SLA</fullName>
+                <default>false</default>
+                <label>National Partnership SLA</label>
+            </value>
+            <value>
+                <fullName>One Week Check-in</fullName>
+                <default>false</default>
+                <label>One Week Check-in</label>
+            </value>
+            <value>
+                <fullName>Parental Consent Check</fullName>
+                <default>false</default>
+                <label>Parental Consent Check</label>
+            </value>
+            <value>
+                <fullName>Parking Needs</fullName>
+                <default>false</default>
+                <label>Parking Needs</label>
+            </value>
+            <value>
+                <fullName>Post Drive Analysis AM</fullName>
+                <default>false</default>
+                <label>Post Drive Analysis AM</label>
+            </value>
+            <value>
+                <fullName>Post Drive Analysis SBPM</fullName>
+                <default>false</default>
+                <label>Post Drive Analysis SBPM</label>
+            </value>
+            <value>
+                <fullName>Power Red Review</fullName>
+                <default>false</default>
+                <label>Power Red Review</label>
+            </value>
+            <value>
+                <fullName>Publicity Order Not Created</fullName>
+                <default>false</default>
+                <label>Publicity Order Not Created</label>
+            </value>
+            <value>
+                <fullName>Publicity Review Needed</fullName>
+                <default>false</default>
+                <label>Publicity Review Needed</label>
+            </value>
+            <value>
+                <fullName>Quarterly Meeting</fullName>
+                <default>false</default>
+                <label>Quarterly Meeting</label>
+            </value>
+            <value>
+                <fullName>Recruitment Assessment</fullName>
+                <default>false</default>
+                <label>Recruitment Assessment</label>
+            </value>
+            <value>
+                <fullName>Recruitment Presentation Tabling</fullName>
+                <default>false</default>
+                <label>Recruitment Presentation Tabling</label>
+            </value>
+            <value>
+                <fullName>Recruitment Strategy Meeting</fullName>
+                <default>false</default>
+                <label>Recruitment Strategy Meeting</label>
+            </value>
+            <value>
+                <fullName>Room Rentals</fullName>
+                <default>false</default>
+                <label>Room Rentals</label>
+            </value>
+            <value>
+                <fullName>SBPM Sponsor Date Confirmation</fullName>
+                <default>false</default>
+                <label>SBPM Sponsor Date Confirmation</label>
+            </value>
+            <value>
+                <fullName>Send Local Media Outreach</fullName>
+                <default>false</default>
+                <label>Send Local Media Outreach</label>
+            </value>
+            <value>
+                <fullName>Standing Date Confirmation</fullName>
+                <default>false</default>
+                <label>Standing Date Confirmation</label>
+            </value>
+            <value>
+                <fullName>Submit DL &amp; Background Checks</fullName>
+                <default>false</default>
+                <label>Submit DL &amp; Background Checks</label>
+            </value>
+            <value>
+                <fullName>Volunteer Assignments</fullName>
+                <default>false</default>
+                <label>Volunteer Assignments</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
