@@ -3,13 +3,7 @@ public without sharing class slwcDataService {
     @AuraEnabled(cacheable=false)
     public static Object executeQuery(String query) {
         //return Database.query(query);
-        List<sObject> result = DynamicSoqlUtil.executeDynamicQuery(
-                                    query,
-                                    'slwcDataService',
-                                    null,      // ORDER BY must come from parsed SOQL only
-                                    2000,      // safe default limit
-                                    0
-                                );
+        List<sObject> result = DynamicSoqlUtil.executeDynamicQuery(query,'slwcDataService',null,2000,0);
         return result;
     }
     
@@ -22,13 +16,7 @@ public without sharing class slwcDataService {
             queryResultModel result = new queryResultModel();
             result.key = query.key;
             //List<sObject> sObjects = Database.query(query.query);
-            List<sObject> sObjects = DynamicSoqlUtil.executeDynamicQuery(
-                                        query.query,
-                                        'slwcDataService',
-                                        null,      // ORDER BY must come from parsed SOQL only
-                                        2000,      // safe default limit
-                                        0
-                                    );
+            List<sObject> sObjects = DynamicSoqlUtil.executeDynamicQuery(query.query,'slwcDataService',null,2000,0);
             result.result = sObjects;
             for (sObject sObj : sObjects) {
                 if (string.isBlank(query.fieldToExtractId)) {

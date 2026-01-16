@@ -30,21 +30,8 @@ public class GenericRelatedListController {
         List<String> recordIds = recordId;
         List<String> soqlQueryList = new List<String>();
         try {
-<<<<<<< HEAD
             String soqlQueryForAll = soqlQuery;
             if(soqlQuery.contains('Task')||soqlQuery.contains('task'))
-=======
-            // HRP-16273 & HRP-16417 SECURITY VALIDATION =================
-            DynamicSoqlUtil.validateSoql(sanitizedSoql);
-            // Extract object name safely
-            String objectName = DynamicSoqlUtil.extractObjectName(sanitizedSoql);
-
-            // Enforce object whitelist
-            DynamicSoqlUtil.validateObject('GenericRelatedListController',objectName);
-
-            //String soqlQueryForAll = sanitizedSoql;
-            if(sanitizedSoql.contains('Task')||sanitizedSoql.contains('task'))
->>>>>>> 2d3e944c61dfe837801b56f835b238a3249d72fc
             {
               sanitizedSoql += ' recordIds OR Delegate__c IN: recordIds)';  
             } else
@@ -77,7 +64,6 @@ public class GenericRelatedListController {
                 orderByClause = 'ORDER BY CreatedDate DESC';
             }
            //soqlQuery += ' Order by CreatedDate DESC limit '+limits+' Offset '+recordOffset;
-<<<<<<< HEAD
             soqlQuery = ' ' + DynamicSoqlUtil.adjustTheBindingFieldName(soqlQuery,recordId);
             System.debug('HRP-16273 Account Ids added in soqlQuery : ' + soqlQuery );
             //sObjectList = Database.Query(soqlQuery);
@@ -88,14 +74,6 @@ public class GenericRelatedListController {
                             limits,
                             recordOffset
                         );
-=======
-            sanitizedSoql += ' ' + orderByClause + ' limit :limits Offset :recordOffset';
-            System.debug('sanitizedSoql is ' + sanitizedSoql );
-            String trustedSoql = sanitizedSoql;
-            //sObjectList = Database.Query(soqlQuery);
-            sObjectList = DynamicSoqlUtil.safeQuery(trustedSoql,'GenericRelatedListController',recordIds,limits,recordOffset);
-
->>>>>>> 2d3e944c61dfe837801b56f835b238a3249d72fc
             system.debug( 'sObjectList is ' + sObjectList );
             wrapperClass.sObjectList = sObjectList;
             System.debug('wrapperClass.sObjectList: ' + wrapperClass.sObjectList);
