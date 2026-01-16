@@ -1,15 +1,16 @@
 public without sharing class slwcDataService {
-
+    
     @AuraEnabled(cacheable=false)
     public static Object executeQuery(String query) {
         //return Database.query(query);
-        //HRP-16273 fix
-        String rawSoql = query;
-        DynamicSoqlUtil.validateSoql(rawSoql);
-        String objectName = DynamicSoqlUtil.extractObjectName(rawSoql);
-        DynamicSoqlUtil.validateObject('slwcDataService', objectName);
-        String trustedSoql = rawSoql;
-        return DynamicSoqlUtil.safeQuery(trustedSoql,'slwcDataService');
+        List<sObject> result = DynamicSoqlUtil.executeDynamicQuery(
+                                    query,
+                                    'slwcDataService',
+                                    null,      // ORDER BY must come from parsed SOQL only
+                                    2000,      // safe default limit
+                                    0
+                                );
+        return result;
     }
     
     @AuraEnabled(cacheable=false)
@@ -21,13 +22,13 @@ public without sharing class slwcDataService {
             queryResultModel result = new queryResultModel();
             result.key = query.key;
             //List<sObject> sObjects = Database.query(query.query);
-            //HRP-16273 fix
-            String rawSoql = query.query;
-            DynamicSoqlUtil.validateSoql(rawSoql);
-            String objectName = DynamicSoqlUtil.extractObjectName(rawSoql);
-            DynamicSoqlUtil.validateObject('slwcDataService', objectName);
-            String trustedSoql = rawSoql;
-            List<sObject> sObjects = DynamicSoqlUtil.safeQuery(trustedSoql,'slwcDataService');
+            List<sObject> sObjects = DynamicSoqlUtil.executeDynamicQuery(
+                                        query.query,
+                                        'slwcDataService',
+                                        null,      // ORDER BY must come from parsed SOQL only
+                                        2000,      // safe default limit
+                                        0
+                                    );
             result.result = sObjects;
             for (sObject sObj : sObjects) {
                 if (string.isBlank(query.fieldToExtractId)) {
@@ -425,4 +426,5 @@ public without sharing class slwcDataService {
         @AuraEnabled public string label {get;set;}
         @AuraEnabled public string value {get;set;}
     }
+    
 }
