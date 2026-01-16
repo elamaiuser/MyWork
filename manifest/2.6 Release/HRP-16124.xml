@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>BSF_TaskPlanningWizardController</members>		
+		<name>ApexClass</name>
+	</types>
+	<types>
 		<members>Task_Definition__c.Assigned_To__c</members>
 		<members>Task_Definition__c.Category__c</members>
 		<members>Task_Definition__c.Creation_Date_Offset__c</members>
@@ -21,6 +25,10 @@
 		<members>Task_Package_Item__c</members>
 		<members>Task_Package__c</members>
 		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>bsfTaskPlanningWizard</members>
+		<name>LightningComponentBundle</name>
 	</types>
 	<version>66.0</version>
 </Package>
