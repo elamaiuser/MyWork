@@ -28,7 +28,7 @@
     </values>
     <values>
         <field>Task_Subject__c</field>
-        <value xsi:type="xsd:string">Recruitment Planning Meeting</value>
+        <value xsi:type="xsd:string">Recruitment Strategy Meeting</value>
     </values>
     <values>
         <field>Task_Type__c</field>

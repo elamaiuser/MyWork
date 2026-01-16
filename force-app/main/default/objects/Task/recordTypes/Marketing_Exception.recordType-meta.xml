@@ -4,6 +4,25 @@
     <active>true</active>
     <label>Marketing Exception</label>
     <picklistValues>
+        <picklist>Location__c</picklist>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Face to Face</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Phone Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Virtual</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Priority</picklist>
         <values>
             <fullName>High</fullName>
