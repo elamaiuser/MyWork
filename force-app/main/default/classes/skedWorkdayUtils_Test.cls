@@ -117,4 +117,59 @@ private class skedWorkdayUtils_Test {
         );
         insert pto;
     }
+    @isTest
+static void verifyUnavailabilityBalance_Test() {
+    Test.setMock(HttpCalloutMock.class, new skedWorkdayGetPlanBalancesMock());
+    skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+    Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
+    skedSetting.instance.Admin.workdayIntegration = true;
+
+    sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
+
+    Test.startTest();
+        skedWorkdayUtils.verifyUnavailabilityBalance(
+            testResource,
+            Date.today(),
+            120,
+            skedConstants.UNAVAILABILITY_TYPE_PTO
+        );
+    Test.stopTest();
+}
+
+private class skedWorkdayGetPlanBalancesMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+        HttpResponse res = new HttpResponse();
+        res.setStatusCode(200);
+        res.setBody(
+            '<?xml version="1.0" encoding="UTF-8"?>' +
+            '<wd:Report_Data xmlns:wd="urn:com.workday.report/Web_Services_Time_Off_Balances_Skedulo">' +
+            '  <wd:Report_Entry>' +
+            '    <wd:Eligible_Time_Off_Plans_for_Worker_group>' +
+            '      <wd:time_off_plan wd:Descriptor="PTO - 7 Day Lag">' +
+            '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
+            '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
+            '      </wd:time_off_plan>' +
+            '      <wd:balance>202.46</wd:balance>' +
+            '    </wd:Eligible_Time_Off_Plans_for_Worker_group>' +
+            '    <wd:All_Eligible_Time_Offs_for_Worker_group>' +
+            '      <wd:plan wd:Descriptor="PTO - 7 Day Lag">' +
+            '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
+            '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
+            '      </wd:plan>' +
+            '      <wd:Time_Off_Reasons wd:Descriptor="Planned">' +
+            '        <wd:ID wd:type="WID">e865d498431c010203429a881a350002</wd:ID>' +
+            '        <wd:ID wd:type="Time_Off_Reason_ID">Planned - PTO - 7 Day Lag - Time Off</wd:ID>' +
+            '      </wd:Time_Off_Reasons>' +
+            '      <wd:Time_Off_Reasons wd:Descriptor="Unplanned">' +
+            '        <wd:ID wd:type="WID">e865d498431c010203429a881a350003</wd:ID>' +
+            '        <wd:ID wd:type="Time_Off_Reason_ID">Unplanned - PTO - 7 Day Lag - Time Off</wd:ID>' +
+            '      </wd:Time_Off_Reasons>' +
+            '    </wd:All_Eligible_Time_Offs_for_Worker_group>' +
+            '  </wd:Report_Entry>' +
+            '</wd:Report_Data>'
+        );
+        return res;
+    }
+}
+
 }
