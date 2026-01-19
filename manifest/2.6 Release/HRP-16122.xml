@@ -5,6 +5,13 @@
         <members>Task_Reassignment_Matrix.Recruitment_Task</members>
         <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
         <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
+        <members>Task_Report_Link__mdt.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link__mdt.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link__mdt.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link__mdt.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link__mdt.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link__mdt.DRMS_Audit_report</members>
+        <members>Task_Report_Link__mdt.Donor_Appointments_Recruitment_Task</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>

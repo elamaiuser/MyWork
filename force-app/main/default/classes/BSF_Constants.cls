@@ -143,7 +143,7 @@ public class BSF_Constants {
     public static final String PUBLICITY_REVIEW_NEEDED_TASK = 'Publicity Review Needed';
     public static final String PRE_DRIVE_SECURITY_TASK = 'Security Information Completion';
     public static final String X72_HOUR_CHECK_IN_TASK = '72 Hour Check in - System Generated';
-    public static final String RECRUITMENT_TASK = 'Recruitment Task - System Generated';
+    public static final String RECRUITMENT_TASK = 'Recruitment Strategy Meeting';
     public static final String SPONSOR_PLANNING_MEETING_TASK = 'Sponsor Planning Meeting - System Generated';
     public static final String MARKETING_EXCEPTION_TASK = 'Request for Marketing Exception';
 
