@@ -76,4 +76,9 @@
         <default>false</default>
         <label>Template Order Task</label>
     </standardValue>
+    <standardValue>
+        <fullName>1 Week Check-In</fullName>
+        <default>false</default>
+        <label>1 Week Check-In</label>
+    </standardValue>
 </StandardValueSet>
