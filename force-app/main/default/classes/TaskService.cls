@@ -659,7 +659,7 @@ public with sharing class TaskService {
             t.WhatId = oppId;
             t.Type = matrix.Task_Type__c;
             t.ActivityDate = opp.Drive_Date__c != null
-                            ? opp.Drive_Date__c.addDays(0 - Integer.valueOf(matrix.Creation_Date_Offset__c))
+                            ? opp.Drive_Date__c.addDays(0 - Integer.valueOf(matrix.Due_Date_Offset__c))
                             : null;
             t.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,matrix.Assigned_To__c);
             t.Status = BSF_Constants.STATUS_NOT_STARTED;
