@@ -354,7 +354,7 @@ public class BSF_Constants {
       
     //HRP-7123 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis';
-    public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
+    public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Strategy Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
     
     public static final String ACCOUNT_TYPE_EDUCATION = 'Education';
@@ -372,7 +372,7 @@ public class BSF_Constants {
 
     //HRP-13426 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
-    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis / Future Drive Planning SBPM';
     public static final String DRD_SYSTEM_USER = 'DRD System UserM';
 
     //Special Circumstances Badges -> HRP-701

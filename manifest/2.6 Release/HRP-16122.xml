@@ -24,5 +24,17 @@
         <members>Task-Marketing Exception</members>
         <name>Layout</name>
     </types>
+    <types>
+        <members>BSF_Constants</members>
+        <members>BSF_TaskCreationBatch</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>OpportunityService</members>
+        <members>TaskGenerationBatch</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Task_Creation_on_Drive_Status_Complete</members>
+        <name>Flow</name>
+    </types>
 	<version>65.0</version>
 </Package>

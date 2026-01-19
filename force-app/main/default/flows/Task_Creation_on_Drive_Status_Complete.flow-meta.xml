@@ -293,7 +293,7 @@
             <label>SBPM task Not present</label>
         </rules>
     </decisions>
-    <description>HRP-16392</description>
+    <description>HRP-16122</description>
     <environments>Default</environments>
     <formulas>
         <description>Assign the task to the opp&apos;s account manager if present. Else it will go straight to the opportunity owner</description>
@@ -516,7 +516,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <textTemplates>
         <name>SubjectTask2</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>Post Drive Analysis SBPM</text>
+        <text>Post Drive Analysis / Future Drive Planning SBPM</text>
     </textTemplates>
     <variables>
         <name>New_Post_Drive_Analysis_AM_Task</name>

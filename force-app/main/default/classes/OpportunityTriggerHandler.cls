@@ -597,14 +597,14 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             
             if(super.getTriggerMethodsToBypass().indexOf('createRecruitmentTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Executing...');
-                OpportunityService.createRecruitmentTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+                //OpportunityService.createRecruitmentTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Bypassed');
             }
             
 			if(super.getTriggerMethodsToBypass().indexOf('createSponsorPlanningMeetingTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Executing...');
-                OpportunityService.createSponsorPlanningMeetingTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+                //OpportunityService.createSponsorPlanningMeetingTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Bypassed');
             }
