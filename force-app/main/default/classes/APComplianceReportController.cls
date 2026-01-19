@@ -384,7 +384,7 @@ public static DatableConfigWrapper searchReport(
         'sked__Job__r.sked_Drive__r.sked_Drive_Operation_Type__c, sked__Job__r.sked_Drive__r.sked_Type_of_Drive__c, ' +
         'sked_Drive_Shift_Trade__c, sked_Call_Out_Type__c, sked_Staffing_Reason__c ' +
         'FROM sked__Job_Allocation__c ' +
-        'WHERE sked_Start_Date__c >= :startDt ' +
+        'WHERE sked_Start_Date__c >= :startDt and sked__Status__c != \'Deleted\'' +
         'AND sked_Start_Date__c <= :endDt ' +
         'AND sked__Resource__c IN ' + idClause + ' ';
 
