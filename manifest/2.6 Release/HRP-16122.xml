@@ -3,6 +3,8 @@
 	<types>
 		<members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
         <members>Task_Reassignment_Matrix.Recruitment_Task</members>
+        <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
+        <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
