@@ -614,4 +614,94 @@ public with sharing class TaskService {
             }
         }
     }
+    public static void createOneWeekCheckInTasks(Map<Id, Opportunity> oppMap) {
+        if(oppMap == null || oppMap.isEmpty()){
+            return;
+        }
+        Task_Reassignment_Matrix__mdt matrix = Task_Reassignment_Matrix__mdt.getInstance('One_Week_Check_in');
+
+        Map<Id, Task> existingTasksByOpp = new Map<Id, Task>();
+        for (Task t : [
+            SELECT Id, WhatId
+            FROM Task
+            WHERE WhatId IN :oppMap.keySet()
+            AND Type = :matrix.Task_Type__c
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ]) {
+            existingTasksByOpp.put(t.WhatId, t);
+        }
+
+        List<Task> tasksToInsert = new List<Task>();
+
+        List<OpportunityTeamMember> allOpportunityTeamMembers = [SELECT Id, OpportunityId, TeamMemberRole, UserId
+                                                                 FROM OpportunityTeamMember
+                                                                 WHERE TeamMemberRole IN (:BSF_Constants.DISTRICT_MANAGER, :BSF_Constants.ACCOUNT_SPECIALIST, :BSF_Constants.ACCOUNT_SPECIALIST)
+                                                                 AND OpportunityId IN :oppMap.keySet()
+                                                                ];
+        
+        
+        Map<Id, List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id, List<OpportunityTeamMember>>();
+        for (OpportunityTeamMember oppteamem : allOpportunityTeamMembers) {
+            if (!oppTeamMembersMap.containsKey(oppteamem.OpportunityId)) {
+                oppTeamMembersMap.put(oppteamem.OpportunityId, new List<OpportunityTeamMember>());
+            }
+            oppTeamMembersMap.get(oppteamem.OpportunityId).add(oppteamem);
+        }
+
+        for (Id oppId : oppMap.keySet()) {
+            if (existingTasksByOpp.containsKey(oppId)){
+                continue;
+            }
+
+            Opportunity opp = oppMap.get(oppId);
+
+            Task t = new Task();
+            t.WhatId = oppId;
+            t.Type = matrix.Task_Type__c;
+            t.ActivityDate = opp.Drive_Date__c != null
+                            ? opp.Drive_Date__c.addDays(0 - Integer.valueOf(matrix.Creation_Date_Offset__c))
+                            : null;
+            t.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,matrix.Assigned_To__c);
+            t.Status = BSF_Constants.STATUS_NOT_STARTED;
+            t.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
+            t.Drive_Date__c = opp.Drive_Date__c;
+            tasksToInsert.add(t);
+        }
+
+        if (tasksToInsert.size() > 0) {
+            Database.SaveResult[] srList = Database.insert(tasksToInsert, false);
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Insert task','TaskService','createOneWeekCheckInTasks','Error', 'Error in Inserting Tasks for One Week Check-In');
+            if(!errorList.isEmpty()){
+                Database.insert(errorList, true);
+            }
+        } 
+    }
+
+    public static void cancelOneWeekCheckInTasks(Set<Id> oppids) {
+        if(oppids == null || oppids.isEmpty()){
+            return;
+        }
+        Task_Reassignment_Matrix__mdt matrix = Task_Reassignment_Matrix__mdt.getInstance('One_Week_Check_in');
+
+        Map<Id, Task> existingTasksByOpp = new Map<Id, Task>();
+        List<Task> tasksToUpdate = new List<Task>();
+        for (Task t : [
+            SELECT Id, WhatId
+            FROM Task
+            WHERE WhatId IN :oppids
+            AND Type = :matrix.Task_Type__c
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ]) {
+            t.Status = BSF_Constants.STATUS_CANCELLED;
+            tasksToUpdate.add(t);
+        }
+        if (tasksToUpdate.size() > 0) {
+            Database.SaveResult[] srList = Database.update(tasksToUpdate, false);
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOneWeekCheckInTasks','Error', 'Error in Cancelling Tasks for One Week Check-In');
+            if(!errorList.isEmpty()){
+                Database.insert(errorList, true);
+            }
+        } 
+    }
+
 }

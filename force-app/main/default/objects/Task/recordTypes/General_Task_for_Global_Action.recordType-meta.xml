@@ -5,25 +5,6 @@
     <description>This is the record type for Global Action</description>
     <label>General Task for Global Action</label>
     <picklistValues>
-        <picklist>Location__c</picklist>
-        <values>
-            <fullName>Email</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Face to Face</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Phone Call</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Virtual</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Priority</picklist>
         <values>
             <fullName>High</fullName>
@@ -74,6 +55,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Type</picklist>
+        <values>
+            <fullName>1 Week Check-In</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>72 Hour Check In</fullName>
             <default>false</default>
