@@ -56,6 +56,10 @@
     <picklistValues>
         <picklist>Type</picklist>
         <values>
+            <fullName>1 Week Check-In</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>72 Hour Check In</fullName>
             <default>false</default>
         </values>
