@@ -705,7 +705,7 @@ public without sharing class DriveTriggerService {
             }
         }
         if(!oppIdsToCreateTasks.isEmpty()) {
-            Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([SELECT Id, 
+            Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([SELECT Id, OwnerId,
                                                                             Drive_Date__c,
                                                                             Account_Manager__c 
                                                                     FROM Opportunity 

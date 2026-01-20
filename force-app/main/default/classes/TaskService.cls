@@ -654,17 +654,37 @@ public with sharing class TaskService {
             }
 
             Opportunity opp = oppMap.get(oppId);
+            Id distmng, accsp;
+            for (OpportunityTeamMember t : oppTeamMembersMap.get(opp.Id)) {
+                if (t.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER){
+                    distmng = t.UserId;
+                }
+                if (t.TeamMemberRole == BSF_Constants.ACCOUNT_SPECIALIST){
+                     accsp = t.UserId;
+                }
+            }
 
             Task t = new Task();
+            t.Subject = matrix.Task_Subject__c;
             t.WhatId = oppId;
             t.Type = matrix.Task_Type__c;
             t.ActivityDate = opp.Drive_Date__c != null
                             ? opp.Drive_Date__c.addDays(0 - Integer.valueOf(matrix.Due_Date_Offset__c))
                             : null;
-            t.OwnerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,matrix.Assigned_To__c);
             t.Status = BSF_Constants.STATUS_NOT_STARTED;
             t.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
             t.Drive_Date__c = opp.Drive_Date__c;
+            if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_MANAGER)){
+                t.OwnerId = opp.Account_Manager__c != null ? opp.Account_Manager__c :
+                            accsp != null ? accsp : distmng != null ? distmng : opp.OwnerId;
+
+            }else if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST)){
+                t.OwnerId = accsp != null ? accsp : distmng != null ? distmng : opp.OwnerId;
+
+            }else if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER)){
+                t.OwnerId = distmng != null ? distmng : opp.OwnerId;
+
+            }
             tasksToInsert.add(t);
         }
 
