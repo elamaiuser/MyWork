@@ -5,5 +5,14 @@
 		<members>skedWorkdayUtils_Test</members>
 		<name>ApexClass</name>
 	</types>
+	<types>
+		<members>General_Reports/Time_Off_Request_Evaluation_Report_JBj</members>
+		<members>General_Reports/Time_Off_Request_Evaluation_Report_WDerr</members>
+		<name>Report</name>
+	</types>
+	<types>
+		<members>Resources_with_Availability</members>
+		<name>ReportType</name>
+	</types>
 	<version>65.0</version>
 </Package>
