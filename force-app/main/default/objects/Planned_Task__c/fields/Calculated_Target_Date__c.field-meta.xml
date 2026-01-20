@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculated_Target_Date__c</fullName>
+    <formula>CASE(Text( Scheduling_Method__c),
+				&quot;Days Offset&quot;, (Related_Opportunity__r.Drive_Date__c - User_Defined_Offset__c),
+				&quot;Target Date&quot;,Target_Date__c,
+				NULL
+				)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Calculated Target Date</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>
