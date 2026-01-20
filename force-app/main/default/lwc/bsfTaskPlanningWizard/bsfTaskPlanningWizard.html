@@ -2,154 +2,109 @@
     <lightning-card title="Task Planning Wizard" icon-name="standard:flow">
         <div class="slds-p-around_medium">
             
-            <!-- 1. READ ONLY NOTIFICATION -->
-            <!-- Displayed when the Drive is Confirmed -->
-            <template if:true={isReadOnly}>
+            <!-- 1. LOCK STATUS -->
+            <template if:true={isPlanningLocked}>
                 <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_medium" role="alert">
-                    <span class="slds-assistive-text">info</span>
-                    <span class="slds-icon_container slds-icon-utility-user slds-m-right_x-small">
-                        <lightning-icon icon-name="utility:lock" size="x-small" variant="inverse"></lightning-icon>
-                    </span>
-                    <h2>
-                        <strong>Confirmed Drive:</strong> The plan is locked. Please manage tasks directly on the Timeline.
-                    </h2>
+                    <lightning-icon icon-name="utility:lock" size="x-small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                    <h2><strong>Confirmed Drive:</strong> The plan is locked and cannot be modified here.</h2>
                 </div>
             </template>
 
             <!-- 2. PATH SELECTION -->
             <div class="slds-box slds-theme_shade slds-m-bottom_medium">
-                <lightning-radio-group name="pathOptions"
+                <lightning-radio-group name="activePlanningPath"
                     label="Select Planning Path"
                     options={pathOptions}
-                    value={selectedPath}
+                    value={activePlanningPath}
                     onchange={handlePathChangeRequest} 
                     type="button"
-                    disabled={isReadOnly}>
+                    disabled={isPlanningLocked}>
                 </lightning-radio-group>
             </div>
 
-            <!-- 3. LOADER -->
+            <!-- 3. MAIN CONTENT -->
             <template if:true={isLoading}>
-                <div class="slds-p-around_large slds-text-align_center">
-                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-                </div>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
             </template>
 
-            <!-- 4. PACKAGE BUNDLES -->
-            <template if:true={showBundles}>
+            <template if:true={isDataLoaded}>
                 <div class="slds-scrollable_y" style="max-height: 600px;">
-                    
-                    <template for:each={bundleList} for:item="bundle">
-                        
-                        <!-- Dynamic Section Class handles Expand/Collapse visibility -->
-                        <div key={bundle.id} class={bundle.sectionClass}>
+                    <template for:each={packageGroups} for:item="packageGroup">
+                        <div key={packageGroup.packageId} class={packageGroup.containerClass}>
                             
-                            <!-- A. HEADER ROW -->
+                            <!-- PACKAGE HEADER -->
                             <div class="slds-section__title slds-theme_shade slds-p-around_small">
                                 <div class="slds-grid slds-grid_vertical-align-center">
-                                    
-                                    <!-- Chevron Button -->
                                     <div class="slds-col slds-grow-none slds-m-right_small">
-                                        <lightning-button-icon icon-name={bundle.chevronIcon} variant="bare" 
-                                            data-bundle-id={bundle.id} onclick={handleToggleSection}
-                                            alternative-text="Toggle Section">
+                                        <lightning-button-icon icon-name={packageGroup.chevronIcon} variant="bare" 
+                                            data-package-id={packageGroup.packageId} onclick={handleToggleSection}>
                                         </lightning-button-icon>
                                     </div>
 
-                                    <!-- Title & Selection Controls -->
                                     <div class="slds-col slds-grid slds-grid_vertical-align-center">
-                                        
-                                        <!-- Scenario: Standard/Required Package (Locked Label) -->
-                                        <template if:true={bundle.isStandard}>
-                                            <strong>{bundle.name}</strong>
-                                            <lightning-badge label="Standard" class="slds-theme_success slds-m-left_small"></lightning-badge>
+                                        <template if:true={packageGroup.isStandard}>
+                                            <strong>{packageGroup.name}</strong>
+                                            <lightning-badge label="Required" class="slds-theme_success slds-m-left_small"></lightning-badge>
                                         </template>
 
-                                        <!-- Scenario: Flexible Package (Checkbox) -->
-                                        <template if:false={bundle.isStandard}>
-                                            <lightning-input type="checkbox" label={bundle.name} 
-                                                class="header-checkbox" checked={bundle.isAllSelected}
-                                                data-bundle-id={bundle.id} onchange={handleSelectAll}
-                                                disabled={isReadOnly}>
+                                        <template if:false={packageGroup.isStandard}>
+                                            <lightning-input type="checkbox" label={packageGroup.name} 
+                                                checked={packageGroup.isAllSelected} data-package-id={packageGroup.packageId} 
+                                                onchange={handleSelectAllInGroup} disabled={isPlanningLocked}>
                                             </lightning-input>
                                         </template>
                                     </div>
 
-                                    <!-- Count Badge -->
                                     <div class="slds-col slds-text-align_right">
-                                        <span class="slds-badge">{bundle.selectedCount} Selected</span>
+                                        <span class="slds-badge">{packageGroup.selectedCount} Tasks</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- B. TASK TABLE CONTENT -->
+                            <!-- TASK TABLE -->
                             <div class="slds-section__content slds-p-horizontal_small">
-                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <table class="slds-table slds-table_bordered">
                                     <thead>
                                         <tr class="slds-text-title_caps">
-                                            <th style="width: 40px;"></th> <!-- Checkbox Col -->
-                                            <th>Task Name</th>
-                                            <th style="width: 250px;">Task Due Date Configuration</th>
+                                            <th style="width: 40px;"></th>
+                                            <th>Task Description</th>
+                                            <th style="width: 250px;">Timing Configuration</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <template for:each={bundle.tasks} for:item="task">
-                                            <tr key={task.uniqueKey} class={task.rowClass}>
-                                                
-                                                <!-- Checkbox -->
+                                        <template for:each={packageGroup.tasks} for:item="taskItem">
+                                            <tr key={taskItem.uniqueKey} class={taskItem.rowClass}>
                                                 <td>
-                                                    <lightning-input type="checkbox" checked={task.isChecked}
-                                                        disabled={task.isLocked} data-task-id={task.id}
-                                                        data-bundle-id={bundle.id} onchange={handleTaskCheck}>
+                                                    <lightning-input type="checkbox" checked={taskItem.isChecked}
+                                                        disabled={taskItem.isLocked} data-task-id={taskItem.taskDefinitionId}
+                                                        data-package-id={packageGroup.packageId} onchange={handleTaskSelection}>
                                                     </lightning-input>
                                                 </td>
-
-                                                <!-- Task Name + Info Icon -->
                                                 <td>
                                                     <div class="slds-grid slds-grid_vertical-align-center">
-                                                        <div class="slds-truncate slds-m-right_x-small" title={task.subject}>
-                                                            {task.subject}
-                                                        </div>
-                                                        <template if:true={task.description}>
-                                                            <lightning-helptext content={task.description}></lightning-helptext>
+                                                        <span class="slds-truncate" title={taskItem.subject}>{taskItem.subject}</span>
+                                                        <template if:true={taskItem.description}>
+                                                            <lightning-helptext content={taskItem.description} class="slds-m-left_xx-small"></lightning-helptext>
                                                         </template>
                                                     </div>
                                                 </td>
-
-                                                <!-- Input Fields (Conditional based on Method) -->
                                                 <td>
-                                                    <!-- 1. Days Offset (Number) -->
-                                                    <template if:true={task.isDaysOffset}>
-                                                        <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
-                                                            <div class="slds-col slds-grow-none">
-                                                                <lightning-input type="number" variant="label-hidden"
-                                                                    value={task.userOffset} disabled={task.inputDisabled}
-                                                                    data-task-id={task.id} data-bundle-id={bundle.id}
-                                                                    onchange={handleOffsetChange} class="short-input"
-                                                                    min="0">
-                                                                </lightning-input>
-                                                            </div>
-                                                            <div class="slds-col">
-                                                                <!-- Dynamic Label: "Days Prior" or "Days After" -->
-                                                                <span class="slds-text-body_small">{task.offsetLabel}</span>
-                                                            </div>
+                                                    <template if:true={taskItem.isDriveDependent}>
+                                                        <div class="slds-grid slds-grid_vertical-align-center">
+                                                            <lightning-input type="number" variant="label-hidden"
+                                                                value={taskItem.userOffset} disabled={taskItem.isInputDisabled}
+                                                                data-task-id={taskItem.taskDefinitionId} data-package-id={packageGroup.packageId}
+                                                                onchange={handleOffsetChange} class="short-input" min="0">
+                                                            </lightning-input>
+                                                            <span class="slds-text-body_small slds-m-left_x-small">{taskItem.offsetLabel}</span>
                                                         </div>
                                                     </template>
-
-                                                    <!-- 2. Target Date (Calendar) -->
-                                                    <template if:false={task.isDaysOffset}>
-                                                        <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
-                                                            <div class="slds-col">
-                                                                <lightning-input type="date" variant="label-hidden"
-                                                                    value={task.userDate} disabled={task.inputDisabled}
-                                                                    data-task-id={task.id} data-bundle-id={bundle.id}
-                                                                    onchange={handleDateChange}>
-                                                                </lightning-input>
-                                                            </div>
-                                                            <div class="slds-col">
-                                                                <span class="slds-text-body_small">Due Date</span>
-                                                            </div>
-                                                        </div>
+                                                    <template if:false={taskItem.isDriveDependent}>
+                                                        <lightning-input type="date" variant="label-hidden"
+                                                            value={taskItem.userDate} disabled={taskItem.isInputDisabled}
+                                                            data-task-id={taskItem.taskDefinitionId} data-package-id={packageGroup.packageId}
+                                                            onchange={handleDateChange}>
+                                                        </lightning-input>
                                                     </template>
                                                 </td>
                                             </tr>
@@ -161,37 +116,31 @@
                     </template>
                 </div>
 
-                <!-- Footer / Save Button -->
                 <div class="slds-m-top_medium footer-sticky">
-                    <template if:false={isReadOnly}>
-                        <lightning-button label="Save Plan" variant="brand" onclick={handleSave} class="slds-size_full slds-button_stretch"></lightning-button>
+                    <template if:false={isPlanningLocked}>
+                        <lightning-button label="Persist Plan" variant="brand" onclick={persistTaskPlan} class="slds-button_stretch"></lightning-button>
                     </template>
                 </div>
             </template>
         </div>
 
-        <!-- 5. CONFIRMATION MODAL -->
-        <template if:true={showConfirmation}>
-            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <!-- PATH CHANGE MODAL -->
+        <template if:true={isPathChangeModalOpen}>
+            <section role="dialog" class="slds-modal slds-fade-in-open">
                 <div class="slds-modal__container">
                     <header class="slds-modal__header">
-                        <h2 class="slds-text-heading_medium">Confirm Path Change</h2>
+                        <h2 class="slds-text-heading_medium">Confirm Path Transition</h2>
                     </header>
-                    <div class="slds-modal__content slds-p-around_medium">
-                        <p class="slds-text-align_center">
-                            Recruitment Team confirming w/ Process
-                            <br/><br/>
-                            <strong>Proceed with path change?</strong>
-                        </p>
+                    <div class="slds-modal__content slds-p-around_medium slds-text-align_center">
+                        <p>Are you sure you want to change the planning path? Existing configurations may be reset.</p>
                     </div>
                     <footer class="slds-modal__footer">
-                        <lightning-button label="Cancel" variant="neutral" onclick={cancelPathChange}></lightning-button>
-                        <lightning-button label="Confirm" variant="brand" onclick={confirmPathChange} class="slds-m-left_small"></lightning-button>
+                        <lightning-button label="Cancel" onclick={cancelPathChange}></lightning-button>
+                        <lightning-button label="Confirm" variant="brand" onclick={executePathChange} class="slds-m-left_small"></lightning-button>
                     </footer>
                 </div>
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
         </template>
-
     </lightning-card>
 </template>

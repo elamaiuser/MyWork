@@ -1,3 +1,7 @@
+/**
+ * @Description        : Controller for Task Planning Wizard. Handles metadata-driven
+ *                       task configuration for Accounts, Opportunities, and Templates.
+ **/
 public with sharing class BSF_TaskPlanningWizardController {
 
     // ============================================================================
@@ -11,26 +15,24 @@ public with sharing class BSF_TaskPlanningWizardController {
     }
 
     public class PackageGroupWrapper {
-        @AuraEnabled public String id;            // Task_Package__c Id
-        @AuraEnabled public String name;          // Package_Name__c
-        @AuraEnabled public Integer sortOrder;    // Sort_Order__c
-        @AuraEnabled public Boolean isStandard;   // Derived from Category logic
+        @AuraEnabled public Id packageId;
+        @AuraEnabled public String name;
+        @AuraEnabled public Integer sortOrder;
+        @AuraEnabled public Boolean isStandard;
         @AuraEnabled public List<TaskItemWrapper> tasks;
     }
 
     public class TaskItemWrapper implements Comparable {
-        @AuraEnabled public String id;            // Task_Definition__c Id
+        @AuraEnabled public Id taskDefinitionId;
         @AuraEnabled public String subject;
         @AuraEnabled public String description;
-        @AuraEnabled public String schedulingMethod; // 'Days Offset' or 'Target Date'
+        @AuraEnabled public String schedulingMethod; 
         @AuraEnabled public Integer defaultOffset;
 
         @AuraEnabled public Boolean isChecked = false;
-        @AuraEnabled public Boolean isProcessed = false;
         @AuraEnabled public Integer userOffset;
         @AuraEnabled public String userDate;
 
-        // UI Helpers
         @AuraEnabled public Boolean isDaysOffset;
         @AuraEnabled public Boolean isPostDrive;
 
@@ -39,6 +41,7 @@ public with sharing class BSF_TaskPlanningWizardController {
             TaskItemWrapper other = (TaskItemWrapper) compareTo;
             Integer thisOffset = this.defaultOffset != null ? this.defaultOffset : 0;
             Integer otherOffset = other.defaultOffset != null ? other.defaultOffset : 0;
+            
             if (thisOffset > otherOffset) {
                 return -1;
             }
@@ -50,338 +53,339 @@ public with sharing class BSF_TaskPlanningWizardController {
     }
 
     public class SavePayload {
-        public String definitionId; // Task_Definition__c Id
-        public String schedulingMethod;
-        public Integer userOffset;
-        public String userDate;
-        public String packageId;    // Task_Package__c Id
+        @AuraEnabled public String definitionId; 
+        @AuraEnabled public String schedulingMethod;
+        @AuraEnabled public Integer userOffset;
+        @AuraEnabled public String userDate;
+        @AuraEnabled public String packageId; 
     }
 
     // ============================================================================
-    // GET METHOD
+    // PUBLIC @AuraEnabled METHODS
     // ============================================================================
 
     @AuraEnabled(cacheable=true)
     public static InitData getTaskBundles(Id recordId) {
-        String sObjName = recordId.getSObjectType().getDescribe().getName();
+        String objectApiName = recordId.getSObjectType().getDescribe().getName();
         InitData response = new InitData();
 
-        // 1. Context
-        if(sObjName == 'Account') {
-            response.currentPath = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId].Planning_Path__c;
+        // 1. Fetch Context Details
+        if (objectApiName == 'Account') {
+            Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH USER_MODE];
+            response.currentPath = acc.Planning_Path__c;
         } else {
-            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c
-                               FROM Opportunity
-                               WHERE Id = :recordId
-                               WITH USER_MODE];
+            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
             response.currentPath = opp.Planning_Path__c;
             response.driveStatus = opp.Drive_Status__c;
         }
-        if(response.currentPath == null) {
+        
+        if (response.currentPath == null) {
             response.currentPath = 'Standard';
         }
 
-        // 2. Fetch Metadata (Data Driven)
-        // Fetch Packages in Order (Standard is #1, Additional is #2, etc.)
-        List<Task_Package__c> packages = [SELECT Id, Package_Name__c, Sort_Order__c
-                                          FROM Task_Package__c
-                                          WITH USER_MODE
-                                          ORDER BY Sort_Order__c ASC
-                                          ];
-
-        // Fetch Definitions linked to Packages
-        List<Task_Package_Item__c> items = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Subject__c,
+        // 2. Fetch Metadata
+        List<Task_Package__c> taskPackages = [SELECT Id, Package_Name__c, Sort_Order__c FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
+        List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Subject__c,
                                             Task_Definition__r.Description__c, Task_Definition__r.Scheduling_Method__c,
-                                            Task_Definition__r.Due_Date_Offset__c, Task_Definition__r.Category__c
-                                            FROM Task_Package_Item__c
-                                            WITH USER_MODE];
+                                            Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH USER_MODE];
 
-        // 3. Fetch Saved State
-        Map<Id, SavePayload> stateMap = getSavedState(recordId, sObjName);
+        Map<Id, SavePayload> savedStateByDefinitionId = getSavedState(recordId, objectApiName);
 
-        // 4. Construct Hierarchy
+        // 3. Construct Hierarchy
         Map<Id, PackageGroupWrapper> packageMap = new Map<Id, PackageGroupWrapper>();
-        List<PackageGroupWrapper> resultPackages = new List<PackageGroupWrapper>();
-
-        // Init Package Wrappers
-        for(Task_Package__c pkg : packages) {
-            PackageGroupWrapper grp = new PackageGroupWrapper();
-            grp.id = pkg.Id;
-            grp.name = pkg.Package_Name__c;
-            grp.sortOrder = (Integer)pkg.Sort_Order__c;
-            grp.tasks = new List<TaskItemWrapper>();
-            // If the package name implies Standard (or based on Sort Order 1), mark it
-            // Ideally, check the tasks inside, but for grouping we can rely on Name or Sort
-            grp.isStandard = (pkg.Package_Name__c.contains('Standard') || pkg.Sort_Order__c == 1);
-            packageMap.put(pkg.Id, grp);
-            resultPackages.add(grp);
+        for (Task_Package__c pkg : taskPackages) {
+            PackageGroupWrapper groupWrap = new PackageGroupWrapper();
+            groupWrap.packageId = pkg.Id;
+            groupWrap.name = pkg.Package_Name__c;
+            groupWrap.sortOrder = (Integer)pkg.Sort_Order__c;
+            groupWrap.tasks = new List<TaskItemWrapper>();
+            groupWrap.isStandard = (pkg.Package_Name__c.contains('Standard') || pkg.Sort_Order__c == 1);
+            packageMap.put(pkg.Id, groupWrap);
         }
 
-        // 5. Populate Tasks into Packages
-        for(Task_Package_Item__c item : items) {
-            if(packageMap.containsKey(item.Task_Package__c)) {
-                TaskItemWrapper task = new TaskItemWrapper();
-                task.id = item.Task_Definition__c;
-                task.subject = item.Task_Definition__r.Subject__c;
-                task.description = item.Task_Definition__r.Description__c;
-                task.schedulingMethod = item.Task_Definition__r.Scheduling_Method__c;
-                task.defaultOffset = (Integer)item.Task_Definition__r.Due_Date_Offset__c;
-
-                // UI Flags
-                task.isDaysOffset = (task.schedulingMethod == 'Days Offset');
-                // Check for Post-Drive (Negative Offset)
-                task.isPostDrive = (task.defaultOffset != null && task.defaultOffset < 0);
-
-                // Merge Saved State
-                if(stateMap.containsKey(item.Task_Definition__c)) {
-                    SavePayload saved = stateMap.get(item.Task_Definition__c);
-                    task.isChecked = true;
-                    // Send Positive Number to UI
-                    task.userOffset = Math.abs(saved.userOffset != null ? saved.userOffset : 0);
-                    task.userDate = saved.userDate;
-
-                    // If saved value was negative, ensure UI knows it's Post Drive
-                    if(saved.userOffset != null && saved.userOffset < 0) {
-                        task.isPostDrive = true;
-                    }
-                } else {
-                    task.userOffset = Math.abs(task.defaultOffset != null ? task.defaultOffset : 0);
-                }
-
-                packageMap.get(item.Task_Package__c).tasks.add(task);
+        for (Task_Package_Item__c item : packageItems) {
+            if (!packageMap.containsKey(item.Task_Package__c)) {
+                continue;
             }
+
+            TaskItemWrapper task = new TaskItemWrapper();
+            task.taskDefinitionId = item.Task_Definition__c;
+            task.subject = item.Task_Definition__r.Subject__c;
+            task.description = item.Task_Definition__r.Description__c;
+            task.schedulingMethod = item.Task_Definition__r.Scheduling_Method__c;
+            task.defaultOffset = (Integer)item.Task_Definition__r.Due_Date_Offset__c;
+            task.isDaysOffset = (task.schedulingMethod == 'Days Offset');
+
+            // Merge Saved State or Set Defaults
+            if (savedStateByDefinitionId.containsKey(item.Task_Definition__c)) {
+                SavePayload saved = savedStateByDefinitionId.get(item.Task_Definition__c);
+                task.isChecked = true;
+                task.userOffset = Math.abs(saved.userOffset != null ? saved.userOffset : 0);
+                task.userDate = saved.userDate;
+                task.isPostDrive = (saved.userOffset != null && saved.userOffset < 0);
+            } else {
+                task.userOffset = Math.abs(task.defaultOffset != null ? task.defaultOffset : 0);
+                task.isPostDrive = (task.defaultOffset != null && task.defaultOffset < 0);
+            }
+
+            packageMap.get(item.Task_Package__c).tasks.add(task);
         }
 
-        // 6. Sort Tasks inside Packages
-        for(PackageGroupWrapper pkg : resultPackages) {
+        for (PackageGroupWrapper pkg : packageMap.values()) {
             pkg.tasks.sort();
         }
 
-        response.packages = resultPackages;
+        response.packages = packageMap.values();
         return response;
     }
 
-    // ============================================================================
-    // SAVE METHOD
-    // ============================================================================
-
     @AuraEnabled
     public static void saveTaskPlans(Id recordId, String jsonPayload, List<String> selectedPackageIds, String activePath) {
-        /*String sObjName = recordId.getSObjectType().getDescribe().getName();
+        String objectApiName = recordId.getSObjectType().getDescribe().getName();
         Boolean isTemplateRecord = isTemplate(recordId);
 
-        // Security
-        if(sObjName == 'Opportunity') {
-            Opportunity opp = [SELECT Drive_Status__c FROM Opportunity WHERE Id = :recordId];
-            if(opp.Drive_Status__c == 'Confirmed') throw new AuraHandledException('Planning is Read-Only for Confirmed Drives.');
+        // Validation: Block Confirmed Drives
+        if (objectApiName == 'Opportunity') {
+            Opportunity opp = [SELECT Drive_Status__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
+            if (opp.Drive_Status__c == 'Confirmed') {
+                throw new AuraHandledException('Planning is Read-Only for Confirmed Drives.');
+            }
         }
 
-        // Scenario: Revert to Standard
-        if(activePath == 'Standard') {
-            wipeConfiguration(recordId, sObjName); 
-            resetToStandardConfig(recordId, sObjName); 
-            updatePath(recordId, sObjName, 'Standard');
-            if (isTemplateRecord) fireTemplateCascadeBatch(recordId);
+        // Scenario A: Revert to Standard
+        if (activePath == 'Standard') {
+            wipeConfiguration(recordId, objectApiName); 
+            resetToStandardConfig(recordId, objectApiName); 
+            updatePath(recordId, objectApiName, 'Standard');
+            if (isTemplateRecord) {
+                fireTemplateCascadeBatch(recordId);
+            }            
             return;
         }
 
-        // Scenario: Save Flexible
+        // Scenario B: Flexible Save
         List<SavePayload> selections = (List<SavePayload>) JSON.deserialize(jsonPayload, List<SavePayload>.class);
-        Map<String, SavePayload> uniqueMap = new Map<String, SavePayload>();
-        // Dedupe: Last selection wins
-        for(SavePayload p : selections) uniqueMap.put(p.definitionId, p);
+        Map<Id, SavePayload> uniqueSelectionsByDefId = new Map<Id, SavePayload>();
+        for (SavePayload p : selections) {
+            uniqueSelectionsByDefId.put(p.definitionId, p);
+        }
 
-        // Fetch Creation Offsets for Standard Tasks (Schedule Logic)
-        Map<Id, Task_Definition__c> defMap = new Map<Id, Task_Definition__c>([
-            SELECT Id, Creation_Date_Offset__c, Category__c 
-            FROM Task_Definition__c 
-            WHERE Id IN :uniqueMap.keySet()
+        Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
+            SELECT Id, Creation_Date_Offset__c FROM Task_Definition__c 
+            WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE 
         ]);
 
-        if(sObjName == 'Account' || isTemplateRecord) {
-            saveToConfiguration(recordId, sObjName, uniqueMap.values(), defMap);
+        if (objectApiName == 'Account' || isTemplateRecord) {
+            saveToConfiguration(recordId, objectApiName, uniqueSelectionsByDefId.values(), taskDefinitionsById);
         } else {
-            saveToQueue(recordId, uniqueMap.values(), defMap);
+            saveToQueue(recordId, uniqueSelectionsByDefId.values(), taskDefinitionsById);
         }
 
         saveSelectedPackages(recordId, selectedPackageIds);
-        updatePath(recordId, sObjName, 'Flexible');
+        updatePath(recordId, objectApiName, 'Flexible');
 
-        if (isTemplateRecord) fireTemplateCascadeBatch(recordId);*/
+        if (isTemplateRecord) {
+            fireTemplateCascadeBatch(recordId);
+        }        
     }
 
     // ============================================================================
-    // PRIVATE HELPERS
+    // PRIVATE HELPERS (Logic & Persistence)
     // ============================================================================
 
     private static Map<Id, SavePayload> getSavedState(Id recordId, String objectApiName) {
         Map<Id, SavePayload> payloadByDefinitionId = new Map<Id, SavePayload>();
         
         if (objectApiName == 'Account' || isTemplate(recordId)) {
-            String queryTemplate = 'SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c ' +
-                                   'FROM Task_Planning_Default__c WHERE {0} = :recordId WITH USER_MODE';
-            String filterField = (objectApiName == 'Account') ? 'Account__c' : 'Template_Opportunity__c';            
-            String dynamicQuery = String.format(queryTemplate, new List<String>{ String.escapeSingleQuotes(filterField) });
+            String lookupField = getConfigurationLookupField(objectApiName);
+            String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c FROM Task_Planning_Default__c WHERE {0} = :recordId WITH USER_MODE', 
+                           new List<String>{ String.escapeSingleQuotes(lookupField) });
 
-            for(Task_Planning_Default__c config : Database.query(dynamicQuery)) {
+            for (Task_Planning_Default__c config : Database.query(query)) {
                 SavePayload payload = new SavePayload();
                 payload.definitionId = config.Task_Definition__c; 
                 payload.schedulingMethod = config.Scheduling_Method__c;
                 payload.userOffset = (Integer)config.Configured_Offset__c;
-                if(config.Configured_Date__c != null) {
+                if (config.Configured_Date__c != null) {
                     payload.userDate = String.valueOf(config.Configured_Date__c);
                 }
                 payloadByDefinitionId.put(config.Task_Definition__c, payload);
             }
         } else {
-            for(Planned_Task__c plannedTask : [SELECT Task_Definition__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c, Status__c 
-                                               FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId WITH USER_MODE]) {
+            for (Planned_Task__c pt : [SELECT Task_Definition__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c 
+                                      FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId WITH USER_MODE]) {
                 SavePayload payload = new SavePayload();
-                payload.definitionId = plannedTask.Task_Definition__c;
-                payload.schedulingMethod = plannedTask.Scheduling_Method__c;
-                payload.userOffset = (Integer)plannedTask.User_Defined_Offset__c;
-                if(plannedTask.Target_Date__c != null) {
-                    payload.userDate = String.valueOf(plannedTask.Target_Date__c);
+                payload.definitionId = pt.Task_Definition__c;
+                payload.schedulingMethod = pt.Scheduling_Method__c;
+                payload.userOffset = (Integer)pt.User_Defined_Offset__c;
+                if (pt.Target_Date__c != null) {
+                    payload.userDate = String.valueOf(pt.Target_Date__c);
                 }
-                payloadByDefinitionId.put(plannedTask.Task_Definition__c, payload);
+                payloadByDefinitionId.put(pt.Task_Definition__c, payload);
             }
         }
         return payloadByDefinitionId;
     }
 
-    /*private static void saveToQueue(Id oppId, List<SavePayload> data, Map<Id, Task_Definition__c> defMap) {
-        Opportunity opp = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Id = :oppId];
-        delete [SELECT Id FROM Task_Queue__c WHERE Related_Opportunity__c = :oppId AND Status__c = 'Configured'];
-
-        List<Task_Queue__c> ins = new List<Task_Queue__c>();
-        for(SavePayload p : data) {
-            Task_Queue__c q = new Task_Queue__c();
-            q.Related_Opportunity__c = oppId;
-            q.Task_Definition__c = p.definitionId;
-            q.Task_Package__c = p.packageId;
-            q.Status__c = 'Configured';
-
-            if(p.schedulingMethod == 'Days Offset') {
-                q.Timing_Type__c = 'Drive Dependent'; // Mapping Picklist Value
-                q.User_Defined_Offset__c = p.userOffset; // Negative allowed
-            } else {
-                q.Timing_Type__c = 'Manual Date';
-                q.Manual_Date__c = (p.userDate != null ? Date.valueOf(p.userDate) : Date.today());
-            }
-
-            if(defMap.containsKey(p.definitionId)) {
-                q.Creation_Offset__c = defMap.get(p.definitionId).Creation_Date_Offset__c;
-                // Add Queue Category field if needed for reports based on Definition Category
-            }
-            ins.add(q);
+    private static void saveToQueue(Id opportunityId, List<SavePayload> payloads, Map<Id, Task_Definition__c> taskDefinitionsById) {
+        List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :opportunityId AND Status__c = 'Configured' WITH USER_MODE];
+        if (!existingTasks.isEmpty()) {
+            delete as user existingTasks;
         }
-        insert ins;
+
+        Opportunity opp = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Id = :opportunityId WITH USER_MODE];
+
+        List<Planned_Task__c> tasksToInsert = new List<Planned_Task__c>();
+        for (SavePayload payload : payloads) {
+            Planned_Task__c task = new Planned_Task__c(
+                Related_Opportunity__c = opportunityId,
+                Task_Definition__c = payload.definitionId,
+                Task_Package__c = payload.packageId,
+                Status__c = 'Configured'
+            );
+            if (payload.schedulingMethod == 'Days Offset') {
+                task.Scheduling_Method__c = 'Days Offset';
+                task.User_Defined_Offset__c = payload.userOffset;
+            } else {
+                task.Scheduling_Method__c = 'Target Date';
+                task.Target_Date__c = (String.isNotBlank(payload.userDate) ? Date.valueOf(payload.userDate) : Date.today());
+            }
+            if (taskDefinitionsById.containsKey(payload.definitionId)) {
+                task.Creation_Offset__c = taskDefinitionsById.get(payload.definitionId).Creation_Date_Offset__c;
+            }
+            tasksToInsert.add(task);
+        }
+        insert as user tasksToInsert;
 
         if(opp.Drive_Status__c == 'Confirmed') {
-            FlexibleTaskService.evaluateAndGenerateTasks(new Set<Id>{oppId});
+            System.debug('Drive is Confirmed - Skipping Task Generation');
+            BSF_TaskPlanningService.generateTasksFromQueue(new Set<Id>{opportunityId});
         }
     }
 
-    private static void saveToConfiguration(Id parentId, String type, List<SavePayload> data, Map<Id, Task_Definition__c> defMap) {
-        String field = (type == 'Account') ? 'Account__c' : 'Template_Opportunity__c';
-        delete Database.query('SELECT Id FROM Planning_Configuration__c WHERE ' + field + ' = :parentId');
+    private static void saveToConfiguration(Id recordId, String objectApiName, List<SavePayload> payloads, Map<Id, Task_Definition__c> taskDefinitionsById) {
+        String lookupField = getConfigurationLookupField(objectApiName);
+        wipeConfiguration(recordId, objectApiName);
 
-        List<Planning_Configuration__c> ins = new List<Planning_Configuration__c>();
-        for(SavePayload p : data) {
-            Planning_Configuration__c c = new Planning_Configuration__c();
-            c.put(field, parentId);
-            c.Task_Definition__c = p.definitionId;
-            c.Task_Package__c = p.packageId;
+        List<Task_Planning_Default__c> configsToInsert = new List<Task_Planning_Default__c>();
+        for (SavePayload payload : payloads) {
+            Task_Planning_Default__c config = new Task_Planning_Default__c();
+            config.put(lookupField, recordId);
+            config.Task_Definition__c = payload.definitionId;
+            config.Task_Package__c = payload.packageId;
 
-            if(p.schedulingMethod == 'Days Offset') {
-                c.Timing_Type__c = 'Drive Dependent';
-                c.Configured_Offset__c = p.userOffset;
+            if (payload.schedulingMethod == 'Days Offset') {
+                config.Scheduling_Method__c = 'Days Offset';
+                config.Configured_Offset__c = payload.userOffset;
             } else {
-                c.Timing_Type__c = 'Immediate';
-                c.Configured_Date__c = (p.userDate != null ? Date.valueOf(p.userDate) : Date.today());
+                config.Scheduling_Method__c = 'Target Date';
+                config.Configured_Date__c = (payload.userDate != null ? Date.valueOf(payload.userDate) : Date.today());
             }
 
-            if(defMap.containsKey(p.definitionId)) {
-                c.Configured_Creation_Offset__c = defMap.get(p.definitionId).Creation_Date_Offset__c;
+            if (taskDefinitionsById.containsKey(payload.definitionId)) {
+                config.Configured_Offset__c = taskDefinitionsById.get(payload.definitionId).Creation_Date_Offset__c;
             }
-            ins.add(c);
+            configsToInsert.add(config);
         }
-        if(!ins.isEmpty()) insert ins;
+        insert as user configsToInsert;
     }
 
     private static void saveSelectedPackages(Id recordId, List<String> packageIds) {
-        String sObj = recordId.getSObjectType().getDescribe().getName();
-        String field = sObj == 'Account' ? 'Account__c' : 'Opportunity__c';
-        delete Database.query('SELECT Id FROM Selected_Bundle__c WHERE ' + field + ' = :recordId');
+        String lookupField = getBundleLookupField(recordId.getSObjectType().getDescribe().getName());
+        List<Task_Selected_Package__c> bundlesToInsert = new List<Task_Selected_Package__c>();
 
-        List<Selected_Bundle__c> ins = new List<Selected_Bundle__c>();
-        for(String pkgId : packageIds) {
-            Selected_Bundle__c sb = new Selected_Bundle__c();
-            sb.Task_Package__c = pkgId;
-            sb.put(field, recordId);
-            ins.add(sb);
-        }
-        if(!ins.isEmpty()) insert ins;
-    }*/
-
-    private static void resetToStandardConfig(Id recordId, String sObjName) {
-        // Fetch Standard Tasks via Category
-        List<Task_Definition__c> stdTasks = [
-            SELECT Id, Due_Date_Offset__c, Creation_Date_Offset__c, Scheduling_Method__c, Category__c
-            FROM Task_Definition__c
-            WHERE Category__c = 'Standard'
-        ];
-
-        // Must map them to the Standard Package ID for consistency
-        List<Task_Package__c> stdPkg = [SELECT Id FROM Task_Package__c WHERE Sort_Order__c = 1 LIMIT 1];
-        String stdPkgId = stdPkg.isEmpty() ? null : stdPkg[0].Id;
-
-        List<SavePayload> dummyPayloads = new List<SavePayload>();
-        for(Task_Definition__c tm : stdTasks) {
-            SavePayload p = new SavePayload();
-            p.definitionId = tm.Id;
-            p.schedulingMethod = (tm.Scheduling_Method__c == 'Days Offset') ? 'Days Offset' : 'Target Date';
-            p.userOffset = (Integer)tm.Due_Date_Offset__c;
-            p.packageId = stdPkgId;
-            dummyPayloads.add(p);
+        for (Id packageId : packageIds) {
+            Task_Selected_Package__c bundle = new Task_Selected_Package__c(Task_Package__c = packageId);
+            bundle.put(lookupField, recordId);
+            bundlesToInsert.add(bundle);
         }
 
-        Map<Id, Task_Definition__c> infoMap = new Map<Id, Task_Definition__c>(stdTasks);
-
-        if(sObjName == 'Account' || isTemplate(recordId)) {
-            //saveToConfiguration(recordId, sObjName, dummyPayloads, infoMap);
-        } else {
-            //saveToQueue(recordId, dummyPayloads, infoMap);
+        if (!bundlesToInsert.isEmpty()) {
+            insert as user bundlesToInsert;
         }
     }
 
-    /*private static void wipeConfiguration(Id recordId, String sObjName) {
-        String configField = (sObjName == 'Account') ? 'Account__c' : 'Template_Opportunity__c';
-        String bundleField = (sObjName == 'Account') ? 'Account__c' : 'Opportunity__c';
-        if(sObjName == 'Account' || isTemplate(recordId)) {
-            delete Database.query('SELECT Id FROM Planning_Configuration__c WHERE ' + configField + ' = :recordId');
-        } else {
-            delete [SELECT Id FROM Task_Queue__c WHERE Related_Opportunity__c = :recordId];
-        }
-        delete Database.query('SELECT Id FROM Selected_Bundle__c WHERE ' + bundleField + ' = :recordId');
-    }*/
+    private static void resetToStandardConfig(Id recordId, String objectApiName) {
+        List<Task_Definition__c> stdDefinitions = [SELECT Id, Due_Date_Offset__c, Creation_Date_Offset__c, Scheduling_Method__c 
+                                                   FROM Task_Definition__c WHERE Category__c = 'Standard' WITH USER_MODE];
+        
+        List<Task_Package__c> stdPkgs = [SELECT Id FROM Task_Package__c WHERE Sort_Order__c = 1 WITH USER_MODE LIMIT 1];
+        Id stdPkgId = stdPkgs.isEmpty() ? null : stdPkgs[0].Id;
 
-    private static void updatePath(Id recordId, String sObjName, String pathValue) {
-        if(sObjName == 'Account') {
-            update new Account(Id = recordId, Planning_Path__c = pathValue);
-        } else {
-            update new Opportunity(Id = recordId, Planning_Path__c = pathValue, Is_Path_Overridden__c = true);
+        List<SavePayload> payloads = new List<SavePayload>();
+        for (Task_Definition__c def : stdDefinitions) {
+            SavePayload p = new SavePayload();
+            p.definitionId = def.Id;
+            p.schedulingMethod = (def.Scheduling_Method__c == 'Days Offset') ? 'Days Offset' : 'Target Date';
+            p.userOffset = (Integer)def.Due_Date_Offset__c;
+            p.packageId = stdPkgId;
+            payloads.add(p);
         }
+
+        if (objectApiName == 'Account' || isTemplate(recordId)) {
+            saveToConfiguration(recordId, objectApiName, payloads, new Map<Id, Task_Definition__c>(stdDefinitions));
+        } else {
+            saveToQueue(recordId, payloads, new Map<Id, Task_Definition__c>(stdDefinitions));
+        }
+    }
+
+    private static void wipeConfiguration(Id recordId, String objectApiName) {
+        String bundleField = getBundleLookupField(objectApiName);
+        
+        // Wipe Bundles
+        String bundleQuery = String.format('SELECT Id FROM Task_Selected_Package__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(bundleField) });
+        List<Task_Selected_Package__c> existingBundles = Database.query(bundleQuery);
+        if (!existingBundles.isEmpty()) {
+            delete as user existingBundles;
+        }
+
+        // Wipe Specific Settings
+        if (objectApiName == 'Account' || isTemplate(recordId)) {
+            String configField = getConfigurationLookupField(objectApiName);
+            String configQuery = String.format('SELECT Id FROM Task_Planning_Default__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(configField) });
+            List<Task_Planning_Default__c> existingConfigs = Database.query(configQuery);
+            if (!existingConfigs.isEmpty()) {
+                delete as user existingConfigs;
+            }
+        } else {
+            List<Planned_Task__c> tasksToWipe = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId AND Status__c = 'Configured' WITH USER_MODE];
+            if (!tasksToWipe.isEmpty()) {
+                delete as user tasksToWipe;
+            }
+        }
+    }
+
+    private static void updatePath(Id recordId, String objectApiName, String pathValue) {
+        if (objectApiName == 'Account') {
+            update as user new Account(Id = recordId, Planning_Path__c = pathValue);
+        } else {
+            update as user new Opportunity(Id = recordId, Planning_Path__c = pathValue, Is_Path_Overridden__c = true);
+        }
+    }
+
+    // ============================================================================
+    // UTILITIES
+    // ============================================================================
+
+    private static String getConfigurationLookupField(String objectName) {
+        return (objectName == 'Account') ? 'Account__c' : 'Template_Opportunity__c';
+    }
+
+    private static String getBundleLookupField(String objectName) {
+        return (objectName == 'Account') ? 'Account__c' : 'Opportunity__c';
+    }
+
+    private static Boolean isTemplate(Id recordId) {
+        if (recordId.getSObjectType() == Account.SObjectType) {
+            return false;
+        }
+        return [SELECT Is_Template__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE].Is_Template__c;
     }
 
     private static void fireTemplateCascadeBatch(Id templateId) {
         if (!System.isBatch() && !System.isFuture()) {
-            Database.executeBatch(new FlexiblePathTemplateBatch(new Set<Id>{templateId}), 50);
+            System.debug('Firing Template Cascade Batch for Template Id: ' + templateId);
+            // Database.executeBatch(new FlexiblePathTemplateBatch(new Set<Id>{templateId}), 50);
         }
-    }
-
-    private static Boolean isTemplate(Id oppId) {
-        if(oppId.getSObjectType() == Account.SObjectType) return false;
-        return [SELECT Is_Template__c FROM Opportunity WHERE Id =: oppId WITH USER_MODE].Is_Template__c;
     }
 }

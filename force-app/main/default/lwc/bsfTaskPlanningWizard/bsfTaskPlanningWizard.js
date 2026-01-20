@@ -1,18 +1,22 @@
 import { LightningElement, track, wire, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { notifyRecordUpdateAvailable } from 'lightning/uiRecordApi';
+import { refreshApex } from '@salesforce/apex';
 import getTaskBundles from '@salesforce/apex/BSF_TaskPlanningWizardController.getTaskBundles';
 import saveTaskPlans from '@salesforce/apex/BSF_TaskPlanningWizardController.saveTaskPlans';
 
 export default class BsfTaskPlanningWizard extends LightningElement {
     @api recordId;
-    @track bundleList = [];
-    @track selectedPath = 'Standard';
-    @track isLoading = true;
-    @track showConfirmation = false;
-    @track isReadOnly = false;
     
-    rawBackendData = [];
-    pendingPath = '';
+    @track packageGroups = [];
+    @track activePlanningPath = 'Standard';
+    @track isLoading = true;
+    @track isPathChangeModalOpen = false;
+    @track isPlanningLocked = false;
+    
+    wiredResult;
+    taskMetadataCache = [];
+    pendingPlanningPath = '';
 
     get pathOptions() {
         return [
@@ -21,197 +25,216 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         ];
     }
 
-    get showBundles() { return this.bundleList.length > 0 && !this.isLoading; }
+    get isDataLoaded() { 
+        return this.packageGroups.length > 0 && !this.isLoading; 
+    }
 
     @wire(getTaskBundles, { recordId: '$recordId' })
-    wiredData({ error, data }) {
+    handleInitialDataLoad(result) {
+        this.wiredResult = result;
+        const { data, error } = result;
+
         this.isLoading = true;
         if (data) {
-            this.selectedPath = data.currentPath ? data.currentPath : 'Standard';
-            this.isReadOnly = (data.driveStatus === 'Confirmed');
-            this.rawBackendData = JSON.parse(JSON.stringify(data.packages));
-            this.computeView();
+            this.activePlanningPath = data.currentPath || 'Standard';
+            this.isPlanningLocked = (data.driveStatus === 'Confirmed');
+            this.taskMetadataCache = JSON.parse(JSON.stringify(data.packages));
+            this.initializePackageDisplay();
         } else if (error) {
-            console.error(error);
             this.showToast('Error', 'Failed to load task packages.', 'error');
         }
         this.isLoading = false;
     }
 
     handlePathChangeRequest(event) {
-        this.pendingPath = event.detail.value;
-        this.showConfirmation = true;
+        this.pendingPlanningPath = event.detail.value;
+        this.isPathChangeModalOpen = true;
     }
 
-    confirmPathChange() {
-        this.selectedPath = this.pendingPath;
-        this.showConfirmation = false;
-        this.computeView();
+    executePathChange() {
+        this.activePlanningPath = this.pendingPlanningPath;
+        this.isPathChangeModalOpen = false;
+        this.initializePackageDisplay();
     }
 
     cancelPathChange() {
-        this.showConfirmation = false;
-        this.pendingPath = '';
+        this.isPathChangeModalOpen = false;
+        this.pendingPlanningPath = '';
     }
 
-    computeView() {
-        let data = JSON.parse(JSON.stringify(this.rawBackendData));
+    initializePackageDisplay() {
+        // Deep clone the metadata to apply UI-specific logic
+        const packages = JSON.parse(JSON.stringify(this.taskMetadataCache));
         
-        this.bundleList = data.map(grp => {
-            // Standard Mode: Only show Standard Groups (Sort Order 1 or Name contains Standard)
-            if (this.selectedPath === 'Standard' && !grp.isStandard) return null;
+        this.packageGroups = packages.map(group => {
+            // Standard Mode Filter: Only show standard groups
+            if (this.activePlanningPath === 'Standard' && !group.isStandard) {
+                return null;
+            }
 
-            // Accordion: Collapsed by default unless it's Standard group
-            grp.isExpanded = (this.selectedPath === 'Standard' && grp.isStandard);
-            grp.chevronIcon = grp.isExpanded ? 'utility:chevrondown' : 'utility:chevronright';
-            grp.sectionClass = grp.isExpanded ? 'slds-section slds-is-open slds-m-bottom_small slds-card' : 'slds-section slds-m-bottom_small slds-card';
+            // UI State Configuration
+            group.isExpanded = (this.activePlanningPath === 'Standard' && group.isStandard);
+            group.chevronIcon = group.isExpanded ? 'utility:chevrondown' : 'utility:chevronright';
+            group.containerClass = group.isExpanded ? 'slds-section slds-is-open slds-m-bottom_small slds-card' : 'slds-section slds-m-bottom_small slds-card';
 
-            grp.tasks = grp.tasks.map(t => {
+            group.tasks = group.tasks.map(taskItem => {
                 let isChecked = false;
                 let isLocked = false;
 
-                // Path Logic
-                if (this.selectedPath === 'Standard') {
-                    if (grp.isStandard) { isChecked = true; isLocked = true; }
+                // Path-Based Default Logic
+                if (this.activePlanningPath === 'Standard') {
+                    if (group.isStandard) { isChecked = true; isLocked = true; }
                 } else {
-                    // Flexible: Standard tasks are auto-checked but unlocked
-                    if (grp.isStandard) { isChecked = true; isLocked = false; }
-                    // Retain previously selected flexible tasks
-                    if (!grp.isStandard && t.isChecked) isChecked = true;
+                    // Flexible: Standard tasks are auto-checked but editable; Flexible tasks retain saved state
+                    isChecked = group.isStandard || taskItem.isChecked;
                 }
 
-                if (this.isReadOnly) isLocked = true;
-
-                // Dynamic Label: Pre vs Post Drive
-                let label = 'Days Prior';
-                if (t.isPostDrive) label = 'Days After Drive';
+                if (this.isPlanningLocked) {
+                    isLocked = true;
+                }
 
                 return {
-                    ...t,
-                    uniqueKey: grp.id + '-' + t.id,
-                    isDriveDependent: t.schedulingMethod === 'Days Offset',
-                    userOffset: (t.userOffset !== undefined && t.userOffset !== null) ? t.userOffset : t.defaultOffset,
-                    userDate: t.userDate ? t.userDate : new Date().toISOString().slice(0, 10),
-                    offsetLabel: label,
+                    ...taskItem,
+                    uniqueKey: group.packageId + '-' + taskItem.taskDefinitionId,
+                    isDriveDependent: taskItem.schedulingMethod === 'Days Offset',
+                    userOffset: (taskItem.userOffset != null) ? taskItem.userOffset : taskItem.defaultOffset,
+                    userDate: taskItem.userDate || new Date().toISOString().slice(0, 10),
+                    offsetLabel: taskItem.isPostDrive ? 'Days After Drive' : 'Days Prior',
                     isChecked: isChecked,
                     isLocked: isLocked,
-                    inputDisabled: !isChecked || isLocked || this.isReadOnly,
+                    isInputDisabled: !isChecked || isLocked || this.isPlanningLocked,
                     rowClass: isChecked ? 'slds-hint-parent slds-is-selected' : 'slds-hint-parent'
                 };
             });
 
-            const checkedCount = grp.tasks.filter(t => t.isChecked).length;
-            grp.selectedCount = checkedCount;
-            grp.isAllSelected = (checkedCount === grp.tasks.length && checkedCount > 0);
+            const checkedCount = group.tasks.filter(t => t.isChecked).length;
+            group.selectedCount = checkedCount;
+            group.isAllSelected = (checkedCount === group.tasks.length && checkedCount > 0);
 
-            return grp;
-        }).filter(g => g !== null);
+            return group;
+        }).filter(group => group !== null);
     }
 
-    // --- EVENT HANDLERS ---
+    // --- INTERACTION HANDLERS ---
+
     handleToggleSection(event) {
-        const bundleId = event.target.dataset.bundleId;
-        this.updateData(grp => { if(grp.id === bundleId) grp.isExpanded = !grp.isExpanded; });
+        const packageId = event.target.dataset.packageId;
+        this.updatePackageState(group => { 
+            if(group.packageId === packageId) group.isExpanded = !group.isExpanded; 
+        });
     }
 
-    handleSelectAll(event) {
-        const bundleId = event.target.dataset.bundleId;
+    handleSelectAllInGroup(event) {
+        const packageId = event.target.dataset.packageId;
         const checked = event.target.checked;
-        this.updateData(grp => {
-            if (grp.id === bundleId) {
-                grp.tasks.forEach(t => {
-                    if (!t.isLocked) { t.isChecked = checked; t.inputDisabled = !checked; }
+        this.updatePackageState(group => {
+            if (group.packageId === packageId) {
+                group.tasks.forEach(task => {
+                    if (!task.isLocked) { 
+                        task.isChecked = checked; 
+                        task.isInputDisabled = !checked; 
+                    }
                 });
             }
         });
     }
 
-    handleTaskCheck(event) {
-        const bundleId = event.target.dataset.bundleId;
+    handleTaskSelection(event) {
         const taskId = event.target.dataset.taskId;
+        const packageId = event.target.dataset.packageId;
         const checked = event.target.checked;
-        this.updateData(grp => {
-            if (grp.id === bundleId) {
-                grp.tasks.forEach(t => { if(t.id === taskId) { t.isChecked = checked; t.inputDisabled = !checked; }});
+        this.updatePackageState(group => {
+            if (group.packageId === packageId) {
+                group.tasks.forEach(task => { 
+                    if(task.taskDefinitionId === taskId) { 
+                        task.isChecked = checked; 
+                        task.isInputDisabled = !checked; 
+                    }
+                });
             }
         });
     }
 
     handleOffsetChange(event) {
         const taskId = event.target.dataset.taskId;
-        const bundleId = event.target.dataset.bundleId;
-        this.updateData(grp => {
-            if (grp.id === bundleId) grp.tasks.forEach(t => { if(t.id === taskId) t.userOffset = parseInt(event.target.value, 10); });
+        const packageId = event.target.dataset.packageId;
+        const value = parseInt(event.target.value, 10);
+        this.updatePackageState(group => {
+            if (group.packageId === packageId) {
+                group.tasks.forEach(task => { if(task.taskDefinitionId === taskId) task.userOffset = value; });
+            }
         });
     }
 
     handleDateChange(event) {
         const taskId = event.target.dataset.taskId;
-        const bundleId = event.target.dataset.bundleId;
-        this.updateData(grp => {
-            if (grp.id === bundleId) grp.tasks.forEach(t => { if(t.id === taskId) t.userDate = event.target.value; });
-        });
-    }
-
-    updateData(mutationFn) {
-        this.bundleList = this.bundleList.map(grp => {
-            mutationFn(grp);
-            // Visual Updates
-            if (grp.isExpanded) {
-                grp.sectionClass = 'slds-section slds-is-open slds-m-bottom_small slds-card';
-                grp.chevronIcon = 'utility:chevrondown';
-            } else {
-                grp.sectionClass = 'slds-section slds-m-bottom_small slds-card';
-                grp.chevronIcon = 'utility:chevronright';
+        const packageId = event.target.dataset.packageId;
+        const value = event.target.value;
+        this.updatePackageState(group => {
+            if (group.packageId === packageId) {
+                group.tasks.forEach(task => { if(task.taskDefinitionId === taskId) task.userDate = value; });
             }
-            const count = grp.tasks.filter(t => t.isChecked).length;
-            grp.selectedCount = count;
-            grp.isAllSelected = (count === grp.tasks.length);
-            return grp;
         });
     }
 
-    handleSave() {
+    updatePackageState(mutationFn) {
+        this.packageGroups = this.packageGroups.map(group => {
+            mutationFn(group);
+            // Visual Refresh for the section
+            group.containerClass = group.isExpanded ? 'slds-section slds-is-open slds-m-bottom_small slds-card' : 'slds-section slds-m-bottom_small slds-card';
+            group.chevronIcon = group.isExpanded ? 'utility:chevrondown' : 'utility:chevronright';
+            
+            const count = group.tasks.filter(t => t.isChecked).length;
+            group.selectedCount = count;
+            group.isAllSelected = (count === group.tasks.length);
+            return group;
+        });
+    }
+
+    persistTaskPlan() {
         this.isLoading = true;
-        let taskSelections = [];
-        let selectedPackageIds = new Set();
+        const serializedTaskPayload = [];
+        const selectedPackageIds = new Set();
 
-        this.bundleList.forEach(grp => {
-            let hasSelection = false;
-            grp.tasks.forEach(t => {
-                if (t.isChecked) {
-                    hasSelection = true;
-                    // FLIP SIGN Logic for Post-Drive
-                    let finalOffset = t.userOffset;
-                    if(t.isPostDrive) finalOffset = -Math.abs(t.userOffset);
-                    else finalOffset = Math.abs(t.userOffset);
-
-                    taskSelections.push({
-                        definitionId: t.id,
-                        schedulingMethod: t.schedulingMethod,
-                        userOffset: finalOffset,
-                        userDate: t.userDate,
-                        packageId: grp.id
+        this.packageGroups.forEach(group => {
+            let hasSelectionInGroup = false;
+            group.tasks.forEach(task => {
+                if (task.isChecked) {
+                    hasSelectionInGroup = true;
+                    
+                    // Flip sign for Post-Drive persistence
+                    const persistentOffset = task.isPostDrive ? -Math.abs(task.userOffset) : Math.abs(task.userOffset);
+                    serializedTaskPayload.push({
+                        definitionId: task.taskDefinitionId,
+                        schedulingMethod: task.schedulingMethod,
+                        userOffset: persistentOffset,
+                        userDate: task.userDate,
+                        packageId: group.packageId
                     });
                 }
             });
-            if (hasSelection && !grp.isStandard) selectedPackageIds.add(grp.id);
+            if (hasSelectionInGroup && !group.isStandard) {
+                selectedPackageIds.add(group.packageId);
+            }
         });
 
         saveTaskPlans({ 
             recordId: this.recordId, 
-            jsonPayload: JSON.stringify(taskSelections),
+            jsonPayload: JSON.stringify(serializedTaskPayload),
             selectedPackageIds: Array.from(selectedPackageIds),
-            activePath: this.selectedPath
+            activePath: this.activePlanningPath
         })
         .then(() => {
-            this.showToast('Success', 'Plan saved successfully!', 'success');
-            this.isLoading = false;
-            setTimeout(() => { eval("$A.get('e.force:refreshView').fire();"); }, 1000);
+            this.showToast('Success', 'Task plan saved successfully.', 'success');            
+            return refreshApex(this.wiredResult)
+            .then(() => {
+                notifyRecordUpdateAvailable([{ recordId: this.recordId }]);
+            });            
         })
-        .catch(error => {
-            console.error(error);
-            this.showToast('Error', 'Failed to save plan.', 'error');
+        .catch(() => {
+            this.showToast('Error', 'An error occurred while saving.', 'error');            
+        })
+        .finally(() => {
             this.isLoading = false;
         });
     }
