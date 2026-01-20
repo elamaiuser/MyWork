@@ -329,14 +329,14 @@ public static DatableConfigWrapper searchReport(
 
     Map<Id, List<PatternWithDateRange>> resourcePatternsMap = new Map<Id, List<PatternWithDateRange>>();
     for (sked__Availability_Pattern_Resource__c apr : [
-        SELECT sked__Resource__c, sked_Start_Date__c, sked_End_Date__c,
+        SELECT sked__Resource__c, sked_Start_Date__c, sked__End__c,
                sked__Availability_Pattern__c,
                sked__Availability_Pattern__r.Name,
                sked__Availability_Pattern__r.sked__Pattern__c
         FROM sked__Availability_Pattern_Resource__c
         WHERE sked__Resource__c IN :resourceIds
         AND sked_Start_Date__c <= :endDt
-        AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :startDt)
+        AND (sked__End__c = NULL OR sked__End__c >= :startDt)
     ]) {
         String jsonPattern = apr.sked__Availability_Pattern__r.sked__Pattern__c;
         if (String.isBlank(jsonPattern)) continue;
@@ -361,7 +361,7 @@ public static DatableConfigWrapper searchReport(
 
         PatternWithDateRange datedPattern = new PatternWithDateRange(
             apr.sked_Start_Date__c,
-            apr.sked_End_Date__c,
+            apr.sked__End__c,
             apr.sked__Availability_Pattern__c,
             apr.sked__Availability_Pattern__r.Name,
             weeklyMap
@@ -809,12 +809,12 @@ public static DatableConfigWrapper searchReport(
 
     private class PatternWithDateRange {
         public Date startDate { get; set; }
-        public Date endDate { get; set; }
+        public Datetime endDate { get; set; }
         public Id patternId { get; set; }
         public String patternName { get; set; }
         public Map<String, List<TimeRange>> weeklySchedule { get; set; }
 
-        public PatternWithDateRange(Date sDate, Date eDate, Id pid, String name, Map<String, List<TimeRange>> schedule) {
+        public PatternWithDateRange(Date sDate, Datetime eDate, Id pid, String name, Map<String, List<TimeRange>> schedule) {
             this.startDate = sDate;
             this.endDate = (eDate == null) ? Date.newInstance(4000, 1, 1) : eDate;
             this.patternId = pid;
