@@ -547,7 +547,7 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             //HRP-10788 earlier the below if condition was only checking stageName change. added check change in Call_List_Recipient_Exist__c
             //if (!oppidTaskMap.containskey(opp.id) && (oldMap == NULL ? (opp.StageName == 'Closed' && opp.Call_List_Recipient_Exist__c) : (((opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName) && opp.Call_List_Recipient_Exist__c) || (opp.Call_List_Recipient_Exist__c && opp.Call_List_Recipient_Exist__c != oldMap.get(opp.id).Call_List_Recipient_Exist__c) && opp.StageName == 'Closed'))) {
-            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled') && (oldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName))) // HRP-12284  //Changes for HRP-13850
+            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled'))
               {
                 task recruitmentTask = new task();
                 recruitmentTask.RecordTypeId = recTypeId;
