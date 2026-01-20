@@ -655,12 +655,14 @@ public with sharing class TaskService {
 
             Opportunity opp = oppMap.get(oppId);
             Id distmng, accsp;
-            for (OpportunityTeamMember t : oppTeamMembersMap.get(opp.Id)) {
-                if (t.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER){
-                    distmng = t.UserId;
-                }
-                if (t.TeamMemberRole == BSF_Constants.ACCOUNT_SPECIALIST){
-                     accsp = t.UserId;
+            if(oppTeamMembersMap.containsKey(opp.Id)){
+                for (OpportunityTeamMember t : oppTeamMembersMap.get(opp.Id)) {
+                    if (t.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER){
+                        distmng = t.UserId;
+                    }
+                    if (t.TeamMemberRole == BSF_Constants.ACCOUNT_SPECIALIST){
+                        accsp = t.UserId;
+                    }
                 }
             }
 
