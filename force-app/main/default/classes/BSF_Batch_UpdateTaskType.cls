@@ -5,7 +5,7 @@ global class BSF_Batch_UpdateTaskType implements Database.Batchable<sObject>{
         if(subjectVsTypeMap != null && !subjectVsTypeMap.isEmpty()){
             String query = 'SELECT Id, Subject, Type FROM Task WHERE Subject IN (\''+String.join(new List<String>(subjectVsTypeMap.keySet()), '\',\'')+'\')';
             if(dueDate != null){
-                query += ' AND DueDate >= '+dueDate.format('yyyy-MM-dd');
+                query += ' AND ActivityDate >= '+dueDate.format('yyyy-MM-dd');
             }
             this.subjectVsTypeMap = subjectVsTypeMap;
             this.query=query;
