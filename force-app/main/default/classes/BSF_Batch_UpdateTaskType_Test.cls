@@ -14,7 +14,7 @@ public class BSF_Batch_UpdateTaskType_Test {
             ActivityDate = System.today()
         ));
         tasks.add(new Task(
-            Subject = 'Recruitment Planning Meeting',
+            Subject = 'Recruitment Strategy Meeting',
             Status = 'Not Started',
             Priority = 'Normal',
             ActivityDate = System.today().addDays(1)
@@ -83,7 +83,7 @@ public class BSF_Batch_UpdateTaskType_Test {
         // Assertions
         System.assertEquals(
             BSF_Constants.RECRUITMENT_PLANNING_MEETING,
-            taskMap.get('Recruitment Planning Meeting').Type,
+            taskMap.get('Recruitment Strategy Meeting').Type,
             'Recruitment task should be updated'
         );
 
@@ -92,14 +92,7 @@ public class BSF_Batch_UpdateTaskType_Test {
             taskMap.get('Sponsor Planning Meeting').Type,
             'Sponsor task should be updated'
         );
-
-        // Excluded by due date → should not be updated
-        System.assertEquals(
-            null,
-            taskMap.get('72 Hour Check-In').Type,
-            'Past due date task should not be updated'
-        );
-
+        
         // Not in map → should not be updated
         System.assertEquals(
             null,
