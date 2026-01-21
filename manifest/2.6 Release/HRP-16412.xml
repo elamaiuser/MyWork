@@ -27,6 +27,7 @@
 		<members>skedRacStory_Test</members>
 		<members>skedStaffingBudgetCollOp_Test</members>
 		<members>skedUntypedService_Test</members>
+		<members>skedPtoRequestController_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>64.0</version>
