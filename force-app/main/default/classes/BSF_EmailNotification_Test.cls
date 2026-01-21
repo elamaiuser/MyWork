@@ -75,10 +75,7 @@ public class BSF_EmailNotification_Test {
         contact.Primary_Phone__c = 'Mobile Phone';
         contact.MobilePhone = '888-888-8888';
         insert contact;
-        
-        
-        
-        
+
         TriggerHandler.bypass('OpportunityTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         Opportunity opp = new Opportunity();
@@ -128,15 +125,25 @@ public class BSF_EmailNotification_Test {
 
        }
     
-    	static testMethod void testSendEmailSeperately() {
-        
+    static testMethod void testSendEmailSeperately() {
         Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
         message.toAddresses = new String[] { UserInfo.getUserId() };
         message.subject = 'Opt Out Test Message';
         message.plainTextBody = 'This is the message body.';
+        
         Test.startTest();
-        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'MarketingException', system.now().addDays(10));
+        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'SponsorIntroduction', system.now().addDays(10));
+        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'Test', system.now().addDays(10));
         Test.stopTest();
-
-       }
+    }
+    
+    static testMethod void testCatchBlocks() {
+        Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
+        message.subject = 'Opt Out Test Message';
+        message.plainTextBody = 'This is the message body.';
+        
+        Test.startTest();
+        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'SponsorIntroduction', system.now().addDays(10));
+        Test.stopTest();
+    }
 }
