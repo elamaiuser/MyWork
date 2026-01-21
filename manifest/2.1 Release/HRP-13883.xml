@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Fixed_Site_Account_Record_Page</members>
+		<members>Mobile_Account_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>	
+	<version>60.0</version>
+</Package>

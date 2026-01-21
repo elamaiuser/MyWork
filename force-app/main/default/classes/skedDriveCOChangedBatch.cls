@@ -90,7 +90,7 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
             if (!remainRecordQuery.isEmpty()) {
                 if (!Test.isRunningTest()) {
                     //HRP-14438
-                    Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedDriveCOChangedBatch');   
+                    Integer batchSize = Taxo_Utilities.getBatchSize(BSF_Constants.BIO_COLLECTION_RECORD_TYPE, 'skedDriveCOChangedBatch');
                     Database.executeBatch(new skedDriveCOChangedBatch(this.lastId, this.sitecollectionOperationIds), batchSize);
                     runSkedDriveCOChangedBatch = true;
                 }
