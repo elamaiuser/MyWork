@@ -10,10 +10,6 @@
         <field>FK_NAME</field>
     </columns>
     <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>sked__Location__c.sked_Active__c</field>
-    </columns>
-    <columns>
         <field>CUST_NAME</field>
     </columns>
     <columns>
@@ -26,23 +22,13 @@
         <field>CUST_RECORDTYPE</field>
     </columns>
     <columns>
-        <field>sked__Location__c.sked_National_Name__c</field>
-    </columns>
-    <columns>
         <field>CUST_CREATED_DATE</field>
     </columns>
     <columns>
         <field>CUST_CREATED_NAME</field>
     </columns>
     <columns>
-        <field>sked__Location__c.sked_Timezone__c</field>
-    </columns>
-    <columns>
-        <field>sked__Location__c.sked_Automation_Suitability__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>sked__Location__c.sked_Max_Auto_Machines__c</field>
+        <field>sked__Location__c.sked_Security_Information_Needed__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -60,11 +46,11 @@
             <value>1</value>
         </criteriaItems>
         <criteriaItems>
-            <column>sked__Location__c.Division__c</column>
+            <column>sked__Location__c.sked_Security_Information_Needed__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value></value>
+            <value>Real ID</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
