@@ -12,5 +12,10 @@
     <columns>Status__c</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Account_Id__c</field>
+        <operation>equals</operation>
+        <value>0015c00002IpRx0AAF</value>
+    </filters>
     <label>All</label>
 </ListView>

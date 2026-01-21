@@ -13,10 +13,5 @@
     <columns>CREATED_DATE</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Affiliation_Staging_Record__c.Log_Entry</value>
-    </filters>
     <label>Affiliation Program Management Debug Log</label>
 </ListView>

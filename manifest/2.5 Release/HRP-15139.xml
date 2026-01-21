@@ -41,6 +41,6 @@
         <members>slwcDriveStaffingReasonModal</members>
         <members>slwcDriveStaffingDetails</members>
         <name>LightningComponentBundle</name>
-    </types>    
+    </types>
     <version>64.0</version>
 </Package>
