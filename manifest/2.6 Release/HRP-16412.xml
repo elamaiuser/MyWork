@@ -8,6 +8,25 @@
 		<members>UpdateAMAndDMPortfolioBatchTest</members>
 		<members>UpdateAMAndDMPortfolioDailyBatchTest</members>
 		<members>skedStaffingBudgetCollOp_Test</members>
+		<members>BSF_EmailNotification_Test</members>
+		<members>BSFVehiclePlanningController_Test</members>
+		<members>BSF_BatchUpdateAccountForZipCodeTest</members>
+		<members>BSF_Batch_CreateHandOffTasks_Test</members>
+		<members>BSF_Batch_OpportunityTeamMember_Test</members>
+		<members>BsfPortfolioSyncHelper_Test</members>
+		<members>DMBellNotificationATMBatchHelperTest</members>
+		<members>InformaticaStandardAddress_Test</members>
+		<members>LeadUtils_Test</members>
+		<members>NotifyAMforBPLRecruitedDailyBatchTest</members>
+		<members>SendBellNotificationDM4ATMExpiringTest</members>
+		<members>UpdateCollectionOpWebSchedule_Test</members>
+		<members>UpdateTaskChecklistEventTrigger_Test</members>
+		<members>WeeklyStaffScheduleReportControllerTest</members>
+		<members>skedEmailHandlerController_Test</members>
+		<members>skedEmailService_Test</members>
+		<members>skedRacStory_Test</members>
+		<members>skedStaffingBudgetCollOp_Test</members>
+		<members>skedUntypedService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>64.0</version>

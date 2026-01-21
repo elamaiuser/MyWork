@@ -700,6 +700,21 @@ private class skedRacStory_Test {
         );
         insert avail;
         
+        sked_Staffing_Budget__c testStaffingBudget = new sked_Staffing_Budget__c(
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = testDataFactory.summary.startDate,
+            sked_Total_Slots__c = 20,
+            sked_Request_Type__c = 'Standard'
+        );
+        insert testStaffingBudget;
+        
+        sked_Staffing_Budget_Availability__c testStaffingBudgetAvailability = new sked_Staffing_Budget_Availability__c(
+        	sked_Availability__c = avail.Id,
+        	sked_Staffing_Budget__c = testStaffingBudget.Id
+        );
+        insert testStaffingBudgetAvailability;
+        
         Test.startTest();
         
         Test.setCurrentPage(new PageReference('skedRAC'));
@@ -715,12 +730,10 @@ private class skedRacStory_Test {
         getPendingAvailabilityRequest.regionIds.add(testRegion1.Id);
         getPendingAvailabilityRequest.resourceCategories = resourceCategories;
         getPendingAvailabilityRequest.startDate = testDataFactory.summary.startDateIso;
-        getPendingAvailabilityRequest.submissionEndDate = testDataFactory.summary.endDateIso;
-        getPendingAvailabilityRequest.submissionStartDate = testDataFactory.summary.startDateIso;
+        getPendingAvailabilityRequest.submissionEndDate = Json.serialize(Date.today()).replace('"', '');
+        getPendingAvailabilityRequest.submissionStartDate = Json.serialize(Date.today()).replace('"', '');
         getPendingAvailabilityRequest.timezoneSidId = testDataFactory.summary.timezoneSidId;
         skedRemoteResultModel getPendingAvailabilityResult = skedRacController.getPendingAvailability(getPendingAvailabilityRequest);
-        skedRacController.availabilityDataModel availabilityDataResult = (skedRacController.availabilityDataModel)getPendingAvailabilityResult.data;
-        List<skedModels.availability> availabilityData = (List<skedModels.availability>)availabilityDataResult.availabilityData;
         
         //approveAvailability 
         skedRacController.saveAvailabilityRequestModel saveAvailabilityRequest = new skedRacController.saveAvailabilityRequestModel();
@@ -1095,6 +1108,16 @@ private class skedRacStory_Test {
     static testmethod void testSearchDrive() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
+        
+        sked_Territory__c testTerritoryParent1 = new sked_Territory__c(
+        	Name = 'Test Territory Parent 1',
+            RecordTypeId = sked_Territory__c.sObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('sked_ARC_Region').getRecordTypeId()
+        );
+        insert testTerritoryParent1;
+        
+        sked_Territory__c testTerritory1 = (sked_Territory__c)mapTestData.get('testTerritory1');
+        testTerritory1.sked_Parent__c = testTerritoryParent1.Id;
+        update testTerritory1;
         
         Test.startTest();
         mapTestData = testDataFactory.setupDriveData();
@@ -1498,6 +1521,17 @@ private class skedRacStory_Test {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupRacTestData();
         
+        sked__Activity__c testActivity1 = (sked__Activity__c)mapTestData.get('testGroupActivity1');
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Territory__c testTerritory1 = (sked_Territory__c)mapTestData.get('testTerritory1');
+        
+        sked_Activity_Collection_Operation__c testActivityCO = new sked_Activity_Collection_Operation__c(
+        	sked_Activity__c = testActivity1.Id,
+        	sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id,
+            sked_District__c = testTerritory1.Id
+        );
+        insert testActivityCO;
+        
         Test.startTest();
         
         skedRacController.getGroupActivitiesRequestModel getGroupActivitiesRequest = new skedRacController.getGroupActivitiesRequestModel();
@@ -1509,6 +1543,7 @@ private class skedRacStory_Test {
         getGroupActivitiesRequest.activityTypes.add('Administration');
         getGroupActivitiesRequest.endDate = testDataFactory.summary.endDateIso;
         getGroupActivitiesRequest.startDate = testDataFactory.summary.startDateIso;
+        getGroupActivitiesRequest.territoryKeys = new List<String>{testTerritory1.Id + ':' + testCollectionOperation1.Id};
 
         skedRemoteResultModel getGroupActivitiesResult = skedRacController.getGroupActivities(getGroupActivitiesRequest);
 
@@ -1588,6 +1623,32 @@ private class skedRacStory_Test {
         skedModels.overlappingPatternResource overlappingPatternResource = returnedPatternResource.overlappingPatternResources.get(0);
         Assert.isTrue(overlappingPatternResource.patternName == 'Test Weekly Pattern 1');
         
+        Test.stopTest();
+    }
+    
+    static testMethod void testGetPlaceDetails() {
+        Test.startTest();
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        
+        skedRacController.getPlaceDetailsModel getPlaceDetailsRequest = new skedRacController.getPlaceDetailsModel();
+        getPlaceDetailsRequest.viewData = new Map<string, object>();
+        getPlaceDetailsRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getPlaceDetailsRequest.placeId = 'TEST';
+        
+        skedRemoteResultModel getPlaceDetailsResult = skedRacController.getPlaceDetails(getPlaceDetailsRequest);
+        Test.stopTest();
+    }
+    
+    static testMethod void testGetAddressPredictions() {
+        Test.startTest();
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        
+        skedRacController.getgetAddressPredictionsModel getAddressPredictionRequest = new skedRacController.getgetAddressPredictionsModel();
+        getAddressPredictionRequest.viewData = new Map<string, object>();
+        getAddressPredictionRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getAddressPredictionRequest.queryText = 'TEST';
+        
+        skedRemoteResultModel getAddressPredictionResult = skedRacController.getAddressPredictions(getAddressPredictionRequest);
         Test.stopTest();
     }
 }
