@@ -654,7 +654,9 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID && 
                 !opp.StageName.equalsIgnoreCase('Cancelled') && //Changes for HRP-13850
+                !opp.DriveStatus__c.equalsIgnoreCase('Complete') &&
                 opp.Is_Template__c == false && 
+                opp.Drive_Date__c > Date.Today() &&
                 //(oldMap == null ? (opp.StageName == 'Closed' || opp.StageName == 'Committed') : ((opp.StageName == 'Closed' || opp.StageName == 'Committed') && opp.StageName != oldMap.get(opp.id).StageName)) &&//Commented for HRP-5337
                 (Date.Today().daysBetween(opp.Drive_Date__c) <= Integer.ValueOf(label.SponsorPlanningMeetingTaskThresholdDays)) && //added for HRP-5337
                 (taskIds.isEmpty() ||(!taskIds.isEmpty() && !taskIds.contains(opp.Id)))) {
