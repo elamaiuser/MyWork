@@ -31,6 +31,11 @@
 		<members>BSF_AccessControlManagerTest</members>
 		<members>TemplateCDA_FutureOpportunityBatch_Test</members>
 		<members>skedJobAllocationTravelTimeBatch_Test</members>
+		<members>skedMockTest</members>
+		<members>skedTestDataFactory</members>
+		<members>slwcOptimizationService</members>
+		<members>slwcOptimizationService_Test</members>
+		<members>slwcDriveShiftTradeService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>64.0</version>
