@@ -3,16 +3,45 @@
     <types>
         <members>APComplianceReportController</members>
 		<members>APComplianceReportControllerTest</members>
+        <members>APComplianceReportController</members>     -HRP16309
+		<members>APComplianceReportControllerTest</members> -HRP16309
+        <members>AccountService</members>
+        <members>AccountTriggerHandler</members>
+        <members>AccountTriggerTest</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Constants</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>createPreDriveTaskBatch</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>OpportunityTriggerTest</members>
+        <members>SiteService</members>
+        <members>SiteServiceTest</members>
+        <members>SiteTriggerHandler</members>
         <members>skedAvailabilityHandler</members>
         <members>skedAvailabilityTrigger_Test</members>
-        <members>skedConstants</members>
-        <members>skedConstants</members>
+        <members>skedAvailabilityPatternResourceHandler</members> -HRP15707
+        <members>skedAvailabilityPatternResourceHandler</members> -HRP15641
+        <members>skedAvailabilityPatternService</members>
+        <members>skedCaptureAPExceptionLogBatch</members>      -HRP15707
+        <members>skedCaptureAPExceptionLogBatch_Test</members> -HRP15707
+        <members>skedConstants</members> -HRP 16337
+        <members>skedConstants</members> -HRP16338
+        <members>skedDateTimeUtils</members>
+        <members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
 		<members>skedHCExceptionHandler</members>
 		<members>skedHCExceptionTrigger_Test</members>
+        <members>skedModels</members>
+        <members>skedRacController</members>
+        <members>skedRacStory_Test</members>
+        <members>skedResourceHandler</members>
         <members>TaskService</members>
         <members>TaskTriggerHandler</members>
+        <members>skedTriggerUtils</members>
+        <members>skedTriggerUtils_Test</members>
+        <members>skedWorkdayUtils</members>
+        <members>skedWorkdayUtils_Test</members>
+        <members>skedTestDataFactory</members>
+        <members>UpdateOpportunityNameBatch</members>
+        <members>UpdateOpportunityNameBatchTest</members>
