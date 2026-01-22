@@ -5,6 +5,10 @@
 		<members>APComplianceReportControllerTest</members>
         <members>APComplianceReportController</members>     -HRP16309
 		<members>APComplianceReportControllerTest</members> -HRP16309
+        <members>APComplianceReportController</members>     -HRP15752
+		<members>APComplianceReportControllerTest</members> -HRP15752
+        <members>APComplianceReportController</members>     -HRP15754
+		<members>APComplianceReportControllerTest</members> -HRP15754
         <members>AccountService</members>
         <members>AccountTriggerHandler</members>
         <members>AccountTriggerTest</members>
@@ -13,8 +17,12 @@
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>createPreDriveTaskBatch</members>
+        <members>OpportunityService</members>
+        <members>OpportunityServiceController</members>
+        <members>OpportunityServiceControllerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
+        <members>OpportunityTriggerTest</members> -HRP7731
         <members>SiteService</members>
         <members>SiteServiceTest</members>
         <members>SiteTriggerHandler</members>
@@ -36,12 +44,25 @@
         <members>skedRacController</members>
         <members>skedRacStory_Test</members>
         <members>skedResourceHandler</members>
-        <members>TaskService</members>
-        <members>TaskTriggerHandler</members>
         <members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
         <members>skedWorkdayUtils</members>
         <members>skedWorkdayUtils_Test</members>
         <members>skedTestDataFactory</members>
+        <members>slwcAllocationService</members>
+        <members>TaskService</members>
+        <members>TaskTriggerHandler</members>
+        <members>TimeBlockComplianceReportController</members>
+		<members>TimeBlockComplianceReportControllerTest</members>
         <members>UpdateOpportunityNameBatch</members>
         <members>UpdateOpportunityNameBatchTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>APComplianceExcel</members> -HRP15707
+        <members>APComplianceExcel</members> -HRP16309
+        <members>skedMobileCallOutContactInformationForm</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        
