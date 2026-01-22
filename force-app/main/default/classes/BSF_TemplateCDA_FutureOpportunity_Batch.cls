@@ -16,7 +16,7 @@ global class BSF_TemplateCDA_FutureOpportunity_Batch implements Database.Batchab
     
     global Database.QueryLocator start(Database.BatchableContext BC){
         String query = 'SELECT Id,Parent_Template_Id__r.WB_Projected_Procedures__c,WholeBloodProceduresProjectedTemplate__c,Parent_Template_Id__r.X2RBC_Projected_Procedures__c,Double_Red_Procedures_Projected_Template__c,'+
-            			'Parent_Template_Id__r.Anticipated_Registered_Donors__c,Anticipated_Registered_Donors_Template__c FROM Opportunity WHERE DriveStatus__c !=\'Complete\'';
+            			'Parent_Template_Id__r.Anticipated_Registered_Donors__c,Anticipated_Registered_Donors_Template__c FROM Opportunity WHERE DriveStatus__c NOT IN (\'Complete\', \'Cancel\') AND Drive_Date__c >= TODAY ';
         if(this.changedToday){
             query = query +' AND Parent_Template_Id__r.LastModifiedDate = TODAY';
         }
