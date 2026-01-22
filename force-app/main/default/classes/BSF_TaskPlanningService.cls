@@ -235,6 +235,63 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     // ============================================================================
+    // 5. CENTRAL HANDLER
+    // ============================================================================
+    public static void handleOpportunityUpdates(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
+        Set<Id> confirmedIds = new Set<Id>();
+        Set<Id> templateChangedIds = new Set<Id>();
+
+        for(Opportunity opp : newOpps) {
+            Opportunity old = oldMap.get(opp.Id);
+            
+            // 1. Detect Status Change to 'Confirmed' (Trigger Task Generation)
+            if(opp.Drive_Status__c == 'Confirmed' && old.Drive_Status__c != 'Confirmed') {
+                confirmedIds.add(opp.Id);
+            }
+            
+            // 2. Detect Template Planning Path Change (Trigger Cascade Batch)
+            if(opp.Is_Template__c && opp.Planning_Path__c != old.Planning_Path__c) {
+                templateChangedIds.add(opp.Id);
+            }
+        }
+
+        // Action: Generate Tasks for newly Confirmed drives
+        if(!confirmedIds.isEmpty()) {
+            generateTasksFromQueue(confirmedIds);
+        }
+
+        // Action: Cascade changes from Template to Child Drives
+        if(!templateChangedIds.isEmpty()) {
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
+        }
+    }
+
+    // ============================================================================
+    // 6. CLEANUP
+    // Context: Switching Path back to Standard
+    // ============================================================================
+    public static void handlePathCleanup(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
+        Set<Id> revertIds = new Set<Id>();
+        for(Opportunity opp : newOpps) {
+            // Detect switch Flexible -> Standard
+            if(opp.Planning_Path__c == BSF_Constants.PATH_STANDARD && oldMap.get(opp.Id).Planning_Path__c == BSF_Constants.PATH_FLEXIBLE) {
+                revertIds.add(opp.Id);
+            }
+        }
+
+        if(!revertIds.isEmpty()) {
+            // Delete Queue Items
+            delete [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c IN :revertIds];
+            // Delete Configs (if Template)
+            delete [SELECT Id FROM Task_Planning_Default__c WHERE Template_Opportunity__c IN :revertIds];
+            // Delete Junctions
+            delete [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :revertIds];
+            // Delete Generated Tasks (Flexible Only)
+            //delete [SELECT Id FROM Task WHERE WhatId IN :revertIds AND Planning_Task_Category__c = 'Flexible' AND IsClosed = FALSE];
+        }
+    }
+
+    // ============================================================================
     // PRIVATE HELPERS
     // ============================================================================
     private static Date calculateActivityDate(Date referenceDate, Integer offsetDays) {
