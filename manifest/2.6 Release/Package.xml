@@ -3,12 +3,6 @@
     <types>
         <members>APComplianceReportController</members>
 		<members>APComplianceReportControllerTest</members>
-        <members>APComplianceReportController</members>     -HRP16309
-		<members>APComplianceReportControllerTest</members> -HRP16309
-        <members>APComplianceReportController</members>     -HRP15752
-		<members>APComplianceReportControllerTest</members> -HRP15752
-        <members>APComplianceReportController</members>     -HRP15754
-		<members>APComplianceReportControllerTest</members> -HRP15754
         <members>AccountService</members>
         <members>AccountTriggerHandler</members>
         <members>AccountTriggerTest</members>
@@ -22,19 +16,16 @@
         <members>OpportunityServiceControllerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
-        <members>OpportunityTriggerTest</members> -HRP7731
         <members>SiteService</members>
         <members>SiteServiceTest</members>
         <members>SiteTriggerHandler</members>
         <members>skedAvailabilityHandler</members>
         <members>skedAvailabilityTrigger_Test</members>
-        <members>skedAvailabilityPatternResourceHandler</members> -HRP15707
-        <members>skedAvailabilityPatternResourceHandler</members> -HRP15641
+        <members>skedAvailabilityPatternResourceHandler</members>
         <members>skedAvailabilityPatternService</members>
-        <members>skedCaptureAPExceptionLogBatch</members>      -HRP15707
-        <members>skedCaptureAPExceptionLogBatch_Test</members> -HRP15707
-        <members>skedConstants</members> -HRP 16337
-        <members>skedConstants</members> -HRP16338
+        <members>skedCaptureAPExceptionLogBatch</members>
+        <members>skedCaptureAPExceptionLogBatch_Test</members>
+        <members>skedConstants</members>
         <members>skedDateTimeUtils</members>
         <members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
@@ -68,6 +59,10 @@
 		<name>ApexTrigger</name>
     </types>
     <types>
+    	<members>skedMobileCallOutContactInformationForm</members>
+		<name>AuraDefinitionBundle</name>
+	</types>
+    <types>
         <members>sked__Activity_Resource__c.sked_Replacement_For__c</members>
 		<members>sked__Activity_Resource__c.sked_UniqueKey__c</members>
         <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
@@ -86,16 +81,16 @@
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
         <members>BSF_Access_Control_Rule.HRP_16367_Field_Permission_Set_Read</members>
         <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
-        <members>Task_Reassignment_Matrix.Sponsor_Planning</members>
-        <members>Task_Reassignment_Matrix.Recruitment_Task</members>
-        <members>Task_Reassignment_Matrix.X72_Hour</members>
         <members>Task_Reassignment_Matrix.Marketing_Exception</members>
-        <members>Task_Reassignment_Matrix.Security_Information_Completion</members>
         <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
         <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
         <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
         <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
+        <members>Task_Reassignment_Matrix.Recruitment_Task</members>
+        <members>Task_Reassignment_Matrix.Security_Information_Completion</members>
+        <members>Task_Reassignment_Matrix.Sponsor_Planning</members>
         <members>Task_Reassignment_Matrix.Template_Order_Task</members>
+        <members>Task_Reassignment_Matrix.X72_Hour</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -129,17 +124,46 @@
         <members>aPComplianceReport</members>
         <members>autoMapper</members>
         <members>dataService</members>
+        <members>slwcAvailator</members>
         <members>slwcDriveCalendar</members>
         <members>slwcDriveCalendarDriveList</members>
     	<members>slwcDriveGenerator</members>
         <members>slwcDriveProductivityDriveList</members>
     	<members>slwcDriveSchedulingConsole</members>
+        <members>slwcDriveStaffingDetails</members>
         <members>slwcMobileCallOutContactInformationForm</members>
         <members>slwcNewCollectionOperationMultiPicklist</members>
         <members>slwcOnCallCallOutManagement</members>
+        <members>slwcPopoverContent</members>
         <members>timeBlockComplianceReport</members>
         <name>LightningComponentBundle</name>
 	</types>
-
+    <types>
+		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
+		<name>QuickAction</name>
+	</types>
+    <types>
+        <members>Task.General_Task_for_Global_Action</members>
+        <members>Task.General_Task</members>
+        <members>Task.Marketing_Exception</members>
+        <members>Task.Recruitment_Meeting</members>
+        <members>Task.Team_Portfolio_Assignment</members>
+        <members>Task.X72_Hour_CheckIn</members>
+        <name>RecordType</name>
+    </types>
+    <types>
+        <members>TaskType</members>        
+        <name>StandardValueSet</name>
+    </types>
+    <types>
+    	<members>sked_HLT_Dist</members>     
+    	<name>StaticResource</name>
+ 	</types>
+    <types>
+		<members>sked__Tag__c.Validate_Role_ID_Format</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>65.0</version>
+</Package>
 
 
