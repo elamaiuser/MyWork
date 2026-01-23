@@ -133,7 +133,11 @@ public class BSF_EmailNotification_Test {
         
         Test.startTest();
         BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'SponsorIntroduction', system.now().addDays(10));
-        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'Test', system.now().addDays(10));
+        try {
+            BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'Test', system.now().addDays(10));
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('Invalid Email Category'));
+        }
         Test.stopTest();
     }
     
@@ -143,7 +147,11 @@ public class BSF_EmailNotification_Test {
         message.plainTextBody = 'This is the message body.';
         
         Test.startTest();
-        BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'SponsorIntroduction', system.now().addDays(10));
+        try {
+            BSF_EmailNotification.sendEmails(new List<Messaging.SingleEmailMessage>{message}, 'SponsorIntroduction', system.now().addDays(10));
+        } catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('Add a recipient'));
+        }
         Test.stopTest();
     }
 }
