@@ -7,8 +7,8 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/slds/styles/salesforce-lightning-design-system.min.css')}" />
-  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-custom/jquery-ui.min.css')}" />
-  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-custom/jquery-ui.theme.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.14.1.custom/jquery-ui.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.14.1.custom/jquery-ui.theme.min.css')}" />
   <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-time-picker/jquery.timepicker.css')}" />
 
   <link rel="stylesheet" href="{!URLFOR($Resource.sked_HLT_Dist, '/styles/resource-availability-console.css')}" />
@@ -43,8 +43,9 @@
   </div>
 
   <!-- jquery -->
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.1.1.min.js')}"></script>
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.12.1.custom/jquery-ui.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.7.1.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-migrate/jquery-migrate-3.4.1.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.14.1.custom/jquery-ui.min.js')}"></script>
   <!-- angularjs -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular.min.js')}"></script>
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular-sanitize.min.js')}"></script>
@@ -54,10 +55,6 @@
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/clickoutside.directive.js')}"></script>
   <!-- jquery time picker -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-time-picker/jquery.timepicker.min.js')}"></script>
-
-  <!-- month picker -->
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.11.4-widget-button/jquery-ui.min.js')}"></script>
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-month-picker/MonthPicker.min.js')}"></script>
 
   <!-- angular-vs-repeat -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angular-vs-repeat/angular-vs-repeat.min.js')}"></script>
