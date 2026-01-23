@@ -547,7 +547,7 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             //HRP-10788 earlier the below if condition was only checking stageName change. added check change in Call_List_Recipient_Exist__c
             //if (!oppidTaskMap.containskey(opp.id) && (oldMap == NULL ? (opp.StageName == 'Closed' && opp.Call_List_Recipient_Exist__c) : (((opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName) && opp.Call_List_Recipient_Exist__c) || (opp.Call_List_Recipient_Exist__c && opp.Call_List_Recipient_Exist__c != oldMap.get(opp.id).Call_List_Recipient_Exist__c) && opp.StageName == 'Closed'))) {
-            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled') && (oldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName))) // HRP-12284  //Changes for HRP-13850
+            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled'))
               {
                 task recruitmentTask = new task();
                 recruitmentTask.RecordTypeId = recTypeId;
@@ -3856,50 +3856,67 @@ opp.StageName = 'Closed';
     //12/9 FWO - Method used to generate opportunity name (name field of non-template opportunities).  This is replacing the following workflow rules:
     //"Update Opportunity Name with No Site" and "Update Opportunity Name with Site Building"
     public static void GenerateOpportunityName(List<Opportunity> lstNewOpps, map<Id, Opportunity> oppOldTmpMap) {
-        
-        System.debug('### inside opportunity service GenerateOpportunityName');
         List<Opportunity> finalOppList = new List<Opportunity>();
-         Map <String,Schema.RecordTypeInfo> recordTypesOpportunity = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName();
+        Set<Id> oppIdsToCheckOppNameFor = new Set<Id>();
+
+        Map <String,Schema.RecordTypeInfo> recordTypesOpportunity = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName();
         Id mobileRecTypeId = recordTypesOpportunity.get('Mobile Opp').getRecordTypeId();
-   
-        if(oppOldTmpMap == null) {
-            checkOppNameChange(lstNewOpps);
+        
+        for (opportunity opp : lstNewOpps) {
+            if(opp.Is_Template__c) continue;
+
+            if(oppOldTmpMap == null || (oppOldTmpMap != null && 
+               (opp.RecordTypeId == mobileRecTypeId && oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != opp.Parent_Template_Id__c) || 
+               (opp.RecordTypeId != mobileRecTypeId && oppOldTmpMap.get(opp.Id).Drive_Site__c != opp.Drive_Site__c))) {
+                oppIdsToCheckOppNameFor.add(opp.Id);
+            }
         }
-        //If before update, then only check if template has changed
-        else if(oppOldTmpMap != null) {
-            Set<Id> oppsTemplateChangedIds = new Set<Id>();
-            for(Opportunity opp : lstNewOpps){
-                if(opp.Is_Template__c == false && ((opp.RecordTypeId==mobileRecTypeId && (oppOldTmpMap.get(opp.Id).Parent_Template_Id__c != Opp.Parent_Template_Id__c)) || (opp.RecordTypeId!=mobileRecTypeId &&(oppOldTmpMap.get(opp.Id).Drive_Site__c != Opp.Drive_Site__c)))){
-                    finalOppList.add(opp);
-                } 
-            }
-            if(!finalOppList.isEmpty()) {
-                checkOppNameChange(finalOppList);
-            }
+        
+        if(!oppIdsToCheckOppNameFor.isEmpty()) { 
+            finalOppList = checkOppNameChange(oppIdsToCheckOppNameFor);
+        }
+        
+        if(!system.isBatch() && !Test.isRunningTest() && !finalOppList.isEmpty()) {
+            UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(finalOppList, false, false);
+            Database.executeBatch(batchOppRecs, 1);
         }
     }
     
-    public static void checkOppNameChange(List<Opportunity> incomingOppList) {
-        
-        for (opportunity opp : incomingOppList) {
-            if(opp.Is_Template__c == false && opp.Drive_Site__c == null) {
-                string tmpTbdOppName = opp.Account_Internal_Name__c + ', TBD';
-                if(opp.Name != tmpTbdOppName) {
-                    opp.Name =  opp.Account_Internal_Name__c + ', TBD';   
+    public static List<Opportunity> checkOppNameChange(Set<Id> incomingOppIds) {
+        List<Opportunity> finalOppList = new List<Opportunity>();
+
+        List<Opportunity> lstLastestOpps = [
+            SELECT Id, Name, Is_Template__c, Drive_Site__c, 
+            Account_Internal_Name__c, Site_Building_Name__c, 
+            Drive_Site_Name__c, Account_Name__c, Drive_Name__c,
+            Is_Account_Internal_Name_Changed__c, Drive_Date__c,
+            RecordTypeId, Linked_Opportunity_Drives__c, 
+            Is_this_part_of_MultiDay_Drive__c 
+            FROM Opportunity 
+            WHERE Id IN :incomingOppIds
+        ];
+
+        if(lstLastestOpps != null && !lstLastestOpps.isEmpty()) {
+            for(Opportunity opp : lstLastestOpps) {
+                string tmpOppName;
+                if(opp.Drive_Site__c == null) {
+                    tmpOppName = opp.Account_Internal_Name__c + ', TBD';
+                } else {
+                    tmpOppName = opp.Account_Name__c + ', ' + opp.Drive_Site_Name__c; // HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
+                    tmpOppName = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName; //HRP-12136
                 }
-            }                    
-            else if (opp.Is_Template__c == false && opp.Drive_Site__c != null) {
-                string tmpOppName = opp.Account_Name__c + ', ' + opp.Drive_Site_Name__c; // HRP-12136 prev -->opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c
-                opp.Name = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
-                //commented HRP-12136
-                /*if(tmpOppName.length() > 120) {
-                    tmpOppName = tmpOppName.substring(0,120);
+
+                if(opp.Name != tmpOppName) {
+                    opp.Name = tmpOppName;
+                    finalOppList.add(opp);
                 }
-                */
-                //commented HRP-12136  
             }
         }
+
+        return finalOppList;
     }
+        
+
     //HRP-9101
     public static void populateDriveWorksheetData(List<Opportunity> newItems)
     {

@@ -48,7 +48,7 @@ private class UpdateOpportunityNameBatchTest {
             WHERE AccountId = :testMobileAccount.Id
             AND Is_Template__c = true];
                 
-        UpdateOpportunityNameBatch testBatchInstance = new UpdateOpportunityNameBatch(testOppTemplateList, true);
+        UpdateOpportunityNameBatch testBatchInstance = new UpdateOpportunityNameBatch(testOppTemplateList, true, true);
         Database.executeBatch(testBatchInstance);
                         
         Test.stopTest();

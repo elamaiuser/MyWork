@@ -102,6 +102,21 @@ public with sharing class UpdateAMAndDMPortfolioBatchTest {
         atm = atmList[0].clone();
         atm.userId = testUsers[1].Id;
         atm.BSF_Portfolio__c = bParentportfolioList[0].Id;
+        atm.TeamMemberRole = 'Account Manager';
+        atm.Is_Covering_Recruiter__c = false;
+        atmList.add(atm);
+        
+        atm = atmList[0].clone();
+        atm.userId = testUsers[2].Id;
+        atm.BSF_Portfolio__c = bParentportfolioList[0].Id;
+        atm.TeamMemberRole = 'Account Manager';
+        atmList.add(atm);
+        
+        atm = atmList[0].clone();
+        atm.userId = testUsers[3].Id;
+        atm.BSF_Portfolio__c = bportfolioList[0].Id;
+        atm.TeamMemberRole = 'District Manager';
+        atm.Is_Covering_Recruiter__c = false;
         atmList.add(atm);
         
         TriggerHandler.bypass('AccountTeamMemberTriggerHandler');

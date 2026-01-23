@@ -205,6 +205,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>sked_WID__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>sked__Finish__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
@@ -301,11 +306,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Call_Out_Created_By_Resource__c</field>
-            <table>sked__Resource__c.sked__Availabilities1__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_SBA_Count__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>

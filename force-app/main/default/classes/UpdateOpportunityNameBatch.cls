@@ -13,10 +13,12 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
     
     private List<Opportunity> incomingOppNewList;
     private Boolean isOnlyTemplates;
+    private Boolean isRecalculationNeeded;
     
-    global UpdateOpportunityNameBatch(list<Opportunity> incomingOppNewList, Boolean isOnlyTemplates) {
+    global UpdateOpportunityNameBatch(list<Opportunity> incomingOppNewList, Boolean isOnlyTemplates, Boolean isRecalculationNeeded) {
         this.incomingOppNewList = incomingOppNewList ?? new List<opportunity>();
         this.isOnlyTemplates = isOnlyTemplates ?? false;
+        this.isRecalculationNeeded = isRecalculationNeeded ?? false;
     }
     
     global List<Opportunity> start(Database.BatchableContext bc) {
@@ -24,13 +26,23 @@ global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, 
     }
     
     global void execute(Database.BatchableContext bc, List<Opportunity> lstOpportunities) {
-        if(isOnlyTemplates) {
-            OpportunityService.generateTemplateOppName(lstOpportunities, null);
+        List<Opportunity> clonedOldOppsList = lstOpportunities.deepClone(true, true, true);
+        if(isRecalculationNeeded) {
+            if(isOnlyTemplates) {
+                OpportunityService.generateTemplateOppName(clonedOldOppsList, null);
+            } else {
+                clonedOldOppsList = OpportunityService.checkOppNameChange(new Map<Id, Opportunity>(clonedOldOppsList).keySet());
+
+                for (Opportunity opp : clonedOldOppsList) {
+                    opp.Is_Account_Internal_Name_Changed__c = true;
+                }
+                OpportunityService.updateOpportunityName(clonedOldOppsList, new Map<Id, Opportunity>(lstOpportunities));
+            }
         }
 
-        TriggerHandler.bypass('OpportunityTriggerHandler');//HRP-12136
-        Database.SaveResult[] updateResults = Database.update(lstOpportunities, false);
-        TriggerHandler.clearBypass('OpportunityTriggerHandler');//HRP-12136
+        TriggerHandler.bypass('OpportunityTriggerHandler'); //HRP-12136
+        Database.SaveResult[] updateResults = Database.update(clonedOldOppsList, false);
+        TriggerHandler.clearBypass('OpportunityTriggerHandler'); //HRP-12136
             
         if(!updateResults.isEmpty()) {
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLogWithObjectId(
