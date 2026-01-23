@@ -53,6 +53,18 @@ global class skedMockTest implements HttpCalloutMock {
         else if (urlString.startsWith(skedSkeduloApiManager.OPTIMIZATION_RUN_ARC_ENDPOINT)) {
             res = mockDataFactory.triggerOptimizationRun(req);
         }
+        else if (urlString.contains('/optimization/run/') && urlString.endsWith('/diff')) {
+            res = mockDataFactory.getOptimizerRunDiff(req);
+        }
+        else if (urlString.contains('/optimization/run/') && urlString.endsWith('/meta')) {
+            res = mockDataFactory.getOptimizerRunMeta(req);
+        }
+        else if (urlString.contains('/optimization/run/') && urlString.endsWith('/statistics')) {
+            res = mockDataFactory.getOptimizerRunStatistics(req);
+        }
+        else if (urlString.contains('/optimization/run/') && urlString.endsWith('/solvice')) {
+            res = mockDataFactory.getOptimizerRunParameters(req);
+        }
         return res;
     }
     
@@ -291,6 +303,86 @@ global class skedMockTest implements HttpCalloutMock {
             result.success = true;
 
             res.setBody(JSON.serialize(result));
+            return res;
+        }
+
+        public HttpResponse getOptimizerRunMeta(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+
+            skedSkeduloApiData.optimizationRunMetaResult result = new skedSkeduloApiData.optimizationRunMetaResult();
+            result.success = true;
+            result.allocationMeta = new List<skedSkeduloApiData.allocationMetaItem>();
+
+            skedSkeduloApiData.allocationMetaItem item = new skedSkeduloApiData.allocationMetaItem();
+            item.jobId = 'drivercdltest-job-123';
+            item.featureAllocId = 'feature-alloc-456';
+            item.existingAllocationId = 'existing-alloc-789';
+            result.allocationMeta.add(item);
+
+            res.setBody(JSON.serialize(result));
+            res.setStatusCode(this.statusCode);
+            return res;
+        }
+
+        public HttpResponse getOptimizerRunDiff(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+
+            skedSkeduloApiData.optimizationRunDiffResult result = new skedSkeduloApiData.optimizationRunDiffResult();
+            result.success = true;
+            result.solver = 'arc';
+            result.allocations = new Map<String, skedSkeduloApiData.optimizationDiffAllocation>();
+
+            skedSkeduloApiData.optimizationDiffAllocation diffAlloc = new skedSkeduloApiData.optimizationDiffAllocation();
+            diffAlloc.allocation = 'test-resource-123';
+            diffAlloc.deallocation = null;
+            result.allocations.put('feature-alloc-456', diffAlloc);
+
+            res.setBody(JSON.serialize(result));
+            res.setStatusCode(this.statusCode);
+            return res;
+        }
+
+        public HttpResponse getOptimizerRunStatistics(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+
+            skedSkeduloApiData.OptimizationRunStatisticsResult result = new skedSkeduloApiData.OptimizationRunStatisticsResult();
+            result.success = true;
+            result.result = new skedSkeduloApiData.OptimizationRunStatistics();
+            result.result.totalPlannedAllocations = 100;
+            result.result.totalScheduledAllocations = 95;
+            result.result.utilizedResources = 20;
+            result.result.unutilizedResources = 5;
+            result.result.averageTotalScheduledTimePerUtilizedResourceInMinutes = 480;
+            result.result.totalTravelTimeInMinutes = 120;
+            result.result.totalTravelDistanceInMeters = 50000;
+            result.result.maxTravelTimeToAllocationInMinutes = 30;
+            result.result.averageNumberOfAllocationsPerResource = 5;
+
+            res.setBody(JSON.serialize(result));
+            res.setStatusCode(this.statusCode);
+            return res;
+        }
+
+        public HttpResponse getOptimizerRunParameters(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+
+            skedSkeduloApiData.OptimizationRunParametersResult result = new skedSkeduloApiData.OptimizationRunParametersResult();
+            result.success = true;
+            result.result = new skedSkeduloApiData.OptimizationRunParameters();
+            result.result.weights = new skedSkeduloApiData.Weights();
+            result.result.weights.pref = '10';
+            result.result.weights.distanceAL = '5';
+            result.result.weights.softSkillsLevel = '3';
+            result.result.score = new skedSkeduloApiData.Scores();
+            result.result.score.hardScore = 0;
+            result.result.score.softScore = -1000;
+
+            res.setBody(JSON.serialize(result));
+            res.setStatusCode(this.statusCode);
             return res;
         }
     }

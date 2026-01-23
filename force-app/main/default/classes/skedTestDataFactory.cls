@@ -1030,6 +1030,7 @@ public class skedTestDataFactory {
         insert staffSetupExcludedRoles;
 
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Territory__c testTerritory1 = (sked_Territory__c)mapTestData.get('testTerritory1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
         sked__Location__c testLocation2 = (sked__Location__c)mapTestData.get('testLocation2');
         sked_Staging_Location__c testStagingLocation1 = (sked_Staging_Location__c) mapTestData.get('testStagingLocation1');
@@ -1102,6 +1103,7 @@ public class skedTestDataFactory {
 
         sked_Drive__c testDrive1 = new sked_Drive__c(
             Name = 'Test Drive',
+            sked_District__c = testTerritory1.Id,
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked_Drive_Date__c = driveStartDate,
             sked_Day_of_Week__c = driveDateDayOfWeek,
