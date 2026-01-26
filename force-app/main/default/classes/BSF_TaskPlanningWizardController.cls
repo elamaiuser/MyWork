@@ -171,8 +171,8 @@ public with sharing class BSF_TaskPlanningWizardController {
         }
 
         Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
-            SELECT Id, Creation_Date_Offset__c FROM Task_Definition__c 
-            WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE 
+            SELECT Id, Creation_Date_Offset__c, Subject__c FROM Task_Definition__c 
+            WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE
         ]);
 
         if (objectApiName == 'Account' || isTemplateRecord) {
@@ -251,10 +251,12 @@ public with sharing class BSF_TaskPlanningWizardController {
                 task.Target_Date__c = (String.isNotBlank(payload.userDate) ? Date.valueOf(payload.userDate) : Date.today());
             }
             if (taskDefinitionsById.containsKey(payload.definitionId)) {
-                task.Creation_Offset__c = taskDefinitionsById.get(payload.definitionId).Creation_Date_Offset__c;
+                Task_Definition__c taskDef = taskDefinitionsById.get(payload.definitionId);
+                task.Creation_Offset__c = taskDef.Creation_Date_Offset__c;
+                task.Subject__c = taskDef.Subject__c;
             }
             tasksToInsert.add(task);
-        }
+        }        
         insert as user tasksToInsert;
 
         if(opp.Drive_Status__c == 'Confirmed') {
@@ -282,9 +284,9 @@ public with sharing class BSF_TaskPlanningWizardController {
                 config.Configured_Date__c = (payload.userDate != null ? Date.valueOf(payload.userDate) : Date.today());
             }
 
-            if (taskDefinitionsById.containsKey(payload.definitionId)) {
+            /*if (taskDefinitionsById.containsKey(payload.definitionId)) {
                 config.Configured_Offset__c = taskDefinitionsById.get(payload.definitionId).Creation_Date_Offset__c;
-            }
+            }*/
             configsToInsert.add(config);
         }
         insert as user configsToInsert;

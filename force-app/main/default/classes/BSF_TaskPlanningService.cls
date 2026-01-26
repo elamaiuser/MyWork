@@ -153,7 +153,9 @@ public with sharing class BSF_TaskPlanningService {
     // ============================================================================
     public static void cascadeAccountToTemplates(List<Opportunity> templatesToSync) {
         Set<Id> accountIds = new Set<Id>();
-        for (Opportunity t : templatesToSync) { accountIds.add(t.AccountId); }
+        for (Opportunity template : templatesToSync) { 
+            accountIds.add(template.AccountId); 
+        }
 
         Map<Id, Account> accountsById = new Map<Id, Account>([SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds WITH USER_MODE]);
         Map<Id, List<Task_Planning_Default__c>> configsByAccountId = getParentConfigs(accountIds, 'Account__c');
@@ -261,7 +263,7 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         // Action: Cascade changes from Template to Child Drives
-        if(!templateChangedIds.isEmpty()) {
+        if(!templateChangedIds.isEmpty() && !System.isBatch() && !System.isFuture()) {
             Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
         }
     }
@@ -309,9 +311,10 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Planned_Task__c createPlannedTaskFromConfig(Task_Planning_Default__c source, Id opportunityId) {
         Planned_Task__c plannedTask = new Planned_Task__c(
-            Related_Opportunity__c = opportunityId, 
-            Task_Definition__c = source.Task_Definition__c, 
-            Scheduling_Method__c = source.Scheduling_Method__c, 
+            Related_Opportunity__c = opportunityId,
+            Task_Definition__c = source.Task_Definition__c,
+            Scheduling_Method__c = source.Scheduling_Method__c,
+            Task_Package__c = source.Task_Package__c,            
             Status__c = BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED
         );
         if (source.Scheduling_Method__c == BSF_Constants.PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET) { 
@@ -332,7 +335,7 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Map<Id, List<Task_Planning_Default__c>> getParentConfigs(Set<Id> parentIds, String lookupFieldApiName) {
         if (parentIds.isEmpty() || !BSF_Constants.ALLOWED_PLANNING_DEFAULT_LOOKUPS.contains(lookupFieldApiName)) { return new Map<Id, List<Task_Planning_Default__c>>(); }
-        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
+        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, Task_Package__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
         Map<Id, List<Task_Planning_Default__c>> resultsByParentId = new Map<Id, List<Task_Planning_Default__c>>();
         for (Task_Planning_Default__c config : Database.query(query)) {
             Id pId = (Id)config.get(lookupFieldApiName);
