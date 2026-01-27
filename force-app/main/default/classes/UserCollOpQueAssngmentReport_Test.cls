@@ -58,7 +58,7 @@ public class UserCollOpQueAssngmentReport_Test
         
         User DRDAMUser = new User(
              ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
-             LastName = 'last',
+             LastName = 'testingLastDRD',
              Email = 'puser000@amamama.com',
              Username = 'puser000@amamama.com' + System.currentTimeMillis(),
              CompanyName = 'TEST',
@@ -80,10 +80,10 @@ public class UserCollOpQueAssngmentReport_Test
     
     @isTest
     public static void testReportController() {
-        Test.startTest();
+        //Test.startTest();
         
-        user u =[select id,Name,sked_Collection_Operations__c from user Limit 1];
-        user AdminUser=[select id,Name,sked_Collection_Operations__c from user where profile.name='System Administrator' Limit 1];
+        user u =[select id,Name,sked_Collection_Operations__c from user WHERE LastName = 'testingLastDRD' AND Profile.Name = 'DRD Profile' Limit 1];
+        user AdminUser=[select id,Name,sked_Collection_Operations__c from user where LastName = 'last' AND profile.name='System Administrator' Limit 1];
 
         Group objGroup = new Group(Name = 'TestGroup1', Type='Queue',DeveloperName='Test_Group1');
         insert objGroup;
@@ -95,7 +95,7 @@ public class UserCollOpQueAssngmentReport_Test
         grpMem.GroupId =objGroup.id;
         grpMem.userorGroupId=AdminUser.id;
         
-        system.runAs(new User(Id = UserInfo.getUserId())) {
+        system.runAs(AdminUser) {
          	insert grpMem;
         }
         
@@ -107,7 +107,7 @@ public class UserCollOpQueAssngmentReport_Test
         reportController.clear();
         reportController.searchUser = u.Name;
         reportController.searchCollOpp = u.sked_Collection_Operations__c;
-        
+        Test.startTest();
         reportController.search();
   
         UserCollOpQueAssngmentReportController.getRoleSubordinateUsers(u.Id);

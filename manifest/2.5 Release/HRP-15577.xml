@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>BSF_Batch_BSFPortfolio</members>
@@ -25,12 +25,12 @@
 		<name>CustomField</name>
 	</types>
 	<types>
-        <members>Taxonomy_Automation_Runtime_Check__c</members>
-        <name>CustomObject</name>
-  </types>
-	<types>
 		<members>Taxonomy_Run_Config__mdt.Taxonomy_Run_Config</members>
 		<name>ListView</name>
 	</types>
+	<types>
+        <members>Taxonomy_Automation_Runtime_Check__c</members>
+        <name>CustomObject</name>
+  </types>
 	<version>64.0</version>
 </Package>

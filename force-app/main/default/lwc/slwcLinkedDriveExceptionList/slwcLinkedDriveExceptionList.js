@@ -283,7 +283,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     this.exceptionLog = [];
     this.fetchExceptionData()
       .then(result => {
-        this.exceptionLog = result;
+        this.exceptionLog = result;        
         if (this.sortedBy && this.sortedDirection) {
           this.sortData(this.sortedBy, this.sortedDirection);
         }
