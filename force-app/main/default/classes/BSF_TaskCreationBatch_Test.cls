@@ -60,15 +60,15 @@ public class BSF_TaskCreationBatch_Test {
         Database.executeBatch(taskCreationBatchInstance);
         Test.stopTest();
         
-        List<Task> sponsorPlanningTaskList = [SELECT Id, Subject FROM Task WHERE WhatId = :mobileOpp.Id];
-        Assert.areEqual(1, sponsorPlanningTaskList.size());
-        Assert.areEqual('Sponsor Planning Meeting', sponsorPlanningTaskList[0].Subject);
+        List<Task> recruitmentStrategyTaskList = [SELECT Id, Subject FROM Task WHERE WhatId = :mobileOpp.Id];
+        Assert.areEqual(1, recruitmentStrategyTaskList.size());
+        Assert.areEqual('Recruitment Strategy Meeting', recruitmentStrategyTaskList[0].Subject);
     }
     
     static testMethod void testBatchExecutionForSpecificOpp() {
         Test.startTest();
         Opportunity mobileOpp = [SELECT Id, Name, Drive_Date__c, WB_Projected_Procedures__c, Source__c, stageName FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
-        Date nextNDays = Date.today().addDays(Integer.ValueOf(label.SponsorPlanningMeetingTaskThresholdDays));
+        Date nextNDays = Date.today().addDays(Integer.valueOf(Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Creation_Date_Offset__c));
         mobileOpp.Drive_Date__c = nextNDays;
         mobileOpp.Drive_Date_Change_Reason__c = 'Test Specific Task Creation';
         TriggerHandler.bypass('OpportunityTriggerHandler');
@@ -79,9 +79,9 @@ public class BSF_TaskCreationBatch_Test {
         Database.executeBatch(taskCreationBatchInstance);
         Test.stopTest();
         
-        List<Task> sponsorPlanningTaskList = [SELECT Id, Subject FROM Task WHERE WhatId = :mobileOpp.Id];
-        Assert.areEqual(1, sponsorPlanningTaskList.size());
-        Assert.areEqual('Sponsor Planning Meeting', sponsorPlanningTaskList[0].Subject);
+        List<Task> recruitmentStrategyTaskList = [SELECT Id, Subject FROM Task WHERE WhatId = :mobileOpp.Id];
+        Assert.areEqual(1, recruitmentStrategyTaskList.size());
+        Assert.areEqual('Recruitment Strategy Meeting', recruitmentStrategyTaskList[0].Subject);
     }
     
     static testMethod void testSchdulableBatchExecution() {

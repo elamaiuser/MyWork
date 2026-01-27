@@ -4,5 +4,28 @@
     	<members>sked_HLT_Dist</members>     
     	<name>StaticResource</name>
  	</types>
+	<types>
+		<members>skedMappingConfigContainer</members>
+		<members>skedModels</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>sked__Availability__c.sked_Requested_Time_Off_Hours__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked__Availability__c-Sked Availability Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>Jobs_with_Availability</members>
+		<members>Resources_with_Availability</members>
+		<name>ReportType</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_13861_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_13861_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
     <version>64.0</version>
 </Package>

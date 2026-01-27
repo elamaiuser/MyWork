@@ -39,6 +39,10 @@
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>slwcDriveStaffingDetails</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <types>
 		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
 		<name>QuickAction</name>
