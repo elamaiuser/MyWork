@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Fixed Site Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Fixed Site Opp APS Layout</members>
+		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
+	<version>65.0</version>
+</Package>

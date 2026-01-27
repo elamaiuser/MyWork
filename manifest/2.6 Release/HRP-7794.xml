@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>Fixed_Site_Opp_Record_Page</members>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+    <types>
+		<members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Planner Mobile Opp Layout</members>
+		<members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+		<members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+		<members>Opportunity-DRD Fixed Site Opp Layout</members>
+		<members>Opportunity-DRD Mobile Opp Layout</members>
+		<members>Opportunity-Fixed Site Opp APS Layout</members>
+		<members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+		<members>Opportunity-Mobile Opp Layout</members>
+		<members>Opportunity-Opportunity Layout</members>
+		<members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+		<name>Layout</name>
+	</types>
+    <types>
+		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
+		<name>QuickAction</name>
+	</types>
+    <version>64.0</version>
+</Package>
