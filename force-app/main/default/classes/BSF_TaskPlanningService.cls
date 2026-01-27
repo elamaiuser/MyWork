@@ -302,11 +302,14 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     private static Task_Planning_Default__c createConfigClone(Task_Planning_Default__c source, Id parentRecordId, String lookupFieldApiName) {
-        Task_Planning_Default__c configClone = source.clone(false, true);
-        configClone.Account__c = null; 
-        configClone.Template_Opportunity__c = null;
-        configClone.put(lookupFieldApiName, parentRecordId);
-        return configClone;
+        Task_Planning_Default__c config = new Task_Planning_Default__c();
+        config.Task_Definition__c = source.Task_Definition__c;
+        config.Scheduling_Method__c = source.Scheduling_Method__c;
+        config.Configured_Offset__c = source.Configured_Offset__c;
+        config.Configured_Date__c = source.Configured_Date__c;
+        config.Task_Package__c = source.Task_Package__c;        
+        config.put(lookupFieldApiName, parentRecordId);
+        return config;
     }
 
     private static Planned_Task__c createPlannedTaskFromConfig(Task_Planning_Default__c source, Id opportunityId) {
@@ -314,7 +317,9 @@ public with sharing class BSF_TaskPlanningService {
             Related_Opportunity__c = opportunityId,
             Task_Definition__c = source.Task_Definition__c,
             Scheduling_Method__c = source.Scheduling_Method__c,
-            Task_Package__c = source.Task_Package__c,            
+            Task_Package__c = source.Task_Package__c,
+            Subject__c = source.Task_Definition__r != null ? source.Task_Definition__r.Subject__c : 'Undefined Subject',
+            creation_Offset__c = source.Task_Definition__r.Creation_Date_Offset__c,
             Status__c = BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED
         );
         if (source.Scheduling_Method__c == BSF_Constants.PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET) { 
@@ -335,7 +340,7 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Map<Id, List<Task_Planning_Default__c>> getParentConfigs(Set<Id> parentIds, String lookupFieldApiName) {
         if (parentIds.isEmpty() || !BSF_Constants.ALLOWED_PLANNING_DEFAULT_LOOKUPS.contains(lookupFieldApiName)) { return new Map<Id, List<Task_Planning_Default__c>>(); }
-        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, Task_Package__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
+        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, Task_Package__c, Task_Definition__r.Subject__c, Task_Definition__r.Creation_Date_Offset__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
         Map<Id, List<Task_Planning_Default__c>> resultsByParentId = new Map<Id, List<Task_Planning_Default__c>>();
         for (Task_Planning_Default__c config : Database.query(query)) {
             Id pId = (Id)config.get(lookupFieldApiName);
