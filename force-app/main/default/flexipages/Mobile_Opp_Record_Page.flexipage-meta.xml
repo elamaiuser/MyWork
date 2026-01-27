@@ -220,7 +220,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&#39;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
+                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&apos;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText2</identifier>
@@ -551,6 +551,40 @@
                         <leftValue>{!Record.Is_Template__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>true</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>createQuickActionName</name>
+                    <value>NewOpportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>lookupFieldName</name>
+                    <value>Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>titleFieldName</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>updateQuickActionName</name>
+                    <value>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</value>
+                </componentInstanceProperties>
+                <componentName>console:relatedRecord</componentName>
+                <identifier>console_relatedRecord2</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Military</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
