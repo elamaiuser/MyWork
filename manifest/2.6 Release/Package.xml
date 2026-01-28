@@ -154,6 +154,7 @@
     </types>
     <types>
         <members>aPComplianceReport</members>
+        <members>aRCSearchAffiliations</members>
         <members>autoMapper</members>
         <members>dataService</members>
         <members>slwcAvailator</members>
