@@ -151,6 +151,10 @@ class driveService extends dataService {
             queryBuilder.addCondition({ template: "District_Manager_Portfolio__c IN {0}", value: query.districtManagerPortfolioIds, type: "array_string" });
         }
 
+        if (query.missingTimeBlock) {
+            queryBuilder.addCondition({ template: `sked_Drive_Operation_Type__c != '{0}'`, value: DRIVE_TYPE.FIXED_SITE });
+        }
+
         queryBuilder.orderClause = "ORDER BY sked_Drive_Date__c ASC";
         //Related List
         if (query.includes(sObjectType.DRIVE_SHIFT)) {
