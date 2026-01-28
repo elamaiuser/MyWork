@@ -46,5 +46,9 @@
 		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
 		<name>QuickAction</name>
 	</types>
+	<types>
+		<members>aRCSearchAffiliations</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>64.0</version>
 </Package>
