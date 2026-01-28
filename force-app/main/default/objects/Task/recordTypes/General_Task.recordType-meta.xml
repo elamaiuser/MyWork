@@ -5,47 +5,6 @@
     <description>This is the record type for Global Action</description>
     <label>General Task</label>
     <picklistValues>
-        <picklist>Approved__c</picklist>
-        <values>
-            <fullName>No</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Location__c</picklist>
-        <values>
-            <fullName>Face to Face</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Phone Call</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Virtual</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Pre_Drive_Security_Due_Date__c</picklist>
-        <values>
-            <fullName>14</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>21</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>7</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Priority</picklist>
         <values>
             <fullName>High</fullName>
@@ -58,41 +17,6 @@
         <values>
             <fullName>Normal</fullName>
             <default>true</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Staff_List__c</picklist>
-        <values>
-            <fullName>Date of Birth</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Drivers Licenses %23</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Real ID</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>SSN</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Safety Video</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Staff Full Names</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>US Citizen</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Vehicle License %23</fullName>
-            <default>false</default>
         </values>
     </picklistValues>
     <picklistValues>
@@ -132,6 +56,14 @@
     <picklistValues>
         <picklist>Type</picklist>
         <values>
+            <fullName>1 Week Check-In</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>72 Hour Check In</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Book Drive</fullName>
             <default>false</default>
         </values>
@@ -152,7 +84,39 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Post Drive Analysis AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post Drive Analysis SBPM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Publicity Order Not Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Publicity Review Needed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recruitment Planning Meeting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request for Marketing Exception</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Security Information Completion</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Sponsor Planning Meeting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Template Order Task</fullName>
             <default>false</default>
         </values>
     </picklistValues>
