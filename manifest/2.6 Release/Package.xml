@@ -13,11 +13,15 @@
         <members>BSF_Batch_CreateHandOffTasks_Test</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
+        <members>BSF_TaskCreationBatch</members>
+        <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>BSF_Constants</members>
         <members>BSF_EmailNotification_Test</members>
         <members>BsfPortfolioSyncHelper_Test</members>
+        <members>BSFVehiclePlanningController_Test</members>
+        <members>DefaultTerritoryPortfolioBatch_Test</members>
         <members>DMBellNotificationATMBatchHelperTest</members>
         <members>DriveTriggerHandler</members>
         <members>DriveTriggerService</members>
@@ -33,6 +37,7 @@
         <members>SiteService</members>
         <members>SiteServiceTest</members>
         <members>SiteTriggerHandler</members>
+        <members>TaskGenerationBatch</members>
         <members>TaskService</members>
         <members>TaskTriggerHandler</members>
         <members>TemplateCDA_FutureOpportunityBatch_Test</members>
@@ -52,6 +57,7 @@
         <members>skedAvailabilityTrigger_Test</members>
         <members>skedCaptureAPExceptionLogBatch</members>
         <members>skedCaptureAPExceptionLogBatch_Test</members>
+        <members>skedCollectionsZipCodeBatch_Test</members>
         <members>skedConstants</members>
         <members>skedDateTimeUtils</members>
         <members>skedDriveHandler</members>
@@ -83,6 +89,7 @@
     <types>
         <members>APComplianceExcel</members>
         <members>skedMobileCallOutContactInformationForm</members>
+        <members>skedRAC</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -94,6 +101,7 @@
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
+        <members>Activity.Location__c</members>
         <members>Opportunity.Account_Name__c</members>
         <members>Task.Type</members>
         <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
@@ -101,6 +109,7 @@
         <members>sked__Activity_Resource__c.sked_Replacement_For__c</members>
         <members>sked__Activity_Resource__c.sked_UniqueKey__c</members>
         <members>sked__Job_Allocation__c.sked_Replacement_For__c</members>
+        <members>sked__Location__c.sked_Staff_Personal_Parking_Directions__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -123,6 +132,13 @@
         <members>Task_Reassignment_Matrix.Sponsor_Planning</members>
         <members>Task_Reassignment_Matrix.Template_Order_Task</members>
         <members>Task_Reassignment_Matrix.X72_Hour</members>
+        <members>Task_Report_Link__mdt.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link__mdt.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link__mdt.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link__mdt.Donor_Appointments_Recruitment_Task</members>
+        <members>Task_Report_Link__mdt.DRMS_Audit_report</members>
+        <members>Task_Report_Link__mdt.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link__mdt.Same_Day_Rebooking_Results_SBPM</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -148,8 +164,11 @@
         <members>Opportunity-Opportunity Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Task-Marketing Exception</members>
         <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
+         <members>Task-Task Layout</members>   
+        <members>Task-Task 72hrs Layout</members>        
         <name>Layout</name>
     </types>
     <types>
@@ -190,6 +209,7 @@
     </types>
     <types>
         <members>sked_HLT_Dist</members>
+        <members>sked_HLT_Vendors</members>
         <name>StaticResource</name>
     </types>
     <types>
