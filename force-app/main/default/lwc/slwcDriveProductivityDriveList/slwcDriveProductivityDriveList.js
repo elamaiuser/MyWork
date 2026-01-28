@@ -3,8 +3,8 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DateTime } from 'c/luxon';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { driveQueryModel, driveService, sObjectType } from 'c/dataService';
-import { groupBy, result } from 'c/lodash';
+import { driveQueryModel, driveService, sObjectType, territoryQueryModel, territoryService } from 'c/dataService';
+import { groupBy } from 'c/lodash';
 import { classNames, generateColors } from "c/slwcUtils";
 import { LINK_DRIVE_TYPE } from 'c/slwcConstants';
 
@@ -22,6 +22,7 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
     @track btnConfirmDisabled = true;
 
     selectedProductivityStatus = null;
+    territoriesMapById = null;
     startDate = null;
     endDate = null;
 
@@ -107,27 +108,49 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
     getDriveList() {
         this.showSpinner = true;
         this.filteredList = [];
-        let driveQuery = new driveQueryModel();
-        driveQuery.territoryKeys = this.territoryKeys;
-        driveQuery.startDate = this.startDate;
-        driveQuery.endDate = this.endDate;
-        driveQuery.eventTypes = this.filters.driveTypes;
-        driveQuery.statuses = this.filters.driveStatuses;
-        driveQuery.stages = this.filters.stages;
-        driveQuery.accountTypes = this.filters.accountTypes;
-        driveQuery.accountIndustryCodes = this.filters.accountIndustryCodes;
-        // driveQuery.recruitedBys = this.filters.recruitedBys;
-        driveQuery.markets = (this.filters.markets || []).map(market => {
-            return market.id;
-        });
-        driveQuery.subQueryIndicator = sObjectType.JOB;
 
-        let service = new driveService();
-        service.query(driveQuery)
-            .then((result) => {
-                if (result && result.length) {
-                    result.forEach((drive) => {
+        const territoryKeys = this.territoryKeys;
+        const territoryIds = territoryKeys.map(key => key.split(':')[0]);
+
+        return Promise.resolve()
+            .then(() => {
+                let driveQuery = new driveQueryModel();
+                driveQuery.territoryKeys = this.territoryKeys;
+                driveQuery.startDate = this.startDate;
+                driveQuery.endDate = this.endDate;
+                driveQuery.eventTypes = this.filters.driveTypes;
+                driveQuery.statuses = this.filters.driveStatuses;
+                driveQuery.stages = this.filters.stages;
+                driveQuery.accountTypes = this.filters.accountTypes;
+                driveQuery.accountIndustryCodes = this.filters.accountIndustryCodes;
+                // driveQuery.recruitedBys = this.filters.recruitedBys;
+                driveQuery.markets = (this.filters.markets || []).map(market => {
+                    return market.id;
+                });
+                driveQuery.subQueryIndicator = sObjectType.JOB;
+                
+                let territoryQuery = new territoryQueryModel();
+                territoryQuery.recordIds = territoryIds;
+
+                let driveSvc = new driveService();
+                let territorySvc = new territoryService();
+
+                return Promise.all([
+                    driveSvc.query(driveQuery),
+                    territorySvc.query(territoryQuery)
+                ])
+            })
+            .then(([driveResult, territoryResult]) => {
+                this.territoriesMapById = territoryResult.reduce((map, territory) => {
+                    map[territory.id] = territory;
+                    return map;
+                }, {});
+
+                if (driveResult && driveResult.length) {
+                    driveResult.forEach((drive) => {
                         let territoryCollectionOperation = ((this.filters.collectionOperationValues || {}).territoryCollectionOperations || []).find(item => item.territoryId == drive.territoryId);
+
+                        const territory = this.territoriesMapById[territoryCollectionOperation.territoryId];
 
                         drive.recordPageUrl = '/' + drive.id;
                         drive.driveNameData = {
@@ -146,11 +169,11 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
                         } : null;
 
                         drive.productivityStatus = "";
-                        if(territoryCollectionOperation) {
-                            if (drive.driveProductivityPlanned < territoryCollectionOperation.midDriveProductivityThreshold) {
+                        if (territory) {
+                            if (drive.driveProductivityPlanned < territory.midDriveProductivityThreshold) {
                                 drive.productivityStatus = "Low";
                             }
-                            else if (drive.driveProductivityPlanned < territoryCollectionOperation.highDriveProductivityThreshold) {
+                            else if (drive.driveProductivityPlanned < territory.highDriveProductivityThreshold) {
                                 drive.productivityStatus = "Mid";
                             }
                             else {
@@ -159,8 +182,8 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
                         }
                     });
                 }
-                this.totalDrives = result.length;
-                this.driveList = result;
+                this.totalDrives = driveResult.length;
+                this.driveList = driveResult;
                 this.countDriveByProductivityStatus();
                 this.updateLinkedDrivesStyle();
                 this.filterDriveList("High");
@@ -169,7 +192,7 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
                 console.log(error);
             })
             .finally(() => {
-                this.showSpinner = false;
+                this.showSpinner = false
             });
     }
 
