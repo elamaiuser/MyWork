@@ -1426,14 +1426,15 @@ public class skedResourceHandler extends skedTriggerHub {
             }
         }
         if (!deactivatedResourceIds.isEmpty()) {
+            DateTime currentTime = system.now();
             List<sked__Availability_Pattern_Resource__c> patternResources = [
                 SELECT Id, sked__End__c
                 FROM sked__Availability_Pattern_Resource__c
                 WHERE sked__Resource__c IN :deactivatedResourceIds
+                AND (sked__End__c = NULL OR sked__End__c >= :currentTime)
             ];
 
             if (!patternResources.isEmpty()) {
-                DateTime currentTime = system.now();
                 for (sked__Availability_Pattern_Resource__c patternResource : patternResources) {
                     patternResource.sked__End__c = currentTime;
                 }
