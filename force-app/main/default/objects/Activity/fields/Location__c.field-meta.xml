@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Location__c</fullName>
-    <externalId>false</externalId>
     <label>Location</label>
     <required>false</required>
     <type>Picklist</type>
@@ -23,6 +22,11 @@
                 <fullName>Phone Call</fullName>
                 <default>false</default>
                 <label>Phone Call</label>
+            </value>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
             </value>
         </valueSetDefinition>
     </valueSet>
