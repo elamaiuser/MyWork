@@ -157,7 +157,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
                 name: `${collectionOperation.name} - ${coTb.timeBlock.name}`,
                 driveType: driveType
               }
-              result.push(coTbItem);
+              result.push(coTbItem); // test
             }
           })
         }
