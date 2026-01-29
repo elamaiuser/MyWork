@@ -34,6 +34,8 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>BSF_Batch_TaskRename</members>
+        <members>BSF_Batch_TaskRename_Test</members>
         <members>BSF_Constants</members>
         <members>BSF_TaskCreationBatch</members>
         <members>OpportunityTriggerHandler</members>
