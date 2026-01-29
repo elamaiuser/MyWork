@@ -551,13 +551,15 @@ if(ds.isCreateable()){}*/
               {
                 task recruitmentTask = new task();
                 recruitmentTask.RecordTypeId = recTypeId;
-                Date taskDueDate = opp.Drive_Date__c.addDays(-50);
-                String taskDueDayString = Datetime.newInstance(taskDueDate.year(), taskDueDate.month(),taskDueDate.day()).format('EEE'); 
+                Integer daysFromDriveDate = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Due_Date_Offset__c != null 
+                                            ? Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Due_Date_Offset__c.intValue() : 0;
+                Date taskDueDate = opp.Drive_Date__c.addDays(0 - daysFromDriveDate);
+                /*String taskDueDayString = Datetime.newInstance(taskDueDate.year(), taskDueDate.month(),taskDueDate.day()).format('EEE'); 
                 if(taskDueDayString.equalsIgnoreCase('Sat')){
                     taskDueDate = taskDueDate.addDays(-1);
                 }else if(taskDueDayString.equalsIgnoreCase('Sun')){
                     taskDueDate = taskDueDate.addDays(-2);
-                }
+                }*/
                 recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
                 recruitmentTask.subject = taskSubject;
