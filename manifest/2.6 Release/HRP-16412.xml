@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>BSF_Batch_CreateHandOffTasks</members>
+  <types>
+    <members>BSF_Batch_CreateHandOffTasks</members>
 		<members>BSF_Batch_CreateHandOffTasks_Test</members>
 		<members>BsfPortfolioSyncHelper_Test</members>
 		<members>LeadUtils_Test</members>
 		<members>UpdateAMAndDMPortfolioBatchTest</members>
-		<members>UpdateAMAndDMPortfolioDailyBatchTest</members>
-		<members>skedStaffingBudgetCollOp_Test</members>
+		<members>UpdateAMAndDMPortfolioDailyBatchTest</members>		
 		<members>BSF_EmailNotification_Test</members>
 		<members>BSFVehiclePlanningController_Test</members>
+		<members>BSF_TaskCreationBatch_Test</members>
 		<members>BSF_BatchUpdateAccountForZipCodeTest</members>
 		<members>BSF_Batch_CreateHandOffTasks_Test</members>
 		<members>BSF_Batch_OpportunityTeamMember_Test</members>
