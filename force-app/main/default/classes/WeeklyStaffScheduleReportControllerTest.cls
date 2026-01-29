@@ -64,22 +64,42 @@ private class WeeklyStaffScheduleReportControllerTest {
 
         sked__Resource__c testResource1 = [SELECT Id FROM sked__Resource__c WHERE RecordType.Name = 'Staff' AND sked__Resource_Type__c = 'Person' LIMIT 1];
         List<String> availabilityType = Custom_Report_Config__mdt.getInstance('AvailabilityType').Value__c.split(',');
-        sked__Availability__c availability1 = new sked__Availability__c(
+        List<sked__Availability__c> testAvailabilities = new List<sked__Availability__c>();
+        sked__Availability__c availability1;
+        availability1 = new sked__Availability__c(
             sked__Resource__c = testResource1.Id,
             sked__Is_Available__c = True,
             sked__Status__c = 'Approved',
-            sked__Start__c = Date.today(),
-            sked__Finish__c = Date.today().addDays(5),
+            sked__Start__c = DateTime.now(),
+            sked__Finish__c =Datetime.now().addMinutes(66),
+            sked_Bypass_Auto_Approval_Process__c = True,
+            sked_Custom_Status__c = 'Pending',
+            sked_Start_Date__c =  Date.today(),
+            sked_Finish_Date__c =  Date.today(),
+            sked__Type__c = availabilityType[0],
+            sked_Start_Time__c = Datetime.now().time(),
+            sked_Finish_Time__c = Datetime.now().addMinutes(66).time()
+        );
+        testAvailabilities.add(availability1);
+        
+        availability1 = new sked__Availability__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Is_Available__c = True,
+            sked__Status__c = 'Approved',
+            sked__Start__c = DateTime.now(),
+            sked__Finish__c =Datetime.now().addDays(5).addMinutes(66),
             sked_Bypass_Auto_Approval_Process__c = True,
             sked_Custom_Status__c = 'Pending',
             sked_Start_Date__c =  Date.today(),
             sked_Finish_Date__c =  Date.today().addDays(5),
             sked__Type__c = availabilityType[0],
             sked_Start_Time__c = Datetime.now().time(),
-            sked_Finish_Time__c = Datetime.now().addMinutes(66).time()
+            sked_Finish_Time__c = Datetime.now().addDays(5).addMinutes(66).time()
         );
+        testAvailabilities.add(availability1);
+        
         skedHubBase.BypassInsertTriggers = true;
-        insert availability1;
+        insert testAvailabilities;
         
     }
 
@@ -128,6 +148,13 @@ private class WeeklyStaffScheduleReportControllerTest {
             WeeklyStaffScheduleReportController ext = new WeeklyStaffScheduleReportController(); 
             ext.wrapper = new WeeklyStaffScheduleReportController.DatablePDFWrapper();
         }catch(AuraHandledException ex) {}
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void testmethod4() {
+        Test.startTest();
+        WeeklyStaffScheduleReportController.addLineBreaks('Test Line-Break To', 3);
         Test.stopTest();
     }
 
@@ -708,7 +735,8 @@ private class WeeklyStaffScheduleReportControllerTest {
                 sked__Resource__c = resourcestaff.id,
                 sked__Status__c = effwffwf.split(',')[0],
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
-                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
+                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0),
+                sked_Additional_Roles__c = '2RBC Sign-off'
             );
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobAllocationTriggerHandler');
@@ -721,7 +749,8 @@ private class WeeklyStaffScheduleReportControllerTest {
                 sked__Resource__c = resourceVehicle.id,
                 sked__Status__c = 'Complete',
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
-                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
+                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0),
+                sked_Additional_Roles__c = '2RBC Sign-off'
             );
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobAllocationTriggerHandler');
@@ -733,7 +762,8 @@ private class WeeklyStaffScheduleReportControllerTest {
                 sked__Resource__c = resourceVehicle.id,
                 sked__Status__c = 'Complete',
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
-                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
+                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0),
+                sked_Additional_Roles__c = '2RBC Sign-off'
             );
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobAllocationTriggerHandler');
@@ -745,7 +775,8 @@ private class WeeklyStaffScheduleReportControllerTest {
                 sked__Resource__c = resourceEquipment.id,
                 sked__Status__c = 'Complete',
                 sked_Start_Time__c = Time.newInstance(5, 0, 0, 0),
-                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0)
+                sked_Set_End_Time__c = Time.newInstance(12, 0, 0, 0),
+                sked_Additional_Roles__c = '2RBC Sign-off'
             );
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobAllocationTriggerHandler');
@@ -757,59 +788,68 @@ private class WeeklyStaffScheduleReportControllerTest {
         	skedHubBase.BypassUpdateTriggers = false;
             skedSetting.instance.Admin.dateTimeConversion = true;
             
-            sked__Activity__c activity = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked_Start_Date__c =  Date.today(),
-            sked_End_Date__c =  Date.today().addDays(1),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked__Start__c = Datetime.now(),
-            sked__End__c = Datetime.now().addMinutes(66),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_District__c = testCollectionOperation1.sked_Territory__c,
-            sked_Drive__c = testDrive1.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+            List<sked__Activity__c> testActivities = new List<sked__Activity__c>();
+            sked__Activity__c testActivity;
+            testActivity = new sked__Activity__c(
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'Administrative',
+                sked_Activity_Title__c = 'Administrative 1',
+                sked_Start_Date__c =  Date.today().addDays(3),
+                sked_End_Date__c =  Date.today().addDays(5),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked__Start__c = Datetime.now().addDays(3),
+                sked__End__c = Datetime.now().addDays(5).addMinutes(66),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive1.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
-            insert activity;
-            
-            sked__Activity_Resource__c skedActivityResource = new sked__Activity_Resource__c(
-                sked__Activity__c = activity.Id,
-                sked__Resource__c = resourcestaff.Id
-            );
-            insert skedActivityResource;
-            
-            sked__Activity__c activity1 = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked_Start_Date__c =  Date.today().addDays(2),
-            sked_End_Date__c =  Date.today().addDays(2),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked__Start__c = Datetime.now(),
-            sked__End__c = Datetime.now().addMinutes(66),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_District__c = testCollectionOperation1.sked_Territory__c,
-            sked_Drive__c = testDrive2.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
-            );
-            insert activity1;
-            
-            sked__Activity_Resource__c skedActivityResource1 = new sked__Activity_Resource__c(
-                sked__Activity__c = activity1.Id,
-                sked__Resource__c = resourcestaff.Id
-            );
-            insert skedActivityResource1;
-        }        
-        
-    }
+            testActivities.add(testActivity);
 
+            testActivity = new sked__Activity__c(
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'Training',
+                sked_Activity_Title__c = 'Training 1',
+                sked_Start_Date__c =  Date.today().addDays(2),
+                sked_End_Date__c =  Date.today().addDays(2),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked__Start__c = Datetime.now().addDays(2),
+                sked__End__c = Datetime.now().addDays(2).addMinutes(66),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_District__c = testCollectionOperation1.sked_Territory__c,
+                sked_Drive__c = testDrive2.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
+            );
+            testActivities.add(testActivity);
+            insert testActivities;
+
+            sked__Activity_Resource__c testActivityResource1 = new sked__Activity_Resource__c(
+                sked__Activity__c = testActivities[0].Id,
+                sked__Resource__c = resourcestaff.Id,
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time()
+            );
+            insert testActivityResource1;
+            
+            skedHubBase.BypassInsertTriggers = true;
+            skedHubBase.BypassUpdateTriggers = true;
+            
+            sked__Activity_Resource__c testActivityResource2 = new sked__Activity_Resource__c(
+                sked__Activity__c = testActivities[1].Id,
+                sked__Resource__c = resourcestaff.Id
+            );
+            insert testActivityResource2;
+            
+            skedHubBase.BypassInsertTriggers = false;
+            skedHubBase.BypassUpdateTriggers = false;
+        }         
+    }
 }
