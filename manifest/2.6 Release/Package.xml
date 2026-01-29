@@ -7,6 +7,9 @@
         <members>OpportunityServiceControllerTest</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>BSF_Batch_TaxonomyEndDate_Test</members>
+		<members>skedCollectionsZipCodeBatch_Test</members>
+		<members>DefaultTerritoryPortfolioBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
