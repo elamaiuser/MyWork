@@ -294,7 +294,7 @@ public class skedWorkdayUtils implements Callable {
                     recordsToUpsert.add(timeOffRequest);
 
                     if (skedSetting.instance.admin.enableWorkdayLogging) {
-                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Enter Time Off', timeOffRequest, result);
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Create Time Off Entry', timeOffRequest, result);//HRP-13728
                         recordsToUpsert.add(debugLog);
                     }
                 }
@@ -320,6 +320,11 @@ public class skedWorkdayUtils implements Callable {
             if (skedSetting.instance.admin.workdayIntegration && !availabilityIds.isEmpty()) {
 
                 Map<Id, skedWorkdayAdjustTimeOffResponse> resultById = new Map<Id, skedWorkdayAdjustTimeOffResponse>();
+
+                Map<Id, sked__Availability__c> availabilityById = new Map<Id, sked__Availability__c>([
+                    SELECT Id, sked__Resource__c,sked_WID__c,sked_Custom_Status__c FROM sked__Availability__c WHERE Id IN :availabilityIds
+                ]);//HRP-13728
+
                 for (Id availabilityId : availabilityIds) {
                     Id resourceId = resourceIdByAvailId.get(availabilityId);
                     skedWorkdayAdjustTimeOffRequest adjustTimeOffRequest = new skedWorkdayAdjustTimeOffRequest();
@@ -328,14 +333,13 @@ public class skedWorkdayUtils implements Callable {
                     
                     skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustTimeOffEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
                     adjustTimeOffEntry.ptoEntryId = availabilityId;
+                    adjustTimeOffEntry.Comment = availabilityById.get(availabilityId).sked_Custom_Status__c == 'Processing Cancellation' ? 'Cancelled via Skedulo' : availabilityById.get(availabilityId).sked_Custom_Status__c == 'Processing Adjustment' ? 'Adjusted via Skedulo' : null;//HRP-13728
                     adjustTimeOffEntry.adjustment = adjustmentById.get(availabilityId);
                     adjustTimeOffRequest.adjustTimeOffEntries.add(adjustTimeOffEntry);
                     resultById.put(availabilityId, skedWorkdayApiManager.AdjustTimeOff(adjustTimeOffRequest));
                 }
 
-                Map<Id, sked__Availability__c> availabilityById = new Map<Id, sked__Availability__c>([
-                    SELECT Id, sked__Resource__c,sked_WID__c FROM sked__Availability__c WHERE Id IN :availabilityIds
-                ]);
+                
 
                 List<sked__Availability__c> failedAdjustments = new List<sked__Availability__c>();
 
@@ -363,7 +367,7 @@ public class skedWorkdayUtils implements Callable {
                     recordsToUpsert.add(availabilityRecord);
                     
                     if (skedSetting.instance.admin.enableWorkdayLogging) {
-                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Adjust Time Off', availabilityRecord, result);
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Adjust Time Off Entry', availabilityRecord, result);//HRP-13728
                         recordsToUpsert.add(debugLog);
                     }
                 }
