@@ -13,14 +13,13 @@
         <members>BSF_Batch_CreateHandOffTasks_Test</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
-        <members>BSF_TaskCreationBatch</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>BSF_Constants</members>
         <members>BSF_EmailNotification_Test</members>
+        <members>BSF_TaskCreationBatch</members>
         <members>BsfPortfolioSyncHelper_Test</members>
-        <members>BSFVehiclePlanningController_Test</members>
         <members>DefaultTerritoryPortfolioBatch_Test</members>
         <members>DMBellNotificationATMBatchHelperTest</members>
         <members>DriveTriggerHandler</members>
@@ -64,6 +63,7 @@
         <members>skedDriveTrigger_Test</members>
         <members>skedEmailHandlerController_Test</members>
         <members>skedEmailService_Test</members>
+		<members>skedExceptionLogService</members>
         <members>skedHCExceptionHandler</members>
         <members>skedHCExceptionTrigger_Test</members>
         <members>skedJobAllocationTravelTimeBatch_Test</members>
@@ -89,7 +89,6 @@
     <types>
         <members>APComplianceExcel</members>
         <members>skedMobileCallOutContactInformationForm</members>
-        <members>skedRAC</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -135,8 +134,8 @@
         <members>Task_Report_Link__mdt.After_Drive_Analysis_SBPM</members>
         <members>Task_Report_Link__mdt.BPL_Thank_You_Flyer_SBPM</members>
         <members>Task_Report_Link__mdt.Contingency_Worksheet_Recruitment_Task</members>
-        <members>Task_Report_Link__mdt.Donor_Appointments_Recruitment_Task</members>
         <members>Task_Report_Link__mdt.DRMS_Audit_report</members>
+        <members>Task_Report_Link__mdt.Donor_Appointments_Recruitment_Task</members>
         <members>Task_Report_Link__mdt.Ferritin_Deferrals_SBPM</members>
         <members>Task_Report_Link__mdt.Same_Day_Rebooking_Results_SBPM</members>
         <name>CustomMetadata</name>
@@ -165,10 +164,10 @@
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
         <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
         <members>Task-Marketing Exception</members>
+        <members>Task-Task 72hrs Layout</members>
+        <members>Task-Task Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
-         <members>Task-Task Layout</members>   
-        <members>Task-Task 72hrs Layout</members>        
         <name>Layout</name>
     </types>
     <types>
@@ -209,7 +208,6 @@
     </types>
     <types>
         <members>sked_HLT_Dist</members>
-        <members>sked_HLT_Vendors</members>
         <name>StaticResource</name>
     </types>
     <types>

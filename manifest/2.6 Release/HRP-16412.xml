@@ -13,6 +13,9 @@
 		<members>BSF_BatchUpdateAccountForZipCodeTest</members>
 		<members>BSF_Batch_CreateHandOffTasks_Test</members>
 		<members>BSF_Batch_OpportunityTeamMember_Test</members>
+		<members>BSF_Batch_TaxonomyEndDate_Test</members>
+		<members>DefaultTerritoryPortfolioBatch_Test</members>
+		<members>skedCollectionsZipCodeBatch_Test</members>
 		<members>BsfPortfolioSyncHelper_Test</members>
 		<members>DMBellNotificationATMBatchHelperTest</members>
 		<members>InformaticaStandardAddress_Test</members>
