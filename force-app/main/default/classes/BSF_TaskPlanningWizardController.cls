@@ -141,52 +141,58 @@ public with sharing class BSF_TaskPlanningWizardController {
 
     @AuraEnabled
     public static void saveTaskPlans(Id recordId, String jsonPayload, List<String> selectedPackageIds, String activePath) {
-        String objectApiName = recordId.getSObjectType().getDescribe().getName();
-        Boolean isTemplateRecord = isTemplate(recordId);
+        try {        
+            String objectApiName = recordId.getSObjectType().getDescribe().getName();
+            Boolean isTemplateRecord = isTemplate(recordId);
+            String currentPath;
 
-        // Validation: Block Confirmed Drives
-        if (objectApiName == 'Opportunity') {
-            Opportunity opp = [SELECT Drive_Status__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
-            if (opp.Drive_Status__c == 'Confirmed') {
-                throw new AuraHandledException('Planning is Read-Only for Confirmed Drives.');
+            // Validation: Block Confirmed Drives
+            if (objectApiName == 'Opportunity') {
+                Opportunity opp = [SELECT Drive_Status__c, Planning_Path__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
+                currentPath = opp.Planning_Path__c;
+                if (opp.Drive_Status__c == 'Confirmed') {
+                    throw new AuraHandledException('Planning is Read-Only for Confirmed Drives.');
+                }
+            } else {
+                Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH USER_MODE];
+                currentPath = acc.Planning_Path__c;
             }
+
+            Boolean isPathChanged = (currentPath != activePath);
+
+            // Scenario A: Revert to Standard
+            if (activePath == 'Standard') {
+                wipeConfiguration(recordId, objectApiName); 
+                resetToStandardConfig(recordId, objectApiName); 
+                updatePath(recordId, objectApiName, 'Standard');
+                handleBatchTrigger(isPathChanged, isTemplateRecord, objectApiName, recordId);                           
+                return;
+            }
+
+            // Scenario B: Flexible Save
+            List<SavePayload> selections = (List<SavePayload>) JSON.deserialize(jsonPayload, List<SavePayload>.class);
+            Map<Id, SavePayload> uniqueSelectionsByDefId = new Map<Id, SavePayload>();
+            for (SavePayload p : selections) {
+                uniqueSelectionsByDefId.put(p.definitionId, p);
+            }
+
+            Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
+                SELECT Id, Creation_Date_Offset__c, Subject__c FROM Task_Definition__c 
+                WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE
+            ]);
+
+            if (objectApiName == 'Account' || isTemplateRecord) {
+                saveToConfiguration(recordId, objectApiName, uniqueSelectionsByDefId.values(), taskDefinitionsById);
+            } else {
+                saveToQueue(recordId, uniqueSelectionsByDefId.values(), taskDefinitionsById);
+            }
+
+            saveSelectedPackages(recordId, selectedPackageIds);
+            updatePath(recordId, objectApiName, 'Flexible');
+            handleBatchTrigger(isPathChanged, isTemplateRecord, objectApiName, recordId);            
+        } catch (Exception ex) {
+            throw new AuraHandledException('Error Saving Task Plans: ' + ex.getMessage());
         }
-
-        // Scenario A: Revert to Standard
-        if (activePath == 'Standard') {
-            wipeConfiguration(recordId, objectApiName); 
-            resetToStandardConfig(recordId, objectApiName); 
-            updatePath(recordId, objectApiName, 'Standard');
-            if (isTemplateRecord) {
-                fireTemplateCascadeBatch(recordId);
-            }            
-            return;
-        }
-
-        // Scenario B: Flexible Save
-        List<SavePayload> selections = (List<SavePayload>) JSON.deserialize(jsonPayload, List<SavePayload>.class);
-        Map<Id, SavePayload> uniqueSelectionsByDefId = new Map<Id, SavePayload>();
-        for (SavePayload p : selections) {
-            uniqueSelectionsByDefId.put(p.definitionId, p);
-        }
-
-        Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
-            SELECT Id, Creation_Date_Offset__c, Subject__c FROM Task_Definition__c 
-            WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE
-        ]);
-
-        if (objectApiName == 'Account' || isTemplateRecord) {
-            saveToConfiguration(recordId, objectApiName, uniqueSelectionsByDefId.values(), taskDefinitionsById);
-        } else {
-            saveToQueue(recordId, uniqueSelectionsByDefId.values(), taskDefinitionsById);
-        }
-
-        saveSelectedPackages(recordId, selectedPackageIds);
-        updatePath(recordId, objectApiName, 'Flexible');
-
-        if (isTemplateRecord) {
-            fireTemplateCascadeBatch(recordId);
-        }        
     }
 
     // ============================================================================
@@ -365,6 +371,16 @@ public with sharing class BSF_TaskPlanningWizardController {
         }
     }
 
+    private static void handleBatchTrigger(Boolean isPathChanged, Boolean isTemplateRecord, String objectApiName, Id recordId) {
+        if (!isPathChanged) {
+            if (isTemplateRecord) {
+                fireTemplateCascadeBatch(recordId);
+            } else if (objectApiName == 'Account') {
+                fireAccountCascadeBatch(recordId);
+            }
+        }
+    }
+
     // ============================================================================
     // UTILITIES
     // ============================================================================
@@ -387,7 +403,13 @@ public with sharing class BSF_TaskPlanningWizardController {
     private static void fireTemplateCascadeBatch(Id templateId) {
         if (!System.isBatch() && !System.isFuture()) {
             System.debug('Firing Template Cascade Batch for Template Id: ' + templateId);
-            // Database.executeBatch(new FlexiblePathTemplateBatch(new Set<Id>{templateId}), 50);
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(new Set<Id>{templateId}), 50);
+        }
+    }
+
+    private static void fireAccountCascadeBatch(Id accountId) {
+        if (!System.isBatch() && !System.isFuture()) {
+            Database.executeBatch(new BSF_AccountTaskPlanningCascadeBatch(new Set<Id>{accountId}), 50);
         }
     }
 }

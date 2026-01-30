@@ -65,7 +65,11 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     initializePackageDisplay() {
         // Deep clone the metadata to apply UI-specific logic
         const packages = JSON.parse(JSON.stringify(this.taskMetadataCache));
-        
+
+        // Determine if we are in a "Transition" state (Moving from Standard -> Flexible without saving yet)
+        // In this state, we want to pre-select Standard tasks as a starting point.
+        const isTransitioningFromStandard = (this.wiredResult && this.wiredResult.data && this.wiredResult.data.currentPath === 'Standard');
+
         this.packageGroups = packages.map(group => {
             // Standard Mode Filter: Only show standard groups
             if (this.activePlanningPath === 'Standard' && !group.isStandard) {
@@ -85,8 +89,16 @@ export default class BsfTaskPlanningWizard extends LightningElement {
                 if (this.activePlanningPath === 'Standard') {
                     if (group.isStandard) { isChecked = true; isLocked = true; }
                 } else {
-                    // Flexible: Standard tasks are auto-checked but editable; Flexible tasks retain saved state
-                    isChecked = group.isStandard || taskItem.isChecked;
+                    // In Flexible View:
+                    if (isTransitioningFromStandard && group.isStandard) {
+                        // Scenario: User just switched from Standard to Flexible (Unsaved).
+                        // Default the standard tasks to Checked so they have a baseline to work from.
+                        isChecked = true;
+                    } else {
+                        // Scenario: Existing Flexible Plan (Saved in DB).
+                        // Trust the DB state. If user unchecked it previously, it stays unchecked.
+                        isChecked = taskItem.isChecked;
+                    }
                 }
 
                 if (this.isPlanningLocked) {
