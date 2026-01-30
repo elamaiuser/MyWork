@@ -5,16 +5,16 @@
         <members>Task_Reassignment_Matrix.Recruitment_Task</members>
         <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
         <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
-        <members>Task_Report_Link__mdt.After_Drive_Analysis_SBPM</members>
-        <members>Task_Report_Link__mdt.BPL_Thank_You_Flyer_SBPM</members>
-        <members>Task_Report_Link__mdt.Ferritin_Deferrals_SBPM</members>
-        <members>Task_Report_Link__mdt.Same_Day_Rebooking_Results_SBPM</members>
-        <members>Task_Report_Link__mdt.Contingency_Worksheet_Recruitment_Task</members>
-        <members>Task_Report_Link__mdt.DRMS_Audit_report</members>
-        <members>Task_Report_Link__mdt.Donor_Appointments_Recruitment_Task</members>
-        <members>BSF_Access_Control_Rule__mdt.HRP_16122_Field_Permission_Set_1</members>
-        <members>BSF_Access_Control_Rule__mdt.HRP_16122_Field_Permission_Set_2</members>
-         <members>BSF_Access_Control_Rule__mdt.HRP_16122_Class_Permission_Set</members>
+        <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link.DRMS_Audit_report</members>
+        <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
+         <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
