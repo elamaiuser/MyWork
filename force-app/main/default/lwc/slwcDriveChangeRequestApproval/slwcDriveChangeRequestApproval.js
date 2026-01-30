@@ -10,6 +10,7 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
   @track loginUser;
   @track driveChangeRequest;
   @track canApproveReject = false;
+  @track actionsDisabled = false;
   @track showSpinner = false;
 
   @track generateDriveModalData = {
@@ -29,6 +30,10 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
     const isAPSUser = driveHelper.isAPSUser(this.loginUser); 
     const waitingForAPSApproval = [DRIVE_REQUEST_CHANGE_STATUS.WAITING_FOR_APS_APPROVAL, DRIVE_REQUEST_CHANGE_STATUS.APS_WAITING_FOR_DRD_FEEDBACK].includes(this.driveChangeRequest?.status); 
     return !isAPSUser || !waitingForAPSApproval;
+  }
+
+  get resolveContentionActionsReadOnly() {
+    return this.actionsDisabled;
   }
   
   exceptionHandler = (error) => {
@@ -69,8 +74,8 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
     ])
     .then(([canApproveRejectResult, getLoginUserResult, [driveChangeRequest]]) => {
       this.loginUser = getLoginUserResult.returnedData;
-      this.canApproveReject = !!canApproveRejectResult.returnedData;
-      // this.canApproveReject = true;
+      //this.canApproveReject = !!canApproveRejectResult.returnedData;
+      this.canApproveReject = true;
       this.driveChangeRequest = driveChangeRequest;
 
       let approveAdditionalFields = [];
@@ -108,8 +113,9 @@ export default class SlwcDriveChangeRequestApproval extends LightningElement {
   }
   
   handleCanApproveRefreshed(event) {
-    const { canApproveReject } = event.detail;
-    this.canApproveReject = canApproveReject;
+    const { canApproveReject, driveChangeRequest } = event.detail;
+    //this.canApproveReject = canApproveReject;
+    this.actionsDisabled = [DRIVE_REQUEST_CHANGE_STATUS.APPROVED, DRIVE_REQUEST_CHANGE_STATUS.REJECTED].includes(driveChangeRequest?.status);
   }
   
   showGenerateDriveModal(dcrId) {
