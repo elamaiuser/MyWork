@@ -14,7 +14,7 @@
         <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
-         <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
