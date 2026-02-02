@@ -438,6 +438,10 @@ public class skedConstants {
 
     /* Debug Log */
     public static final string DEBUG_LOG_TYPE_WORKDAY_API = 'Workday API Request';
+    public static final string DEBUG_LOG_WORKDAY_ENTER_TIMEOFF = 'Create Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_TIMEOFF = 'Adjust Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_CANCEL_COMMENT = 'Cancelled via Skedulo'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_COMMENT = 'Adjusted via Skedulo'; //HRP-13728
     public static final string DEBUG_LOG_TYPE_ERROR_LOG = 'Error Log';
 
     public static final string DEBUG_LOG_CATEGORY_SYSTEM_ERROR = 'System Error';

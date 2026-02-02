@@ -5,6 +5,8 @@
 		<members>skedWorkdayAbsenceManagement</members>
 		<members>skedWorkdayApiManager</members>
 		<members>skedWorkdayUtils</members>
+		<members>skedConstants</members>
+		<members>skedWorkdayUtils_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<version>66.0</version>

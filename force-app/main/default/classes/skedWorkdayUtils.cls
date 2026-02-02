@@ -294,7 +294,7 @@ public class skedWorkdayUtils implements Callable {
                     recordsToUpsert.add(timeOffRequest);
 
                     if (skedSetting.instance.admin.enableWorkdayLogging) {
-                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Create Time Off Entry', timeOffRequest, result);//HRP-13728
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_ENTER_TIMEOFF, timeOffRequest, result);//HRP-13728
                         recordsToUpsert.add(debugLog);
                     }
                 }
@@ -333,7 +333,7 @@ public class skedWorkdayUtils implements Callable {
                     
                     skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry adjustTimeOffEntry = new skedWorkdayAdjustTimeOffRequest.skedWorkdayAdjustTimeOffEntry();
                     adjustTimeOffEntry.ptoEntryId = availabilityId;
-                    adjustTimeOffEntry.Comment = availabilityById.get(availabilityId).sked_Custom_Status__c == 'Processing Cancellation' ? 'Cancelled via Skedulo' : availabilityById.get(availabilityId).sked_Custom_Status__c == 'Processing Adjustment' ? 'Adjusted via Skedulo' : null;//HRP-13728
+                    adjustTimeOffEntry.Comment = availabilityById.get(availabilityId).sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION ? skedConstants.DEBUG_LOG_WORKDAY_CANCEL_COMMENT : availabilityById.get(availabilityId).sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT ? skedConstants.DEBUG_LOG_WORKDAY_ADJUST_COMMENT : null;//HRP-13728
                     adjustTimeOffEntry.adjustment = adjustmentById.get(availabilityId);
                     adjustTimeOffRequest.adjustTimeOffEntries.add(adjustTimeOffEntry);
                     resultById.put(availabilityId, skedWorkdayApiManager.AdjustTimeOff(adjustTimeOffRequest));
@@ -367,7 +367,7 @@ public class skedWorkdayUtils implements Callable {
                     recordsToUpsert.add(availabilityRecord);
                     
                     if (skedSetting.instance.admin.enableWorkdayLogging) {
-                        sked__Debug_Log__c debugLog = getDebugLogFromResponse('Adjust Time Off Entry', availabilityRecord, result);//HRP-13728
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_ADJUST_TIMEOFF, availabilityRecord, result);//HRP-13728
                         recordsToUpsert.add(debugLog);
                     }
                 }
@@ -497,6 +497,12 @@ public class skedWorkdayUtils implements Callable {
 
     return null;
 }
+
+    public static string fetchXML(DOM.Document doc) {//HRP-13728
+        String xml = doc.toXmlString();
+        xml = xml.replaceAll('><', '>\n<'); // light formatting;
+        return xml;
+    }
 
     public class workdayAdjustmentsContainer {
         public List<Id> recordIds;

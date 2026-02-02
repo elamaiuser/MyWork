@@ -33,10 +33,7 @@ public class skedWorkdayAbsenceManagement {
 		methodNode.setAttribute('bsvc:version', version);		
 		skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_RequestType request_x = new skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_RequestType(Business_Process_Parameters,Adjust_Time_Off_Data);
 		request_x.populateXmlNode(methodNode);
-
-		String soapXml = doc.toXmlString();//-----------HRP-13728
-        soapXml = soapXml.replaceAll('><', '>\n<'); // light formatting
-        requestXML = soapXml;
+		requestXML = skedWorkdayUtils.fetchXML(doc);//-----------HRP-13728
 		
 		HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint_x, 'POST');
 		req.setBodyDocument(doc);
@@ -52,10 +49,7 @@ public class skedWorkdayAbsenceManagement {
 		methodNode.setAttribute('bsvc:version', version);
 		skedWorkdayAbsenceManagementBsvc.Enter_Time_Off_RequestType request_x = new skedWorkdayAbsenceManagementBsvc.Enter_Time_Off_RequestType(Business_Process_Parameters,Enter_Time_Off_Data);
 		request_x.populateXmlNode(methodNode);
-
-		String soapXml = doc.toXmlString();//-----------HRP-13728
-        soapXml = soapXml.replaceAll('><', '>\n<'); // light formatting
-        requestXML = soapXml;
+		requestXML = skedWorkdayUtils.fetchXML(doc);//-----------HRP-13728
 		
 		HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint_x, 'POST');
 		req.setBodyDocument(doc);
