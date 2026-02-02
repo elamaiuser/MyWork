@@ -114,6 +114,7 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>BSF_Access_Control_Rule.HRP_13441_Class_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
