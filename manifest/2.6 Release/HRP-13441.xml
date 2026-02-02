@@ -25,6 +25,7 @@
         <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
         <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
         <members>Task_Reassignment_Matrix.Template_Order_Task</members>
+        <members>BSF_Access_Control_Rule.HRP_13441_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
