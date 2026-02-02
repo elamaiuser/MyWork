@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>ChangeRecordType</excludeButtons>
-    <excludeButtons>DataDotComClean</excludeButtons>
+    <excludeButtons>DataDotComAccountInsights</excludeButtons>
+    <excludeButtons>DataDotComCompanyHierarchy</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>DisableCustomerPortalAccount</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
@@ -45,11 +46,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>Relationship_Manager__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Exclude_from_sponsor_direct_marketing__c</field>
+                <field>National_Name_Status__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -57,19 +54,19 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Industry_Code__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Phone</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Business_Planning_Completed__c</field>
+                <field>Fax</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Business_Planning_Completed_By__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Business_Planning_Completed_Date__c</field>
+                <behavior>Readonly</behavior>
+                <field>Blood_Region__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -103,23 +100,35 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>HS_Chapter__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>National_Name_Status__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
                 <field>ParentId</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Industry_Code__c</field>
+                <behavior>Readonly</behavior>
+                <field>HS_Chapter__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Fax</field>
+                <field>HS_Relationship_Manager__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager_Notes__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Exclude_from_sponsor_direct_marketing__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_By__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Business_Planning_Completed_Date__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -158,8 +167,25 @@
                 <field>BillingAddress</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsTopToBottom</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>false</customLabel>
+        <detailHeading>false</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Additional Information</label>
+        <layoutColumns/>
+        <layoutColumns/>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>false</customLabel>
+        <detailHeading>false</detailHeading>
+        <editHeading>false</editHeading>
+        <label>Description Information</label>
+        <layoutColumns/>
+        <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
@@ -199,23 +225,6 @@
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
-    </layoutSections>
-    <layoutSections>
-        <customLabel>false</customLabel>
-        <detailHeading>false</detailHeading>
-        <editHeading>true</editHeading>
-        <label>Additional Information</label>
-        <layoutColumns />
-        <layoutColumns />
-        <style>TwoColumnsLeftToRight</style>
-    </layoutSections>
-    <layoutSections>
-        <customLabel>false</customLabel>
-        <detailHeading>false</detailHeading>
-        <editHeading>false</editHeading>
-        <label>Description Information</label>
-        <layoutColumns />
-        <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -261,9 +270,9 @@
         <detailHeading>true</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -289,32 +298,32 @@
             <sortOrder>3</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>Account.Account_Based_Portfolio_Assignment</actionName>
+            <actionName>FeedItem.ContentNote</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>4</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>FeedItem.ContentNote</actionName>
-            <actionType>QuickAction</actionType>
-            <sortOrder>5</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
             <actionName>ChangeOwnerOne</actionName>
             <actionType>StandardButton</actionType>
-            <sortOrder>6</sortOrder>
+            <sortOrder>5</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
             <actionName>Delete</actionName>
             <actionType>StandardButton</actionType>
-            <sortOrder>7</sortOrder>
+            <sortOrder>6</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
             <actionName>PrintableView</actionName>
             <actionType>StandardButton</actionType>
-            <sortOrder>8</sortOrder>
+            <sortOrder>7</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
             <actionName>LogACall</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>8</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>Account.Close_Fixed_Account</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>9</sortOrder>
         </platformActionListItems>
@@ -329,7 +338,7 @@
             <sortOrder>11</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>Account.Close_Fixed_Account</actionName>
+            <actionName>Account.Account_Based_Portfolio_Assignment</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>12</sortOrder>
         </platformActionListItems>
@@ -380,8 +389,8 @@
         <fields>Active_Status__c</fields>
         <fields>Affiliation_Name__c</fields>
         <fields>Affiliation_Record_Type__c</fields>
-        <fields>Deleted_Date__c</fields>
         <fields>End_Date__c</fields>
+        <fields>Deleted_Date__c</fields>
         <fields>Start_Date__c</fields>
         <relatedList>Account_Affiliation_History__c.Account__c</relatedList>
     </relatedLists>
@@ -412,13 +421,13 @@
         <excludeButtons>DeleteAllAccountTeamMembers</excludeButtons>
         <excludeButtons>DisplayAccountTeamEffectiveAccess</excludeButtons>
         <fields>MEMBER_NAME</fields>
+        <fields>TEAM_MEMBER_ROLE</fields>
         <fields>Is_Covering_Recruiter__c</fields>
         <fields>Start_Date__c</fields>
         <fields>End_Date__c</fields>
-        <fields>TEAM_MEMBER_ROLE</fields>
         <relatedList>RelatedAccountSalesTeam</relatedList>
-        <sortField>Is_Covering_Recruiter__c</sortField>
-        <sortOrder>Asc</sortOrder>
+        <sortField>Start_Date__c</sortField>
+        <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
         <fields>Contact__c</fields>
@@ -506,6 +515,14 @@
         <relatedList>RelatedActivityList</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>ExternalId</fields>
+        <fields>external_id__c</fields>
+        <fields>internal_id__c</fields>
+        <fields>region_id__c</fields>
+        <fields>DisplayUrl</fields>
+        <relatedList>AccountBridgeAPI__x.guid__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <fields>TASK.SUBJECT</fields>
         <fields>TASK.WHO_NAME</fields>
         <fields>TASK.WHAT_NAME</fields>
@@ -514,14 +531,6 @@
         <fields>CORE.USERS.FULL_NAME</fields>
         <fields>TASK.LAST_UPDATE</fields>
         <relatedList>RelatedHistoryList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>ExternalId</fields>
-        <fields>external_id__c</fields>
-        <fields>internal_id__c</fields>
-        <fields>region_id__c</fields>
-        <fields>DisplayUrl</fields>
-        <relatedList>AccountBridgeAPI__x.guid__c</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedContentNoteList</relatedList>
@@ -539,7 +548,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h5c00000DaYLu</masterLabel>
+        <masterLabel>00h5c00000DaYLs</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>
