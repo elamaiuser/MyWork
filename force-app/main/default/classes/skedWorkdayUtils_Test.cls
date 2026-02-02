@@ -173,7 +173,7 @@ private class skedWorkdayUtils_Test {
     }
     
     @IsTest
-    static void testFetchXML_fromAbsenceManagementFlow() {
+    static void testFetchXML() {
         DOM.Document doc = new DOM.Document();
         
         // Simulate SOAP envelope (minimal but valid)
