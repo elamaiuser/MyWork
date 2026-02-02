@@ -6,7 +6,7 @@ private class skedWorkdayUtils_Test {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
         skedSetting.instance.Admin.workdayIntegration = true;
-
+        
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Availability__c testAvailability = new sked__Availability__c(
             sked__Resource__c = testResource.Id,
@@ -19,20 +19,20 @@ private class skedWorkdayUtils_Test {
             sked_Time_Off_Reason_Code__c = 'pto-test'
         );
         insert testAvailability;
-
+        
         Test.startTest();
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL;
-            update testAvailability;
+        testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL;
+        update testAvailability;
         Test.stopTest();
     }
-
+    
     @isTest
     static void publishWorkdayAdjustmentsEvent_Test() {
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOAdjustmentMock());
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
         skedSetting.instance.Admin.workdayIntegration = true;
-
+        
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Availability__c testAvailability = new sked__Availability__c(
             sked__Resource__c = testResource.Id,
@@ -46,21 +46,21 @@ private class skedWorkdayUtils_Test {
             sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
         );
         insert testAvailability;
-
+        
         Test.startTest();
-            testAvailability.sked__Finish__c = testDataFactory.summary.startTime.addHours(4);
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT;
-            update testAvailability;
+        testAvailability.sked__Finish__c = testDataFactory.summary.startTime.addHours(4);
+        testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_ADJUSTMENT;
+        update testAvailability;
         Test.stopTest();
     }
-
+    
     @isTest
     static void publishWorkdayCancellationEvent_Test() {
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOAdjustmentMock());
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
         skedSetting.instance.Admin.workdayIntegration = true;
-
+        
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Availability__c testAvailability = new sked__Availability__c(
             sked__Resource__c = testResource.Id,
@@ -74,20 +74,20 @@ private class skedWorkdayUtils_Test {
             sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
         );
         insert testAvailability;
-
+        
         Test.startTest();
-            testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
-            update testAvailability;
+        testAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION;
+        update testAvailability;
         Test.stopTest();
     }
-
+    
     @isTest
     static void publishWorkdayCancellationEvent_Test_Deletion() {
         Test.setMock(HttpCalloutMock.class, new skedWorkdayPTOAdjustmentMock());
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
         skedSetting.instance.Admin.workdayIntegration = true;
-
+        
         sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
         sked__Availability__c testAvailability = new sked__Availability__c(
             sked__Resource__c = testResource.Id,
@@ -101,12 +101,12 @@ private class skedWorkdayUtils_Test {
             sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS
         );
         insert testAvailability;
-
+        
         Test.startTest();
-            delete testAvailability;
+        delete testAvailability;
         Test.stopTest();
     }
-
+    
     @TestSetup
     static void makeData(){
         sked_Event_Type_Setting__c pto = new sked_Event_Type_Setting__c(
@@ -118,58 +118,104 @@ private class skedWorkdayUtils_Test {
         insert pto;
     }
     @isTest
-static void verifyUnavailabilityBalance_Test() {
-    Test.setMock(HttpCalloutMock.class, new skedWorkdayGetPlanBalancesMock());
-    skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
-    Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
-    skedSetting.instance.Admin.workdayIntegration = true;
-
-    sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
-
-    Test.startTest();
+    static void verifyUnavailabilityBalance_Test() {
+        Test.setMock(HttpCalloutMock.class, new skedWorkdayGetPlanBalancesMock());
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<String, SObject> mapTestData = testDataFactory.setupCommonTestData();
+        skedSetting.instance.Admin.workdayIntegration = true;
+        
+        sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
+        
+        Test.startTest();
         skedWorkdayUtils.verifyUnavailabilityBalance(
             testResource,
             Date.today(),
             120,
             skedConstants.UNAVAILABILITY_TYPE_PTO
         );
-    Test.stopTest();
-}
-
-private class skedWorkdayGetPlanBalancesMock implements HttpCalloutMock {
-    public HTTPResponse respond(HTTPRequest req) {
-        HttpResponse res = new HttpResponse();
-        res.setStatusCode(200);
-        res.setBody(
-            '<?xml version="1.0" encoding="UTF-8"?>' +
-            '<wd:Report_Data xmlns:wd="urn:com.workday.report/Web_Services_Time_Off_Balances_Skedulo">' +
-            '  <wd:Report_Entry>' +
-            '    <wd:Eligible_Time_Off_Plans_for_Worker_group>' +
-            '      <wd:time_off_plan wd:Descriptor="PTO - 7 Day Lag">' +
-            '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
-            '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
-            '      </wd:time_off_plan>' +
-            '      <wd:balance>202.46</wd:balance>' +
-            '    </wd:Eligible_Time_Off_Plans_for_Worker_group>' +
-            '    <wd:All_Eligible_Time_Offs_for_Worker_group>' +
-            '      <wd:plan wd:Descriptor="PTO - 7 Day Lag">' +
-            '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
-            '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
-            '      </wd:plan>' +
-            '      <wd:Time_Off_Reasons wd:Descriptor="Planned">' +
-            '        <wd:ID wd:type="WID">e865d498431c010203429a881a350002</wd:ID>' +
-            '        <wd:ID wd:type="Time_Off_Reason_ID">Planned - PTO - 7 Day Lag - Time Off</wd:ID>' +
-            '      </wd:Time_Off_Reasons>' +
-            '      <wd:Time_Off_Reasons wd:Descriptor="Unplanned">' +
-            '        <wd:ID wd:type="WID">e865d498431c010203429a881a350003</wd:ID>' +
-            '        <wd:ID wd:type="Time_Off_Reason_ID">Unplanned - PTO - 7 Day Lag - Time Off</wd:ID>' +
-            '      </wd:Time_Off_Reasons>' +
-            '    </wd:All_Eligible_Time_Offs_for_Worker_group>' +
-            '  </wd:Report_Entry>' +
-            '</wd:Report_Data>'
-        );
-        return res;
+        Test.stopTest();
     }
-}
-
+    
+    private class skedWorkdayGetPlanBalancesMock implements HttpCalloutMock {
+        public HTTPResponse respond(HTTPRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setStatusCode(200);
+            res.setBody(
+                '<?xml version="1.0" encoding="UTF-8"?>' +
+                '<wd:Report_Data xmlns:wd="urn:com.workday.report/Web_Services_Time_Off_Balances_Skedulo">' +
+                '  <wd:Report_Entry>' +
+                '    <wd:Eligible_Time_Off_Plans_for_Worker_group>' +
+                '      <wd:time_off_plan wd:Descriptor="PTO - 7 Day Lag">' +
+                '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
+                '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
+                '      </wd:time_off_plan>' +
+                '      <wd:balance>202.46</wd:balance>' +
+                '    </wd:Eligible_Time_Off_Plans_for_Worker_group>' +
+                '    <wd:All_Eligible_Time_Offs_for_Worker_group>' +
+                '      <wd:plan wd:Descriptor="PTO - 7 Day Lag">' +
+                '        <wd:ID wd:type="WID">8a81de01e08310a6d89d396076d2dfa9</wd:ID>' +
+                '        <wd:ID wd:type="Absence_Plan_ID">PTO - 7 Day Lag</wd:ID>' +
+                '      </wd:plan>' +
+                '      <wd:Time_Off_Reasons wd:Descriptor="Planned">' +
+                '        <wd:ID wd:type="WID">e865d498431c010203429a881a350002</wd:ID>' +
+                '        <wd:ID wd:type="Time_Off_Reason_ID">Planned - PTO - 7 Day Lag - Time Off</wd:ID>' +
+                '      </wd:Time_Off_Reasons>' +
+                '      <wd:Time_Off_Reasons wd:Descriptor="Unplanned">' +
+                '        <wd:ID wd:type="WID">e865d498431c010203429a881a350003</wd:ID>' +
+                '        <wd:ID wd:type="Time_Off_Reason_ID">Unplanned - PTO - 7 Day Lag - Time Off</wd:ID>' +
+                '      </wd:Time_Off_Reasons>' +
+                '    </wd:All_Eligible_Time_Offs_for_Worker_group>' +
+                '  </wd:Report_Entry>' +
+                '</wd:Report_Data>'
+            );
+            return res;
+        }
+    }
+    
+    @IsTest
+    static void testFetchXML() {
+        DOM.Document doc = new DOM.Document();
+        
+        // Simulate SOAP envelope (minimal but valid)
+        DOM.XmlNode envelope = doc.createRootElement(
+            'Envelope',
+            'http://schemas.xmlsoap.org/soap/envelope/',
+            'soapenv'
+        );
+        
+        DOM.XmlNode body = envelope.addChildElement(
+            'Body',
+            'http://schemas.xmlsoap.org/soap/envelope/',
+            'soapenv'
+        );
+        
+        // Simulate Workday request node
+        DOM.XmlNode requestNode = body.addChildElement(
+            'Adjust_Time_Off_Request',
+            'urn:com.workday/bsvc',
+            'bsvc'
+        );
+        
+        requestNode.setAttribute('bsvc:version', 'v38.1');
+        
+        // Add a child node to make XML non-empty
+        DOM.XmlNode commentNode = requestNode.addChildElement(
+            'Comment',
+            'urn:com.workday/bsvc',
+            'bsvc'
+        );
+        commentNode.addTextNode('Adjusted via Skedulo');
+        
+        Test.startTest();
+        String requestXML = skedWorkdayUtils.fetchXML(doc);
+        Test.stopTest();
+        
+        // ---------- Assert ----------
+        System.assert(
+            requestXML.contains('Adjusted via Skedulo'),
+            'XML should contain the Comment text'
+        );
+    }    
+    
+    
 }
