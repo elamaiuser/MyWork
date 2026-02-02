@@ -13,6 +13,8 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>Contact.After_Hours_Number__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
 		<members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
 		<members>sked__Location__c.sked_Staff_Personal_Parking_Directions__c</members>
 		<name>CustomField</name>
