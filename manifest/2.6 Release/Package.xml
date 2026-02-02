@@ -26,6 +26,7 @@
         <members>DMBellNotificationATMBatchHelperTest</members>
         <members>DriveTriggerHandler</members>
         <members>DriveTriggerService</members>
+        <members>GenerateDriveWorksheetPdfController</members>
         <members>InformaticaStandardAddress_Test</members>
         <members>LeadUtils_Test</members>
         <members>NotifyAMforBPLRecruitedDailyBatchTest</members>
@@ -91,6 +92,8 @@
     </types>
     <types>
         <members>APComplianceExcel</members>
+        <members>generateDriveWorksheetHTM</members>
+		<members>generateDriveWorksheetPdf</members>
         <members>skedMobileCallOutContactInformationForm</members>
         <name>ApexPage</name>
     </types>
