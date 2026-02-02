@@ -71,6 +71,7 @@
         <members>skedJobAllocationTravelTimeBatch_Test</members>
         <members>skedMockTest</members>
         <members>skedModels</members>
+        <members>skedOperationRecordService</members>
         <members>skedPtoRequestController_Test</members>
         <members>skedRacController</members>
         <members>skedRacStory_Test</members>
