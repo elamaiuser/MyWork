@@ -13,6 +13,8 @@
         <members>BSF_Batch_CreateHandOffTasks_Test</members>
         <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
+        <members>BSF_Batch_TaskRename</members>
+        <members>BSF_Batch_TaskRename_Test</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
@@ -113,6 +115,9 @@
     </types>
     <types>
         <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_2</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read</members>
