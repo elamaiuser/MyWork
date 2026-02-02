@@ -351,7 +351,7 @@ public class skedStaffingBudgetUtils implements Callable {
                 }
 
                 availabilitiesToUpdate.add(availability);
-                debugLogsToInsert.add(skedWorkdayUtils.getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_ENTER_TIMEOFF, availability, result));
+                debugLogsToInsert.add(skedWorkdayUtils.getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_CREATE_TIMEOFF, availability, result));
             }
         }
 

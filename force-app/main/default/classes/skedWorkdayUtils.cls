@@ -294,7 +294,7 @@ public class skedWorkdayUtils implements Callable {
                     recordsToUpsert.add(timeOffRequest);
 
                     if (skedSetting.instance.admin.enableWorkdayLogging) {
-                        sked__Debug_Log__c debugLog = getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_ENTER_TIMEOFF, timeOffRequest, result);//HRP-13728
+                        sked__Debug_Log__c debugLog = getDebugLogFromResponse(skedConstants.DEBUG_LOG_WORKDAY_CREATE_TIMEOFF, timeOffRequest, result);//HRP-13728
                         recordsToUpsert.add(debugLog);
                     }
                 }
