@@ -38,7 +38,8 @@ public class BSF_Batch_TaskRename_Test {
         BSF_Batch_TaskRename taskRenameBatchInstance = new BSF_Batch_TaskRename(
             new List<String>{'Completed'},
             new List<String>{(String) testAccount.Id},
-            new Map<String, String>{'Invalid Account Address' => 'Invalid Account Address (Update Required)'}
+            new Map<String, String>{'Invalid Account Address' => 'Invalid Account Address (Update Required)'},
+            System.today()
         );
         Database.executeBatch(taskRenameBatchInstance, 100);
         Task updatedTask = [SELECT Id, Subject FROM Task WHERE WhatId = :testAccount.Id LIMIT 1];
