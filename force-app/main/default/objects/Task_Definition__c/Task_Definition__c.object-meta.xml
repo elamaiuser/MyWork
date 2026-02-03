@@ -155,9 +155,8 @@
     <enableStreamingApi>true</enableStreamingApi>
     <label>Task Definition</label>
     <nameField>
-        <displayFormat>T-{0000}</displayFormat>
         <label>Task Definition Name</label>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Task Definitions</pluralLabel>
     <searchLayouts></searchLayouts>
