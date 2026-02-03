@@ -39,6 +39,8 @@
 		<members>slwcOptimizationService</members>
 		<members>slwcOptimizationService_Test</members>
 		<members>slwcDriveShiftTradeService_Test</members>
+		<members>SponsorPlanningReportController_Test</members>
+		<members>skedResourceHandler_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>64.0</version>
