@@ -14,6 +14,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Phone Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Virtual</fullName>
             <default>false</default>
         </values>
