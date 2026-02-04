@@ -109,6 +109,8 @@
     </types>
     <types>
         <members>Activity.Location__c</members>
+        <members>Contact.After_Hours_Number__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
         <members>Opportunity.Account_Name__c</members>
         <members>Task.Type</members>
         <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
