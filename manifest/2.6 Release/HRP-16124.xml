@@ -41,9 +41,14 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>Task_Definition__c-Task Definition Layout</members>
+		<members>Task_Package__c-Task Package Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
 		<members>Task_Definition__c.All</members>
 		<members>Task_Package__c.All</members>
 		<name>ListView</name>
 	</types>
-	<version>66.0</version>
+	<version>65.0</version>
 </Package>
