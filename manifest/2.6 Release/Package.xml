@@ -5,6 +5,8 @@
         <members>OpportunityTriggerTest</members>
         <members>OpportunityServiceController</members>
         <members>OpportunityServiceControllerTest</members>
+		<members>slwcDataService</members>
+        <members>GenericRelatedListController</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -35,5 +37,12 @@
 		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
 		<name>QuickAction</name>
 	</types>
+	<types>
+        <members>MOEStagingSheetReport</members>
+        <members>skedEmailHandler</members>
+        <members>StagingSheetReport</members>
+        <members>WeeklyStaffingRoleReport</members>
+        <name>ApexPage</name>
+    </types>
     <version>64.0</version>
 </Package>

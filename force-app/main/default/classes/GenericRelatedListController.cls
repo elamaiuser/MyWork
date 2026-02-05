@@ -16,34 +16,27 @@ public class GenericRelatedListController {
      * @return wrapperClass   return wrapper class of rcord and other values
      */ 
     @AuraEnabled
-    public static wrapperClass getRecords(
-        String[] recordId, 
-        String columnName, 
-        String soqlQuery, 
-        Integer limits, 
-        Integer recordOffset,
-        String fieldwithOrderBy){
+    public static wrapperClass getRecords(String[] recordId, String columnName, String soqlQuery, Integer limits, Integer recordOffset,String fieldwithOrderBy){
         System.debug( 'recordId is in getRecord ' + recordId );
-        String sanitizedSoql = soqlQuery;
         List<sObject> sObjectList;
         wrapperClass wrapperClass = new wrapperClass();
-        List<String> recordIds = recordId;
+        String[] recordIds = recordId;
         List<String> soqlQueryList = new List<String>();
         try {
             String soqlQueryForAll = soqlQuery;
             if(soqlQuery.contains('Task')||soqlQuery.contains('task'))
             {
-              sanitizedSoql += ' recordIds OR Delegate__c IN: recordIds)';  
+              soqlQuery += ' recordIds OR Delegate__c IN: recordIds)';  
             } else
             {
-              sanitizedSoql += ' recordIds';
+              soqlQuery += ' recordIds';
             }
-            if ((sanitizedSoql.contains('(')) || sanitizedSoql.contains(')'))
+            if ((soqlQuery.contains('(')) || soqlQuery.contains(')'))
             { 
             String soqlQuery1;
-              if(sanitizedSoql.contains('('))
+              if(soqlQuery.contains('('))
               {
-                soqlQuery1 = sanitizedSoql.substringAfter('(');
+                soqlQuery1 = soqlQuery.substringAfter('(');
               }
               if(soqlQuery1.contains(')'))
               {
@@ -53,7 +46,7 @@ public class GenericRelatedListController {
                 soqlQuery1 += ' recordIds';
               }
               string subquery = '('+soqlQuery1+') ';
-              sanitizedSoql = sanitizedSoql.substringBefore('(')+subquery+sanitizedSoql.substringAfter(')');
+              soqlQuery = soqlQuery.substringBefore('(')+subquery+soqlQuery.substringAfter(')');
             }
             String orderByClause = '';
             if(String.isNotBlank(fieldwithOrderBy)) {
@@ -64,17 +57,15 @@ public class GenericRelatedListController {
                 orderByClause = 'ORDER BY CreatedDate DESC';
             }
            //soqlQuery += ' Order by CreatedDate DESC limit '+limits+' Offset '+recordOffset;
-            soqlQuery = ' ' + DynamicSoqlUtil.adjustTheBindingFieldName(soqlQuery,recordId);
-            System.debug('HRP-16273 Account Ids added in soqlQuery : ' + soqlQuery );
-            //sObjectList = Database.Query(soqlQuery);
-            sObjectList = DynamicSoqlUtil.executeDynamicQuery(
-                            soqlQuery,
-                            'GenericRelatedListController',
-                            fieldwithOrderBy,
-                            limits,
-                            recordOffset
-                        );
+            soqlQuery += ' ' + orderByClause + ' limit '+limits+' Offset '+recordOffset;
+            System.debug('soqlQuery is ' + soqlQuery );
+            sObjectList = Database.Query(soqlQuery);
             system.debug( 'sObjectList is ' + sObjectList );
+            
+            
+            
+            
+			
             wrapperClass.sObjectList = sObjectList;
             System.debug('wrapperClass.sObjectList: ' + wrapperClass.sObjectList);
             //Integer recordCount = Database.Query(soqlQueryForAll).size();
@@ -82,20 +73,20 @@ public class GenericRelatedListController {
             wrapperClass.counts = recordCount;
             
             String[] firstSplit;
-            if(sanitizedSoql.contains('select')){
-                firstSplit = sanitizedSoql.split('select');
-            }else if(sanitizedSoql.contains('Select')){
-                firstSplit = sanitizedSoql.split('Select');
-            }else if(sanitizedSoql.contains('SELECT')){
-                firstSplit = sanitizedSoql.split('SELECT');
+            if(soqlQuery.contains('select')){
+                firstSplit = soqlQuery.split('select');
+            }else if(soqlQuery.contains('Select')){
+                firstSplit = soqlQuery.split('Select');
+            }else if(soqlQuery.contains('SELECT')){
+                firstSplit = soqlQuery.split('SELECT');
             }
             
             String[] secondSplit;
-            if(sanitizedSoql.contains('from')){
+            if(soqlQuery.contains('from')){
                 secondSplit = firstSplit[1].split('from');
-            }else if(sanitizedSoql.contains('From')){
+            }else if(soqlQuery.contains('From')){
                 secondSplit = firstSplit[1].split('From');
-            }else if(sanitizedSoql.contains('FROM')){
+            }else if(soqlQuery.contains('FROM')){
                 secondSplit = firstSplit[1].split('FROM');
             }
             String[] columnApiName = secondSplit[0].split(','); 
@@ -127,8 +118,7 @@ public class GenericRelatedListController {
 			sObject obj;
             System.debug( 'objectAPIName is ' + objectAPIName );
             if( objectAPIName != 'ContentDocument' && objectAPIName !=  'Task' ){
-                String queryStr = 'Select Name from '+ String.escapeSingleQuotes(objectAPIName) +' where Id in :recordIds limit 1';
-                obj = Database.Query(queryStr);
+                obj = Database.Query('Select Name from '+objectAPIName+' where Id in:recordId limit 1');
             }
             
             combineColumnName = combineColumnName.removeEnd(',');
@@ -138,7 +128,7 @@ public class GenericRelatedListController {
 			System.debug('Final wrapperClass: ' + wrapperClass);
 			
         } catch (Exception e) {
-            System.debug( 'exception  msg:' + e.getMessage() + ' line number ' + e.getLineNumber() + ' Stack :' +e.getStackTraceString() );
+            System.debug( 'exception  msg:' + e.getMessage() + ' line number ' + e.getLineNumber() );
             throw new AuraHandledException(e.getMessage());
         }
         

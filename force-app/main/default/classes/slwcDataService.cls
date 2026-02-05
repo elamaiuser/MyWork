@@ -2,9 +2,7 @@ public without sharing class slwcDataService {
     
     @AuraEnabled(cacheable=false)
     public static Object executeQuery(String query) {
-        //return Database.query(query);
-        List<sObject> result = DynamicSoqlUtil.executeDynamicQuery(query,'slwcDataService',null,2000,0);
-        return result;
+        return Database.query(query);
     }
     
     @AuraEnabled(cacheable=false)
@@ -15,8 +13,7 @@ public without sharing class slwcDataService {
         for(queryModel query : request){
             queryResultModel result = new queryResultModel();
             result.key = query.key;
-            //List<sObject> sObjects = Database.query(query.query);
-            List<sObject> sObjects = DynamicSoqlUtil.executeDynamicQuery(query.query,'slwcDataService',null,2000,0);
+            List<sObject> sObjects = Database.query(query.query);
             result.result = sObjects;
             for (sObject sObj : sObjects) {
                 if (string.isBlank(query.fieldToExtractId)) {
