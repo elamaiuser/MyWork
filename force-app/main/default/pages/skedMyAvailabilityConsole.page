@@ -43,8 +43,8 @@
   </div>
 
   <!-- jquery -->
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.1.1.min.js')}"></script>
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.12.1.custom/jquery-ui.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.7.1.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.14.1.custom/jquery-ui.min.js')}"></script>
   <!-- angularjs -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular.min.js')}"></script>
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular-sanitize.min.js')}"></script>
@@ -54,10 +54,6 @@
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/clickoutside.directive.js')}"></script>
   <!-- jquery time picker -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-time-picker/jquery.timepicker.min.js')}"></script>
-
-  <!-- month picker -->
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.11.4-widget-button/jquery-ui.min.js')}"></script>
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-month-picker/MonthPicker.min.js')}"></script>
 
   <!-- angular google map -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angular-simple-logger.min.js')}"></script>
