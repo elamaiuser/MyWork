@@ -90,9 +90,14 @@
                 <label>MOI COI TLA</label>
             </value>
             <value>
-                <fullName>National Partnership SLA</fullName>
+                <fullName>National Partnership SLA AM</fullName>
                 <default>false</default>
-                <label>National Partnership SLA</label>
+                <label>National Partnership SLA AM</label>
+            </value>
+            <value>
+                <fullName>National Partnership SLA SBPM</fullName>
+                <default>false</default>
+                <label>National Partnership SLA SBPM</label>
             </value>
             <value>
                 <fullName>One Week Check-in</fullName>

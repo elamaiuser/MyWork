@@ -295,6 +295,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Time_Off_Reason_Code__c', 'timeOffReasonCode', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Message__c', 'workdaySyncMessage', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Status__c', 'workdaySyncStatus', 'direct');
+            mappingConfig.addFieldConfig('sked_Requested_Time_Off_Hours__c', 'noOfRequestedHours', 'direct'); // HRP-13861 Eric Keating
             mappingConfig.addFieldConfig('availability', 'objectType', 'value');
             
             mappingConfig.addFieldConfig('skedHC__Exception_Log__r', 'exceptionLogs', 'relatedList', 'skedHC__Exception__c');

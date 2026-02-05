@@ -154,9 +154,8 @@
     <enableStreamingApi>true</enableStreamingApi>
     <label>Task Package</label>
     <nameField>
-        <displayFormat>TP-{0000}</displayFormat>
         <label>Task Package Name</label>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Task Packages</pluralLabel>
     <searchLayouts></searchLayouts>
