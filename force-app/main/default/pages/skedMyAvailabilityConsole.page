@@ -44,7 +44,6 @@
 
   <!-- jquery -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.7.1.min.js')}"></script>
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-migrate/jquery-migrate-3.4.1.min.js')}"></script>
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery-ui-1.14.1.custom/jquery-ui.min.js')}"></script>
   <!-- angularjs -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular.min.js')}"></script>
