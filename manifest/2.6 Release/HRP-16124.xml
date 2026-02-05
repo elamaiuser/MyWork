@@ -17,7 +17,7 @@
 		<members>Task_Package_Item__c.Task_Definition__c</members>
 		<members>Task_Package_Item__c.Task_Package__c</members>
 		<members>Task_Package__c.Package_Name__c</members>
-		<members>Task_Package__c.Sort_Order__c</members>		
+		<members>Task_Package__c.Sort_Order__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -34,6 +34,16 @@
 		<members>Task_Package_Item__c</members>
 		<members>Task_Package__c</members>
 		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Task_Definition__c</members>
+		<members>Task_Package__c</members>
+		<name>CustomTab</name>
+	</types>
+	<types>
+		<members>Task_Definition__c.All</members>
+		<members>Task_Package__c.All</members>
+		<name>ListView</name>
 	</types>
 	<version>66.0</version>
 </Package>
