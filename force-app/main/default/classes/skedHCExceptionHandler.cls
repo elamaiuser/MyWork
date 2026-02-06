@@ -83,6 +83,7 @@ public class skedHCExceptionHandler extends skedTriggerHub {
     private void resolveStaffingReason(List<skedHC__Exception__c> records) {
         List<sked__Activity_Resource__c> activityResourcesToUpdate = new List<sked__Activity_Resource__c>();
         List<sked__Job_Allocation__c> jobAllocationsToUpdate = new List<sked__Job_Allocation__c>();
+        Set<Id> jobAllocIds = new Set<Id>();
 
         Set<Id> activityIds = new Set<Id>();
         Set<Id> resourceIds = new Set<Id>();
@@ -106,18 +107,19 @@ public class skedHCExceptionHandler extends skedTriggerHub {
             boolean isOutsideAP = record.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN;
             boolean isNonWorkingTime = record.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT && record.skedHC__Exception__c == 'Non-working time';
             
-            if (isNonWorkingTime && record.skedHC__Job_Allocation__c != NULL) {
+            if (isNonWorkingTime && record.skedHC__Job_Allocation__c != NULL && !jobAllocIds.contains(record.skedHC__Job_Allocation__c)) {
+               jobAllocIds.add(record.skedHC__Job_Allocation__c);
                 sked__Job_Allocation__c jobAllocation = new sked__Job_Allocation__c(
                     Id = record.skedHC__Job_Allocation__c,
                     sked_Staffing_Reason__c = NULL
                 );
                 jobAllocationsToUpdate.add(jobAllocation);
             }  
-            
+          
             if (isOutsideAP && mapActivity.containsKey(record.skedHC__Activity__c)) {
                 sked__Activity__c activity = mapActivity.get(record.skedHC__Activity__c);
-                for (sked__Activity_Resource__c activityResource : activity.sked__Activity_Resources__r) {
-                    if (activityResource.sked__Resource__c == record.skedHC__Resource__c) {
+               for (sked__Activity_Resource__c activityResource : activity.sked__Activity_Resources__r) {
+                     if (activityResource.sked__Resource__c == record.skedHC__Resource__c) {
                         activityResource.sked_Staffing_Reason__c = NULL;
                         activityResourcesToUpdate.add(activityResource);
                     }
