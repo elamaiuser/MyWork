@@ -39,6 +39,17 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>BSF_Access_Control_Rule.HRP_16123_Account_Path_Field_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Opportunity_Path_Field_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Field_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Object_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Task_Planning_Field_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Task_Planning_Object_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Task_Sel_Pkg_Object_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Task_Sel_Pkg_Field_PS</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
 		<members>Planned_Task__c</members>
 		<members>Task_Planning_Default__c</members>
 		<members>Task_Selected_Package__c</members>
