@@ -37,8 +37,7 @@ public with sharing class BSF_TaskPlanningService {
             );
 
             if (plannedTask.Scheduling_Method__c == BSF_Constants.PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET) {
-                newTask.ActivityDate = calculateActivityDate(plannedTask.Related_Opportunity__r.Drive_Date__c, (Integer)plannedTask.User_Defined_Offset__c);
-                newTask.Drive_Offset_Days__c = plannedTask.User_Defined_Offset__c;
+                newTask.ActivityDate = calculateActivityDate(plannedTask.Related_Opportunity__r.Drive_Date__c, (Integer)plannedTask.User_Defined_Offset__c);                
                 newTask.Is_Drive_Dependent__c = true;
             } else {
                 newTask.ActivityDate = plannedTask.Target_Date__c;
@@ -74,15 +73,15 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         List<Task> dependentTasksToUpdate = [
-            SELECT Id, WhatId, Drive_Offset_Days__c FROM Task 
+            SELECT Id, WhatId FROM Task 
             WHERE WhatId IN :opportunityIdsWithDateChange AND Is_Drive_Dependent__c = TRUE AND IsClosed = FALSE
             WITH USER_MODE
         ];
 
         for (Task taskRecord : dependentTasksToUpdate) {
             Opportunity parentOpp = newOpportunityMap.get(taskRecord.WhatId);
-            if (parentOpp != null && taskRecord.Drive_Offset_Days__c != null) {
-                taskRecord.ActivityDate = calculateActivityDate(parentOpp.Drive_Date__c, (Integer)taskRecord.Drive_Offset_Days__c);
+            if (parentOpp != null ) {
+                taskRecord.ActivityDate = calculateActivityDate(parentOpp.Drive_Date__c, 0);
             }
         }
 
