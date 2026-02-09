@@ -1,24 +1,25 @@
-/* Description : This test class covers SponsorPlanningReportPDFController (91%) and SponsorPlanningReportController(94%) 
-   
- * Modification Log 
- * Date					     Developer Name			     Comments
- * ***********************************************************************************************************************************************
- * 11/08/2024				  Priti Jana				Modified to cover SponsorPlanningReportPDFController
- *************************************************************************************************************************************************
+/* Description : This test class covers:
+ *  SponsorPlanningReportPDFController (93%)
+ *  SponsorPlanningReportController(94%) 
 */
-@IsTest
-public class SponsorPlanningReportController_Test {
 
-    // -----------------------------------------------------------------------------------
-    //Test Setup
-    // -----------------------------------------------------------------------------------
+@isTest
+private class SponsorPlanningReportController_Test {
+    
     @testSetup
     static void setupData() {
         //Temporarily bypass heavy triggers
         TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('BsfPortfolioTriggerHandler');
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
 
         //Create Account and Contact
         Account acc = new Account(
@@ -172,7 +173,6 @@ public class SponsorPlanningReportController_Test {
         );
         insert drive2;
 
-        
         sked_Drive_Shift__c shift = new sked_Drive_Shift__c(
             Name = 'test shift 1',
             sked_Max_Donor_Capacity__c = 250,
@@ -187,9 +187,7 @@ public class SponsorPlanningReportController_Test {
             sked_End_Time__c = Time.newInstance(12, 0, 0, 0)
 		);  
         insert shift;
-
         
-
         sked__Job__c job = new sked__Job__c(
             sked__Region__c = region.Id,
             sked__Start__c = system.today(),
@@ -222,6 +220,7 @@ public class SponsorPlanningReportController_Test {
             End_Date__c = Date.today().addDays(30)
         );
         insert accPortfolio;
+        
         OpportunityTeamMember opptyTeamMember = new OpportunityTeamMember(
             OpportunityId=opp1.Id,
             TeamMemberRole ='Account Manager',
@@ -235,6 +234,7 @@ public class SponsorPlanningReportController_Test {
         );
 
         insert opptyContactRole;
+        
         List<Note> notes = new List<Note>();
         notes.add(new Note(ParentId=opp1.AccountId,Title='Account Notes'));
         notes.add(new Note(ParentId=opp1.Id,Title='Opportunity Notes'));
@@ -246,7 +246,9 @@ public class SponsorPlanningReportController_Test {
             Account__c=opp1.AccountId,
             Account_Service_Role__c='Blood Program Leader');
         insert asr;
+        
         Id organizationPartnershipRTId = Schema.SObjectType.Marketing_Program__c.getRecordTypeInfosByName().get('Organization Partnership').getRecordTypeId();
+        
         Marketing_Program__c  affilaition = new Marketing_Program__c(
             Scope__c='Drive;Account;Template',
             Name='Test Marketing Program',
@@ -273,10 +275,12 @@ public class SponsorPlanningReportController_Test {
                                  EffectiveDate=System.today(),
                                  Status='Draft');
         insert order1;
+        
         Product2 prod = new Product2(
             Name = 'Laptop X200',
             Family = 'Hardware');
         insert prod;
+        
         Id pricebookId = Test.getStandardPricebookId();
         PricebookEntry standardPrice = new PricebookEntry(
 		    Pricebook2Id = pricebookId,
@@ -285,16 +289,17 @@ public class SponsorPlanningReportController_Test {
             IsActive = true
         );
 	    insert standardPrice;
+        
         Task task1 = new Task(
             Subject='Test Task',
             ActivityDate=System.today().addDays(10), 
             WhatId=opp1.Id);
         insert task1;	
+        
         //Clear Trigger Bypass Flags
-        TriggerHandler.clearBypass('AccountTriggerHandler');
-        TriggerHandler.clearBypass('OpportunitySplitTriggerHandler');
-        TriggerHandler.clearBypass('DriveTriggerHandler');
-        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassInsertTriggers = false;
+        skedHubBase.BypassUpdateTriggers = false;
     }
 
     // -----------------------------------------------------------------------------------

@@ -143,6 +143,10 @@ export default class SlwcDriveCalendar extends LightningElement {
         return this.filters.collectionOperationValues.territoryCollectionOperations.map(item => item.collectionOperation);
     }
 
+    get isFilteringMissingTimeBlock() {
+        return this.filters?.collectionOperationValues?.isFilteringMissingTimeBlock || false;
+    }
+
     connectedCallback() {
         this.retrieveLoginUser();
         this.calendarWeeks = this.buildCalendarWeeks();
@@ -189,7 +193,7 @@ export default class SlwcDriveCalendar extends LightningElement {
 
     handleRefreshCalendar() {
         const selectedTimeBlockIds = this.filters.collectionOperationValues.timeBlocks?.map(item => item.value);
-        this.isTimeBlockApplied = !!selectedTimeBlockIds?.length;
+        this.isTimeBlockApplied = this.filters.collectionOperationValues.isFilteringMissingTimeBlock || !!selectedTimeBlockIds?.length;
 
         this.isFixedSiteDisabled = this.filters.driveOperationTypes?.includes(DRIVE_OPERATION_TYPE.FIXED_SITE);
         this.selectedMonth = this.filters.selectedMonth;
@@ -816,6 +820,8 @@ export default class SlwcDriveCalendar extends LightningElement {
                     return districtManagerPortfolio.id;
                 })
                 driveQuery.daysOfWeek = this.filters.daysOfWeek;
+                driveQuery.missingTimeBlock = this.isFilteringMissingTimeBlock;
+
                 if (this.isTimeBlockApplied) {
                     driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
                 }
@@ -852,6 +858,16 @@ export default class SlwcDriveCalendar extends LightningElement {
                 ])
             })
             .then(([staffingConstraintResult, productGoalResult, driveResult, driveLimitResult, activityResult, holidayResult, calendarMessageResult]) => {
+                if (this.isFilteringMissingTimeBlock) {
+                    // Filter: If filtering by missing time blocks, only include drives that have missing time blocks
+                    driveResult = (driveResult || []).filter((drive) => {
+                        if (!this.driveHelper.isDriveMissingTimeBlock(drive, { collectionOperations: this.collectionOperations })) {
+                            return false; // Exclude this drive
+                        }
+                        return true;
+                    });
+                }
+
                 this.staffingConstraintsMapByDate = groupBy(staffingConstraintResult, 'dateOfConstraint');
                 this.productGoalsByDate = groupBy(productGoalResult, 'dateOfGoal');
                 this.drivesMapByDate = groupBy(driveResult, 'driveDate');

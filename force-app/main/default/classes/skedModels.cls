@@ -253,6 +253,7 @@ global class skedModels {
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
         public List<exceptionLog> exceptionLogs;
         public string timeOffReasonCode;
+        public decimal noOfRequestedHours; // HRP-13861 Eric Keating
         public string workdaySyncMessage;
         public string workdaySyncStatus;
         
@@ -285,6 +286,15 @@ global class skedModels {
         public string startDate;
         public integer startTime;
         public string status;
+
+        public boolean isOverlapping;
+        public List<overlappingPatternResource> overlappingPatternResources;
+    }
+
+    global virtual class overlappingPatternResource {
+        public string endDate;
+        public string startDate;
+        public string patternName;
     }
     
     global virtual class availabilityTemplate extends modelBase {

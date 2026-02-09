@@ -685,4 +685,36 @@ public without sharing class DriveTriggerService {
 
     }
     //HRP-701 -> Ends Here
+    public static void handleOneWeekCheckIn(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> oldDriveMap) {
+        if(newDriveList == NULL || newDriveList.isEmpty() || oldDriveMap == NULL || oldDriveMap.isEmpty()) {
+            return;
+        }
+        Set<Id> oppIdsToCreateTasks = new Set<Id>();
+        Set<Id> oppIdsToCancelTasks = new Set<Id>();
+        for(sked_Drive__c newDrive : newDriveList) {
+            sked_Drive__c oldDrive = oldDriveMap.get(newDrive.Id);
+            if(newDrive.Id != NULL && oldDriveMap.containsKey(newDrive.Id) 
+                    && newDrive.sked_Status__c != oldDrive.sked_Status__c
+                    && newDrive.sked_Opportunity__c != NULL){
+                        if(newDrive.sked_Status__c == BSF_Constants.DOC_STATUS_CONFIRMED){
+                            oppIdsToCreateTasks.add(newDrive.sked_Opportunity__c);
+                        }else if(newDrive.sked_Status__c == BSF_Constants.DOC_STATUS_CANCEL){
+                            oppIdsToCancelTasks.add(newDrive.sked_Opportunity__c);
+                        }
+
+            }
+        }
+        if(!oppIdsToCreateTasks.isEmpty()) {
+            Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([SELECT Id, OwnerId,
+                                                                            Drive_Date__c,
+                                                                            Account_Manager__c 
+                                                                    FROM Opportunity 
+                                                                    WHERE Id IN :oppIdsToCreateTasks]);
+            TaskService.createOneWeekCheckInTasks(oppMap);
+        }
+        if(!oppIdsToCancelTasks.isEmpty()) {
+            TaskService.cancelOneWeekCheckInTasks(oppIdsToCancelTasks);
+        }
+
+    }
 }

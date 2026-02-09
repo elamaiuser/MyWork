@@ -32,8 +32,9 @@ public class OpportunityTriggerHandler extends TriggerHandler{
     public Static Boolean isSplit=false;
     public static Boolean isCalledBefore = false; //HRP-12011
     
-    public override void beforeUpdate(){
+    public override void beforeUpdate() {
         System.debug('Entered method beforeUpdate');
+
         //Start HRP-10912
         if(super.getTriggerMethodsToBypass().indexOf('validateNoPendingDCR') == -1) {
             OpportunityService.validateNoPendingDCR((Map<Id,Opportunity>)trigger.newMap, (Map<Id,Opportunity>)trigger.oldMap);
@@ -172,10 +173,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('autoPopulateOpportunityTemplateValues') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.autoPopulateOpportunityTemplateValues() Executing...');
             OpportunityService.autoPopulateOpportunityTemplateValues((Map<Id, Opportunity>)trigger.oldMap, (List<Opportunity>)trigger.new);
-        }else{
+        } else {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.autoPopulateOpportunityTemplateValues() Bypassed');
         }
-        
+
         if(super.getTriggerMethodsToBypass().indexOf('updateOpportunityName') == -1) {
             System.debug('OpportunityTriggerHandler.beforeUpdate() - OpportunityService.updateOpportunityName() Executing...');
             OpportunityService.updateOpportunityName((List<Opportunity>) trigger.new, (Map<Id, Opportunity>)trigger.oldMap);
@@ -308,10 +309,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         System.debug('Exiting method beforeUpdate');
     }
     
-    public override void beforeInsert(){
+    public override void beforeInsert() {
         isSplit=true;
         System.debug('Entered method Opportunity beforeInsert');
 		System.debug('getCpuTime()'+limits.getCpuTime());
+
         // HRP-12011 --> Starts Here
         if(super.getTriggerMethodsToBypass().indexOf('populateSlotGeneratorOnOpportunity') == -1) {
             System.debug('#### OpportunityTriggerHandler.beforeInsert() - OpportunityService.populateSlotGeneratorOnOpportunity() Executing...');
@@ -365,9 +367,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('autoPopulateOpportunityTemplateValues') == -1) {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.autoPopulateOpportunityTemplateValues() Executing...');
             OpportunityService.autoPopulateOpportunityTemplateValues(null, (List<Opportunity>)trigger.new);
-        }else{
+        } else {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.autoPopulateOpportunityTemplateValues() Bypassed');
         }
+
         System.debug('getCpuTime()'+limits.getCpuTime());
         if(super.getTriggerMethodsToBypass().indexOf('updateOpportunityName') == -1) {
             System.debug('OpportunityTriggerHandler.beforeInsert() - OpportunityService.updateOpportunityName() Executing...');
@@ -555,13 +558,16 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         }
         System.debug('getCpuTime()'+limits.getCpuTime());        
 		//12/9 FWO added to replace the workflows "Update Opportunity name with No Site & Update Opportunity Name with Site Building"
+        
+		System.debug('getCpuTime()'+limits.getCpuTime());
+
         if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.GenerateOpportunityName() Executing...');
             OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, null);
-        }else{
+        } else {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.GenerateOpportunityName() Bypassed');
         }
-		System.debug('getCpuTime()'+limits.getCpuTime());
+
         //HRP-12664
         if(super.getTriggerMethodsToBypass().indexOf('syncTemplateOrdertoOpportunity') == -1) {
             System.debug('OpportunityTriggerHandler.afterInsert() - OpportunityService.syncTemplateOrdertoOpportunity() Executing...');
@@ -591,14 +597,14 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             
             if(super.getTriggerMethodsToBypass().indexOf('createRecruitmentTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Executing...');
-                OpportunityService.createRecruitmentTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+                //OpportunityService.createRecruitmentTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Bypassed');
             }
             
 			if(super.getTriggerMethodsToBypass().indexOf('createSponsorPlanningMeetingTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Executing...');
-                OpportunityService.createSponsorPlanningMeetingTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
+                //OpportunityService.createSponsorPlanningMeetingTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Bypassed');
             }
@@ -692,12 +698,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
              } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.modifyTasksOnDriveDateChange() Bypassed');  
             }
-            
-            //12/9 FWO added to replace the workflows "Update Opportunity name with No Site & Update Opportunity Name with Site Building"
+
             if(super.getTriggerMethodsToBypass().indexOf('GenerateOpportunityName') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.GenerateOpportunityName() Executing...');
                 OpportunityService.GenerateOpportunityName((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
-            }else{
+            } else {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.GenerateOpportunityName() Bypassed');
             }
 

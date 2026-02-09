@@ -11,95 +11,53 @@
 */
 global class UpdateOpportunityNameBatch implements Database.Batchable<sObject>, Database.Stateful {
     
-    global List<Opportunity> oppNewList = new List<opportunity>();
-    global Map<id, Opportunity> oppOldMap = new Map<id, Opportunity>();
-    global Boolean updateNameInBulk = false;
-    global String query; 
+    private List<Opportunity> incomingOppNewList;
+    private Boolean isOnlyTemplates;
+    private Boolean isRecalculationNeeded;
     
-    global UpdateOpportunityNameBatch(Boolean runBulkUpdate, string incomingQuery) {
-        //system.debug('coming here1# '+runBulkUpdate+' '+incomingQuery);
-        updateNameInBulk = true;
-        query = incomingQuery;
-    }
-    
-    global UpdateOpportunityNameBatch(list<Opportunity> incomingOppNewList) {
-        oppNewList = incomingOppNewList;
-    }
-    
-    global UpdateOpportunityNameBatch(list<Opportunity> incomingOppNewList, map<Id, Opportunity> incomingOppOldMap) {
-     
-        oppNewList = incomingOppNewList;
-        oppOldMap = incomingOppOldMap;
+    global UpdateOpportunityNameBatch(list<Opportunity> incomingOppNewList, Boolean isOnlyTemplates, Boolean isRecalculationNeeded) {
+        this.incomingOppNewList = incomingOppNewList ?? new List<opportunity>();
+        this.isOnlyTemplates = isOnlyTemplates ?? false;
+        this.isRecalculationNeeded = isRecalculationNeeded ?? false;
     }
     
     global List<Opportunity> start(Database.BatchableContext bc) {
-       
-        //If after insert, query the opportunity since it will be read-only
-        //if(oppOldMap == null) {
-        //    oppNewList = [SELECT Id, Name, Is_Template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c FROM Opportunity WHERE Id in: oppNewList];
-        //}
-        if(updateNameInBulk == true && query != '') {
-            
-            oppNewList = Database.query(query);
-            //system.debug('oppNewList### '+oppNewList);
-        }
-        return oppNewList;
+        return incomingOppNewList;
     }
     
     global void execute(Database.BatchableContext bc, List<Opportunity> lstOpportunities) {
-       // System.debug('### inside UpdateOpportunityNameBatch Execute ' + lstOpportunities.size() + ' ---' + lstOpportunities);
-        if(updateNameInBulk) {
-            //system.debug('updateNameInBulk##'+updateNameInBulk);
-            List<Opportunity> finalOppList = new List<Opportunity>();
-            for (opportunity opp : lstOpportunities) {
-                if(opp.Is_Template__c == false && opp.Drive_Site__c == null) {
-                    string tmpTbdOppName = opp.Name + ', TBD';//HRP-12136  internal name--> Name
-                    if(opp.Name != tmpTbdOppName) {
-                        opp.Name =  opp.Name + ', TBD';   //HRP-12136 internal name--> Name
-                        finalOppList.add(opp);
-                    }
-                }                    
-                else if (opp.Is_Template__c == false && opp.Drive_Site__c != null) {
-                    string tmpOppName = opp.account.name+', '+opp.Drive_Site_Name__c;//HRP-12136 opp.Account_Internal_Name__c + ', ' +  opp.Site_Building_Name__c;
-                    tmpOppName = tmpOppName.length() > 80 ? tmpOppName.substring(0, 75) + ' ...' : tmpOppName;//HRP-12136
-                    //HRP-12136
-                    /*if(tmpOppName.length() > 120) {
-                        tmpOppName = tmpOppName.substring(0,120);
-                    }*/
-                    //HRP-12136
-                    if(opp.Name != tmpOppName) {
-                        opp.Name = tmpOppName;
-                        finalOppList.add(opp);
-                    }
-                } 
+        List<Opportunity> clonedOldOppsList = lstOpportunities.deepClone(true, true, true);
+        if(isRecalculationNeeded) {
+            if(isOnlyTemplates) {
+                OpportunityService.generateTemplateOppName(clonedOldOppsList, null);
+            } else {
+                clonedOldOppsList = OpportunityService.checkOppNameChange(new Map<Id, Opportunity>(clonedOldOppsList).keySet());
+
+                for (Opportunity opp : clonedOldOppsList) {
+                    opp.Is_Account_Internal_Name_Changed__c = true;
+                }
+                OpportunityService.updateOpportunityName(clonedOldOppsList, new Map<Id, Opportunity>(lstOpportunities));
             }
-            // added Database method and Error log(HRP-10549):start
-            //system.debug('finalOppList##'+finalOppList.size());
-            TriggerHandler.bypass('OpportunityTriggerHandler');//HRP-12136
-            Database.UpsertResult[] upsertfinalOppList = Database.upsert(finalOppList,false);
-            TriggerHandler.clearBypass('OpportunityTriggerHandler');//HRP-12136
+        }
+
+        TriggerHandler.bypass('OpportunityTriggerHandler'); //HRP-12136
+        Database.SaveResult[] updateResults = Database.update(clonedOldOppsList, false);
+        TriggerHandler.clearBypass('OpportunityTriggerHandler'); //HRP-12136
             
-            if(upsertfinalOppList.size()>0){
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(upsertfinalOppList,'UpdateOpportunityName','UpdateOpportunityNameBatch','execute','Error','Error in Updating opportunity name');
+        if(!updateResults.isEmpty()) {
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLogWithObjectId(
+                updateResults, 
+                'UpdateOpportunityName', 
+                'UpdateOpportunityNameBatch',
+                'execute',
+                'Error',
+                'Update Opportunity Name'
+            );
             InsertBsfErrorLog.insertBsfErrors(logList);
             // added Database method and Error log(HRP-10549):End
-        }
-        }
-        else{
-            // added Database method and Error log(HRP-10549):start
-            //system.debug('lstOpportunities##'+lstOpportunities.size()+' '+lstOpportunities);
-            TriggerHandler.bypass('OpportunityTriggerHandler');//HRP-12136
-            Database.UpsertResult[] upsertlstOpportunities = Database.upsert(lstOpportunities,false);
-            TriggerHandler.clearBypass('OpportunityTriggerHandler');//HRP-12136
-            if(upsertlstOpportunities.size()>0){
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(upsertlstOpportunities,'UpdateOpportunityName','UpdateOpportunityNameBatch','execute','Error','Error in Updating opportunity name');
-            InsertBsfErrorLog.insertBsfErrors(logList);
-            // added Database method and Error log(HRP-10549):End
-        }
         }
     }
     
-    public void finish(Database.BatchableContext BC){
-        
-    }
+    public void finish(Database.BatchableContext BC) {}
+
 }

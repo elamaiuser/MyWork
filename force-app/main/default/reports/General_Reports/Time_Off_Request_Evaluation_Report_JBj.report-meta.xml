@@ -68,6 +68,9 @@
         <field>sked__Resource__c$sked_Roles__c</field>
     </columns>
     <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_WID__c</field>
+    </columns>
+    <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Message__c</field>
     </columns>
     <columns>
