@@ -20,6 +20,7 @@ public with sharing class BSF_TaskPlanningWizardController {
         @AuraEnabled public Integer sortOrder;
         @AuraEnabled public Boolean isStandard;
         @AuraEnabled public List<TaskItemWrapper> tasks;
+        @AuraEnabled public Boolean hideSelectAll;
     }
 
     public class TaskItemWrapper implements Comparable {
@@ -84,8 +85,9 @@ public with sharing class BSF_TaskPlanningWizardController {
         }
 
         // 2. Fetch Metadata
-        List<Task_Package__c> taskPackages = [SELECT Id, Package_Name__c, Sort_Order__c FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
-        List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Subject__c,
+        List<Task_Package__c> taskPackages = [SELECT Id, Name, Sort_Order__c, Hide_Select_All__c 
+                                              FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
+        List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Name,
                                             Task_Definition__r.Description__c, Task_Definition__r.Scheduling_Method__c,
                                             Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH USER_MODE];
 
@@ -96,10 +98,11 @@ public with sharing class BSF_TaskPlanningWizardController {
         for (Task_Package__c pkg : taskPackages) {
             PackageGroupWrapper groupWrap = new PackageGroupWrapper();
             groupWrap.packageId = pkg.Id;
-            groupWrap.name = pkg.Package_Name__c;
+            groupWrap.name = pkg.Name;
             groupWrap.sortOrder = (Integer)pkg.Sort_Order__c;
+            groupWrap.hideSelectAll = pkg.Hide_Select_All__c;
             groupWrap.tasks = new List<TaskItemWrapper>();
-            groupWrap.isStandard = (pkg.Package_Name__c.contains('Standard') || pkg.Sort_Order__c == 1);
+            groupWrap.isStandard = (pkg.Name.contains('Standard') || pkg.Sort_Order__c == 1);
             packageMap.put(pkg.Id, groupWrap);
         }
 
@@ -110,7 +113,7 @@ public with sharing class BSF_TaskPlanningWizardController {
 
             TaskItemWrapper task = new TaskItemWrapper();
             task.taskDefinitionId = item.Task_Definition__c;
-            task.subject = item.Task_Definition__r.Subject__c;
+            task.subject = item.Task_Definition__r.Name;
             task.description = item.Task_Definition__r.Description__c;
             task.schedulingMethod = item.Task_Definition__r.Scheduling_Method__c;
             task.defaultOffset = (Integer)item.Task_Definition__r.Due_Date_Offset__c;
@@ -177,7 +180,7 @@ public with sharing class BSF_TaskPlanningWizardController {
             }
 
             Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
-                SELECT Id, Creation_Date_Offset__c, Subject__c FROM Task_Definition__c 
+                SELECT Id, Creation_Date_Offset__c, Name FROM Task_Definition__c 
                 WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE
             ]);
 
@@ -259,7 +262,7 @@ public with sharing class BSF_TaskPlanningWizardController {
             if (taskDefinitionsById.containsKey(payload.definitionId)) {
                 Task_Definition__c taskDef = taskDefinitionsById.get(payload.definitionId);
                 task.Creation_Offset__c = taskDef.Creation_Date_Offset__c;
-                task.Subject__c = taskDef.Subject__c;
+                task.Subject__c = taskDef.Name;
             }
             tasksToInsert.add(task);
         }        

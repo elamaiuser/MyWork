@@ -42,12 +42,14 @@
                                     </div>
 
                                     <div class="slds-col slds-grid slds-grid_vertical-align-center">
-                                        <template if:true={packageGroup.isStandard}>
-                                            <strong>{packageGroup.name}</strong>
-                                            <lightning-badge label="Required" class="slds-theme_success slds-m-left_small"></lightning-badge>
+                                        <template if:true={packageGroup.isReadOnlyHeader}>
+                                            {packageGroup.name}
+                                            <template if:true={packageGroup.showRequiredBadge}>
+                                                <lightning-badge label="Required" class="slds-theme_success slds-m-left_small"></lightning-badge>
+                                            </template>
                                         </template>
 
-                                        <template if:false={packageGroup.isStandard}>
+                                        <template if:false={packageGroup.isReadOnlyHeader}>
                                             <lightning-input type="checkbox" label={packageGroup.name} 
                                                 checked={packageGroup.isAllSelected} data-package-id={packageGroup.packageId} 
                                                 onchange={handleSelectAllInGroup} disabled={isPlanningLocked}>
@@ -55,9 +57,11 @@
                                         </template>
                                     </div>
 
+                                    <!--
                                     <div class="slds-col slds-text-align_right">
                                         <span class="slds-badge">{packageGroup.selectedCount} Tasks</span>
                                     </div>
+                                    -->
                                 </div>
                             </div>
 
@@ -118,7 +122,7 @@
 
                 <div class="slds-m-top_medium footer-sticky">
                     <template if:false={isPlanningLocked}>
-                        <lightning-button label="Persist Plan" variant="brand" onclick={persistTaskPlan} class="slds-button_stretch"></lightning-button>
+                        <lightning-button label="Apply Plan" variant="brand" onclick={persistTaskPlan} class="slds-button_stretch"></lightning-button>
                     </template>
                 </div>
             </template>
@@ -132,7 +136,7 @@
                         <h2 class="slds-text-heading_medium">Confirm Path Transition</h2>
                     </header>
                     <div class="slds-modal__content slds-p-around_medium slds-text-align_center">
-                        <p>Are you sure you want to change the planning path? Existing configurations may be reset.</p>
+                        <p>Are you sure you want to change the planning path? Current task selections may change.</p>
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning-button label="Cancel" onclick={cancelPathChange}></lightning-button>

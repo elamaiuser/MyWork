@@ -1293,7 +1293,7 @@ public static void handleTaskPlanningPathChange(List<Account> newAccounts, Map<I
       
       // Detect if the Planning Path value has changed
       if (acc.Planning_Path__c != oldAcc.Planning_Path__c) {
-          changedAccountIds.add(acc.Id);          
+          changedAccountIds.add(acc.Id);
       }
   }
 

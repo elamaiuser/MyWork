@@ -60,6 +60,11 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     cancelPathChange() {
         this.isPathChangeModalOpen = false;
         this.pendingPlanningPath = '';
+        const originalPath = this.activePlanningPath;
+        this.activePlanningPath = null; // Force re-render to reset the UI state
+        Promise.resolve().then(() => {
+            this.activePlanningPath = originalPath;
+        });
     }
 
     initializePackageDisplay() {
@@ -80,6 +85,8 @@ export default class BsfTaskPlanningWizard extends LightningElement {
             group.isExpanded = (this.activePlanningPath === 'Standard' && group.isStandard);
             group.chevronIcon = group.isExpanded ? 'utility:chevrondown' : 'utility:chevronright';
             group.containerClass = group.isExpanded ? 'slds-section slds-is-open slds-m-bottom_small slds-card' : 'slds-section slds-m-bottom_small slds-card';
+            group.showRequiredBadge = (group.isStandard && this.activePlanningPath === 'Standard');
+            group.isReadOnlyHeader = group.isStandard || group.hideSelectAll;
 
             group.tasks = group.tasks.map(taskItem => {
                 let isChecked = false;
@@ -237,7 +244,7 @@ export default class BsfTaskPlanningWizard extends LightningElement {
             activePath: this.activePlanningPath
         })
         .then(() => {
-            this.showToast('Success', 'Task plan saved successfully.', 'success');            
+            this.showToast('Success', 'Plan has been applied successfully. Please allow a few minutes for the process to complete.', 'success');
             return refreshApex(this.wiredResult)
             .then(() => {
                 notifyRecordUpdateAvailable([{ recordId: this.recordId }]);
