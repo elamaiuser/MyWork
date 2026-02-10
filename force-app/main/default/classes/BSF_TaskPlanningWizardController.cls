@@ -20,6 +20,7 @@ public with sharing class BSF_TaskPlanningWizardController {
         @AuraEnabled public Integer sortOrder;
         @AuraEnabled public Boolean isStandard;
         @AuraEnabled public List<TaskItemWrapper> tasks;
+        @AuraEnabled public Boolean hideSelectAll;
     }
 
     public class TaskItemWrapper implements Comparable {
@@ -84,7 +85,8 @@ public with sharing class BSF_TaskPlanningWizardController {
         }
 
         // 2. Fetch Metadata
-        List<Task_Package__c> taskPackages = [SELECT Id, Name, Sort_Order__c FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
+        List<Task_Package__c> taskPackages = [SELECT Id, Name, Sort_Order__c, Hide_Select_All__c 
+                                              FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
         List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Name,
                                             Task_Definition__r.Description__c, Task_Definition__r.Scheduling_Method__c,
                                             Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH USER_MODE];
@@ -98,6 +100,7 @@ public with sharing class BSF_TaskPlanningWizardController {
             groupWrap.packageId = pkg.Id;
             groupWrap.name = pkg.Name;
             groupWrap.sortOrder = (Integer)pkg.Sort_Order__c;
+            groupWrap.hideSelectAll = pkg.Hide_Select_All__c;
             groupWrap.tasks = new List<TaskItemWrapper>();
             groupWrap.isStandard = (pkg.Name.contains('Standard') || pkg.Sort_Order__c == 1);
             packageMap.put(pkg.Id, groupWrap);

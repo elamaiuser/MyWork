@@ -1243,6 +1243,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>bsfTaskPlanningWizard</componentName>
+                <identifier>c_bsfTaskPlanningWizard</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-7ad4e2aa-2022-471c-bb2b-cb1439fa3bcf</name>
+        <type>Facet</type>
+    </flexiPageRegions>    
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>ColumnName</name>
                     <value>File Title, File Type, Expiry Date</value>
@@ -1375,14 +1385,21 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-3da2ca02-1f38-4ab4-a14a-bc454facd9d6</value>
+                    <value>Facet-7ad4e2aa-2022-471c-bb2b-cb1439fa3bcf</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Custom Files</value>
+                    <value>Task Planning Wizard</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>customTab5</identifier>
+                <identifier>flexipage_tab3</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.RecordType.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>Mobile</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -1404,6 +1421,20 @@
                         <rightValue>Feeder Only</rightValue>
                     </criteria>
                 </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-3da2ca02-1f38-4ab4-a14a-bc454facd9d6</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Custom Files</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>customTab5</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</name>
