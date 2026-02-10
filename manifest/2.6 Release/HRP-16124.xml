@@ -16,6 +16,7 @@
 		<members>Task_Definition__c.Task_Type__c</members>
 		<members>Task_Package_Item__c.Task_Definition__c</members>
 		<members>Task_Package_Item__c.Task_Package__c</members>
+		<members>Task_Package__c.Hide_Select_All__c</members>
 		<members>Task_Package__c.Package_Name__c</members>
 		<members>Task_Package__c.Sort_Order__c</members>
 		<name>CustomField</name>
