@@ -292,6 +292,7 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Recurring_Schedule__r.sked__Description__c', 'scheduleDescription', 'direct');
             mappingConfig.addFieldConfig('sked_Approved_Via_Automation__c', 'approvedViaAutomation', 'direct');
             mappingConfig.addFieldConfig('sked_Bidding_Type__c', 'biddingType', 'direct');
+            mappingConfig.addFieldConfig('sked_Time_Off_Plan__c', 'timeOffPlan', 'direct');
             mappingConfig.addFieldConfig('sked_Time_Off_Reason_Code__c', 'timeOffReasonCode', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Message__c', 'workdaySyncMessage', 'direct');
             mappingConfig.addFieldConfig('sked_Workday_Sync_Status__c', 'workdaySyncStatus', 'direct');

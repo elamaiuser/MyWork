@@ -420,7 +420,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     private boolean canBeAutoApproved(sked__Availability__c availability, sked__Resource__c resource, Date currentDate) {
         Set<string> excludedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_PTO, skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY, skedConstants.UNAVAILABILITY_TYPE_PERSONAL, skedConstants.UNAVAILABILITY_TYPE_SICK};
         Set<String> typesrequiresCutOffDays = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_BEREAVEMENT};
-        Set<String> bypassedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_UNAVAILABLE};
+        Set<String> bypassedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_UNAVAILABLE, skedConstants.AVAILABILITY_TYPE_CALL_OUT};
 
         Date startDate = skedDateTimeUtils.getDate(availability.sked__Start__c, availability.sked__Timezone__c);
 
@@ -496,7 +496,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                     }
 
                     if (!hasMatchingStaffingBudgetSlot && !Test.isRunningTest()) {
-                        wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY);
+                        wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NOT_FOUND);
                     }
                 }
                 
