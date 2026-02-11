@@ -999,6 +999,7 @@ global virtual class skedRacController extends skedBaseController {
     @remoteAction
     global static skedRemoteResultModel saveCallOut(saveCallOutRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
         try {
             string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
@@ -1024,6 +1025,7 @@ global virtual class skedRacController extends skedBaseController {
         }
         catch (Exception ex) {
             result.getError(ex);
+            Database.rollback(sp);
         }
         return result;
     }

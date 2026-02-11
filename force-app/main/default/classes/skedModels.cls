@@ -252,6 +252,7 @@ global class skedModels {
         public string biddingType;
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
         public List<exceptionLog> exceptionLogs;
+        public string timeOffPlan;
         public string timeOffReasonCode;
         public decimal noOfRequestedHours; // HRP-13861 Eric Keating
         public string workdaySyncMessage;
