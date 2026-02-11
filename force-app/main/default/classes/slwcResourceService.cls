@@ -257,7 +257,6 @@ global class slwcResourceService {
             callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
         	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
         }
-        insert callOutAvailability;
         
         if (!notes.isEmpty()) {
             String driveUFIDNotes = String.join(notes, ' - ');
@@ -265,6 +264,22 @@ global class slwcResourceService {
                 callOutAvailability.sked__Notes__c = driveUFIDNotes + '. ' + callOutAvailability.sked__Notes__c;
             }
         }
+        insert callOutAvailability;
+        
+        sked__Availability__c relatedAvailability = new sked__Availability__c(
+            sked__Type__c = request.timeOffPlan,
+            sked__Is_Available__c = FALSE,
+            sked__Finish__c = unavailabilityEnd,
+            sked__Start__c = unavailabilityStart,
+            sked__Resource__c = request.resourceId,
+            sked__Notes__c = request.callOutNotes,
+            sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
+            sked__Timezone__c = unavailabilityTimezone,
+            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
+            sked_Related_Call_Out__c = callOutAvailability.Id
+        );
+        insert relatedAvailability;
     }
     
     private static void editCallOut(saveCallOutRequestModel request) {

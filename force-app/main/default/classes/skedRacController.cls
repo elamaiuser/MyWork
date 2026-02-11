@@ -1427,22 +1427,6 @@ global virtual class skedRacController extends skedBaseController {
                     allHolidays.addAll(globalHolidays);
                 }
             }
-            //get existing unavailability
-            List<sked__Availability__c> existingUnavailabilityList = [SELECT Id, sked_Start_Date__c, sked_Finish_Date__c
-                                                                      FROM sked__Availability__c
-                                                                      WHERE sked__Resource__c = :request.event.resourceId
-                                                                      AND sked__Is_Available__c = FALSE
-                                                                      AND sked_Start_Date__c <= :endDate
-                                                                      AND sked_Finish_Date__c >= :startDate
-                                                                      AND sked__Status__c != :skedConstants.AVAILABILITY_STATUS_DECLINED];
-            Set<Date> existingAvailabilityDates = new Set<Date>();
-            for (sked__Availability__c unavailability : existingUnavailabilityList) {
-                tempDate = unavailability.sked_Start_Date__c;
-                while (tempDate <= unavailability.sked_Finish_Date__c) {
-                    existingAvailabilityDates.add(tempDate);
-                    tempDate = tempDate.addDays(1);
-                }
-            }
             
             prepareUnavailabilityResultModel data = new prepareUnavailabilityResultModel();
             data.unavailability = new List<unavailabilityModel>();
@@ -1473,11 +1457,7 @@ global virtual class skedRacController extends skedBaseController {
                         unavailability.unavailabilityType = 'no-slots-defined';
                     }
                 }
-                if (string.isBlank(unavailability.unavailabilityType)) {
-                    if (existingAvailabilityDates.contains(tempDate)) {
-                        unavailability.unavailabilityType = 'existing-unavailability';
-                    }
-                }
+                
                 if (string.isBlank(unavailability.unavailabilityType)) {
                     skedModels.event templateEvent = mapTempateEvents.get(dateIso);
                     unavailability.workingStartTime = templateEvent.startTime;
@@ -1570,6 +1550,8 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
+    
+    
     
     @remoteAction
     global static skedRemoteResultModel getResourceOverride(getDataRequestModel request) {
