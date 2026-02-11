@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">Sort_Order__c</value>
+        <value xsi:type="xsd:string">Hide_Select_All__c,Sort_Order__c</value>
     </values>
     <values>
         <field>Is_Enabled__c</field>
