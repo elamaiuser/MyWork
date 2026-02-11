@@ -657,6 +657,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     private static String getResourcesToAllocate (Set<Id> siteIds) {	
         String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
             ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c '+
+            '(SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c,'+
+            ' sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = \'Approved\' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate)'+
             ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c IN :siteIds)'+
             ' AND (sked_Asset_Type__c = \'Vehicle\' OR sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')' +
                             ' ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST';
@@ -871,10 +873,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Boolean isResourceAvailable = TRUE;
 
             //a. Check for Unavailability
-            if(!res.availabilities.isEmpty()) {
-                for(sked__Availability__c unavailablity : res.availabilities) {
+            if(!res.resource.sked__Availabilities1__r.isEmpty()) {
+                for(sked__Availability__c unavailablity : res.resource.sked__Availabilities1__r) {
                     if(unavailabilityTypes.contains(unavailablity.sked__Type__c)) {
-                        isResourceAvailable = isResourceAvailableDuringJob(res.availabilities, drive, res.resource); //HRP-12760
+                        isResourceAvailable = isResourceAvailableDuringJob(res.resource.sked__Availabilities1__r, drive, res.resource); //HRP-12760
                     }
                 }
             }
