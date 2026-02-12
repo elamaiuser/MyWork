@@ -386,6 +386,9 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                         newRecord.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(newRecord.sked_DateTime_Call_Out_Received__c, newRecord.sked__Start__c);	
                     }
                 }
+                if (newRecord.sked_Related_Call_Out__c != NULL) {
+                    newRecord.sked_Requested_Time_Off_Hours__c = skedWorkdayUtils.getWorkdayPtoHours(newRecord, skedResource);
+                }
             }
         }
     }
@@ -437,7 +440,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         
         List<sked__Availability__c> recordsToPopulate = new List<sked__Availability__c>();
         for (sked__Availability__c newRecord : newRecords) {
-            if (newRecord.sked__Type__c != NULL && unavailabilityTypesToPopulate.contains(newRecord.sked__Type__c)) {
+            if (newRecord.sked_Related_Call_Out__c == NULL && newRecord.sked__Type__c != NULL && unavailabilityTypesToPopulate.contains(newRecord.sked__Type__c)) {
                 recordsToPopulate.add(newRecord);
             }
         }
