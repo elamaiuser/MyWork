@@ -4,6 +4,13 @@
 		<members>AccountStatusUpdateHelper</members>
 		<name>ApexClass</name>
 	</types>
+    <types>
+		<members>Account-APS Planner Fixed Site Account Layout</members>
+        <members>Account-APS Planner Mobile Account Layout</members>
+        <members>Account-Sponsor Marketing Fixed Site Account Layout</members>
+        <members>Account-Sponsor Marketing Mobile Layout</members>
+		<name>Layout</name>
+	</types>
 	<types>
 		<members>slwcDriveStaffingDetails</members>
 	   <name>LightningComponentBundle</name>
