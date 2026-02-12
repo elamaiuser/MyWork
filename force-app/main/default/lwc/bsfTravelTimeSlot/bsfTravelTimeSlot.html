@@ -1,0 +1,120 @@
+<template>
+    <lightning-card title="Travel Time Configuration (POC)" icon-name="standard:business_hours">
+        
+        <!-- HEADER ACTIONS -->
+        <div slot="actions">
+            <template if:true={isEditing}>
+                <lightning-button label="Cancel" onclick={handleCancel} class="slds-m-right_small"></lightning-button>
+                <lightning-button variant="brand" label="Save Master Schedule" onclick={handleSave} disabled={hasErrors}></lightning-button>
+            </template>
+            <template if:false={isEditing}>
+                <lightning-button label="Edit Schedule" onclick={handleEdit}></lightning-button>
+            </template>
+        </div>
+
+        <div class="slds-p-around_medium">
+            
+            <!-- INFO BANNER -->
+            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
+                <span class="slds-assistive-text">warning</span>
+                <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:warning" size="x-small" variant="inverse"></lightning-icon>
+                </span>
+                <h2>
+                    <b>Master Schedule Mode:</b> Changes made here will be automatically applied to <b>All 7 Days (Mon-Sun)</b>.
+                </h2>
+            </div>
+
+            <!-- VIEW MODE (READ ONLY) -->
+            <template if:false={isEditing}>
+                <div class="slds-box slds-theme_shade">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Current Configured Schedule</h3>
+                    <lightning-datatable
+                        key-field="id"
+                        data={viewData}
+                        columns={viewColumns}
+                        hide-checkbox-column>
+                    </lightning-datatable>
+                </div>
+            </template>
+
+            <!-- EDIT MODE (INTERACTIVE) -->
+            <template if:true={isEditing}>
+                <div class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+                    * The system automatically adjusts Start Times to ensure zero gaps and 24-hour coverage.
+                </div>
+
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" style="width:50px">#</th>
+                            <th scope="col">Label</th>
+                            <th scope="col">Start Time <span class="slds-text-color_weak">(Auto)</span></th>
+                            <th scope="col">End Time <span class="slds-text-color_weak">(Edit)</span></th>
+                            <th scope="col">Duration</th>
+                            <th scope="col" style="width:50px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={draftData} for:item="slot" for:index="index">
+                            <tr key={slot.id} class={slot.rowClass}>
+                                <td>{slot.indexDisplay}</td>
+                                <td>
+                                    <lightning-input 
+                                        type="text" 
+                                        variant="label-hidden" 
+                                        value={slot.label} 
+                                        data-index={index} 
+                                        data-field="label"
+                                        onchange={handleInputChange}>
+                                    </lightning-input>
+                                </td>
+                                <td>
+                                    <!-- LOCKED START TIME -->
+                                    <div class="locked-input">
+                                        {slot.formattedStart}
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- EDITABLE END TIME -->
+                                    <lightning-input 
+                                        type="time" 
+                                        variant="label-hidden" 
+                                        value={slot.endTime} 
+                                        data-index={index}
+                                        onchange={handleTimeChange}
+                                        disabled={slot.isLastRow}
+                                        class={slot.validationClass}>
+                                    </lightning-input>
+                                </td>
+                                <td>
+                                    <div title={slot.errorMsg}>
+                                        <lightning-badge label={slot.durationDisplay} icon-name={slot.durationIcon} class={slot.badgeClass}></lightning-badge>
+                                    </div>
+                                </td>
+                                <td>
+                                    <template if:false={slot.isLastRow}>
+                                        <lightning-button-icon icon-name="utility:delete" variant="bare" data-index={index} onclick={handleDeleteRow} disabled={isSingleRow}></lightning-button-icon>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+
+                <!-- FOOTER -->
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-top_medium">
+                    <div class="slds-col">
+                        <lightning-button label="Add Slot" icon-name="utility:add" onclick={handleAddSlot} disabled={disableAddButton}></lightning-button>
+                    </div>
+                    <div class="slds-col slds-m-left_small">
+                        <span class={limitTextClass}>
+                            {draftData.length} of {maxSlots} slots used.
+                        </span>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
