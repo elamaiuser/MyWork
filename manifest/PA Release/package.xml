@@ -15,5 +15,13 @@
 		<members>slwcDriveStaffingDetails</members>
 	   <name>LightningComponentBundle</name>
 	</types>
+    <types>
+        <members>BSFRecruitment/Account_with_Account_Affiliations_4FD</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Accounts_With_Account_Affiliation</members>
+        <name>ReportType</name>
+    </types>
 	<version>64.0</version>
 </Package>
