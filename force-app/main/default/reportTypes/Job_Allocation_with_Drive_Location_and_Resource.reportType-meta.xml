@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>sked__Job_Allocation__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Report type based on Job Allocation (sked__Job_Allocation__c) including related Drive, Location, Opportunity, and Resource records. Used to report on staff Real ID compliance for drives at sites requiring Real ID.</description>
+    <label>Job Allocation with Drive, Location and Resource</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Account Manager</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.sked_Opportunity__c.Account_Manager__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>District Manager</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.sked_Opportunity__c.District_Manager__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Date</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.sked_Drive_Date__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Name</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.Name</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Role</displayNameOverride>
+            <field>sked__Job__c.sked_Resource_Role__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation Status</displayNameOverride>
+            <field>sked__Status__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive Status</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.sked_Status__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Real ID Required?</displayNameOverride>
+            <field>sked__Job__c.sked__Location__c.sked_Real_ID_Required__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Real ID?</displayNameOverride>
+            <field>sked__Resource__c.sked_REAL_ID_Compliant_indicator__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Region Name</displayNameOverride>
+            <field>sked__Resource__c.sked_ARC_Region_Name__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource Supervisor</displayNameOverride>
+            <field>sked__Resource__c.sked_Supervisor_Email__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Location Name</displayNameOverride>
+            <field>sked__Job__c.sked__Location__c.Name</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Collection Operation</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.sked_Collection_Operation__c.Name</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <masterLabel>Job Allocation</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Location</displayNameOverride>
+            <field>sked__Job__c.sked__Location__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource</displayNameOverride>
+            <field>sked__Resource__c.Name</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <masterLabel>Links to</masterLabel>
+    </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Drive ID</displayNameOverride>
+            <field>sked__Job__c.sked_Drive__c.Id</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Job Allocation ID</displayNameOverride>
+            <field>Id</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Location ID</displayNameOverride>
+            <field>sked__Job__c.sked__Location__c.Id</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Resource ID</displayNameOverride>
+            <field>sked__Resource__c.Id</field>
+            <table>sked__Job_Allocation__c</table>
+        </columns>
+        <masterLabel>Ids</masterLabel>
+    </sections>
+</ReportType>
