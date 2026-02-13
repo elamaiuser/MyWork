@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+        <members>BSFRecruitment/Account_with_Account_Affiliations_4FD</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Accounts_With_Account_Affiliation</members>
+        <name>ReportType</name>
+    </types>
+	<version>63.0</version>
+</Package>

@@ -1,8 +1,9 @@
 /* 
  * Modification Log 
- * Date					     Developer Name			     Comments
+ * Date               Developer Name           Comments
  * **********************************************************************************************************************************************************************************
  * 8/20/2025                 Barnojit Sharma           Logic for HRP-14999 (Account Status not updating to Inactive) 
+ * 1/16/2026				 Souvik Mukherjee		   Fix for HRP-16472. Include check to ensure there are no future drives when determining account status based on latestCompletedDrive
  ************************************************************************************************************************************************************************************
 */
 public inherited sharing class AccountStatusUpdateHelper {
@@ -54,15 +55,17 @@ public inherited sharing class AccountStatusUpdateHelper {
             FROM Account
             WHERE Id IN :accountIds
         ];
-
+		
+		
         for (Account acc : accWithOpps) {
-
+			
             if (acc.Opportunities.isEmpty()) {
+				
                 Integer monthsOld = acc.CreatedDate.date().monthsBetween(today);
 
                 if (monthsOld <= 12 && acc.Account_Status__c != 'Active') {
                     acc.Account_Status__c = 'Active';
-                    accountsToUpdate.add(acc);
+                    accountsToUpdate.add(acc);					
                 }else if (monthsOld >= 13 && monthsOld <= 24 && acc.Account_Status__c != 'Inactive') {
                     acc.Account_Status__c = 'Inactive';
                     accountsToUpdate.add(acc);
@@ -90,6 +93,7 @@ public inherited sharing class AccountStatusUpdateHelper {
                     latestCompletedDrive = opp;
                 }
             }
+			
 
             if (futureDrive != null && acc.Account_Status__c != 'Active') {
                 acc.Account_Status__c = 'Active';
@@ -100,7 +104,7 @@ public inherited sharing class AccountStatusUpdateHelper {
                 (acc.Account_Status__c == 'Lost' || acc.Account_Status__c == 'Defunct')) {
                 acc.Account_Status__c = 'Reactivate';
                 accountsToUpdate.add(acc);
-            }else if (latestCompletedDrive != null) {
+            }else if (futureDrive == null && latestCompletedDrive != null) {		//HRP-16472
                 Integer monthsSinceLastDrive = latestCompletedDrive.Drive_Date__c.monthsBetween(today);
 
                 if (monthsSinceLastDrive <= 12) {
@@ -123,7 +127,7 @@ public inherited sharing class AccountStatusUpdateHelper {
                 }
             }
         }
-
+		
         if (!accountsToUpdate.isEmpty()) {
             Database.SaveResult[] srList = Database.update (accountsToUpdate,false);
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'updating Account Status to Inactive','AccountStatusUpdateHelper','updateAcc','Error','Error in updating Account Status to Inactive');
