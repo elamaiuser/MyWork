@@ -1,6 +1,9 @@
 <template>
     <lightning-card title="Travel Time Configuration (POC)" icon-name="standard:business_hours">
-        
+        <template if:true={showSpinner}>
+            <lightning-spinner class="spins" size="medium"></lightning-spinner>
+        </template>
+
         <!-- HEADER ACTIONS -->
         <div slot="actions">
             <template if:true={isEditing}>
@@ -13,7 +16,7 @@
         </div>
 
         <div class="slds-p-around_medium">
-            
+
             <!-- INFO BANNER -->
             <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
                 <span class="slds-assistive-text">warning</span>
@@ -60,11 +63,11 @@
                             <tr key={slot.id} class={slot.rowClass}>
                                 <td>{slot.indexDisplay}</td>
                                 <td>
-                                    <lightning-input 
-                                        type="text" 
-                                        variant="label-hidden" 
-                                        value={slot.label} 
-                                        data-index={index} 
+                                    <lightning-input
+                                        type="text"
+                                        variant="label-hidden"
+                                        value={slot.label}
+                                        data-index={index}
                                         data-field="label"
                                         onchange={handleInputChange}>
                                     </lightning-input>
@@ -77,10 +80,10 @@
                                 </td>
                                 <td>
                                     <!-- EDITABLE END TIME -->
-                                    <lightning-input 
-                                        type="time" 
-                                        variant="label-hidden" 
-                                        value={slot.endTime} 
+                                    <lightning-input
+                                        type="time"
+                                        variant="label-hidden"
+                                        value={slot.endTime}
                                         data-index={index}
                                         onchange={handleTimeChange}
                                         disabled={slot.isLastRow}

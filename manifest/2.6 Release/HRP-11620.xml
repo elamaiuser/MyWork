@@ -11,5 +11,11 @@
         <members>sked_Travel_Time_Slot__c</members>
         <name>CustomObject</name>
     </types>
+	<types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcTravelTimeSlots</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>64.0</version>
 </Package>
