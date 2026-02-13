@@ -260,7 +260,7 @@ global class slwcResourceService {
         }
         insert callOutAvailability;
         
-        if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+        if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
             sked__Availability__c relatedAvailability = new sked__Availability__c(
                 sked__Type__c = request.timeOffPlan,
                 sked__Is_Available__c = FALSE,
