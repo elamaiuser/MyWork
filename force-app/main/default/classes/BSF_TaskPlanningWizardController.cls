@@ -11,6 +11,8 @@ public with sharing class BSF_TaskPlanningWizardController {
     public class InitData {
         @AuraEnabled public String currentPath;
         @AuraEnabled public String driveStatus;
+        @AuraEnabled public Boolean isOverridden;
+        @AuraEnabled public String objectApiName;        
         @AuraEnabled public List<PackageGroupWrapper> packages;
     }
 
@@ -69,15 +71,18 @@ public with sharing class BSF_TaskPlanningWizardController {
     public static InitData getTaskBundles(Id recordId) {
         String objectApiName = recordId.getSObjectType().getDescribe().getName();
         InitData response = new InitData();
+        response.objectApiName = objectApiName;
 
         // 1. Fetch Context Details
         if (objectApiName == 'Account') {
             Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH USER_MODE];
             response.currentPath = acc.Planning_Path__c;
+            response.isOverridden = false;
         } else {
-            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
+            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c, Is_Path_Overridden__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
             response.currentPath = opp.Planning_Path__c;
             response.driveStatus = opp.Drive_Status__c;
+            response.isOverridden = opp.Is_Path_Overridden__c;
         }
         
         if (response.currentPath == null) {

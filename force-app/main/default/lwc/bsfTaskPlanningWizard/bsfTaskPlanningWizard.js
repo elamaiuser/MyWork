@@ -10,13 +10,17 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     
     @track packageGroups = [];
     @track activePlanningPath = 'Standard';
+    @track currentDriveStatus;
+    @track objectApiName;
     @track isLoading = true;
     @track isPathChangeModalOpen = false;
     @track isPlanningLocked = false;
+    @track isSaveConfirmationModalOpen = false;
     
     wiredResult;
     taskMetadataCache = [];
     pendingPlanningPath = '';
+    isOverridden = false;
 
     get pathOptions() {
         return [
@@ -36,8 +40,12 @@ export default class BsfTaskPlanningWizard extends LightningElement {
 
         this.isLoading = true;
         if (data) {
+            this.objectApiName = data.objectApiName;
             this.activePlanningPath = data.currentPath || 'Standard';
-            this.isPlanningLocked = (data.driveStatus === 'Confirmed');
+            this.currentDriveStatus = data.driveStatus;
+            const lockedStatuses = ['Confirmed', 'Complete'];
+            this.isPlanningLocked = lockedStatuses.includes(data.driveStatus);
+            this.isOverridden = data.isOverridden;
             this.taskMetadataCache = JSON.parse(JSON.stringify(data.packages));
             this.initializePackageDisplay();
         } else if (error) {
@@ -211,6 +219,15 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     }
 
     persistTaskPlan() {
+        if (this.objectApiName !== 'Account' && this.activePlanningPath === 'Flexible' && !this.isOverridden) {
+            this.isSaveConfirmationModalOpen = true;
+            return;
+        }
+        this.executeSave();
+    }
+
+    executeSave() {
+        this.isSaveConfirmationModalOpen = false;
         this.isLoading = true;
         const serializedTaskPayload = [];
         const selectedPackageIds = new Set();
@@ -256,6 +273,10 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         .finally(() => {
             this.isLoading = false;
         });
+    }
+
+    closeSaveModal() {
+        this.isSaveConfirmationModalOpen = false;
     }
 
     showToast(title, message, variant) {

@@ -6,7 +6,7 @@
             <template if:true={isPlanningLocked}>
                 <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_medium" role="alert">
                     <lightning-icon icon-name="utility:lock" size="x-small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
-                    <h2><strong>Confirmed Drive:</strong> The plan is locked and cannot be modified here.</h2>
+                    <h2><strong>{currentDriveStatus} Drive:</strong> The plan is locked and cannot be modified here.</h2>
                 </div>
             </template>
 
@@ -141,6 +141,30 @@
                     <footer class="slds-modal__footer">
                         <lightning-button label="Cancel" onclick={cancelPathChange}></lightning-button>
                         <lightning-button label="Confirm" variant="brand" onclick={executePathChange} class="slds-m-left_small"></lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
+        <!-- OVERRIDE CONFIRMATION MODAL (ON SAVE) -->
+        <template if:true={isSaveConfirmationModalOpen}>
+            <section role="dialog" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeSaveModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                        </button>
+                        <h2 class="slds-text-heading_medium">Confirm Override</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium slds-text-align_center">
+                        <p>Saving these changes will override the task selection from the Account.</p>
+                        <p class="slds-m-top_small">Future updates made to the Account's task plan will <strong>no longer automatically sync</strong> to this record.</p>
+                        <p class="slds-m-top_small">Are you sure you want to proceed?</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button label="Cancel" onclick={closeSaveModal}></lightning-button>
+                        <lightning-button label="Confirm & Save" variant="brand" onclick={executeSave} class="slds-m-left_small"></lightning-button>
                     </footer>
                 </div>
             </section>
