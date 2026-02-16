@@ -1284,4 +1284,22 @@ Insert errorLogList;
 }
 }
 // HRP-9520 --> Ends Here
+
+public static void handleTaskPlanningPathChange(List<Account> newAccounts, Map<Id, Account> oldAccountMap) {
+  Set<Id> changedAccountIds = new Set<Id>();
+
+  for (Account acc : newAccounts) {
+      Account oldAcc = oldAccountMap.get(acc.Id);
+      
+      // Detect if the Planning Path value has changed
+      if (acc.Planning_Path__c != oldAcc.Planning_Path__c) {
+          changedAccountIds.add(acc.Id);
+      }
+  }
+
+  // Fire the Cascade Batch if changes were detected
+  if (!changedAccountIds.isEmpty()) {
+      Database.executeBatch(new BSF_AccountTaskPlanningCascadeBatch(changedAccountIds), 50);
+  }
+}
 }

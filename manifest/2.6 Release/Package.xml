@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>contactService_Test</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerTest</members>
         <members>OpportunityServiceController</members>
         <members>OpportunityServiceControllerTest</members>
 		<members>skedDriveHandler</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>BSF_Batch_TaxonomyEndDate_Test</members>
+		<members>skedCollectionsZipCodeBatch_Test</members>
+		<members>DefaultTerritoryPortfolioBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>Contact.After_Hours_Number__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
 		<members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
+		<members>sked__Location__c.sked_Staff_Personal_Parking_Directions__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -45,6 +52,10 @@
     <types>
 		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
 		<name>QuickAction</name>
+	</types>
+	<types>
+		<members>aRCSearchAffiliations</members>
+		<name>LightningComponentBundle</name>
 	</types>
     <version>64.0</version>
 </Package>

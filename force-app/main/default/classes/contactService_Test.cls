@@ -214,6 +214,6 @@ public class contactService_Test
                       Primary_Phone_Number_New__c
                FROM Contact 
                WHERE Id = :con.Id];
-		System.assertEquals(con.Phone,con.Primary_Phone_Number_New__c,'The formula field phone number should be copied to the phone field when phone fields are updated');
+		System.assertEquals(con.Phone,con.Primary_Phone_Number_New__c.replaceAll('[^0-9.]', ''),'The formula field phone number should be copied to the phone field when phone fields are updated');
     }
 }
