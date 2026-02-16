@@ -24,6 +24,8 @@
 		<members>Availability_Pattern_Role__c.Collection_Operation__c</members>
 		<members>Availability_Pattern_Role__c.Min_Nbr_of_Role__c</members>
 		<members>Availability_Pattern_Role__c.Role__c</members>
+		<members>Biomed_Collection_Op_Center__c.Grand_Total_Available_AP__c</members>
+		<members>Biomed_Collection_Op_Center__c.Grand_Total_Needed_AP__c</members>
 		<members>Collection_Operation_Availability__c.Availability_Pattern__c</members>
 		<members>Collection_Operation_Availability__c.Collection_Operation__c</members>
 		<members>Collection_Operation_Availability__c.Effective_End_Date__c</members>
@@ -33,6 +35,7 @@
 		<members>Collection_Operation_Availability__c.Total_Target__c</members>
 		<members>sked__Availability_Pattern_Resource__c.sked_Availability_Pattern_Name__c</members>
 		<members>sked__Availability_Pattern_Resource__c.sked_Resource_Primary_CO_Name__c</members>
+		<members>sked__Resource__c.CO_AP_Status__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
