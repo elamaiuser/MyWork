@@ -41,7 +41,12 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         if (data) {
             this.isLoading = false;
             this.objectApiName = data.objectApiName;
-            this.activePlanningPath = data.currentPath || 'Standard';
+            //this.activePlanningPath = data.currentPath || 'Standard';
+            if (this.objectApiName === 'Account' && !data.currentPath) {
+                this.activePlanningPath = 'Standard';
+            } else {
+                this.activePlanningPath = data.currentPath;
+            }
             this.currentDriveStatus = data.driveStatus;
             const lockedStatuses = ['Confirmed', 'Complete'];
             this.isPlanningLocked = lockedStatuses.includes(data.driveStatus);
@@ -75,6 +80,11 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     }
 
     initializePackageDisplay() {
+        // If no path is selected (null), clear packages and return
+        if (!this.activePlanningPath) {
+            this.packageGroups = [];
+            return;
+        }
         // Deep clone the metadata to apply UI-specific logic
         const packages = JSON.parse(JSON.stringify(this.taskMetadataCache));
 
@@ -217,7 +227,7 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         });
     }
 
-    persistTaskPlan() {
+    applyTaskPlan() {
         if (this.objectApiName !== 'Account' && this.activePlanningPath === 'Flexible' && !this.isOverridden) {
             this.isSaveConfirmationModalOpen = true;
             return;

@@ -85,7 +85,7 @@ public without sharing class BSF_TaskPlanningWizardController {
             response.isOverridden = opp.Is_Path_Overridden__c;
         }
         
-        if (response.currentPath == null) {
+        if (response.currentPath == null && objectApiName == 'Account') {
             response.currentPath = 'Standard';
         }
 
