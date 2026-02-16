@@ -28,7 +28,20 @@ public with sharing class BSF_TaskPlanningService {
         List<Task> standardTasksToCreate = new List<Task>();
         List<Planned_Task__c> processedPlannedTasks = new List<Planned_Task__c>();
 
+        Set<String> processedKeys = new Set<String>();
+
         for (Planned_Task__c plannedTask : configuredPlannedTasks) {
+            String uniqueKey = String.valueOf(plannedTask.Related_Opportunity__c) + '-' + String.valueOf(plannedTask.Task_Definition__c);
+            plannedTask.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+            processedPlannedTasks.add(plannedTask);
+
+            // Check for duplicates in the queue (same Opportunity + Task Definition)
+            if (processedKeys.contains(uniqueKey)) {
+                continue; // Skip duplicate
+            }
+            processedKeys.add(uniqueKey);
+
+            // --- Create Task based on Planned Task ---
             Task newTask = new Task(
                 WhatId = plannedTask.Related_Opportunity__c,
                 Subject = plannedTask.Subject__c,
@@ -41,12 +54,8 @@ public with sharing class BSF_TaskPlanningService {
             } else {
                 newTask.ActivityDate = plannedTask.Target_Date__c;
             }
-
-            standardTasksToCreate.add(newTask);
-            plannedTask.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
-            processedPlannedTasks.add(plannedTask);
+            standardTasksToCreate.add(newTask);            
         }
-
         if (!standardTasksToCreate.isEmpty()) {
             //handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
         }

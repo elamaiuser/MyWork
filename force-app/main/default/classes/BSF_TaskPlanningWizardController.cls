@@ -95,8 +95,8 @@ public without sharing class BSF_TaskPlanningWizardController {
         List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Name,
                                             Task_Definition__r.Description__c, Task_Definition__r.Scheduling_Method__c,
                                             Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH USER_MODE];
-
-        Map<Id, SavePayload> savedStateByDefinitionId = getSavedState(recordId, objectApiName);
+        
+        Map<String, SavePayload> savedStateByKey = getSavedState(recordId, objectApiName);
 
         // 3. Construct Hierarchy
         Map<Id, PackageGroupWrapper> packageMap = new Map<Id, PackageGroupWrapper>();
@@ -124,9 +124,11 @@ public without sharing class BSF_TaskPlanningWizardController {
             task.defaultOffset = (Integer)item.Task_Definition__r.Due_Date_Offset__c;
             task.isDaysOffset = (task.schedulingMethod == 'Days Offset');
 
-            // Merge Saved State or Set Defaults
-            if (savedStateByDefinitionId.containsKey(item.Task_Definition__c)) {
-                SavePayload saved = savedStateByDefinitionId.get(item.Task_Definition__c);
+            // This ensures we only check the box if the Saved Record matches THIS Package
+            String savedStateKey = item.Task_Definition__c + '-' + item.Task_Package__c;
+
+            if (savedStateByKey.containsKey(savedStateKey)) {
+                SavePayload saved = savedStateByKey.get(savedStateKey);
                 task.isChecked = true;
                 task.userOffset = Math.abs(saved.userOffset != null ? saved.userOffset : 0);
                 task.userDate = saved.userDate;
@@ -179,20 +181,20 @@ public without sharing class BSF_TaskPlanningWizardController {
 
             // Scenario B: Flexible Save
             List<SavePayload> selections = (List<SavePayload>) JSON.deserialize(jsonPayload, List<SavePayload>.class);
-            Map<Id, SavePayload> uniqueSelectionsByDefId = new Map<Id, SavePayload>();
+            Set<Id> definitionIds = new Set<Id>();
             for (SavePayload p : selections) {
-                uniqueSelectionsByDefId.put(p.definitionId, p);
+                definitionIds.add(p.definitionId);
             }
 
             Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
                 SELECT Id, Creation_Date_Offset__c, Name FROM Task_Definition__c 
-                WHERE Id IN :uniqueSelectionsByDefId.keySet() WITH USER_MODE
+                WHERE Id IN :definitionIds WITH USER_MODE
             ]);
 
             if (objectApiName == 'Account' || isTemplateRecord) {
-                saveToConfiguration(recordId, objectApiName, uniqueSelectionsByDefId.values(), taskDefinitionsById);
+                saveToConfiguration(recordId, objectApiName, selections, taskDefinitionsById);
             } else {
-                saveToQueue(recordId, uniqueSelectionsByDefId.values(), taskDefinitionsById);
+                saveToQueue(recordId, selections, taskDefinitionsById);
             }
 
             saveSelectedPackages(recordId, selectedPackageIds);
@@ -207,12 +209,12 @@ public without sharing class BSF_TaskPlanningWizardController {
     // PRIVATE HELPERS (Logic & Persistence)
     // ============================================================================
 
-    private static Map<Id, SavePayload> getSavedState(Id recordId, String objectApiName) {
-        Map<Id, SavePayload> payloadByDefinitionId = new Map<Id, SavePayload>();
+    private static Map<String, SavePayload> getSavedState(Id recordId, String objectApiName) {
+        Map<String, SavePayload> payloadByKey = new Map<String, SavePayload>();
         
         if (objectApiName == 'Account' || isTemplate(recordId)) {
             String lookupField = getConfigurationLookupField(objectApiName);
-            String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c FROM Task_Planning_Default__c WHERE {0} = :recordId WITH USER_MODE', 
+            String query = String.format('SELECT Task_Definition__c, Task_Package__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c FROM Task_Planning_Default__c WHERE {0} = :recordId WITH USER_MODE', 
                            new List<String>{ String.escapeSingleQuotes(lookupField) });
 
             for (Task_Planning_Default__c config : Database.query(query)) {
@@ -220,31 +222,35 @@ public without sharing class BSF_TaskPlanningWizardController {
                 payload.definitionId = config.Task_Definition__c; 
                 payload.schedulingMethod = config.Scheduling_Method__c;
                 payload.userOffset = (Integer)config.Configured_Offset__c;
+                payload.packageId = config.Task_Package__c;
                 if (config.Configured_Date__c != null) {
                     payload.userDate = String.valueOf(config.Configured_Date__c);
                 }
-                payloadByDefinitionId.put(config.Task_Definition__c, payload);
+                String key = config.Task_Definition__c + '-' + config.Task_Package__c;
+                payloadByKey.put(key, payload);
             }
         } else {
-            for (Planned_Task__c pt : [SELECT Task_Definition__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c 
+            for (Planned_Task__c pt : [SELECT Task_Definition__c, Task_Package__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c 
                                       FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId WITH USER_MODE]) {
                 SavePayload payload = new SavePayload();
                 payload.definitionId = pt.Task_Definition__c;
+                payload.packageId = pt.Task_Package__c;
                 payload.schedulingMethod = pt.Scheduling_Method__c;
                 payload.userOffset = (Integer)pt.User_Defined_Offset__c;
                 if (pt.Target_Date__c != null) {
                     payload.userDate = String.valueOf(pt.Target_Date__c);
                 }
-                payloadByDefinitionId.put(pt.Task_Definition__c, payload);
+                String key = pt.Task_Definition__c + '-' + pt.Task_Package__c;
+                payloadByKey.put(key, payload);
             }
         }
-        return payloadByDefinitionId;
+        return payloadByKey;
     }
 
     private static void saveToQueue(Id opportunityId, List<SavePayload> payloads, Map<Id, Task_Definition__c> taskDefinitionsById) {
         List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :opportunityId AND Status__c = 'Configured' WITH USER_MODE];
         if (!existingTasks.isEmpty()) {
-            delete as user existingTasks;
+            delete existingTasks;
         }
 
         Opportunity opp = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Id = :opportunityId WITH USER_MODE];
