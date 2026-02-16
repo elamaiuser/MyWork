@@ -20,7 +20,9 @@
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>autoMapper</members>
 		<members>collectionOperationAvailabilityPatternSummaryView</members>
+		<members>dataService</members>
 		<name>LightningComponentBundle</name>
 	</types>
     <version>64.0</version>
