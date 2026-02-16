@@ -48,7 +48,7 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!standardTasksToCreate.isEmpty()) {
-            handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
+            //handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
         }
         if (!processedPlannedTasks.isEmpty()) {
             handleDatabaseResults(Database.update(processedPlannedTasks, false, AccessLevel.USER_MODE), 'Marking Planned Tasks Processed');
