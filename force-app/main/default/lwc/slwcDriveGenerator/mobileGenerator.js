@@ -276,7 +276,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots', 'proposeDriveShifts', 'proposeDriveShifts'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -297,7 +297,8 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
-            $this.updateDriveTotalSlots()
+            $this.updateDriveTotalSlots();
+            $this.proposeDriveShifts();
           }
           else {
             $this.moveLunchBreakToDuringDrawHours(driveShift);
@@ -309,6 +310,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
             $this.updateDriveTotalSlots();
+            $this.proposeDriveShifts();
           }
         }]
       },

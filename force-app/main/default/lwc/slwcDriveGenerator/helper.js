@@ -3485,12 +3485,13 @@ class DriveHelper {
         const isSystemGenerated = this.isSystemRole(job, currentDrive);
         if(!isSystemGenerated || !job.resourceRole) return;
 
-        const backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
+        let backupDriveShift;
         if(!backupDriveShift) {
+          backupDriveShift = backupDrive.driveShifts?.[driveShiftIndex];
           mapResult(job, null, driveShift, driveShiftIndex, result.newJobs);
           return;
         }
-
+        
         const backupJob = backupDriveShift.jobs?.find(_job => {
           const sameRole = this.isJobsSameRoles(_job, job);
           return sameRole;
