@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">Name,Availability_Pattern__c,Actual_Count_of_Role__c,Role__c,Min_Nbr_of_Role__c,Collection_Operation_Availability__c,Collection_Operation__c</value>
+        <value xsi:type="xsd:string">Availability_Pattern__c,Actual_Count_of_Role__c,Role__c,Min_Nbr_of_Role__c,Collection_Operation_Availability__c,Collection_Operation__c</value>
     </values>
     <values>
         <field>Is_Enabled__c</field>
