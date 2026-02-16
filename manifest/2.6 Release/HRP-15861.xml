@@ -19,5 +19,9 @@
 		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>collectionOperationAvailabilityPatternSummaryView</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>64.0</version>
 </Package>
