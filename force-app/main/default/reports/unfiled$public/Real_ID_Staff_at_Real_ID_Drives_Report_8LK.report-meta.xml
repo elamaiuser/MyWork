@@ -114,8 +114,6 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>sked__Job_Allocation__c$sked__Job__c.sked_Drive__c.sked_Drive_Date__c</dateColumn>
-        <endDate>2026-02-13</endDate>
-        <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2022-02-01</startDate>
+        <interval>INTERVAL_TODAY</interval>
     </timeFrameFilter>
 </Report>
