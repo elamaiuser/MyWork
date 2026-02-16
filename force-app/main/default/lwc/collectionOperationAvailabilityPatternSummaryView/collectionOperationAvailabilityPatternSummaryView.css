@@ -1,0 +1,51 @@
+.grand-total-header-main {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.grand-total-center-container {
+    width: 60%;            
+    max-width: 500px;      
+    margin: 40px auto;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.availability-pattern-header {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.availability-pattern-role-table-container {
+    display: grid;
+    flex-wrap: wrap;  
+    grid-template-columns: repeat(2, 1fr);    
+    gap: 20px;            
+    justify-content: center; 
+    margin: 1rem;
+}
+
+.positive-variance {
+    background-color: #92D050 !important; 
+    text-align: center;
+}
+
+.negative-variance {
+    background-color: #FF0000 !important; 
+    text-align: center;
+}
+
+.neutral-variance {
+    background-color: #f8e408 !important;
+    text-align: center;
+}
+
+.table, th, td {
+  border: 1px solid black !important;
+  border-collapse: collapse !important;
+}

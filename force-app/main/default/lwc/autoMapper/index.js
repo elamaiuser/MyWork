@@ -88,3 +88,5 @@ export { BsfPortfolioMappingConfigFactory } from './_BsfPortfolioMappingConfigFa
 export { StaffSetupExcludedRoleMappingConfigFactory } from './_StaffSetupExcludedRoleMappingConfigFactory.js';
 export { StaffMealAndRestBreakMappingConfigFactory } from './_StaffMealAndRestBreakMappingConfigFactory.js';
 export { CollectionOperationOptimizerSettingConfigFactory } from './_CollectionOperationOptimizerSettingConfigFactory.js';
+export { CollectionOpAvailabilityMappingConfigFactory } from './_CollectionOpAvailabilityMappingConfigFactory.js';
+export { AvailabilityPatternRoleMappingConfigFactory } from './_AvailabilityPatternRoleMappingConfigFactory.js';
