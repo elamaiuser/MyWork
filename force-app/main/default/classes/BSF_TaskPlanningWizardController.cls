@@ -2,7 +2,7 @@
  * @Description        : Controller for Task Planning Wizard. Handles metadata-driven
  *                       task configuration for Accounts, Opportunities, and Templates.
  **/
-public with sharing class BSF_TaskPlanningWizardController {
+public without sharing class BSF_TaskPlanningWizardController {
 
     // ============================================================================
     // WRAPPERS
@@ -352,7 +352,7 @@ public with sharing class BSF_TaskPlanningWizardController {
         String bundleQuery = String.format('SELECT Id FROM Task_Selected_Package__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(bundleField) });
         List<Task_Selected_Package__c> existingBundles = Database.query(bundleQuery);
         if (!existingBundles.isEmpty()) {
-            delete as user existingBundles;
+            delete existingBundles;
         }
 
         // Wipe Specific Settings
@@ -361,12 +361,12 @@ public with sharing class BSF_TaskPlanningWizardController {
             String configQuery = String.format('SELECT Id FROM Task_Planning_Default__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(configField) });
             List<Task_Planning_Default__c> existingConfigs = Database.query(configQuery);
             if (!existingConfigs.isEmpty()) {
-                delete as user existingConfigs;
+                delete existingConfigs;
             }
         } else {
             List<Planned_Task__c> tasksToWipe = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId AND Status__c = 'Configured' WITH USER_MODE];
             if (!tasksToWipe.isEmpty()) {
-                delete as user tasksToWipe;
+                delete tasksToWipe;
             }
         }
     }

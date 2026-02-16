@@ -9,7 +9,7 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     @api recordId;
     
     @track packageGroups = [];
-    @track activePlanningPath = 'Standard';
+    @track activePlanningPath;
     @track currentDriveStatus;
     @track objectApiName;
     @track isLoading = true;
@@ -36,10 +36,10 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     @wire(getTaskBundles, { recordId: '$recordId' })
     handleInitialDataLoad(result) {
         this.wiredResult = result;
-        const { data, error } = result;
-
+        const { data, error } = result;        
         this.isLoading = true;
         if (data) {
+            this.isLoading = false;
             this.objectApiName = data.objectApiName;
             this.activePlanningPath = data.currentPath || 'Standard';
             this.currentDriveStatus = data.driveStatus;
@@ -47,11 +47,10 @@ export default class BsfTaskPlanningWizard extends LightningElement {
             this.isPlanningLocked = lockedStatuses.includes(data.driveStatus);
             this.isOverridden = data.isOverridden;
             this.taskMetadataCache = JSON.parse(JSON.stringify(data.packages));
-            this.initializePackageDisplay();
+            this.initializePackageDisplay();            
         } else if (error) {
             this.showToast('Error', 'Failed to load task packages.', 'error');
-        }
-        this.isLoading = false;
+        }        
     }
 
     handlePathChangeRequest(event) {
