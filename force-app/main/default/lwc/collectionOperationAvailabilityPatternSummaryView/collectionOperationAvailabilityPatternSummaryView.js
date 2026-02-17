@@ -72,12 +72,10 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
     }
 
     getColorClass(value) {
-        if (value > 0) {
-            return 'positive-variance';
-        } else if (value < 0) {
+        if (value < 0) {
             return 'negative-variance';
         }
-        return 'neutral-variance';
+        return 'positive-variance';
     }
 
     showLoading = () => {

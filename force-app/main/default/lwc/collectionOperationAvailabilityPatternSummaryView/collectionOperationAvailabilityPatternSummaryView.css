@@ -40,11 +40,6 @@
     text-align: center;
 }
 
-.neutral-variance {
-    background-color: #f8e408 !important;
-    text-align: center;
-}
-
 .table, th, td {
   border: 1px solid black !important;
   border-collapse: collapse !important;
