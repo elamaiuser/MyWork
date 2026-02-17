@@ -35,7 +35,8 @@ global class BSF_EmailNotification {
                 Send_Mailers__c,
                 Drive_Date__c,
                 Reason__c,
-                Reason_for_Rejection__c
+                Reason_for_Rejection__c,
+                Approved__c
             FROM Task
             WHERE Id IN :taskIds
         ];
@@ -56,26 +57,6 @@ global class BSF_EmailNotification {
             ]);
 
         List<Messaging.SingleEmailMessage> emailList = new List<Messaging.SingleEmailMessage>();
-        /*
-        for(Task t : tasks) {
-            system.debug('taskIds##' +t);
-            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
-            
-            System.debug('t.CreatedById## '+t.CreatedById);
-            
-            email.setTargetObjectId(t.CreatedById);
-            
-            email.setSubject('Approval Status Changed: ' + t.Subject);
-            
-            email.setTreatTargetObjectAsRecipient(true);
-            
-            email.setHtmlBody('Hello,<br/>The approval status for the task ' + t.Subject + ' has changed. Please review it.');
-            
-            email.setSaveAsActivity(false);
-            
-            emailList.add(email);
-        }
-        */
         // 5. Build emails
         for (Task t : tasks) {
             Opportunity opp = oppMap.get(t.WhatId);
@@ -83,8 +64,8 @@ global class BSF_EmailNotification {
             String driveDate = (t.Drive_Date__c != null) ? String.valueOf(t.Drive_Date__c)  : 'N/A';
             String oppUrl = (t.WhatId != null) ? URL.getOrgDomainURL().toExternalForm() + '/' + t.WhatId : '';
             // Determine approval outcome
-            Boolean isRejected = t.Approved__c != null && t.Status.toLowerCase().contains('no');
-            Boolean isApproved = t.Approved__c != null && t.Status.toLowerCase().contains('yes');
+            Boolean isRejected = t.Approved__c != null && t.Approved__c.toLowerCase().contains('no');
+            Boolean isApproved = t.Approved__c != null && t.Approved__c.toLowerCase().contains('yes');
             String decisionText = isApproved ? 'APPROVED' : isRejected ? 'REJECTED' : 'N/A';
 
             // Determine unchecked marketing fields (original request)
@@ -104,7 +85,7 @@ global class BSF_EmailNotification {
             // Rejection reason
             if (isRejected && String.isNotBlank(t.Reason_for_Rejection__c)) {
                 body += '<b>Reason for Rejection:</b> ' +
-                        t.Reason__c.escapeHtml4() +
+                        t.Reason_for_Rejection__c.escapeHtml4() +
                         '<br/><br/>';
             }
             // Original request section
@@ -123,6 +104,7 @@ global class BSF_EmailNotification {
                         t.Reason__c.escapeHtml4() +
                         '<br/>';
             }
+
             // Create email
             Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
             email.setTargetObjectId(t.CreatedById);
@@ -134,7 +116,7 @@ global class BSF_EmailNotification {
             emailList.add(email);
                 
         }
-        system.debug('emailList##' + emailList);
+        
         sendEmails(emailList,'MarketingExceptionApproveReject',null);//Changes for  HRP-11608
     }
     /*
@@ -142,7 +124,6 @@ global class BSF_EmailNotification {
     */
     public static void sendEmails(List<Messaging.SingleEmailMessage> emailList, String notificationKey, DateTime emailExpiry){
         final string logTag = '[BSF_EmailNotification:sendEmails]';
-        System.debug(logTag + ' Entering method==> ' + emailList);
         Custom_Notification_Setting__mdt customEmailSetting;
         if(emailList == null || emailList.isEmpty()){
             return;
@@ -174,7 +155,7 @@ global class BSF_EmailNotification {
             List<BSF_Custom_Notification__c> notificationList = BSF_General_Notification.getEmailNotificationRecord(emailList, notificationKey, 
                                                                                                                     Integer.valueOf(customEmailSetting.Priority__c), 
                                                                                                                     emailExpiry);
-            System.debug('Calling BSF_General_Notification.insertNotificationRecord==>');
+            
             BSF_General_Notification.insertNotificationRecord(notificationList);
         }
     }   
