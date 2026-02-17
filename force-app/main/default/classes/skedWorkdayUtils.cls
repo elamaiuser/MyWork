@@ -131,7 +131,7 @@ public class skedWorkdayUtils implements Callable {
         
         for (sked__Availability__c record : records) {
             if (record.sked_Integrate_With_Workday__c && unavailabilityTypesToSync.contains(record.sked__Type__c)) {
-                if (record.sked__Type__c == skedConstants.AVAILABILITY_TYPE_CALL_OUT && record.sked_Time_Off_Plan__c == null) { continue; }
+                if (record.sked__Type__c == skedConstants.AVAILABILITY_TYPE_CALL_OUT) { continue; }
                     
                 if (record.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL) {
                     approvedRecordIds.add(record.Id);
@@ -405,8 +405,7 @@ public class skedWorkdayUtils implements Callable {
     }
 
     public static String getWorkdayTimeOffType(sked__Availability__c record) {
-        return record.sked__Type__c == skedConstants.AVAILABILITY_TYPE_CALL_OUT ?
-            record.sked_Time_Off_Plan__c : record.sked__Type__c;
+        return record.sked__Type__c;
     }
 
     public static Decimal getApprovedTimeOffHours(sked__Resource__c resource, Date availDate, String timeOffType) {

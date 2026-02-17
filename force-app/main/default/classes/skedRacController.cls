@@ -999,6 +999,7 @@ global virtual class skedRacController extends skedBaseController {
     @remoteAction
     global static skedRemoteResultModel saveCallOut(saveCallOutRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
         try {
             string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
@@ -1024,6 +1025,7 @@ global virtual class skedRacController extends skedBaseController {
         }
         catch (Exception ex) {
             result.getError(ex);
+            Database.rollback(sp);
         }
         return result;
     }
@@ -1431,6 +1433,7 @@ global virtual class skedRacController extends skedBaseController {
             List<sked__Availability__c> existingUnavailabilityList = [SELECT Id, sked_Start_Date__c, sked_Finish_Date__c
                                                                       FROM sked__Availability__c
                                                                       WHERE sked__Resource__c = :request.event.resourceId
+                                                                      AND sked__Type__c = :request.event.eventType
                                                                       AND sked__Is_Available__c = FALSE
                                                                       AND sked_Start_Date__c <= :endDate
                                                                       AND sked_Finish_Date__c >= :startDate

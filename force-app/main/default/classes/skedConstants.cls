@@ -70,6 +70,7 @@ public class skedConstants {
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';
+    public static final String AVAILABILITY_STAFFING_BUDGET_NOT_FOUND = 'Required staffing budget record not found in the system';
     public static final String AVAILABILITY_CRUD_MUST_COME_FROM_RAC = 'Unable to complete operation - Please use the Resource Availability Console to perform Availability/Activity related actions';
     public static final String DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE = 'Unable to complete operation - Please use the Drive Record Page to perform Drive/Job/Allocation related actions';
     public static final String RECORD_CHANGES_INVALID_FROM_LIST_VIEW = 'Unable to complete operation - You do not have permission to update records from this location.';
