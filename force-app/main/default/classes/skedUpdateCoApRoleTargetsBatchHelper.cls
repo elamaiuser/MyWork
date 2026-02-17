@@ -57,10 +57,32 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         return errorLogToInsert;
     }
 
-    public static List<BSF_Error_Log__c> calculateTotalsAndUpdateCoApStatusOnResources(Set<Id> resourceIds) {
-        Set<Id> colOpIds = new Set<Id>();
+    public static List<BSF_Error_Log__c> calculateTotalsAndUpdateCoApStatusOnResources(Set<Id> resourceIds, Map<String, Set<String>> map_coId_uniqueApIds) {
         Map<Id, Decimal> map_apId_noOfAssignedResources = new Map<Id, Decimal>();
         Map<Id, Map<String, Decimal>> map_apId_roleVsNoOfResourcesMap = new Map<Id, Map<String, Decimal>>();
+        Set<Id> colIds = new Set<Id>();
+        Set<Id> apIds = new Set<Id>();
+        
+        for(String coIdName : map_coId_uniqueApIds.keySet()) {
+            colIds.add(coIdName.split('_')[0]);
+            for(String apIdname : map_coId_uniqueApIds.get(coIdName)) {
+                apIds.add(apIdname.split('_')[0]);
+            }
+        }
+
+        for (AggregateResult ar : [
+            SELECT sked__Availability_Pattern__c apId,
+            COUNT_DISTINCT(sked__Resource__c) totalActualResources
+            FROM sked__Availability_Pattern_Resource__c
+            WHERE sked__Resource__r.sked_Collection_Operation_Id__c IN : colIds
+            AND sked__Availability_Pattern__c IN : apIds
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= TODAY)
+            AND sked__Resource__r.sked__Resource_Type__c = 'Person'
+            AND sked__Resource__r.sked__Is_Active__c = TRUE
+            GROUP BY sked__Availability_Pattern__c
+        ]) {
+            map_apId_noOfAssignedResources.put((Id)ar.get('apId'), (Decimal)ar.get('totalActualResources'));
+        }
 
         List<sked__Resource__c> resourceList = [
             SELECT Id, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, CO_AP_Status__c,
@@ -75,16 +97,14 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             (
                 SELECT Id, sked__Availability_Pattern__c
                 FROM sked__Availability_Pattern_Resources__r
+                WHERE sked__Availability_Pattern__c IN :apIds
             )
             FROM sked__Resource__c
             WHERE Id IN :resourceIds
         ];
 
         for(sked__Resource__c resource : resourceList) {
-            colOpIds.add(resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c);
             for(sked__Availability_Pattern_Resource__c apResource : resource.sked__Availability_Pattern_Resources__r) {
-                Decimal assignedResourceCount = map_apId_noOfAssignedResources.containsKey(apResource.sked__Availability_Pattern__c) ? map_apId_noOfAssignedResources.get(apResource.sked__Availability_Pattern__c) : 0;
-                map_apId_noOfAssignedResources.put(apResource.sked__Availability_Pattern__c, assignedResourceCount + 1);
                 for(sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
                     if(!map_apId_roleVsNoOfResourcesMap.containsKey(apResource.sked__Availability_Pattern__c)) {
                         map_apId_roleVsNoOfResourcesMap.put(apResource.sked__Availability_Pattern__c, new Map<String, Decimal>());
@@ -97,7 +117,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         }
 
         List<Collection_Operation_Availability__c> coApList = [
-            SELECT Id, Name, Total_Actual_Resources__c, Min_Nbr_of_Staff__c,
+            SELECT Id, Name, Total_Actual_Resources__c, Min_Nbr_of_Staff__c, Total_Target__c,
             Collection_Operation__c, Collection_Operation__r.Name,
             Collection_Operation__r.Grand_Total_Available_AP__c,
             Collection_Operation__r.Grand_Total_Needed_AP__c,
@@ -108,7 +128,8 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
                 FROM Availability_Pattern_Roles__r
             )
             FROM Collection_Operation_Availability__c
-            WHERE Collection_Operation__c IN :colOpIds
+            WHERE Collection_Operation__c IN :colIds
+            AND Availability_Pattern__c IN :apIds
             AND (Effective_End_Date__c = null OR Effective_End_Date__c >= TODAY)
             ORDER BY Collection_Operation__c
         ];
@@ -124,7 +145,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             objectsToUpdate.add(coAp);
         }
 
-        objectsToUpdate.addAll(getCalculateGrandTotalAvailableOnColOp(coApList));
+        objectsToUpdate.addAll(getCalculateGrandTotalAvailableOnColOp(colIds));
         objectsToUpdate.addAll(getUpdatedCoApStatusOnResources(resourceList, coApList));
 
         Database.SaveResult[] updateResults = Database.update(objectsToUpdate, false);
@@ -139,25 +160,35 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         return errorLogToInsert;
     }
 
-    public static List<Biomed_Collection_Op_Center__c> getCalculateGrandTotalAvailableOnColOp(List<Collection_Operation_Availability__c> coApList) {
-        Map<Id, Biomed_Collection_Op_Center__c> map_coId_coToUpdate = new Map<Id, Biomed_Collection_Op_Center__c>();
+    public static List<Biomed_Collection_Op_Center__c> getCalculateGrandTotalAvailableOnColOp(Set<Id> colIds) {
+        List<Biomed_Collection_Op_Center__c> coUpdateList = new List<Biomed_Collection_Op_Center__c>();
+        Map<Id, Decimal> map_coId_grandTotalResources = new Map<Id, Decimal>();
 
-        for(Collection_Operation_Availability__c coAp : coApList) {
-            if(!map_coId_coToUpdate.containsKey(coAp.Collection_Operation__c)) {
-                map_coId_coToUpdate.put(coAp.Collection_Operation__c, new Biomed_Collection_Op_Center__c(Id = coAp.Collection_Operation__c, Grand_Total_Available_AP__c = 0));
-                
-            }
-            map_coId_coToUpdate.get(coAp.Collection_Operation__c).Grand_Total_Available_AP__c += coAp.Total_Actual_Resources__c;
+        for (AggregateResult ar : [
+            SELECT sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c resourcePrimaryCo,
+            COUNT_DISTINCT(sked__Resource__c) totalActualResources
+            FROM sked__Availability_Pattern_Resource__c
+            WHERE sked__Resource__r.sked_Collection_Operation_Id__c IN : colIds
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c >= TODAY)
+            AND sked__Resource__r.sked__Resource_Type__c = 'Person'
+            AND sked__Resource__r.sked__Is_Active__c = TRUE
+            GROUP BY sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c
+        ]) {
+            map_coId_grandTotalResources.put((Id)ar.get('resourcePrimaryCo'), (Decimal)ar.get('totalActualResources'));
         }
 
-        return map_coId_coToUpdate.values();
+        for(Id coId : map_coId_grandTotalResources.keySet()) {
+            coUpdateList.add(new Biomed_Collection_Op_Center__c(Id = coId, Grand_Total_Available_AP__c = map_coId_grandTotalResources.get(coId)));
+        }
+
+        return coUpdateList;
     }
 
     public static List<sked__Resource__c> getUpdatedCoApStatusOnResources(List<sked__Resource__c> resourceList, List<Collection_Operation_Availability__c> coApList) {
         List<sked__Resource__c> resourceListToUpdate = new List<sked__Resource__c>();
 
         for(sked__Resource__c resource : resourceList) {
-            Boolean isResourceUpdateNeeded, isResourceNeedsFurtherProcessing = false;
+            Boolean isResourceUpdateNeeded = false, isResourceNeedsFurtherProcessing = false;
             for(Collection_Operation_Availability__c coAp : coApList) {
                 if(coAp.Collection_Operation__c != resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c) continue;
                 if(coAp.Min_Nbr_of_Staff__c > 0 && coAp.Total_Actual_Resources__c > 0 && coAp.Total_Target__c != null) {
@@ -182,7 +213,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
                 resource.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_TOTALS;
                 isResourceUpdateNeeded = true;
             }
-
+            system.debug('isResourceUpdateNeeded '+isResourceUpdateNeeded);
             if(isResourceUpdateNeeded) resourceListToUpdate.add(resource);
         }
         

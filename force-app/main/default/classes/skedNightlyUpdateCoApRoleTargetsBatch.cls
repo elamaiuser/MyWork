@@ -35,6 +35,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
 
     global void execute(Database.BatchableContext bc, List<sked__Availability_Pattern_Resource__c> availabilityPatternResources) {
         Map<String, Set<String>> map_coIdName_uniqueApIdNames = new Map<String, Set<String>>();
+        Map<String, Set<String>> map_coIdName_uniqueApIdNamesCopy = new Map<String, Set<String>>();
         Set<Id> resourceIds = new Set<Id>();
 
         for(sked__Availability_Pattern_Resource__c apResource : availabilityPatternResources) {
@@ -47,8 +48,15 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
             map_coIdName_uniqueApIdNames.get(mapKey).add(apResource.sked__Availability_Pattern__c + '_' + apResource.sked__Availability_Pattern__r.Name);
         }
 
+        for (String key : map_coIdName_uniqueApIdNames.keySet()) {
+            map_coIdName_uniqueApIdNamesCopy.put(
+                key,
+                new Set<String>(map_coIdName_uniqueApIdNames.get(key))
+            );
+        }
+
         errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.autoAssignCollectionOpAvailabilityRecordsAndGetErrorLogs(map_coIdName_uniqueApIdNames));
-        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(resourceIds));
+        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(resourceIds, map_coIdName_uniqueApIdNamesCopy));
     }
 
     global void finish(Database.BatchableContext bc) {
