@@ -1,4 +1,4 @@
-public with sharing class AvailabilityPatternRoleTriggerService {
+public without sharing class AvailabilityPatternRoleTriggerService {
     public static void updateCoApStatusOnResources(List<Availability_Pattern_Role__c> newList, Map<Id, Availability_Pattern_Role__c> oldMap) {
         Set<Id> colIds = new Set<Id>();
         Set<Id> apIds = new Set<Id>();

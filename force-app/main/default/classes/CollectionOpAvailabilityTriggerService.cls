@@ -1,4 +1,4 @@
-public with sharing class CollectionOpAvailabilityTriggerService {
+public without sharing class CollectionOpAvailabilityTriggerService {
 
     public static void updateCoApStatusOnResources(List<Collection_Operation_Availability__c> newList, Map<Id, Collection_Operation_Availability__c> oldMap) {
         Set<Id> colOpIds = new Set<Id>();

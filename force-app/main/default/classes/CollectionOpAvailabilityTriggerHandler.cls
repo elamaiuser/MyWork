@@ -1,4 +1,4 @@
-public with sharing class CollectionOpAvailabilityTriggerHandler extends triggerHandler {
+public without sharing class CollectionOpAvailabilityTriggerHandler extends triggerHandler {
 
     public override void afterUpdate() {
         if(super.getTriggerMethodsToBypass().indexOf('updateCoApStatusOnResources') == -1) {
