@@ -155,8 +155,9 @@
     <enableStreamingApi>true</enableStreamingApi>
     <label>Availability Pattern Role</label>
     <nameField>
+        <displayFormat>AP Role-{0000}</displayFormat>
         <label>Availability Pattern Role Name</label>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Availability Pattern Roles</pluralLabel>
     <searchLayouts></searchLayouts>
