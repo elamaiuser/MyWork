@@ -424,6 +424,8 @@ global virtual class skedRacController extends skedBaseController {
             query.requestTypes = request.requestTypes;
             query.recurringScheduleIds = request.recurringScheduleIds;
             query.roles = request.roles;
+            query.isCalloutRelated = request.isCalloutRelated;//HRP-16778
+            query.availabilityTypeCallout = skedConstants.AVAILABILITY_TYPE_CALL_OUT;//HRP-16778
 
             if (!string.isBlank(request.resourceId)) {
                 query.resourceIds = new List<string>();
@@ -2447,6 +2449,7 @@ global virtual class skedRacController extends skedBaseController {
         public string submissionEndDate;
         public string submissionStartDate;
         public List<string> recurringScheduleIds;
+        public Boolean isCalloutRelated;//HRP-16778
     }
 
     global class getStaffingBudgetModel extends getDataRequestModel {
