@@ -745,6 +745,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             // HRP- 12142 --> Ends Here
             System.debug('Exiting method AfterUpdate');
         }
+        BSF_TaskPlanningService.handleOpportunityUpdates((List<Opportunity>)Trigger.new, (Map<Id,Opportunity>)Trigger.oldMap);
         
         System.debug('Exiting method AfterUpdate');
             system.debug(' Limits.getLimitQueries()'+ Limits.getLimitQueries());
