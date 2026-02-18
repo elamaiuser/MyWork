@@ -328,7 +328,7 @@ public without sharing class BSF_TaskPlanningWizardController {
     }
 
     private static void resetToStandardConfig(Id recordId, String objectApiName) {
-        List<Task_Definition__c> stdDefinitions = [SELECT Id, Due_Date_Offset__c, Creation_Date_Offset__c, Scheduling_Method__c 
+        List<Task_Definition__c> stdDefinitions = [SELECT Id, Name, Due_Date_Offset__c, Creation_Date_Offset__c, Scheduling_Method__c
                                                    FROM Task_Definition__c WHERE Category__c = 'Standard' WITH USER_MODE];
         
         List<Task_Package__c> stdPkgs = [SELECT Id FROM Task_Package__c WHERE Sort_Order__c = 1 WITH USER_MODE LIMIT 1];
