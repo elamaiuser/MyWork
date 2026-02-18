@@ -228,7 +228,7 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     }
 
     applyTaskPlan() {
-        if (this.objectApiName !== 'Account' && this.activePlanningPath === 'Flexible' && !this.isOverridden) {
+        if (this.objectApiName !== 'Account' && this.activePlanningPath === 'Flexible') {
             this.isSaveConfirmationModalOpen = true;
             return;
         }
