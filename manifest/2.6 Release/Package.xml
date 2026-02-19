@@ -191,12 +191,13 @@
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Opportunity Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
-        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>        
         <members>Task-Marketing Exception</members>
         <members>Task-Task 72hrs Layout</members>
         <members>Task-Task Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
+        <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -217,6 +218,7 @@
         <members>slwcOnCallCallOutManagement</members>
         <members>slwcPopoverContent</members>
         <members>timeBlockComplianceReport</members>
+        <members>travelTimeBreakdown</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
