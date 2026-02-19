@@ -15,6 +15,8 @@
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
         <members>BSF_Batch_TaskRename</members>
         <members>BSF_Batch_TaskRename_Test</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
@@ -46,6 +48,7 @@
         <members>TaskService</members>
         <members>TaskTriggerHandler</members>
         <members>TemplateCDA_FutureOpportunityBatch_Test</members>
+        <members>TerritoryTriggerHandler</members>
         <members>TimeBlockComplianceReportController</members>
         <members>TimeBlockComplianceReportControllerTest</members>
         <members>UpdateAMAndDMPortfolioBatchTest</members>
