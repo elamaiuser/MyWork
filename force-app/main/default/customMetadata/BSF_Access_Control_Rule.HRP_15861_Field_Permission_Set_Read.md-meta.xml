@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">Grand_Total_Available_AP__c,Grand_Total_Needed_AP__c</value>
+        <value xsi:type="xsd:string">Grand_Total_Available_AP__c,Grand_Total_Needed_AP__c,sked_Maximum_Travel_Time_Slots__c</value>
     </values>
     <values>
         <field>Is_Enabled__c</field>
