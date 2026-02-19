@@ -1,7 +1,8 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { travelTimeSlotService, travelTimeSlotQueryModel } from 'c/dataService';
+import { collectionOperationService,collectionOperationQueryModel,travelTimeSlotService, travelTimeSlotQueryModel } from 'c/dataService';
 import * as slwcDateUtils from "c/slwcDateUtils";
+import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { cloneDeep } from 'c/lodash';
 
 export default class SlwcTravelTimeSlots extends LightningElement {
@@ -12,6 +13,7 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 	@track draftData = [];
 	@track slotsData = []; // Store all original travel time slot records (all weekdays) for updates
 	@track draftSlotsData = []; // Draft copy of all slots (all weekdays) for editing
+	@track recordsToDelete = []; // Track records to delete on save
 	@track showSpinner = false;
 
 	// Configuration Constraints
@@ -39,88 +41,91 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 	}
 
 	initialize() {
-		// Create query model to fetch travel time slots
-		let query = new travelTimeSlotQueryModel();
-		query.collectionOperationIds = [this.recordId];
-
-		// Fetch data from Salesforce
 		this.showSpinner = true;
-		let service = new travelTimeSlotService();
-		service.query(query)
-			.then((result) => {
-				if (result && result.length) {
-					// Sort slots by weekday and startTime, then assign order numbers
-					const weekdayOrder = { 'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 };
+		this.recordsToDelete = [];
 
-					// Sort by weekday first, then by startTime
-					result.sort((a, b) => {
-						if (weekdayOrder[a.weekday] !== weekdayOrder[b.weekday]) {
-							return weekdayOrder[a.weekday] - weekdayOrder[b.weekday];
-						}
-						return a.startTime - b.startTime;
-					});
+		let coQuery = new collectionOperationQueryModel();
+		coQuery.recordIds = [this.recordId];
+		let coService = new collectionOperationService();
 
-					// Assign order numbers within each weekday group
-					let currentWeekday = null;
-					let orderNumber = 0;
-					result.forEach(slot => {
-						if (slot.weekday !== currentWeekday) {
-							currentWeekday = slot.weekday;
-							orderNumber = 1;
-						} else {
-							orderNumber++;
-						}
-						slot.order = orderNumber;
-					});
+		// Create query model to fetch travel time slots
+		let slotQuery = new travelTimeSlotQueryModel();
+		slotQuery.collectionOperationIds = [this.recordId];				
+		let slotService = new travelTimeSlotService();
 
-					// Store all sorted and ordered slots
-					this.slotsData = result;
-
-					// Filter for Sunday records only to use as base/template data
-					const sundaySlots = result.filter(slot => slot.weekday === 'Sunday');
-
-					if (sundaySlots.length) {
-						// Process and format the Sunday data as base/raw data
-						this.viewData = sundaySlots.map((slot, index) => {
-							// Convert time integer fields (HHMM format) to HH:mm:ss.SSS format
-							const startTime = this.timeIntToTime24h(slot.startTime);
-							const endTime = this.timeIntToTime24h(slot.endTime);
-
-							return this.processSlotMetrics({
-								id: slot.id,
-								label: slot.name || `Slot ${index + 1}`,
-								startTime: startTime,
-								endTime: endTime
-							}, index, sundaySlots.length);
-						});
+		Promise.all([coService.query(coQuery), slotService.query(slotQuery)])
+			.then(([coResult, slotsResult]) => {
+				if (coResult && coResult.length > 0) {
+					const coRecord = coResult[0];
+					if (coRecord.maximumTravelTimeSlots) {
+						this.maxSlots = coRecord.maximumTravelTimeSlots;
 					} else {
-						// No Sunday data found, use empty array
-						this.viewData = [];
+						this.maxSlots = 6; // Default if not set
 					}
-				} else {
-					// No data found, use empty arrays
-					this.slotsData = [];
-					this.viewData = [];
 				}
+				this.processLoadedSlots(slotsResult); // Only process travel time slots data
 			})
 			.catch((error) => {
-				console.error('Error fetching travel time slots:', error);
+				console.error('Error initializing travel time slots:', error);
 				this.dispatchEvent(new ShowToastEvent({
 					title: 'Error',
 					message: 'Failed to load travel time slots: ' + (error.message || 'Unknown error'),
 					variant: 'error'
-				}));
-				// Fall back to empty array
-				this.viewData = [];
+				}));				
 			})
 			.finally(() => {
 				this.showSpinner = false;
 			});
 	}
 
+	processLoadedSlots(result) {
+		if (result && result.length) {
+			// Sort slots by weekday and startTime, then assign order numbers
+			const weekdayOrder = { 'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 };
+
+			// Sort by weekday first, then by startTime
+			result.sort((a, b) => {
+				if (weekdayOrder[a.weekday] !== weekdayOrder[b.weekday]) {
+					return weekdayOrder[a.weekday] - weekdayOrder[b.weekday];
+				}
+				return a.startTime - b.startTime;
+			});					
+
+			// Store all sorted and ordered slots
+			this.slotsData = result;
+
+			// Filter for Sunday records only to use as base/template data
+			const sundaySlots = result.filter(slot => slot.weekday === 'Sunday');
+
+			if (sundaySlots.length) {
+				// Process and format the Sunday data as base/raw data
+				this.viewData = sundaySlots.map((slot, index) => {
+					// Convert time integer fields (HHMM format) to HH:mm:ss.SSS format
+					const startTime = this.timeIntToTime24h(slot.startTime);
+					const endTime = this.timeIntToTime24h(slot.endTime);
+
+					return this.processSlotMetrics({
+						id: slot.id,
+						label: slot.name || `Slot ${index + 1}`,
+						startTime: startTime,
+						endTime: endTime
+					}, index, sundaySlots.length);
+				});
+			} else {
+				// No Sunday data found, use empty array
+				this.viewData = [];
+			}
+		} else {
+			// No data found, use empty arrays
+			this.slotsData = [];
+			this.viewData = [];
+		}
+	}
+
 	handleEdit() {
 		this.draftData = cloneDeep(this.viewData);
 		this.draftSlotsData = cloneDeep(this.slotsData);
+		this.recordsToDelete = [];
 		this.recalculateLogic();
 		this.isEditing = true;
 	}
@@ -129,6 +134,7 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 		this.isEditing = false;
 		this.draftData = [];
 		this.draftSlotsData = [];
+		this.recordsToDelete = [];
 	}
 
 	handleInputChange(event) {
@@ -187,138 +193,152 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 		let startMs = this.timeToMs(lastSlot.startTime);
 		// Default Add 2 hours at split
 		let newSplitMs = startMs + 7200000;
+		if (newSplitMs >= 86400000) {
+			newSplitMs = 86340000; // Cap at 23:59
+		}
 
 		// Update current last slot to end at split
-		lastSlot.endTime = this.msToTime24h(newSplitMs);
+		let splitTimeStr = this.msToTime24h(newSplitMs);
+		lastSlot.endTime = splitTimeStr;
 
 		// Create new slot for UI
 		let newSlot = {
 			id: Date.now(),
 			label: 'New Slot',
-			startTime: lastSlot.endTime,
+			startTime: splitTimeStr,
 			endTime: '23:59:00.000'
 		};
-
 		this.draftData.push(newSlot);
 
 		// Add corresponding slots for all 7 weekdays in draftSlotsData
 		const newStartTimeInt = this.time24hToTimeInt(newSlot.startTime);
 		const newEndTimeInt = this.time24hToTimeInt(newSlot.endTime);
+		const splitTimeInt = this.time24hToTimeInt(splitTimeStr);
+
+		let updatedDraftSlotsData = [];
 
 		this.weekdays.forEach(weekday => {
 			// Find and update the last slot for this weekday
-			const weekdaySlots = this.draftSlotsData.filter(slot => slot.weekday === weekday);
-			if (weekdaySlots.length) {
-				const lastWeekdaySlot = weekdaySlots[weekdaySlots.length - 1];
-				lastWeekdaySlot.endTime = this.time24hToTimeInt(lastSlot.endTime);
-			}
+			let daySlots = this.draftSlotsData.filter(slot => slot.weekday === weekday);
+			if (daySlots.length > 0) {
+				const lastDaySlot = daySlots[daySlots.length - 1];
+				lastDaySlot.endTime = splitTimeInt;
 
-			// Create new slot for this weekday
-			this.draftSlotsData.push({
-				id: null, // Will be created on save
-				name: 'New Slot',
-				startTime: newStartTimeInt,
-				endTime: newEndTimeInt,
-				weekday: weekday,
-				collectionOperationId: this.recordId
-			});
+				let newDaySlot = {
+					id: null, // Will be created on save
+					name: 'New Slot',
+					startTime: newStartTimeInt,
+					endTime: newEndTimeInt,
+					weekday: weekday,
+					collectionOperationId: this.recordId
+				};
+				daySlots.push(newDaySlot);
+			}
+			updatedDraftSlotsData = [...updatedDraftSlotsData, ...daySlots];			
 		});
 
+		this.draftSlotsData = updatedDraftSlotsData;
 		this.recalculateLogic();
 	}
 
 	handleDeleteRow(event) {
 		const index = parseInt(event.target.dataset.index, 10);
-		const deletedSlot = this.draftData[index];
 
+		// Logic for the UI
 		if (index > 0) {
 			let prevSlot = this.draftData[index - 1];
+			let deletedSlot = this.draftData[index];
 			prevSlot.endTime = deletedSlot.endTime; // Merge
 			this.draftData.splice(index, 1);
 
 			if (index < this.draftData.length) {
 				this.draftData[index].startTime = prevSlot.endTime;
 			}
-
-			// Update draftSlotsData for all weekdays
-			const newEndTimeInt = this.time24hToTimeInt(prevSlot.endTime);
-
-			this.weekdays.forEach(weekday => {
-				const weekdaySlots = this.draftSlotsData.filter(slot => slot.weekday === weekday);
-				if (weekdaySlots.length > index) {
-					// Update previous slot's end time
-					if (index > 0) {
-						weekdaySlots[index - 1].endTime = newEndTimeInt;
-					}
-					// Remove the deleted slot
-					const slotToRemove = weekdaySlots[index];
-					const slotIndexInArray = this.draftSlotsData.indexOf(slotToRemove);
-					if (slotIndexInArray !== -1) {
-						this.draftSlotsData.splice(slotIndexInArray, 1);
-					}
-					// Update next slot's start time if exists
-					if (index < weekdaySlots.length - 1) {
-						weekdaySlots[index].startTime = newEndTimeInt;
-					}
-				}
-			});
 		} else {
+			// Deleting the first slot, just remove and set next slot to start at 00:00
 			this.draftData.splice(0, 1);
-			this.draftData[0].startTime = '00:00:00.000';
-
-			// Delete first slot for all weekdays
-			this.weekdays.forEach(weekday => {
-				const weekdaySlots = this.draftSlotsData.filter(slot => slot.weekday === weekday);
-				if (weekdaySlots.length) {
-					const firstSlot = weekdaySlots[0];
-					const slotIndexInArray = this.draftSlotsData.indexOf(firstSlot);
-					if (slotIndexInArray !== -1) {
-						this.draftSlotsData.splice(slotIndexInArray, 1);
-					}
-					// Update new first slot's start time
-					const newFirstSlot = this.draftSlotsData.filter(slot => slot.weekday === weekday)[0];
-					if (newFirstSlot) {
-						newFirstSlot.startTime = 0; // 00:00
-					}
-				}
-			});
+			if (this.draftData.length > 0) {
+				this.draftData[0].startTime = '00:00:00.000';
+			}
 		}
 
+		// Logic for the Backend Data
+		let updatedDraftSlotsData = [];			
+
+			this.weekdays.forEach(weekday => {
+				let daySlots = this.draftSlotsData.filter(slot => slot.weekday === weekday);
+				if (daySlots.length > index) {
+					// Remove the deleted slot
+					const slotToRemove = daySlots[index];
+					if (slotToRemove.id) {
+						this.recordsToDelete.push(slotToRemove);
+					}
+					// Update Times for merging slots if not deleting the first slot
+					if (index > 0) {
+						const newEndTimeInt = this.time24hToTimeInt(this.draftData[index - 1].endTime);
+						daySlots[index - 1].endTime = newEndTimeInt;
+					}
+					// Remove the slot from draftSlotsData
+					daySlots.splice(index, 1);
+
+					// Update Start time of the slot that shifted into this position
+					if (index < daySlots.length) {
+						if (index === 0) {
+							daySlots[0].startTime = 0;
+						} else {
+							daySlots[index].startTime = daySlots[index - 1].endTime;
+						}
+					}					
+				}
+				// Rebuild master array
+				updatedDraftSlotsData = [...updatedDraftSlotsData, ...daySlots];
+			});	
+
+		this.draftSlotsData = updatedDraftSlotsData;
 		this.recalculateLogic();
 	}
 
 	handleSave() {
-		if(this.hasErrors) return;
+		if(this.hasErrors) return;		
 
 		// Save draftSlotsData to Salesforce
 		this.showSpinner = true;
 		let service = new travelTimeSlotService();
-		service.saveList(this.draftSlotsData)
-			.then(() => {
-				// Update local data after successful save
-				this.slotsData = cloneDeep(this.draftSlotsData);
-				this.viewData = cloneDeep(this.draftData);
-				this.isEditing = false;
-				this.draftData = [];
-				this.draftSlotsData = [];
 
-				this.dispatchEvent(new ShowToastEvent({
-					title: 'Success',
-					message: 'Master Schedule saved (Mon-Sun).',
-					variant: 'success'
-				}));
-			})
-			.catch((error) => {
+		// Handle deletions first
+		let deletePromise = Promise.resolve();
+		if (this.recordsToDelete.length > 0) {
+			deletePromise = service.deleteList(this.recordsToDelete);
+		}
+
+		deletePromise.then(() => {
+			// After deletions, save the updated/added records
+			return service.saveList(this.draftSlotsData);
+		})
+		.then(() => {
+			this.dispatchEvent(new ShowToastEvent({
+				title: 'Success',
+				message: 'Master Schedule saved (Mon-Sun).',
+				variant: 'success'
+			}));
+			// Reload data from server
+			this.isEditing = false;
+			this.draftData = [];
+			this.draftSlotsData = [];
+			this.recordsToDelete = [];
+			return this.initialize();
+		})		
+		.catch((error) => {
 				console.error('Error saving travel time slots:', error);
 				this.dispatchEvent(new ShowToastEvent({
 					title: 'Error',
 					message: 'Failed to save travel time slots: ' + (error.message || 'Unknown error'),
 					variant: 'error'
 				}));
-			})
-			.finally(() => {
+		})
+		.finally(() => {
 				this.showSpinner = false;
-			});
+		});
 	}
 
 	// --- CALCULATIONS & VALIDATION ---
@@ -425,9 +445,10 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 		hours = hours % 12;
 		hours = hours ? hours : 12; // the hour '0' should be '12'
 
+		let strHour = hours < 10 ? '0' + hours : hours;
 		let strMin = mins < 10 ? '0' + mins : mins;
 
-		return `${hours}:${strMin} ${ampm}`;
+		return `${strHour}:${strMin} ${ampm}`;
 	}
 
 	get hasErrors() { return this.draftData.some(d => d.hasError); }
