@@ -37,6 +37,24 @@
                             {colOpAvailability.availabilityPatternName}
                         </th>
                     </tr>
+                    <tr if:true={colOpAvailability.showApTotals}>
+                        <th class="ap-blank-cell"></th>
+                        <th>Total Actual Resources (AP)</th>
+                        <th>Total Target(AP)</th>
+                        <th>Variance</th>
+                    </tr>
+
+                    <tr if:true={colOpAvailability.showApTotals}>
+                        <th class="ap-blank-cell"></th>
+                        <td>{colOpAvailability.totalActualResources}</td>
+                        <td>{colOpAvailability.totalTargetResources}</td>
+                        <td class={colOpAvailability.totalVarianceClass}>{colOpAvailability.totalVariance}</td>
+                    </tr>
+
+                    <tr if:true={colOpAvailability.showApTotals} class="ap-divider-row">
+                        <td colspan="4"></td>
+                    </tr>
+
                     <tr>
                         <th>Roles</th>
                         <th>Actual</th>
@@ -45,6 +63,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    
                     <template for:each={colOpAvailability.availabilityPatternRoles} for:item="availabilityPatternRole">
                         <tr key={availabilityPatternRole.id}>
                             <th>{availabilityPatternRole.role}</th>
