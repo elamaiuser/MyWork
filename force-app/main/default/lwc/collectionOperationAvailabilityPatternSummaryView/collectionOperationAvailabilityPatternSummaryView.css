@@ -44,3 +44,8 @@
   border: 1px solid black !important;
   border-collapse: collapse !important;
 }
+.ap-divider-row td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border: none;
+}
