@@ -17,8 +17,6 @@
                 </div>
             </div>
         <div class="slds-m-around_medium">
-            
-
             <template for:each={records} for:item="record">
                 <div key={record.id} class="slds-box slds-theme_default slds-m-bottom_medium">
                     <div class="slds-grid slds-wrap">
@@ -28,11 +26,7 @@
                             <div><strong>Effective Dates:</strong>  {record.effectiveDates}</div>
                             <div><strong>Direction: </strong><strong>  {record.direction}</strong></div>
                         </div>
-                        
                     </div>
-                    
-                    
-                    
 
                     <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
                         <thead>
@@ -80,7 +74,6 @@
                         </div>
                         <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
                             <lightning-input type="checkbox" label="User Override" checked={record.userOverride} data-index-id={record.indexId} onchange={handleUserOverrideChange} disabled={record.inputsDisabled}></lightning-input>
-
                         </div>
                         <div class="slds-col slds-size_1-of-1 slds-text-align_right">
                             <template if:true={record.isEditMode}>
@@ -95,9 +88,6 @@
                     </div>
                 </div>
             </template>
-
-            <!-- Action Buttons here  -->
-            
 
         </div>
     </lightning-card>
