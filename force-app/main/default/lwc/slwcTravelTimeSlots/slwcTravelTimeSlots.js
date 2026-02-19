@@ -1,6 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { travelTimeSlotService, travelTimeSlotQueryModel } from 'c/dataService';
+import { collectionOperationService,collectionOperationQueryModel,travelTimeSlotService, travelTimeSlotQueryModel } from 'c/dataService';
 import * as slwcDateUtils from "c/slwcDateUtils";
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { cloneDeep } from 'c/lodash';
@@ -44,58 +44,29 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 		this.showSpinner = true;
 		this.recordsToDelete = [];
 
+		let coQuery = new collectionOperationQueryModel();
+		coQuery.recordIds = [this.recordId];
+		let coService = new collectionOperationService();
+
 		// Create query model to fetch travel time slots
-		let query = new travelTimeSlotQueryModel();
-		query.collectionOperationIds = [this.recordId];
+		let slotQuery = new travelTimeSlotQueryModel();
+		slotQuery.collectionOperationIds = [this.recordId];				
+		let slotService = new travelTimeSlotService();
 
-		// Fetch data from Salesforce		
-		let service = new travelTimeSlotService();
-		service.query(query)
-			.then((result) => {
-				if (result && result.length) {
-					// Sort slots by weekday and startTime, then assign order numbers
-					const weekdayOrder = { 'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 };
-
-					// Sort by weekday first, then by startTime
-					result.sort((a, b) => {
-						if (weekdayOrder[a.weekday] !== weekdayOrder[b.weekday]) {
-							return weekdayOrder[a.weekday] - weekdayOrder[b.weekday];
-						}
-						return a.startTime - b.startTime;
-					});					
-
-					// Store all sorted and ordered slots
-					this.slotsData = result;
-
-					// Filter for Sunday records only to use as base/template data
-					const sundaySlots = result.filter(slot => slot.weekday === 'Sunday');
-
-					if (sundaySlots.length) {
-						// Process and format the Sunday data as base/raw data
-						this.viewData = sundaySlots.map((slot, index) => {
-							// Convert time integer fields (HHMM format) to HH:mm:ss.SSS format
-							const startTime = this.timeIntToTime24h(slot.startTime);
-							const endTime = this.timeIntToTime24h(slot.endTime);
-
-							return this.processSlotMetrics({
-								id: slot.id,
-								label: slot.name || `Slot ${index + 1}`,
-								startTime: startTime,
-								endTime: endTime
-							}, index, sundaySlots.length);
-						});
+		Promise.all([coService.query(coQuery), slotService.query(slotQuery)])
+			.then(([coResult, slotsResult]) => {
+				if (coResult && coResult.length > 0) {
+					const coRecord = coResult[0];
+					if (coRecord.maximumTravelTimeSlots) {
+						this.maxSlots = coRecord.maximumTravelTimeSlots;
 					} else {
-						// No Sunday data found, use empty array
-						this.viewData = [];
+						this.maxSlots = 6; // Default if not set
 					}
-				} else {
-					// No data found, use empty arrays
-					this.slotsData = [];
-					this.viewData = [];
 				}
+				this.processLoadedSlots(slotsResult); // Only process travel time slots data
 			})
 			.catch((error) => {
-				console.error('Error fetching travel time slots:', error);
+				console.error('Error initializing travel time slots:', error);
 				this.dispatchEvent(new ShowToastEvent({
 					title: 'Error',
 					message: 'Failed to load travel time slots: ' + (error.message || 'Unknown error'),
@@ -105,6 +76,50 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 			.finally(() => {
 				this.showSpinner = false;
 			});
+	}
+
+	processLoadedSlots(result) {
+		if (result && result.length) {
+			// Sort slots by weekday and startTime, then assign order numbers
+			const weekdayOrder = { 'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 };
+
+			// Sort by weekday first, then by startTime
+			result.sort((a, b) => {
+				if (weekdayOrder[a.weekday] !== weekdayOrder[b.weekday]) {
+					return weekdayOrder[a.weekday] - weekdayOrder[b.weekday];
+				}
+				return a.startTime - b.startTime;
+			});					
+
+			// Store all sorted and ordered slots
+			this.slotsData = result;
+
+			// Filter for Sunday records only to use as base/template data
+			const sundaySlots = result.filter(slot => slot.weekday === 'Sunday');
+
+			if (sundaySlots.length) {
+				// Process and format the Sunday data as base/raw data
+				this.viewData = sundaySlots.map((slot, index) => {
+					// Convert time integer fields (HHMM format) to HH:mm:ss.SSS format
+					const startTime = this.timeIntToTime24h(slot.startTime);
+					const endTime = this.timeIntToTime24h(slot.endTime);
+
+					return this.processSlotMetrics({
+						id: slot.id,
+						label: slot.name || `Slot ${index + 1}`,
+						startTime: startTime,
+						endTime: endTime
+					}, index, sundaySlots.length);
+				});
+			} else {
+				// No Sunday data found, use empty array
+				this.viewData = [];
+			}
+		} else {
+			// No data found, use empty arrays
+			this.slotsData = [];
+			this.viewData = [];
+		}
 	}
 
 	handleEdit() {
