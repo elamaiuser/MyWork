@@ -5,7 +5,6 @@
     <excludeButtons>Clone</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>PrintableView</excludeButtons>
     <excludeButtons>RecordShareHierarchy</excludeButtons>
     <excludeButtons>Share</excludeButtons>
@@ -398,6 +397,13 @@
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>
         <relatedList>sked_Role_Time_Detail__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>sked_Site__c</fields>
+        <fields>sked_Start_Date__c</fields>
+        <fields>sked_End_Date__c</fields>
+        <relatedList>sked_Site_Collection_Operation__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
         <excludeButtons>MassChangeOwner</excludeButtons>
