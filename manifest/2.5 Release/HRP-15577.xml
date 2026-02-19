@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>BSF_Batch_BSFPortfolio</members>
@@ -17,13 +17,11 @@
 		<members>Add_Update_OpptyTeamMembers</members>
 		<name>ApexTrigger</name>
 	</types>
-  <types>
-		
-		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>
-		<!--New Custom Settingss -->
+  <types>		
+		<members>Taxonomy_Run_Config__mdt.Schedule_Delay_Minutes__c</members>		
 		<members>Taxonomy_Automation_Runtime_Check__c.Is_Taxonomy_Running__c</members>
 		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_Start_DateTime__c</members>
-		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>	
+		<members>Taxonomy_Automation_Runtime_Check__c.Taxonomy_Automation_End_DateTime__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -33,6 +31,6 @@
 	<types>
         <members>Taxonomy_Automation_Runtime_Check__c</members>
         <name>CustomObject</name>
-    </types>
+  </types>
 	<version>64.0</version>
 </Package>

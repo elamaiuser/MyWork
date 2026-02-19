@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Account.CFY_Drives1__c</members>
+		<members>Account.CY_Drives1__c</members>
+        <members>Account.CFY_Drives__c</members>
+		<members>Account.CY_Drives__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Account-APS Planner Mobile Account Layout</members>
+		<members>Account-BioSponsor Account</members>
+		<members>Account-Biomed Read Only Mobile Account Layout</members>
+		<members>Account-DRD Mobile Account Layout</members>
+		<members>Account-Sponsor Marketing Mobile Layout</members>
+		<name>Layout</name>
+	</types>
+    <types>
+        <members>Obsolete/Copy_of_Fixed_Site_Accounts_buW</members>
+        <members>APSStarForce/New_Accounts_and_Primary_Region_Report_C7o</members>
+        <name>Report</name>
+    </types>
+	<version>64.0</version>
+</Package>

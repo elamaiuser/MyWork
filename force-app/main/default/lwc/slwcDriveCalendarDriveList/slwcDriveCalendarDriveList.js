@@ -8,7 +8,7 @@ import { DateTime } from 'c/luxon';
 import { groupBy, result } from 'c/lodash';
 import { classNames, generateColors } from 'c/slwcUtils';
 import { DRIVE_STATUS, DRIVE_OPERATION_TYPE, DRIVE_TYPE, LINK_DRIVE_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
-import { drivesGeneratorInstance } from 'c/slwcDriveGenerator';
+import { drivesGeneratorInstance, DriveHelper } from 'c/slwcDriveGenerator';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import customLWCStyle from '@salesforce/resourceUrl/skedLWCCustomStyle'
 
@@ -47,6 +47,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
     @api includesAdditionalDays = 0;
 
     selectedStatus = null;
+    driveHelper = new DriveHelper();
 
     get hideCheckboxColumn() {
         return this.isReadonly || this.selectedStatus === DRIVE_STATUS.CANCEL || this.selectedStatus === DRIVE_STATUS.COMPLETE;
@@ -90,6 +91,15 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
 
     get isAllocateAssetsOnly() {
         return [DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE].includes(this.selectedStatus);
+    }
+
+    get collectionOperations() {
+        if (!this.filters || !this.filters.collectionOperationValues) return [];
+        return this.filters.collectionOperationValues.territoryCollectionOperations.map(item => item.collectionOperation);
+    }
+
+    get isFilteringMissingTimeBlock() {
+        return this.filters?.collectionOperationValues?.isFilteringMissingTimeBlock || false;
     }
 
     get columns() {
@@ -230,6 +240,7 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         })
 
         //driveQuery.operationTypes = this.filters.operationTypes;
+        driveQuery.missingTimeBlock = this.isFilteringMissingTimeBlock;
         driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
         driveQuery.subQueryIndicator = sObjectType.JOB | sObjectType.DRIVE_SHIFT;
 
@@ -241,6 +252,15 @@ export default class SlwcDriveCalendarDriveList extends LightningElement {
         
         let service = new driveService();
         this.currentGetDriveListPromise = service.query(driveQuery)
+            .then((result) => {
+                return (result || []).filter((drive) => {
+                    // Filter: If filtering by missing time blocks, only include drives that have missing time blocks
+                    if (this.isFilteringMissingTimeBlock && !this.driveHelper.isDriveMissingTimeBlock(drive, { collectionOperations: this.collectionOperations })) {
+                        return false; // Exclude this drive
+                    }
+                    return true;
+                });
+            })
             .then((result) => {
                 let drives = [];
                 if (result && result.length) {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Taxonomy_Automation_Start_DateTime__c</fullName>
+    <description>Stores the exact timestamp when the current Taxonomy run begins.
+Updated when BSF_Batch_BSFPortfolio starts the Taxonomy chain.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Stores the exact timestamp when the current Taxonomy run begins.
+Updated when BSF_Batch_BSFPortfolio starts the Taxonomy chain.</inlineHelpText>
+    <label>Taxonomy Automation Start DateTime</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

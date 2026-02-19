@@ -28,6 +28,7 @@
                     <th>Resource</th>
                     <th>Supervisor</th>
                     <th>Drive Name</th>
+                    <th> Drive Operation Type</th>
                     <th>Division</th>
                     <th>Job/Activity Name</th>
                     <th>Region</th>
@@ -41,6 +42,8 @@
                     <th>AP Time</th>
                     <th>AP Name</th>
                     <th>AP Violation</th>
+                    <th>Activity Type</th>
+                    <th>Activity SubType</th>
                     <th>Staffing Reason</th>
                     <th>Exception</th>
                     <th>Callout/Trade</th>
@@ -52,6 +55,7 @@
                         <td>{!row['name']}</td>
                         <td>{!row['supervisor']}</td>
                         <td>{!row['driveName']}</td>
+                        <td>{!row['JOT']}</td>
                         <td>{!row['division']}</td>
                         <td>{!row['JName']}</td>
                         <td>{!row['region']}</td>
@@ -65,6 +69,8 @@
                         <td>{!row['apTime']}</td>
                         <td>{!row['apName']}</td>
                         <td>{!row['violation']}</td>
+                        <td>{!row['AType']}</td>
+                        <td>{!row['Subtype']}</td>
                         <td>{!row['StaffingReason']}</td>
                         <td>{!row['exc']}</td>
                         <td>{!row['calloutTrade']}</td>

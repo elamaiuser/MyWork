@@ -1,0 +1,79 @@
+<template>
+    <!-- Loading indicator -->
+    <lightning-spinner style="z-index: 10000" if:true={showSpinner} class="spins" size="medium"></lightning-spinner>
+
+    <template if:true={initialized}>
+        <!-- No data found -->
+        <template if:false={hasActivityResources}>
+            <div class="slds-p-around_small">
+                <div class="slds-text-body_regular">No Call Out Contact Information</div>
+            </div>
+        </template>
+
+        <!-- Listing Call Out Contact Information -->
+        <template if:true={hasActivityResources}>
+            <template for:each={activityResources} for:item="activityResource">
+                <ul key={activityResource.resource.id} class="slds-accordion">
+                    <li class="slds-accordion__list-item">
+                        <section class="slds-accordion__section slds-is-open slds-m-bottom_medium">
+                            <div class="slds-accordion__content">
+                                <!-- Name -->
+                                 <template if:true={activityResource.resource.name}>
+                                    <div class="slds-form-element slds-p-around_x-small slds-has-divider--bottom">
+                                        <span class="slds-form-element__label">Call Out Contact Name</span>
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-form-element__static">{activityResource.resource.name}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Primary phone -->
+                                <template if:true={activityResource.resource.primaryPhone}>
+                                    <div class="slds-form-element slds-p-around_x-small slds-has-divider--bottom">
+                                        <span class="slds-form-element__label">Call Out Contact Phone</span>
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-form-element__static">{activityResource.resource.primaryPhone}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Mobile phone -->
+                                <template if:true={activityResource.resource.mobilePhone}>
+                                    <div class="slds-form-element slds-p-around_x-small slds-has-divider--bottom">
+                                        <span class="slds-form-element__label">Call Out Contact Mobile Phone</span>
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-form-element__static">{activityResource.resource.mobilePhone}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Email -->
+                                <template if:true={activityResource.resource.email}>
+                                    <div class="slds-form-element slds-p-around_x-small slds-has-divider--bottom">
+                                        <span class="slds-form-element__label">Call Out Contact Email</span>
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-form-element__static">{activityResource.resource.email}</span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </section>
+                    </li>
+                </ul>
+            </template>
+        </template>
+    </template>
+
+    <!-- Modal showing error messages -->
+    <c-slwc-confirm-modal
+        is-open={confirmModalData.isOpen}
+        mode={confirmModalData.mode}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        handle-on-close={confirmModalData.onClose}
+        confirm-btn-label={confirmModalData.confirmBtnLabel}
+        cancel-btn-label={confirmModalData.cancelBtnLabel}
+        layer-index="1000"
+        size='x-small'>
+    </c-slwc-confirm-modal>
+</template>

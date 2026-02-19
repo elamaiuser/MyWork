@@ -90,6 +90,47 @@
                 </div>
             </div>
 
+            <!-- Pending Trades -->
+            <template if:true={popoverData.hasPendingTrades}>
+                <div class="slds-m-top_x-small trade-shift-section" for:each={popoverData.pendingTrades} for:item="pendingTrade" key={pendingTrade.id}>
+                    <div class="header">
+                        <div>Pending Trade</div>
+                    </div>
+    
+                    <dl class="slds-dl_horizontal content">
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Requesting Staff:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            {pendingTrade.requestingStaffName}
+                        </dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            {pendingTrade.requestingStaffTradingEventName}
+                        </dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event Date:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            <lightning-formatted-date-time value={pendingTrade.requestingStaffTradingEventDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                        </dd>
+                        <div class="slds-has-divider_top slds-m-vertical_x-small slds-size_1-of-1"></div>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Trading Staff:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            {pendingTrade.tradingStaffName}
+                        </dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            {pendingTrade.tradingStaffTradingEventName}
+                        </dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">Event Date:</dt>
+                        <dd class="slds-dl_horizontal__detail  slds-m-bottom_xx-small">
+                            <lightning-formatted-date-time value={pendingTrade.tradingStaffTradingEventDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                        </dd>
+                        <template if:true={pendingTrade.apsNotes}>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak slds-m-bottom_xx-small">APS Notes:</dt>
+                            <div class="white-space_prewrap">{pendingTrade.apsNotes}</div>
+                        </template>
+                    </dl>
+                </div>
+            </template>
+
             <div class="slds-m-top_x-small trade-shift-section" if:true={popoverData.hasDriveShiftTrade}>
                 <div class="header">
                     <div>Traded Event</div>
@@ -128,6 +169,8 @@
             </div>
         </div>
 
+        <!-- HRP-13357: Prevent allocation change if there are pending drive shift trades -->
+        <template if:false={popoverData.hasPendingTrades}>
             <template if:false={readOnly}>
                 <footer class="slds-popover__footer slds-text-align_right">
                     <div class="slds-grid slds-wrap slds-grid--align-spread direction-rtl">
@@ -201,6 +244,7 @@
                         </template>
                     </div>
                 </footer>
+            </template>
         </template>
     </div>
 </template>

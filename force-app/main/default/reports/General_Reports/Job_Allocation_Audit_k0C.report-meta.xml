@@ -69,13 +69,6 @@
             <value>Confirmed</value>
         </criteriaItems>
         <criteriaItems>
-            <column>sked__Job_Allocation__c$sked__Status__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Deleted</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>sked__Job_Allocation__c$sked__Resource__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
@@ -87,14 +80,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Bus,Cargo Van,Employee,ProMaster,Trailer,Truck,Volunteer</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked__Job_Allocation__c$LastModifiedDate</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>greaterOrEqual</operator>
-            <value>1/1/2023 12:00 AM</value>
+            <value>,Employee</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Job_Allocation__c$sked__Job__c.sked_Drive__c.Name</column>
@@ -108,6 +94,13 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
+            <value></value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Job_Allocation__c$Name</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
             <value></value>
         </criteriaItems>
         <language>en_US</language>
