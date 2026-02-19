@@ -851,7 +851,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
           return service.save({
             jobId: this.selectedAllocationData.job.id,
             resourceId: this.selectedResource.id,
-            status: JOB_ALLOCATION_STATUS.PENDING_DISPATCH
+            status: JOB_ALLOCATION_STATUS.PENDING_DISPATCH,
+            replacementFor: this.selectedAllocationData.jobAllocation.id
           })
           .then(() => {
             let driveSvc = new driveService();
@@ -867,6 +868,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
           return service.save({
             activityId: this.selectedAllocationData.activity.id,
             resourceId: this.selectedResource.id,
+            replacementFor: this.selectedAllocationData.activityResource.resourceId
           })
         }
       }

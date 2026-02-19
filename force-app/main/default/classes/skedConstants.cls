@@ -351,6 +351,9 @@ public class skedConstants {
     public static final string STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK = 'Unavailability Day';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT = 'Bidding Period';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_STANDARD = 'Standard';
+    
+    public static final string STAFFING_REASON_CALLOUT_REPLACEMENT = 'Callout replacement';
+    public static final string STAFFING_REASON_TRADE = 'Trade';
 
     public static final string SUPPORT_PLAN_STATUS_ACTIVE = 'Active';
     public static final string SUPPORT_PLAN_STATUS_CLOSED = 'Closed';
@@ -435,6 +438,7 @@ public class skedConstants {
 
     /* Debug Log */
     public static final string DEBUG_LOG_TYPE_WORKDAY_API = 'Workday API Request';
+    public static final string DEBUG_LOG_TYPE_ERROR_LOG = 'Error Log';
 
     public static final string DEBUG_LOG_CATEGORY_SYSTEM_ERROR = 'System Error';
     public static final string DEBUG_LOG_CATEGORY_VALIDATION_ERROR = 'Validation Error';

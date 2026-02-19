@@ -230,7 +230,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &#39;Cancel&#39; AND StageName != &#39;Cancelled&#39; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -354,7 +354,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>

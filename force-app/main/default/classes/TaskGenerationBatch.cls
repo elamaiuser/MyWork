@@ -24,45 +24,43 @@ global class TaskGenerationBatch implements Database.Batchable<sObject> {
         List<Opportunity> oppsForSponsorTasks = new List<Opportunity>();
         List<Opportunity> oppsForRecruitmentTasks = new List<Opportunity>();
         List<Opportunity> oppsFor72CheckInTasks = new List<Opportunity>();
-        List<task> tasks = [SELECT WhatId, Subject, Type FROM Task WHERE (Subject = 'Recruitment Planning Meeting' OR Type = 'Sponsor Planning Meeting' OR Subject = '72 Hour Check-In') AND WhatId IN: oppIdSet];//HRP-7123//HRP-12627
+        List<task> tasks = [SELECT WhatId, Subject, Type FROM Task WHERE (Subject = 'Recruitment Strategy Meeting' OR Subject = '72 Hour Check-In') AND WhatId IN: oppIdSet];//HRP-7123//HRP-12627
         if (!tasks.isEmpty()) {
             for (Task tsk : tasks) {
-                if(tsk.Subject == 'Recruitment Planning Meeting'){//HRP-7123
+                if(tsk.Subject == 'Recruitment Strategy Meeting'){//HRP-7123
                     oppIdsWithRecruitmentTask.add(tsk.WhatId);
                 }else if(tsk.type == 'Sponsor Planning Meeting'){
-                    oppIdsWithSponsorTask.add(tsk.WhatId);
+                    //oppIdsWithSponsorTask.add(tsk.WhatId);
                 }else if(tsk.Subject == '72 Hour Check-In'){//HRP-12627
                     oppIdsWith72CheckInTask.add(tsk.WhatId);
                 }
             }
             for (Opportunity opp : opportunities) {
-                Boolean hasSponsorTask = oppIdsWithSponsorTask.contains(opp.Id);
+                //Boolean hasSponsorTask = oppIdsWithSponsorTask.contains(opp.Id);
                 Boolean hasRecruitmentTask = oppIdsWithRecruitmentTask.contains(opp.Id);
                 Boolean has72CheckInTask = oppIdsWith72CheckInTask.contains(opp.Id);
                 if (opp.StageName == 'Closed') {
-                    if (!hasSponsorTask) {
+                    /*if (!hasSponsorTask) {
                         oppsForSponsorTasks.add(opp);
-                    }
+                    }*/
                     if (!hasRecruitmentTask) {
                         oppsForRecruitmentTasks.add(opp);
                     }
                     if (!has72CheckInTask) {
                         oppsFor72CheckInTasks.add(opp);
                     }
-                }else if (opp.StageName == 'Committed' && !hasSponsorTask) {
-                    oppsForSponsorTasks.add(opp);
                 }else if(opp.StageName == 'Committed' && !has72CheckInTask) {//HRP-12627
                     oppsFor72CheckInTasks.add(opp);//HRP-12627
                 }
             }
         }else{
-            oppsForSponsorTasks.addAll(opportunities);
+            //oppsForSponsorTasks.addAll(opportunities);
             oppsForRecruitmentTasks.addAll(opportunities);
             oppsFor72CheckInTasks.addAll(opportunities);
         }
         
         if(!oppsForSponsorTasks.isEmpty()){
-            OpportunityService.createSponsorPlanningMeetingTask(oppsForSponsorTasks, NULL);
+            //OpportunityService.createSponsorPlanningMeetingTask(oppsForSponsorTasks, NULL);
         }
         if(!oppsForRecruitmentTasks.isEmpty()){
             OpportunityService.createRecruitmentTask(oppsForRecruitmentTasks, NULL); //Recruitments are created only when Call_List_Recipient_Exist__c

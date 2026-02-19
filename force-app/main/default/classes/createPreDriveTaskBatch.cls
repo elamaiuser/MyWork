@@ -96,6 +96,7 @@ global class createPreDriveTaskBatch implements Database.Batchable<sObject>
                 Task preDriveSecurityTask = new Task();
                 preDriveSecurityTask.subject = BSF_Constants.PRE_DRIVE_SECURITY_TASK;
                 preDriveSecurityTask.priority = BSF_Constants.HIGH_PRIORITY_TASK;
+                preDriveSecurityTask.Type = BSF_Constants.SECURITY_INFORMATION_COMPLETION;
                 preDriveSecurityTask.whatId = opp.Id;
                 preDriveSecurityTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                 preDriveSecurityTask.ownerId = OpportunityService.getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Security_Information_Completion').Assigned_To__c); //HRP-9562;//HRP-12333 added 3rd paarameter

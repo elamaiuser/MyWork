@@ -5,6 +5,7 @@
     <columns>Sender_Email__c</columns>
     <columns>Notification_Type__c</columns>
     <columns>Status__c</columns>
+    <columns>Destination_Id__c</columns>
     <columns>Subject__c</columns>
     <columns>Body__c</columns>
     <columns>CREATED_DATE</columns>

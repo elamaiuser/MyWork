@@ -928,11 +928,20 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             }, false, clonedDriveDetails1, clonedDriveDetails2);
         });
       
+        // Check if resource has pending trades - if so, disable all jobs
+        const hasPendingTrades = resourceDetail && resourceDetail.hasPendingTrades;
         const listJobAvailable = this.getListJobAvailable(resourceId);
         const listJobUnavailable = this.getListJobUnavailable(resourceId);
         listjobEl.forEach(el => {
             const jobId = el.dataset.id
             const [jobDetail, driveShift] = this.getJobById(jobId);
+            
+            // Disable all jobs if resource has pending trades
+            if (hasPendingTrades) {
+                el.classList.add('job-hover-disabled');
+                return;
+            }
+
             if((resourceDetail.resourceType == TYPE_RESOURCE.RESOURCE && jobDetail.resourceRole) || (resourceDetail.assetType && resourceDetail.assetType == jobDetail.assetType)){
                 const isResourceAllocated = this.isResourceAllocatedToDriveShift(resourceDetail, driveShift);
                 if (
@@ -1047,6 +1056,19 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
 
     handleResourceAction(event) {
         const action = event.detail.action;
+
+        // HRP-13357: Prevent allocation change if there are pending drive shift trades
+        if (event.detail.record.hasPendingTrades) {
+            this.showConfirmModal({
+                title: 'Action Not Allowed',
+                message: 'The staff has pending drive shift trade that must be resolved prior to change in allocation.',
+                confirmBtnLabel: 'Close',
+                cancelBtnLabel: 'none', // Hide cancel button
+                onClose: () => { this.hideConfirmModal(); }
+            });
+            return;
+        }
+
         if(action === 'unallocate') {
             if (event.detail.record.driveShiftTradeId) { 
                 this.showConfirmModal({
@@ -1371,7 +1393,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             this.populateDefaultJobAllocationTimes(driveDetail1, resource);
             this.populateDefaultJobAllocationTimes(driveDetail2, resource);    
         }
-       
+
         const allocationExceptionLogMap = {};
         const resourceTagNames = resource.resourceTags?.map(resourceTag => resourceTag.tag.name);
        
@@ -1757,6 +1779,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             id: item.id,
             mobilePhone: item.mobilePhone,
             name: item.name,
+            hasPendingTrades: (item.pendingTrades || []).some(trade => (trade.requestingStaffId === item.id && trade.requestingStaffTradingEventDate === drive.driveDate) || (trade.tradingStaffId === item.id && trade.tradingStaffTradingEventDate === drive.driveDate)),
             hasLinkedDrive: hasLinkedDrive,
             categoryText: compact([item.category, item.employmentType]).join(' - '),
             isPerson: item.resourceType === TYPE_RESOURCE.RESOURCE,
@@ -1885,6 +1908,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                     jobAllocations: jobAllocations && jobAllocations.map(itemJa => {
                         const posAl = this.listPossibleAllocations.find(itemEx => itemEx.resourceId == itemJa.resourceId && itemEx.jobId == itemJa.jobId && !itemEx.isAvailable) || null
                         const exceptionLog = posAl && posAl.exceptionLog.length > 0 && posAl.exceptionLog || [];
+                        const hasDriveShiftTrade = !!itemJa.driveShiftTradeId;
+                        const hasPendingTrades = itemJa.pendingTrades?.length > 0;
+                        const hasAnyDriveShiftTrade = hasDriveShiftTrade || hasPendingTrades; // including pending trade/approved drive shift trade
 
                         return {
                             ...itemJa,
@@ -1899,7 +1925,9 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                             }),
                             resourceId: itemJa.resourceId,
                             exceptionLog: exceptionLog,
-                            hasDriveShiftTrade: !!itemJa.driveShiftTradeId,
+                            hasDriveShiftTrade: hasDriveShiftTrade,
+                            hasPendingTrades: hasPendingTrades,
+                            hasAnyDriveShiftTrade: hasAnyDriveShiftTrade,
                             isRequestingStaff: itemJa.driveShiftTrade && itemJa.driveShiftTrade.requestingStaffId === itemJa.resourceId,
                             requestingStaffUrl: itemJa.driveShiftTrade ? ('/' + itemJa.driveShiftTrade.requestingStaffId) : '',
                             tradingStaffUrl: itemJa.driveShiftTrade ? ('/' + itemJa.driveShiftTrade.tradingStaffId) : '',
@@ -2856,7 +2884,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 result
             }
         }));
-
+        
         this.initialized = false;
     }
 
@@ -2997,7 +3025,6 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
         let { job , jobAllocation } = this.jobAllocationModalData; 
 
         let [ tempJob ] = this.getJobById(job.id);
-     
         let tempJobAllocation =  find(job.jobAllocations, item => item.key == jobAllocation.key);
 
         tempJobAllocation = extend(tempJobAllocation, event.detail);
@@ -3034,6 +3061,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
     /** Confirm Modal **/
     showConfirmModal(confirmModalData) {
         this.confirmModalData = {...confirmModalData,
+            confirmBtnLabel: confirmModalData.confirmBtnLabel || 'Yes',
+            cancelBtnLabel: confirmModalData.cancelBtnLabel || 'Cancel',
             isOpen: true
         }
     }

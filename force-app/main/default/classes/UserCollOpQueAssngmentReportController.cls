@@ -62,9 +62,7 @@ public without sharing class UserCollOpQueAssngmentReportController {
         public string selQName {get;set;}
     }
     
-    // search method from UI
-    public  void search ()
-    {
+    public  void search(){
         UserCollOpQueWrapList = new List<UserCollOpQueWrapper>();
         errorPresent=false;
         errorMsg=null;
@@ -73,49 +71,45 @@ public without sharing class UserCollOpQueAssngmentReportController {
         
         string query='select id,Name,Profile.Name,sked_Collection_Operations__c,UserRoleid  from user where ';
         
+    String searchUserLike;
+    String collOppVal;
         
-        if(String.isBlank(searchCollOpp) && String.isBlank(searchUser))
-        {
-            //system.debug('Here');
+    if (String.isBlank(searchCollOpp) && String.isBlank(searchUser)) {
             errorMsg='No Input found for Filters';
             errorPresent=true;
         }
-        if(String.isNotBlank(searchUser) && searchUser.length() < 3)
-        {
+    if (String.isNotBlank(searchUser) && searchUser.length() < 3) {
             errorMsg='User name must be more than 2 characters';
             errorPresent=true;
         }
         
-        if(String.isNotBlank(searchUser) && searchUser.length() >= 3 && String.isBlank(searchCollOpp))
-        {
-            string s = searchUser;
-            condition =  'Name like \'%'+S+'%\'';
+    if (String.isNotBlank(searchUser) && searchUser.length() >= 3 && String.isBlank(searchCollOpp)) {
+        searchUserLike = '%' + searchUser + '%';
+        condition = 'Name LIKE :searchUserLike';
         }
         
-        if(String.isNotBlank(searchCollOpp) && String.isBlank(searchUser))
-        {
-            condition = 'sked_Collection_Operations__c includes ('+'\''+searchCollOpp+'\''+')';
+    if (String.isNotBlank(searchCollOpp) && String.isBlank(searchUser)) {
+        collOppVal = searchCollOpp;
+        condition = 'sked_Collection_Operations__c INCLUDES (:collOppVal)';
         }
 
-        if(String.isNotBlank(searchCollOpp) && searchUser.length() >= 3 && String.isNotBlank(searchUser))
-        {
-            string s = searchUser;
-            condition = 'Name like \'%'+S+'%\' AND sked_Collection_Operations__c includes ('+'\''+searchCollOpp+'\''+')';
+    if (String.isNotBlank(searchCollOpp) && String.isNotBlank(searchUser) && searchUser.length() >= 3) {
+        searchUserLike = '%' + searchUser + '%';
+        collOppVal = searchCollOpp;
+        condition = 'Name LIKE :searchUserLike AND sked_Collection_Operations__c INCLUDES (:collOppVal)';
         }
         
-        if (condition!= null)
-        {
-            query = query+condition;
+        if (condition!= null){
+            query +=condition;
         }
         //system.debug('Query'+query);
         
         list<user> userList = new list<user>();
         
-        if(!errorPresent && condition!=null)
-        {
+        if(!errorPresent && condition!=null){
             userList = Database.query(query,AccessLevel.SYSTEM_MODE);
-            if(userList.isEmpty())
-            {
+
+        if (userList.isEmpty()) {
                 errorMsg='No Records found for the Filters';
                 errorPresent=true;
             }
@@ -475,9 +469,7 @@ userParentRoleID.get(u.UserRoleid).add(u.id);
         /*
         * HRP-13373 changes ends here
         */
-
-        if(!errorPresent && UserCollOpQueWrapList.isEmpty())
-        {
+        if(!errorPresent && UserCollOpQueWrapList.isEmpty()){
             UserCollOpQueWrapListPresent=false;
             errorMsg='The selected User doesn\'t have any Queue/Collection Operation assignment to them';
             errorPresent=true;
