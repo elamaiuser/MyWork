@@ -5,6 +5,10 @@
 		<members>BSF_TemplateCDA_FutureOpportunity_Batch</members>
 		<members>OpportunityService</members>
 		<members>OpportunityTriggerTest</members>
+		<members>BSF_TaskCreationBatch</members>
+		<members>BSF_TaskCreationBatch_Test</members>
+		<members>TaskGenerationBatch</members>
+		<members>TaskGenerationBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<version>65.0</version>
