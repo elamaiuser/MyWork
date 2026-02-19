@@ -1,14 +1,13 @@
-<apex:page 
-    title="WeeklyStaffingRoleReport" 
+<apex:page title="WeeklyStaffingRoleReport" 
     controller="PowerBIProxyController"  
-    docType="html-5.0">
+    docType="html-5.0" >
 
     <script>
-        window.onload = function () {
-            location.replace('{!JSENCODE(redirectURL)}');
-        };
+        (function() {
+            var url = '{!JSENCODE(redirectURL)}';
+            if (url) {
+                location.replace(url);
+            }
+        })();
     </script>
-    
-
-    
 </apex:page>
