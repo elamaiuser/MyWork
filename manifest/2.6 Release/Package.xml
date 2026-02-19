@@ -15,10 +15,13 @@
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
         <members>BSF_Batch_TaskRename</members>
         <members>BSF_Batch_TaskRename_Test</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>BSF_Constants</members>
+        <members>BSF_EmailNotification</members>
         <members>BSF_EmailNotification_Test</members>
         <members>BSF_TaskCreationBatch</members>
         <members>BsfPortfolioSyncHelper_Test</members>
@@ -35,6 +38,7 @@
         <members>OpportunityServiceControllerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
+        <members>PowerBIProxyController</members>
         <members>SendBellNotificationDM4ATMExpiringTest</members>
         <members>SiteService</members>
         <members>SiteServiceTest</members>
@@ -44,6 +48,7 @@
         <members>TaskService</members>
         <members>TaskTriggerHandler</members>
         <members>TemplateCDA_FutureOpportunityBatch_Test</members>
+        <members>TerritoryTriggerHandler</members>
         <members>TimeBlockComplianceReportController</members>
         <members>TimeBlockComplianceReportControllerTest</members>
         <members>UpdateAMAndDMPortfolioBatchTest</members>
@@ -52,7 +57,7 @@
         <members>UpdateOpportunityNameBatch</members>
         <members>UpdateOpportunityNameBatchTest</members>
         <members>UpdateTaskChecklistEventTrigger_Test</members>
-				<members>UserCollOpQueAssngmentReportController</members>
+		<members>UserCollOpQueAssngmentReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>createPreDriveTaskBatch</members>
         <members>skedAvailabilityHandler</members>
@@ -68,7 +73,7 @@
         <members>skedDriveTrigger_Test</members>
         <members>skedEmailHandlerController_Test</members>
         <members>skedEmailService_Test</members>
-				<members>skedExceptionLogService</members>
+		<members>skedExceptionLogService</members>
         <members>skedHCExceptionHandler</members>
         <members>skedHCExceptionTrigger_Test</members>
         <members>skedJobAllocationTravelTimeBatch_Test</members>
@@ -95,17 +100,17 @@
     </types>
     <types>
         <members>APComplianceExcel</members>
-				<members>BSFWeeklyStaffingRTReport</members>
-				<members>MOEStagingSheetReport</members>
-				<members>StagingSheetReport</members>
+        <members>BSFWeeklyStaffingRTReport</members>
+        <members>MOEStagingSheetReport</members>
+        <members>StagingSheetReport</members>
         <members>WeeklyStaffingRoleReport</members>
-				<members>bsfVehiclePlanningReportPDF</members>
+		<members>bsfVehiclePlanningReportPDF</members>
         <members>generateDriveWorksheetHTM</members>
-				<members>generateDriveWorksheetPdf</members>
-				<members>skedAvailabilityUrlNavigation</members>
-				<members>skedEmailHandler</members>
+        <members>generateDriveWorksheetPdf</members>
+        <members>skedAvailabilityUrlNavigation</members>
+        <members>skedEmailHandler</members>
         <members>skedMobileCallOutContactInformationForm</members>
-				<members>skedRAC</members>
+		<members>skedRAC</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -119,7 +124,7 @@
     <types>
         <members>Activity.Location__c</members>
         <members>Contact.After_Hours_Number__c</members>
-				<members>Contact.Primary_Phone_Number_New__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
         <members>Opportunity.Account_Name__c</members>
         <members>Task.Type</members>
         <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
@@ -142,6 +147,7 @@
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_2</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
         <members>BSF_Access_Control_Rule.HRP_16367_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_16372_Field_Permission_Set</members>
         <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
         <members>Task_Reassignment_Matrix.Marketing_Exception</members>
         <members>Task_Reassignment_Matrix.One_Week_Check_in</members>
@@ -185,12 +191,13 @@
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Opportunity Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
-        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>        
         <members>Task-Marketing Exception</members>
         <members>Task-Task 72hrs Layout</members>
         <members>Task-Task Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
         <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
+        <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -205,12 +212,13 @@
         <members>slwcDriveProductivityDriveList</members>
         <members>slwcDriveSchedulingConsole</members>
         <members>slwcDriveStaffingDetails</members>
-				<members>slwcJobDetailsForm</members>
+		<members>slwcJobDetailsForm</members>
         <members>slwcMobileCallOutContactInformationForm</members>
         <members>slwcNewCollectionOperationMultiPicklist</members>
         <members>slwcOnCallCallOutManagement</members>
         <members>slwcPopoverContent</members>
         <members>timeBlockComplianceReport</members>
+        <members>travelTimeBreakdown</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
@@ -227,12 +235,20 @@
         <name>RecordType</name>
     </types>
     <types>
+        <members>unfiled$public/Real_ID_Staff_at_Real_ID_Drives_Report_8LK</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Job_Allocation_with_Drive_Location_and_Resource</members>
+        <name>ReportType</name>
+    </types>
+    <types>
         <members>TaskType</members>
         <name>StandardValueSet</name>
     </types>
     <types>
         <members>sked_HLT_Dist</members>
-				<members>sked_HLT_Vendors</members>
+		<members>sked_HLT_Vendors</members>
         <name>StaticResource</name>
     </types>
     <types>
