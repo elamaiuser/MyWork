@@ -255,6 +255,7 @@ global class skedModels {
         public string timeOffPlan;
         public string timeOffReasonCode;
         public decimal noOfRequestedHours; // HRP-13861 Eric Keating
+        public string parentCalloutType;//HRP-16778 -v2
         public string workdaySyncMessage;
         public string workdaySyncStatus;
         
