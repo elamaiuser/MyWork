@@ -147,6 +147,7 @@
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_2</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
         <members>BSF_Access_Control_Rule.HRP_16367_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_16372_Field_Permission_Set</members>
         <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
         <members>Task_Reassignment_Matrix.Marketing_Exception</members>
         <members>Task_Reassignment_Matrix.One_Week_Check_in</members>
@@ -230,6 +231,14 @@
         <members>Task.Team_Portfolio_Assignment</members>
         <members>Task.X72_Hour_CheckIn</members>
         <name>RecordType</name>
+    </types>
+    <types>
+        <members>unfiled$public/Real_ID_Staff_at_Real_ID_Drives_Report_8LK</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Job_Allocation_with_Drive_Location_and_Resource</members>
+        <name>ReportType</name>
     </types>
     <types>
         <members>TaskType</members>
