@@ -9,14 +9,18 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     @api recordId;
     
     @track packageGroups = [];
-    @track activePlanningPath = 'Standard';
+    @track activePlanningPath;
+    @track currentDriveStatus;
+    @track objectApiName;
     @track isLoading = true;
     @track isPathChangeModalOpen = false;
     @track isPlanningLocked = false;
+    @track isSaveConfirmationModalOpen = false;
     
     wiredResult;
     taskMetadataCache = [];
     pendingPlanningPath = '';
+    isOverridden = false;
 
     get pathOptions() {
         return [
@@ -32,18 +36,26 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     @wire(getTaskBundles, { recordId: '$recordId' })
     handleInitialDataLoad(result) {
         this.wiredResult = result;
-        const { data, error } = result;
-
+        const { data, error } = result;        
         this.isLoading = true;
         if (data) {
-            this.activePlanningPath = data.currentPath || 'Standard';
-            this.isPlanningLocked = (data.driveStatus === 'Confirmed');
+            this.isLoading = false;
+            this.objectApiName = data.objectApiName;
+            //this.activePlanningPath = data.currentPath || 'Standard';
+            if (this.objectApiName === 'Account' && !data.currentPath) {
+                this.activePlanningPath = 'Standard';
+            } else {
+                this.activePlanningPath = data.currentPath;
+            }
+            this.currentDriveStatus = data.driveStatus;
+            const lockedStatuses = ['Confirmed', 'Complete'];
+            this.isPlanningLocked = lockedStatuses.includes(data.driveStatus);
+            this.isOverridden = data.isOverridden;
             this.taskMetadataCache = JSON.parse(JSON.stringify(data.packages));
-            this.initializePackageDisplay();
+            this.initializePackageDisplay();            
         } else if (error) {
             this.showToast('Error', 'Failed to load task packages.', 'error');
-        }
-        this.isLoading = false;
+        }        
     }
 
     handlePathChangeRequest(event) {
@@ -68,6 +80,11 @@ export default class BsfTaskPlanningWizard extends LightningElement {
     }
 
     initializePackageDisplay() {
+        // If no path is selected (null), clear packages and return
+        if (!this.activePlanningPath) {
+            this.packageGroups = [];
+            return;
+        }
         // Deep clone the metadata to apply UI-specific logic
         const packages = JSON.parse(JSON.stringify(this.taskMetadataCache));
 
@@ -210,7 +227,16 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         });
     }
 
-    persistTaskPlan() {
+    applyTaskPlan() {
+        if (this.objectApiName !== 'Account' && this.activePlanningPath === 'Flexible') {
+            this.isSaveConfirmationModalOpen = true;
+            return;
+        }
+        this.executeSave();
+    }
+
+    executeSave() {
+        this.isSaveConfirmationModalOpen = false;
         this.isLoading = true;
         const serializedTaskPayload = [];
         const selectedPackageIds = new Set();
@@ -256,6 +282,10 @@ export default class BsfTaskPlanningWizard extends LightningElement {
         .finally(() => {
             this.isLoading = false;
         });
+    }
+
+    closeSaveModal() {
+        this.isSaveConfirmationModalOpen = false;
     }
 
     showToast(title, message, variant) {
