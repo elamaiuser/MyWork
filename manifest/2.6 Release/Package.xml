@@ -19,6 +19,7 @@
         <members>BSF_Batch_UpdateTaskType</members>
         <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>BSF_Constants</members>
+        <members>BSF_EmailNotification</members>
         <members>BSF_EmailNotification_Test</members>
         <members>BSF_TaskCreationBatch</members>
         <members>BsfPortfolioSyncHelper_Test</members>
@@ -35,6 +36,7 @@
         <members>OpportunityServiceControllerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
+        <members>PowerBIProxyController</members>
         <members>SendBellNotificationDM4ATMExpiringTest</members>
         <members>SiteService</members>
         <members>SiteServiceTest</members>
@@ -52,7 +54,7 @@
         <members>UpdateOpportunityNameBatch</members>
         <members>UpdateOpportunityNameBatchTest</members>
         <members>UpdateTaskChecklistEventTrigger_Test</members>
-				<members>UserCollOpQueAssngmentReportController</members>
+		<members>UserCollOpQueAssngmentReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>createPreDriveTaskBatch</members>
         <members>skedAvailabilityHandler</members>
@@ -68,7 +70,7 @@
         <members>skedDriveTrigger_Test</members>
         <members>skedEmailHandlerController_Test</members>
         <members>skedEmailService_Test</members>
-				<members>skedExceptionLogService</members>
+		<members>skedExceptionLogService</members>
         <members>skedHCExceptionHandler</members>
         <members>skedHCExceptionTrigger_Test</members>
         <members>skedJobAllocationTravelTimeBatch_Test</members>
@@ -95,17 +97,17 @@
     </types>
     <types>
         <members>APComplianceExcel</members>
-				<members>BSFWeeklyStaffingRTReport</members>
-				<members>MOEStagingSheetReport</members>
-				<members>StagingSheetReport</members>
+        <members>BSFWeeklyStaffingRTReport</members>
+        <members>MOEStagingSheetReport</members>
+        <members>StagingSheetReport</members>
         <members>WeeklyStaffingRoleReport</members>
-				<members>bsfVehiclePlanningReportPDF</members>
+		<members>bsfVehiclePlanningReportPDF</members>
         <members>generateDriveWorksheetHTM</members>
-				<members>generateDriveWorksheetPdf</members>
-				<members>skedAvailabilityUrlNavigation</members>
-				<members>skedEmailHandler</members>
+        <members>generateDriveWorksheetPdf</members>
+        <members>skedAvailabilityUrlNavigation</members>
+        <members>skedEmailHandler</members>
         <members>skedMobileCallOutContactInformationForm</members>
-				<members>skedRAC</members>
+		<members>skedRAC</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -119,7 +121,7 @@
     <types>
         <members>Activity.Location__c</members>
         <members>Contact.After_Hours_Number__c</members>
-				<members>Contact.Primary_Phone_Number_New__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
         <members>Opportunity.Account_Name__c</members>
         <members>Task.Type</members>
         <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
@@ -205,7 +207,7 @@
         <members>slwcDriveProductivityDriveList</members>
         <members>slwcDriveSchedulingConsole</members>
         <members>slwcDriveStaffingDetails</members>
-				<members>slwcJobDetailsForm</members>
+		<members>slwcJobDetailsForm</members>
         <members>slwcMobileCallOutContactInformationForm</members>
         <members>slwcNewCollectionOperationMultiPicklist</members>
         <members>slwcOnCallCallOutManagement</members>
@@ -232,7 +234,7 @@
     </types>
     <types>
         <members>sked_HLT_Dist</members>
-				<members>sked_HLT_Vendors</members>
+		<members>sked_HLT_Vendors</members>
         <name>StaticResource</name>
     </types>
     <types>
