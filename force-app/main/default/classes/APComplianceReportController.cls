@@ -289,11 +289,10 @@ public static DatableConfigWrapper searchReport(
 };
 
 
-    if (!excludeTrades) {
-        wrapper.columnsInfo.add(new Map<String, Object>{
-            'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
-        });
-    }
+    wrapper.columnsInfo.add(new Map<String, Object>{
+    'label' => 'Trade/Callout', 'fieldName' => 'calloutTrade', 'type' => 'text', 'sortable' => true
+		});
+
 
     Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>([
         SELECT Id, Name,
@@ -392,9 +391,9 @@ public static DatableConfigWrapper searchReport(
         jobSOQL += 'AND sked__Job__r.sked_Drive__r.sked_Status__c IN :driveStatusFilter ';
     }
 
-    if (excludeTrades) {
+    /*if (excludeTrades) {
         jobSOQL += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
-    }
+    }*/
 
     if (driveOperationTypeFilter != null && !driveOperationTypeFilter.isEmpty()) {
     jobSOQL += buildDriveOperationTypeWhere(driveOperationTypeFilter);
@@ -417,13 +416,16 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (job.sked_Drive_Shift_Trade__c != null) || (job.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, job.sked_Start_Time__c, job.sked_Set_End_Time__c, activePattern.weeklySchedule);
-        //if (isTradeOrCallout) isViolation = false;
+       if (excludeTrades && isTradeOrCallout && isViolation) {
+                        continue;
+                    }
 
         String calloutTradeVal = '';
-        if (!excludeTrades && isTradeOrCallout) {
+        if (isTradeOrCallout) {
             if (job.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Job - Trade';
             else calloutTradeVal = 'Job - Callout';
         }
+
 
         if (violationOnly && !isViolation) continue;
         if (isViolation) jobViolations++;
@@ -469,9 +471,9 @@ public static DatableConfigWrapper searchReport(
         'AND sked__Activity__r.sked__Type__c NOT IN :excludedTypes ' +
         'AND sked__Resource__c IN ' + idClause + ' ';
 
-    if (excludeTrades) {
+   /* if (excludeTrades) {
         activityQuery += 'AND (sked_Drive_Shift_Trade__c = null AND sked_Staffing_Reason__c != \'Callout replacement\') ';
-    }
+    }*/
     activityQuery += 'ORDER BY sked_Start_Date__c desc';
 
     List<sked__Activity_Resource__c> Lact = Database.query(activityQuery);
@@ -491,10 +493,12 @@ public static DatableConfigWrapper searchReport(
         Boolean isTradeOrCallout = (act.sked_Drive_Shift_Trade__c != null) || (act.sked_Staffing_Reason__c == 'Callout replacement');
 
         Boolean isViolation = !isWithinPattern(day, act.sked_Start_Time__c, act.sked_End_Time__c, activePattern.weeklySchedule);
-        //if (isTradeOrCallout) isViolation = false;
+        if (excludeTrades && isTradeOrCallout && isViolation) {
+                        continue;
+                    }
 
         String calloutTradeVal = '';
-        if (!excludeTrades && isTradeOrCallout) {
+        if (isTradeOrCallout) {
             if (act.sked_Drive_Shift_Trade__c != null) calloutTradeVal = 'Activity - Trade';
             else calloutTradeVal = 'Activity - Callout';
         }
