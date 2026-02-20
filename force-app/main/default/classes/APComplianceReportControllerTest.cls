@@ -578,14 +578,15 @@ for (sked__Job_Allocation__c alloc : allocCheck) {
             sked__Resource__c = resourcestaff.Id, 
             sked__Start__c = futureDate,
             sked_Start_Date__c = futureDate,
-            sked_Start_Time__c = startTime
+            sked_Start_Time__c = startTime,
+            sked__End__c = Date.today().addDays(30)
         );
         insert testPatternResource1;
             skedSetting.instance.Admin.dateTimeConversion = true;
             
             sked__Activity__c activity = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
+            sked__Type__c = 'Training',
             sked_Activity_Title__c = 'On Call 1',
             sked_Start_Date__c =  Date.today(),
             sked_End_Date__c =  Date.today().addDays(1),
@@ -614,7 +615,7 @@ for (sked__Job_Allocation__c alloc : allocCheck) {
             
             sked__Activity__c activity1 = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
+            sked__Type__c = 'Training',
             sked_Activity_Title__c = 'On Call 1',
             sked_Start_Date__c =  Date.today().addDays(2),
             sked_End_Date__c =  Date.today().addDays(2),
@@ -682,9 +683,11 @@ for (sked__Activity_Resource__c ar : acts) {
         Biomed_Collection_Op_Center__c testCO = [SELECT Id FROM Biomed_Collection_Op_Center__c LIMIT 1];
         sked_Territory__c division = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'Division' LIMIT 1];
         sked_Territory__c region = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'ARC Region' LIMIT 1];
+        
 
-        Date startDate = Date.today();
-        Date endDate = Date.today().addDays(5);
+
+        Date startDate = Date.today().addDays(-5);
+        Date endDate = Date.today().addDays(30);
         List<String> coList = new List<String>{testCO.Id};
         List<String> driveStatusList = new List<String>{ skedConstants.DRIVE_STATUS_DRAFT };
             List<String> driveOpList   = new list<string>{'Mobile','Fixed Site','Non Integrated WB'};
