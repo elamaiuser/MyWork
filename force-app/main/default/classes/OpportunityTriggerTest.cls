@@ -3134,4 +3134,35 @@ public class OpportunityTriggerTest
         
         Test.stopTest();
     }
+    
+    static testMethod void testbuildOppsByAccountIdMap() {
+        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        // insert Mobile Account
+        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
+        testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
+        insert testMobileAccount;
+        
+        // insert Mobile Site
+        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
+        insert testMobileSite;
+        
+        // insert templates
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testMobileAccount.Id;
+        testTemplate.Drive_Site__c = testMobileSite.Id;
+        insert testTemplate;
+        
+        // insert Mobile Opp 2
+        Opportunity testMobileOpp2 = (Opportunity)mapTestData.get('MOBILE_OPP');
+        testMobileOpp2.AccountId = testMobileAccount.Id;
+        testMobileOpp2.Drive_Site__c = testMobileSite.Id;
+        testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
+        insert testMobileOpp2;
+        Map<Id, List<Opportunity>> oppMap = OpportunityService.buildOppsByAccountIdMap(new List<Opportunity>{testMobileOpp2});
+        system.debug('Opp: '+oppMap.get(testMobileAccount.Id));
+        Assert.areEqual(oppMap.get(testMobileAccount.Id),testMobileOpp2);
+          
+    }
 }
