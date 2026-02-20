@@ -182,9 +182,9 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 return validSoFar && inputCmp.checkValidity();
             }, true);
         
-        if (this.filters.redcrossVolunteerQuantity <= 0) {
+        if (this.filters.redcrossVolunteerQuantity < 0) {//HRP-16529
             this.errorMessages.push({
-                message: 'Red Cross Volunteer Quantity must be greater than 0.'
+                message: 'Red Cross Volunteer Quantity must be greater than or equal to 0.'//HRP-16529
             })
         }
 
@@ -196,7 +196,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
 
         if (!slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity) && this.model.redcrossVolunteerQuantity <= 0) {
             this.errorMessages.push({
-                message: 'Edit Field Red Cross Volunteer Quantity must be greater than 0.'
+                message: 'Edit Field Red Cross Volunteer Quantity must be greater than or equal to 0.'//HRP-16529
             })
         }
 

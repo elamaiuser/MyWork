@@ -612,7 +612,6 @@ if(ds.isCreateable()){}*/
     
     //Generate Sponsor Planning Meeting task when Opportunity stage is set to committed or closed
     public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
-        System.debug('Entered method createSponsorPlanningMeetingTask with opp items->' + newItems);
         if (newItems == null || newItems.size() < 1)
             return;
         set<id> oppIds = new set<id>();
@@ -654,7 +653,9 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             if (opp.RecordTypeId == MOBILE_OPP_RECTYPEID && 
                 !opp.StageName.equalsIgnoreCase('Cancelled') && //Changes for HRP-13850
+                (opp.DriveStatus__c != null && !opp.DriveStatus__c.equalsIgnoreCase('Complete')) &&
                 opp.Is_Template__c == false && 
+                opp.Drive_Date__c > Date.Today() &&
                 //(oldMap == null ? (opp.StageName == 'Closed' || opp.StageName == 'Committed') : ((opp.StageName == 'Closed' || opp.StageName == 'Committed') && opp.StageName != oldMap.get(opp.id).StageName)) &&//Commented for HRP-5337
                 (Date.Today().daysBetween(opp.Drive_Date__c) <= Integer.ValueOf(label.SponsorPlanningMeetingTaskThresholdDays)) && //added for HRP-5337
                 (taskIds.isEmpty() ||(!taskIds.isEmpty() && !taskIds.contains(opp.Id)))) {
@@ -723,10 +724,11 @@ if(ds.isCreateable()){}*/
         if (oldClosedOppListOfThisAcc.size() > 0) {
             closedOppList.addAll(oldClosedOppListOfThisAcc);
         }
-        if (closedOppList.size() > 0)
-            system.debug('###QQQ');
-        updateAccount(closedOppList);
-        OpportunityRecursive.isOpportunity = false ;
+        if (closedOppList.size() > 0){
+            updateAccount(closedOppList);
+            OpportunityRecursive.isOpportunity = false;
+        }
+        
     }
     
     public static void updateAccount(list<opportunity> closedOppList) {
