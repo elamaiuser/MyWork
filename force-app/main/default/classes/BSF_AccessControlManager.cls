@@ -255,7 +255,14 @@ public without sharing class BSF_AccessControlManager {
                             }
                             continue;
                         }
-                        Boolean effectiveEdit = rule.PermissionsEdit__c && token.getDescribe().isUpdateable();
+                        Schema.DescribeFieldResult fieldDescribe = token.getDescribe();
+    
+    					// Skip fields that cannot have FLS applied (Master-Detail, System fields, etc.)
+    					if (!fieldDescribe.isPermissionable()) {
+        					System.debug(LoggingLevel.INFO, 'Skipping non-permissionable field: ' + sObjectName + '.' + fieldName);
+        					continue;
+   						}
+                        Boolean effectiveEdit = rule.PermissionsEdit__c && fieldDescribe.isUpdateable();
                         String fullFieldApiName = sObjectName + '.' + fieldName;
                         String key = permSetId + '-' + fullFieldApiName;
                         FieldPermissions fp = existingFieldPerms.get(key);
