@@ -138,8 +138,9 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
 
         for(Collection_Operation_Availability__c coAp : coApList) {
             coAp.Total_Actual_Resources__c = map_apId_noOfAssignedResources.get(coAp.Availability_Pattern__c) ?? 0;
+
             for(Availability_Pattern_Role__c apRole : coAp.Availability_Pattern_Roles__r) {
-                apRole.Actual_Count_of_Role__c = map_apId_roleVsNoOfResourcesMap.get(coAp.Availability_Pattern__c).get(apRole.Role__c) ?? 0;
+                apRole.Actual_Count_of_Role__c = (map_apId_roleVsNoOfResourcesMap.get(coAp.Availability_Pattern__c) ?? new Map<String, Decimal>()).get(apRole.Role__c) ?? 0;
                 objectsToUpdate.add(apRole);
             }
             objectsToUpdate.add(coAp);
@@ -213,7 +214,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
                 resource.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_TOTALS;
                 isResourceUpdateNeeded = true;
             }
-            system.debug('isResourceUpdateNeeded '+isResourceUpdateNeeded);
+            
             if(isResourceUpdateNeeded) resourceListToUpdate.add(resource);
         }
         
