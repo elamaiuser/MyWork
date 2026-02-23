@@ -243,7 +243,8 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Account>)trigger.new,(Map<Id,Account>)trigger.oldMap); 
             }
             // HRP- 12142 --> Ends Here
-      }
+       }
+       AccountService.handleTaskPlanningPathChange((List<Account>) trigger.new, (Map<Id, Account>) trigger.oldMap);      
     }
     
     
