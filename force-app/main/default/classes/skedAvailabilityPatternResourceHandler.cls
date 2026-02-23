@@ -123,6 +123,8 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
     private void endDateRelatedColOpAvailabilityRecord(List<sked__Availability_Pattern_Resource__c> newRecords, Map<Id, sked__Availability_Pattern_Resource__c> oldMap) {
         Map<String, Date> map_coAndApName_coApEndDate = new Map<String, Date>();
         Map<Id, sObject> sObjectToUpdate = new Map<Id, sObject>();
+        Map<String, Decimal> map_apCoId_noOfAssignedResources = new Map<String, Decimal>();
+        Set<String> apAndCoIdKey = new Set<String>();
 
         for(sked__Availability_Pattern_Resource__c newRecord : newRecords) {
             sked__Availability_Pattern_Resource__c oldRecord = oldMap.get(newRecord.Id);
@@ -131,11 +133,41 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
                 if(!map_coAndApName_coApEndDate.containsKey(mapKey)) {
                     map_coAndApName_coApEndDate.put(mapKey, newRecord.sked_End_Date__c);
                 }
+                apAndCoIdKey.add(newRecord.sked__Availability_Pattern__c + '_' + newRecord.sked_Resource_Primary_CO__c);
+            }
+        }
+
+        Set<Id> colIds = new Set<Id>();
+        Set<Id> apIds = new Set<Id>();
+        
+        for(String key : apAndCoIdKey) {
+            colIds.add(key.split('_')[1]);
+            apIds.add(key.split('_')[0]);
+        }
+
+        for (AggregateResult ar : [
+            SELECT sked__Availability_Pattern__c apId,
+            sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Id resourcePrimaryCo,
+            COUNT_DISTINCT(sked__Resource__c) totalActualResources
+            FROM sked__Availability_Pattern_Resource__c
+            WHERE sked__Resource__r.sked_Collection_Operation_Id__c IN : colIds
+            AND sked__Availability_Pattern__c IN : apIds
+            AND (sked_End_Date__c = NULL OR sked_End_Date__c > TODAY)
+            AND sked__Resource__r.sked__Resource_Type__c = 'Person'
+            AND sked__Resource__r.sked__Is_Active__c = TRUE
+            GROUP BY sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Id, sked__Availability_Pattern__c
+        ]) {
+            map_apCoId_noOfAssignedResources.put((String)ar.get('apId') + '_' + (String)ar.get('resourcePrimaryCo') , (Decimal)ar.get('totalActualResources'));
+        }
+
+        for(String apAndCoId : apAndCoIdKey) {
+            if(map_apCoId_noOfAssignedResources.containsKey(apAndCoId) && map_apCoId_noOfAssignedResources.get(apAndCoId) >= 1) {
+                apAndCoIdKey.remove(apAndCoId);
             }
         }
 
         List<Collection_Operation_Availability__c> existingCoApRecords = [
-            SELECT Id, Effective_End_Date__c,
+            SELECT Id, Name, Effective_End_Date__c, Availability_Pattern__c,
             Collection_Operation__c, Collection_Operation__r.Grand_Total_Available_AP__c,
             Total_Actual_Resources__c
             FROM Collection_Operation_Availability__c
@@ -143,14 +175,18 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
         ];
 
         for(Collection_Operation_Availability__c coAp : existingCoApRecords) {
+            system.debug(coAp.Availability_Pattern__c + '_' + coAp.Collection_Operation__c);
+            if(!apAndCoIdKey.contains(coAp.Availability_Pattern__c + '_' + coAp.Collection_Operation__c)) continue;
+
             coAp.Effective_End_Date__c = map_coAndApName_coApEndDate.get(coAp.Name);
+            sObjectToUpdate.put(coAp.Id, coAp);
+
             if(!sObjectToUpdate.containsKey(coAp.Collection_Operation__c)) {
                 sObjectToUpdate.put(coAp.Collection_Operation__c, new Biomed_Collection_Op_Center__c(Id = coAp.Collection_Operation__c, Grand_Total_Available_AP__c = coAp.Collection_Operation__r.Grand_Total_Available_AP__c));
             }
             ((Biomed_Collection_Op_Center__c)sObjectToUpdate.get(coAp.Collection_Operation__c)).Grand_Total_Available_AP__c -= coAp.Total_Actual_Resources__c;
         }
 
-        sObjectToUpdate.putAll(existingCoApRecords);
         skedHubBase.BypassUpdateTriggers = true;
         Database.saveResult[] updateResults = Database.update(sObjectToUpdate.values(), false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
