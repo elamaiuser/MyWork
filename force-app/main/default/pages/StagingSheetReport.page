@@ -1,4 +1,13 @@
-<apex:page title="StagingSheetReport" controller="PowerBIProxyController"  docType="html-5.0" action="{!redirect}">
+<apex:page 
+    title="StagingSheetReport" 
+    controller="PowerBIProxyController"  
+    docType="html-5.0" >
+
+    <script>
+        window.onload = function () {
+            location.replace('{!JSENCODE(redirectURL)}');
+        };
+    </script>
     
     
 </apex:page>

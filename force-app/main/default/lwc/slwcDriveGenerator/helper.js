@@ -4043,6 +4043,23 @@ class DriveHelper {
     })
   }
 
+  isDriveMissingTimeBlock(drive, {
+    collectionOperationTimeBlocks = [],
+    collectionOperations = []
+  }) {
+      // Use provided collectionOperationTimeBlocks or fetch from drive's collectionOperation
+      const cotbList = collectionOperationTimeBlocks?.length
+        ? collectionOperationTimeBlocks
+        : (collectionOperations || []).find(co => co.id === drive.collectionOperationId)?.collectionOperationTimeBlocks || [];
+
+      if (!this.isDriveUseTimeBlock(drive, { collectionOperationTimeBlocks: cotbList })) {
+        return false;
+      }
+
+      // Check if any driveShift has null/undefined timeBlockId
+      return (drive?.driveShifts || []).some(shift => isNullOrEmpty(shift.timeBlockId));
+  }
+
   isDriveUseTimeBlock(drive, {
     collectionOperationTimeBlocks = []
   }) {
@@ -4169,7 +4186,8 @@ class DriveHelper {
           }
         }
       } else {
-        if (availableCOTimeBlocks.length >= 2 && !availableTimeBlocks.length) {
+        // Always validate missing time block first as long as there is at least one available CO time block
+        if (availableCOTimeBlocks.length >= 1 && !availableTimeBlocks.length) {
           return {
             driveShiftKey: driveShift.key,
             driveShift: driveShift,

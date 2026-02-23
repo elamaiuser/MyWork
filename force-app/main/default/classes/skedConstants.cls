@@ -70,6 +70,7 @@ public class skedConstants {
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';
+    public static final String AVAILABILITY_STAFFING_BUDGET_NOT_FOUND = 'Required staffing budget record not found in the system';
     public static final String AVAILABILITY_CRUD_MUST_COME_FROM_RAC = 'Unable to complete operation - Please use the Resource Availability Console to perform Availability/Activity related actions';
     public static final String DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE = 'Unable to complete operation - Please use the Drive Record Page to perform Drive/Job/Allocation related actions';
     public static final String RECORD_CHANGES_INVALID_FROM_LIST_VIEW = 'Unable to complete operation - You do not have permission to update records from this location.';
@@ -98,6 +99,11 @@ public class skedConstants {
 
     public static final string CALENDAR_BUILD_STATUS_QUALIFIED = 'Qualified';
     public static final string CALENDAR_BUILD_STATUS_UNQUALIFIED = 'Unqualified';
+
+    public static final string CO_AP_STATUS_ERROR = 'Error';
+    public static final string CO_AP_STATUS_PROCESSED = 'Processed';
+    public static final string CO_AP_STATUS_YET_TO_PROCESS_CO = 'Yet to process CO';
+    public static final string CO_AP_STATUS_YET_TO_PROCESS_TOTALS = 'Yet to Process Totals';
 
     public static final string DRIVE_OPTIMIZATION_STATUS_PENDING = 'Pending';
 
@@ -351,6 +357,9 @@ public class skedConstants {
     public static final string STAFFING_BUDGET_REQUEST_TYPE_ALL_HANDS_ON_DECK = 'Unavailability Day';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT = 'Bidding Period';
     public static final string STAFFING_BUDGET_REQUEST_TYPE_STANDARD = 'Standard';
+    
+    public static final string STAFFING_REASON_CALLOUT_REPLACEMENT = 'Callout replacement';
+    public static final string STAFFING_REASON_TRADE = 'Trade';
 
     public static final string SUPPORT_PLAN_STATUS_ACTIVE = 'Active';
     public static final string SUPPORT_PLAN_STATUS_CLOSED = 'Closed';
@@ -435,6 +444,11 @@ public class skedConstants {
 
     /* Debug Log */
     public static final string DEBUG_LOG_TYPE_WORKDAY_API = 'Workday API Request';
+    public static final string DEBUG_LOG_WORKDAY_CREATE_TIMEOFF = 'Create Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_TIMEOFF = 'Adjust Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_CANCEL_COMMENT = 'Cancelled via Skedulo'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_COMMENT = 'Adjusted via Skedulo'; //HRP-13728
+    public static final string DEBUG_LOG_TYPE_ERROR_LOG = 'Error Log';
 
     public static final string DEBUG_LOG_CATEGORY_SYSTEM_ERROR = 'System Error';
     public static final string DEBUG_LOG_CATEGORY_VALIDATION_ERROR = 'Validation Error';

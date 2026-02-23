@@ -1122,7 +1122,7 @@ class FixedSiteGenerator extends BaseGenerator {
 
     this.drive.driveShifts = this.buildMultiDriveShifts();
 
-    if(!skipGenerateSlots) {
+    if(!skipGenerateSlots && !this.masterData.skipGenerateSlots) {
       this.drive.driveShifts.forEach((driveShift) => {
         this.generateShiftSlots(driveShift);
       })
@@ -1188,6 +1188,13 @@ class FixedSiteGenerator extends BaseGenerator {
         let originalDriveShift = this.drive.driveShifts[index];
         driveShift.id = originalDriveShift.id;
         driveShift.key = originalDriveShift.key;
+
+        driveShift.slots = originalDriveShift.slots;
+        driveShift.canGenerateSlots = driveShift.slots?.length > 0;
+        driveShift.default2rbcSlots = originalDriveShift.default2rbcSlots;
+        driveShift.defaultWbSlots = originalDriveShift.defaultWbSlots;
+        driveShift.defaultPlasmaSlots = originalDriveShift.defaultPlasmaSlots;
+        driveShift.defaultPlateletSlots = originalDriveShift.defaultPlateletSlots;
 
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {

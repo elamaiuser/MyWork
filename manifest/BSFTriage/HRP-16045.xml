@@ -4,5 +4,5 @@
         <members>slwcDriveStaffingDetails</members>
         <name>LightningComponentBundle</name>
     </types>
-    <version>59.0</version>
+    <version>65.0</version>
 </Package>

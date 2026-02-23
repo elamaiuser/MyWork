@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>contactService_Test</members>
+        <members>OpportunityService</members>
+        <members>OpportunityTriggerTest</members>
+        <members>OpportunityServiceController</members>
+        <members>OpportunityServiceControllerTest</members>
+		<members>skedDriveHandler</members>
+		<members>skedDriveTrigger_Test</members>
+		<members>BSF_Batch_TaxonomyEndDate_Test</members>
+		<members>skedCollectionsZipCodeBatch_Test</members>
+		<members>DefaultTerritoryPortfolioBatch_Test</members>
+		<members>TerritoryTriggerHandler</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+		<members>PowerBIProxyController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Contact.After_Hours_Number__c</members>
+		<members>Contact.Primary_Phone_Number_New__c</members>
+		<members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
+		<members>sked__Location__c.sked_Staff_Personal_Parking_Directions__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
+		<members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
     <types>
 		<members>Fixed_Site_Opp_Record_Page</members>
 		<members>Mobile_Opp_Record_Page</members>
@@ -20,9 +49,17 @@
 		<members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
 		<name>Layout</name>
 	</types>
+	<types>
+		<members>slwcDriveStaffingDetails</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <types>
 		<members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
 		<name>QuickAction</name>
+	</types>
+	<types>
+		<members>aRCSearchAffiliations</members>
+		<name>LightningComponentBundle</name>
 	</types>
     <version>64.0</version>
 </Package>

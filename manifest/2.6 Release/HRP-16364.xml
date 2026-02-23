@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">	
+	<types>
+		<members>Task_Reassignment_Matrix.One_Week_Check_in</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+        <members>Task.Type</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>TaskType</members>        
+        <name>StandardValueSet</name>
+    </types>
+    <types>
+        <members>Task.General_Task_for_Global_Action</members>
+        <members>Task.General_Task</members>
+        <members>Task.Marketing_Exception</members>
+        <members>Task.Recruitment_Meeting</members>
+        <members>Task.Team_Portfolio_Assignment</members>
+        <members>Task.X72_Hour_CheckIn</members>
+        <name>RecordType</name>
+    </types>
+    <types>
+        <members>DriveTriggerHandler</members>   
+        <members>TaskService</members>        
+        <members>DriveTriggerService</members>
+        <name>ApexClass</name>
+    </types>
+	<version>65.0</version>
+</Package>

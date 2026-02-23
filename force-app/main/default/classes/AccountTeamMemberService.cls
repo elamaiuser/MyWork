@@ -1047,10 +1047,10 @@ eve.Start_Date__c = accIdMinMaxDates.get(acctId)[0];//HRP-13340
                                 oppIdLookupPopulatedListMap.put(opRecord.id,new list<string>());
                             if(!atmRecords.Is_Covering_Recruiter__c)
                             oppIdLookupPopulatedListMap.get(opRecord.id).add('AM');
-                            
+                          
                             if(atmRecords.Is_Covering_Recruiter__c)
                                 oppIdLookupPopulatedListMap.get(opRecord.id).add('CovAM');
-                            
+                           
                         }
                         if(atmRecords.TeamMemberRole == 'District Manager')
                         {
@@ -1604,58 +1604,86 @@ insert optyTeamMemberListToInsert;
             }
         }
     }
-    //HRP-14849 starts here adding covering recruiter
-   public static void assignCoveringRecruiterFromATM(List<AccountTeamMember> atmList) {
-        if (atmList == null || atmList.isEmpty()) return;
-
-        Map<Id, List<AccountTeamMember>> accIdToCoveringATMMap = new Map<Id, List<AccountTeamMember>>();
-
-        // Group relevant ATM records by AccountId
-        for (AccountTeamMember atm : atmList) {
-            if (atm.AccountId == null || atm.Is_Covering_Recruiter__c != true ||
-                atm.Start_Date__c == null || atm.End_Date__c == null) {
-                continue;
-            }
-
-            if (!accIdToCoveringATMMap.containsKey(atm.AccountId)) {
-                accIdToCoveringATMMap.put(atm.AccountId, new List<AccountTeamMember>());
-            }
-            accIdToCoveringATMMap.get(atm.AccountId).add(atm);
-        }
-
-        if (accIdToCoveringATMMap.isEmpty()) return;
-
-        // Query Opportunities for those Accounts
-        List<Opportunity> oppsToUpdate = [
-            SELECT Id, AccountId, Drive_Date__c, Covering_Recruiter__c
-            FROM Opportunity
-            WHERE AccountId IN :accIdToCoveringATMMap.keySet()
-            AND Drive_Date__c != null
-        ];
-
-        for (Opportunity opp : oppsToUpdate) {
-            List<AccountTeamMember> coveringTeam = accIdToCoveringATMMap.get(opp.AccountId);
-            if (coveringTeam == null || coveringTeam.isEmpty()) continue;
-
-            // Find the one with latest Start_Date__c where Drive_Date__c is within the date range
-            AccountTeamMember selected = null;
-            for (AccountTeamMember atm : coveringTeam) {
-                if (opp.Drive_Date__c >= atm.Start_Date__c && opp.Drive_Date__c <= atm.End_Date__c) {
-                    if (selected == null || atm.Start_Date__c > selected.Start_Date__c) {
-                        selected = atm;
-                    }
+  //HRP-14849 starts here adding covering recruiter
+public static void assignCoveringRecruiterFromATM(List<AccountTeamMember> atmList) {
+    if (atmList == null || atmList.isEmpty()) return;
+    
+    Map<Id, List<AccountTeamMember>> accIdToCoveringATMMap = new Map<Id, List<AccountTeamMember>>();
+    List<Opportunity> oppListToUpdate = new List<Opportunity>();
+    
+    Set<Id> accountIds = new Set<Id>(); for (AccountTeamMember atm : atmList) {
+        if (atm.AccountId != null) { 
+            accountIds.add(atm.AccountId); 
+        } 
+    } if (accountIds.isEmpty()) return;
+    
+    // Group relevant ATM records by AccountId
+    for (AccountTeamMember atm : [SELECT Id, AccountId, UserId, Start_Date__c, Is_Covering_Recruiter__c,
+                                  End_Date__c FROM AccountTeamMember WHERE AccountId IN :accountIds AND Is_Covering_Recruiter__c = true 
+                                  AND Start_Date__c != null AND End_Date__c != null]) {
+                                      
+                                      if (!accIdToCoveringATMMap.containsKey(atm.AccountId)) {
+                                          accIdToCoveringATMMap.put(atm.AccountId, new List<AccountTeamMember>());
+                                      }
+                                      accIdToCoveringATMMap.get(atm.AccountId).add(atm);
+                                  }
+  
+    if (accIdToCoveringATMMap.isEmpty()) return;
+    
+    // Query Opportunities for those Accounts
+    List<Opportunity> oppsToEvaluate = [
+        SELECT Id, AccountId, Drive_Date__c, Covering_Recruiter__c
+        FROM Opportunity
+        WHERE AccountId IN :accIdToCoveringATMMap.keySet()
+        AND Drive_Date__c != null 
+    ];
+    
+    for (Opportunity opp : oppsToEvaluate) {
+        List<AccountTeamMember> coveringTeam = accIdToCoveringATMMap.get(opp.AccountId);
+        if (coveringTeam == null || coveringTeam.isEmpty()) continue;
+        // Find the one with latest Start_Date__c where Drive_Date__c is within the date range
+        AccountTeamMember selected = null;
+        for (AccountTeamMember atm : coveringTeam) {
+            if (opp.Drive_Date__c >= atm.Start_Date__c && opp.Drive_Date__c <= atm.End_Date__c) {
+                if (selected == null || atm.Start_Date__c > selected.Start_Date__c) {
+                    selected = atm;
                 }
             }
-
-            if (selected != null) {
-                opp.Covering_Recruiter__c = selected.UserId;
-            } else {
-                opp.Covering_Recruiter__c = null;
+        }
+        
+        if (selected != null &&  opp.Covering_Recruiter__c != selected.UserId) {
+            opp.Covering_Recruiter__c = selected.UserId;
+            oppListToUpdate.add(opp);
+           } else if(selected == null && opp.Covering_Recruiter__c !=null ){
+            opp.Covering_Recruiter__c = null;
+            oppListToUpdate.add(opp);
+         }
+     }
+    
+    if (!oppListToUpdate.isEmpty()) 
+    {
+        Database.SaveResult[] results = Database.Update(oppListToUpdate, false);
+        List<BSF_Error_Log__c> insertErrorLog = new List<BSF_Error_Log__c>();
+        for (Integer i = 0; i < results.size(); i++) {
+            if (!results[i].isSuccess()) {
+                Opportunity opp = oppListToUpdate[i];
+                for (Database.Error err : results[i].getErrors()) {
+                    
+                    String msg =  'Failed Opportunity Id:' + opp.Id +
+                        'Field: ' + err.getFields() +
+                        'StatusCode: ' + err.getStatusCode() +
+                        'Message: ' + err.getMessage();
+                    
+                    BSF_Error_Log__c log = BSF_Utilities.getErrorLog('Assign Covering Recruiter from Account Team','AccountTeamMemberService', 'assignCoveringRecruiterFromATM', 'Error', err.getMessage(),msg);
+                    insertErrorLog.add(log);              
+                }
+                
             }
         }
-
-        if (!oppsToUpdate.isEmpty()) {
-            update oppsToUpdate;
+        if (!insertErrorLog.isEmpty()) {
+            Database.insert(insertErrorLog, false);
         }
+    }
+    
 }
 }

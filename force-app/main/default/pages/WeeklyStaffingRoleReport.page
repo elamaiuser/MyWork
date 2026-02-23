@@ -1,5 +1,13 @@
-<apex:page title="WeeklyStaffingRoleReport" controller="PowerBIProxyController"  docType="html-5.0" action="{!redirect}">
-    
+<apex:page title="WeeklyStaffingRoleReport" 
+    controller="PowerBIProxyController"  
+    docType="html-5.0" >
 
-    
+    <script>
+        (function() {
+            var url = '{!JSENCODE(redirectURL)}';
+            if (url) {
+                location.replace(url);
+            }
+        })();
+    </script>
 </apex:page>

@@ -57,13 +57,34 @@ private class BSF_Batch_OpportunityTeamMember_Test {
             ));
         }
         insert testTeamMembersList;
+        
+        //insert Portfolio_Accounts_Processing__c
+        Portfolio_Accounts_Processing__c testPortFolioAccountsProcessing = new Portfolio_Accounts_Processing__c(
+            Portfolio_progress_for_Accounts__c = 0,
+            Records_Processed__c = 0
+        );
+        insert testPortFolioAccountsProcessing;
     }
 
     @isTest
-    static void batchTest() {
+    static void batchTestDelete() {
         Test.startTest();
         BSF_Batch_OpportunityTeamMember batch = new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>{[SELECT Id, opportunityId, UserId FROM OpportunityTeamMember LIMIT 1]},new List<OpportunityTeamMember>(),'Delete',false,0);
         Database.executeBatch(batch);
         Test.stopTest();
+        
+        Integer testSuccessLogEntry = [SELECT COUNT() FROM BSF_Error_Log__c];
+        Assert.isTrue(testSuccessLogEntry != null && testSuccessLogEntry > 0);
+    }
+    
+    @isTest
+    static void batchTestInsert() {
+        Test.startTest();
+        BSF_Batch_OpportunityTeamMember batch = new BSF_Batch_OpportunityTeamMember(new List<OpportunityTeamMember>(), new List<OpportunityTeamMember>{[SELECT Id, opportunityId, UserId FROM OpportunityTeamMember LIMIT 1]}, 'Insert', true, 1);
+        Database.executeBatch(batch);
+        Test.stopTest();
+        
+        Portfolio_Accounts_Processing__c testPortFolioAccountsProcessing = [SELECT Id, Records_Processed__c FROM Portfolio_Accounts_Processing__c LIMIT 1];
+        Assert.isTrue(testPortFolioAccountsProcessing.Records_Processed__c > 0);
     }
 }

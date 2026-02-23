@@ -838,32 +838,7 @@ prevMember = member1;
 }
 return prevMember;
 }
-public static Set<Id> getInternalNameChangedAccounts(Map<Id, Account> oldAccountMap, List<Account> newAccountList){
-Set<Id> accountIds = new Set<Id>();
-for (Account newAccount : newAccountList) {
-Account oldAccount = oldAccountMap?.get(newAccount.Id);
-if (newAccount.Name != oldAccount?.Name) {//HRP-12136 prev Internal_Name__c--> Name
-accountIds.add(newAccount.Id);
-}
-}
-return accountIds;
-}
-public static void updateBloodDriveOpportunitiesForInternalNameChangeAsync(Set<Id> accountIds) {
-if (!accountIds.isEmpty()) {
-List<Opportunity> opportuntyUpdateList = new List<Opportunity>();
-//for (Opportunity opportunity : [SELECT Id, Is_Account_Internal_Name_Changed__c FROM Opportunity WHERE AccountId IN :accountIds AND Drive_Date__c >= TODAY AND Is_Template__c = FALSE]) {
-for (Opportunity opp : [SELECT Id, Name, Is_Template__c, Drive_Site__c, Account_Internal_Name__c, Site_Building_Name__c FROM Opportunity WHERE AccountId IN :accountIds AND Is_Template__c = FALSE]) {
-//opportunity.Is_Account_Internal_Name_Changed__c = true;
-opportuntyUpdateList.add(opp);
-}
-if (!opportuntyUpdateList.isEmpty()) {
-//Schema.DescribeSObjectResult ds = Opportunity.sObjectType.getDescribe();
-//if( ds.isUpdateable() ){}
-//update opportuntyUpdateList;
-OpportunityService.GenerateOpportunityName(opportuntyUpdateList, null);
-}
-}
-}
+
 // User Story: 1485 :Updates to Account Preference Values
 public static void validationForDaysOfWeekDeclined(Map<Id, Account> oldAccountMap, List<Account> newAccountList) {
 //System.debug('---Enter----');
@@ -1123,112 +1098,140 @@ acc.addError(label.DRD_Can_t_Create_Fixed_Account_Error_Msg);
 /*
 * HRP-9818 changes Ends
 */
+
 //Logic for HRP-10085 for opportunity and Template ***starts here***
 public static void updateTemplateBloodDriveOpportunitiesForAccountNameChange(List<Account> accounts,Map<Id, Account> oldAccountMap) {
-system.debug('accounts@@ '+accounts);
-Map<Id,Account> nameChangedAccoutMap =new Map<Id,Account>();
-List<Opportunity> OppList = new List<Opportunity>();
-if(accounts == null || oldAccountMap == null || accounts.isEmpty() || oldAccountMap.isEmpty()){
-return;
-}
-for(Account acc : accounts){
-if(!oldAccountMap.containsKey(acc.Id) || oldAccountMap.get(acc.Id) == null){
-continue;
-}
-if((String.isNotBlank(acc.Name) && !acc.Name.equals(oldAccountMap.get(acc.Id).Name))
-||(String.isNotBlank(acc.Internal_Name__c) && !acc.Internal_Name__c.equals(oldAccountMap.get(acc.Id).Internal_Name__c))){
-nameChangedAccoutMap.put(acc.Id,acc);
-}
-}
-System.debug('nameChangedAccoutMap Size: '+nameChangedAccoutMap.size());
-System.debug('nameChangedAccoutMap: '+nameChangedAccoutMap);
-if(!nameChangedAccoutMap.isEmpty()){
-OppList = [SELECT Id,
-Name,
-Is_Template__c,
-accountId,
-Drive_Site__c,
-Account_Internal_Name__c,
-Site_Building_Name__c
-FROM Opportunity
-WHERE AccountId IN :nameChangedAccoutMap.Keyset()
-AND Is_Template__c = true];
-System.debug('OppList Size: '+OppList.size());
-System.debug('OppList: '+OppList);
-}
-if(!system.isBatch() && !Test.isRunningTest() && !OppList.isEmpty()) {
-UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(OppList, null);
-Database.executeBatch(batchOppRecs, 200);
-}
+    Map<Id,Account> nameChangedAccoutMap =new Map<Id,Account>();
+    List<Opportunity> oppList = new List<Opportunity>();
+    if(accounts == null || oldAccountMap == null || accounts.isEmpty() || oldAccountMap.isEmpty()) {
+        return;
+    }
+    for(Account acc : accounts) {
+        if(!oldAccountMap.containsKey(acc.Id) || oldAccountMap.get(acc.Id) == null) {
+            continue;
+        }
+        if((String.isNotBlank(acc.Name) && !acc.Name.equals(oldAccountMap.get(acc.Id).Name))
+        ||(String.isNotBlank(acc.Internal_Name__c) && !acc.Internal_Name__c.equals(oldAccountMap.get(acc.Id).Internal_Name__c))) {
+            nameChangedAccoutMap.put(acc.Id,acc);
+        }
+    }
+    if(!nameChangedAccoutMap.isEmpty()) {
+        oppList = [
+            SELECT Id, Name, Drive_Name__c,
+            Is_Template__c, accountId,
+            Drive_Site__c, Drive_Site_Name__c,
+            Account_Internal_Name__c,
+            Site_Building_Name__c,
+            Template_Status__c, Additional_Description__c
+            FROM Opportunity
+            WHERE AccountId IN :nameChangedAccoutMap.Keyset()
+            AND Is_Template__c = true
+        ];
+    }
+
+    if(!system.isBatch() && !Test.isRunningTest() && !oppList.isEmpty()) {
+        UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(oppList, true, true);
+        Database.executeBatch(batchOppRecs, 200);
+    }
 }
 //Logic for HRP-10085 for opportunity and Template ***ends here***
+
+public static void updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync(List<Account> newAccountList, Map<Id, Account> oldAccountMap) {
+    Set<Id> accountIds = new Set<Id>();
+    for (Account newAccount : newAccountList) {
+        Account oldAccount = oldAccountMap?.get(newAccount.Id);
+        if (newAccount.Name != oldAccount?.Name || newAccount.Internal_Name__c != oldAccount?.Internal_Name__c) {
+            accountIds.add(newAccount.Id);
+        }
+    }
+
+    if (!accountIds.isEmpty()) {
+        Map<Id, Opportunity> map_oppId_opps = new Map<Id, Opportunity>([
+            SELECT Id, Name, AccountId,
+            Is_Template__c, Drive_Date__c, 
+            Drive_Site__c, Drive_Site_Name__c, Is_Account_Internal_Name_Changed__c,
+            Account_Internal_Name__c, RecordTypeId, 
+            Linked_Opportunity_Drives__c, Is_this_part_of_MultiDay_Drive__c,
+            Site_Building_Name__c, Account.Name, Account_Name__c 
+            FROM Opportunity 
+            WHERE AccountId IN :accountIds 
+            AND Is_Template__c = FALSE
+        ]);
+
+        if(!system.isBatch() && !Test.isRunningTest() && map_oppId_opps != null && !map_oppId_opps.isEmpty()) {
+            UpdateOpportunityNameBatch batchOppRecs = new UpdateOpportunityNameBatch(map_oppId_opps.values(), false, true);
+            Database.executeBatch(batchOppRecs, 1);
+        }
+    }
+}
+
 //Logic for HRP-10085 for Drives on calendar ***starts here***
-public static void updateDivesOnCalenderForAccountInternalNameChange(List<Account> accounts,Map<Id, Account> oldAccountMap){
-system.debug('accounts@@22 '+accounts);
-Map<Id,Account> nameChangedAccoutMap =new Map<Id,Account>();
-List<Opportunity> OppList = new List<Opportunity>();
-if(accounts == null || oldAccountMap == null || accounts.isEmpty() || oldAccountMap.isEmpty()){
-return;
-}
-for(Account acc : accounts){
-if(!oldAccountMap.containsKey(acc.Id) || oldAccountMap.get(acc.Id) == null){
-continue;
-}
-if((String.isNotBlank(acc.Name) && !acc.Name.equals(oldAccountMap.get(acc.Id).Name))
-||(String.isNotBlank(acc.Internal_Name__c) && !acc.Internal_Name__c.equals(oldAccountMap.get(acc.Id).Internal_Name__c))){
-nameChangedAccoutMap.put(acc.Id,acc);
-}
-}
-List<sked_Drive__c> DrivesList=[SELECT id,
-name,
-sked_Account__c,
-sked_Account__r.name,
-sked_Drive_Site__r.sked_Site_Building_Name__c,
-sked_Drive_Site__r.sked_Room_Name__c,
-sked_Drive_Site__r.Name,
-sked_Account__r.Internal_Name__c
-from sked_Drive__c
-where sked_Account__c
-IN :nameChangedAccoutMap.Keyset()];
-for(sked_Drive__c sdc:DrivesList){
-String drivenameNew = '';
-if(sdc.sked_Account__r != null && nameChangedAccoutMap.get(sdc.sked_Account__c) != null){
-drivenameNew = sdc.sked_Account__r.name + ', ';
-drivenameNew += sdc.sked_Drive_Site__r.Name;//HRP-12136
-//commented part of HRP-12136
-/*if(String.isNotBlank(sdc.sked_Drive_Site__r.sked_Room_Name__c)){
-drivenameNew = drivenameNew + '-' + sdc.sked_Drive_Site__r.sked_Room_Name__c;
-}*/
-//commented part of HRP-12136
-sdc.Name = driveNameNew.length() > 80 ? driveNameNew.substring(0, 75) + ' ...' : driveNameNew; //HRP-12136 changed; Prev drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
-}
-}
-if(!DrivesList.isEmpty()){
-skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
-//HRP-12136 start
-TriggerHandler.bypass('DriveTriggerHandler');
-skedHubBase.BypassInsertTriggers = true;
-skedHubBase.BypassUpdateTriggers = true;
-//HRP-12136 End
-List<Database.SaveResult> saveResults = Database.update(DrivesList,false);
-//HRP-12136 start
-skedHubBase.BypassInsertTriggers = false;
-skedHubBase.BypassUpdateTriggers = false;
-TriggerHandler.clearBypass('OpportunityTriggerHandler');
-//HRP-12136 End
-for(Database.SaveResult sr : saveResults){
-if (!sr.isSuccess()) {
-for(Database.Error err : sr.getErrors())
-{
-System.debug('The following error has occurred.');
-System.debug(err.getStatusCode() + ': ' + err.getMessage());
-System.debug('Drives fields that affected this error: ' + err.getFields());
-}
-}
-}
-}
+public static void updateDivesOnCalenderForAccountInternalNameChange(List<Account> accounts, Map<Id, Account> oldAccountMap) {
+    Map<Id,Account> nameChangedAccoutMap =new Map<Id,Account>();
+    List<Opportunity> OppList = new List<Opportunity>();
+
+    if(accounts == null || oldAccountMap == null || accounts.isEmpty() || oldAccountMap.isEmpty()) return;
+    
+    for(Account acc : accounts) {
+        if(!oldAccountMap.containsKey(acc.Id) || oldAccountMap.get(acc.Id) == null) continue;
+    
+        if((String.isNotBlank(acc.Name) && !acc.Name.equals(oldAccountMap.get(acc.Id).Name))
+        ||(String.isNotBlank(acc.Internal_Name__c) && !acc.Internal_Name__c.equals(oldAccountMap.get(acc.Id).Internal_Name__c))) {
+            nameChangedAccoutMap.put(acc.Id,acc);
+        }
+    }
+
+    List<sked_Drive__c> drivesList = [
+        SELECT id, name,
+        sked_Account__c, sked_Account__r.name,
+        sked_Drive_Site__r.sked_Site_Building_Name__c,
+        sked_Drive_Site__r.sked_Room_Name__c,
+        sked_Drive_Site__r.Name,
+        sked_Account__r.Internal_Name__c
+        FROM sked_Drive__c
+        WHERE sked_Account__c IN :nameChangedAccoutMap.keyset()
+    ];
+
+    for(sked_Drive__c sdc : drivesList) {
+        String drivenameNew = '';
+        if(sdc.sked_Account__r != null && nameChangedAccoutMap.get(sdc.sked_Account__c) != null) {
+            drivenameNew = sdc.sked_Account__r.name + ', ';
+            drivenameNew += sdc.sked_Drive_Site__r.Name; //HRP-12136
+            sdc.Name = driveNameNew.length() > 80 ? driveNameNew.substring(0, 75) + ' ...' : driveNameNew; //HRP-12136 changed; Prev drivenameNew.length() > 80 ? drivenameNew.substring(0,80) : drivenameNew ;
+        }
+    }
+
+    if(!drivesList.isEmpty()) {
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
+        //HRP-12136 start
+        TriggerHandler.bypass('DriveTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        //HRP-12136 End
+
+        List<Database.SaveResult> updateResults = Database.update(drivesList, false);
+
+        //HRP-12136 start
+        skedHubBase.BypassInsertTriggers = false;
+        skedHubBase.BypassUpdateTriggers = false;
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        //HRP-12136 End
+        
+        if(!updateResults.isEmpty()) {
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLogWithObjectId(
+                updateResults, 
+                'Update DOC Name', 
+                'AccountService',
+                'updateDivesOnCalenderForAccountInternalNameChange',
+                'Error',
+                'Update DOC Name'
+            );
+            InsertBsfErrorLog.insertBsfErrors(logList);
+        }
+    }
 }
 //Logic for HRP-10085 for Drives on calendar ***ends here***
+
 /*
 * HRP-10878 changes starts here
 * @Description: update the filed "Zipcode_change__c" Tracks Old Zipcode value in each update
@@ -1281,4 +1284,22 @@ Insert errorLogList;
 }
 }
 // HRP-9520 --> Ends Here
+
+public static void handleTaskPlanningPathChange(List<Account> newAccounts, Map<Id, Account> oldAccountMap) {
+  Set<Id> changedAccountIds = new Set<Id>();
+
+  for (Account acc : newAccounts) {
+      Account oldAcc = oldAccountMap.get(acc.Id);
+      
+      // Detect if the Planning Path value has changed
+      if (acc.Planning_Path__c != oldAcc.Planning_Path__c) {
+          changedAccountIds.add(acc.Id);
+      }
+  }
+
+  // Fire the Cascade Batch if changes were detected
+  if (!changedAccountIds.isEmpty()) {
+      Database.executeBatch(new BSF_AccountTaskPlanningCascadeBatch(changedAccountIds), 50);
+  }
+}
 }

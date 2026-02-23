@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>OpportunityService</members>
+        <members>skedDriveHandler</members>
         <members>skedDriveShiftHandler</members>
         <name>ApexClass</name>
     </types>
     <types>
-		<members>Biomed_Collection_Op_Center__c.sked_Time_Block_Count__c</members>
-		<members>sked_Drive_Shift__c.sked_Is_Time_Block_Missing__c</members>
-		<members>sked_Drive__c.sked_CO_Time_Block_Count__c</members>
-		<members>sked_Drive__c.sked_Shifts_Missing_Time_Blocks__c</members>
-		<name>CustomField</name>
-	</types>
-    <types>
-		<members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set</members>
-		<members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set_Read</members>
-		<members>BSF_Access_Control_Rule.HRP_15704_Field_Permission_Set_Read_CO</members>
+		<members>Custom_Messages.Time_Block_Validation_From_DOC</members>
+		<members>Custom_Messages.Time_Block_Validation_From_Opportunity</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
@@ -23,10 +17,6 @@
         <members>slwcDriveShift</members>
         <members>slwcResolveDriveContentions</members>
 		<name>LightningComponentBundle</name>
-	</types>
-    <types>
-		<members>sked_Drive__c.Restrict_DriveConfirm_wo_TimeBlock</members>
-		<name>ValidationRule</name>
 	</types>
     <version>64.0</version>
 </Package>

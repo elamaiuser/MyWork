@@ -52,9 +52,13 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                             wrapper.biomedCollectionOpId = skedResource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c;
 
                             List<String> primaryRoles = new List<String>();
-                            Decimal priority = skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c ;
+                            
+                            Decimal priority = 
+                            skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c != null ?
+                            skedResource.sked__ResourceTags__r.get(0).sked__Tag__r.sked_Priority__c : 0;
+                            
                             for(sked__Resource_Tag__c resourceTag : skedResource.sked__ResourceTags__r){
-                             if (resourceTag.sked__Tag__r.Name != null && resourceTag.sked__Tag__r.sked_Priority__c == priority ) {
+                                if (resourceTag.sked__Tag__r.Name != null && (priority == 0 || resourceTag.sked__Tag__r.sked_Priority__c == priority)) {
                             primaryRoles.add(resourceTag.sked__Tag__r.Name);
                              }
                             }
@@ -84,14 +88,19 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     }
     
     public override void onAfterInsert() {
-        populateStaffingBudgetAvailabilities(this.context.newRecords);
-        captureExceptionLogs(this.context.newRecords);
-        syncToResourceHoursRecord(this.context.newRecords);
-        if (!skedSetting.instance.Admin.migrationMode) {
-            if (!System.isBatch()) {
-                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
-                skedWorkdayUtils.publishWorkdayApprovalsEvent(skedWorkdayUtils.getApprovedRecordIds(this.context.newRecords));
+        try {
+            populateStaffingBudgetAvailabilities(this.context.newRecords);
+            captureExceptionLogs(this.context.newRecords);
+            syncToResourceHoursRecord(this.context.newRecords);
+            if (!skedSetting.instance.Admin.migrationMode) {
+                if (!System.isBatch()) {
+                    skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+                    skedWorkdayUtils.publishWorkdayApprovalsEvent(skedWorkdayUtils.getApprovedRecordIds(this.context.newRecords));
+                }
             }
+        } catch (Exception ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Insert', ex, (Set<Id>)this.context.newMap.keySet());
+            insert debugLog;
         }
     }
 
@@ -106,15 +115,20 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     
     public override void onAfterUpdate() {
         if (!skedSetting.instance.Admin.migrationMode) {
-            captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            syncToStaffingBudgetAvailabilities(this.context.newRecords);
-            cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-            skedWorkdayUtils.initiateFullWorkdaySync(this.context.newRecords, (Map<Id, sked__Availability__c>) this.context.oldMap);
-            if (!System.isBatch()) {
-                skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+            try {
+                captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                syncToStaffingBudgetAvailabilities(this.context.newRecords);
+                cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
+                skedWorkdayUtils.initiateFullWorkdaySync(this.context.newRecords, (Map<Id, sked__Availability__c>) this.context.oldMap);
+                if (!System.isBatch()) {
+                    skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.newRecords);
+                }
+            } catch (Exception ex) {
+                sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Update', ex, (Set<Id>)this.context.newMap.keySet());
+                insert debugLog;
             }
         }
     }
@@ -128,9 +142,14 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     }
 
     public override void onAfterDelete() {
-        skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.oldRecords);
-        deleteCallOut(this.context.oldRecords);
-        skedWorkdayUtils.publishWorkdayCancellationsEvent(skedWorkdayUtils.getCancellationsContainer(this.context.oldRecords));
+        try {
+            skedRecurringScheduleUtils.publishUpdateAvailabilityCountEvent(this.context.oldRecords);
+            deleteCallOut(this.context.oldRecords);
+            skedWorkdayUtils.publishWorkdayCancellationsEvent(skedWorkdayUtils.getCancellationsContainer(this.context.oldRecords));
+        } catch (Exception ex) {
+            sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Availability After Delete', ex, (Set<Id>)this.context.oldMap.keySet());
+            insert debugLog;
+        }
     }
 
     /*********************************************************** Private methods ***********************************************************/
@@ -367,6 +386,9 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                         newRecord.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(newRecord.sked_DateTime_Call_Out_Received__c, newRecord.sked__Start__c);	
                     }
                 }
+                if (newRecord.sked_Related_Call_Out__c != NULL) {
+                    newRecord.sked_Requested_Time_Off_Hours__c = skedWorkdayUtils.getWorkdayPtoHours(newRecord, skedResource);
+                }
             }
         }
     }
@@ -401,7 +423,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     private boolean canBeAutoApproved(sked__Availability__c availability, sked__Resource__c resource, Date currentDate) {
         Set<string> excludedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_PTO, skedConstants.UNAVAILABILITY_TYPE_FLOATING_HOLIDAY, skedConstants.UNAVAILABILITY_TYPE_PERSONAL, skedConstants.UNAVAILABILITY_TYPE_SICK};
         Set<String> typesrequiresCutOffDays = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_BEREAVEMENT};
-        Set<String> bypassedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_UNAVAILABLE};
+        Set<String> bypassedTypes = new Set<String>{skedConstants.UNAVAILABILITY_TYPE_UNAVAILABLE, skedConstants.AVAILABILITY_TYPE_CALL_OUT};
 
         Date startDate = skedDateTimeUtils.getDate(availability.sked__Start__c, availability.sked__Timezone__c);
 
@@ -418,7 +440,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         
         List<sked__Availability__c> recordsToPopulate = new List<sked__Availability__c>();
         for (sked__Availability__c newRecord : newRecords) {
-            if (newRecord.sked__Type__c != NULL && unavailabilityTypesToPopulate.contains(newRecord.sked__Type__c)) {
+            if (newRecord.sked_Related_Call_Out__c == NULL && newRecord.sked__Type__c != NULL && unavailabilityTypesToPopulate.contains(newRecord.sked__Type__c)) {
                 recordsToPopulate.add(newRecord);
             }
         }
@@ -477,7 +499,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                     }
 
                     if (!hasMatchingStaffingBudgetSlot && !Test.isRunningTest()) {
-                        wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY);
+                        wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NOT_FOUND);
                     }
                 }
                 
