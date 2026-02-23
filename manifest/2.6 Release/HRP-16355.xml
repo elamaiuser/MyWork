@@ -8,7 +8,7 @@
 	</types>
 	<types>
 		<members>BSF_Access_Control_Rule.HRP_16123_Account_Path_Field_PS</members>
-		<members>BSF_Access_Control_Rule.HRP_16123_Class_Component_PS</members>
+		<members>BSF_Access_Control_Rule.HRP_16123_Class_Component</members>
 		<members>BSF_Access_Control_Rule.HRP_16123_Opportunity_Path_Field_PS</members>
 		<members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Field_PS</members>
 		<members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Object_PS</members>
