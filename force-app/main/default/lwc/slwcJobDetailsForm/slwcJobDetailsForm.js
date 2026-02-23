@@ -91,6 +91,12 @@ export default class SlwcJobDetailsForm extends LightningElement {
             }));
         }
     }
+    sanitizeDateTime(value) {
+    if (!value) return null;
+    const str = String(value);
+    if (/[<>]/.test(str)) return null;
+    return value;
+}
 
     connectedCallback() {
         this.init();
