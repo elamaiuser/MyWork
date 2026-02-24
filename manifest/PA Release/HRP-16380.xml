@@ -73,5 +73,9 @@
 		<members>sked_Optimization_Run__c</members>
 		<name> CustomObject</name>
 	</types>
+    <types>
+		<members>sked_Optimization_Run__c-Optimization Run Layout</members>
+		<name>Layout</name>
+	</types>
 	<version>64.0</version>
 </Package>
