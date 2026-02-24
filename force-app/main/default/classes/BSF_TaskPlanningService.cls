@@ -109,6 +109,8 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> templateIds = new Set<Id>();
         for (Opportunity opp : newOpportunities) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+
             if (opp.AccountId != null) { accountIds.add(opp.AccountId); }
             if (opp.Parent_Template_Id__c != null) { templateIds.add(opp.Parent_Template_Id__c); }
         }
@@ -119,6 +121,8 @@ public with sharing class BSF_TaskPlanningService {
         Map<Id, List<Task_Selected_Package__c>> bundlesByTemplateId = getParentBundles(templateIds, 'Opportunity__c');
 
         for (Opportunity opp : newOpportunities) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            
             List<Task_Planning_Default__c> sourceConfigs = new List<Task_Planning_Default__c>();
             List<Task_Selected_Package__c> sourceBundles = new List<Task_Selected_Package__c>();
 
@@ -251,6 +255,8 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> templateChangedIds = new Set<Id>();
 
         for(Opportunity opp : newOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+
             Opportunity old = oldMap.get(opp.Id);
             
             // 1. Detect Status Change to 'Confirmed' (Trigger Task Generation)

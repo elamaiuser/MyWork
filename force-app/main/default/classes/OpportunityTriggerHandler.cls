@@ -582,7 +582,9 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.createPrimaryContactRoleAfterTemplateCreation((List<Opportunity>)trigger.new);
         }
 
-        BSF_TaskPlanningService.inheritConfiguration((List<Opportunity>) Trigger.new);
+        if(super.getTriggerMethodsToBypass().indexOf('inheritConfiguration') == -1) {
+            BSF_TaskPlanningService.inheritConfiguration((List<Opportunity>) Trigger.new);
+        }
 
 		System.debug('getCpuTime()'+limits.getCpuTime());
         System.debug('Exiting method AfterInsert');
@@ -741,8 +743,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             }
             // HRP- 12142 --> Ends Here
             System.debug('Exiting method AfterUpdate');
-        }        
-        BSF_TaskPlanningService.handleOpportunityUpdates((List<Opportunity>)Trigger.new, (Map<Id,Opportunity>)Trigger.oldMap);
+        }
+
+        if(super.getTriggerMethodsToBypass().indexOf('handleOpportunityUpdates') == -1) {
+            BSF_TaskPlanningService.handleOpportunityUpdates((List<Opportunity>)Trigger.new, (Map<Id,Opportunity>)Trigger.oldMap);
+        }
         
         System.debug('Exiting method AfterUpdate');
             system.debug(' Limits.getLimitQueries()'+ Limits.getLimitQueries());
