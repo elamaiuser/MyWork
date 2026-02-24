@@ -1322,6 +1322,11 @@ fetchJobTags(driveId){
     
     (resource.availabilityPatternResources || []).forEach((availabilityPatternResource) => {
       let patternData = this.availabilityPatternsMap[availabilityPatternResource.availabilityPatternId].pattern;
+
+      if (!patternData) {
+        return;
+      }
+
       patternData = JSON.parse(patternData)
       if (patternData.type === PATTERN_TYPE.WEEKLY) {
         let patternEvents = this.getWeeklyPatternEvents({
