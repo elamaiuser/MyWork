@@ -4,6 +4,8 @@ import {
   jobService,
   activityQueryModel,
   activityService,
+  activityCollectionOperationService,
+  activityCollectionOperationQueryModel,
   sObjectType,
 } from "c/dataService";
 import { DateTime } from "c/luxon";
@@ -61,30 +63,40 @@ export default class SlwcMobileCallOutContactInformationForm extends LightningEl
       return Promise.resolve([]);
     }
 
-    const activitySvc = new activityService();
-    const activityQuery = new activityQueryModel();
-    const startDate = DateTime.fromISO(this.job.start).toISODate();
-
     // Query activities for "After Hours Call Out Management" type
     // Filter by collection operation, activity's start/end should cover the job start date
     // and include activity resources
-    activityQuery.collectionOperationIds = [this.job.collectionOperationId];
-    activityQuery.startDate = startDate;
-    activityQuery.endDate = startDate;
-    activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE;
+    const activityCollectionOperationSvc = new activityCollectionOperationService();
+    const activityCollectionOperationQuery = new activityCollectionOperationQueryModel();
+    const startDate = DateTime.fromISO(this.job.start).toISODate();
 
-    return activitySvc.query(activityQuery).then((activities) => {
-      this.activityResources = (activities || [])
-        .filter(
-          (activity) => activity.eventType === "After Hours Call Out Management"
-        )
-        .flatMap((activity) =>
-          (activity.activityResources || []).map((ar) => ({
-            id: activity.id,
-            resource: ar.resource || {},
-          }))
-        );
-    });
+    activityCollectionOperationQuery.collectionOperationIds = [this.job.collectionOperationId];
+    activityCollectionOperationQuery.startDate = startDate;
+    activityCollectionOperationQuery.endDate = startDate;
+    activityCollectionOperationQuery.activityTypes = ["After Hours Call Out Management"];
+
+    return activityCollectionOperationSvc.query(activityCollectionOperationQuery)
+      .then((activityCOs) => {
+        const activitySvc = new activityService();
+        const activityQuery = new activityQueryModel();
+
+        activityQuery.recordIds = (activityCOs || []).map(activityCO => activityCO.activityId);
+        activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE;
+
+        if (!activityQuery.recordIds.length) {
+          return Promise.resolve([]);
+        }
+
+        return activitySvc.query(activityQuery).then((activities) => {
+          this.activityResources = (activities || [])
+            .flatMap((activity) =>
+              (activity.activityResources || []).map((ar) => ({
+                id: activity.id,
+                resource: ar.resource || {},
+              }))
+            );
+        });
+      });
   }
 
   hideConfirmModal() {

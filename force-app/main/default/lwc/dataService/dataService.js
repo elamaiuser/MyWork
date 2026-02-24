@@ -2,6 +2,7 @@ export * from './base';
 export * from './accountBridgeApiService';
 export * from './accountService';
 export * from './accountTagService';
+export * from './activityCollectionOperationService';
 export * from './availabilityService';
 export * from './availabilityPatternResourceService';
 export * from './activityService';
