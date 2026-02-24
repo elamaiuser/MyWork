@@ -3,7 +3,8 @@
     <types>
         <members>bsfVehiclePlanningReportPDF</members>
         <members>BSFWeeklyStaffingRTReport</members>
-        <members>skedAvailabilityUrlNavigation</members>    
+        <members>skedAvailabilityUrlNavigation</members>
+        <members>skedPTORequestSubmission</members>    
         <members>skedRAC</members>
         <members>MOEStagingSheetReport</members>
         <members>skedEmailHandler</members>
