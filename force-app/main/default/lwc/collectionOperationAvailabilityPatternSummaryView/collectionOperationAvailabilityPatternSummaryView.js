@@ -6,6 +6,10 @@ import {
   availabilityPatternRoleService,
   availabilityPatternRoleQueryModel
 } from 'c/dataService';
+import {
+    ShowToastEvent
+} from 'lightning/platformShowToastEvent';
+import { DateTime } from 'c/luxon';
 
 export default class CollectionOperationAvailabilityPatternSummaryView extends LightningElement {
     @api recordId;
@@ -13,6 +17,10 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
     @track records = [];
     @track model = {};
     @track showSpinner = false;
+
+    get todayIso() {
+        return DateTime.fromJSDate(new Date()).toISODate();
+    }
 
     connectedCallback() {
         this.init();
@@ -41,6 +49,7 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                     ... this.model,
                     grandTotalAvailable: grandTotalAvailable,
                     grandTotalNeeded: grandTotalNeeded,
+                    collectionOperationAvailabilities: (this.model.collectionOperationAvailabilities?.filter(coAp => coAp.endDate >= this.todayIso) ?? []),
                     variance: variance,
                     varianceClass: this.getColorClass(variance)
                 }
