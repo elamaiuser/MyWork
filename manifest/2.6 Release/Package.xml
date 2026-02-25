@@ -132,6 +132,8 @@
         <members>Activity.Location__c</members>
         <members>Contact.After_Hours_Number__c</members>
 		<members>Contact.Primary_Phone_Number_New__c</members>
+        <members>Biomed_Collection_Op_Center__c.Grand_Total_Available_AP__c</members>
+		<members>Biomed_Collection_Op_Center__c.Grand_Total_Needed_AP__c</members>
         <members>Opportunity.Account_Name__c</members>
         <members>Opportunity.Is_Path_Overridden__c</members>
 		<members>Opportunity.Planning_Path__c</members>
@@ -180,6 +182,8 @@
     </types>
     <types>
         <members>BSF_Access_Control_Rule.HRP_13441_Class_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
@@ -242,6 +246,7 @@
 	</types>
     <types>
         <members>APS_Homepage</members>
+        <members>Collection_Operation_Record_Page</members>
         <members>Fixed_Site_Opp_Record_Page</members>
         <members>Mobile_Account_Record_Page</members>
         <members>Mobile_Opp_Record_Page</members>
@@ -252,6 +257,8 @@
         <name>Flow</name>
     </types>
     <types>
+        <members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
+		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
         <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
         <members>Opportunity-APS Planner Mobile Opp Layout</members>
         <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
@@ -279,6 +286,7 @@
         <members>aRCSearchAffiliations</members>
         <members>autoMapper</members>
         <members>bsfTaskPlanningWizard</members>
+        <members>collectionOperationAvailabilityPatternSummaryView</members>
         <members>dataService</members>
         <members>slwcAvailator</members>
         <members>slwcDriveCalendar</members>
