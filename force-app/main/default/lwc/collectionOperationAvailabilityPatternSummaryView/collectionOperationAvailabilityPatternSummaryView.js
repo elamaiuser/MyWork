@@ -63,6 +63,7 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                         collectionOperationAvailabilities: this.model.collectionOperationAvailabilities.map(item => {
                             return { 
                                 ...item,
+                                totalTargetResources: (item.totalTargetResources ?? 0),
                                 totalVariance: (item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0),
                                 totalVarianceClass: this.getColorClass((item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0)),
                                 showApTotals: (queryResult?.some(apRole => apRole.colOpAvailabilityId === item.id)) ?? false,
