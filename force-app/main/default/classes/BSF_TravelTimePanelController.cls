@@ -174,6 +174,18 @@ public without sharing class BSF_TravelTimePanelController {
         if(String.isBlank(siteCO_Id)) {
             return travelTimeDataWrap;
         }
+
+        Boolean isRefreshInProgress = false;
+        List<sked_Travel_Time_Index_Refresh_Request__c> refreshRequestList = [
+            SELECT Id 
+            FROM sked_Travel_Time_Index_Refresh_Request__c 
+            WHERE sked_Manual_Refresh_SCO_Id__c = :siteCO_Id
+            AND sked_Status__c IN ('Pending', 'In Progress')
+            LIMIT 1
+        ];
+        if(!refreshRequestList.isEmpty()) {
+            isRefreshInProgress = true;
+        }
         
         Location site_Location;
         String siteKeystr;
@@ -373,18 +385,28 @@ public without sharing class BSF_TravelTimePanelController {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON_Backup__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
-                        wrapper.userOverride = true;
-                        wrapper.systemOverride = true;
-                        wrapper.overrideComment = systemOverrideComment;
+                        if(!isRefreshInProgress) {
+                            wrapper.userOverride = true;
+                            wrapper.systemOverride = true;
+                            wrapper.overrideComment = systemOverrideComment;
+                        } else {
+                            wrapper.userOverride = ttRec.User_Override__c;
+                            wrapper.systemOverride = false;
+                        }                       
                     }
                 }
                 else {
                     List<TravelTimeBreakdownJSON> emptyJsonData = generateEmptyTravelTimeData(0, allTravelTimeSlots);
                     for(TravelTimeBreakdownJSON ttData : emptyJsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
-                        wrapper.userOverride = true;
-                        wrapper.systemOverride = true;
-                        wrapper.overrideComment = systemOverrideComment;
+                        if(!isRefreshInProgress) {
+                            wrapper.userOverride = true;
+                            wrapper.systemOverride = true;
+                            wrapper.overrideComment = systemOverrideComment;
+                        } else {
+                            wrapper.userOverride = ttRec.User_Override__c;
+                            wrapper.systemOverride = false;
+                        }
                     }
                 }
                 travelTimeDataWrap.add(wrapper);
