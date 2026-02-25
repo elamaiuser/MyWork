@@ -244,7 +244,10 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
             }
             // HRP- 12142 --> Ends Here
        }
-       AccountService.handleTaskPlanningPathChange((List<Account>) trigger.new, (Map<Id, Account>) trigger.oldMap);      
+
+        if(super.getTriggerMethodsToBypass().indexOf('handleTaskPlanningPathChange') == -1) {
+            AccountService.handleTaskPlanningPathChange((List<Account>) trigger.new, (Map<Id, Account>) trigger.oldMap);    
+        }  
     }
     
     

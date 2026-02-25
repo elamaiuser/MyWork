@@ -3,6 +3,7 @@
 	<types>
 		<members>dataService</members>
     	<members>slwcMobileCallOutContactInformationForm</members>
+		<members>slwcAvailator</members>		
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
