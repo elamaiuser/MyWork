@@ -121,6 +121,7 @@
         <members>skedAvailabilityUrlNavigation</members>
         <members>skedEmailHandler</members>
         <members>skedMobileCallOutContactInformationForm</members>
+        <members>skedMyAvailabilityConsole</members>
         <members>skedPTORequestSubmission</members>
 		<members>skedRAC</members>
         <name>ApexPage</name>
