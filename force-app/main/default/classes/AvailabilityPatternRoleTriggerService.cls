@@ -34,16 +34,14 @@ public without sharing class AvailabilityPatternRoleTriggerService {
             ));
         }
 
-        skedHubBase.BypassUpdateTriggers = true;
         Database.SaveResult[] updateResults = Database.update(resourceListToUpdate, false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
             updateResults,
             'Resource Records update',
-            'CollectionOpAvailabilityTriggerService',
+            'AvailabilityPatternRoleTriggerService',
             'updateCoApStatusOnResources',
             'Error',
             'Record Update'
         ));
-        skedHubBase.BypassUpdateTriggers = false;
     }
 }

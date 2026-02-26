@@ -38,7 +38,6 @@ public without sharing class CollectionOpAvailabilityTriggerService {
             ));
         }
 
-        skedHubBase.BypassUpdateTriggers = true;
         Database.SaveResult[] updateResults = Database.update(resourceListToUpdate, false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
             updateResults,
@@ -48,6 +47,5 @@ public without sharing class CollectionOpAvailabilityTriggerService {
             'Error',
             'Record Update'
         ));
-        skedHubBase.BypassUpdateTriggers = false;
     }
 }
