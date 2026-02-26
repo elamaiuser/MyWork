@@ -127,7 +127,7 @@ public without sharing class BSF_TravelTimePanelController {
                                 travelTimeSet.add(wrap.travelTime);
                                 if(wrap.travelTime == null) {
                                     throw new AuraHandledException('TravelTime is Null.');
-                                }else if(jsondata.travelTime != wrap.travelTime) {
+                                }else if(jsondata != NULL && jsondata.travelTime != wrap.travelTime) {
                                     jsondata.travelTime = wrap.travelTime;
                                     ttJSONMap.put(wrap.travelTimeKey,jsondata);
                                     updateJSONFlag = true;
