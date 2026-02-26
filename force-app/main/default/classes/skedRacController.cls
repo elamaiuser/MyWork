@@ -315,6 +315,7 @@ global virtual class skedRacController extends skedBaseController {
             availabilityDetailsModel data = new availabilityDetailsModel();
             skedModels.availability event = models.get(0);
             event.timezone = event.start.format('z', event.timezoneSidId);
+            event.dailyTimeOffHoursMax = skedAvailabilityService.fetchDailyTimeOffHoursMax(request); // HRP-13613 - v2
             data.event = event;
             result.data = data;
         }
@@ -1359,11 +1360,15 @@ global virtual class skedRacController extends skedBaseController {
             result.data = data;
 
             availabilityService.setDefaultStatusesForUnavailabilities(data.hasEnoughHours, unavailabilityList);
-            data.unavailability = unavailabilityList;
+            data.unavailability = skedAvailabilityService.verifyTimeConflict(unavailabilityList, resourceId); // HRP-13613
             result.data = data;
         }
         catch (Exception ex) {
             result.getError(ex);
+        }
+        if (skedAvailabilityService.hasConflictError) { // HRP-13613
+            result.success = false;
+            result.errorMessage = skedAvailabilityService.consolidateConflictErrorMessage;
         }
         return result;
     }
@@ -1388,6 +1393,7 @@ global virtual class skedRacController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
+                sked_Daily_Time_Off_Hours__c, // HRP-13613
                 (SELECT Id, sked__Tag__r.Name , sked__Tag__r.sked_Priority__c
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
@@ -1433,6 +1439,7 @@ global virtual class skedRacController extends skedBaseController {
             }
             //get existing unavailability
             List<sked__Availability__c> existingUnavailabilityList = [SELECT Id, sked_Start_Date__c, sked_Finish_Date__c
+                                                                      , sked__Type__c, sked_Is_All_Day__c, sked_Duration__c // HRP-13613
                                                                       FROM sked__Availability__c
                                                                       WHERE sked__Resource__c = :request.event.resourceId
                                                                       AND sked__Type__c = :request.event.eventType
@@ -1441,10 +1448,27 @@ global virtual class skedRacController extends skedBaseController {
                                                                       AND sked_Finish_Date__c >= :startDate
                                                                       AND sked__Status__c != :skedConstants.AVAILABILITY_STATUS_DECLINED];
             Set<Date> existingAvailabilityDates = new Set<Date>();
+            Map<string, Decimal> unavailabilityDateUnavailableMinutesMap = new Map<string, Decimal>(); // HRP-13613
+            Map<string, boolean> unavailabilityDateAllDayAvailableMap = new Map<string, boolean>(); // HRP-13613
             for (sked__Availability__c unavailability : existingUnavailabilityList) {
+                // HRP-13613---------start------
+                unavailabilityDateAllDayAvailableMap.put(Json.serialize(unavailability.sked_Start_Date__c).replace('"', ''), false);
+                if (unavailability.sked_Start_Date__c != null && unavailability.sked_Duration__c != null) {
+                    String dateKey = Json.serialize(unavailability.sked_Start_Date__c).replace('"', '');
+                    if (!unavailabilityDateUnavailableMinutesMap.containsKey(dateKey)) {
+                        unavailabilityDateUnavailableMinutesMap.put(dateKey, 0);
+                    }
+                    unavailabilityDateUnavailableMinutesMap.put(
+                        dateKey,
+                        unavailabilityDateUnavailableMinutesMap.get(dateKey) + unavailability.sked_Duration__c
+                    );
+                }
+                // HRP-13613-------------end-------
                 tempDate = unavailability.sked_Start_Date__c;
                 while (tempDate <= unavailability.sked_Finish_Date__c) {
-                    existingAvailabilityDates.add(tempDate);
+                    if ((unavailability.sked__Type__c == request.event.eventType) || (unavailability.sked_Is_All_Day__c)) { // HRP-13613
+                        existingAvailabilityDates.add(tempDate);
+                    }
                     tempDate = tempDate.addDays(1);
                 }
             }
@@ -1494,7 +1518,16 @@ global virtual class skedRacController extends skedBaseController {
                         }
                     }
                 }
-                
+                // HRP-13613------------start---------
+                if (unavailabilityDateAllDayAvailableMap.containskey(unavailability.unavailabilityDate)) {
+                    unavailability.isAllDayLeaveAvailable = unavailabilityDateAllDayAvailableMap.get(unavailability.unavailabilityDate);
+                }
+                if (unavailabilityDateUnavailableMinutesMap.containskey(unavailability.unavailabilityDate)) {
+                    unavailability.dailyTimeOffHoursMax = skedResource.sked_Daily_Time_Off_Hours__c - (unavailabilityDateUnavailableMinutesMap.get(unavailability.unavailabilityDate) / 60).setScale(2);
+                } else {
+                    unavailability.dailyTimeOffHoursMax = skedResource.sked_Daily_Time_Off_Hours__c;
+                }
+                // HRP-13613---------end-----------
                 data.unavailability.add(unavailability);
                 tempDate = tempDate.addDays(1);
             }
@@ -2602,6 +2635,8 @@ global virtual class skedRacController extends skedBaseController {
         public integer workingStartTime;
         public integer workingEndTime;
         public string unavailabilityDate;
+        public decimal dailyTimeOffHoursMax; // HRP-13613
+        public boolean isAllDayLeaveAvailable = true; // HRP-13613 
     }
     
     global class verifyUnavailabilityBalanceRequestModel extends saveRequestModel {
