@@ -3,8 +3,10 @@
     <types>
 		<members>AvailabilityPatternRoleHandler</members>
 		<members>AvailabilityPatternRoleTriggerService</members>
+        <members>AvailabilityPatternRoleTrigger_Test</members>
 		<members>CollectionOpAvailabilityTriggerHandler</members>
 		<members>CollectionOpAvailabilityTriggerService</members>
+        <members>CollectionOpAvailabilityTrigger_Test</members>
 		<members>skedAvailabilityPatternResourceHandler</members>
 		<members>skedConstants</members>
 		<members>skedNightlyUpdateCoApRoleTargetsBatch</members>
