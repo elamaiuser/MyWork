@@ -99,6 +99,11 @@ public class skedConstants {
     public static final string CALENDAR_BUILD_STATUS_QUALIFIED = 'Qualified';
     public static final string CALENDAR_BUILD_STATUS_UNQUALIFIED = 'Unqualified';
 
+    public static final string CO_AP_STATUS_ERROR = 'Error';
+    public static final string CO_AP_STATUS_PROCESSED = 'Processed';
+    public static final string CO_AP_STATUS_YET_TO_PROCESS_CO = 'Yet to process CO';
+    public static final string CO_AP_STATUS_YET_TO_PROCESS_TOTALS = 'Yet to Process Totals';
+
     public static final string DRIVE_OPTIMIZATION_STATUS_PENDING = 'Pending';
 
     public static final string DRIVE_PENDING_ACTION_CANCEL_IN_PROCESS = 'Cancel In Process';
