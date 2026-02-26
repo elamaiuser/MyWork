@@ -1651,4 +1651,291 @@ private class skedRacStory_Test {
         skedRemoteResultModel getAddressPredictionResult = skedRacController.getAddressPredictions(getAddressPredictionRequest);
         Test.stopTest();
     }
+    
+    @isTest
+    static void testGetEventDetails() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+        
+        // Set sked__Resource__c.sked_Daily_Time_Off_Hours__c
+        testResource1.sked_Daily_Time_Off_Hours__c = 8.00;
+        update testResource1;
+
+        //create unavailability #1
+        skedRacController.saveAvailabilityRequestModel saveUnAvailabilityRequest1 = new skedRacController.saveAvailabilityRequestModel();
+        saveUnAvailabilityRequest1.viewData = new Map<string, object>();
+        saveUnAvailabilityRequest1.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveUnAvailabilityRequest1.event = new skedModels.availability();
+        saveUnAvailabilityRequest1.event.endDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest1.event.endTime = 1300;
+        saveUnAvailabilityRequest1.event.eventType = 'PTO';
+        saveUnAvailabilityRequest1.event.notes = 'notes saveUnAvailabilityRequest1';
+        saveUnAvailabilityRequest1.event.startDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest1.event.startTime = 900;
+        saveUnAvailabilityRequest1.event.resourceId = testResource1.Id;
+        saveUnAvailabilityRequest1.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        saveUnAvailabilityRequest1.event.isAvailable = false;
+        skedRemoteResultModel saveAvailabilityResult1 = skedRacController.saveAvailability(saveUnAvailabilityRequest1);
+
+        sked__Availability__c availabilityChecking1 = [
+            SELECT Id, sked__Start__c, sked__Finish__c, sked__Notes__c, sked__Type__c, sked__Resource__c
+            FROM sked__Availability__c
+            LIMIT 1
+        ];
+        
+        Test.startTest();
+
+        //get event details #1
+        skedRacController.getAvailabilityDetailsRequest getAvailabilityDetailsRequest1 = new skedRacController.getAvailabilityDetailsRequest();
+        getAvailabilityDetailsRequest1.viewData = new Map<string, object>();
+        getAvailabilityDetailsRequest1.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getAvailabilityDetailsRequest1.event = new skedModels.availability();
+        getAvailabilityDetailsRequest1.event.id = availabilityChecking1.Id;
+        getAvailabilityDetailsRequest1.event.startDate = testDataFactory.summary.startDateIso;
+        getAvailabilityDetailsRequest1.event.endDate = testDataFactory.summary.endDateIso;
+        skedRemoteResultModel getEventDetailsResult1 = skedRacController.getEventDetails(getAvailabilityDetailsRequest1);
+
+        // System.debug('assertEquals getEventDetailsResult1.success (true):' + getEventDetailsResult1.success);
+        System.assertEquals(true, getEventDetailsResult1.success);
+
+        //create unavailability #2
+        skedRacController.saveAvailabilityRequestModel saveUnAvailabilityRequest2 = new skedRacController.saveAvailabilityRequestModel();
+        saveUnAvailabilityRequest2.viewData = new Map<string, object>();
+        saveUnAvailabilityRequest2.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveUnAvailabilityRequest2.event = new skedModels.availability();
+        saveUnAvailabilityRequest2.event.endDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest2.event.endTime = 1700;
+        saveUnAvailabilityRequest2.event.eventType = 'Floating Holiday';
+        saveUnAvailabilityRequest2.event.notes = 'notes saveUnAvailabilityRequest2';
+        saveUnAvailabilityRequest2.event.startDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest2.event.startTime = 1300;
+        saveUnAvailabilityRequest2.event.resourceId = testResource1.Id;
+        saveUnAvailabilityRequest2.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        saveUnAvailabilityRequest2.event.isAvailable = false;
+        skedRemoteResultModel saveAvailabilityResult2 = skedRacController.saveAvailability(saveUnAvailabilityRequest2);
+
+        sked__Availability__c availabilityChecking2 = [
+            SELECT Id, sked__Start__c, sked__Finish__c, sked__Notes__c, sked__Type__c, sked__Resource__c
+            FROM sked__Availability__c
+            LIMIT 1
+        ];
+
+        //get event details #2
+        skedRacController.getAvailabilityDetailsRequest getAvailabilityDetailsRequest2 = new skedRacController.getAvailabilityDetailsRequest();
+        getAvailabilityDetailsRequest2.viewData = new Map<string, object>();
+        getAvailabilityDetailsRequest2.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getAvailabilityDetailsRequest2.event = new skedModels.availability();
+        getAvailabilityDetailsRequest2.event.id = availabilityChecking2.Id;
+        getAvailabilityDetailsRequest2.event.startDate = testDataFactory.summary.startDateIso;
+        getAvailabilityDetailsRequest2.event.endDate = testDataFactory.summary.endDateIso;
+        skedRemoteResultModel getEventDetailsResult2 = skedRacController.getEventDetails(getAvailabilityDetailsRequest2);
+
+        // System.debug('assertEquals getEventDetailsResult2.success (true):' + getEventDetailsResult2.success);
+        System.assertEquals(true, getEventDetailsResult2.success);
+
+        Test.stopTest();
+
+    }
+
+    @isTest
+    static void testVerifyTimeConflict() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        
+        sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+
+        //create unavailability #1
+        skedRacController.saveAvailabilityRequestModel saveUnAvailabilityRequest1 = new skedRacController.saveAvailabilityRequestModel();
+        saveUnAvailabilityRequest1.viewData = new Map<string, object>();
+        saveUnAvailabilityRequest1.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveUnAvailabilityRequest1.event = new skedModels.availability();
+        saveUnAvailabilityRequest1.event.endDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest1.event.endTime = 1300;
+        saveUnAvailabilityRequest1.event.eventType = 'Floating Holiday';
+        saveUnAvailabilityRequest1.event.notes = 'notes saveUnAvailabilityRequest1';
+        saveUnAvailabilityRequest1.event.startDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest1.event.startTime = 900;
+        saveUnAvailabilityRequest1.event.resourceId = testResource1.Id;
+        saveUnAvailabilityRequest1.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        saveUnAvailabilityRequest1.event.isAvailable = false;
+        skedRemoteResultModel saveAvailabilityResult1 = skedRacController.saveAvailability(saveUnAvailabilityRequest1);
+
+        sked__Availability__c existingAvailability = [
+            SELECT Id, sked__Start__c, sked__Finish__c, sked__Resource__c
+            FROM sked__Availability__c
+            LIMIT 1
+        ];
+
+        //create unavailability #2
+        skedRacController.saveAvailabilityRequestModel saveUnAvailabilityRequest2 = new skedRacController.saveAvailabilityRequestModel();
+        saveUnAvailabilityRequest2.viewData = new Map<string, object>();
+        saveUnAvailabilityRequest2.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveUnAvailabilityRequest2.event = new skedModels.availability();
+        saveUnAvailabilityRequest2.event.endDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        saveUnAvailabilityRequest2.event.eventType = 'Floating Holiday';
+        saveUnAvailabilityRequest2.event.notes = 'notes saveUnAvailabilityRequest2';
+        saveUnAvailabilityRequest2.event.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        saveUnAvailabilityRequest2.event.resourceId = testResource1.Id;
+        saveUnAvailabilityRequest2.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        saveUnAvailabilityRequest2.event.isAvailable = false;
+        saveUnAvailabilityRequest2.event.isAllDay = true;
+        skedRemoteResultModel saveAvailabilityResult2 = skedRacController.saveAvailability(saveUnAvailabilityRequest2);
+
+        //create unavailability #3
+        skedRacController.saveAvailabilityRequestModel saveUnAvailabilityRequest3 = new skedRacController.saveAvailabilityRequestModel();
+        saveUnAvailabilityRequest3.viewData = new Map<string, object>();
+        saveUnAvailabilityRequest3.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveUnAvailabilityRequest3.event = new skedModels.availability();
+        saveUnAvailabilityRequest3.event.endDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest3.event.endTime = 1430;
+        saveUnAvailabilityRequest3.event.eventType = 'Floating Holiday';
+        saveUnAvailabilityRequest3.event.notes = 'notes saveUnAvailabilityRequest3';
+        saveUnAvailabilityRequest3.event.startDate = testDataFactory.summary.startDateIso;
+        saveUnAvailabilityRequest3.event.startTime = 1330;
+        saveUnAvailabilityRequest3.event.resourceId = testResource1.Id;
+        saveUnAvailabilityRequest3.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        saveUnAvailabilityRequest3.event.isAvailable = false;
+        skedRemoteResultModel saveAvailabilityResult3 = skedRacController.saveAvailability(saveUnAvailabilityRequest3);
+
+        Test.startTest();
+                
+        //create new unavailability
+        skedRacController.saveAvailabilityRequestModel saveAvailabilityRequest = new skedRacController.saveAvailabilityRequestModel();
+        saveAvailabilityRequest.viewData = new Map<string, object>();
+        saveAvailabilityRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveAvailabilityRequest.event = new skedModels.availability();
+        saveAvailabilityRequest.event.endDate = testDataFactory.summary.startDateIso;
+        saveAvailabilityRequest.event.endTime = 1700;
+        saveAvailabilityRequest.event.eventType = 'PTO';
+        saveAvailabilityRequest.event.notes = 'notes saveAvailabilityRequest';
+        saveAvailabilityRequest.event.startDate = testDataFactory.summary.startDateIso;
+        saveAvailabilityRequest.event.startTime = 900;
+        saveAvailabilityRequest.event.resourceId = testResource1.Id;
+        saveAvailabilityRequest.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        skedRemoteResultModel prepareUnavailabilityResult = skedRacController.prepareUnavailabilityRequest(saveAvailabilityRequest);
+
+        // System.debug('assertEquals prepareUnavailabilityResult.success (true):' + prepareUnavailabilityResult.success);
+        System.assertEquals(true, prepareUnavailabilityResult.success);
+
+        //create new unavailability
+        skedRacController.saveAvailabilityRequestModel saveAvailabilityRequest1 = new skedRacController.saveAvailabilityRequestModel();
+        saveAvailabilityRequest1.viewData = new Map<string, object>();
+        saveAvailabilityRequest1.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveAvailabilityRequest1.event = new skedModels.availability();
+        saveAvailabilityRequest1.event.endDate = Json.serialize(testDataFactory.summary.startDate.addDays(4)).replace('"', '');
+        saveAvailabilityRequest1.event.endTime = 1700;
+        saveAvailabilityRequest1.event.eventType = 'PTO';
+        saveAvailabilityRequest1.event.notes = 'notes saveAvailabilityRequest1';
+        saveAvailabilityRequest1.event.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(4)).replace('"', '');
+        saveAvailabilityRequest1.event.startTime = 900;
+        saveAvailabilityRequest1.event.resourceId = testResource1.Id;
+        saveAvailabilityRequest1.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        skedRemoteResultModel prepareUnavailabilityResult1 = skedRacController.prepareUnavailabilityRequest(saveAvailabilityRequest1);
+
+        // System.debug('assertEquals prepareUnavailabilityResult1.success (true):' + prepareUnavailabilityResult1.success);
+        System.assertEquals(true, prepareUnavailabilityResult1.success);
+
+        //create new unavailability
+        skedRacController.saveAvailabilityRequestModel saveAvailabilityRequest2 = new skedRacController.saveAvailabilityRequestModel();
+        saveAvailabilityRequest2.viewData = new Map<string, object>();
+        saveAvailabilityRequest2.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        saveAvailabilityRequest2.event = new skedModels.availability();
+        saveAvailabilityRequest2.event.endDate = testDataFactory.summary.startDateIso;
+        saveAvailabilityRequest2.event.endTime = 1700;
+        saveAvailabilityRequest2.event.eventType = 'Floating Holiday';
+        saveAvailabilityRequest2.event.notes = 'notes saveAvailabilityRequest2';
+        saveAvailabilityRequest2.event.startDate = testDataFactory.summary.startDateIso;
+        saveAvailabilityRequest2.event.startTime = 900;
+        saveAvailabilityRequest2.event.resourceId = testResource1.Id;
+        saveAvailabilityRequest2.event.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        skedRemoteResultModel prepareUnavailabilityResult2 = skedRacController.prepareUnavailabilityRequest(saveAvailabilityRequest2);
+
+        // System.debug('assertEquals prepareUnavailabilityResult2.success (true):' + prepareUnavailabilityResult2.success);
+        System.assertEquals(true, prepareUnavailabilityResult2.success);
+
+        skedModels.availability event1 = new skedModels.availability();
+        event1.endDate = testDataFactory.summary.startDateIso;
+        event1.endTime = 1700;
+        event1.eventType = 'PTO';
+        event1.notes = 'notes event1';
+        event1.startDate = testDataFactory.summary.startDateIso;
+        event1.startTime = 900;
+        event1.resourceId = testResource1.Id;
+        event1.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        event1.isAllDay = false;
+
+        skedModels.availability event2 = new skedModels.availability();
+        event2.endDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        event2.endTime = 2359;
+        event2.eventType = 'PTO';
+        event2.notes = 'notes event2';
+        event2.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        event2.startTime = 0000;
+        event2.resourceId = testResource1.Id;
+        event2.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        event2.isAllDay = true;
+
+        skedModels.availability event3 = new skedModels.availability();
+        event3.endDate = Json.serialize(testDataFactory.summary.startDate.addDays(-1)).replace('"', '');
+        event3.endTime = 2359;
+        event3.eventType = 'PTO';
+        event3.notes = 'notes event3';
+        event3.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(-1)).replace('"', '');
+        event3.startTime = 0000;
+        event3.resourceId = testResource1.Id;
+        event3.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        event3.isAllDay = true;
+
+        skedModels.availability event4 = new skedModels.availability();
+        event4.endDate = testDataFactory.summary.startDateIso;
+        event4.endTime = 1700;
+        event4.eventType = 'Floating Holiday';
+        event4.notes = 'notes event4';
+        event4.startDate = testDataFactory.summary.startDateIso;
+        event4.startTime = 900;
+        event4.resourceId = testResource1.Id;
+        event4.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        event4.isAllDay = false;
+        event4.id = existingAvailability.id;
+
+        skedRacController.verifyUnavailabilityBalanceRequestModel verifyUnavailabilityBalanceRequest = new skedRacController.verifyUnavailabilityBalanceRequestModel();
+        verifyUnavailabilityBalanceRequest.viewData = new Map<string, object>();
+        verifyUnavailabilityBalanceRequest.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        verifyUnavailabilityBalanceRequest.unavailability = new List<skedModels.availability>();
+        verifyUnavailabilityBalanceRequest.unavailability.add(event1);
+        verifyUnavailabilityBalanceRequest.unavailability.add(event2);
+        verifyUnavailabilityBalanceRequest.unavailability.add(event3);
+        verifyUnavailabilityBalanceRequest.unavailability.add(event4);
+        skedRemoteResultModel verifyUnavailabilityBalanceResult = skedRacController.verifyUnavailabilityBalance(verifyUnavailabilityBalanceRequest);
+
+        // System.debug('assertEquals verifyUnavailabilityBalanceResult.success (false):' + verifyUnavailabilityBalanceResult.success);
+        System.assertEquals(false, verifyUnavailabilityBalanceResult.success);
+
+        Test.stopTest();
+
+    }
+
+    @isTest
+    static void skedAvailabilityService_convertToTime_throws_onInvalidHourOrMinute() {
+        // Arrange
+        Integer[] badValues = new Integer[] { 2400, 2360 };
+
+        for (Integer bad : badValues) {
+            Boolean threw = false;
+            try {
+                // Act
+                skedAvailabilityService.convertToTime(bad);
+            } catch (IllegalArgumentException ex) {
+                // Assert
+                threw = true;
+                System.assert(ex.getMessage().contains('Invalid time'),
+                    'Message should contain a helpful reason. Got: ' + ex.getMessage());
+            }
+            System.assert(threw, 'Expected IllegalArgumentException for value: ' + bad);
+        }
+    }
+
 }
