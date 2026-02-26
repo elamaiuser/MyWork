@@ -20,6 +20,7 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
     }
 
     public override void onAfterUpdate() {
+        updateCoApStatusOnResources(this.context.newRecords, (Map<Id, sked__Availability_Pattern_Resource__c>)this.context.oldMap);
         endDateRelatedColOpAvailabilityRecord(this.context.newRecords, (Map<Id, sked__Availability_Pattern_Resource__c>)this.context.oldMap);
     }
     
@@ -107,17 +108,64 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
             }
         }
 
-        skedHubBase.BypassUpdateTriggers = true;
         Database.saveResult[] updateResults = Database.update(map_resourceId_resourceToUpdate.values(), false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
             updateResults,
             'Resource CO_AP_Status__c update',
             'skedAvailabilityPatternResourceHandler',
-            'updateCoApStatusOnResources',
+            'updateCoApStatusOnResources on After Insert',
             'Error',
             'Record Update'
         ));
-        skedHubBase.BypassUpdateTriggers = false;
+    }
+
+    private void updateCoApStatusOnResources(List<sked__Availability_Pattern_Resource__c> newRecords, Map<Id, sked__Availability_Pattern_Resource__c> oldMap) {
+        Map<Id, sked__Resource__c> map_resourceId_resourceToUpdate = new Map<Id, sked__Resource__c>();
+        Set<Id> resourceIdsNeedUpdate = new Set<Id>();
+        Set<Id> endDatedApIds = new Set<Id>();
+
+        for (sked__Availability_Pattern_Resource__c newRecord : newRecords) {
+            sked__Availability_Pattern_Resource__c oldRecord = oldMap.get(newRecord.Id);
+            if(newRecord.sked_End_Date__c != oldRecord.sked_End_Date__c && newRecord.sked_End_Date__c <= System.today()) {
+                resourceIdsNeedUpdate.add(newRecord.sked__Resource__c);
+                endDatedApIds.add(newRecord.sked__Availability_Pattern__c);
+            }
+        }
+
+        if(!endDatedApIds.isEmpty()) {
+            List<sked__Availability_Pattern_Resource__c> existingFutureApResourcesWithProcessedCo = [
+                SELECT Id, sked__Resource__c
+                FROM sked__Availability_Pattern_Resource__c
+                WHERE sked__Availability_Pattern__c IN : endDatedApIds
+                AND (sked_End_Date__c = NULL OR sked_End_Date__c >= TODAY)
+                AND sked__Resource__r.sked__Resource_Type__c = 'Person'
+                AND sked__Resource__r.sked__Is_Active__c = TRUE
+                AND sked__Resource__r.CO_AP_Status__c = :skedConstants.CO_AP_STATUS_PROCESSED
+                ORDER BY sked__Resource__c
+            ];
+            
+            if(existingFutureApResourcesWithProcessedCo != null && !existingFutureApResourcesWithProcessedCo.isEmpty()) {
+                for(sked__Availability_Pattern_Resource__c apResource : existingFutureApResourcesWithProcessedCo) {
+                    resourceIdsNeedUpdate.add(apResource.sked__Resource__c);
+                }
+            }
+        }
+
+        for(Id resourceId : resourceIdsNeedUpdate) {
+            if(!map_resourceId_resourceToUpdate.containsKey(resourceId)) {
+                map_resourceId_resourceToUpdate.put(resourceId, new sked__Resource__c(Id = resourceId, CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_TOTALS));
+            }
+        }
+        
+        Database.saveResult[] updateResults = Database.update(map_resourceId_resourceToUpdate.values(), false);
+        insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
+            updateResults,
+            'Resource CO_AP_Status__c update',
+            'skedAvailabilityPatternResourceHandler',
+            'updateCoApStatusOnResources  on After Update',
+            'Error',
+            'Record Update'
+        ));
     }
 
     private void endDateRelatedColOpAvailabilityRecord(List<sked__Availability_Pattern_Resource__c> newRecords, Map<Id, sked__Availability_Pattern_Resource__c> oldMap) {
@@ -175,7 +223,6 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
         ];
 
         for(Collection_Operation_Availability__c coAp : existingCoApRecords) {
-            system.debug(coAp.Availability_Pattern__c + '_' + coAp.Collection_Operation__c);
             if(!apAndCoIdKey.contains(coAp.Availability_Pattern__c + '_' + coAp.Collection_Operation__c)) continue;
 
             coAp.Effective_End_Date__c = map_coAndApName_coApEndDate.get(coAp.Name);
@@ -187,7 +234,7 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
             ((Biomed_Collection_Op_Center__c)sObjectToUpdate.get(coAp.Collection_Operation__c)).Grand_Total_Available_AP__c -= coAp.Total_Actual_Resources__c;
         }
 
-        skedHubBase.BypassUpdateTriggers = true;
+        sObjectToUpdate.values().sort();
         Database.saveResult[] updateResults = Database.update(sObjectToUpdate.values(), false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
             updateResults,
@@ -197,6 +244,5 @@ public class skedAvailabilityPatternResourceHandler extends skedTriggerHub {
             'Error',
             'Record Update'
         ));
-        skedHubBase.BypassUpdateTriggers = false;
     }
 }

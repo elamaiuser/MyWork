@@ -148,6 +148,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
 
         objectsToUpdate.addAll(getCalculateGrandTotalAvailableOnColOp(colIds));
         objectsToUpdate.addAll(getUpdatedCoApStatusOnResources(resourceList, coApList));
+        objectsToUpdate.sort();
 
         Database.SaveResult[] updateResults = Database.update(objectsToUpdate, false);
         List<BSF_Error_Log__c> errorLogToInsert = BSF_Utilities.createErrorLogWithObjectId(
