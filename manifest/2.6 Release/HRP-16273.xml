@@ -4,7 +4,8 @@
         <members>bsfVehiclePlanningReportPDF</members>
         <members>BSFWeeklyStaffingRTReport</members>
         <members>skedAvailabilityUrlNavigation</members>
-        <members>skedPTORequestSubmission</members>    
+        <members>skedPTORequestSubmission</members>
+        <members>skedMyAvailabilityConsole</members>   
         <members>skedRAC</members>
         <members>MOEStagingSheetReport</members>
         <members>skedEmailHandler</members>
