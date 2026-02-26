@@ -8,6 +8,7 @@
         <members>AccountTriggerTest</members>
         <members>AvailabilityPatternRoleHandler</members>
 		<members>AvailabilityPatternRoleTriggerService</members>
+        <members>AvailabilityPatternRoleTrigger_Test</members>
         <members>BSFVehiclePlanningController_Test</members>
         <members>BSF_AccessControlManager</members>
         <members>BSF_AccessControlManagerTest</members>
@@ -34,6 +35,7 @@
         <members>BsfPortfolioSyncHelper_Test</members>
         <members>CollectionOpAvailabilityTriggerHandler</members>
 		<members>CollectionOpAvailabilityTriggerService</members>
+        <members>CollectionOpAvailabilityTrigger_Test</members>
         <members>DefaultTerritoryPortfolioBatch_Test</members>
         <members>DMBellNotificationATMBatchHelperTest</members>
         <members>DriveTriggerHandler</members>
@@ -72,6 +74,7 @@
         <members>skedAvailabilityHandler</members>
         <members>skedAvailabilityPatternResourceHandler</members>
         <members>skedAvailabilityPatternService</members>
+        <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityTrigger_Test</members>
         <members>skedCaptureAPExceptionLogBatch</members>
         <members>skedCaptureAPExceptionLogBatch_Test</members>
@@ -101,6 +104,7 @@
         <members>skedTriggerUtils_Test</members>
         <members>skedUntypedService_Test</members>
         <members>skedUpdateCoApRoleTargetsBatchHelper</members>
+        <members>skedUpdateCoApRoleTargetsBatch_Test</members>
         <members>skedWorkdayUtils</members>
         <members>skedWorkdayUtils_Test</members>
         <members>slwcAllocationService</members>
