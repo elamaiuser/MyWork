@@ -8,9 +8,11 @@
 		<members>CollectionOpAvailabilityTriggerService</members>
         <members>CollectionOpAvailabilityTrigger_Test</members>
 		<members>skedAvailabilityPatternResourceHandler</members>
+        <members>skedAPResourceTrigger_Test</members>
 		<members>skedConstants</members>
 		<members>skedNightlyUpdateCoApRoleTargetsBatch</members>
 		<members>skedUpdateCoApRoleTargetsBatchHelper</members>
+        <members>skedUpdateCoApRoleTargetsBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
