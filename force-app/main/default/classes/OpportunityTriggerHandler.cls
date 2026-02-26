@@ -495,6 +495,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('populateSpecialCircumstancesBadgeData') == -1) {
             OpportunityService.populateSpecialCircumstancesBadgeData((List<Opportunity>)trigger.new);
         }
+        OpportunityService.applyDefaultPlanningPath((List<Opportunity>) Trigger.new);
        
         System.debug('Exiting method beforeInsert');
         System.debug('getCpuTime()'+limits.getCpuTime());
@@ -582,6 +583,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         //HRP-7470
         if(super.getTriggerMethodsToBypass().indexOf('createPrimaryContactRoleAfterTemplateCreation') == -1) {
             OpportunityService.createPrimaryContactRoleAfterTemplateCreation((List<Opportunity>)trigger.new);
+        }
+
+        if(super.getTriggerMethodsToBypass().indexOf('inheritConfiguration') == -1) {
+            BSF_TaskPlanningService.inheritConfiguration((List<Opportunity>) Trigger.new);
         }
 
 		System.debug('getCpuTime()'+limits.getCpuTime());
@@ -741,6 +746,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             }
             // HRP- 12142 --> Ends Here
             System.debug('Exiting method AfterUpdate');
+        }
+
+        if(super.getTriggerMethodsToBypass().indexOf('handleOpportunityUpdates') == -1) {
+            BSF_TaskPlanningService.handleOpportunityUpdates((List<Opportunity>)Trigger.new, (Map<Id,Opportunity>)Trigger.oldMap);
         }
         
         System.debug('Exiting method AfterUpdate');

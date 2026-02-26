@@ -83,8 +83,11 @@ export { TerritoryCollectionOperationMappingConfigFactory } from './_TerritoryCo
 export { TerritoryMappingConfigFactory } from './_TerritoryMappingConfigFactory.js';
 export { TimeBlockMappingConfigFactory } from './_TimeBlockMappingConfigFactory.js';
 export { TravelTimeIndexItemMappingConfigFactory } from './_TravelTimeIndexItemMappingConfigFactory.js';
+export { TravelTimeSlotConfigFactory } from './_TravelTimeSlotConfigFactory.js';
 export { UserMappingConfigFactory } from './_UserMappingConfigFactory.js';
 export { BsfPortfolioMappingConfigFactory } from './_BsfPortfolioMappingConfigFactory.js';
 export { StaffSetupExcludedRoleMappingConfigFactory } from './_StaffSetupExcludedRoleMappingConfigFactory.js';
 export { StaffMealAndRestBreakMappingConfigFactory } from './_StaffMealAndRestBreakMappingConfigFactory.js';
 export { CollectionOperationOptimizerSettingConfigFactory } from './_CollectionOperationOptimizerSettingConfigFactory.js';
+export { CollectionOpAvailabilityMappingConfigFactory } from './_CollectionOpAvailabilityMappingConfigFactory.js';
+export { AvailabilityPatternRoleMappingConfigFactory } from './_AvailabilityPatternRoleMappingConfigFactory.js';

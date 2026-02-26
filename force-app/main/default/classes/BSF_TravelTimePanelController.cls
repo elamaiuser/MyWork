@@ -34,11 +34,32 @@ public without sharing class BSF_TravelTimePanelController {
 
 
     @AuraEnabled
-    public static void saveUpdatedRecords(List<BSF_TravelTimeDataWrapper> updatedRecords) {
+    public static void saveUpdatedRecords(List<BSF_TravelTimeDataWrapper> updatedRecords, String siteCO_Id) {
         system.debug('updatedRecords '+JSON.serialize(updatedRecords));
+        system.debug('siteCO_Id '+siteCO_Id);
         List<sked_Travel_Time_Index_Item__c> objectsToUpdate = new List<sked_Travel_Time_Index_Item__c>();
         List<Id> indexIds = new List<Id>();
+        List<sked_Travel_Time_Slot__c> travelTimeSlots = new List<sked_Travel_Time_Slot__c>();
         try{
+            // Query travel time slots for the collection operation
+            if (String.isNotBlank(siteCO_Id)) {
+                List<sked_Site_Collection_Operation__c> siteCollectionOpData = [
+                    SELECT Id, sked_Collection_Operation__c
+                    FROM sked_Site_Collection_Operation__c
+                    WHERE Id = :siteCO_Id
+                    WITH SYSTEM_MODE
+                    LIMIT 1
+                ];
+
+                if (!siteCollectionOpData.isEmpty()) {
+                    travelTimeSlots = [
+                        SELECT sked_Collection_Operation__c, sked_Weekday__c, sked_Start_Time__c, sked_End_Time__c
+                        FROM sked_Travel_Time_Slot__c
+                        WHERE sked_Collection_Operation__c = :siteCollectionOpData[0].sked_Collection_Operation__c
+                        ORDER BY sked_Collection_Operation__c, sked_Weekday__c, sked_Start_Time__c
+                    ];
+                }
+            }
             for (BSF_TravelTimeDataWrapper wrapper : updatedRecords) {
                 if(String.isNotBlank(wrapper.indexId)){
                     indexIds.add(wrapper.indexId);
@@ -91,7 +112,7 @@ public without sharing class BSF_TravelTimePanelController {
                             ttJSONMap.put(key,ttData);
                         }
                     } else {
-                        List<TravelTimeBreakdownJSON> jsonData = generateEmptyTravelTimeData(1);
+                        List<TravelTimeBreakdownJSON> jsonData = generateEmptyTravelTimeData(1, travelTimeSlots);
                         for(TravelTimeBreakdownJSON ttData : jsonData) {
                             String key = String.valueOf(indexRecId).right(10)+ttData.weekday.left(4).toLowerCase()+ttData.startOfWindow.left(2)+ttData.endOfWindow.left(2);
                             ttJSONMap.put(key,ttData);
@@ -133,10 +154,14 @@ public without sharing class BSF_TravelTimePanelController {
                 try {
                     Database.update(objectsToUpdate,true);
                 } catch (DmlException e) {
+                    system.debug('#ex Database#' + e.getMessage());
+                    system.debug('#ex Database#' + e.getStackTraceString());
                     throw new AuraHandledException('Error updating records: ' + e.getMessage());
                 }
             }
         }catch(Exception ex) {
+            system.debug('#ex #' + ex.getMessage());
+            system.debug('#ex #' + ex.getStackTraceString());
             throw new AuraHandledException(ex.getMessage());
         }
     }
@@ -148,6 +173,18 @@ public without sharing class BSF_TravelTimePanelController {
 
         if(String.isBlank(siteCO_Id)) {
             return travelTimeDataWrap;
+        }
+
+        Boolean isRefreshInProgress = false;
+        List<sked_Travel_Time_Index_Refresh_Request__c> refreshRequestList = [
+            SELECT Id 
+            FROM sked_Travel_Time_Index_Refresh_Request__c 
+            WHERE sked_Manual_Refresh_SCO_Id__c = :siteCO_Id
+            AND sked_Status__c IN ('Pending', 'In Progress')
+            LIMIT 1
+        ];
+        if(!refreshRequestList.isEmpty()) {
+            isRefreshInProgress = true;
         }
         
         Location site_Location;
@@ -164,51 +201,63 @@ public without sharing class BSF_TravelTimePanelController {
         String todayStr = Date.today().format();
         String systemOverrideComment = BSF_Constants.SYSTEM_TTBD_OVERRIDE_COMMENT.replace('{0}',todayStr);
 
-        List<sked_Site_Collection_Operation__c> siteCollectionOpData = [SELECT Id,
-                                                                                sked_Collection_Operation__c,
-                                                                                sked_Collection_Operation__r.Name,
-                                                                                sked_Site__c,
-                                                                                sked_Site__r.sked__GeoLocation__latitude__s,
-                                                                                sked_Site__r.sked__GeoLocation__longitude__s
-                                                                        FROM sked_Site_Collection_Operation__c 
-                                                                        WHERE Id =: siteCO_Id
-                                                                        AND sked_Collection_Operation__c != null
-                                                                        AND sked_Site__c != null
-                                                                        AND sked_Site__r.sked__GeoLocation__latitude__s != null
-                                                                        AND sked_Site__r.sked__GeoLocation__longitude__s != null
-                                                                        WITH SYSTEM_MODE];
-        if(!siteCollectionOpData.isEmpty()) {
-            CollectionOperationName = siteCollectionOpData.get(0).sked_Collection_Operation__r.Name;
-            site_Location = Location.newInstance(siteCollectionOpData.get(0).sked_Site__r.sked__GeoLocation__latitude__s,
-                                                    siteCollectionOpData.get(0).sked_Site__r.sked__GeoLocation__longitude__s);
-            siteKeystr = String.valueOf(site_Location.getLatitude()) 
-                        + String.valueOf(site_Location.getLongitude()); //HRP-13050
-        }
-        System.debug('siteCollectionOpData : '+siteCollectionOpData.size());
-        List<sked_Collection_Op_Staging_Location__c> stagingLocationCOList = [SELECT Id,
-                                                                                        sked_End_Date__c,
-                                                                                        sked_Start_Date__c,
-                                                                                        sked_Staging_Location__c,
-                                                                                        sked_Staging_Location__r.sked_GeoLocation__latitude__s,
-                                                                                        sked_Staging_Location__r.sked_GeoLocation__longitude__s,
-                                                                                        sked_Staging_Location__r.sked_Address__c,
-                                                                                        sked_Staging_Location__r.sked_Zip_Code__c
-                                                                                FROM sked_Collection_Op_Staging_Location__c 
-                                                                                WHERE sked_Collection_Operation__c =: siteCollectionOpData[0].sked_Collection_Operation__c
-                                                                                AND sked_Staging_Location__c != null
-                                                                                AND sked_Staging_Location__r.sked_GeoLocation__latitude__s != null
-                                                                                AND sked_Staging_Location__r.sked_GeoLocation__longitude__s != null
-                                                                                AND sked_Start_Date__c != null
-                                                                                WITH SYSTEM_MODE
-                                                                                ORDER BY sked_Start_Date__c DESC]; 
-        for(sked_Collection_Op_Staging_Location__c slco : stagingLocationCOList) {
+        List<sked_Site_Collection_Operation__c> siteCollectionOpData = [
+            SELECT Id,
+                sked_Collection_Operation__c,
+                sked_Collection_Operation__r.Name,
+                sked_Site__c,
+                sked_Site__r.sked__GeoLocation__latitude__s,
+                sked_Site__r.sked__GeoLocation__longitude__s
+            FROM sked_Site_Collection_Operation__c 
+            WHERE Id =: siteCO_Id
+            AND sked_Collection_Operation__c != null
+            AND sked_Site__c != null
+            AND sked_Site__r.sked__GeoLocation__latitude__s != null
+            AND sked_Site__r.sked__GeoLocation__longitude__s != null
+            WITH SYSTEM_MODE
+        ];
+
+        CollectionOperationName = siteCollectionOpData.get(0).sked_Collection_Operation__r.Name;
+        site_Location = Location.newInstance(siteCollectionOpData.get(0).sked_Site__r.sked__GeoLocation__latitude__s,
+                                                siteCollectionOpData.get(0).sked_Site__r.sked__GeoLocation__longitude__s);
+        siteKeystr = String.valueOf(site_Location.getLatitude())
+                    + String.valueOf(site_Location.getLongitude()); //HRP-13050
+
+        List<sked_Travel_Time_Slot__c> allTravelTimeSlots = [
+            SELECT sked_Collection_Operation__c, sked_Weekday__c, sked_Start_Time__c, sked_End_Time__c
+            FROM sked_Travel_Time_Slot__c
+            WHERE sked_Collection_Operation__c = :siteCollectionOpData[0].sked_Collection_Operation__c
+            ORDER BY sked_Collection_Operation__c, sked_Weekday__c, sked_Start_Time__c
+        ];
+
+        List<sked_Collection_Op_Staging_Location__c> stagingLocationCOList = [
+            SELECT Id,
+                sked_End_Date__c,
+                sked_Start_Date__c,
+                sked_Staging_Location__c,
+                sked_Staging_Location__r.sked_GeoLocation__latitude__s,
+                sked_Staging_Location__r.sked_GeoLocation__longitude__s,
+                sked_Staging_Location__r.sked_Address__c,
+                sked_Staging_Location__r.sked_Zip_Code__c
+            FROM sked_Collection_Op_Staging_Location__c 
+            WHERE sked_Collection_Operation__c =: siteCollectionOpData[0].sked_Collection_Operation__c
+            AND sked_Staging_Location__c != null
+            AND sked_Staging_Location__r.sked_GeoLocation__latitude__s != null
+            AND sked_Staging_Location__r.sked_GeoLocation__longitude__s != null
+            AND sked_Start_Date__c != null
+            WITH SYSTEM_MODE
+            ORDER BY sked_Start_Date__c DESC
+        ]; 
+
+        for (sked_Collection_Op_Staging_Location__c slco : stagingLocationCOList) {
             List<sked_Collection_Op_Staging_Location__c> tempList = new List<sked_Collection_Op_Staging_Location__c>{slco};
-            if(stagingLocation_stagingLocationCOMap.isEmpty() || !stagingLocation_stagingLocationCOMap.containsKey(slco.sked_Staging_Location__c)) {
+            if (stagingLocation_stagingLocationCOMap.isEmpty() || !stagingLocation_stagingLocationCOMap.containsKey(slco.sked_Staging_Location__c)) {
                 stagingLocationMap.put(slco.sked_Staging_Location__c,slco.sked_Staging_Location__r);
                 stagingGeoLocationMap.put(slco.sked_Staging_Location__c,
                                             Location.newInstance(slco.sked_Staging_Location__r.sked_GeoLocation__latitude__s,
                                             slco.sked_Staging_Location__r.sked_GeoLocation__longitude__s));
-            }else {
+            }
+            else {
                 tempList.addAll(stagingLocation_stagingLocationCOMap.get(slco.sked_Staging_Location__c));
             }
             stagingLocation_stagingLocationCOMap.put(slco.sked_Staging_Location__c,tempList);
@@ -282,18 +331,16 @@ public without sharing class BSF_TravelTimePanelController {
             String coToSiteKey = String.valueOf(stagingGeoLocationMap.get(slId).getLatitude()) 
                                 + String.valueOf(stagingGeoLocationMap.get(slId).getLongitude())+ siteKeystr;
             
-            if(indexItemMap.containsKey(siteToCOKey) && (stopDuplicateEnty_SC.isEmpty() 
-                    || !stopDuplicateEnty_SC.contains(indexItemMap.get(siteToCOKey).Id))) {
-                        stopDuplicateEnty_SC.add(indexItemMap.get(siteToCOKey).Id);
-                        ttDataList.add(indexItemMap.get(siteToCOKey));
-                        ttIndex_DirectionMap.put(indexItemMap.get(siteToCOKey).Id,'Site to CO');
+            if(indexItemMap.containsKey(siteToCOKey) && (stopDuplicateEnty_SC.isEmpty() || !stopDuplicateEnty_SC.contains(indexItemMap.get(siteToCOKey).Id))) {
+                stopDuplicateEnty_SC.add(indexItemMap.get(siteToCOKey).Id);
+                ttDataList.add(indexItemMap.get(siteToCOKey));
+                ttIndex_DirectionMap.put(indexItemMap.get(siteToCOKey).Id,'Site to CO');
             }
             
-            if(indexItemMap.containsKey(coToSiteKey) && (stopDuplicateEnty_SC.isEmpty() 
-                    || !stopDuplicateEnty_SC.contains(indexItemMap.get(coToSiteKey).Id))) {
-                        stopDuplicateEnty_SC.add(indexItemMap.get(coToSiteKey).Id);
-                        ttDataList.add(indexItemMap.get(coToSiteKey));
-                        ttIndex_DirectionMap.put(indexItemMap.get(coToSiteKey).Id,'CO to Site');
+            if(indexItemMap.containsKey(coToSiteKey) && (stopDuplicateEnty_SC.isEmpty() || !stopDuplicateEnty_SC.contains(indexItemMap.get(coToSiteKey).Id))) {
+                stopDuplicateEnty_SC.add(indexItemMap.get(coToSiteKey).Id);
+                ttDataList.add(indexItemMap.get(coToSiteKey));
+                ttIndex_DirectionMap.put(indexItemMap.get(coToSiteKey).Id,'CO to Site');
             }
 
             if(!ttDataList.isEmpty()) {
@@ -328,7 +375,7 @@ public without sharing class BSF_TravelTimePanelController {
                 wrapper.direction = ttIndex_DirectionMap.get(ttRec.Id);
                 wrapper.systemOverride = false;
                 wrapper.travelTimeBreakdownData = new List<TravelTimeBreakdownData>();
-                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA') {
+                if(ttRec.sked_Travel_Time_Breakdown_JSON__c != 'NO DATA' && ttRec.sked_Travel_Time_Breakdown_JSON__c != null) {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
@@ -338,18 +385,28 @@ public without sharing class BSF_TravelTimePanelController {
                     List<TravelTimeBreakdownJSON> jsonData = (List<TravelTimeBreakdownJSON>) JSON.deserialize(ttRec.sked_Travel_Time_Breakdown_JSON_Backup__c, List<TravelTimeBreakdownJSON>.class);
                     for(TravelTimeBreakdownJSON ttData : jsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
-                        wrapper.userOverride = true;
-                        wrapper.systemOverride = true;
-                        wrapper.overrideComment = systemOverrideComment;
+                        if(!isRefreshInProgress) {
+                            wrapper.userOverride = true;
+                            wrapper.systemOverride = true;
+                            wrapper.overrideComment = systemOverrideComment;
+                        } else {
+                            wrapper.userOverride = ttRec.User_Override__c;
+                            wrapper.systemOverride = false;
+                        }                       
                     }
                 }
                 else {
-                    List<TravelTimeBreakdownJSON> emptyJsonData = generateEmptyTravelTimeData(0);
+                    List<TravelTimeBreakdownJSON> emptyJsonData = generateEmptyTravelTimeData(0, allTravelTimeSlots);
                     for(TravelTimeBreakdownJSON ttData : emptyJsonData) {
                         wrapper.travelTimeBreakdownData.add(transformTTBDataToDataWrapper(ttData, wrapper.indexId));
-                        wrapper.userOverride = true;
-                        wrapper.systemOverride = true;
-                        wrapper.overrideComment = systemOverrideComment;
+                        if(!isRefreshInProgress) {
+                            wrapper.userOverride = true;
+                            wrapper.systemOverride = true;
+                            wrapper.overrideComment = systemOverrideComment;
+                        } else {
+                            wrapper.userOverride = ttRec.User_Override__c;
+                            wrapper.systemOverride = false;
+                        }
                     }
                 }
                 travelTimeDataWrap.add(wrapper);
@@ -359,23 +416,89 @@ public without sharing class BSF_TravelTimePanelController {
         return travelTimeDataWrap;
     }
 
-    private static List<TravelTimeBreakdownJSON> generateEmptyTravelTimeData(Integer travelTime) {
+    private static List<TravelTimeBreakdownJSON> generateEmptyTravelTimeData(Integer travelTime, List<sked_Travel_Time_Slot__c> travelTimeSlots) {
         List<TravelTimeBreakdownJSON> travelTimeBreakdownJSON = new List<TravelTimeBreakdownJSON>();
-        List<String> weekdays = new List<String>{'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'};
-        List<String> startTimes = new List<String>{'00:00:00.000Z', '08:00:00.000Z', '16:00:00.000Z'};
-        List<String> endTimes = new List<String>{'08:00:00.000Z', '16:00:00.000Z', '23:59:00.000Z'};
-        for(String weekday : weekdays) { 
-            for(Integer i = 0; i < startTimes.size(); i++) {
+
+        // If travel time slots are provided, use them
+        if (travelTimeSlots != null && !travelTimeSlots.isEmpty()) {
+            for (sked_Travel_Time_Slot__c slot : travelTimeSlots) {
                 TravelTimeBreakdownJSON ttData = new TravelTimeBreakdownJSON();
-                ttData.weekday = weekday;
+                ttData.weekday = slot.sked_Weekday__c;
                 ttData.travelTime = travelTime;
                 ttData.travelDistance = 0;
-                ttData.startOfWindow = startTimes[i];
-                ttData.endOfWindow = endTimes[i];
+                ttData.startOfWindow = convertNumericTimeToString(slot.sked_Start_Time__c);
+                ttData.endOfWindow = convertNumericTimeToString(slot.sked_End_Time__c);
                 travelTimeBreakdownJSON.add(ttData);
             }
+        } else {
+            // Fallback to custom metadata if no travel time slots provided
+            List<sked_Travel_Time_Breakdown_Setting__mdt> settings = [
+                SELECT sked_Weekday__c,
+                       sked_Start_At_Time_1__c, sked_Start_At_Time_2__c, sked_Start_At_Time_3__c,
+                       sked_End_At_Time_1__c, sked_End_At_Time_2__c, sked_End_At_Time_3__c
+                FROM sked_Travel_Time_Breakdown_Setting__mdt
+                WHERE sked_Weekday__c != null
+                ORDER BY sked_Weekday__c
+            ];
+
+            for (sked_Travel_Time_Breakdown_Setting__mdt setting : settings) {
+                // Build list of time pairs dynamically
+                List<TimePair> timePairs = buildTimePairs(setting);
+
+                // Create travel time breakdown records for this weekday
+                for (TimePair pair : timePairs) {
+                    TravelTimeBreakdownJSON ttData = new TravelTimeBreakdownJSON();
+                    ttData.weekday = setting.sked_Weekday__c;
+                    ttData.travelTime = travelTime;
+                    ttData.travelDistance = 0;
+                    ttData.startOfWindow = convertNumericTimeToString(pair.startTime);
+                    ttData.endOfWindow = convertNumericTimeToString(pair.endTime);
+                    travelTimeBreakdownJSON.add(ttData);
+                }
+            }
         }
+
         return travelTimeBreakdownJSON;
+    }
+
+    // Helper method to build time pairs from metadata record
+    private static List<TimePair> buildTimePairs(sked_Travel_Time_Breakdown_Setting__mdt setting) {
+        List<TimePair> timePairs = new List<TimePair>();
+
+        if (setting.sked_Start_At_Time_1__c != null && setting.sked_End_At_Time_1__c != null) {
+            timePairs.add(new TimePair(setting.sked_Start_At_Time_1__c, setting.sked_End_At_Time_1__c));
+        }
+        if (setting.sked_Start_At_Time_2__c != null && setting.sked_End_At_Time_2__c != null) {
+            timePairs.add(new TimePair(setting.sked_Start_At_Time_2__c, setting.sked_End_At_Time_2__c));
+        }
+        if (setting.sked_Start_At_Time_3__c != null && setting.sked_End_At_Time_3__c != null) {
+            timePairs.add(new TimePair(setting.sked_Start_At_Time_3__c, setting.sked_End_At_Time_3__c));
+        }
+
+        return timePairs;
+    }
+
+    // Helper method to convert numeric time (e.g., 800) to string format (e.g., "08:00:00.000Z")
+    private static String convertNumericTimeToString(Decimal timeValue) {
+        Integer timeInt = timeValue.intValue();
+        Integer hours = timeInt / 100;
+        Integer minutes = Math.mod(timeInt, 100);
+
+        String hoursStr = String.valueOf(hours).leftPad(2, '0');
+        String minutesStr = String.valueOf(minutes).leftPad(2, '0');
+
+        return hoursStr + ':' + minutesStr + ':00.000Z';
+    }
+
+    // Helper class to hold time pairs
+    private class TimePair {
+        Decimal startTime;
+        Decimal endTime;
+
+        TimePair(Decimal start, Decimal endVal) {
+            this.startTime = start;
+            this.endTime = endVal;
+        }
     }
 
     private static TravelTimeBreakdownData transformTTBDataToDataWrapper(TravelTimeBreakdownJSON ttData, String indexId) {

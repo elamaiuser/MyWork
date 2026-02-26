@@ -5280,4 +5280,83 @@ opp.StageName = 'Closed';
 
         if(!templates.isEmpty()) TemplateService.createPrimaryContactDriveServiceRole(templates);
     }
+
+    /**
+     * HRP-16123: Inherit Planning Path from Account or Template
+     * Context: BEFORE INSERT
+     */
+    public static void applyDefaultPlanningPath(List<Opportunity> newOpps) {
+        Set<Id> accountIds = new Set<Id>();
+        Set<Id> templateIds = new Set<Id>();
+
+        // 1. Collect Parent IDs from the new Opportunities
+        for(Opportunity opp : newOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+
+            if(opp.AccountId != null) {
+                accountIds.add(opp.AccountId);
+            }
+            if(opp.Parent_Template_Id__c != null) {
+                templateIds.add(opp.Parent_Template_Id__c);
+            }
+        }
+
+        // 2. Query Parent Account Settings
+        Map<Id, Account> accountMap = new Map<Id, Account>();
+        if(!accountIds.isEmpty()) {
+            accountMap = new Map<Id, Account>([
+                SELECT Id, Planning_Path__c 
+                FROM Account 
+                WHERE Id IN :accountIds
+                WITH USER_MODE
+            ]);
+        }
+
+        // 3. Query Parent Template Settings
+        Map<Id, Opportunity> templateMap = new Map<Id, Opportunity>();
+        if(!templateIds.isEmpty()) {
+            templateMap = new Map<Id, Opportunity>([
+                SELECT Id, Planning_Path__c 
+                FROM Opportunity 
+                WHERE Id IN :templateIds
+                WITH USER_MODE
+            ]);
+        }
+
+        // 4. Assign Values based on Hierarchy
+        for(Opportunity opp : newOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            
+            // Only apply logic if the user hasn't manually selected a path during creation
+            if(opp.Planning_Path__c == null) {
+                
+                // SCENARIO A: Drive created from a Template (Inherit from Template)
+                // Priority: High
+                if(opp.Parent_Template_Id__c != null && templateMap.containsKey(opp.Parent_Template_Id__c) && !opp.Is_Template__c) {
+                    Opportunity parentTemplate = templateMap.get(opp.Parent_Template_Id__c);
+                    if(parentTemplate.Planning_Path__c != null) {
+                        opp.Planning_Path__c = parentTemplate.Planning_Path__c;
+                    }
+                }
+                
+                // SCENARIO B: Template (Inherit from Account)
+                // Priority: Medium (Only if Template didn't set it)
+                if(opp.Planning_Path__c == null && opp.Is_Template__c && opp.AccountId != null && accountMap.containsKey(opp.AccountId)) {
+                    Account parentAccount = accountMap.get(opp.AccountId);
+                    if(parentAccount.Planning_Path__c != null) {
+                        opp.Planning_Path__c = parentAccount.Planning_Path__c;
+                    }
+                }
+                
+                // SCENARIO C: Default Fallback
+                // Priority: Low
+                if(opp.Planning_Path__c == null) {
+                    opp.Planning_Path__c = BSF_Constants.PATH_STANDARD;
+                }
+                
+                // Ensure the Override flag is False on creation so it receives future updates
+                opp.Is_Path_Overridden__c = false;
+            }
+        }
+    }
 }

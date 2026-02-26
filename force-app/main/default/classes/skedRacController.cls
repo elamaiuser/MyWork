@@ -425,6 +425,8 @@ global virtual class skedRacController extends skedBaseController {
             query.requestTypes = request.requestTypes;
             query.recurringScheduleIds = request.recurringScheduleIds;
             query.roles = request.roles;
+            query.isCalloutRelated = request.isCalloutRelated;//HRP-16778
+            query.availabilityTypeCallout = skedConstants.AVAILABILITY_TYPE_CALL_OUT;//HRP-16778
 
             if (!string.isBlank(request.resourceId)) {
                 query.resourceIds = new List<string>();
@@ -1000,6 +1002,7 @@ global virtual class skedRacController extends skedBaseController {
     @remoteAction
     global static skedRemoteResultModel saveCallOut(saveCallOutRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        SavePoint sp = Database.setSavepoint();
         try {
             string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
@@ -1025,6 +1028,7 @@ global virtual class skedRacController extends skedBaseController {
         }
         catch (Exception ex) {
             result.getError(ex);
+            Database.rollback(sp);
         }
         return result;
     }
@@ -1438,6 +1442,7 @@ global virtual class skedRacController extends skedBaseController {
                                                                       , sked__Type__c, sked_Is_All_Day__c, sked_Duration__c // HRP-13613
                                                                       FROM sked__Availability__c
                                                                       WHERE sked__Resource__c = :request.event.resourceId
+                                                                      AND sked__Type__c = :request.event.eventType
                                                                       AND sked__Is_Available__c = FALSE
                                                                       AND sked_Start_Date__c <= :endDate
                                                                       AND sked_Finish_Date__c >= :startDate
@@ -2477,6 +2482,7 @@ global virtual class skedRacController extends skedBaseController {
         public string submissionEndDate;
         public string submissionStartDate;
         public List<string> recurringScheduleIds;
+        public Boolean isCalloutRelated;//HRP-16778
     }
 
     global class getStaffingBudgetModel extends getDataRequestModel {

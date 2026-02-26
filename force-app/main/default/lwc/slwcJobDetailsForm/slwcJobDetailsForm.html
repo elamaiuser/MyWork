@@ -7,12 +7,11 @@
                 <section class="slds-accordion__section slds-is-open">
                     <div class="slds-accordion__content">
                         <div class="slds-p-around_xx-small">
-                            <lightning-input type="text" name="resourceRole" disabled label="Type (role)"
-                                value={jobAllocation.job.resourceRole}></lightning-input>
+                            <lightning-input type="text" name="resourceRole" disabled label="Type (role)" value={safeResourceRole}></lightning-input>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-input type="text" name="dualRole" disabled label="Dual Role"
-                                value={jobAllocation.job.dualRole}></lightning-input>
+                                value={safeDualRole}></lightning-input>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-textarea name="additionalRoles" disabled label="Additional Roles"
@@ -20,22 +19,22 @@
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-textarea name="address" disabled label="Address"
-                                value={jobAllocation.job.address}></lightning-textarea>
+                                value={safeAddress}></lightning-textarea>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-textarea name="driveName" disabled label="Drive Name"
-                                value={jobAllocation.driveName}></lightning-textarea>
+                                value={safeDriveName}></lightning-textarea>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-input type="text" name="driveShiftName" disabled label="Drive Shift"
-                                value={jobAllocation.driveShiftName}></lightning-input>
+                                value={safeDriveShiftName}></lightning-input>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <div class="slds-form-element slds-form-element_readonly">
                                 <span class="slds-form-element__label">Start</span>
                                 <div class="slds-form-element__control">
                                     <div class="slds-form-element__static slds-truncate">
-                                        <lightning-formatted-date-time value={jobAllocation.start}
+                                        <lightning-formatted-date-time value={safeStart}
                                             year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
                                             time-zone={timezoneSidId}></lightning-formatted-date-time>
                                     </div>
@@ -47,7 +46,7 @@
                                 <span class="slds-form-element__label">End</span>
                                 <div class="slds-form-element__control">
                                     <div class="slds-form-element__static slds-truncate">
-                                        <lightning-formatted-date-time value={jobAllocation.end}
+                                        <lightning-formatted-date-time value={safeEnd}
                                             year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit"
                                             time-zone={timezoneSidId}></lightning-formatted-date-time>
                                     </div>
@@ -56,15 +55,15 @@
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-input type="text" name="travelTimeTo" disabled label="Travel Time To"
-                                value={jobAllocation.travelTimeTo}></lightning-input>
+                                value={safeTravelTimeTo}></lightning-input>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-input type="text" name="travelTimeBack" disabled label="Travel Time Back"
-                                value={jobAllocation.travelTimeBack}></lightning-input>
+                                value={safeTravelTimeBack}></lightning-input>
                         </div>
                         <div class="slds-p-around_xx-small">
                             <lightning-input type="text" name="status" disabled label="Status"
-                                value={jobAllocation.status}></lightning-input>
+                                value={safeStatus}></lightning-input>
                         </div>
                     </div>
                 </section>

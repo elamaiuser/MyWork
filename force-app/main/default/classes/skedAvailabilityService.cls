@@ -55,6 +55,14 @@ global class skedAvailabilityService extends skedEventService {
         if (query.isException != null) {
             queryBuilder.addCondition('sked_Is_Exception__c = {0}', query.isException);
         }
+        //----------//HRP-16778-----------start
+        if (query.isCalloutRelated != null && query.isCalloutRelated) {
+            queryBuilder.addCondition('sked_Related_Call_Out__r.sked__Type__c = {0}', query.availabilityTypeCallout);
+        }
+        else{
+            queryBuilder.addCondition('sked_Related_Call_Out__r.sked__Type__c != {0}', query.availabilityTypeCallout);
+        }
+        //----------//HRP-16778-----------end
         if (query.recurringScheduleIds != NULL && !query.recurringScheduleIds.isEmpty()) {
             queryBuilder.addCondition('sked_Recurring_Schedule__c IN {0}', query.recurringScheduleIds);
         }
@@ -417,6 +425,8 @@ global class skedAvailabilityService extends skedEventService {
         public string submissionEndDate;
         public string submissionStartDate;
         public List<string> requestTypes;
+        public Boolean isCalloutRelated;//HRP-16778
+        public String availabilityTypeCallout;//HRP-16778
     }
 
 }
