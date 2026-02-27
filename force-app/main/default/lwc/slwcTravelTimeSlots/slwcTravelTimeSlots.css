@@ -1,0 +1,16 @@
+.locked-input {
+    background-color: #f3f2f2;
+    border: 1px solid #dddbda;
+    border-radius: 4px;
+    padding: 0 12px;
+    line-height: 32px; /* Matches standard input height */
+    height: 32px;
+    color: #3e3e3c;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: not-allowed;
+}
+
+.slds-table th {
+    background-color: #fafaf9;
+}
