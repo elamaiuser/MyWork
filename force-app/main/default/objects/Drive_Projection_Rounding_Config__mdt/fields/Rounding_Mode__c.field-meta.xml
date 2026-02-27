@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rounding_Mode__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Rounding Mode</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>HALF_UP</fullName>
+                <default>true</default>
+                <label>HALF_UP</label>
+            </value>
+            <value>
+                <fullName>FLOOR</fullName>
+                <default>false</default>
+                <label>FLOOR</label>
+            </value>
+            <value>
+                <fullName>CEILING</fullName>
+                <default>false</default>
+                <label>CEILING</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
