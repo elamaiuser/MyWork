@@ -78,6 +78,7 @@
         <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityTrigger_Test</members>
         <members>skedBiomedCollectionOpHandler</members>
+        <members>skedCOGroupTravelTimeIndexRefreshBatch</members>
         <members>skedCaptureAPExceptionLogBatch</members>
         <members>skedCaptureAPExceptionLogBatch_Test</members>
         <members>skedCollectionsZipCodeBatch_Test</members>
@@ -90,18 +91,22 @@
 		<members>skedExceptionLogService</members>
         <members>skedHCExceptionHandler</members>
         <members>skedHCExceptionTrigger_Test</members>
+        <members>skedImmediateRefreshTravelTimeIndexBatch</members>
         <members>skedJobAllocationTravelTimeBatch_Test</members>
         <members>skedMockTest</members>
         <members>skedModels</members>
+        <members>skedNightlyRefreshTravelTimeIndexBatch</members>
         <members>skedNightlyUpdateCoApRoleTargetsBatch</members>
         <members>skedOperationRecordService</members>
         <members>skedPtoRequestController_Test</members>
         <members>skedRacController</members>
         <members>skedRacStory_Test</members>
+        <members>skedRefreshTravelTimeIndexBatchBase</members>
         <members>skedResourceHandler</members>
         <members>skedResourceHandler_Test</members>
         <members>skedStaffingBudgetCollOp_Test</members>
         <members>skedTestDataFactory</members>
+        <members>skedTravelTimeIndexTravelTimeBatch</members>
         <members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
         <members>skedUntypedService_Test</members>
@@ -203,7 +208,8 @@
         <members>Task_Selected_Package__c.Account__c</members>
 		<members>Task_Selected_Package__c.Opportunity__c</members>
 		<members>Task_Selected_Package__c.Task_Package__c</members>
-        <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>        
+        <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
+        <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Time_Slots__c</members>        
 		<members>sked_Travel_Time_Slot__c.sked_Collection_Operation__c</members>
 		<members>sked_Travel_Time_Slot__c.sked_End_Time__c</members>
 		<members>sked_Travel_Time_Slot__c.sked_Start_Time__c</members>
@@ -233,6 +239,7 @@
         <members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_15890_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
         <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
