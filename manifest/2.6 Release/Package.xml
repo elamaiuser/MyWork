@@ -76,6 +76,7 @@
         <members>skedAvailabilityPatternService</members>
         <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityTrigger_Test</members>
+        <members>skedBiomedCollectionOpHandler</members>
         <members>skedCaptureAPExceptionLogBatch</members>
         <members>skedCaptureAPExceptionLogBatch_Test</members>
         <members>skedCollectionsZipCodeBatch_Test</members>
@@ -105,6 +106,7 @@
         <members>skedUntypedService_Test</members>
         <members>skedUpdateCoApRoleTargetsBatchHelper</members>
         <members>skedUpdateCoApRoleTargetsBatch_Test</members>
+        <members>skedUtils</members>
         <members>skedWorkdayUtils</members>
         <members>skedWorkdayUtils_Test</members>
         <members>slwcAllocationService</members>
@@ -149,6 +151,7 @@
 		<members>Availability_Pattern_Role__c.Collection_Operation__c</members>
 		<members>Availability_Pattern_Role__c.Min_Nbr_of_Role__c</members>
 		<members>Availability_Pattern_Role__c.Role__c</members>
+        <members>Biomed_Collection_Op_Center__c.sked_Maximum_Travel_Time_Slots__c</members>
         <members>Contact.After_Hours_Number__c</members>
 		<members>Contact.Primary_Phone_Number_New__c</members>
         <members>Biomed_Collection_Op_Center__c.Grand_Total_Available_AP__c</members>
@@ -199,7 +202,11 @@
         <members>Task_Selected_Package__c.Account__c</members>
 		<members>Task_Selected_Package__c.Opportunity__c</members>
 		<members>Task_Selected_Package__c.Task_Package__c</members>
-        <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
+        <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>        
+		<members>sked_Travel_Time_Slot__c.sked_Collection_Operation__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_End_Time__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_Start_Time__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_Weekday__c</members>
         <members>sked__Activity_Resource__c.sked_Replacement_For__c</members>
         <members>sked__Activity_Resource__c.sked_UniqueKey__c</members>
         <members>sked__Availability_Pattern_Resource__c.sked_Availability_Pattern_Name__c</members>
@@ -279,6 +286,7 @@
 		<members>Task_Package__c</members>
         <members>Task_Planning_Default__c</members>
 		<members>Task_Selected_Package__c</members>
+        <members>sked_Travel_Time_Slot__c</members>
 		<name>CustomObject</name>
 	</types>
 	<types>
@@ -344,6 +352,7 @@
         <members>slwcNewCollectionOperationMultiPicklist</members>
         <members>slwcOnCallCallOutManagement</members>
         <members>slwcPopoverContent</members>
+        <members>slwcTravelTimeSlots</members>
         <members>timeBlockComplianceReport</members>
         <members>travelTimeBreakdown</members>
         <name>LightningComponentBundle</name>

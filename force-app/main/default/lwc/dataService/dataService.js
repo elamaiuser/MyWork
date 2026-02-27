@@ -61,6 +61,7 @@ export * from './tagService';
 export * from './territoryCollectionOperationService';
 export * from './territoryService';
 export * from './travelTimeIndexItemService';
+export * from './travelTimeSlotService';
 export * from './userService';
 export * from './slotService';
 export * from './skedService';
