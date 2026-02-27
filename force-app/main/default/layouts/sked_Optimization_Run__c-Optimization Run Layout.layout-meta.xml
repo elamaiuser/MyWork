@@ -255,9 +255,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
@@ -271,6 +271,14 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>sked_Constraint_Type__c</fields>
+        <fields>sked_Constraint__c</fields>
+        <fields>sked_Default_Weight__c</fields>
+        <fields>sked_Display_Order__c</fields>
+        <fields>sked_Display_Type__c</fields>
+        <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Enabled__c</fields>
+        <fields>sked_Optimizer_Mapped_Weight__c</fields>
         <relatedList>sked_CollectionOperationOptimizerSetting__c.sked_Optimization_Run__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -282,6 +290,9 @@
         <fields>sked_Drive_Productivity_Planned__c</fields>
         <fields>sked_UFID__c</fields>
         <relatedList>sked_Drive__c.sked_Optimization_Run__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>RelatedEntityHistoryList</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
