@@ -32,6 +32,7 @@
         <members>BSF_TaskPlanningService</members>
 		<members>BSF_TaskPlanningWizardController</members>
 		<members>BSF_TemplateTaskPlanningCascadeBatch</members>
+        <members>BSF_TravelTimePanelController</members>
         <members>BsfPortfolioSyncHelper_Test</members>
         <members>CollectionOpAvailabilityTriggerHandler</members>
 		<members>CollectionOpAvailabilityTriggerService</members>
