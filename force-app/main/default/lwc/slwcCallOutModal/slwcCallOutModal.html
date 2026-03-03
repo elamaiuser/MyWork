@@ -70,10 +70,10 @@
                         </c-slwc-dependent-picklist>
                     </div>
 
-                    <!-- <div if:true={allowPtoForCallOut} class="slds-m-top_x-small slds-form-element">
+                    <div if:true={allowPtoForCallOut} class="slds-m-top_x-small slds-form-element">
                         <lightning-input 
                             type="checkbox" 
-                            label="Use PTO for call out?" 
+                            label="Use time-off with Callout?" 
                             name="usePtoForCallOut"
                             checked={model.usePtoForCallOut}
                             onchange={handleOnChange}>
@@ -105,7 +105,7 @@
                                 disabled={timeOffReasonCodeDisabled}>
                             </lightning-combobox>
                         </div>
-                    </div> -->
+                    </div>
 
                     <lightning-textarea class="slds-m-top_x-small" value={model.callOutNotes} label="Call Out Notes" name="callOutNotes"  onchange={handleOnChange}></lightning-textarea>
                 </div>

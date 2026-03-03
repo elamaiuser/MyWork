@@ -251,6 +251,9 @@ global class slwcResourceService {
             callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
         	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
         }
+        if (request.usePtoForCallOut == false && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NoTimeOFF_message;
+        }
         
         if (!notes.isEmpty()) {
             String driveUFIDNotes = String.join(notes, ' - ');
