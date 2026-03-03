@@ -1,5 +1,8 @@
 import TIME_ZONE from "@salesforce/i18n/timeZone";
 import {
+  sObjectType,
+  activityQueryModel,
+  activityService,
   activityResourceQueryModel,
   activityResourceService,
   availabilityService,
@@ -584,12 +587,29 @@ export default class SlwcDriveShiftTrade extends LightningElement {
     .then(() => {
       if (this.model.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.DRIVE_SHIFT) {
         return [this.model.requestingStaffRecord.collectionOperationId];
-      } else if (this.model.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
-        return [this.model.requestingStaffRecord.activity.collectionOperationId];
-      } else if (this.model.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY) {
+      } 
+      else if (this.model.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.ACTIVITY) {
+        if (!!this.model.requestingStaffRecord.activity.collectionOperationId) {
+          return [this.model.requestingStaffRecord.activity.collectionOperationId];
+        }
+        else {
+          let query = new activityQueryModel();
+          query.recordIds = [this.model.requestingStaffRecord.activity.id];
+          query.subQueryIndicator = sObjectType.ACTIVITY_COLLECTION_OPERATION;
+
+          let activitySvc = new activityService();
+          return activitySvc.query(query).then((activities) => {
+            return (activities || []).flatMap(activity =>
+              (activity.activityCollectionOperations || []).map(aco => aco.biomedCollectionOperationId)
+            );
+          });
+        }
+      }
+      else if (this.model.requestingStaffTradingType === DRIVE_SHIFT_TRADE_TYPE.AVAILABLE_DAY) {
         let foundResourceOverrides = this.findMatchedResourceOverrideOfRequester(this.model.requestingStaffRecord.startDate, this.model.requestingStaffRecord.endDate);
         return foundResourceOverrides?.length ? [foundResourceOverrides[0].collectionOperationId] : [this.userResource.collectionOperationId];
-      } else {
+      } 
+      else {
         return [this.userResource.collectionOperationId];
       }
     })
