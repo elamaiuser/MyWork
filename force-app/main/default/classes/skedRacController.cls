@@ -1442,7 +1442,6 @@ global virtual class skedRacController extends skedBaseController {
                                                                       , sked__Type__c, sked_Is_All_Day__c, sked_Duration__c // HRP-13613
                                                                       FROM sked__Availability__c
                                                                       WHERE sked__Resource__c = :request.event.resourceId
-                                                                      AND sked__Type__c = :request.event.eventType
                                                                       AND sked__Is_Available__c = FALSE
                                                                       AND sked_Start_Date__c <= :endDate
                                                                       AND sked_Finish_Date__c >= :startDate
