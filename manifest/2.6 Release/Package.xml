@@ -366,6 +366,7 @@
         <members>slwcDriveGenerator</members>
         <members>slwcDriveProductivityDriveList</members>
         <members>slwcDriveSchedulingConsole</members>
+        <members>slwcDriveShiftTrade</members>
         <members>slwcDriveStaffingDetails</members>
         <members>slwcGenerateDriveModal</members>
         <members>slwcJobDetailsForm</members>
