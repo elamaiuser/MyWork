@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>Daily Guaranteed Hours Score</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>

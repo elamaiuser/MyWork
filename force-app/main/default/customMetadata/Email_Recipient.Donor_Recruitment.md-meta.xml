@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Email__c</field>
-        <value xsi:type="xsd:string">bhq-donorrecruitmentprocess&amp;planning@redcross.org</value>
+        <value xsi:type="xsd:string">recruitmentsystems@redcross.org</value>
     </values>
 </CustomMetadata>
