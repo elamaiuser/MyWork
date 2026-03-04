@@ -1664,7 +1664,7 @@ class MobileGenerator extends BaseGenerator {
       )
 
       const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-      let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
+      let totalVpHhCapacity = driveShiftMetadata.donorsScheduled - staffCapacity;
       if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
       
       const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
@@ -1693,7 +1693,7 @@ class MobileGenerator extends BaseGenerator {
     )
 
     const vpHhCapacity = this.masterData.staffingDecisionMatrix.vpHhCapacity;
-    let totalVpHhCapacity = Math.ceil(driveShiftMetadata.donorsScheduled - staffCapacity);
+    let totalVpHhCapacity = driveShiftMetadata.donorsScheduled - staffCapacity;
     if(totalVpHhCapacity < 0) totalVpHhCapacity = 0;
       
     const drawHours = this.helper.calculateDrawHours(driveShiftMetadata, this.masterData, driveShiftMetadata.lunchBreakSettings);
