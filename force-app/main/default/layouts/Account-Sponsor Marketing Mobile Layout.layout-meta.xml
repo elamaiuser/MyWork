@@ -124,6 +124,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Market__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Business_Planning_Completed__c</field>
             </layoutItems>
             <layoutItems>
