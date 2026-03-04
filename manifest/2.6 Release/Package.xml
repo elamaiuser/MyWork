@@ -105,6 +105,7 @@
         <members>skedRefreshTravelTimeIndexBatchBase</members>
         <members>skedResourceHandler</members>
         <members>skedResourceHandler_Test</members>
+        <members>skedResourceTrigger_Test</members>
         <members>skedStaffingBudgetCollOp_Test</members>
         <members>skedTestDataFactory</members>
         <members>skedTravelTimeIndexTravelTimeBatch</members>
