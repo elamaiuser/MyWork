@@ -223,9 +223,9 @@ global class slwcResourceService {
             sked__Start__c = unavailabilityStart,
             sked__Resource__c = request.resourceId,
             sked__Notes__c = request.callOutNotes,
-            sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
+            sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
             sked__Timezone__c = unavailabilityTimezone,
-            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
             sked_Call_Out_For_Activity__c = request.activityId,
             sked_Call_Out_For_Job_Allocation__c = request.jobAllocationId,
             sked_Call_Out_Notes__c = request.callOutNotes,
@@ -235,7 +235,8 @@ global class slwcResourceService {
             sked_DateTime_Call_Out_Received__c = request.callOutReceivedDateTime,
             sked_DateTime_of_Call_Out__c = currentTime,
             sked_Time_Off_Plan__c = request.timeOffPlan,
-            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode            
+            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
+            sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NA            
         );
 
         if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
@@ -246,24 +247,38 @@ global class slwcResourceService {
             callOutAvailability.sked__Finish__c = callOutFinish.addMinutes(-1);
         }
 
-        if (request.usePtoForCallOut == false || request.usePtoForCallOut == null) {
-            callOutAvailability.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NA;
-            callOutAvailability.sked_Workday_Sync_Message__c = request.hasTimeOffPlans ? 'User chose to not submit time off' : 'No time off plan for workday sync';
-            callOutAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-            callOutAvailability.sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-        }
-
         if (callOutAvailability.sked_DateTime_of_Call_Out__c != NULL && callOutAvailability.sked__Start__c != NULL) {
             callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
         	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
         }
-        insert callOutAvailability;
+        if (request.usePtoForCallOut == false && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NoTimeOFF_message;
+        }
         
         if (!notes.isEmpty()) {
             String driveUFIDNotes = String.join(notes, ' - ');
             if (!string.isBlank(callOutAvailability.sked__Notes__c)) {
                 callOutAvailability.sked__Notes__c = driveUFIDNotes + '. ' + callOutAvailability.sked__Notes__c;
             }
+        }
+        insert callOutAvailability;
+        
+        if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            sked__Availability__c relatedAvailability = new sked__Availability__c(
+                sked__Type__c = request.timeOffPlan,
+                sked__Is_Available__c = FALSE,
+                sked__Finish__c = callOutAvailability.sked__Finish__c,
+                sked__Start__c = callOutAvailability.sked__Start__c,
+                sked_Is_All_Day__c = callOutAvailability.sked_Is_All_Day__c,
+                sked__Resource__c = request.resourceId,
+                sked__Notes__c = request.callOutNotes,
+                sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
+                sked__Timezone__c = unavailabilityTimezone,
+                sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+                sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
+                sked_Related_Call_Out__c = callOutAvailability.Id
+            );
+            insert relatedAvailability;
         }
     }
     

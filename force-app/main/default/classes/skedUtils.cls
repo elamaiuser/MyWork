@@ -467,6 +467,38 @@ public class skedUtils {
         }
     }
 
+    public static void createDefaultTravelTimeSlots(Set<Id> collectionOpIds) {
+        if (collectionOpIds.isEmpty()) {
+            return;
+        }
+
+        Set<Id> existingTravelTimeSlotCollectionOpIds = new Set<Id>();
+        for (AggregateResult ar : [SELECT sked_Collection_Operation__c FROM sked_Travel_Time_Slot__c WHERE sked_Collection_Operation__c IN :collectionOpIds GROUP BY sked_Collection_Operation__c]) {
+            existingTravelTimeSlotCollectionOpIds.add((Id)ar.get('sked_Collection_Operation__c'));
+        }
+
+        List<sked_Travel_Time_Slot__c> travelTimeSlotsToInsert = new List<sked_Travel_Time_Slot__c>();
+
+        for (Id collectionOpId : collectionOpIds) {
+            if (!existingTravelTimeSlotCollectionOpIds.contains(collectionOpId)) {
+                for (String weekday : WEEKDAYS) {
+                    for (SlotTemplate slot : DEFAULT_SLOTS) {
+                        sked_Travel_Time_Slot__c travelTimeSlot = new sked_Travel_Time_Slot__c();
+                        travelTimeSlot.sked_Collection_Operation__c = collectionOpId;
+                        travelTimeSlot.sked_Weekday__c = weekday;
+                        travelTimeSlot.Name = slot.label;
+                        travelTimeSlot.sked_Start_Time__c = slot.startTime;
+                        travelTimeSlot.sked_End_Time__c = slot.endTime;
+                        travelTimeSlotsToInsert.add(travelTimeSlot);
+                    }
+                }                
+            }
+        }
+        if (!travelTimeSlotsToInsert.isEmpty()) {
+            insert travelTimeSlotsToInsert;
+        }
+    }
+
     /************************************************ Private methods ***********************************************/
     private static string extractTemplateToFieldString(string template) {
         if (!string.isBlank(template)) {
@@ -497,5 +529,29 @@ public class skedUtils {
             return '';
         }
     }
+    
+    // Define the default Travel Time slots structure for new Collection Operations
+    private static final List<SlotTemplate> DEFAULT_SLOTS = new List<SlotTemplate>{
+        new SlotTemplate('Morning', 0, 800),    // 00:00 to 08:00
+        new SlotTemplate('Day', 800, 1600),     // 08:00 to 16:00
+        new SlotTemplate('Evening', 1600, 2359) // 16:00 to 23:59
+    };
 
+    private static final List<String> WEEKDAYS = new List<String>{
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    };
+    
+
+    /************************************************ Helper Class ***********************************************/
+    private class SlotTemplate {
+        public String label;
+        public Integer startTime;
+        public Integer endTime;
+
+        public SlotTemplate(String label, Integer startTime, Integer endTime) {
+            this.label = label;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+    }
 }

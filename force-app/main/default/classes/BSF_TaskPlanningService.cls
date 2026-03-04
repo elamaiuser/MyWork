@@ -28,7 +28,20 @@ public with sharing class BSF_TaskPlanningService {
         List<Task> standardTasksToCreate = new List<Task>();
         List<Planned_Task__c> processedPlannedTasks = new List<Planned_Task__c>();
 
+        Set<String> processedKeys = new Set<String>();
+
         for (Planned_Task__c plannedTask : configuredPlannedTasks) {
+            String uniqueKey = String.valueOf(plannedTask.Related_Opportunity__c) + '-' + String.valueOf(plannedTask.Task_Definition__c);
+            plannedTask.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+            processedPlannedTasks.add(plannedTask);
+
+            // Check for duplicates in the queue (same Opportunity + Task Definition)
+            if (processedKeys.contains(uniqueKey)) {
+                continue; // Skip duplicate
+            }
+            processedKeys.add(uniqueKey);
+
+            // --- Create Task based on Planned Task ---
             Task newTask = new Task(
                 WhatId = plannedTask.Related_Opportunity__c,
                 Subject = plannedTask.Subject__c,
@@ -41,14 +54,10 @@ public with sharing class BSF_TaskPlanningService {
             } else {
                 newTask.ActivityDate = plannedTask.Target_Date__c;
             }
-
-            standardTasksToCreate.add(newTask);
-            plannedTask.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
-            processedPlannedTasks.add(plannedTask);
+            standardTasksToCreate.add(newTask);            
         }
-
         if (!standardTasksToCreate.isEmpty()) {
-            handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
+            //handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
         }
         if (!processedPlannedTasks.isEmpty()) {
             handleDatabaseResults(Database.update(processedPlannedTasks, false, AccessLevel.USER_MODE), 'Marking Planned Tasks Processed');
@@ -100,6 +109,8 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> templateIds = new Set<Id>();
         for (Opportunity opp : newOpportunities) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+
             if (opp.AccountId != null) { accountIds.add(opp.AccountId); }
             if (opp.Parent_Template_Id__c != null) { templateIds.add(opp.Parent_Template_Id__c); }
         }
@@ -110,6 +121,8 @@ public with sharing class BSF_TaskPlanningService {
         Map<Id, List<Task_Selected_Package__c>> bundlesByTemplateId = getParentBundles(templateIds, 'Opportunity__c');
 
         for (Opportunity opp : newOpportunities) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            
             List<Task_Planning_Default__c> sourceConfigs = new List<Task_Planning_Default__c>();
             List<Task_Selected_Package__c> sourceBundles = new List<Task_Selected_Package__c>();
 
@@ -242,6 +255,8 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> templateChangedIds = new Set<Id>();
 
         for(Opportunity opp : newOpps) {
+            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+
             Opportunity old = oldMap.get(opp.Id);
             
             // 1. Detect Status Change to 'Confirmed' (Trigger Task Generation)

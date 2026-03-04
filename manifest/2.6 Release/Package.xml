@@ -11,6 +11,10 @@
 		<members>BSF_Batch_TaxonomyEndDate_Test</members>
 		<members>skedCollectionsZipCodeBatch_Test</members>
 		<members>DefaultTerritoryPortfolioBatch_Test</members>
+		<members>TerritoryTriggerHandler</members>
+        <members>BSF_Batch_TaxonomyEndDateHelper</members>
+        <members>BSF_Batch_TaxonomyEndDateHandler</members>
+		<members>PowerBIProxyController</members>
 		<name>ApexClass</name>
 	</types>
 	<types>

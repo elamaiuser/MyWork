@@ -6,7 +6,7 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
 
     public override void onAfterUpdate() {
         captureJobIMPACTChanges(this.context.newRecords, (Map<Id, Biomed_Collection_Op_Center__c>) this.context.oldMap);
-        captureWeightLevelValueChanges(this.context.newRecords, (Map<Id, Biomed_Collection_Op_Center__c>) this.context.oldMap);
+        captureWeightLevelValueChanges(this.context.newRecords, (Map<Id, Biomed_Collection_Op_Center__c>) this.context.oldMap);        
     }
     
     public override void onAfterInsert() {
@@ -15,6 +15,11 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
                 skedBiomedCollectionOpHandler.class.getName(),
                 'createQueues',
                 getCollectionOpNames(this.context.newRecords, false)
+            );
+            skedFutureCallEventHandler.publishFutureCallEvent(
+                skedBiomedCollectionOpHandler.class.getName(),
+                'createTravelTimeSlots',
+                getCollectionOpIds(this.context.newRecords)
             );
         }
     }
@@ -111,6 +116,10 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
         insert queueSobjectsToCreate;
     }
 
+    public static void createTravelTimeSlots(Set<Id> collectionOpIds) {
+        skedUtils.createDefaultTravelTimeSlots(collectionOpIds);        
+    }
+
     @testVisible
     private static Set<String> getCollectionOpNames(List<Biomed_Collection_Op_Center__c> records, Boolean appendWildcard) {
         Set<String> collectionOpNames = new Set<String>();
@@ -119,6 +128,14 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
         }
 
         return collectionOpNames;
+    }
+
+    private static Set<String> getCollectionOpIds(List<Biomed_Collection_Op_Center__c> records) {
+        Set<String> collectionOpIds = new Set<String>();
+        for (Biomed_Collection_Op_Center__c co : records) {
+            collectionOpIds.add(co.Id);
+        }
+        return collectionOpIds;
     }
 
     private void captureJobIMPACTChanges(List<Biomed_Collection_Op_Center__c> newRecords, Map<Id, Biomed_Collection_Op_Center__c> oldMap) {
@@ -184,6 +201,9 @@ public class skedBiomedCollectionOpHandler extends skedTriggerHub implements Cal
                 }
                 when 'deleteQueues' {
                     deleteQueues((Set<String>) JSON.deserialize((String) params.get('param1'), Set<String>.class));
+                }
+                when 'createTravelTimeSlots' {
+                    createTravelTimeSlots((Set<Id>) JSON.deserialize((String) params.get('param1'), Set<Id>.class));
                 }
                 when else {
                     throw new skedException('Unable to locate Method: ' + methodName + ' in Class: ' + skedBiomedCollectionOpHandler.class.getName());
