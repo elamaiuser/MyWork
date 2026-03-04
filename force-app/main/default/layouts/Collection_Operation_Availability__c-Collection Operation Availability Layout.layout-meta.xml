@@ -33,11 +33,11 @@
                 <field>Total_Actual_Resources__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Effective_Start_Date__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Effective_End_Date__c</field>
             </layoutItems>
         </layoutColumns>
