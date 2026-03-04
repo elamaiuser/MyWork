@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-		<members>AccountStatusUpdateHelper</members>
+        <members>BSF_TemplateCDA_FutOppBatch_Test</members>
+		<members>BSF_TemplateCDA_FutureOpportunity_Batch</members>
+		<members>MobileDriveGeneratorDMLService</members>
+        <members>OpportunityService</members>
+		<members>OpportunityTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
-		<members>Account-APS Planner Fixed Site Account Layout</members>
-        <members>Account-APS Planner Mobile Account Layout</members>
-        <members>Account-Sponsor Marketing Fixed Site Account Layout</members>
-        <members>Account-Sponsor Marketing Mobile Layout</members>
-		<name>Layout</name>
-	</types>
-	<types>
-		<members>slwcDriveStaffingDetails</members>
+         <members>Email_Recipient.Donor_Recruitment</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+        <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+        <members>Task_Checklist_Setting.Contacted_Sponsor</members>
+        <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
 	   <name>LightningComponentBundle</name>
 	</types>
-    <types>
-        <members>BSFRecruitment/Account_with_Account_Affiliations_4FD</members>
-        <name>Report</name>
-    </types>
-    <types>
-        <members>Accounts_With_Account_Affiliation</members>
-        <name>ReportType</name>
-    </types>
 	<version>64.0</version>
 </Package>

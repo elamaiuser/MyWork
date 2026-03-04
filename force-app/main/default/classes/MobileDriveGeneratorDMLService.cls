@@ -206,7 +206,8 @@ public with sharing class MobileDriveGeneratorDMLService {
             Map<Id, Opportunity> mapOpp = new Map<Id, Opportunity>([SELECT Id, Calendar_Build_Status__c, Calendar_Build_Reasons_For_Unqualified__c,
                                                                     Source__c
                                                                     FROM Opportunity
-                                                                    WHERE Id IN :oppIds
+                                                                    WHERE Id IN :oppIds 
+                                                                    AND Type_of_Drive__c != :skedConstants.DRIVE_TYPE_FIXED_SITE
                                                                     AND (Source__c = :BSF_Constants.OPP_SOURCE_CALENDAR_BUILD 
                                                                         OR Source__c = :BSF_Constants.OPP_SOURCE_ADHOC_CALENDAR_BUILD)]);
             
