@@ -325,6 +325,7 @@ global class skedModels {
         public string notes;
         public resource resource;
         public string resourceId;
+        public decimal noOfRequestedHours;
     }
     
     global virtual class holiday extends modelBase {
