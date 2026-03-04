@@ -14,10 +14,12 @@ private class skedResourceHandler_Test {
         List<sObject> predefinedData = new List<sObject>();
 
         List<string> roles = skedUtils.getPickListValues('sked__Resource__c', 'sked_Roles__c');
-        for (string role : roles) {
+        for (Integer i = 0; i < roles.size(); i++) {
             sked__Tag__c roleTag = new sked__Tag__c(
-                Name = role,
-                sked__Type__c = 'Role'
+                Name = roles[i],
+                sked__Type__c = 'Role',
+                sked_Priority__c = 9,
+                sked_Role_ID__c = 'SKED-T-' + i
             );
             predefinedData.add(roleTag);
         }
@@ -157,10 +159,9 @@ private class skedResourceHandler_Test {
         testResource.sked_FCC_Code__c = '83140';
         testResource.sked_Mobile_Type__c = 'Outside';
         testResource.sked_Primary_Phone_Type__c = 'Work Phone';
-        update testResource;
         
         testEquipment.sked_Site_Type__c = 'Mobile';
-        update testEquipment;
+        update new List<sked__Resource__c>{testResource, testEquipment};
         TriggerHandler.clearBypass('ResourceTriggerHandler');
         
         Test.stopTest();

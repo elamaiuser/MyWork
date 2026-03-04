@@ -13,7 +13,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>filterName</name>
-                    <value>Op_Record_not_Submitted</value>
+                    <value>Not_Submitted_Op_Records</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>hideActionBar</name>
@@ -107,7 +107,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type from Task where Status != &#39;Completed&#39; AND (OwnerId in:</value>
+                    <value>Select Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type from Task where Status != &apos;Completed&apos; AND (OwnerId in:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>

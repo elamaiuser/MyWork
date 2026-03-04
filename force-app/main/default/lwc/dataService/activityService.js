@@ -9,7 +9,7 @@ class activityService extends dataService {
     getQueryConditions(query) {
         let queryBuilder = query.getQueryBuilder(this.sObjectApiName);
         if (query.collectionOperationIds && query.collectionOperationIds.length) {
-            queryBuilder.addCondition({ template: 'sked_Region__r.sked_Biomed_Collection_Op_Center__c IN {0}', value: query.collectionOperationIds, type: "array_string" });
+            queryBuilder.addCondition({ template: 'sked_Collection_Operation__c IN {0}', value: query.collectionOperationIds, type: "array_string" });
         }
         if (query.territoryKeys && query.territoryKeys.length) {
             queryBuilder.addCondition({ template: "sked_Territory_Key__c IN {0}", value: query.territoryKeys, type: "array_string" });

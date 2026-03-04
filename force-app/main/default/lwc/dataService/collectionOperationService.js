@@ -39,6 +39,14 @@ class collectionOperationService extends dataService {
       if (query.includes(sObjectType.COLLECTION_OPERATION_TIME_BLOCK)) {
         let subQueryBuilder = query.getQueryBuilder("Collection_Operation_Time_Block__c");
       }
+
+      if (query.includes(sObjectType.COLLECTION_OPERATION_AVAILABILITY)) {
+        let subQueryBuilder = query.getQueryBuilder("Collection_Operation_Availability__c");
+      }
+
+      if (query.includes(sObjectType.AVAILABILITY_PATTERN_ROLE)) {
+        let subQueryBuilder = query.getQueryBuilder("Availability_Pattern_Role__c");
+      }
   }
 
   getCollectionOperationData(query) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>OpportunityService</members>
+		<members>TaskGenerationBatch</members>
+        <members>BSF_Batch_CreatePublicityTasks</members>
+        <members>TaskGenerationBatch_Test</members>
+        <members>OpportunityTriggerTest</members>
+        <members>BSF_Batch_CreatePublicityTasksTest</members>
+		<members>BSF_Batch_RecruitmentTaskCreation</members>
+		<members>BSF_Batch_RecruitmentTaskCreation_Test</members>		
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>Task_Creation_on_Drive_Status_Complete</members>
+		<name>Flow</name>
+	</types>
+	<version>60.0</version>
+</Package>

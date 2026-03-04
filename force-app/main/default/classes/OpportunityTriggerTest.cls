@@ -931,7 +931,7 @@ public class OpportunityTriggerTest
         insert drives;
         
         OpportunityService.populateDriveWorksheetData(oppList);
-        OpportunityService.checkOppNameChange(oppList);
+        OpportunityService.checkOppNameChange(new Set<Id>{oppList[0].Id});
         Test.stopTest();
         
         sked_Drive__c driveAfterUpdate = [select Id, sked_Open_to_Public__c,OwnerId, sked_Opportunity__r.OwnerId from sked_Drive__c where Id=:drives.id];
