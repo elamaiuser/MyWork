@@ -6,7 +6,7 @@
     <errorConditionFormula>AND(
 NOT($User.FirstName &amp; &apos; &apos; &amp; $User.LastName = &apos;Automated Process&apos;),
 NOT($Profile.Name  = &apos;System Administrator&apos;),
-ISCHANGED(Total_Actual_Resources__c))</errorConditionFormula>
+NOT(ISBLANK(Total_Actual_Resources__c)))</errorConditionFormula>
     <errorDisplayField>Total_Actual_Resources__c</errorDisplayField>
     <errorMessage>Only System Admins are allowed to modify this field</errorMessage>
 </ValidationRule>
