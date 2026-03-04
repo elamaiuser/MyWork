@@ -13,6 +13,8 @@
 		<members>skedNightlyUpdateCoApRoleTargetsBatch</members>
 		<members>skedUpdateCoApRoleTargetsBatchHelper</members>
         <members>skedUpdateCoApRoleTargetsBatch_Test</members>
+		<members>skedResourceHandler</members>
+		<members>skedResourceTrigger_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>

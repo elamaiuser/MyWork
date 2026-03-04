@@ -669,6 +669,7 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (newRecord.sked_Max_Hours_Per_Week__c == NULL) {
                     newRecord.sked_Max_Hours_Per_Week__c = 40;
                 }
+                newRecord.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_CO;
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
                 if (newRecord.sked_Site_Type__c == NULL) {
@@ -702,6 +703,9 @@ public class skedResourceHandler extends skedTriggerHub {
                 }
                 if (newRecord.sked_Max_Hours_Per_Week__c != oldData.sked_Max_Hours_Per_Week__c && newRecord.sked_Max_Hours_Per_Week__c == NULL) {
                     newRecord.sked_Max_Hours_Per_Week__c = 40;
+                }
+                if(newRecord.sked__Primary_Region__c != oldData.sked__Primary_Region__c) {
+                    newRecord.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_CO;
                 }
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
