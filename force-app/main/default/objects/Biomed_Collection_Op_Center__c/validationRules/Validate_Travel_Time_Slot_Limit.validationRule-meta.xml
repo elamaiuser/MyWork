@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validate_Travel_Time_Slot_Limit</fullName>
+    <active>true</active>
+    <description>Restricts the Maximum Travel Time Slots to be between 3 and 8.</description>
+    <errorConditionFormula>AND(
+				NOT(ISBLANK(sked_Maximum_Travel_Time_Slots__c)),
+				OR(
+								sked_Maximum_Travel_Time_Slots__c &lt; 3,
+								sked_Maximum_Travel_Time_Slots__c &gt; 8
+						)
+				)</errorConditionFormula>
+    <errorDisplayField>sked_Maximum_Travel_Time_Slots__c</errorDisplayField>
+    <errorMessage>The Maximum Travel Time Slots must be a number between 3 and 8.</errorMessage>
+</ValidationRule>
