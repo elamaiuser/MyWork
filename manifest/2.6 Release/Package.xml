@@ -416,6 +416,7 @@
         <name>StaticResource</name>
     </types>
     <types>
+        <members>Biomed_Collection_Op_Center__c.Validate_Travel_Time_Slot_Limit</members>
         <members>sked__Tag__c.Validate_Role_ID_Format</members>
         <name>ValidationRule</name>
     </types>
