@@ -1,6 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { collectionOperationService,collectionOperationQueryModel,travelTimeSlotService, travelTimeSlotQueryModel } from 'c/dataService';
+import { collectionOperationService,collectionOperationQueryModel,travelTimeSlotService, travelTimeSlotQueryModel, userService } from 'c/dataService';
 import * as slwcDateUtils from "c/slwcDateUtils";
 import TIME_ZONE from '@salesforce/i18n/timeZone';
 import { cloneDeep } from 'c/lodash';
@@ -15,6 +15,7 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 	@track draftSlotsData = []; // Draft copy of all slots (all weekdays) for editing
 	@track recordsToDelete = []; // Track records to delete on save
 	@track showSpinner = false;
+	@track loginUser;
 
 	// Configuration Constraints
 	maxSlots = 6;
@@ -36,6 +37,15 @@ export default class SlwcTravelTimeSlots extends LightningElement {
     });
   }
 
+	get isReadonly() {
+		if (!this.loginUser || !this.loginUser.profileName) {
+			return true;
+		}
+		const profile = this.loginUser.profileName;
+		const isAdmin = profile.startsWith('System Administrator') || profile.startsWith('Global Admin') || profile.startsWith('APS Admin');
+		return !isAdmin;
+	}
+
 	connectedCallback() {
 		this.initialize();
 	}
@@ -43,6 +53,8 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 	initialize() {
 		this.showSpinner = true;
 		this.recordsToDelete = [];
+
+		let userSvc = new userService();
 
 		let coQuery = new collectionOperationQueryModel();
 		coQuery.recordIds = [this.recordId];
@@ -53,8 +65,12 @@ export default class SlwcTravelTimeSlots extends LightningElement {
 		slotQuery.collectionOperationIds = [this.recordId];				
 		let slotService = new travelTimeSlotService();
 
-		Promise.all([coService.query(coQuery), slotService.query(slotQuery)])
-			.then(([coResult, slotsResult]) => {
+		Promise.all([coService.query(coQuery), slotService.query(slotQuery), userSvc.getLoginUser()])
+			.then(([coResult, slotsResult, loginUser]) => {
+				if (loginUser && loginUser.returnedData) {
+					this.loginUser = loginUser.returnedData;
+				}
+				
 				if (coResult && coResult.length > 0) {
 					const coRecord = coResult[0];
 					if (coRecord.maximumTravelTimeSlots) {
