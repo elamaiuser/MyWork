@@ -397,4 +397,36 @@ public class BSF_Constants {
     public static final String SSBS_BADGE_RISK_FOR_REMOVAL = 'Risk for Removal';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH = 'Strategic Stretch Booking';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH_DIVERSE = 'Strategic Stretch Booking - Diverse';
+
+    // Assignment Roles & Hierarchies
+    public static final String ASSIGNED_TO_AM = 'Account Manager';
+    public static final String ASSIGNED_TO_SBPM = 'Strategic Business Planning Manager';
+
+    // StandardTaskGenerationBatch Constants
+    public static final String STANDARD_TASK_BATCH_FILTER = 
+        'Status__c = \'' + PLANNED_TASK_STATUS_CONFIGURED + '\' ' +
+        'AND Related_Opportunity__c != null ' +
+        'AND Related_Opportunity__r.DriveStatus__c != \'' + DOC_STATUS_CANCEL + '\' ' +
+        'AND (' +
+            '(Creation_Offset__c != null AND Calculated_Creation_Date__c <= TODAY) ' +
+            'OR ' +
+            '(Creation_Offset__c = null AND Related_Opportunity__r.DriveStatus__c = \'' + DOC_STATUS_CONFIRMED + '\')' +
+        ')';
+    public static final List<String> TASK_OWNER_HIERARCHY = new List<String>{
+        AREA_BOOKING_MANAGER,
+        ACCOUNT_MANAGER,
+        ACCOUNT_SPECIALIST,
+        DISTRICT_MANAGER,
+        OPPORTUNITY_OWNER,
+        DRD_SYSTEM_USER
+    };
+    public static final String TASK_FIELD_MAPPING_JSON = 
+        '{' +
+            '"Subject__c": "Subject",' +
+            '"Calculated_Target_Date__c": "ActivityDate",' +
+            '"Related_Opportunity__c": "WhatId",' +
+            '"Task_Definition__r.Task_Type__c": "Type",' +
+            '"Task_Definition__r.Task_Sub_Type__c": "TaskSubtype",' +
+            '"Related_Opportunity__r.Drive_Date__c": "Drive_Date__c"' +
+        '}';
 }

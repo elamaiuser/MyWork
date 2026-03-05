@@ -387,4 +387,251 @@ public with sharing class BSF_TaskPlanningService {
             System.debug(LoggingLevel.ERROR, 'Error in context [' + context + ']: ' + err.getMessage()); 
         }
     }
+
+    // ============================================================================
+    // StandardTaskGenerationBatch Helper Methods
+    // ============================================================================
+
+    public static String buildTaskGenerationBatchQuery(String batchWhereClause) {
+        Set<String> queryFields = new Set<String>{'Id'};
+        for(Schema.FieldSetMember fsm : SObjectType.Planned_Task__c.FieldSets.Task_Generation_Fields.getFields()) {
+            queryFields.add(fsm.getFieldPath());
+        }
+        return 'SELECT ' + String.join(new List<String>(queryFields), ', ') +
+                ' FROM Planned_Task__c ' +
+                ' WHERE ' + batchWhereClause;
+    }
+
+    public static Id determineTaskOwner(String assignedTo, Map<String, Id> oppRoles) {
+        if (oppRoles == null || oppRoles.isEmpty()) {
+            return UserInfo.getUserId();
+        }
+        Id ownerId = null;
+        if(String.isBlank(assignedTo)) {
+            assignedTo = BSF_Constants.ASSIGNED_TO_AM; // Default to AM if not specified
+        }
+        if(assignedTo.equals(BSF_Constants.ASSIGNED_TO_SBPM)) {
+            assignedTo = BSF_Constants.AREA_BOOKING_MANAGER;
+        }
+
+        Boolean cascade = false;
+        for(String fallbackRole : BSF_Constants.TASK_OWNER_HIERARCHY){
+            if(fallbackRole.equalsIgnoreCase(assignedTo)){
+                cascade = true;
+            }
+            if(cascade && oppRoles.containsKey(fallbackRole) && oppRoles.get(fallbackRole) != null){
+                ownerId = oppRoles.get(fallbackRole);
+                break;
+            }
+        }
+        return ownerId;
+    }
+
+    public static Map<String, Task> getExistingTasks(Set<Id> oppIds, Set<String> subjects) {
+        Map<String, Task> taskMap = new Map<String, Task>();
+        if(oppIds.isEmpty() || subjects.isEmpty()) return taskMap;
+
+        List<Task> existingTasks = [
+            SELECT Id, Subject, WhatId 
+            FROM Task 
+            WHERE WhatId IN :oppIds 
+            AND Subject IN :subjects
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ];
+        
+        for (Task t : existingTasks) {
+            taskMap.put(t.WhatId + '-' + t.Subject, t);
+        }
+        return taskMap;
+    }
+    
+    private static Map<Id, Map<String, Id>> buildRoleHierarchyMap(Set<Id> oppIds) {
+        Map<Id, Map<String, Id>> oppRolesMap = new Map<Id, Map<String, Id>>();
+        Set<Id> accountIds = new Set<Id>();
+
+        if (oppIds.isEmpty()){
+            return oppRolesMap;
+        }
+        Id drdSystemUserId = TaskService.getDRDSystemUser();
+        List<Opportunity> oppList = [SELECT Id, 
+                                            AccountId, 
+                                            Account_Manager__c, 
+                                            OwnerId,
+                                            (SELECT UserId, 
+                                                    TeamMemberRole 
+                                                FROM OpportunityTeamMembers)
+                                            FROM Opportunity 
+                                            WHERE Id IN :oppIds];
+
+        for (Opportunity opp : oppList) {
+            if (opp.AccountId != null) {
+                accountIds.add(opp.AccountId);
+            }
+        }
+
+        Map<Id, Id> accountSpecialistMap = new Map<Id, Id>();
+        if (!accountIds.isEmpty()) {
+            for (AccountTeamMember atm : [SELECT AccountId, 
+                                                UserId, 
+                                                Is_Covering_Recruiter__c 
+                                            FROM AccountTeamMember 
+                                            WHERE AccountId IN :accountIds 
+                                            AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
+                                            ORDER BY CreatedDate DESC]) {
+                if (!accountSpecialistMap.containsKey(atm.AccountId) || atm.Is_Covering_Recruiter__c == true) {
+                    accountSpecialistMap.put(atm.AccountId, atm.UserId);
+                }
+            }
+        }
+
+        for (Opportunity opp : oppList) {
+            Map<String, Id> roles = new Map<String, Id>();
+            roles.put(BSF_Constants.ACCOUNT_MANAGER, opp.Account_Manager__c);
+            roles.put(BSF_Constants.OPPORTUNITY_OWNER, opp.OwnerId);
+            roles.put(BSF_Constants.DRD_SYSTEM_USER, drdSystemUserId);
+            
+            if (opp.OpportunityTeamMembers != null) {
+                for (OpportunityTeamMember otm : opp.OpportunityTeamMembers) {
+                    if (String.isNotBlank(otm.TeamMemberRole) 
+                            && (otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.AREA_BOOKING_MANAGER) 
+                            || otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER)
+                            || otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST))) {
+                        roles.put(otm.TeamMemberRole, otm.UserId);
+                    }
+                }
+            }
+
+            if (opp.AccountId != null && accountSpecialistMap.containsKey(opp.AccountId) && roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null) {
+                roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accountSpecialistMap.get(opp.AccountId));
+            }
+
+            oppRolesMap.put(opp.Id, roles);
+        }
+        
+        return oppRolesMap;
+    }
+
+    public static Task buildTask(Planned_Task__c pt, Map<String, String> fieldMapping, Id ownerId) {
+        Task newTask = new Task();
+        
+        if (fieldMapping != null && !fieldMapping.isEmpty()) {
+            for (String sourceFieldPath : fieldMapping.keySet()) {
+                String targetFieldAPI = fieldMapping.get(sourceFieldPath);
+                Object fieldValue = getFieldValue(pt, sourceFieldPath);
+                if (fieldValue != null) {
+                    newTask.put(targetFieldAPI, fieldValue);
+                }
+            }
+        }
+
+        newTask.Status = BSF_Constants.STATUS_NOT_STARTED;
+        newTask.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
+        newTask.OwnerId = ownerId;
+        return newTask;
+    }
+
+    public static Object getFieldValue(SObject record, String fieldPath) {
+        Object fieldValue;
+        if (record == null || String.isBlank(fieldPath)){ 
+            return null;
+        }
+        if (!fieldPath.contains('.')) {
+            fieldValue = record.get(fieldPath);
+        }else{
+            List<String> relations = fieldPath.split('\\.');
+            SObject currentObj = record;
+            
+            for (Integer i = 0; i < relations.size() - 1; i++) {
+                if (currentObj == null) {
+                    fieldValue = null;
+                    break;
+                }
+                currentObj = currentObj.getSObject(relations[i]);
+            }
+            if(currentObj != null){
+                fieldValue = currentObj.get(relations[relations.size() - 1]);
+            }
+        }
+        return fieldValue;
+    }
+
+    public static Map<String, String> getDynamicFieldMapping() {
+        Map<String, String> fieldMapping = new Map<String, String>();
+        try {
+            String jsonMap = BSF_Constants.TASK_FIELD_MAPPING_JSON;
+            if (String.isNotBlank(jsonMap)) {
+                Map<String, Object> rawMapping = (Map<String, Object>) JSON.deserializeUntyped(jsonMap);
+                for (String key : rawMapping.keySet()) {
+                    fieldMapping.put(key, String.valueOf(rawMapping.get(key)));
+                }
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.ERROR, 'Failed to parse Task_Field_Mapping_JSON: ' + e.getMessage());
+        }
+        return fieldMapping;
+    }
+
+    public static void processAndGenerateTasks(List<Planned_Task__c> plannedTasks) {
+        if (plannedTasks == null || plannedTasks.isEmpty()) return;
+
+        Set<Id> oppIds = new Set<Id>();
+        Set<String> taskSubjects = new Set<String>();
+
+        for (Planned_Task__c pt : plannedTasks) {
+            if (pt.Related_Opportunity__c != null) {
+                oppIds.add(pt.Related_Opportunity__c);
+                taskSubjects.add(pt.Subject__c);
+            }
+        }
+
+        Map<String, Task> existingTaskMap = getExistingTasks(oppIds, taskSubjects);
+        Map<Id, Map<String, Id>> roleHierarchyMap = buildRoleHierarchyMap(oppIds);
+        Map<String, String> fieldMapping = getDynamicFieldMapping();
+
+        List<Task> tasksToInsert = new List<Task>();
+        Map<Integer, Planned_Task__c> taskIndexToPlannedTaskMap = new Map<Integer, Planned_Task__c>();
+        List<Planned_Task__c> pTasksToUpdate = new List<Planned_Task__c>();
+
+        for (Planned_Task__c pt : plannedTasks) {
+            String taskKey = pt.Related_Opportunity__c + '-' + pt.Subject__c;
+            if (existingTaskMap.containsKey(taskKey)) {
+                pt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+                pTasksToUpdate.add(pt);
+                continue;
+            }
+
+            Id assignedOwnerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, roleHierarchyMap.get(pt.Related_Opportunity__c));
+
+            Task newTask = buildTask(pt, fieldMapping, assignedOwnerId);
+
+            tasksToInsert.add(newTask);
+            taskIndexToPlannedTaskMap.put(tasksToInsert.size() - 1, pt);
+        }
+
+        if (!tasksToInsert.isEmpty()) {
+            Database.SaveResult[] srList = Database.insert(tasksToInsert, false);
+            
+            for (Integer i = 0; i < srList.size(); i++) {
+                Planned_Task__c relatedPt = taskIndexToPlannedTaskMap.get(i);
+                
+                if (srList[i].isSuccess()) {
+                    relatedPt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+                    pTasksToUpdate.add(relatedPt);
+                } else {
+                    for(Database.Error err : srList[i].getErrors()) {
+                        System.debug(LoggingLevel.ERROR, 'Error inserting Task for Planned_Task__c ' + relatedPt.Id + ': ' + err.getMessage());
+                    }
+                }
+            }
+        }
+
+        if (!pTasksToUpdate.isEmpty()) {
+            Database.SaveResult[] updateResults = Database.update(pTasksToUpdate, false);
+            for (Database.SaveResult sr : updateResults) {
+                if (!sr.isSuccess()) {
+                    System.debug(LoggingLevel.ERROR, 'Failed to update Planned_Task__c status: ' + sr.getErrors()[0].getMessage());
+                }
+            }
+        }
+    }
 }
