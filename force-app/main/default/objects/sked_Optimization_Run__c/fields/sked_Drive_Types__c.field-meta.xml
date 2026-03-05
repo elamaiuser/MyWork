@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Drive_Types__c</fullName>
     <description>HRP-12864</description>
-    <externalId>false</externalId>
     <label>Drive Types</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>MultiselectPicklist</type>
     <valueSet>

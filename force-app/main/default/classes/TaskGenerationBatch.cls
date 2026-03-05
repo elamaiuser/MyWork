@@ -8,7 +8,7 @@ global class TaskGenerationBatch implements Database.Batchable<sObject> {
     
     global Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
-            'SELECT Id, Name, StageName, Account_Manager__c, OwnerId, Is_Template__c, Call_List_Recipient_Exist__c, RecordTypeId, Drive_Date__c, AccountId, Account.Account_Manager__c, IsClosed, CloseDate FROM Opportunity WHERE RecordType.Name = \'Mobile Opp\' AND (StageName = \'Committed\' OR StageName = \'Closed\')' //Changes for HRP-13850
+            'SELECT Id, Name, StageName, Account_Manager__c, DriveStatus__c, OwnerId, Is_Template__c, Call_List_Recipient_Exist__c, RecordTypeId, Drive_Date__c, AccountId, Account.Account_Manager__c, IsClosed, CloseDate FROM Opportunity WHERE RecordType.Name = \'Mobile Opp\' AND (StageName = \'Committed\' OR StageName = \'Closed\')' //Changes for HRP-13850
         );
     }
     

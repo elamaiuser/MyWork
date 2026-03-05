@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Opt_Run_Meta__c</fullName>
     <description>HRP-12510 Added this field to get the meta result from the api.</description>
-    <externalId>false</externalId>
     <label>Run Meta</label>
     <length>131072</length>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>3</visibleLines>
