@@ -8,6 +8,11 @@
         <isRequired>true</isRequired>
     </displayedFields>
     <displayedFields>
+        <field>Status__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>true</isRequired>
+    </displayedFields>
+    <displayedFields>
         <field>Calculated_Target_Date__c</field>
         <isFieldManaged>false</isFieldManaged>
         <isRequired>true</isRequired>
