@@ -327,6 +327,8 @@ public class skedDriveHandler extends skedTriggerHub {
             FROM Custom_Messages__mdt
             WHERE DeveloperName = 'Time_Block_Validation_From_DOC'
         ];
+
+      
         String errorMessage = customMessage.Value__c;
         for (sked_Drive__c confirmedDrive : mapConfirmedDrives.values()) {
             collectionOperationIds.add(confirmedDrive.sked_Collection_Operation__c);
@@ -355,6 +357,7 @@ public class skedDriveHandler extends skedTriggerHub {
             if (driveShift.sked_Time_Block__c == NULL || (driveShift.sked_Time_Block__c != NULL && driveShift.sked_Contention__c != NULL && driveShift.sked_Contention__c != skedConstants.CONTENTION_CODE_FITS_MULTIPLE_TIME_BLOCKS && driveShift.sked_Contention_Resolution__c == NULL)) {
                 sked_Drive__c drive = mapConfirmedDrives.get(driveShift.sked_Drive__c);
                 
+                if ((drive.sked_Type_of_Drive__c == 'Fixed Site' && drive.sked_Operation_Type__c == 'Non Integrated WB') || drive.sked_Type_of_Drive__c == 'Mobile') {
                 Biomed_Collection_Op_Center__c collectionOperation = mapCO.get(drive.sked_Collection_Operation__c);
                 
                 List<Collection_Operation_Time_Block__c> usedCOTBs = new List<Collection_Operation_Time_Block__c>();
@@ -372,8 +375,9 @@ public class skedDriveHandler extends skedTriggerHub {
                     sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);                    
                     newRecordDrive.addError(errorMessage);
                 }
-            }
+           }
         }
+    }
     }
     
     private void submitConfirmDriveRequest(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
