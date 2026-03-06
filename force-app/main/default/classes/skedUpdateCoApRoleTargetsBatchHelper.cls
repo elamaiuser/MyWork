@@ -99,6 +99,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
                 SELECT Id, sked__Availability_Pattern__c
                 FROM sked__Availability_Pattern_Resources__r
                 WHERE sked__Availability_Pattern__c IN :apIds
+                AND (sked_End_Date__c = null OR sked_End_Date__c >= TODAY)
             )
             FROM sked__Resource__c
             WHERE Id IN :resourceIds
