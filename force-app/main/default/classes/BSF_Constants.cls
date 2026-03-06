@@ -412,6 +412,10 @@ public class BSF_Constants {
             'OR ' +
             '(Creation_Offset__c = null AND Related_Opportunity__r.DriveStatus__c = \'' + DOC_STATUS_CONFIRMED + '\')' +
         ')';
+    public static final String PLANNED_TASK_TRIGGER_FILTER = 
+        'Related_Opportunity__c IN :opportunityIds ' + 
+        'AND Status__c = \'' + PLANNED_TASK_STATUS_CONFIGURED + '\' ' +
+        'AND Creation_Offset__c != null';
     public static final List<String> TASK_OWNER_HIERARCHY = new List<String>{
         AREA_BOOKING_MANAGER,
         ACCOUNT_MANAGER,

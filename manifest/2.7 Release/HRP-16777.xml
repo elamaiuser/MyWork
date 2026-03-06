@@ -5,8 +5,15 @@
 		<members>BSF_Constants</members>
 		<name>ApexClass</name>
 	</types>
+    <types>
+		<members>TaskPlatformEvent</members>
+		<name>ApexTrigger</name>
+	</types>
 	<types>
 		<members>Planned_Task__c.Calculated_Creation_Date__c</members>
+        <members>Task_Platform_Event__e.Planned_Task_Id__c</members>
+        <members>Task_Platform_Event__e.Task_Sub_Type__c</members>
+        <members>Task_Platform_Event__e.Type__c</members>
 		<name>CustomField</name>
 	</types>
     <types>

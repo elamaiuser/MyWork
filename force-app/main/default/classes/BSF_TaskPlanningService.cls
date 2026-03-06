@@ -11,56 +11,16 @@ public with sharing class BSF_TaskPlanningService {
         if (opportunityIds == null || opportunityIds.isEmpty()) {
             return;
         }
-
-        List<Planned_Task__c> configuredPlannedTasks = [
-            SELECT Id, Subject__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c,
-                   Related_Opportunity__c, Related_Opportunity__r.Drive_Date__c, Related_Opportunity__r.OwnerId
-            FROM Planned_Task__c
-            WHERE Related_Opportunity__c IN :opportunityIds 
-            AND Status__c = :BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED
-            WITH USER_MODE
-        ];
-
-        if (configuredPlannedTasks.isEmpty()) {
-            return;
-        }
-
-        List<Task> standardTasksToCreate = new List<Task>();
-        List<Planned_Task__c> processedPlannedTasks = new List<Planned_Task__c>();
-
-        Set<String> processedKeys = new Set<String>();
-
-        for (Planned_Task__c plannedTask : configuredPlannedTasks) {
-            String uniqueKey = String.valueOf(plannedTask.Related_Opportunity__c) + '-' + String.valueOf(plannedTask.Task_Definition__c);
-            plannedTask.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
-            processedPlannedTasks.add(plannedTask);
-
-            // Check for duplicates in the queue (same Opportunity + Task Definition)
-            if (processedKeys.contains(uniqueKey)) {
-                continue; // Skip duplicate
-            }
-            processedKeys.add(uniqueKey);
-
-            // --- Create Task based on Planned Task ---
-            Task newTask = new Task(
-                WhatId = plannedTask.Related_Opportunity__c,
-                Subject = plannedTask.Subject__c,
-                OwnerId = plannedTask.Related_Opportunity__r.OwnerId,
-                Status = BSF_Constants.STATUS_NOT_STARTED
-            );
-
-            if (plannedTask.Scheduling_Method__c == BSF_Constants.PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET) {
-                newTask.ActivityDate = calculateActivityDate(plannedTask.Related_Opportunity__r.Drive_Date__c, (Integer)plannedTask.User_Defined_Offset__c);                
-            } else {
-                newTask.ActivityDate = plannedTask.Target_Date__c;
-            }
-            standardTasksToCreate.add(newTask);            
-        }
-        if (!standardTasksToCreate.isEmpty()) {
-            //handleDatabaseResults(Database.insert(standardTasksToCreate, false, AccessLevel.USER_MODE), 'Standard Task Creation');
-        }
-        if (!processedPlannedTasks.isEmpty()) {
-            handleDatabaseResults(Database.update(processedPlannedTasks, false, AccessLevel.USER_MODE), 'Marking Planned Tasks Processed');
+        Map<String, Object> bindParams = new Map<String, Object>{
+            'opportunityIds' => opportunityIds
+        };
+        String queryString = buildTaskGenerationBatchQuery(BSF_Constants.PLANNED_TASK_TRIGGER_FILTER);
+        List<Planned_Task__c> tasksToProcess = Database.queryWithBinds(queryString, 
+                                                                        bindParams, 
+                                                                        AccessLevel.USER_MODE
+                                                                      );
+        if (!tasksToProcess.isEmpty()) {
+            processAndGenerateTasks(tasksToProcess, true); // Pass 'false' to skip platform event generation if not needed
         }
     }
 
@@ -376,6 +336,37 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     private static void handleDatabaseResults(Object results, String context) {
+        if (results == null) return;
+
+        List<BSF_Error_Log__c> errorLogs = new List<BSF_Error_Log__c>();
+        String className = 'BSF_TaskPlanningService';
+        String typeValue = 'Error';
+
+        if (results instanceof List<Database.SaveResult>) {
+            errorLogs = BSF_Utilities.createErrorLog(
+                (List<Database.SaveResult>)results, 
+                context, className, 'handleDatabaseResults', typeValue, 'DML Save Error'
+            );
+        } 
+        else if (results instanceof List<Database.DeleteResult>) {
+            errorLogs = BSF_Utilities.createErrorLog(
+                (List<Database.DeleteResult>)results, 
+                context, className, 'handleDatabaseResults', typeValue, 'DML Delete Error'
+            );
+        } 
+        else if (results instanceof List<Database.UpsertResult>) {
+            errorLogs = BSF_Utilities.createErrorLog(
+                (List<Database.UpsertResult>)results, 
+                context, className, 'handleDatabaseResults', typeValue, 'DML Upsert Error'
+            );
+        }
+
+        if (!errorLogs.isEmpty()) {
+            debugResults(Database.insert(errorLogs, false), 'BSF Error Log Insertion');
+        }
+    }
+
+    public static void debugResults(Object results, String context) {
         List<Database.Error> errors = new List<Database.Error>();
         if (results instanceof List<Database.SaveResult>) {
             for (Database.SaveResult sr : (List<Database.SaveResult>)results) { if (!sr.isSuccess()) { errors.addAll(sr.getErrors()); } }
@@ -389,10 +380,10 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     // ============================================================================
-    // StandardTaskGenerationBatch Helper Methods
+    // STANDARDTASKGENERATIONBATCH PRIVATE HELPER METHODS
     // ============================================================================
 
-    public static String buildTaskGenerationBatchQuery(String batchWhereClause) {
+    private static String buildTaskGenerationBatchQuery(String batchWhereClause) {
         Set<String> queryFields = new Set<String>{'Id'};
         for(Schema.FieldSetMember fsm : SObjectType.Planned_Task__c.FieldSets.Task_Generation_Fields.getFields()) {
             queryFields.add(fsm.getFieldPath());
@@ -401,6 +392,211 @@ public with sharing class BSF_TaskPlanningService {
                 ' FROM Planned_Task__c ' +
                 ' WHERE ' + batchWhereClause;
     }
+
+    private static Map<String, Task> getExistingTasks(Set<Id> oppIds, Set<String> subjects) {
+        Map<String, Task> taskMap = new Map<String, Task>();
+        if(oppIds.isEmpty() || subjects.isEmpty()) return taskMap;
+
+        List<Task> existingTasks = [
+            SELECT Id, Subject, WhatId 
+            FROM Task 
+            WHERE WhatId IN :oppIds 
+            AND Subject IN :subjects
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ];
+        
+        for (Task t : existingTasks) {
+            taskMap.put(t.WhatId + '-' + t.Subject, t);
+        }
+        return taskMap;
+    }
+
+    private static Boolean isDuplicateTask(Planned_Task__c pt, Map<String, Task> existingTaskMap) {
+        String taskKey = pt.Related_Opportunity__c + '-' + pt.Subject__c;
+        return existingTaskMap.containsKey(taskKey);
+    }
+    
+    private static Map<Id, Map<String, Id>> buildRoleHierarchyMap(Set<Id> oppIds) {
+        Map<Id, Map<String, Id>> oppRolesMap = new Map<Id, Map<String, Id>>();
+        if (oppIds.isEmpty()) return oppRolesMap;
+
+        Id systemUserId = TaskService.getDRDSystemUser();
+        List<Opportunity> oppList = [SELECT Id, 
+                                            AccountId, 
+                                            Account_Manager__c, 
+                                            OwnerId,
+                                            (SELECT UserId, 
+                                                TeamMemberRole 
+                                            FROM OpportunityTeamMembers)
+                                        FROM Opportunity 
+                                        WHERE Id IN :oppIds];
+
+        Map<Id, Id> accSpecialistMap = getAccountSpecialistMap(oppList);
+
+        for (Opportunity opp : oppList) {
+            oppRolesMap.put(opp.Id, mapRolesForSingleOpp(opp, systemUserId, accSpecialistMap));
+        }
+        
+        return oppRolesMap;
+    }
+
+    private static Map<Id, Id> getAccountSpecialistMap(List<Opportunity> oppList) {
+        Set<Id> accountIds = new Set<Id>();
+        for (Opportunity opp : oppList) {
+            if (opp.AccountId != null) accountIds.add(opp.AccountId);
+        }
+
+        Map<Id, Id> specialistMap = new Map<Id, Id>();
+        if (accountIds.isEmpty()) return specialistMap;
+
+        for (AccountTeamMember atm : [SELECT AccountId, 
+                                                UserId, 
+                                                Is_Covering_Recruiter__c 
+                                        FROM AccountTeamMember 
+                                        WHERE AccountId IN :accountIds 
+                                        AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
+                                        ORDER BY CreatedDate DESC]) {
+            if (!specialistMap.containsKey(atm.AccountId) || atm.Is_Covering_Recruiter__c) {
+                specialistMap.put(atm.AccountId, atm.UserId);
+            }
+        }
+        return specialistMap;
+    }
+
+    private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<Id, Id> accSpecMap) {
+        Map<String, Id> roles = new Map<String, Id>{
+            BSF_Constants.ACCOUNT_MANAGER => opp.Account_Manager__c,
+            BSF_Constants.OPPORTUNITY_OWNER => opp.OwnerId,
+            BSF_Constants.DRD_SYSTEM_USER   => systemUserId
+        };
+
+        for (OpportunityTeamMember otm : opp.OpportunityTeamMembers) {
+            String role = otm.TeamMemberRole;
+            if (String.isNotBlank(role) && 
+                    (role.equalsIgnoreCase(BSF_Constants.AREA_BOOKING_MANAGER) || 
+                    role.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER) || 
+                    role.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST))) {
+                            roles.put(otm.TeamMemberRole, otm.UserId);
+            }
+        }
+
+        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && accSpecMap.containsKey(opp.AccountId)) {
+            roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accSpecMap.get(opp.AccountId));
+        }
+
+        return roles;
+    }
+    
+    private static Task buildTask(Planned_Task__c pt, Map<String, String> fieldMapping, Id ownerId) {
+        Task newTask = new Task();
+        
+        if (fieldMapping != null && !fieldMapping.isEmpty()) {
+            for (String sourceFieldPath : fieldMapping.keySet()) {
+                String targetFieldAPI = fieldMapping.get(sourceFieldPath);
+                Object fieldValue = getFieldValue(pt, sourceFieldPath);
+                if (fieldValue != null) {
+                    newTask.put(targetFieldAPI, fieldValue);
+                }
+            }
+        }
+
+        newTask.Status = BSF_Constants.STATUS_NOT_STARTED;
+        newTask.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
+        newTask.OwnerId = ownerId;
+        return newTask;
+    }
+
+    private static Map<String, String> getDynamicFieldMapping() {
+        Map<String, String> fieldMapping = new Map<String, String>();
+        try {
+            String jsonMap = BSF_Constants.TASK_FIELD_MAPPING_JSON;
+            if (String.isNotBlank(jsonMap)) {
+                Map<String, Object> rawMapping = (Map<String, Object>) JSON.deserializeUntyped(jsonMap);
+                for (String key : rawMapping.keySet()) {
+                    fieldMapping.put(key, String.valueOf(rawMapping.get(key)));
+                }
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.ERROR, 'Failed to parse Task_Field_Mapping_JSON: ' + e.getMessage());
+        }
+        return fieldMapping;
+    }
+
+    private static Task_Platform_Event__e buildPlatformEvent(Task t, Id plannedTaskId) {
+        return new Task_Platform_Event__e(
+            Subject__c = t.Subject,
+            ActivityDate__c = t.ActivityDate,
+            OwnerId__c = t.OwnerId,
+            WhatId__c = t.WhatId,
+            Drive_Date__c = t.Drive_Date__c,
+            Type__c = t.Type,
+            Task_Sub_Type__c = t.TaskSubtype,
+            Planned_Task_Id__c = plannedTaskId
+        );
+    }
+
+    private static GenerationContext setupContext(List<Planned_Task__c> plannedTasks) {
+        Set<Id> oppIds = new Set<Id>();
+        Set<String> taskSubjects = new Set<String>();
+
+        for (Planned_Task__c pt : plannedTasks) {
+            if (pt.Related_Opportunity__c != null && pt.Status__c == BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED) {
+                oppIds.add(pt.Related_Opportunity__c);
+                taskSubjects.add(pt.Subject__c);
+            }
+        }
+
+        GenerationContext ctx = new GenerationContext();
+        ctx.existingTaskMap = getExistingTasks(oppIds, taskSubjects);
+        ctx.roleHierarchyMap = buildRoleHierarchyMap(oppIds);
+        ctx.fieldMapping = getDynamicFieldMapping();
+        return ctx;
+    }
+
+    private static void processSinglePlannedTask(Planned_Task__c pt, GenerationContext ctx, ProcessingData data, Boolean usePlatformEvent) {
+        Id ownerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, ctx.roleHierarchyMap.get(pt.Related_Opportunity__c));
+        Task newTask = buildTask(pt, ctx.fieldMapping, ownerId);
+
+        if (usePlatformEvent) {
+            data.eventsToPublish.add(buildPlatformEvent(newTask, pt.Id));
+        } else {
+            data.tasksToInsert.add(newTask);
+            data.indexMap.put(data.tasksToInsert.size() - 1, pt);
+        }
+    }
+
+    private static void executeDmlAndPublish(ProcessingData data, Boolean usePlatformEvent) {
+        if (!data.tasksToInsert.isEmpty()) {
+            Database.SaveResult[] srList = Database.insert(data.tasksToInsert, false);
+            handleTaskInsertResults(srList, data.indexMap, data.pTasksToUpdate);
+        }
+
+        if (!data.eventsToPublish.isEmpty()) {
+            handleDatabaseResults(EventBus.publish(data.eventsToPublish), 'Platform Event Publish');
+        }
+
+        if (!data.pTasksToUpdate.isEmpty()) {
+            handleDatabaseResults(Database.update(data.pTasksToUpdate, false), 'Planned Task Update');
+        }
+    }
+
+    private static void handleTaskInsertResults(Database.SaveResult[] srList, Map<Integer, Planned_Task__c> indexMap, List<Planned_Task__c> pTasksToUpdate) {
+        for (Integer i = 0; i < srList.size(); i++) {
+            if (srList[i].isSuccess()) {
+                pTasksToUpdate.add(markProcessed(indexMap.get(i)));
+            }
+        }
+        handleDatabaseResults(srList, 'Direct Task Insertion');
+    }
+
+    private static Planned_Task__c markProcessed(Planned_Task__c pt) {
+        pt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+        return pt;
+    }
+
+    // ============================================================================
+    // STANDARDTASKGENERATIONBATCH REUSABLE LOGIC FOR BOTH BATCH AND DIRECT EXECUTION
+    // ============================================================================
 
     public static Id determineTaskOwner(String assignedTo, Map<String, Id> oppRoles) {
         if (oppRoles == null || oppRoles.isEmpty()) {
@@ -427,211 +623,81 @@ public with sharing class BSF_TaskPlanningService {
         return ownerId;
     }
 
-    public static Map<String, Task> getExistingTasks(Set<Id> oppIds, Set<String> subjects) {
-        Map<String, Task> taskMap = new Map<String, Task>();
-        if(oppIds.isEmpty() || subjects.isEmpty()) return taskMap;
-
-        List<Task> existingTasks = [
-            SELECT Id, Subject, WhatId 
-            FROM Task 
-            WHERE WhatId IN :oppIds 
-            AND Subject IN :subjects
-            AND Status != :BSF_Constants.STATUS_CANCELLED
-        ];
-        
-        for (Task t : existingTasks) {
-            taskMap.put(t.WhatId + '-' + t.Subject, t);
-        }
-        return taskMap;
-    }
-    
-    private static Map<Id, Map<String, Id>> buildRoleHierarchyMap(Set<Id> oppIds) {
-        Map<Id, Map<String, Id>> oppRolesMap = new Map<Id, Map<String, Id>>();
-        Set<Id> accountIds = new Set<Id>();
-
-        if (oppIds.isEmpty()){
-            return oppRolesMap;
-        }
-        Id drdSystemUserId = TaskService.getDRDSystemUser();
-        List<Opportunity> oppList = [SELECT Id, 
-                                            AccountId, 
-                                            Account_Manager__c, 
-                                            OwnerId,
-                                            (SELECT UserId, 
-                                                    TeamMemberRole 
-                                                FROM OpportunityTeamMembers)
-                                            FROM Opportunity 
-                                            WHERE Id IN :oppIds];
-
-        for (Opportunity opp : oppList) {
-            if (opp.AccountId != null) {
-                accountIds.add(opp.AccountId);
-            }
-        }
-
-        Map<Id, Id> accountSpecialistMap = new Map<Id, Id>();
-        if (!accountIds.isEmpty()) {
-            for (AccountTeamMember atm : [SELECT AccountId, 
-                                                UserId, 
-                                                Is_Covering_Recruiter__c 
-                                            FROM AccountTeamMember 
-                                            WHERE AccountId IN :accountIds 
-                                            AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
-                                            ORDER BY CreatedDate DESC]) {
-                if (!accountSpecialistMap.containsKey(atm.AccountId) || atm.Is_Covering_Recruiter__c == true) {
-                    accountSpecialistMap.put(atm.AccountId, atm.UserId);
-                }
-            }
-        }
-
-        for (Opportunity opp : oppList) {
-            Map<String, Id> roles = new Map<String, Id>();
-            roles.put(BSF_Constants.ACCOUNT_MANAGER, opp.Account_Manager__c);
-            roles.put(BSF_Constants.OPPORTUNITY_OWNER, opp.OwnerId);
-            roles.put(BSF_Constants.DRD_SYSTEM_USER, drdSystemUserId);
-            
-            if (opp.OpportunityTeamMembers != null) {
-                for (OpportunityTeamMember otm : opp.OpportunityTeamMembers) {
-                    if (String.isNotBlank(otm.TeamMemberRole) 
-                            && (otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.AREA_BOOKING_MANAGER) 
-                            || otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER)
-                            || otm.TeamMemberRole.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST))) {
-                        roles.put(otm.TeamMemberRole, otm.UserId);
-                    }
-                }
-            }
-
-            if (opp.AccountId != null && accountSpecialistMap.containsKey(opp.AccountId) && roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null) {
-                roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accountSpecialistMap.get(opp.AccountId));
-            }
-
-            oppRolesMap.put(opp.Id, roles);
-        }
-        
-        return oppRolesMap;
-    }
-
-    public static Task buildTask(Planned_Task__c pt, Map<String, String> fieldMapping, Id ownerId) {
-        Task newTask = new Task();
-        
-        if (fieldMapping != null && !fieldMapping.isEmpty()) {
-            for (String sourceFieldPath : fieldMapping.keySet()) {
-                String targetFieldAPI = fieldMapping.get(sourceFieldPath);
-                Object fieldValue = getFieldValue(pt, sourceFieldPath);
-                if (fieldValue != null) {
-                    newTask.put(targetFieldAPI, fieldValue);
-                }
-            }
-        }
-
-        newTask.Status = BSF_Constants.STATUS_NOT_STARTED;
-        newTask.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
-        newTask.OwnerId = ownerId;
-        return newTask;
-    }
-
     public static Object getFieldValue(SObject record, String fieldPath) {
-        Object fieldValue;
         if (record == null || String.isBlank(fieldPath)){ 
             return null;
         }
+
         if (!fieldPath.contains('.')) {
-            fieldValue = record.get(fieldPath);
-        }else{
-            List<String> relations = fieldPath.split('\\.');
-            SObject currentObj = record;
-            
-            for (Integer i = 0; i < relations.size() - 1; i++) {
-                if (currentObj == null) {
-                    fieldValue = null;
-                    break;
-                }
-                currentObj = currentObj.getSObject(relations[i]);
-            }
-            if(currentObj != null){
-                fieldValue = currentObj.get(relations[relations.size() - 1]);
-            }
+            return record.get(fieldPath);
         }
-        return fieldValue;
+        
+        List<String> relations = fieldPath.split('\\.');
+        SObject currentObj = record;
+        
+        for (Integer i = 0; i < relations.size() - 1; i++) {
+            if (currentObj == null){ 
+                return null; 
+            }
+            currentObj = currentObj.getSObject(relations[i]);
+        }
+        
+        return currentObj != null ? currentObj.get(relations[relations.size() - 1]) : null;
     }
 
-    public static Map<String, String> getDynamicFieldMapping() {
-        Map<String, String> fieldMapping = new Map<String, String>();
-        try {
-            String jsonMap = BSF_Constants.TASK_FIELD_MAPPING_JSON;
-            if (String.isNotBlank(jsonMap)) {
-                Map<String, Object> rawMapping = (Map<String, Object>) JSON.deserializeUntyped(jsonMap);
-                for (String key : rawMapping.keySet()) {
-                    fieldMapping.put(key, String.valueOf(rawMapping.get(key)));
-                }
-            }
-        } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to parse Task_Field_Mapping_JSON: ' + e.getMessage());
-        }
-        return fieldMapping;
-    }
+    // ============================================================================
+    // STANDARDTASKGENERATIONBATCH MAIN EXECUTE METHOD
+    // ============================================================================
 
-    public static void processAndGenerateTasks(List<Planned_Task__c> plannedTasks) {
+    public static void processAndGenerateTasks(List<Planned_Task__c> plannedTasks, Boolean usePlatformEvent) {
         if (plannedTasks == null || plannedTasks.isEmpty()) return;
 
-        Set<Id> oppIds = new Set<Id>();
-        Set<String> taskSubjects = new Set<String>();
+        try {
+            GenerationContext ctx = setupContext(plannedTasks);
+            ProcessingData data = new ProcessingData();
+            List<String> duplicateErrors = new List<String>();
 
-        for (Planned_Task__c pt : plannedTasks) {
-            if (pt.Related_Opportunity__c != null) {
-                oppIds.add(pt.Related_Opportunity__c);
-                taskSubjects.add(pt.Subject__c);
-            }
-        }
-
-        Map<String, Task> existingTaskMap = getExistingTasks(oppIds, taskSubjects);
-        Map<Id, Map<String, Id>> roleHierarchyMap = buildRoleHierarchyMap(oppIds);
-        Map<String, String> fieldMapping = getDynamicFieldMapping();
-
-        List<Task> tasksToInsert = new List<Task>();
-        Map<Integer, Planned_Task__c> taskIndexToPlannedTaskMap = new Map<Integer, Planned_Task__c>();
-        List<Planned_Task__c> pTasksToUpdate = new List<Planned_Task__c>();
-
-        for (Planned_Task__c pt : plannedTasks) {
-            String taskKey = pt.Related_Opportunity__c + '-' + pt.Subject__c;
-            if (existingTaskMap.containsKey(taskKey)) {
-                pt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
-                pTasksToUpdate.add(pt);
-                continue;
-            }
-
-            Id assignedOwnerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, roleHierarchyMap.get(pt.Related_Opportunity__c));
-
-            Task newTask = buildTask(pt, fieldMapping, assignedOwnerId);
-
-            tasksToInsert.add(newTask);
-            taskIndexToPlannedTaskMap.put(tasksToInsert.size() - 1, pt);
-        }
-
-        if (!tasksToInsert.isEmpty()) {
-            Database.SaveResult[] srList = Database.insert(tasksToInsert, false);
-            
-            for (Integer i = 0; i < srList.size(); i++) {
-                Planned_Task__c relatedPt = taskIndexToPlannedTaskMap.get(i);
+            for (Planned_Task__c pt : plannedTasks) {
+                if (pt.Status__c != BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED) continue;
                 
-                if (srList[i].isSuccess()) {
-                    relatedPt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
-                    pTasksToUpdate.add(relatedPt);
-                } else {
-                    for(Database.Error err : srList[i].getErrors()) {
-                        System.debug(LoggingLevel.ERROR, 'Error inserting Task for Planned_Task__c ' + relatedPt.Id + ': ' + err.getMessage());
-                    }
+                if (isDuplicateTask(pt, ctx.existingTaskMap)) {
+                    data.pTasksToUpdate.add(markProcessed(pt));
+                    continue;
                 }
+                processSinglePlannedTask(pt, ctx, data, usePlatformEvent);
             }
-        }
 
-        if (!pTasksToUpdate.isEmpty()) {
-            Database.SaveResult[] updateResults = Database.update(pTasksToUpdate, false);
-            for (Database.SaveResult sr : updateResults) {
-                if (!sr.isSuccess()) {
-                    System.debug(LoggingLevel.ERROR, 'Failed to update Planned_Task__c status: ' + sr.getErrors()[0].getMessage());
-                }
-            }
+            executeDmlAndPublish(data, usePlatformEvent);
+        }catch(Exception ex) {
+            System.debug(LoggingLevel.ERROR, 'Exception in processAndGenerateTasks(): ' + ex.getMessage());
+            
+            BSF_Error_Log__c exLog = BSF_Utilities.getErrorLog(
+                'Task Generation', 
+                'BSF_TaskPlanningService', 
+                'processAndGenerateTasks', 
+                'Critical Error', 
+                'Exception occurred during execution', 
+                ex.getMessage() + ' | Stack Trace: ' + ex.getStackTraceString()
+            );
+
+            debugResults(Database.insert(new List<BSF_Error_Log__c>{exLog}, false), 'BSF Error Log Insertion');
         }
+    }
+
+    // ============================================================================
+    // STANDARDTASKGENERATIONBATCH INNER CLASSES
+    // ============================================================================
+
+    private class GenerationContext {
+        Map<String, Task> existingTaskMap;
+        Map<Id, Map<String, Id>> roleHierarchyMap;
+        Map<String, String> fieldMapping;
+    }
+
+    private class ProcessingData {
+        List<Task> tasksToInsert = new List<Task>();
+        Map<Integer, Planned_Task__c> indexMap = new Map<Integer, Planned_Task__c>();
+        List<Task_Platform_Event__e> eventsToPublish = new List<Task_Platform_Event__e>();
+        List<Planned_Task__c> pTasksToUpdate = new List<Planned_Task__c>();
     }
 }
