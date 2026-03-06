@@ -10,11 +10,20 @@
 
     <types>
         <members>BSF_Workday_RealID_Config__c</members>
+        <members>Workday_Real_ID_Staging__c</members>
         <name>CustomObject</name>
     </types>
 
     <types>
         <members>sked__Resource__c.Real_ID_Expiration_Date__c</members>
+        <members>Workday_Real_ID_Staging__c.Employee_ID__c</members>
+        <members>Workday_Real_ID_Staging__c.Resource__c</members>
+        <members>Workday_Real_ID_Staging__c.Real_ID_Compliant__c</members>
+        <members>Workday_Real_ID_Staging__c.Expiration_Date__c</members>
+        <members>Workday_Real_ID_Staging__c.Workday_Last_Functionally_Updated__c</members>
+        <members>Workday_Real_ID_Staging__c.Workday_Record_Created_Moment__c</members>
+        <members>Workday_Real_ID_Staging__c.Sync_Status__c</members>
+        <members>Workday_Real_ID_Staging__c.Sync_Comment__c</members>
         <name>CustomField</name>
     </types>
 

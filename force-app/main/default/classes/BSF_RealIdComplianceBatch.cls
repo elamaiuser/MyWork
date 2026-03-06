@@ -1,3 +1,357 @@
+public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_RealIdComplianceBatch.WorkdayEmployeeWrapper>, Database.AllowsCallouts, Database.Stateful, Schedulable {
+
+    private static final String WORKDAY_REALID_ENDPOINT = 'https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/A1014901/BSF_-_REAL_ID_Tracker';
+
+    // Stores all Workday employee IDs for removal detection in finish()
+    private Set<String> workdayEmployeeIds = new Set<String>();
+
+    public void execute(SchedulableContext sc) {
+        Database.executeBatch(new BSF_RealIdComplianceBatch(), 200);
+    }
+
+    /*
+     * START
+     * Fetch Workday data and return iterable list
+     */
+    public Iterable<WorkdayEmployeeWrapper> start(Database.BatchableContext bc) {
+
+        List<WorkdayEmployeeWrapper> employees = fetchWorkdayData();
+
+        for (WorkdayEmployeeWrapper w : employees) {
+            workdayEmployeeIds.add(w.employeeId);
+        }
+
+        return employees;
+    }
+
+    /*
+     * EXECUTE
+     * Process Workday employees chunk-by-chunk
+     */
+    public void execute(Database.BatchableContext bc, List<WorkdayEmployeeWrapper> scope) {
+
+        Set<String> employeeIds = new Set<String>();
+        for (WorkdayEmployeeWrapper w : scope) {
+            employeeIds.add(w.employeeId);
+        }
+
+        // Keyed on Employee_ID__c using for loop (map constructor always keys on Salesforce Id)
+        Map<String, Workday_Real_ID_Staging__c> stagingMap = new Map<String, Workday_Real_ID_Staging__c>();
+        for (Workday_Real_ID_Staging__c s : [
+            SELECT Id,
+                   Employee_ID__c,
+                   Resource__c,
+                   Real_ID_Compliant__c,
+                   Expiration_Date__c,
+                   Workday_Last_Functionally_Updated__c,
+                   Workday_Record_Created_Moment__c
+            FROM Workday_Real_ID_Staging__c
+            WHERE Employee_ID__c IN :employeeIds
+        ]) {
+            stagingMap.put(s.Employee_ID__c, s);
+        }
+
+        // Keyed on sked_Employee_ID__c using for loop (map constructor always keys on Salesforce Id)
+        Map<String, sked__Resource__c> resourceMap = new Map<String, sked__Resource__c>();
+        for (sked__Resource__c r : [
+            SELECT Id,
+                   sked_Employee_ID__c,
+                   sked_REAL_ID_Compliant_indicator__c,
+                   Real_ID_Expiration_Date__c
+            FROM sked__Resource__c
+            WHERE sked_Employee_ID__c IN :employeeIds
+        ]) {
+            resourceMap.put(r.sked_Employee_ID__c, r);
+        }
+
+        List<Workday_Real_ID_Staging__c> stagingToUpsert = new List<Workday_Real_ID_Staging__c>();
+        List<sked__Resource__c> resourcesToUpdate = new List<sked__Resource__c>();
+
+        Date today = System.today();
+
+        for (WorkdayEmployeeWrapper wd : scope) {
+
+            Boolean compliant = (wd.expirationDate == null || wd.expirationDate >= today);
+
+            if (stagingMap.containsKey(wd.employeeId)) {
+
+                Workday_Real_ID_Staging__c staging = stagingMap.get(wd.employeeId);
+
+                // Update staging if Workday record has changed OR compliance value has flipped
+                // (e.g. expiration date crossed into the past since last sync)
+                if (staging.Workday_Last_Functionally_Updated__c != wd.lastUpdated || staging.Real_ID_Compliant__c != compliant) {
+
+                    staging.Workday_Last_Functionally_Updated__c = wd.lastUpdated;
+                    staging.Workday_Record_Created_Moment__c = wd.createdMoment;
+                    staging.Expiration_Date__c = wd.expirationDate;
+                    staging.Real_ID_Compliant__c = compliant;
+                    staging.Sync_Status__c = 'Updated';
+                    staging.Sync_Comment__c = compliant
+                        ? 'Updated from Workday. Expiration date: ' + String.valueOf(wd.expirationDate)
+                        : 'Updated from Workday. Real ID unchecked due to expiration date: ' + String.valueOf(wd.expirationDate);
+
+                    stagingToUpsert.add(staging);
+                }
+
+            } else if(resourceMap.containsKey(wd.employeeId)) {
+                Workday_Real_ID_Staging__c newRec = new Workday_Real_ID_Staging__c();
+                newRec.Employee_ID__c = wd.employeeId;
+                newRec.Expiration_Date__c = wd.expirationDate;
+                newRec.Workday_Last_Functionally_Updated__c = wd.lastUpdated;
+                newRec.Workday_Record_Created_Moment__c = wd.createdMoment;
+                newRec.Real_ID_Compliant__c = compliant;
+                newRec.Sync_Status__c = 'Created';
+                newRec.Sync_Comment__c = 'New certification synced from Workday';
+                newRec.Resource__c = resourceMap.get(wd.employeeId).Id;
+                stagingToUpsert.add(newRec);
+            }
+
+            // Update resource record if it exists in Salesforce and values have changed
+            if (resourceMap.containsKey(wd.employeeId)) {
+
+                sked__Resource__c r = resourceMap.get(wd.employeeId);
+
+                if (r.sked_REAL_ID_Compliant_indicator__c != compliant ||
+                    r.Real_ID_Expiration_Date__c != wd.expirationDate) {
+
+                    r.sked_REAL_ID_Compliant_indicator__c = compliant;
+                    r.Real_ID_Expiration_Date__c = wd.expirationDate;
+                    resourcesToUpdate.add(r);
+                }
+            }
+        }
+
+        if (!stagingToUpsert.isEmpty()) {
+            List<Database.UpsertResult> upsertResults = Database.upsert(stagingToUpsert, Workday_Real_ID_Staging__c.Employee_ID__c, false);
+            logUpsertErrors(upsertResults, 'staging upsert');
+        }
+
+        if (!resourcesToUpdate.isEmpty()) {
+            List<Database.SaveResult> resourceResults = Database.update(resourcesToUpdate, false);
+            logSaveErrors(resourceResults, 'resource update');
+        }
+    }
+
+    /*
+     * FINISH
+     * Detect employees removed from Workday and uncheck their Resource and Staging records
+     */
+    public void finish(Database.BatchableContext bc) {
+
+        // Only query currently-compliant staging records not present in today's Workday response
+        List<Workday_Real_ID_Staging__c> removedStagingRecords = [
+            SELECT Id, Employee_ID__c, Real_ID_Compliant__c, Resource__c
+            FROM Workday_Real_ID_Staging__c
+            WHERE Employee_ID__c NOT IN :workdayEmployeeIds
+            AND Real_ID_Compliant__c = true
+        ];
+
+        if (removedStagingRecords.isEmpty()) {
+            return;
+        }
+
+        // Collect Resource IDs to uncheck via the staging records' lookup
+        Set<Id> resourceIdsToUncheck = new Set<Id>();
+        for (Workday_Real_ID_Staging__c s : removedStagingRecords) {
+            if (s.Resource__c != null) {
+                resourceIdsToUncheck.add(s.Resource__c);
+            }
+        }
+
+        // Uncheck the actual Resource records
+        if (!resourceIdsToUncheck.isEmpty()) {
+            List<sked__Resource__c> resourcesToUncheck = [
+                SELECT Id, sked_REAL_ID_Compliant_indicator__c, Real_ID_Expiration_Date__c
+                FROM sked__Resource__c
+                WHERE Id IN :resourceIdsToUncheck
+            ];
+
+            for (sked__Resource__c r : resourcesToUncheck) {
+                r.sked_REAL_ID_Compliant_indicator__c = false;
+                r.Real_ID_Expiration_Date__c = null;
+            }
+
+            List<Database.SaveResult> resourceResults = Database.update(resourcesToUncheck, false);
+            logSaveErrors(resourceResults, 'finish resource uncheck');
+        }
+
+        // Mark removed staging records
+        for (Workday_Real_ID_Staging__c s : removedStagingRecords) {
+            s.Real_ID_Compliant__c = false;
+            s.Sync_Status__c = 'Removed';
+            s.Sync_Comment__c = 'Real ID compliance removed from Workday';
+        }
+
+        List<Database.SaveResult> stagingResults = Database.update(removedStagingRecords, false);
+        logSaveErrors(stagingResults, 'finish staging removal');
+    }
+
+    /*
+     * WORKDAY CALLOUT
+     */
+    private List<WorkdayEmployeeWrapper> fetchWorkdayData() {
+
+        //String endpoint = WORKDAY_REALID_ENDPOINT + '?format=json';
+
+        // Try to get the REAL ID report endpoint from custom metadata first
+        String endpoint;
+        String errorMessage;
+        try {
+            sked_Workday_XML_Template__mdt xml = [
+                SELECT sked_Endpoint__c
+                FROM sked_Workday_XML_Template__mdt
+                WHERE DeveloperName = 'RealID_Compliance_Report'
+                LIMIT 1
+            ];
+            
+            if (xml != null && String.isNotBlank(xml.sked_Endpoint__c)) {
+                endpoint = xml.sked_Endpoint__c;
+                System.debug('Using REAL ID endpoint from sked_Workday_XML_Template__mdt: ' + endpoint);
+            }
+        } catch (Exception mdEx) {
+            System.debug('Could not read sked_Workday_XML_Template__mdt for RealID_Compliance_Report, will fall back to default: ' + mdEx.getMessage());
+        }
+        
+        // If metadata is missing or blank, fall back to the hardcoded base REAL ID report endpoint
+        if (String.isBlank(endpoint)) {
+            endpoint = WORKDAY_REALID_ENDPOINT;
+            System.debug('Using default REAL ID endpoint: ' + endpoint);
+        }
+
+        if (endpoint.contains('?')) {
+            endpoint += '&format=json';
+        } else {
+            endpoint += '?format=json';
+        }
+
+        HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint, 'GET');
+        req.setHeader('Content-Type', 'application/json; charset=UTF-8');
+        req.setHeader('Accept', 'application/json');
+        
+        Http h = new Http();
+        HttpResponse res = h.send(req);
+        
+        if (res.getStatusCode() >= 200 && res.getStatusCode() <= 299) {
+            String responseBody = res.getBody();
+                System.debug(responseBody);
+
+            System.debug('Got response from Workday');
+            
+            //parseWorkdayResponse(responseBody);
+        } else {
+            errorMessage = 'Workday API call failed with status code: ' + res.getStatusCode() + ' - ' + res.getBody();
+            System.debug(errorMessage);
+            throw new CalloutException(errorMessage);
+        }
+
+        return parseWorkdayResponse(res.getBody());
+    }
+
+    /*
+     * PARSE WORKDAY RESPONSE
+     */
+    private List<WorkdayEmployeeWrapper> parseWorkdayResponse(String jsonBody) {
+
+        List<WorkdayEmployeeWrapper> result = new List<WorkdayEmployeeWrapper>();
+
+        Map<String, Object> root = (Map<String, Object>) JSON.deserializeUntyped(jsonBody);
+
+        if (!root.containsKey('Report_Entry')) {
+            return result;
+        }
+
+        List<Object> entries = (List<Object>) root.get('Report_Entry');
+
+        for (Object o : entries) {
+
+            Map<String, Object> entry = (Map<String, Object>) o;
+
+            WorkdayEmployeeWrapper w = new WorkdayEmployeeWrapper();
+            w.employeeId = (String) entry.get('Employee_ID');
+
+            if (String.isBlank(w.employeeId)) {
+                continue;
+            }
+
+            // Each field parsed in its own try/catch so one bad value does not
+            // abort parsing the entire response
+            if (entry.containsKey('Expiration_Date') && entry.get('Expiration_Date') != null) {
+                try {
+                    w.expirationDate = Date.valueOf((String) entry.get('Expiration_Date'));
+                } catch (Exception e) {
+                    System.debug('Could not parse Expiration_Date for employee ' + w.employeeId + ': ' + e.getMessage());
+                }
+            }
+
+            if (entry.containsKey('Last_Functionally_Updated') && entry.get('Last_Functionally_Updated') != null) {
+                try {
+                    String raw = (String) entry.get('Last_Functionally_Updated');
+                    w.lastUpdated = DateTime.valueOf(raw.replace('T', ' ').substring(0, 19));
+                } catch (Exception e) {
+                    System.debug('Could not parse Last_Functionally_Updated for employee ' + w.employeeId + ': ' + e.getMessage());
+                }
+            }
+
+            if (entry.containsKey('Created_Moment') && entry.get('Created_Moment') != null) {
+                try {
+                    String raw = (String) entry.get('Created_Moment');
+                    w.createdMoment = DateTime.valueOf(raw.replace('T', ' ').substring(0, 19));
+                } catch (Exception e) {
+                    System.debug('Could not parse Created_Moment for employee ' + w.employeeId + ': ' + e.getMessage());
+                }
+            }
+
+            result.add(w);
+        }
+
+        return result;
+    }
+
+    /*
+     * ERROR LOGGING
+     */
+    private void logUpsertErrors(List<Database.UpsertResult> results, String context) {
+        for (Database.UpsertResult ur : results) {
+            if (!ur.isSuccess()) {
+                for (Database.Error err : ur.getErrors()) {
+                    System.debug('DML error [' + context + ']: ' + err.getStatusCode() + ' - ' + err.getMessage());
+                }
+            }
+        }
+    }
+
+    private void logSaveErrors(List<Database.SaveResult> results, String context) {
+        for (Database.SaveResult sr : results) {
+            if (!sr.isSuccess()) {
+                for (Database.Error err : sr.getErrors()) {
+                    System.debug('DML error [' + context + ']: ' + err.getStatusCode() + ' - ' + err.getMessage());
+                }
+            }
+        }
+    }
+
+    /*
+     * WRAPPER CLASS
+     */
+    public class WorkdayEmployeeWrapper {
+        public String employeeId;
+        public Date expirationDate;
+        public DateTime lastUpdated;
+        public DateTime createdMoment;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
 // Batch job to sync REAL ID compliance from Workday
 // Pulls employee data from Workday API and updates Resource records
 // Schedule example: String cronExp = '0 0 2 * * ?'; // runs at 2 AM
@@ -395,3 +749,4 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<sObject>, D
     }
     
 }
+*/

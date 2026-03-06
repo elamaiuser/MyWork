@@ -18,6 +18,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // In Workday response, should become compliant with expiration date
         sked__Resource__c resource1 = new sked__Resource__c(
             Name = 'Test Resource 1',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource 1',
+            sked_ULID__c = '1234567891',
             sked_Employee_ID__c = '109850',
             sked_REAL_ID_Compliant_indicator__c = false,
             sked__Resource_Type__c = 'Person'
@@ -27,6 +30,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // Also in Workday response
         sked__Resource__c resource2 = new sked__Resource__c(
             Name = 'Test Resource 2',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource 2',
+            sked_ULID__c = '1234567892',
             sked_Employee_ID__c = '109856',
             sked_REAL_ID_Compliant_indicator__c = false,
             sked__Resource_Type__c = 'Person'
@@ -36,6 +42,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // Not in Workday response, should be left alone
         sked__Resource__c resource3 = new sked__Resource__c(
             Name = 'Test Resource 3',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource 3',
+            sked_ULID__c = '1234567893',
             sked_Employee_ID__c = '999999',
             sked_REAL_ID_Compliant_indicator__c = true,
             sked__Resource_Type__c = 'Person'
@@ -89,6 +98,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // Create test resource
         sked__Resource__c testResource = new sked__Resource__c(
             Name = 'Test Resource',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource',
+            sked_ULID__c = '1234567896',
             sked_Employee_ID__c = '109850',
             sked_REAL_ID_Compliant_indicator__c = false,
             sked__Resource_Type__c = 'Person'
@@ -119,6 +131,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // Create test resource
         sked__Resource__c testResource = new sked__Resource__c(
             Name = 'Test Resource',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource',
+            sked_ULID__c = '1234567894',
             sked_Employee_ID__c = '109850',
             sked_REAL_ID_Compliant_indicator__c = true,
             sked__Resource_Type__c = 'Person'
@@ -154,6 +169,9 @@ private class BSF_RealIdComplianceBatch_Test {
         // Create test resource
         sked__Resource__c testResource = new sked__Resource__c(
             Name = 'Test Resource',
+            sked_First_Name__c = 'Test',
+            sked_Last_Name__c = 'Resource',
+            sked_ULID__c = '1234567895',
             sked_Employee_ID__c = '109850',
             sked_REAL_ID_Compliant_indicator__c = false,
             sked__Resource_Type__c = 'Person'
