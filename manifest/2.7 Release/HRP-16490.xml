@@ -3,6 +3,7 @@
 	<types>
 		<members>dataService</members>
         <members>slwcExceptionList</members>
+				<members>slwcLinkedDriveExceptionList</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>65.0</version>
