@@ -8,7 +8,7 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
     
     for (Task_Platform_Event__e tp : Trigger.new) {
         Task t = new Task();
-        
+        System.debug(LoggingLevel.DEBUG, 'Processing Platform Event for Planned Task Id: ' + tp.Planned_Task_Id__c);
         if (String.isNotBlank(tp.Subject__c)){       
             t.Subject = tp.Subject__c;
         }
@@ -27,16 +27,13 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
         if (String.isNotBlank(tp.Type__c)){          
             t.Type = tp.Type__c;
         }
-        if (String.isNotBlank(tp.Task_Sub_Type__c)){ 
-            t.TaskSubtype = tp.Task_Sub_Type__c;
-        }
         if (String.isNotBlank(tp.RecordTypeId__c)){  
             t.RecordTypeId = tp.RecordTypeId__c;
         }
 
         t.Status = BSF_Constants.STATUS_NOT_STARTED; 
         t.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
-        
+        System.debug(LoggingLevel.DEBUG, 'Final Task to Insert: ' + t);
         taskList.add(t);
     }
     
@@ -58,8 +55,8 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
             }
         }
     }
-
+    System.debug(LoggingLevel.INFO, 'Total Tasks Processed: ' + taskList.size() + ', Planned Tasks to Update: ' + ptsToUpdate.size());
     if (!ptsToUpdate.isEmpty()) {
-        Database.update(ptsToUpdate, false);
+        BSF_TaskPlanningService.handleDatabaseResults(Database.update(ptsToUpdate, false), 'Planned Task Update from Platform Event');
     }
 }

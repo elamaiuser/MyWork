@@ -3,6 +3,7 @@
 	<types>
 		<members>BSF_TaskPlanningService</members>
 		<members>BSF_Constants</members>
+		<members>StandardTaskGenerationBatch</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -12,13 +13,20 @@
 	<types>
 		<members>Planned_Task__c.Calculated_Creation_Date__c</members>
         <members>Task_Platform_Event__e.Planned_Task_Id__c</members>
-        <members>Task_Platform_Event__e.Task_Sub_Type__c</members>
         <members>Task_Platform_Event__e.Type__c</members>
+        <members>Task_Platform_Event__e.RecordTypeId__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
         <members>Planned_Task__c.Task_Generation_Fields</members>
         <name>FieldSet</name>
+    </types>
+    <types>
+        <members>BSF_Task_Batch_Size</members>
+        <members>BSF_Standard_Task_Batch_Filter</members>
+        <members>BSF_Planned_Task_Trigger_Filter</members>
+        <members>BSF_Task_Field_Mapping_JSON</members>
+        <name>CustomLabel</name>
     </types>
 	<version>66.0</version>
 </Package>

@@ -403,19 +403,12 @@ public class BSF_Constants {
     public static final String ASSIGNED_TO_SBPM = 'Strategic Business Planning Manager';
 
     // StandardTaskGenerationBatch Constants
-    public static final String STANDARD_TASK_BATCH_FILTER = 
-        'Status__c = \'' + PLANNED_TASK_STATUS_CONFIGURED + '\' ' +
-        'AND Related_Opportunity__c != null ' +
-        'AND Related_Opportunity__r.DriveStatus__c != \'' + DOC_STATUS_CANCEL + '\' ' +
-        'AND (' +
-            '(Creation_Offset__c != null AND Calculated_Creation_Date__c <= TODAY) ' +
-            'OR ' +
-            '(Creation_Offset__c = null AND Related_Opportunity__r.DriveStatus__c = \'' + DOC_STATUS_CONFIRMED + '\')' +
-        ')';
-    public static final String PLANNED_TASK_TRIGGER_FILTER = 
-        'Related_Opportunity__c IN :opportunityIds ' + 
-        'AND Status__c = \'' + PLANNED_TASK_STATUS_CONFIGURED + '\' ' +
-        'AND Creation_Offset__c != null';
+    public static final Integer TASK_BATCH_SIZE = String.isNotBlank(Label.BSF_Task_Batch_Size) 
+                                                    ? Integer.valueOf(Label.BSF_Task_Batch_Size) 
+                                                    : 200;
+    public static final String STANDARD_TASK_BATCH_FILTER = Label.BSF_Standard_Task_Batch_Filter;
+    public static final String PLANNED_TASK_TRIGGER_FILTER = Label.BSF_Planned_Task_Trigger_Filter;
+    public static final String TASK_FIELD_MAPPING_JSON = Label.BSF_Task_Field_Mapping_JSON;
     public static final List<String> TASK_OWNER_HIERARCHY = new List<String>{
         AREA_BOOKING_MANAGER,
         ACCOUNT_MANAGER,
@@ -424,13 +417,4 @@ public class BSF_Constants {
         OPPORTUNITY_OWNER,
         DRD_SYSTEM_USER
     };
-    public static final String TASK_FIELD_MAPPING_JSON = 
-        '{' +
-            '"Subject__c": "Subject",' +
-            '"Calculated_Target_Date__c": "ActivityDate",' +
-            '"Related_Opportunity__c": "WhatId",' +
-            '"Task_Definition__r.Task_Type__c": "Type",' +
-            '"Task_Definition__r.Task_Sub_Type__c": "TaskSubtype",' +
-            '"Related_Opportunity__r.Drive_Date__c": "Drive_Date__c"' +
-        '}';
 }

@@ -335,7 +335,7 @@ public with sharing class BSF_TaskPlanningService {
         return resultsByParentId;
     }
 
-    private static void handleDatabaseResults(Object results, String context) {
+    public static void handleDatabaseResults(Object results, String context) {
         if (results == null) return;
 
         List<BSF_Error_Log__c> errorLogs = new List<BSF_Error_Log__c>();
@@ -382,16 +382,6 @@ public with sharing class BSF_TaskPlanningService {
     // ============================================================================
     // STANDARDTASKGENERATIONBATCH PRIVATE HELPER METHODS
     // ============================================================================
-
-    private static String buildTaskGenerationBatchQuery(String batchWhereClause) {
-        Set<String> queryFields = new Set<String>{'Id'};
-        for(Schema.FieldSetMember fsm : SObjectType.Planned_Task__c.FieldSets.Task_Generation_Fields.getFields()) {
-            queryFields.add(fsm.getFieldPath());
-        }
-        return 'SELECT ' + String.join(new List<String>(queryFields), ', ') +
-                ' FROM Planned_Task__c ' +
-                ' WHERE ' + batchWhereClause;
-    }
 
     private static Map<String, Task> getExistingTasks(Set<Id> oppIds, Set<String> subjects) {
         Map<String, Task> taskMap = new Map<String, Task>();
@@ -530,7 +520,6 @@ public with sharing class BSF_TaskPlanningService {
             WhatId__c = t.WhatId,
             Drive_Date__c = t.Drive_Date__c,
             Type__c = t.Type,
-            Task_Sub_Type__c = t.TaskSubtype,
             Planned_Task_Id__c = plannedTaskId
         );
     }
@@ -556,7 +545,7 @@ public with sharing class BSF_TaskPlanningService {
     private static void processSinglePlannedTask(Planned_Task__c pt, GenerationContext ctx, ProcessingData data, Boolean usePlatformEvent) {
         Id ownerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, ctx.roleHierarchyMap.get(pt.Related_Opportunity__c));
         Task newTask = buildTask(pt, ctx.fieldMapping, ownerId);
-
+        System.debug(LoggingLevel.DEBUG, 'Built Task for Planned Task Id ' + pt.Id + ': ' + newTask);
         if (usePlatformEvent) {
             data.eventsToPublish.add(buildPlatformEvent(newTask, pt.Id));
         } else {
@@ -566,12 +555,13 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     private static void executeDmlAndPublish(ProcessingData data, Boolean usePlatformEvent) {
-        if (!data.tasksToInsert.isEmpty()) {
+        System.debug(LoggingLevel.INFO, 'Executing DML and Publishing. Use Platform Event: ' + usePlatformEvent);
+        if (!data.tasksToInsert.isEmpty() && !usePlatformEvent) {
             Database.SaveResult[] srList = Database.insert(data.tasksToInsert, false);
             handleTaskInsertResults(srList, data.indexMap, data.pTasksToUpdate);
         }
 
-        if (!data.eventsToPublish.isEmpty()) {
+        if (!data.eventsToPublish.isEmpty() && usePlatformEvent) {
             handleDatabaseResults(EventBus.publish(data.eventsToPublish), 'Platform Event Publish');
         }
 
@@ -645,6 +635,16 @@ public with sharing class BSF_TaskPlanningService {
         return currentObj != null ? currentObj.get(relations[relations.size() - 1]) : null;
     }
 
+    public static String buildTaskGenerationBatchQuery(String batchWhereClause) {
+        Set<String> queryFields = new Set<String>{'Id'};
+        for(Schema.FieldSetMember fsm : SObjectType.Planned_Task__c.FieldSets.Task_Generation_Fields.getFields()) {
+            queryFields.add(fsm.getFieldPath());
+        }
+        return 'SELECT ' + String.join(new List<String>(queryFields), ', ') +
+                ' FROM Planned_Task__c ' +
+                ' WHERE ' + batchWhereClause;
+    }
+
     // ============================================================================
     // STANDARDTASKGENERATIONBATCH MAIN EXECUTE METHOD
     // ============================================================================
@@ -654,6 +654,7 @@ public with sharing class BSF_TaskPlanningService {
 
         try {
             GenerationContext ctx = setupContext(plannedTasks);
+            System.debug(LoggingLevel.INFO, 'Context setup complete. Existing Tasks: ' + ctx.existingTaskMap.size() + ', Opportunities with Roles: ' + ctx.roleHierarchyMap.size() + ', Field Mappings: ' + ctx.fieldMapping.size());
             ProcessingData data = new ProcessingData();
             List<String> duplicateErrors = new List<String>();
 
@@ -666,7 +667,7 @@ public with sharing class BSF_TaskPlanningService {
                 }
                 processSinglePlannedTask(pt, ctx, data, usePlatformEvent);
             }
-
+            System.debug(LoggingLevel.INFO, 'Task processing complete. Tasks to Insert: ' + data.tasksToInsert.size() + ', Events to Publish: ' + data.eventsToPublish.size() + ', Planned Tasks to Update: ' + data.pTasksToUpdate.size());
             executeDmlAndPublish(data, usePlatformEvent);
         }catch(Exception ex) {
             System.debug(LoggingLevel.ERROR, 'Exception in processAndGenerateTasks(): ' + ex.getMessage());
