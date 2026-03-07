@@ -34,5 +34,10 @@
         <members>BSF_Generate_Tasks_From_Events</members>
         <name>CustomLabel</name>
     </types>
+    <types>
+		<members>BSF_Access_Control_Rule.HRP_16777_Planned_Task_Field_PS</members>
+        <members>BSF_Access_Control_Rule.HRP_16777_Class_Permission_Set</members>
+		<name>CustomMetadata</name>
+	</types>
 	<version>66.0</version>
 </Package>

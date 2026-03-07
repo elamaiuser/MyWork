@@ -181,6 +181,15 @@ private class TaskPlatformEventTriggerTest {
             Task_Definition__c = taskDef.Id
         );
         insert pt;
+        Planned_Task__c pt2 = new Planned_Task__c(
+            Related_Opportunity__c = optyObj.Id,
+            Subject__c = 'Test Failed Event',
+            Status__c = 'Configured',
+            Scheduling_Method__c = 'Days Offset',
+            User_Defined_Offset__c = 5,
+            Task_Definition__c = taskDef.Id
+        );
+        insert pt2;
     }
 
    
