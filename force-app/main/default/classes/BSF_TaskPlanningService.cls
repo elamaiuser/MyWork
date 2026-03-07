@@ -539,11 +539,14 @@ public with sharing class BSF_TaskPlanningService {
         ctx.existingTaskMap = getExistingTasks(oppIds, taskSubjects);
         ctx.roleHierarchyMap = buildRoleHierarchyMap(oppIds);
         ctx.fieldMapping = getDynamicFieldMapping();
+        ctx.fallbackHierarchyMap = getRoleFallbackHierarchyMap();
         return ctx;
     }
 
     private static void processSinglePlannedTask(Planned_Task__c pt, GenerationContext ctx, ProcessingData data, Boolean usePlatformEvent) {
-        Id ownerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, ctx.roleHierarchyMap.get(pt.Related_Opportunity__c));
+        Id ownerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, 
+                                        ctx.roleHierarchyMap.get(pt.Related_Opportunity__c),
+                                        ctx.fallbackHierarchyMap);
         Task newTask = buildTask(pt, ctx.fieldMapping, ownerId);
         System.debug(LoggingLevel.DEBUG, 'Built Task for Planned Task Id ' + pt.Id + ': ' + newTask);
         if (usePlatformEvent) {
@@ -588,25 +591,31 @@ public with sharing class BSF_TaskPlanningService {
     // STANDARDTASKGENERATIONBATCH REUSABLE LOGIC FOR BOTH BATCH AND DIRECT EXECUTION
     // ============================================================================
 
-    public static Id determineTaskOwner(String assignedTo, Map<String, Id> oppRoles) {
+    public static Id determineTaskOwner(String assignedTo, Map<String, Id> oppRoles, Map<String, List<String>> fallbackHierarchyMap){
         if (oppRoles == null || oppRoles.isEmpty()) {
-            return UserInfo.getUserId();
+            return null;
         }
         Id ownerId = null;
-        if(String.isBlank(assignedTo)) {
-            assignedTo = BSF_Constants.ASSIGNED_TO_AM; // Default to AM if not specified
-        }
-        if(assignedTo.equals(BSF_Constants.ASSIGNED_TO_SBPM)) {
-            assignedTo = BSF_Constants.AREA_BOOKING_MANAGER;
+        if (String.isBlank(assignedTo)) {
+            assignedTo = BSF_Constants.ACCOUNT_MANAGER; 
+        } else if (assignedTo.equalsIgnoreCase(BSF_Constants.ASSIGNED_TO_SBPM)) {
+            assignedTo = BSF_Constants.AREA_BOOKING_MANAGER; 
         }
 
-        Boolean cascade = false;
-        for(String fallbackRole : BSF_Constants.TASK_OWNER_HIERARCHY){
-            if(fallbackRole.equalsIgnoreCase(assignedTo)){
-                cascade = true;
+        List<String> fallbackChain;
+        if (fallbackHierarchyMap == null || fallbackHierarchyMap.isEmpty() 
+                || !fallbackHierarchyMap.containsKey(assignedTo)) {
+                    fallbackChain = new List<String>{ assignedTo };
+        }else{
+            fallbackChain = fallbackHierarchyMap.get(assignedTo);
+            if (fallbackChain == null || fallbackChain.isEmpty()) {
+                fallbackChain = new List<String>{ assignedTo };
             }
-            if(cascade && oppRoles.containsKey(fallbackRole) && oppRoles.get(fallbackRole) != null){
-                ownerId = oppRoles.get(fallbackRole);
+        }
+
+        for (String roleToCheck : fallbackChain) {
+            if (oppRoles.containsKey(roleToCheck) && oppRoles.get(roleToCheck) != null) {
+                ownerId = oppRoles.get(roleToCheck);
                 break;
             }
         }
@@ -643,6 +652,25 @@ public with sharing class BSF_TaskPlanningService {
         return 'SELECT ' + String.join(new List<String>(queryFields), ', ') +
                 ' FROM Planned_Task__c ' +
                 ' WHERE ' + batchWhereClause;
+    }
+
+        public static Map<String, List<String>> getRoleFallbackHierarchyMap() {
+        Map<String, List<String>> hierarchyMap = new Map<String, List<String>>();
+        try {
+            if(String.isNotBlank(BSF_Constants.TASK_OWNER_HIERARCHY_JSON)) {
+                Map<String, Object> rawMap = (Map<String, Object>) JSON.deserializeUntyped(BSF_Constants.TASK_OWNER_HIERARCHY_JSON);
+                for (String key : rawMap.keySet()) {
+                    List<String> fallbacks = new List<String>();
+                    for (Object obj : (List<Object>)rawMap.get(key)) {
+                        fallbacks.add(String.valueOf(obj).trim());
+                    }
+                    hierarchyMap.put(key.trim(), fallbacks);
+                }
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.ERROR, 'Failed to parse TASK_OWNER_HIERARCHY_JSON: ' + e.getMessage());
+        }
+        return hierarchyMap;
     }
 
     // ============================================================================
@@ -693,6 +721,7 @@ public with sharing class BSF_TaskPlanningService {
         Map<String, Task> existingTaskMap;
         Map<Id, Map<String, Id>> roleHierarchyMap;
         Map<String, String> fieldMapping;
+        Map<String, List<String>> fallbackHierarchyMap;
     }
 
     private class ProcessingData {
