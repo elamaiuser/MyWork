@@ -4,6 +4,9 @@
 		<members>BSF_TaskPlanningService</members>
 		<members>BSF_Constants</members>
 		<members>StandardTaskGenerationBatch</members>
+        <members>BSF_TaskPlanningServiceTest</members>
+        <members>StandardTaskGenerationBatchTest</members>
+        <members>TaskPlatformEventTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -26,6 +29,9 @@
         <members>BSF_Standard_Task_Batch_Filter</members>
         <members>BSF_Planned_Task_Trigger_Filter</members>
         <members>BSF_Task_Field_Mapping_JSON</members>
+        <members>BSF_Task_Owner_Hierarchy_JSON</members>
+        <members>BSF_PE_Field_Mapping_JSON</members>
+        <members>BSF_Generate_Tasks_From_Events</members>
         <name>CustomLabel</name>
     </types>
 	<version>66.0</version>

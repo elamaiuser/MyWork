@@ -20,7 +20,10 @@ public with sharing class BSF_TaskPlanningService {
                                                                         AccessLevel.USER_MODE
                                                                       );
         if (!tasksToProcess.isEmpty()) {
-            processAndGenerateTasks(tasksToProcess, true); // Pass 'false' to skip platform event generation if not needed
+            processAndGenerateTasks(tasksToProcess, 
+                                        Boolean.valueOf(
+                                        Label.BSF_Generate_Tasks_From_Events)
+                                    );
         }
     }
 
@@ -336,46 +339,43 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     public static void handleDatabaseResults(Object results, String context) {
-        if (results == null) return;
-
+        if (results == null){
+            return;
+        }
+        List<Database.Error> errors = new List<Database.Error>();
         List<BSF_Error_Log__c> errorLogs = new List<BSF_Error_Log__c>();
         String className = 'BSF_TaskPlanningService';
-        String typeValue = 'Error';
 
         if (results instanceof List<Database.SaveResult>) {
-            errorLogs = BSF_Utilities.createErrorLog(
-                (List<Database.SaveResult>)results, 
-                context, className, 'handleDatabaseResults', typeValue, 'DML Save Error'
-            );
+            List<Database.SaveResult> srList = (List<Database.SaveResult>)results;
+            for (Database.SaveResult sr : srList) { 
+                if (!sr.isSuccess()) {
+                    errors.addAll(sr.getErrors()); 
+                }
+            }
+            errorLogs = BSF_Utilities.createErrorLog(srList, context, className, 'handleDatabaseResults', 'Error', 'DML Save Error');
         } 
         else if (results instanceof List<Database.DeleteResult>) {
-            errorLogs = BSF_Utilities.createErrorLog(
-                (List<Database.DeleteResult>)results, 
-                context, className, 'handleDatabaseResults', typeValue, 'DML Delete Error'
-            );
-        } 
-        else if (results instanceof List<Database.UpsertResult>) {
-            errorLogs = BSF_Utilities.createErrorLog(
-                (List<Database.UpsertResult>)results, 
-                context, className, 'handleDatabaseResults', typeValue, 'DML Upsert Error'
-            );
-        }
-
-        if (!errorLogs.isEmpty()) {
-            debugResults(Database.insert(errorLogs, false), 'BSF Error Log Insertion');
-        }
-    }
-
-    public static void debugResults(Object results, String context) {
-        List<Database.Error> errors = new List<Database.Error>();
-        if (results instanceof List<Database.SaveResult>) {
-            for (Database.SaveResult sr : (List<Database.SaveResult>)results) { if (!sr.isSuccess()) { errors.addAll(sr.getErrors()); } }
-        } else if (results instanceof List<Database.DeleteResult>) {
-            for (Database.DeleteResult dr : (List<Database.DeleteResult>)results) { if (!dr.isSuccess()) { errors.addAll(dr.getErrors()); } }
+            List<Database.DeleteResult> drList = (List<Database.DeleteResult>)results;
+            for (Database.DeleteResult dr : drList) { 
+                if (!dr.isSuccess()){ 
+                    errors.addAll(dr.getErrors()); 
+                }
+            }
+            errorLogs = BSF_Utilities.createErrorLog(drList, context, className, 'handleDatabaseResults', 'Error', 'DML Delete Error');
         }
         
         for (Database.Error err : errors) { 
             System.debug(LoggingLevel.ERROR, 'Error in context [' + context + ']: ' + err.getMessage()); 
+        }
+
+        if (!errorLogs.isEmpty()) {
+            Database.SaveResult[] logResults = Database.insert(errorLogs, false, AccessLevel.USER_MODE);
+            for (Database.SaveResult sr : logResults) {
+                if (!sr.isSuccess()){
+                    System.debug(LoggingLevel.ERROR, 'Failed to insert Error Log: ' + sr.getErrors()[0].getMessage());
+                }
+            }
         }
     }
 
@@ -479,6 +479,8 @@ public with sharing class BSF_TaskPlanningService {
     
     private static Task buildTask(Planned_Task__c pt, Map<String, String> fieldMapping, Id ownerId) {
         Task newTask = new Task();
+        newTask.Status = BSF_Constants.STATUS_NOT_STARTED;
+        newTask.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
         
         if (fieldMapping != null && !fieldMapping.isEmpty()) {
             for (String sourceFieldPath : fieldMapping.keySet()) {
@@ -489,42 +491,21 @@ public with sharing class BSF_TaskPlanningService {
                 }
             }
         }
-
-        newTask.Status = BSF_Constants.STATUS_NOT_STARTED;
-        newTask.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
+        
         newTask.OwnerId = ownerId;
         return newTask;
     }
 
     private static Map<String, String> getDynamicFieldMapping() {
-        Map<String, String> fieldMapping = new Map<String, String>();
-        try {
-            String jsonMap = BSF_Constants.TASK_FIELD_MAPPING_JSON;
-            if (String.isNotBlank(jsonMap)) {
-                Map<String, Object> rawMapping = (Map<String, Object>) JSON.deserializeUntyped(jsonMap);
-                for (String key : rawMapping.keySet()) {
-                    fieldMapping.put(key, String.valueOf(rawMapping.get(key)));
-                }
-            }
-        } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to parse Task_Field_Mapping_JSON: ' + e.getMessage());
+        Map<String, String> mappingMap = new Map<String, String>();
+        Map<String, Object> rawMap = parseJson(BSF_Constants.TASK_FIELD_MAPPING_JSON, 'TASK_FIELD_MAPPING_JSON');
+        for(String key : rawMap.keySet()) { 
+            mappingMap.put(key, String.valueOf(rawMap.get(key))); 
         }
-        return fieldMapping;
+        return mappingMap;
     }
 
-    private static Task_Platform_Event__e buildPlatformEvent(Task t, Id plannedTaskId) {
-        return new Task_Platform_Event__e(
-            Subject__c = t.Subject,
-            ActivityDate__c = t.ActivityDate,
-            OwnerId__c = t.OwnerId,
-            WhatId__c = t.WhatId,
-            Drive_Date__c = t.Drive_Date__c,
-            Type__c = t.Type,
-            Planned_Task_Id__c = plannedTaskId
-        );
-    }
-
-    private static GenerationContext setupContext(List<Planned_Task__c> plannedTasks) {
+    private static GenerationContext setupContext(List<Planned_Task__c> plannedTasks, Boolean usePlatformEvent) {
         Set<Id> oppIds = new Set<Id>();
         Set<String> taskSubjects = new Set<String>();
 
@@ -540,6 +521,9 @@ public with sharing class BSF_TaskPlanningService {
         ctx.roleHierarchyMap = buildRoleHierarchyMap(oppIds);
         ctx.fieldMapping = getDynamicFieldMapping();
         ctx.fallbackHierarchyMap = getRoleFallbackHierarchyMap();
+        if(usePlatformEvent){
+            ctx.peMapping = getDynamicPlatformEventFieldMapping();
+        }
         return ctx;
     }
 
@@ -550,7 +534,7 @@ public with sharing class BSF_TaskPlanningService {
         Task newTask = buildTask(pt, ctx.fieldMapping, ownerId);
         System.debug(LoggingLevel.DEBUG, 'Built Task for Planned Task Id ' + pt.Id + ': ' + newTask);
         if (usePlatformEvent) {
-            data.eventsToPublish.add(buildPlatformEvent(newTask, pt.Id));
+            data.eventsToPublish.add(buildPlatformEvent(newTask, pt.Id, ctx.peMapping));
         } else {
             data.tasksToInsert.add(newTask);
             data.indexMap.put(data.tasksToInsert.size() - 1, pt);
@@ -585,6 +569,40 @@ public with sharing class BSF_TaskPlanningService {
     private static Planned_Task__c markProcessed(Planned_Task__c pt) {
         pt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
         return pt;
+    }
+
+    private static Map<String, Object> parseJson(String jsonString, String labelName) {
+        if (String.isBlank(jsonString)){
+            return new Map<String, Object>();
+        }
+        try {
+            return (Map<String, Object>) JSON.deserializeUntyped(jsonString);
+        } catch (Exception e) {
+            System.debug(LoggingLevel.ERROR, 'Failed to parse ' + labelName + ': ' + e.getMessage());
+            return new Map<String, Object>();
+        }
+    }
+
+    private static SObject transferMappedFields(SObject source, SObject target, Map<String, String> mapping, Boolean isTaskToPE) {
+        if (mapping == null || mapping.isEmpty()){
+            return target;
+        }
+        
+        for (String taskField : mapping.keySet()) {
+            String peField = mapping.get(taskField);
+            String sourceField = isTaskToPE ? taskField : peField;
+            String targetField = isTaskToPE ? peField : taskField;
+            try {
+                Object val = source.get(sourceField);
+                if (val != null) {
+                    target.put(targetField, val);
+                }
+            } catch (Exception e) {
+                System.debug(LoggingLevel.WARN, 'Mapping failed (' + sourceField + ' -> ' + targetField + '): ' + e.getMessage());
+            }
+        }
+        
+        return target;
     }
 
     // ============================================================================
@@ -654,23 +672,44 @@ public with sharing class BSF_TaskPlanningService {
                 ' WHERE ' + batchWhereClause;
     }
 
-        public static Map<String, List<String>> getRoleFallbackHierarchyMap() {
+    public static Map<String, List<String>> getRoleFallbackHierarchyMap() {
         Map<String, List<String>> hierarchyMap = new Map<String, List<String>>();
-        try {
-            if(String.isNotBlank(BSF_Constants.TASK_OWNER_HIERARCHY_JSON)) {
-                Map<String, Object> rawMap = (Map<String, Object>) JSON.deserializeUntyped(BSF_Constants.TASK_OWNER_HIERARCHY_JSON);
-                for (String key : rawMap.keySet()) {
-                    List<String> fallbacks = new List<String>();
-                    for (Object obj : (List<Object>)rawMap.get(key)) {
-                        fallbacks.add(String.valueOf(obj).trim());
-                    }
-                    hierarchyMap.put(key.trim(), fallbacks);
-                }
+        Map<String, Object> rawMap = parseJson(BSF_Constants.TASK_OWNER_HIERARCHY_JSON, 'TASK_OWNER_HIERARCHY_JSON');
+        for (String key : rawMap.keySet()) {
+            List<String> fallbacks = new List<String>();
+            for (Object obj : (List<Object>)rawMap.get(key)) { 
+                fallbacks.add(String.valueOf(obj).trim()); 
             }
-        } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to parse TASK_OWNER_HIERARCHY_JSON: ' + e.getMessage());
+            hierarchyMap.put(key.trim(), fallbacks);
         }
         return hierarchyMap;
+    }
+
+    public static Map<String, String> getDynamicPlatformEventFieldMapping() {
+        Map<String, String> mappingMap = new Map<String, String>();
+        Map<String, Object> rawMap = parseJson(BSF_Constants.PE_FIELD_MAPPING_JSON, 'PE_FIELD_MAPPING_JSON');
+        for (String key : rawMap.keySet()) { 
+            mappingMap.put(key, String.valueOf(rawMap.get(key))); 
+        }
+        return mappingMap;
+    }
+
+    public static Task_Platform_Event__e buildPlatformEvent(Task t, Id plannedTaskId, Map<String, String> peMapping) {
+        return (Task_Platform_Event__e) transferMappedFields(
+            t, 
+            new Task_Platform_Event__e(Planned_Task_Id__c = plannedTaskId), 
+            peMapping, 
+            true
+        );
+    }
+
+    public static Task buildTaskFromEvent(Task_Platform_Event__e pe, Map<String, String> peMapping) {
+        return (Task) transferMappedFields(
+            pe, 
+            new Task(Status = BSF_Constants.STATUS_NOT_STARTED, Priority = BSF_Constants.NORMAL_PRIORITY_TASK), 
+            peMapping, 
+            false
+        );
     }
 
     // ============================================================================
@@ -678,10 +717,14 @@ public with sharing class BSF_TaskPlanningService {
     // ============================================================================
 
     public static void processAndGenerateTasks(List<Planned_Task__c> plannedTasks, Boolean usePlatformEvent) {
-        if (plannedTasks == null || plannedTasks.isEmpty()) return;
-
+        if (plannedTasks == null || plannedTasks.isEmpty()){
+            return;
+        }
+        if(usePlatformEvent == null) { 
+            usePlatformEvent = false; 
+        }
         try {
-            GenerationContext ctx = setupContext(plannedTasks);
+            GenerationContext ctx = setupContext(plannedTasks, usePlatformEvent);
             System.debug(LoggingLevel.INFO, 'Context setup complete. Existing Tasks: ' + ctx.existingTaskMap.size() + ', Opportunities with Roles: ' + ctx.roleHierarchyMap.size() + ', Field Mappings: ' + ctx.fieldMapping.size());
             ProcessingData data = new ProcessingData();
             List<String> duplicateErrors = new List<String>();
@@ -709,7 +752,7 @@ public with sharing class BSF_TaskPlanningService {
                 ex.getMessage() + ' | Stack Trace: ' + ex.getStackTraceString()
             );
 
-            debugResults(Database.insert(new List<BSF_Error_Log__c>{exLog}, false), 'BSF Error Log Insertion');
+            Database.insert(new List<BSF_Error_Log__c>{exLog}, false, AccessLevel.USER_MODE);
         }
     }
 
@@ -722,6 +765,7 @@ public with sharing class BSF_TaskPlanningService {
         Map<Id, Map<String, Id>> roleHierarchyMap;
         Map<String, String> fieldMapping;
         Map<String, List<String>> fallbackHierarchyMap;
+        Map<String, String> peMapping;
     }
 
     private class ProcessingData {

@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>BSF_Generate_Tasks_From_Events</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Generate_Tasks_From_Events</shortDescription>
+        <value>TRUE</value>
+    </labels>
+    <labels>
+        <fullName>BSF_PE_Field_Mapping_JSON</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_PE_Field_Mapping_JSON</shortDescription>
+        <value>{ &quot;Subject&quot;: &quot;Subject__c&quot;, &quot;ActivityDate&quot;: &quot;ActivityDate__c&quot;, &quot;OwnerId&quot;: &quot;OwnerId__c&quot;, &quot;WhatId&quot;: &quot;WhatId__c&quot;, &quot;Drive_Date__c&quot;: &quot;Drive_Date__c&quot;, &quot;Type&quot;: &quot;Type__c&quot; }</value>
+    </labels>
+    <labels>
         <fullName>BSF_Planned_Task_Trigger_Filter</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -27,5 +41,12 @@
         <protected>false</protected>
         <shortDescription>BSF_Task_Field_Mapping_JSON</shortDescription>
         <value>{&quot;Subject__c&quot;: &quot;Subject&quot;, &quot;Calculated_Target_Date__c&quot;: &quot;ActivityDate&quot;, &quot;Related_Opportunity__c&quot;: &quot;WhatId&quot;, &quot;Task_Definition__r.Task_Type__c&quot;: &quot;Type&quot;, &quot;Related_Opportunity__r.Drive_Date__c&quot;: &quot;Drive_Date__c&quot;}</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Task_Owner_Hierarchy_JSON</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Task_Owner_Hierarchy_JSON</shortDescription>
+        <value>{ &quot;Account Manager&quot;: [&quot;Account Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Area Booking Manager&quot;: [&quot;Area Booking Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Account Specialist&quot;: [&quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;District Manager&quot;: [&quot;District Manager&quot;, &quot;DRD System User&quot;] }</value>
     </labels>
 </CustomLabels>

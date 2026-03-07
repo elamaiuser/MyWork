@@ -403,9 +403,9 @@ public class BSF_Constants {
     public static final String ASSIGNED_TO_SBPM = 'Strategic Business Planning Manager';
 
     // StandardTaskGenerationBatch Constants
-    public static final Integer TASK_BATCH_SIZE = Integer.valueOf(Label.BSF_Task_Batch_Size);
     public static final String STANDARD_TASK_BATCH_FILTER = Label.BSF_Standard_Task_Batch_Filter;
     public static final String PLANNED_TASK_TRIGGER_FILTER = Label.BSF_Planned_Task_Trigger_Filter;
     public static final String TASK_FIELD_MAPPING_JSON = Label.BSF_Task_Field_Mapping_JSON;
     public static final String TASK_OWNER_HIERARCHY_JSON = Label.BSF_Task_Owner_Hierarchy_JSON;
+    public static final String PE_FIELD_MAPPING_JSON = Label.BSF_PE_Field_Mapping_JSON;
 }

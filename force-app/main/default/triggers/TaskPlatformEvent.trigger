@@ -5,36 +5,11 @@
 trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
     List<Task> taskList = new List<Task>();
     List<Planned_Task__c> ptsToUpdate = new List<Planned_Task__c>();
-    
-    for (Task_Platform_Event__e tp : Trigger.new) {
-        Task t = new Task();
-        System.debug(LoggingLevel.DEBUG, 'Processing Platform Event for Planned Task Id: ' + tp.Planned_Task_Id__c);
-        if (String.isNotBlank(tp.Subject__c)){       
-            t.Subject = tp.Subject__c;
-        }
-        if (tp.ActivityDate__c != null){             
-            t.ActivityDate = tp.ActivityDate__c;
-        }
-        if (String.isNotBlank(tp.OwnerId__c)){       
-            t.OwnerId = tp.OwnerId__c;
-        }
-        if (String.isNotBlank(tp.WhatId__c)){        
-            t.WhatId = tp.WhatId__c;
-        }
-        if (tp.Drive_Date__c != null){               
-            t.Drive_Date__c = tp.Drive_Date__c;
-        }
-        if (String.isNotBlank(tp.Type__c)){          
-            t.Type = tp.Type__c;
-        }
-        if (String.isNotBlank(tp.RecordTypeId__c)){  
-            t.RecordTypeId = tp.RecordTypeId__c;
-        }
+    Map<String, String> peMapping = BSF_TaskPlanningService.getDynamicPlatformEventFieldMapping();
 
-        t.Status = BSF_Constants.STATUS_NOT_STARTED; 
-        t.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
-        System.debug(LoggingLevel.DEBUG, 'Final Task to Insert: ' + t);
-        taskList.add(t);
+    for (Task_Platform_Event__e tp : Trigger.new) {
+        System.debug(LoggingLevel.DEBUG, 'Event Details: ' + tp);
+        taskList.add(BSF_TaskPlanningService.buildTaskFromEvent(tp, peMapping));
     }
     
     if (!taskList.isEmpty()) {
