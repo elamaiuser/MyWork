@@ -6,12 +6,12 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         Set<Id> apIds = new Set<Id>();
         
         for(String coIdName : map_coId_uniqueApIds.keySet()) {
-            coIds.add(coIdName.split('_')[0]);
+            coIds.add(coIdName.split(':')[0]);
             for(String apIdname : map_coId_uniqueApIds.get(coIdName)) {
-                apIds.add(apIdname.split('_')[0]);
+                apIds.add(apIdname.split(':')[0]);
             }
         }
-
+		
         //Find existing CoAp records with the same ApIds
         List<Collection_Operation_Availability__c> existingCoApRecords = [
             SELECT Id, Collection_Operation__c,
@@ -24,8 +24,8 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         ];
 
         for(Collection_Operation_Availability__c coAp :  existingCoApRecords) {
-            String mapKey = coAp.Collection_Operation__c + '_' + coAp.Collection_Operation__r.Name;
-            String mapValue = coAp.Availability_Pattern__c + '_' + coAp.Availability_Pattern__r.Name;
+            String mapKey = coAp.Collection_Operation__c + ':' + coAp.Collection_Operation__r.Name;
+            String mapValue = coAp.Availability_Pattern__c + ':' + coAp.Availability_Pattern__r.Name;
             if(map_coId_uniqueApIds.containsKey(mapKey) && map_coId_uniqueApIds.get(mapKey).contains(mapValue)) {
                 map_coId_uniqueApIds.get(mapKey).remove(mapValue);
             }
@@ -36,9 +36,9 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
 
             for(String apIdName : map_coId_uniqueApIds.get(coIdName)) {
                 coApListToInsert.add(new Collection_Operation_Availability__c(
-                    Name = coIdName.split('_')[1] + ' ' + apIdName.split('_')[1],
-                    Collection_Operation__c = coIdName.split('_')[0],
-                    Availability_Pattern__c = apIdName.split('_')[0],
+                    Name = coIdName.split(':')[1] + ' ' + apIdName.split(':')[1],
+                    Collection_Operation__c = coIdName.split(':')[0],
+                    Availability_Pattern__c = apIdName.split(':')[0],
                     Effective_Start_Date__c = Date.today(),
                     Effective_End_Date__c = skedDateTimeUtils.MAX_DATE
                 ));
@@ -46,27 +46,26 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         }
 
         Database.SaveResult[] insertResults = Database.insert(coApListToInsert, false);
-        List<BSF_Error_Log__c> errorLogToInsert = BSF_Utilities.createErrorLogWithObjectId(
+        List<BSF_Error_Log__c> errorLogToInsert = BSF_Utilities.createErrorLog(
             insertResults,
             'CO AP Records insert',
             'skedUpdateCoApRoleTargetsBatchHelper',
             'autoAssignCollectionOpAvailabilityRecords',
             'Error',
-            'Record Creation'
+            'Error in CO AP Record Creation'
         );
         return errorLogToInsert;
     }
 
-    public static List<BSF_Error_Log__c> calculateTotalsAndUpdateCoApStatusOnResources(Set<Id> resourceIds, Map<String, Set<String>> map_coId_uniqueApIds) {
+    public static List<BSF_Error_Log__c> calculateTotalsAndUpdateCoApStatusOnResources(Set<Id> resourceIds, Map<String, Set<String>> map_coId_uniqueApIds, Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap) {
         Map<String, Decimal> map_coIdapIdKey_noOfAssignedResources = new Map<String, Decimal>();
-        Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
         Set<Id> colIds = new Set<Id>();
         Set<Id> apIds = new Set<Id>();
         
         for(String coIdName : map_coId_uniqueApIds.keySet()) {
-            colIds.add(coIdName.split('_')[0]);
+            colIds.add(coIdName.split(':')[0]);
             for(String apIdname : map_coId_uniqueApIds.get(coIdName)) {
-                apIds.add(apIdname.split('_')[0]);
+                apIds.add(apIdname.split(':')[0]);
             }
         }
 
