@@ -23,6 +23,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
             'WHERE sked__Resource__r.sked__Resource_Type__c = \'' + skedConstants.RESOURCE_TYPE_PERSON + '\' '+
             'AND sked__Resource__r.sked__Is_Active__c = true '+
             'AND (sked__Resource__r.CO_AP_Status__c = null OR sked__Resource__r.CO_AP_Status__c IN :includedResourceCoApStatus) '+
+            'AND sked_Start_Date__c <= TODAY '+
             'AND (sked_End_Date__c = null OR sked_End_Date__c > TODAY) ';
 
         if(!this.primaryCoIds.isEmpty()) {

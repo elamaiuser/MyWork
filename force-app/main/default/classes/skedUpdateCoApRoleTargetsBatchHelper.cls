@@ -77,6 +77,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             FROM sked__Availability_Pattern_Resource__c
             WHERE sked__Resource__r.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN : colIds
             AND sked__Availability_Pattern__c IN : apIds
+            AND sked_Start_Date__c <= TODAY
             AND (sked_End_Date__c = NULL OR sked_End_Date__c >= TODAY)
             AND sked__Resource__r.sked__Resource_Type__c = 'Person'
             AND sked__Resource__r.sked__Is_Active__c = TRUE
@@ -99,6 +100,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
                 SELECT Id, sked__Availability_Pattern__c
                 FROM sked__Availability_Pattern_Resources__r
                 WHERE sked__Availability_Pattern__c IN :apIds
+                AND sked_Start_Date__c <= TODAY
                 AND (sked_End_Date__c = null OR sked_End_Date__c >= TODAY)
             )
             FROM sked__Resource__c
@@ -175,6 +177,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             COUNT_DISTINCT(sked__Resource__c) totalActualResources
             FROM sked__Availability_Pattern_Resource__c
             WHERE sked__Resource__r.sked_Collection_Operation_Id__c IN : colIds
+            AND sked_Start_Date__c <= TODAY
             AND (sked_End_Date__c = NULL OR sked_End_Date__c >= TODAY)
             AND sked__Resource__r.sked__Resource_Type__c = 'Person'
             AND sked__Resource__r.sked__Is_Active__c = TRUE
