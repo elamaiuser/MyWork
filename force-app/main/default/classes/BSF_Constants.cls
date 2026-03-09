@@ -388,7 +388,7 @@ public class BSF_Constants {
     //HRP-13426 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
     public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis / Future Drive Planning SBPM';
-    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
+    public static final String DRD_SYSTEM_USER = 'DRD System User';
 
     //Special Circumstances Badges -> HRP-701
     public static final String SSBS_BADGE_FIRST_TIME_DRIVE = 'First Time Drive';
