@@ -24,8 +24,7 @@ private class AvailabilityPatternRoleTrigger_Test {
         	Availability_Pattern__c = testWeeklyPattern1.Id,
         	Effective_Start_Date__c = system.today(),
         	Effective_End_Date__c = Date.newInstance(4000, 12, 30),
-        	Total_Target__c = 5,
-        	Min_Nbr_of_Staff__c = 3
+        	Total_Target__c = 5
         );
         insert testCoAp;
         
