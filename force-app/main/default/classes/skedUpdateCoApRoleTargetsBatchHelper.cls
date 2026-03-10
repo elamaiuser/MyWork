@@ -121,7 +121,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         }
 
         List<Collection_Operation_Availability__c> coApList = [
-            SELECT Id, Name, Total_Actual_Resources__c, Min_Nbr_of_Staff__c, Total_Target__c,
+            SELECT Id, Name, Total_Actual_Resources__c, Total_Target__c,
             Collection_Operation__c, Collection_Operation__r.Name,
             Collection_Operation__r.Grand_Total_Available_AP__c,
             Collection_Operation__r.Grand_Total_Needed_AP__c,
@@ -199,7 +199,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             Boolean isResourceUpdateNeeded = false, isResourceNeedsFurtherProcessing = false;
             for(Collection_Operation_Availability__c coAp : coApList) {
                 if(coAp.Collection_Operation__c != resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c) continue;
-                if(coAp.Min_Nbr_of_Staff__c > 0 && coAp.Total_Actual_Resources__c > 0 && coAp.Total_Target__c != null) {
+                if(coAp.Total_Actual_Resources__c > 0 && coAp.Total_Target__c != null) {
                     if(coAp.Availability_Pattern_Roles__r != null && !coAp.Availability_Pattern_Roles__r.isEmpty()) {
                         for(Availability_Pattern_Role__c apRole : coAp.Availability_Pattern_Roles__r) {
                             if(apRole.Min_Nbr_of_Role__c > 0 && apRole.Actual_Count_of_Role__c > 0) {
