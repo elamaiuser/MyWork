@@ -316,6 +316,16 @@ global virtual class skedRacController extends skedBaseController {
             skedModels.availability event = models.get(0);
             event.timezone = event.start.format('z', event.timezoneSidId);
             event.dailyTimeOffHoursMax = skedAvailabilityService.fetchDailyTimeOffHoursMax(request); // HRP-13613 - v2
+
+            // HRP-13613 begin attempt to determine isAllDayLeaveAvailable
+            if (event.dailyTimeOffHoursMax == event.resource.dailyTimeOffHours) 
+            {
+                event.isAllDayLeaveAvailable = true;
+            } else {
+                event.isAllDayLeaveAvailable = false;
+            }
+            // HRP-13613 end attempt to determine isAllDayLeaveAvailable
+
             data.event = event;
             result.data = data;
         }

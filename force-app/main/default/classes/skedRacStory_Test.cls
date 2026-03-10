@@ -1735,6 +1735,19 @@ private class skedRacStory_Test {
         // System.debug('assertEquals getEventDetailsResult2.success (true):' + getEventDetailsResult2.success);
         System.assertEquals(true, getEventDetailsResult2.success);
 
+        //get event details #3
+        skedRacController.getAvailabilityDetailsRequest getAvailabilityDetailsRequest3 = new skedRacController.getAvailabilityDetailsRequest();
+        getAvailabilityDetailsRequest3.viewData = new Map<string, object>();
+        getAvailabilityDetailsRequest3.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        getAvailabilityDetailsRequest3.event = new skedModels.availability();
+        //getAvailabilityDetailsRequest3.event.id = availabilityChecking1.Id;
+        getAvailabilityDetailsRequest3.event.startDate = testDataFactory.summary.startDateIso;
+        getAvailabilityDetailsRequest3.event.endDate = testDataFactory.summary.endDateIso;
+        skedRemoteResultModel getEventDetailsResult3 = skedRacController.getEventDetails(getAvailabilityDetailsRequest3);
+
+        // System.debug('assertEquals getEventDetailsResult3.success (true):' + getEventDetailsResult3.success);
+        System.assertEquals(false, getEventDetailsResult3.success);
+
         Test.stopTest();
 
     }
@@ -1913,6 +1926,27 @@ private class skedRacStory_Test {
 
         // System.debug('assertEquals verifyUnavailabilityBalanceResult.success (false):' + verifyUnavailabilityBalanceResult.success);
         System.assertEquals(false, verifyUnavailabilityBalanceResult.success);
+
+        skedModels.availability event5 = new skedModels.availability();
+        event5.endDate = Json.serialize(testDataFactory.summary.startDate.addDays(3)).replace('"', '');
+        event5.endTime = 2359;
+        event5.eventType = 'PTO';
+        event5.notes = 'notes event5';
+        event5.startDate = Json.serialize(testDataFactory.summary.startDate.addDays(1)).replace('"', '');
+        event5.startTime = 0000;
+        event5.resourceId = null; //testResource1.Id;
+        event5.timezoneSidId = testDataFactory.summary.timezoneSidId;
+        event5.isAllDay = true;
+
+        skedRacController.verifyUnavailabilityBalanceRequestModel verifyUnavailabilityBalanceRequest1 = new skedRacController.verifyUnavailabilityBalanceRequestModel();
+        verifyUnavailabilityBalanceRequest1.viewData = new Map<string, object>();
+        verifyUnavailabilityBalanceRequest1.viewData.put('timezoneSidId', testDataFactory.summary.timezoneSidId);
+        verifyUnavailabilityBalanceRequest1.unavailability = new List<skedModels.availability>();
+        verifyUnavailabilityBalanceRequest1.unavailability.add(event5);
+        skedRemoteResultModel verifyUnavailabilityBalanceResult1 = skedRacController.verifyUnavailabilityBalance(verifyUnavailabilityBalanceRequest1);
+
+        // System.debug('assertEquals verifyUnavailabilityBalanceResult1.success (false):' + verifyUnavailabilityBalanceResult1.success);
+        System.assertEquals(false, verifyUnavailabilityBalanceResult1.success);
 
         Test.stopTest();
 
