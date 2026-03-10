@@ -15,7 +15,7 @@ private class skedUpdateCoApRoleTargetsBatch_Test {
         sked__Availability_Pattern_Resource__c testPatternResource1 = new sked__Availability_Pattern_Resource__c(
             sked__Availability_Pattern__c = testWeeklyPattern1.Id,
             sked__Resource__c = testResource1.Id, 
-            sked__Start__c = testDataFactory.summary.startTime.addDays(1)
+            sked__Start__c = DateTime.now()
         );
         insert testPatternResource1;
     }
@@ -43,8 +43,12 @@ private class skedUpdateCoApRoleTargetsBatch_Test {
     static testMethod void testBatchRunWithExistingCoAp() {
         Test.startTest();
        
-        Biomed_Collection_Op_Center__c testCo = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c LIMIT 1];
+        Biomed_Collection_Op_Center__c testCo = [SELECT Id, Grand_Total_Needed_AP__c, Name FROM Biomed_Collection_Op_Center__c LIMIT 1];
         sked__Availability_Pattern__c testAp = [SELECT Id, Name FROM sked__Availability_Pattern__c LIMIT 1];
+        
+        skedHubBase.BypassUpdateTriggers = true;
+        update new Biomed_Collection_Op_Center__c(Id = testCo.Id, Grand_Total_Needed_AP__c = 10);
+        skedHubBase.BypassUpdateTriggers = false; 
         
         Collection_Operation_Availability__c testCoAp = new Collection_Operation_Availability__c(
         	Name = testCo.Name + ' ' + testAp.Name,
@@ -52,8 +56,7 @@ private class skedUpdateCoApRoleTargetsBatch_Test {
         	Availability_Pattern__c = testAp.Id,
         	Effective_Start_Date__c = system.today(),
         	Effective_End_Date__c = Date.newInstance(4000, 12, 30),
-        	Total_Target__c = 5,
-        	Min_Nbr_of_Staff__c = 3
+        	Total_Target__c = 5
         );
         insert testCoAp;
         
@@ -68,6 +71,6 @@ private class skedUpdateCoApRoleTargetsBatch_Test {
         
         Test.stopTest();
         sked__Resource__c testResource = [SELECT Id, CO_AP_Status__c FROM sked__Resource__c LIMIT 1];
-        Assert.isTrue(testResource.CO_AP_Status__c != null);
+        Assert.isTrue(testResource.CO_AP_Status__c.equals('Processed'));
     }
 }

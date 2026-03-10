@@ -22,10 +22,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Min_Nbr_of_Staff__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Total_Target__c</field>
             </layoutItems>
             <layoutItems>
