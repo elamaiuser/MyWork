@@ -8,8 +8,8 @@ public without sharing class CollectionOpAvailabilityTriggerService {
         for(Collection_Operation_Availability__c newCoAp : newList) {
             Collection_Operation_Availability__c oldCoAp = oldMap?.get(newCoAp.Id) ?? null;
 
-            if(newCoAp.Min_Nbr_of_Staff__c > 0 && newCoAp.Effective_End_Date__c >= System.today() &&
-               (oldCoAp == null || (oldCoAp != null && oldCoAp.Min_Nbr_of_Staff__c != newCoAp.Min_Nbr_of_Staff__c))) {
+            if(newCoAp.Total_Target__c > 0 && newCoAp.Effective_End_Date__c >= System.today() &&
+               (oldCoAp == null || (oldCoAp != null && oldCoAp.Total_Target__c != newCoAp.Total_Target__c))) {
                    colOpIds.add(newCoAp.Collection_Operation__c);
                    apIds.add(newCoAp.Availability_Pattern__c);
                }
