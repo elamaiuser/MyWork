@@ -88,7 +88,7 @@ public class skedOperationRecordService {
     private static List<sked_Operation_Record__c> generateOperationRecords(Set<Id> driveIds, Map<Id, DriveBridgeAPI__x> map_DriveId_ExternalDrive) {
         List<sked_Drive__c> drives = [SELECT Id, sked_Account__c, sked_Collection_Operation__c, sked_Drive_Site__c, sked_Primary_Contact__c,
                                       sked_2RBC_Projected_Procedures__c, sked_Drive_Site__r.sked_Site_Contact__c,
-                                      District_Manager__c, sked_Drive_Owner__c,
+                                      District_Manager__c, sked_Drive_Owner__c, sked_Type_of_Drive__c,
                                       sked_Drive_Owner__r.FirstName, sked_Drive_Owner__r.LastName, sked_Drive_Owner__r.MobilePhone,
                                       sked_Drive_Owner__r.WorkPhone__c, District_Manager__r.FirstName, District_Manager__r.LastName, 
                                       District_Manager__r.WorkPhone__c, sked_Equipment_Allocated__c,
@@ -139,12 +139,14 @@ public class skedOperationRecordService {
             }
             if (drive.sked_Drive_Shifts__r != NULL && !drive.sked_Drive_Shifts__r.isEmpty()) {
                 String drdRepInfo, drdRepContactNo;
-                if(drive.sked_Drive_Owner__c != NULL) {
-                    drdRepInfo = drive.sked_Drive_Owner__r.FirstName + ' ' + drive.sked_Drive_Owner__r.LastName;
-                    drdRepContactNo = drive.sked_Drive_Owner__r.WorkPhone__c;
-                } else if(drive.District_Manager__c != NULL) {
-                    drdRepInfo = drive.District_Manager__r.FirstName + ' ' + drive.District_Manager__r.LastName;
-                    drdRepContactNo = drive.District_Manager__r.WorkPhone__c;
+                if (drive.sked_Type_of_Drive__c != skedConstants.DRIVE_TYPE_FIXED_SITE) {
+                    if (drive.sked_Drive_Owner__c != NULL) {
+                        drdRepInfo = drive.sked_Drive_Owner__r.FirstName + ' ' + drive.sked_Drive_Owner__r.LastName;
+                        drdRepContactNo = drive.sked_Drive_Owner__r.WorkPhone__c;
+                    } else if(drive.District_Manager__c != NULL) {
+                        drdRepInfo = drive.District_Manager__r.FirstName + ' ' + drive.District_Manager__r.LastName;
+                        drdRepContactNo = drive.District_Manager__r.WorkPhone__c;
+                    }
                 }
                 for (sked_Drive_Shift__c driveShift : drive.sked_Drive_Shifts__r) {
                     if (!map_driveShift_OperationRecord.containsKey(driveShift.Id)) {

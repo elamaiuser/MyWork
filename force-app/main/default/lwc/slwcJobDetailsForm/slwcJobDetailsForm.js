@@ -18,6 +18,62 @@ export default class SlwcJobDetailsForm extends LightningElement {
         return this.jobAllocation.additionalRoles ? this.jobAllocation.additionalRoles.split(';').join(', ') : null;
     } 
 
+    sanitizeText(value) {
+        if (!value) {
+            return value;
+        }
+        return String(value).replace(/[<>]/g, '');
+    }
+    get safeResourceRole() {
+        return this.jobAllocation && this.jobAllocation.job
+            ? this.sanitizeText(this.jobAllocation.job.resourceRole)
+            : '';
+    }
+
+    get safeDualRole() {
+        return this.jobAllocation && this.jobAllocation.job
+            ? this.sanitizeText(this.jobAllocation.job.dualRole)
+            : '';
+    }
+
+    get safeAddress() {
+        return this.jobAllocation && this.jobAllocation.job
+            ? this.sanitizeText(this.jobAllocation.job.address)
+            : '';
+    }
+
+    get safeDriveName() {
+        return this.sanitizeText(this.jobAllocation ? this.jobAllocation.driveName : '');
+    }
+
+    get safeDriveShiftName() {
+        return this.sanitizeText(this.jobAllocation ? this.jobAllocation.driveShiftName : '');
+    }
+
+    get safeTravelTimeTo() {
+        return this.sanitizeText(this.jobAllocation ? this.jobAllocation.travelTimeTo : '');
+    }
+
+    get safeTravelTimeBack() {
+        return this.sanitizeText(this.jobAllocation ? this.jobAllocation.travelTimeBack : '');
+    }
+
+    get safeStatus() {
+        return this.sanitizeText(this.jobAllocation ? this.jobAllocation.status : '');
+    }
+
+    get safeStart() {
+        return this.jobAllocation
+            ? this.sanitizeDateTime(this.jobAllocation.start)
+            : null;
+    }
+
+    get safeEnd() {
+        return this.jobAllocation
+            ? this.sanitizeDateTime(this.jobAllocation.end)
+            : null;
+    }
+
     showLoading() {
         this.showSpinner = true;
     }
@@ -35,6 +91,12 @@ export default class SlwcJobDetailsForm extends LightningElement {
             }));
         }
     }
+    sanitizeDateTime(value) {
+    if (!value) return null;
+    const str = String(value);
+    if (/[<>]/.test(str)) return null;
+    return value;
+}
 
     connectedCallback() {
         this.init();

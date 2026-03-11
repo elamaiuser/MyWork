@@ -39,7 +39,7 @@
   </div>
 
   <!-- jquery -->
-  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.1.1.min.js')}"></script>
+  <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/jquery/jquery-3.7.1.min.js')}"></script>
   <!-- angularjs -->
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular.min.js')}"></script>
   <script src="{!URLFOR($Resource.sked_HLT_Vendors, '/angularjs/angular-sanitize.min.js')}"></script>

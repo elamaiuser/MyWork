@@ -162,6 +162,22 @@ global class slwcApprovalService implements Callable {
         
         return result;
     }
+
+    // HRP-15962
+    @AuraEnabled
+    public static slwcAuraResult getLatestDCRStatus(Id dcrId) {
+        slwcAuraResult result = new slwcAuraResult();
+
+        List<sked_Drive_Change_Request__c> dcrList = [
+            SELECT Id, sked_Status__c
+            FROM sked_Drive_Change_Request__c
+            WHERE Id = :dcrId
+            LIMIT 1
+        ];
+        result.success = true;
+        result.returnedData = dcrList.isEmpty() ? null : dcrList[0].sked_Status__c;
+        return result;
+    }
     
     @AuraEnabled
     public static slwcAuraResult canApprove(Id recordId) {

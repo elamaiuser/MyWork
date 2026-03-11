@@ -880,22 +880,43 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
           .then(() => {
             if (isDrivePendingApproval) {
               const approvalSvc = new approvalService();
-              return approvalSvc.withdraw({
-                request: {
-                  recordId: this.drive.id
-                }
+
+              // HRP-15962 - check latest DCR status first
+              return approvalSvc.getLatestDCRStatus({
+                dcrId: this.driveChangeRequest.id
               })
+              .then(result => {
+
+                const dcrStatus = result.returnedData;
+
+                const isDcrApprovedBySystem =
+                  dcrStatus === DRIVE_REQUEST_CHANGE_STATUS.APPROVED_BY_SYSTEM;
+
+                if (isDcrApprovedBySystem) {
+                  this.resultMessage =
+                    'This DCR was already approved by system. Refreshing page.';
+                  this.needToRefreshPage = true;
+                  this.hookAfterFinishedHandler(false, this.resultMessage);
+                  return false; 
+                }
+
+                return approvalSvc.withdraw({
+                  request: {
+                    recordId: this.drive.id
+                  }
+                })
                 .then(() => {
-                  //wait until isDrivePendingApproval returned false
                   return waitUntil(() => {
                     return approvalSvc.isPendingApproval({
                       recordId: this.drive.id
                     })
-                      .then(result => {
-                        return !result.returnedData;
-                      });
+                    .then(result => {
+                      return !result.returnedData;
+                    });
                   }, 3000, 100);
-                })
+                });
+
+              });
             }
           })
           .then(() => {

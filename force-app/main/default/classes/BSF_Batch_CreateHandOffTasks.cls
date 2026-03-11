@@ -30,7 +30,7 @@ global class BSF_Batch_CreateHandOffTasks implements Database.Batchable<SObject>
         
         for(Account_Handoff_Settings__mdt handOff : Account_Handoff_Settings__mdt.getAll().values()) 
         {
-            if(handOff.Active__c && (System.today().daysBetween(handOff.Live_date__c) <= Task_Reassignment_Matrix__mdt.getInstance(BSF_constants.currentAMDataReview).Creation_Date_Offset__c || (test.isRunningTest() && handOff.DeveloperName=='TEST'))) 
+            if(handOff.Active__c && ((handOff.DeveloperName !='TEST' && System.today().daysBetween(handOff.Live_date__c) <= Task_Reassignment_Matrix__mdt.getInstance(BSF_constants.currentAMDataReview).Creation_Date_Offset__c) || (test.isRunningTest() && handOff.DeveloperName=='TEST'))) 
             {
                 liveDateRegionListMap.put(handOff.Live_date__c,new List<String>(handOff.Region_Name__c.split(',')));
                 regionNameSet.addAll(handOff.Region_Name__c.split(','));

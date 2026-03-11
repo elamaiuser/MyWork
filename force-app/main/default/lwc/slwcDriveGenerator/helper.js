@@ -4062,6 +4062,23 @@ class DriveHelper {
     })
   }
 
+  isDriveMissingTimeBlock(drive, {
+    collectionOperationTimeBlocks = [],
+    collectionOperations = []
+  }) {
+      // Use provided collectionOperationTimeBlocks or fetch from drive's collectionOperation
+      const cotbList = collectionOperationTimeBlocks?.length
+        ? collectionOperationTimeBlocks
+        : (collectionOperations || []).find(co => co.id === drive.collectionOperationId)?.collectionOperationTimeBlocks || [];
+
+      if (!this.isDriveUseTimeBlock(drive, { collectionOperationTimeBlocks: cotbList })) {
+        return false;
+      }
+
+      // Check if any driveShift has null/undefined timeBlockId
+      return (drive?.driveShifts || []).some(shift => isNullOrEmpty(shift.timeBlockId));
+  }
+
   isDriveUseTimeBlock(drive, {
     collectionOperationTimeBlocks = []
   }) {

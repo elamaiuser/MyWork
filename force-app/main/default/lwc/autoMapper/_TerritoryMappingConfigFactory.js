@@ -14,6 +14,8 @@ export class TerritoryMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Parent__c', 'parentId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Start_Date__c', 'startDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('End_Date__c', 'endDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_High_Drive_Productivity_Threshold__c', 'highDriveProductivityThreshold', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Mid_Drive_Productivity_Threshold__c', 'midDriveProductivityThreshold', MAPPING_TYPE.direct);
       return mappingConfig;
   }
 }

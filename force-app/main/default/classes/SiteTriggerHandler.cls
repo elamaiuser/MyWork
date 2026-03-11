@@ -137,16 +137,12 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
         */
     }
     
-    public override void afterUpdate(){
-        
-        System.debug('Entered method sked__Location__c AfterUpdate');
-        
-        if(super.getTriggerMethodsToBypass().indexOf('getSiteBuildingNameChangedAccounts') == -1) {
-            System.debug('SiteTriggerHandler.afterUpdate() - SiteService.updateInitialReviewer() Executing...');
-            Set<Id> siteIds = SiteService.getSiteBuildingNameChangedAccounts((Map<Id, sked__Location__c>)trigger.oldMap, (List<sked__Location__c>)trigger.new);
-            SiteService.updateOpportunitiesForSiteBuidlingNameChangeAsync(siteIds);
-        }else{
-            System.debug('SiteTriggerHandler.afterUpdate() - SiteService.getSiteBuildingNameChangedAccounts() Bypassed');
+    public override void afterUpdate() {
+        if(super.getTriggerMethodsToBypass().indexOf('updateOpportunitiesForSiteBuidlingNameChangeAsync') == -1) {
+            System.debug('SiteTriggerHandler.afterUpdate() - SiteService.updateOpportunitiesForSiteBuidlingNameChangeAsync() Executing...');
+            SiteService.updateOpportunitiesForSiteBuidlingNameChangeAsync((List<sked__Location__c>)trigger.new,(Map<Id,sked__Location__c>)trigger.oldMap);
+        } else {
+            System.debug('SiteTriggerHandler.afterUpdate() - SiteService.updateOpportunitiesForSiteBuidlingNameChangeAsync() Bypassed');
         }
         
         // HRP - 9276        
