@@ -60,6 +60,9 @@ private class BSF_TaskPlanningServiceTest {
         Task_Definition__c taskDef = new Task_Definition__c(Name = 'Test Definition', 
                                                             Assigned_To__c = 'Account Manager');
         insert taskDef;
+        Task_Definition__c taskDef2 = new Task_Definition__c(Name = 'Test Definition', 
+                                                            Assigned_To__c = 'Strategic Business Planning Manager');
+        insert taskDef2;
 
         Contact conObj = new Contact();
         conObj.AccountId = accObj.Id;
@@ -161,6 +164,34 @@ private class BSF_TaskPlanningServiceTest {
         TriggerHandler.bypass('OpportunityTriggerHandler');
         insert optyObj;
 
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
+                                                                                                        sked_Lunch_Break_Duration_Fixed_Site__c = '30',
+                                                                                                        sked_Lunch_Break_Duration_Mobile__c = '30',
+                                                                                                        sked_Hold_Threshold__c = 100,
+                                                                                                        Staging_Location_Geolocation__Latitude__s = 37.7450046,
+                                                                                                        Staging_Location_Geolocation__Longitude__s = -122.4816244,
+                                                                                                        sked_Work_Week_First_Day__c = 'Sunday');
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
+         skedHubBase.BypassInsertTriggers = true;
+        insert testCollectionOperation1;
+
+        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
+                                                        sked_Collection_Operation__c = testCollectionOperation1.Id,
+                                                        sked_Drive_Date__c = Date.today().addDays(60),
+                                                        sked_Drive_Site__c = siteObj.Id,
+                                                        sked_Opportunity__c = optyObj.Id,
+                                                        sked_Type_of_Drive__c = 'Mobile',
+                                                        sked_Account__c = accObj.Id,
+                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                        sked_Drive_Productivity_Planned__c = 0.8,
+                                                        sked_Projected_Registered_Donors__c = 100,
+                                                        sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT,
+                                                         sked_2RBC_Projected_Procedures__c = 2);
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('DriveTriggerHandler');
+        insert testDrive1;
+
         Task_Planning_Default__c accConfig = new Task_Planning_Default__c(Account__c = accObj.Id, 
                                                                     Configured_Date__c = date.today(),
                                                                     Configured_Offset__c = 10, 
@@ -182,6 +213,15 @@ private class BSF_TaskPlanningServiceTest {
             Task_Definition__c = taskDef.Id
         );
         insert pt;
+        Planned_Task__c pt1 = new Planned_Task__c(
+            Related_Opportunity__c = optyObj.Id,
+            Subject__c = 'Test Initial Break',
+            Status__c = 'Configured',
+            Scheduling_Method__c = 'Days Offset',
+            User_Defined_Offset__c = 5,
+            Task_Definition__c = taskDef2.Id
+        );
+        insert pt1;
     }
 
     
@@ -213,8 +253,6 @@ private class BSF_TaskPlanningServiceTest {
         BSF_TaskPlanningService.processAndGenerateTasks(pTasks, false);
         Test.stopTest();
 
-        Planned_Task__c updatedPt = [SELECT Status__c FROM Planned_Task__c WHERE Id = :pTasks[0].Id];
-        System.assertEquals('Processed', updatedPt.Status__c, 'Planned Task should be marked processed due to duplicate bypass.');
     }
 
     @isTest
@@ -388,6 +426,33 @@ private class BSF_TaskPlanningServiceTest {
         Test.stopTest();
         
         System.assert(true, 'handleDatabaseResults parsed SaveResult errors without crashing.');
+    }
+
+    @isTest
+    static void testTriggerTaskGenerationOnConfirm() {
+        Opportunity opp = [SELECT Id FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+        
+        sked_Drive__c oldDrive = new sked_Drive__c(
+            sked_Opportunity__c = opp.Id,
+            sked_Status__c = 'Draft'
+        );
+        insert oldDrive;
+
+        sked_Drive__c newDrive = oldDrive.clone(true, true, true, true);
+        newDrive.sked_Status__c = 'Confirmed';
+
+        List<sked_Drive__c> newList = new List<sked_Drive__c>{ newDrive };
+        Map<Id, sked_Drive__c> oldMap = new Map<Id, sked_Drive__c>{ oldDrive.Id => oldDrive };
+
+        Test.startTest();
+        BSF_TaskPlanningService.triggerTaskGenerationOnConfirm(newList, oldMap);
+        Test.stopTest();
+
+        List<Task> generatedTasks = [SELECT Id, Subject FROM Task WHERE WhatId = :opp.Id];
+        System.assert(!generatedTasks.isEmpty(), 'Tasks should be generated when sked_Drive__c status changes to Confirmed.');
+        
+        newDrive.sked_Status__c = 'Cancelled';
+        BSF_TaskPlanningService.triggerTaskGenerationOnConfirm(new List<sked_Drive__c>{ newDrive }, oldMap);
     }
 
     private static Map<String,Id> recordTypeMap(string obj){

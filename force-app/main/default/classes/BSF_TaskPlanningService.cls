@@ -27,6 +27,25 @@ public with sharing class BSF_TaskPlanningService {
         }
     }
 
+    public static void triggerTaskGenerationOnConfirm(List<sked_Drive__c> newDrives, Map<Id, sked_Drive__c> oldMap) {
+        Set<Id> oppIdsToProcess = new Set<Id>();
+
+        for (sked_Drive__c drive : newDrives) {
+            sked_Drive__c oldDrive = (oldMap != null) ? oldMap.get(drive.Id) : null;
+            
+            Boolean isNewlyConfirmed = drive.sked_Status__c == 'Confirmed' && 
+                                    (oldDrive == null || drive.sked_Status__c != oldDrive.sked_Status__c);
+
+            if (isNewlyConfirmed && drive.sked_Opportunity__c != null) {
+                oppIdsToProcess.add(drive.sked_Opportunity__c);
+            }
+        }
+
+        if (!oppIdsToProcess.isEmpty()) {
+            generateTasksFromQueue(oppIdsToProcess);
+        }
+    }
+
     // ============================================================================
     // 2. REACTIVITY (SYNC DATES)
     // ============================================================================
@@ -223,9 +242,9 @@ public with sharing class BSF_TaskPlanningService {
             Opportunity old = oldMap.get(opp.Id);
             
             // 1. Detect Status Change to 'Confirmed' (Trigger Task Generation)
-            if(opp.Drive_Status__c == 'Confirmed' && old.Drive_Status__c != 'Confirmed') {
+            /*if(opp.Drive_Status__c == 'Confirmed' && old.Drive_Status__c != 'Confirmed') {
                 confirmedIds.add(opp.Id);
-            }
+            }*/
             
             // 2. Detect Template Planning Path Change (Trigger Cascade Batch)
             if(opp.Is_Template__c && opp.Planning_Path__c != old.Planning_Path__c) {
@@ -234,9 +253,9 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         // Action: Generate Tasks for newly Confirmed drives
-        if(!confirmedIds.isEmpty()) {
+        /*if(!confirmedIds.isEmpty()) {
             generateTasksFromQueue(confirmedIds);
-        }
+        }*/
 
         // Action: Cascade changes from Template to Child Drives
         if(!templateChangedIds.isEmpty() && !System.isBatch() && !System.isFuture()) {

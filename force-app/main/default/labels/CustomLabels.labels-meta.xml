@@ -19,7 +19,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_Planned_Task_Trigger_Filter</shortDescription>
-        <value>Related_Opportunity__c IN :opportunityIds AND Status__c = &apos;Configured&apos; AND Creation_Offset__c != null</value>
+        <value>Related_Opportunity__c IN :opportunityIds AND Status__c = &apos;Configured&apos; AND Creation_Offset__c = null</value>
     </labels>
     <labels>
         <fullName>BSF_Standard_Task_Batch_Filter</fullName>
