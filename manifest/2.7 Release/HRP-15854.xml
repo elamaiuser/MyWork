@@ -17,7 +17,6 @@
     <types>
 		<members>BSF_Access_Control_Rule.HRP_15854_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_15854_Field_Permission_Set_2</members>
-		<members>BSF_Access_Control_Rule.HRP_15854_Field_Permission_Set_3</members>
 		<name>CustomMetadata</name>
 	</types>
 	<version>65.0</version>
