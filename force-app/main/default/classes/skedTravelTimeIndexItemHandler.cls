@@ -189,6 +189,7 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
             }
 
             Map<Id, sked_Site_Collection_Operation__c> map_siteCOId_siteCORecord = new Map<Id, sked_Site_Collection_Operation__c>();
+            Map<Id, sked_Travel_Time_Index_Item__c> map_ttiId_ttiRecord = new Map<Id, sked_Travel_Time_Index_Item__c>();
             for(sked_Travel_Time_Index_Item__c tti : newItems) {
                 for (sked_Site_Collection_Operation__c siteCo : siteCoList) {
                     List<String> siteCOAndCoslKey = new List<String>(map_siteCOId_siteCOAndCoslKey.get(siteCo.Id));
@@ -200,7 +201,9 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
                             siteCo.sked_Travel_Time_Index_Site2CO__c = tti.Id;
                         } else {
                             siteCo.sked_Travel_Time_Index_CO2Site__c = tti.Id;
-                        }  
+                        }
+                        tti.sked_Collection_Operation__c = siteCo.sked_Collection_Operation__c;
+                        map_ttiId_ttiRecord.put(tti.Id, tti);
                     }
                     if(!map_siteCOId_siteCORecord.containsKey(siteCo.Id)) {
                         map_siteCOId_siteCORecord.put(siteCo.Id, siteCo);
@@ -219,6 +222,19 @@ public class skedTravelTimeIndexItemHandler extends skedTriggerHub implements ca
                     'Update Site CO'
                 );
                 insert errorLogsToInsert;
+            }
+
+            if (!map_ttiId_ttiRecord.isEmpty()) {
+                Database.SaveResult[] ttiUpdateResult = Database.Update(map_ttiId_ttiRecord.values(), false);
+                List<BSF_Error_Log__c> ttiErrorLogsToInsert = BSF_Utilities.createErrorLogWithObjectId(
+                    ttiUpdateResult,
+                    'TTI Collection Operation update',
+                    'skedTravelTimeIndexItemHandler',
+                    'populateTTILokkupFieldsOnSiteCO',
+                    'Error',
+                    'Update Travel Time Index Item'
+                );
+                insert ttiErrorLogsToInsert;
             }
         }catch(Exception ex) {
             system.debug('ex '+ex);
