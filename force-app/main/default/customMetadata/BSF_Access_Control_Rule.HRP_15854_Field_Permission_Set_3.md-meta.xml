@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>HRP-15854 Field Permission Set 2</label>
+    <label>HRP-15854 Field Permission Set 3</label>
     <protected>false</protected>
     <values>
         <field>Component_API_Names__c</field>
