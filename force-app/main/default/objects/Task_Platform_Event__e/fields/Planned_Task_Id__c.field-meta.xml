@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>RecordTypeId__c</fullName>
+    <fullName>Planned_Task_Id__c</fullName>
     <externalId>false</externalId>
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
-    <label>RecordTypeId</label>
-    <length>20</length>
+    <label>Planned Task Id</label>
+    <length>255</length>
     <required>false</required>
     <type>Text</type>
     <unique>false</unique>
