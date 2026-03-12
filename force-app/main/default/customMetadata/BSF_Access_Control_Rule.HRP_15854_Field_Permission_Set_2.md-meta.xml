@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_Collection_Operation__c</value>
+        <value xsi:type="xsd:string">sked_Collection_Operation__c,sked_Is_Sync_Refresh_Required__c</value>
     </values>
     <values>
         <field>Is_Enabled__c</field>
