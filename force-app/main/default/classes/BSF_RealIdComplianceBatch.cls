@@ -2,33 +2,85 @@
 // BSF_RealIdComplianceBatch
 //
 // Purpose : Nightly batch job that syncs REAL ID compliance data from Workday
-//           into Salesforce. For each employee returned by the Workday RaaS
-//           report the batch will:
-//             1. Create or update a BSF_Workday_Staging__c record.
-//             2. Update the linked sked__Resource__c compliance fields.
-//           Employees that were previously compliant but are no longer present
-//           in the Workday response are detected in finish() and unchecked.
+//           into Salesforce. Uses BSF_WorkdayBatchHelper for all shared
+//           infrastructure: HTTP callout, JSON parsing, map builders, DML
+//           error logging, and duplicate-run prevention.
+//
+//           For each employee returned by the Workday RaaS report:
+//             1. Creates or updates a BSF_Workday_Staging__c record
+//                (Record Type: Real_ID_Compliance).
+//             2. Updates the linked sked__Resource__c compliance fields.
+//
+//           finish() detects employees that were previously compliant in
+//           Salesforce but are no longer present in the Workday response.
+//           Their staging records are marked Removed and their resource
+//           compliance fields are unchecked.
+//
+// Dependencies:
+//   - BSF_WorkdayBatchHelper     — shared HTTP, parsing, logging utilities
+//   - BSF_Workday_RealID_Config__c — custom setting for endpoint config,
+//                                    backfill date, batch size, run date
+//   - sked_Workday_XML_Template__mdt (DeveloperName = 'RealID_Compliance_Report')
+//                                  — holds the Workday RaaS endpoint URL
+//   - skedConstants              — provides staging sync status picklist values
+//                                    and INACTIVE_STATUS
 //
 // Scheduling:
 //   String cronExp = '0 0 2 * * ?'; // 2 AM daily
 //   System.schedule('Real ID Sync', cronExp, new BSF_RealIdComplianceBatch());
 // ─────────────────────────────────────────────────────────────────────────────
-public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_RealIdComplianceBatch.WorkdayEmployeeWrapper>, Database.AllowsCallouts, Database.Stateful, Schedulable {
+public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper>, Database.AllowsCallouts, Database.Stateful, Schedulable {
 
+    // Human-readable label used as a prefix in all System.debug calls and
+    // sked__Debug_Log__c entries produced by this batch
+    private static final String JOB_LABEL                 = 'BSF_RealIdComplianceBatch';
+
+    // DeveloperName of the BSF_Workday_Staging__c record type for REAL ID records.
+    private static final String STAGING_RT_DEVELOPER_NAME = 'Real_ID_Compliance';
+
+    // Workday JSON field names retrieved via getExtraDate() / getExtraDateTime().
+    private static final String WD_EXPIRATION_DATE_FIELD  = 'Expiration_Date';           // Date field — REAL ID expiry
+    private static final String WD_LAST_UPDATED_FIELD     = 'Last_Functionally_Updated'; // DateTime field — Workday change detection key
+    private static final String WD_CREATED_MOMENT_FIELD   = 'Created_Moment';            // DateTime field — stored for audit trail
+
+    // Default batch size used when no value is configured in custom setting
     private static final Integer DEFAULT_BATCH_SIZE = 200;
 
+    // Batch size for this run — set by the constructor
     private Integer batchSize = DEFAULT_BATCH_SIZE;
 
-    // Stores any fatal error message to prevent updating Last_Successful_Run_Date__c
+    // Populated in start() if the Workday callout throws. Checked in finish()
+    // to skip stamping Last_Successful_Run_Date__c when the run did not complete
+    // successfully
     private String errorMessage;
 
-    // Static backfill date sent to Workday as the Effective_as_of_Date filter
-    // Populated from BSF_Workday_RealID_Config__c.Initial_Backfill_Date__c
-    private Date filterDate;
-
-    // All employee IDs returned by Workday this run — used in finish() to
-    // identify records that have been removed from the Workday report
+    // All Workday employee IDs returned in this run, populated in start().
+    // Used in finish() to identify employees absent from the current Workday
+    // response so their staging and resource records can be marked as Removed
     private Set<String> workdayEmployeeIds = new Set<String>();
+
+    private Id stagingRecordTypeId;
+
+    // Domain-specific staging fields required by this batch, passed to
+    // BSF_WorkdayBatchHelper.buildStagingMap() as additionalFields.
+    // These extend the helper's base set (Id, Employee_ID__c, Resource__c,
+    // Sync_Comment__c) with fields needed for change detection and compliance logic.
+    private static final List<String> STAGING_FIELDS = new List<String>{
+        'Real_ID_Compliant__c',              // Used for compliance change detection
+        'Expiration_Date__c',                // Used for expiry change detection
+        'Workday_Last_Functionally_Updated__c', // Primary Workday-side change detection key
+        'Workday_Record_Created_Moment__c',  // Stored for audit trail
+        'Sync_Status__c'                     // Set to Updated or Removed by this batch
+    };
+
+    // Domain-specific resource fields required by this batch, passed to
+    // BSF_WorkdayBatchHelper.buildResourceMap() as additionalFields.
+    // These extend the helper's base set (Id, sked_Employee_ID__c,
+    // sked_Employment_Status__c) with fields needed for compliance sync.
+    private static final List<String> RESOURCE_FIELDS = new List<String>{
+        'sked_REAL_ID_Compliant_indicator__c', // Read for change detection; written with derived compliant value
+        'sked_Real_ID_Expiration_Date__c'      // Read for change detection; written with Workday expiry date
+    };
 
     // ─────────────────────────────────────────────────────────────────────────
     // CONSTRUCTORS
@@ -37,6 +89,8 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_RealIdC
     public BSF_RealIdComplianceBatch() {
     }
 
+    // @param batchSize  Number of wrapper records per execute() chunk.
+    //                   Ignored if null or <= 0 — falls back to DEFAULT_BATCH_SIZE.
     public BSF_RealIdComplianceBatch(Integer batchSize) {
         if (batchSize != null && batchSize > 0) {
             this.batchSize = batchSize;
@@ -44,571 +98,385 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_RealIdC
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // SCHEDULABLE — called by the Salesforce scheduler
-    // Prevents duplicate runs if a previous batch is still in progress
+    // SCHEDULABLE
+    // Called by the Salesforce scheduler at the configured cron time.
+    // Checks whether a previous run is still active before queuing a new one
+    // to prevent overlapping executions if a run takes longer than expected.
     // ─────────────────────────────────────────────────────────────────────────
     public void execute(SchedulableContext sc) {
-        System.debug('BSF_RealIdComplianceBatch: Scheduled trigger fired');
+        System.debug(JOB_LABEL + ': Scheduled trigger fired');
 
-        Integer existingBatchCount = [
-            SELECT COUNT()
-            FROM AsyncApexJob
-            WHERE ApexClass.Name = 'BSF_RealIdComplianceBatch'
-            AND JobType = 'BatchApex'
-            AND Status IN ('Holding', 'Queued', 'Preparing', 'Processing')
-        ];
-
-        if (existingBatchCount == 0) {
-            Integer configuredBatchSize = getConfiguredBatchSize();
-            BSF_RealIdComplianceBatch batch = new BSF_RealIdComplianceBatch(configuredBatchSize);
+        if (!BSF_WorkdayBatchHelper.isBatchAlreadyRunning(JOB_LABEL)) {
+            Integer size = getConfiguredBatchSize();
+            BSF_RealIdComplianceBatch batch = new BSF_RealIdComplianceBatch(size);
             Database.executeBatch(batch, batch.batchSize);
-            System.debug('BSF_RealIdComplianceBatch: Batch queued with batch size ' + configuredBatchSize);
+            System.debug(JOB_LABEL + ': Batch queued with batch size ' + size);
         } else {
-            System.debug('BSF_RealIdComplianceBatch: Batch already running — skipping this scheduled trigger');
+            System.debug(JOB_LABEL + ': Batch already running — skipping this scheduled trigger');
         }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // START
-    // Reads the static backfill date from custom settings, calls Workday,
-    // and returns the full employee list as the batch iterable scope
+    // Builds the Workday endpoint, calls the RaaS API via BSF_WorkdayBatchHelper,
+    // and populates workdayEmployeeIds from the full response so finish() can
+    // use the set for removal detection after all execute() chunks have run.
+    // Returns the parsed employee list as the batch iterable scope.
     // ─────────────────────────────────────────────────────────────────────────
-    public Iterable<WorkdayEmployeeWrapper> start(Database.BatchableContext bc) {
-        System.debug('BSF_RealIdComplianceBatch: start() — batch job ID: ' + bc.getJobId());
+    public Iterable<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> start(Database.BatchableContext bc) {
+        System.debug(JOB_LABEL + ': start() — batch job ID: ' + bc.getJobId());
 
-        // Load the static backfill date that will be sent to Workday as Effective_as_of_Date
-        initializeFilterDate();
+        List<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> employees;
 
-        // Fetch all employees from the Workday RaaS report
-        List<WorkdayEmployeeWrapper> employees = fetchWorkdayData();
+        try {
+            employees = BSF_WorkdayBatchHelper.fetchWorkdayData(buildEndpoint(), JOB_LABEL);
+        } catch (Exception e) {
+            // Store the error so finish() skips stamping Last_Successful_Run_Date__c,
+            // then rethrow so the batch framework marks the job as failed
+            errorMessage = e.getMessage();
+            System.debug(JOB_LABEL + ': Fatal error in start() — ' + errorMessage);
+            throw e;
+        }
 
-        // Populate the full employee ID set now so finish() can use it
-        // to detect removals after all execute() chunks have run
-        for (WorkdayEmployeeWrapper w : employees) {
+        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper w : employees) {
             workdayEmployeeIds.add(w.employeeId);
         }
 
-        System.debug('BSF_RealIdComplianceBatch: Workday returned ' + employees.size() + ' employee record(s)');
-
+        System.debug(JOB_LABEL + ': Workday returned ' + employees.size() + ' employee record(s)');
         return employees;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // EXECUTE
     // Processes one chunk of Workday employees at a time.
-    // For each employee:
-    //   - If a staging record already exists and data has changed → update it
-    //   - If no staging record exists but a matching Resource exists → create it
-    //   - If a matching Resource exists and compliance/expiry has changed → update it
+    // For each employee in the chunk:
+    //   - Existing staging record + data changed  → update staging, set Updated
+    //   - Existing staging record + no change     → skip (avoid unnecessary DML)
+    //   - No staging record + Resource exists     → create staging, set Created
+    //   - No staging record + no Resource         → skip (orphaned Workday entry)
+    //   - Resource exists (any of the above)      → sync compliance fields if changed
     // ─────────────────────────────────────────────────────────────────────────
-    public void execute(Database.BatchableContext bc, List<WorkdayEmployeeWrapper> scope) {
-        System.debug('BSF_RealIdComplianceBatch: execute() — processing chunk of ' + scope.size() + ' employee(s)');
+    public void execute(Database.BatchableContext bc, List<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> scope) {
+        System.debug(JOB_LABEL + ': execute() — processing chunk of ' + scope.size() + ' employee(s)');
 
-        // Collect employee IDs in this chunk for targeted SOQL queries
+        // Collect employee IDs in this chunk for targeted SOQL
         Set<String> employeeIds = new Set<String>();
-        for (WorkdayEmployeeWrapper w : scope) {
+        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper w : scope) {
             employeeIds.add(w.employeeId);
         }
 
-        // Query existing staging records for employees in this chunk
-        // Keyed on Employee_ID__c using a for loop because the Map constructor
-        // always keys on the Salesforce record Id, not an external Id field
-        Map<String, BSF_Workday_Staging__c> stagingMap = new Map<String, BSF_Workday_Staging__c>();
-        for (BSF_Workday_Staging__c s : [
-            SELECT Id,
-                   Employee_ID__c,
-                   Resource__c,
-                   Real_ID_Compliant__c,
-                   Expiration_Date__c,
-                   Workday_Last_Functionally_Updated__c,
-                   Workday_Record_Created_Moment__c,
-                   Sync_Comment__c
-            FROM BSF_Workday_Staging__c
-            WHERE Employee_ID__c IN :employeeIds
-        ]) {
-            stagingMap.put(s.Employee_ID__c, s);
-        }
+        Map<String, BSF_Workday_Staging__c> stagingMap = BSF_WorkdayBatchHelper.buildStagingMap(
+            employeeIds,
+            STAGING_RT_DEVELOPER_NAME,
+            STAGING_FIELDS
+        );
+        System.debug(JOB_LABEL + ': Found ' + stagingMap.size() + ' existing staging record(s) for this chunk');
 
-        System.debug('BSF_RealIdComplianceBatch: Found ' + stagingMap.size() + ' existing staging record(s) for this chunk');
+        Map<String, sked__Resource__c> resourceMap = BSF_WorkdayBatchHelper.buildResourceMap(
+            employeeIds,
+            RESOURCE_FIELDS
+        );
+        System.debug(JOB_LABEL + ': Found ' + resourceMap.size() + ' matching Resource record(s) for this chunk');
 
-        // Query matching Resource records for employees in this chunk
-        // Keyed on sked_Employee_ID__c using a for loop for the same reason as above
-        Map<String, sked__Resource__c> resourceMap = new Map<String, sked__Resource__c>();
-        for (sked__Resource__c r : [
-            SELECT Id,
-                   sked_Employee_ID__c,
-                   sked_REAL_ID_Compliant_indicator__c,
-                   sked_Real_ID_Expiration_Date__c,
-                   sked_Employment_Status__c
-            FROM sked__Resource__c
-            WHERE sked_Employment_Status__c !=: skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE 
-            AND sked_Employee_ID__c IN :employeeIds
-        ]) {
-            resourceMap.put(r.sked_Employee_ID__c, r);
-        }
-
-        System.debug('BSF_RealIdComplianceBatch: Found ' + resourceMap.size() + ' matching Resource record(s) for this chunk');
-
-        List<BSF_Workday_Staging__c> stagingToUpsert = new List<BSF_Workday_Staging__c>();
-        List<sked__Resource__c> resourcesToUpdate = new List<sked__Resource__c>();
+        List<BSF_Workday_Staging__c> stagingToUpsert  = new List<BSF_Workday_Staging__c>();
+        List<sked__Resource__c>      resourcesToUpdate = new List<sked__Resource__c>();
 
         Date today = System.today();
 
-        for (WorkdayEmployeeWrapper wd : scope) {
+        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper wd : scope) {
 
-            // An employee is compliant if they have no expiration date (no expiry set)
-            // or their expiration date is today or in the future
-            Boolean compliant = (wd.expirationDate == null || wd.expirationDate >= today);
+            // Parse domain-specific fields from extraFields for this employee
+            Date     expDate      = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_EXPIRATION_DATE_FIELD, JOB_LABEL);
+            DateTime lastUpdated  = BSF_WorkdayBatchHelper.getExtraDateTime(wd, WD_LAST_UPDATED_FIELD, JOB_LABEL);
+            DateTime createdMoment = BSF_WorkdayBatchHelper.getExtraDateTime(wd, WD_CREATED_MOMENT_FIELD, JOB_LABEL);
 
+            // An employee is compliant if Workday has no expiry date set (open-ended
+            // certification) or the expiry date is today or in the future.
+            // An expired employee (expiry date in the past) is non-compliant even if
+            // Workday has not changed the Last_Functionally_Updated timestamp.
+            Boolean compliant = (expDate == null || expDate >= today);
+
+            // ── Staging ──────────────────────────────────────────────────────
             if (stagingMap.containsKey(wd.employeeId)) {
 
-                // ── Existing staging record found ──────────────────────────
-                // Only update if something has actually changed to avoid
-                // unnecessary DML. We check:
-                //   - Last_Functionally_Updated: Workday-side change detection
-                //   - Real_ID_Compliant__c: catches expiry flipping since last sync
-                //     even when Workday has not changed the record itself
                 BSF_Workday_Staging__c staging = stagingMap.get(wd.employeeId);
 
-                if (staging.Workday_Last_Functionally_Updated__c != wd.lastUpdated ||
+                // Two change signals trigger a staging update:
+                //   1. Last_Functionally_Updated changed — Workday changed the record
+                //   2. Compliant flag changed — expiry date crossed midnight since
+                //      the last run even though Workday did not change the record
+                if (staging.Workday_Last_Functionally_Updated__c != lastUpdated ||
                     staging.Real_ID_Compliant__c != compliant) {
 
-                    System.debug('BSF_RealIdComplianceBatch: Updating staging record for employee ' + wd.employeeId
-                        + ' — compliant: ' + compliant + ', expiration: ' + wd.expirationDate);
+                    System.debug(JOB_LABEL + ': Updating staging for employee ' + wd.employeeId
+                        + ' — compliant: ' + compliant + ', expiration: ' + expDate);
 
-                    // Build a change log of what actually changed.
+                    // Build the change log BEFORE overwriting fields. If this were
+                    // done after the assignments below, the old values would already
+                    // be overwritten and the diff string would always appear empty.
                     String fieldChanges = '';
-                    if (staging.Workday_Last_Functionally_Updated__c != wd.lastUpdated) {
-                        fieldChanges += 'Last_Functionally_Updated: ' + staging.Workday_Last_Functionally_Updated__c + ' → ' + wd.lastUpdated + '; ';
+                    if (staging.Workday_Last_Functionally_Updated__c != lastUpdated) {
+                        fieldChanges += 'Last_Functionally_Updated: '
+                            + staging.Workday_Last_Functionally_Updated__c + ' → ' + lastUpdated + '; ';
                     }
                     if (staging.Real_ID_Compliant__c != compliant) {
                         fieldChanges += 'Compliant: ' + staging.Real_ID_Compliant__c + ' → ' + compliant + '; ';
                     }
-                    if (staging.Expiration_Date__c != wd.expirationDate) {
-                        fieldChanges += 'Expiration_Date: ' + staging.Expiration_Date__c + ' → ' + wd.expirationDate + '; ';
+                    if (staging.Expiration_Date__c != expDate) {
+                        fieldChanges += 'Expiration_Date: ' + staging.Expiration_Date__c + ' → ' + expDate + '; ';
                     }
-                    staging.Sync_Comment__c = staging.Sync_Comment__c + '\n' + String.valueOf(System.today()) + ': Updated from Workday. Changes: ' + fieldChanges;
 
-                    staging.Workday_Last_Functionally_Updated__c = wd.lastUpdated;
-                    staging.Workday_Record_Created_Moment__c     = wd.createdMoment;
-                    staging.Expiration_Date__c                   = wd.expirationDate;
-                    staging.Real_ID_Compliant__c                 = compliant;
+                    // Append change log to Sync_Comment__c
+                    BSF_WorkdayBatchHelper.applyCommonStagingUpdate(staging, wd, fieldChanges);
+                    staging.Workday_Last_Functionally_Updated__c = lastUpdated;
+                    staging.Workday_Record_Created_Moment__c     = createdMoment;
                     staging.Sync_Status__c                       = skedConstants.STAGING_SYNC_STATUS_UPDATED;
+                    staging.Expiration_Date__c                   = expDate;
+                    staging.Real_ID_Compliant__c                 = compliant;
 
                     stagingToUpsert.add(staging);
 
                 } else {
-                    System.debug('BSF_RealIdComplianceBatch: No changes detected for employee ' + wd.employeeId + ' — skipping staging update');
+                    System.debug(JOB_LABEL + ': No changes for employee ' + wd.employeeId + ' — skipping staging');
                 }
 
             } else if (resourceMap.containsKey(wd.employeeId)) {
 
-                // ── No staging record yet, but a matching Resource exists ──
-                // Staging records are only created when a linked Resource record
-                // exists in Salesforce; orphaned Workday entries are skipped
-                System.debug('BSF_RealIdComplianceBatch: Creating new staging record for employee ' + wd.employeeId
-                    + ' — compliant: ' + compliant + ', expiration: ' + wd.expirationDate);
+                // No staging record yet but a matching Resource exists — create one.
+                // Staging is only created when a Resource exists in Salesforce.
+                // Workday employees with no Resource match are silently skipped.
+                System.debug(JOB_LABEL + ': Creating staging for employee ' + wd.employeeId
+                    + ' — compliant: ' + compliant + ', expiration: ' + expDate);
 
-                BSF_Workday_Staging__c newRec        = new BSF_Workday_Staging__c();
-                newRec.Employee_ID__c                    = wd.employeeId;
-                newRec.Expiration_Date__c                = wd.expirationDate;
-                newRec.Workday_Last_Functionally_Updated__c = wd.lastUpdated;
-                newRec.Workday_Record_Created_Moment__c  = wd.createdMoment;
-                newRec.Real_ID_Compliant__c              = compliant;
-                newRec.Sync_Status__c                    = skedConstants.STAGING_SYNC_STATUS_CREATED;
-                newRec.Sync_Comment__c                   = String.valueOf(System.today()) + ': 1st time certification synced from Workday';
-                newRec.Resource__c                       = resourceMap.get(wd.employeeId).Id;
+                BSF_Workday_Staging__c newRec = BSF_WorkdayBatchHelper.buildNewStagingRecord(
+                    wd,
+                    resourceMap.get(wd.employeeId).Id,
+                    getStagingRecordTypeId(),
+                    '1st time certification synced from Workday'
+                );
+                newRec.Workday_Last_Functionally_Updated__c = lastUpdated;
+                newRec.Workday_Record_Created_Moment__c     = createdMoment;
+                newRec.Sync_Status__c                       = skedConstants.STAGING_SYNC_STATUS_CREATED;
+                newRec.Expiration_Date__c                   = expDate;
+                newRec.Real_ID_Compliant__c                 = compliant;
 
                 stagingToUpsert.add(newRec);
 
             } else {
-                // No Resource record found in Salesforce for this Workday employee — skip
-                System.debug('BSF_RealIdComplianceBatch: No Resource record found for employee ' + wd.employeeId + ' — skipping');
+                System.debug(JOB_LABEL + ': No Resource found for employee ' + wd.employeeId + ' — skipping');
             }
 
-            // ── Resource record sync ───────────────────────────────────────
-            // Always keep the Resource record in sync with the derived
-            // compliance value, regardless of whether staging was updated
+            // ── Resource ─────────────────────────────────────────────────────
+            // Always sync the resource compliance fields regardless of whether
+            // staging was updated. The resource fields are what downstream
+            // scheduling logic reads for availability decisions.
             if (resourceMap.containsKey(wd.employeeId)) {
-
                 sked__Resource__c r = resourceMap.get(wd.employeeId);
 
                 if (r.sked_REAL_ID_Compliant_indicator__c != compliant ||
-                    r.sked_Real_ID_Expiration_Date__c != wd.expirationDate) {
+                    r.sked_Real_ID_Expiration_Date__c != expDate) {
 
-                    System.debug('BSF_RealIdComplianceBatch: Updating Resource record for employee ' + wd.employeeId
-                        + ' — compliant: ' + compliant + ', expiration: ' + wd.expirationDate);
+                    System.debug(JOB_LABEL + ': Updating Resource for employee ' + wd.employeeId
+                        + ' — compliant: ' + compliant + ', expiration: ' + expDate);
 
                     r.sked_REAL_ID_Compliant_indicator__c = compliant;
-                    r.sked_Real_ID_Expiration_Date__c          = wd.expirationDate;
+                    r.sked_Real_ID_Expiration_Date__c     = expDate;
                     resourcesToUpdate.add(r);
                 }
             }
         }
 
-        // Upsert staging records — uses Employee_ID__c external ID as the match key
+        // Upsert staging records — Employee_ID__c is the external ID match key
         if (!stagingToUpsert.isEmpty()) {
-            System.debug('BSF_RealIdComplianceBatch: Upserting ' + stagingToUpsert.size() + ' staging record(s)');
+            System.debug(JOB_LABEL + ': Upserting ' + stagingToUpsert.size() + ' staging record(s)');
             List<Database.UpsertResult> upsertResults = Database.upsert(stagingToUpsert, BSF_Workday_Staging__c.Employee_ID__c, false);
-            logUpsertErrors(upsertResults, 'staging upsert');
+            BSF_WorkdayBatchHelper.logUpsertErrors(upsertResults, 'staging upsert', JOB_LABEL);
         }
 
-        // Update Resource records
         if (!resourcesToUpdate.isEmpty()) {
-            System.debug('BSF_RealIdComplianceBatch: Updating ' + resourcesToUpdate.size() + ' Resource record(s)');
+            System.debug(JOB_LABEL + ': Updating ' + resourcesToUpdate.size() + ' Resource record(s)');
             List<Database.SaveResult> resourceResults = Database.update(resourcesToUpdate, false);
-            logSaveErrors(resourceResults, 'resource update');
+            BSF_WorkdayBatchHelper.logSaveErrors(resourceResults, 'resource update', JOB_LABEL);
         }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // FINISH
-    // Detects employees that were previously compliant in Salesforce but are
-    // no longer present in the Workday response. These records are unchecked
-    // on both the staging and Resource objects and marked as Removed.
-    // Also updates Last_Successful_Run_Date__c if no fatal errors occurred.
+    // Runs after all execute() chunks have completed.
+    //
+    // Removal detection: employees that were previously compliant in Salesforce
+    // but were not present in this run's Workday response are identified using
+    // workdayEmployeeIds. Their staging records are marked Removed and their
+    // resource compliance fields are cleared.
+    //
+    // Staging query filters on Real_ID_Compliant__c = true to avoid loading
+    // the entire historical set of already-removed records on every run.
+    //
+    // Resource query is done directly by employee ID rather than going through
+    // the staging lookup — this catches resources that have compliance fields
+    // set but no staging record.
+    //
+    // Last_Successful_Run_Date__c is only stamped if no fatal error occurred
+    // in start(). If start() threw, errorMessage is populated and the stamp
+    // is intentionally skipped.
     // ─────────────────────────────────────────────────────────────────────────
     public void finish(Database.BatchableContext bc) {
-        System.debug('BSF_RealIdComplianceBatch: finish() — begin removal detection');
+        System.debug(JOB_LABEL + ': finish() — begin removal detection');
 
-        // Query staging records that are currently compliant but were NOT
-        // returned by Workday in this run — these employees have been removed
-        // from the Workday report. Filtering on Real_ID_Compliant__c = true
-        // avoids loading the entire history of already-removed records
-        List<BSF_Workday_Staging__c> removedStagingRecords = [
-            SELECT Id, Employee_ID__c, Real_ID_Compliant__c, Resource__c, Sync_Comment__c
-            FROM BSF_Workday_Staging__c
-            WHERE Employee_ID__c NOT IN :workdayEmployeeIds
-            AND Real_ID_Compliant__c = true
+        List<BSF_Workday_Staging__c> removedStaging = [
+            SELECT Id, Employee_ID__c, Real_ID_Compliant__c, Sync_Comment__c
+            FROM   BSF_Workday_Staging__c
+            WHERE  Employee_ID__c NOT IN :workdayEmployeeIds
+            AND    Real_ID_Compliant__c = true
+            AND    RecordType.DeveloperName = :STAGING_RT_DEVELOPER_NAME
         ];
 
-        // Query Resource records directly by employee ID rather than going through
-        // the staging lookup. This catches resources that may have no staging record
-        // but still have compliance checked or an expiration date set
         List<sked__Resource__c> resourcesToUncheck = [
             SELECT Id, sked_REAL_ID_Compliant_indicator__c, sked_Real_ID_Expiration_Date__c
-            FROM sked__Resource__c
-            WHERE sked_Employee_ID__c NOT IN :workdayEmployeeIds
-            AND (sked_REAL_ID_Compliant_indicator__c = true OR sked_Real_ID_Expiration_Date__c != null)
+            FROM   sked__Resource__c
+            WHERE  sked_Employee_ID__c NOT IN :workdayEmployeeIds
+            AND   (sked_REAL_ID_Compliant_indicator__c = true OR sked_Real_ID_Expiration_Date__c != null)
         ];
 
-        // ── Handle removed staging records ────────────────────────────────────
-        if (removedStagingRecords.isEmpty()) {
-            System.debug('BSF_RealIdComplianceBatch: No staging records found for removed employees');
-        } else {
-            System.debug('BSF_RealIdComplianceBatch: Detected ' + removedStagingRecords.size() + ' staging record(s) for employees removed from Workday — marking as Removed');
-
-            for (BSF_Workday_Staging__c s : removedStagingRecords) {
+        if (!removedStaging.isEmpty()) {
+            System.debug(JOB_LABEL + ': Marking ' + removedStaging.size() + ' staging record(s) as Removed');
+            for (BSF_Workday_Staging__c s : removedStaging) {
                 s.Real_ID_Compliant__c = false;
                 s.Sync_Status__c       = skedConstants.STAGING_SYNC_STATUS_REMOVED;
-                s.Sync_Comment__c      = s.Sync_Comment__c + '\n' + String.valueOf(System.today()) + ': Real ID compliance removed from Workday';
+                s.Sync_Comment__c      = s.Sync_Comment__c
+                    + '\n' + String.valueOf(System.today())
+                    + ': Real ID compliance removed from Workday';
             }
-
-            List<Database.SaveResult> stagingResults = Database.update(removedStagingRecords, false);
-            logSaveErrors(stagingResults, 'finish staging removal');
+            BSF_WorkdayBatchHelper.logSaveErrors(
+                Database.update(removedStaging, false),
+                'finish staging removal',
+                JOB_LABEL
+            );
+        } else {
+            System.debug(JOB_LABEL + ': No staging records to mark as Removed');
         }
 
-        // ── Handle removed Resource records ───────────────────────────────────
-        if (resourcesToUncheck.isEmpty()) {
-            System.debug('BSF_RealIdComplianceBatch: No Resource records require unchecking for removed employees');
-        } else {
-            System.debug('BSF_RealIdComplianceBatch: Unchecking ' + resourcesToUncheck.size() + ' Resource record(s) for employees removed from Workday');
-
+        if (!resourcesToUncheck.isEmpty()) {
+            System.debug(JOB_LABEL + ': Unchecking ' + resourcesToUncheck.size() + ' Resource record(s)');
             for (sked__Resource__c r : resourcesToUncheck) {
                 r.sked_REAL_ID_Compliant_indicator__c = false;
-                r.sked_Real_ID_Expiration_Date__c          = null;
+                r.sked_Real_ID_Expiration_Date__c     = null;
             }
-
-            List<Database.SaveResult> resourceResults = Database.update(resourcesToUncheck, false);
-            logSaveErrors(resourceResults, 'finish resource uncheck');
+            BSF_WorkdayBatchHelper.logSaveErrors(
+                Database.update(resourcesToUncheck, false),
+                'finish resource uncheck',
+                JOB_LABEL
+            );
+        } else {
+            System.debug(JOB_LABEL + ': No Resource records to uncheck');
         }
 
-        // Only update the last successful run date if no fatal error occurred
-        // during start() or execute(). If a fatal error aborted the batch,
-        // finish() may still run but we do not want to advance the run date
         if (String.isBlank(errorMessage)) {
             updateLastSuccessfulRunDate();
         } else {
-            System.debug('BSF_RealIdComplianceBatch: Skipping Last_Successful_Run_Date__c update due to fatal error — ' + errorMessage);
+            System.debug(JOB_LABEL + ': Skipping Last_Successful_Run_Date__c update due to fatal error — ' + errorMessage);
         }
 
-        System.debug('BSF_RealIdComplianceBatch: finish() complete');
+        System.debug(JOB_LABEL + ': finish() complete');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // WORKDAY CALLOUT
-    // Resolves the endpoint (custom metadata → hardcoded fallback), appends
-    // the static date filter and format parameter, then calls the RaaS API
+    // PRIVATE HELPERS
     // ─────────────────────────────────────────────────────────────────────────
-    private List<WorkdayEmployeeWrapper> fetchWorkdayData() {
 
-        // Attempt to read the endpoint from custom metadata so it can be
-        // changed without a code deployment
+    // Resolves the Workday RaaS endpoint from the sked_Workday_XML_Template__mdt
+    // custom metadata record (DeveloperName = 'RealID_Compliance_Report'), then
+    // appends the static Effective_as_of_Date filter and format=json.
+    //
+    // The date filter is intentionally fixed (not incremental) so the full
+    // Workday dataset is returned on every run. This is required for accurate
+    // removal detection in finish() — if an incremental filter were used,
+    // employees absent from recent Workday changes would not be detected as removed.
+    private String buildEndpoint() {
         String endpoint;
+
         try {
             sked_Workday_XML_Template__mdt xml = [
                 SELECT sked_Endpoint__c
-                FROM sked_Workday_XML_Template__mdt
-                WHERE DeveloperName = 'RealID_Compliance_Report'
-                LIMIT 1
+                FROM   sked_Workday_XML_Template__mdt
+                WHERE  DeveloperName = 'RealID_Compliance_Report'
+                LIMIT  1
             ];
-
             if (xml != null && String.isNotBlank(xml.sked_Endpoint__c)) {
                 endpoint = xml.sked_Endpoint__c;
-                System.debug('BSF_RealIdComplianceBatch: Using endpoint from custom metadata — ' + endpoint);
-            }
-        } catch (Exception mdEx) {
-            System.debug('BSF_RealIdComplianceBatch: Could not read custom metadata endpoint, falling back to hardcoded default — ' + mdEx.getMessage());
-        }
-
-        // Append the static backfill date filter (Effective_as_of_Date) if configured.
-        // This is always a fixed date so the full dataset is returned on every run,
-        // which is required for accurate removal detection in finish()
-        if (filterDate != null) {
-            String encodedDate = EncodingUtil.urlEncode(String.valueOf(filterDate), 'UTF-8');
-            String separator   = endpoint.contains('?') ? '&' : '?';
-            endpoint += separator + 'Effective_as_of_Date=' + encodedDate + '&format=json';
-            System.debug('BSF_RealIdComplianceBatch: Calling Workday with date filter — ' + endpoint);
-        } else {
-            String separator = endpoint.contains('?') ? '&' : '?';
-            endpoint += separator + 'format=json';
-            System.debug('BSF_RealIdComplianceBatch: Calling Workday without date filter — ' + endpoint);
-        }
-
-        HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint, 'GET');
-        req.setHeader('Content-Type', 'application/json; charset=UTF-8');
-        req.setHeader('Accept', 'application/json');
-
-        Http h = new Http();
-        HttpResponse res = h.send(req);
-
-        String responseBody = res.getBody();
-
-        if (res.getStatusCode() >= 200 && res.getStatusCode() <= 299) {
-            System.debug('BSF_RealIdComplianceBatch: Workday API call successful — HTTP ' + res.getStatusCode());
-            System.debug('BSF_RealIdComplianceBatch: Response body — ' + responseBody);
-        } else {
-            errorMessage = 'Workday API call failed — HTTP ' + res.getStatusCode() + ' — ' + responseBody;
-            System.debug('BSF_RealIdComplianceBatch: ' + errorMessage);
-            throw new CalloutException(errorMessage);
-        }
-
-        return parseWorkdayResponse(responseBody);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // PARSE WORKDAY RESPONSE
-    // Deserialises the JSON Report_Entry array into WorkdayEmployeeWrapper list.
-    // Each date/datetime field is parsed in its own try/catch so a single
-    // malformed value does not abort processing the entire response
-    // ─────────────────────────────────────────────────────────────────────────
-    private List<WorkdayEmployeeWrapper> parseWorkdayResponse(String jsonBody) {
-
-        List<WorkdayEmployeeWrapper> result = new List<WorkdayEmployeeWrapper>();
-
-        Map<String, Object> root = (Map<String, Object>) JSON.deserializeUntyped(jsonBody);
-
-        if (!root.containsKey('Report_Entry')) {
-            System.debug('BSF_RealIdComplianceBatch: No Report_Entry key found in Workday response — nothing to process');
-            return result;
-        }
-
-        List<Object> entries = (List<Object>) root.get('Report_Entry');
-
-        System.debug('BSF_RealIdComplianceBatch: Parsing ' + entries.size() + ' Report_Entry record(s)');
-
-        for (Object o : entries) {
-
-            Map<String, Object> entry = (Map<String, Object>) o;
-
-            WorkdayEmployeeWrapper w = new WorkdayEmployeeWrapper();
-            w.employeeId = (String) entry.get('Employee_ID');
-
-            // Skip records without a valid Employee_ID — they cannot be matched
-            if (String.isBlank(w.employeeId)) {
-                System.debug('BSF_RealIdComplianceBatch: Skipping entry with blank Employee_ID');
-                continue;
-            }
-
-            // Expiration_Date — optional; null means no expiry (treated as compliant)
-            if (entry.containsKey('Expiration_Date') && entry.get('Expiration_Date') != null) {
-                try {
-                    w.expirationDate = Date.valueOf((String) entry.get('Expiration_Date'));
-                } catch (Exception e) {
-                    System.debug('BSF_RealIdComplianceBatch: Could not parse Expiration_Date for employee ' + w.employeeId + ' — ' + e.getMessage());
-                }
-            }
-
-            // Last_Functionally_Updated — used to detect Workday-side changes
-            // between runs without reprocessing unchanged records
-            if (entry.containsKey('Last_Functionally_Updated') && entry.get('Last_Functionally_Updated') != null) {
-                try {
-                    String raw = (String) entry.get('Last_Functionally_Updated');
-                    // Workday sends ISO 8601 with timezone offset e.g. 2026-02-13T10:33:54.582-08:00
-                    // Trim to 'YYYY-MM-DD HH:MM:SS' which DateTime.valueOf() accepts
-                    w.lastUpdated = DateTime.valueOf(raw.replace('T', ' ').substring(0, 19));
-                } catch (Exception e) {
-                    System.debug('BSF_RealIdComplianceBatch: Could not parse Last_Functionally_Updated for employee ' + w.employeeId + ' — ' + e.getMessage());
-                }
-            }
-
-            // Created_Moment — stored on the staging record for audit purposes
-            if (entry.containsKey('Created_Moment') && entry.get('Created_Moment') != null) {
-                try {
-                    String raw = (String) entry.get('Created_Moment');
-                    w.createdMoment = DateTime.valueOf(raw.replace('T', ' ').substring(0, 19));
-                } catch (Exception e) {
-                    System.debug('BSF_RealIdComplianceBatch: Could not parse Created_Moment for employee ' + w.employeeId + ' — ' + e.getMessage());
-                }
-            }
-
-            result.add(w);
-        }
-
-        System.debug('BSF_RealIdComplianceBatch: Successfully parsed ' + result.size() + ' employee record(s) from response');
-
-        return result;
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // INITIALIZE FILTER DATE
-    // Reads the static backfill date from BSF_Workday_RealID_Config__c.
-    // This date is always fixed (not incremental) so the full Workday dataset
-    // is returned on every run, which is required for removal detection
-    // ─────────────────────────────────────────────────────────────────────────
-    private void initializeFilterDate() {
-        try {
-            BSF_Workday_RealID_Config__c config = BSF_Workday_RealID_Config__c.getOrgDefaults();
-
-            if (config != null && config.Initial_Backfill_Date__c != null) {
-                filterDate = config.Initial_Backfill_Date__c;
-                System.debug('BSF_RealIdComplianceBatch: Using configured backfill date — ' + String.valueOf(filterDate));
-            }
-
-            if (filterDate == null) {
-                // Safety fallback: use 5 years back if no date is configured
-                filterDate = System.today().addYears(-5);
-                System.debug('BSF_RealIdComplianceBatch: No backfill date configured — defaulting to 5 years back: ' + String.valueOf(filterDate));
+                System.debug(JOB_LABEL + ': Using endpoint from custom metadata — ' + endpoint);
             }
         } catch (Exception e) {
-            // Do not let a config read failure abort the batch — fall back to default
-            filterDate = System.today().addYears(-5);
-            System.debug('BSF_RealIdComplianceBatch: Error reading config, defaulting to 5 years back — ' + e.getMessage());
+            System.debug(JOB_LABEL + ': Could not read custom metadata endpoint — ' + e.getMessage());
         }
+
+        Date filterDate = resolveFilterDate();
+        if (filterDate != null) {
+            endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Effective_as_of_Date', String.valueOf(filterDate));
+        }
+        endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'format', 'json');
+
+        return endpoint;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // GET CONFIGURED BATCH SIZE
-    // Reads batch size from custom setting; falls back to DEFAULT_BATCH_SIZE
-    // ─────────────────────────────────────────────────────────────────────────
-    private static Integer getConfiguredBatchSize() {
-        Integer configuredBatchSize;
+    // Reads the static backfill date from BSF_Workday_RealID_Config__c.
+    // Falls back to 5 years ago if the config record is missing or the field
+    // is blank — ensures the full Workday dataset is always returned even if
+    // the config has not been set up yet in a new environment.
+    private Date resolveFilterDate() {
+        try {
+            BSF_Workday_RealID_Config__c config = BSF_Workday_RealID_Config__c.getOrgDefaults();
+            if (config != null && config.Initial_Backfill_Date__c != null) {
+                return config.Initial_Backfill_Date__c;
+            }
+        } catch (Exception e) {
+            System.debug(JOB_LABEL + ': Error reading filter date from config — ' + e.getMessage());
+        }
+        return System.today().addYears(-5);
+    }
 
+    // Returns the Real_ID_Compliance record type Id for BSF_Workday_Staging__c.
+    // Lazily resolved and cached to avoid a SOQL query on every execute() chunk.
+    private Id getStagingRecordTypeId() {
+        if (stagingRecordTypeId == null) {
+            stagingRecordTypeId = [
+                SELECT Id FROM RecordType
+                WHERE  SObjectType   = 'BSF_Workday_Staging__c'
+                AND    DeveloperName = :STAGING_RT_DEVELOPER_NAME
+                LIMIT  1
+            ].Id;
+        }
+        return stagingRecordTypeId;
+    }
+
+    // Reads the configured batch size from BSF_Workday_RealID_Config__c.
+    // Falls back to DEFAULT_BATCH_SIZE if the config is missing or the value
+    // is zero or negative.
+    private Integer getConfiguredBatchSize() {
+        Integer size;
         try {
             BSF_Workday_RealID_Config__c config = BSF_Workday_RealID_Config__c.getOrgDefaults();
             if (config != null && config.Batch_Size__c != null && config.Batch_Size__c > 0) {
-                configuredBatchSize = config.Batch_Size__c.intValue();
+                size = config.Batch_Size__c.intValue();
             }
         } catch (Exception e) {
-            System.debug('BSF_RealIdComplianceBatch: Error reading batch size from config — ' + e.getMessage());
+            System.debug(JOB_LABEL + ': Error reading batch size from config — ' + e.getMessage());
         }
-
-        if (configuredBatchSize == null || configuredBatchSize <= 0) {
-            configuredBatchSize = DEFAULT_BATCH_SIZE;
-        }
-
-        System.debug('BSF_RealIdComplianceBatch: Using batch size ' + configuredBatchSize);
-
-        return configuredBatchSize;
+        return (size != null && size > 0) ? size : DEFAULT_BATCH_SIZE;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // UPDATE LAST SUCCESSFUL RUN DATE
-    // Stamps today's date on the custom setting so it can be referenced for
-    // reporting. Only called when no fatal error occurred during the run
-    // ─────────────────────────────────────────────────────────────────────────
+    // Stamps today's date on BSF_Workday_RealID_Config__c.Last_Successful_Run_Date__c
+    // so that monitoring and reporting tools can verify the batch ran successfully.
+    // Only called from finish() when errorMessage is blank.
+    // A failure to write the config does not cause the batch to fail.
     private void updateLastSuccessfulRunDate() {
         try {
             BSF_Workday_RealID_Config__c config = BSF_Workday_RealID_Config__c.getOrgDefaults();
-            config.Last_Successful_Run_Date__c = System.today();
+            config.Last_Successful_Run_Date__c  = System.today();
             upsert config;
-            System.debug('BSF_RealIdComplianceBatch: Last_Successful_Run_Date__c updated to ' + String.valueOf(config.Last_Successful_Run_Date__c));
+            System.debug(JOB_LABEL + ': Last_Successful_Run_Date__c updated to ' + System.today());
         } catch (Exception e) {
-            // Config update failure should not cause the batch to fail
-            System.debug('BSF_RealIdComplianceBatch: Could not update Last_Successful_Run_Date__c — ' + e.getMessage());
+            System.debug(JOB_LABEL + ': Could not update Last_Successful_Run_Date__c — ' + e.getMessage());
         }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // ERROR LOGGING HELPERS
-    // Logs DML errors to both System.debug and the sked__Debug_Log__c object
-    // so that errors are visible in the Debug Log UI for support and monitoring.
-    // Uses Database.insert with allOrNone = false so a failure to write the
-    // log record never causes the batch itself to fail.
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private void logUpsertErrors(List<Database.UpsertResult> results, String context) {
-        List<sked__Debug_Log__c> logsToInsert = new List<sked__Debug_Log__c>();
-
-        for (Database.UpsertResult ur : results) {
-            if (!ur.isSuccess()) {
-                for (Database.Error err : ur.getErrors()) {
-                    String errorDetail = 'Status Code: ' + err.getStatusCode() + ' — ' + err.getMessage();
-                    System.debug('BSF_RealIdComplianceBatch: DML error [' + context + '] — ' + errorDetail);
-
-                    logsToInsert.add(buildDebugLog(context, errorDetail));
-                }
-            }
-        }
-
-        if (!logsToInsert.isEmpty()) {
-            Database.insert(logsToInsert, false);
-        }
-    }
-
-    private void logSaveErrors(List<Database.SaveResult> results, String context) {
-        List<sked__Debug_Log__c> logsToInsert = new List<sked__Debug_Log__c>();
-
-        for (Database.SaveResult sr : results) {
-            if (!sr.isSuccess()) {
-                for (Database.Error err : sr.getErrors()) {
-                    String errorDetail = 'Status Code: ' + err.getStatusCode() + ' — ' + err.getMessage();
-                    System.debug('BSF_RealIdComplianceBatch: DML error [' + context + '] — ' + errorDetail);
-
-                    logsToInsert.add(buildDebugLog(context, errorDetail));
-                }
-            }
-        }
-
-        if (!logsToInsert.isEmpty()) {
-            Database.insert(logsToInsert, false);
-        }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // BUILD DEBUG LOG
-    // Centralises the construction of a sked__Debug_Log__c record so both
-    // logUpsertErrors and logSaveErrors produce consistent log entries.
-    // ─────────────────────────────────────────────────────────────────────────
-    private sked__Debug_Log__c buildDebugLog(String context, String errorDetail) {
-        sked__Debug_Log__c log      = new sked__Debug_Log__c();
-        log.sked__Type__c           = 'Error Log';
-        log.sked_Category__c        = 'System Error';
-        log.sked__Summary__c        = 'BSF_RealIdComplianceBatch DML error [' + context + ']';
-        log.sked__Message__c        = errorDetail;
-        log.sked_Request__c         = 'Batch context: ' + context;
-        return log;
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // WRAPPER CLASS
-    // Holds data parsed from a single Workday Report_Entry record
-    // ─────────────────────────────────────────────────────────────────────────
-    public class WorkdayEmployeeWrapper {
-        public String   employeeId;    // Workday Employee_ID
-        public Date     expirationDate; // REAL ID expiration date (null = no expiry)
-        public DateTime lastUpdated;   // Workday Last_Functionally_Updated
-        public DateTime createdMoment; // Workday Created_Moment
     }
 }
-
