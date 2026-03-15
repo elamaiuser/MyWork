@@ -57,12 +57,23 @@ private class BSF_TaskPlanningServiceTest {
         triggerHandler.bypass('AccountTeamMemberTriggerHandler');
         insert atmList;
 
+        List<Task_Definition__c> taskDefs = new List<Task_Definition__c>();
         Task_Definition__c taskDef = new Task_Definition__c(Name = 'Test Definition', 
                                                             Assigned_To__c = 'Account Manager');
-        insert taskDef;
+        taskDefs.add(taskDef);
         Task_Definition__c taskDef2 = new Task_Definition__c(Name = 'Test Definition', 
                                                             Assigned_To__c = 'Strategic Business Planning Manager');
-        insert taskDef2;
+        taskDefs.add(taskDef2);
+        insert taskDefs;
+        Task_Package__c taskPackage = new Task_Package__c(Name = 'Standard Tasks', Package_Name__c = 'Standard Tasks', Sort_Order__c = 1);
+        insert taskPackage;
+        List<Task_Package_Item__c> taskPackageItems = new List<Task_Package_Item__c>();
+        Task_Package_Item__c taskPackageItem1 = new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[0].Id);
+        taskPackageItems.add(taskPackageItem1);
+        Task_Package_Item__c taskPackageItem2 = new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[1].Id);
+        taskPackageItems.add(taskPackageItem2);
+        insert taskPackageItems;
+
 
         Contact conObj = new Contact();
         conObj.AccountId = accObj.Id;
@@ -453,6 +464,18 @@ private class BSF_TaskPlanningServiceTest {
         
         newDrive.sked_Status__c = 'Cancelled';
         BSF_TaskPlanningService.triggerTaskGenerationOnConfirm(new List<sked_Drive__c>{ newDrive }, oldMap);
+    }
+
+    @isTest
+    static void testInitializeAccountTaskConfigs() {
+        Account acc = [SELECT Id, RecordTypeId, Planning_Path__c FROM Account LIMIT 1];
+
+        Test.startTest();
+        BSF_TaskPlanningService.initializeAccountTaskConfigs(new List<Account>{acc});
+        Test.stopTest();
+
+        List<Task_Planning_Default__c> configs = [SELECT Id FROM Task_Planning_Default__c WHERE Account__c = :acc.Id];
+        System.assert(!configs.isEmpty(), 'Account Task Planning Defaults should be initialized for new Account.');
     }
 
     private static Map<String,Id> recordTypeMap(string obj){
