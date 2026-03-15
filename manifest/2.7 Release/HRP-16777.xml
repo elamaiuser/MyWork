@@ -9,6 +9,7 @@
         <members>TaskPlatformEventTriggerTest</members>
         <members>DriveTriggerHandler</members>
         <members>AccountTriggerHandler</members>
+        <members>AccountService</members>
 		<name>ApexClass</name>
 	</types>
     <types>
