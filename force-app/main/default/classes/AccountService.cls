@@ -1298,7 +1298,7 @@ public static void handleTaskPlanningPathChange(List<Account> newAccounts, Map<I
     // Detect if the Planning Path value has changed
     if (acc.Planning_Path__c != oldAcc.Planning_Path__c) {
         changedAccountIds.add(acc.Id);
-        if(acc.Planning_Path__c == BSF_Constants.PATH_STANDARD) {
+        if(acc.Planning_Path__c == BSF_Constants.PATH_STANDARD && oldAcc.Planning_Path__c == null) {
             changedAccounts.add(acc);
         }
     }
