@@ -37,5 +37,9 @@
 		<members>slwcTravelTimeSlots</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>Biomed_Collection_Op_Center__c.Validate_Travel_Time_Slot_Limit</members>
+		<name>ValidationRule</name>
+	</types>
     <version>64.0</version>
 </Package>

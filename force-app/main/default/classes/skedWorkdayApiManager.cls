@@ -202,7 +202,7 @@ public class skedWorkdayApiManager {
 
         HttpRequest req = getHttpRequest(endpoint, HTTP_METHOD_GET);
         String logCategory;
-        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint(), ptoPlanBalanceRequest.isCallOut);
+        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint());
         try {
             Http h = new Http();
             HttpResponse res = h.send(req);

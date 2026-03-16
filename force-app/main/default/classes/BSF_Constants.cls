@@ -388,7 +388,7 @@ public class BSF_Constants {
     //HRP-13426 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
     public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis / Future Drive Planning SBPM';
-    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
+    public static final String DRD_SYSTEM_USER = 'DRD System User';
 
     //Special Circumstances Badges -> HRP-701
     public static final String SSBS_BADGE_FIRST_TIME_DRIVE = 'First Time Drive';
@@ -397,4 +397,15 @@ public class BSF_Constants {
     public static final String SSBS_BADGE_RISK_FOR_REMOVAL = 'Risk for Removal';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH = 'Strategic Stretch Booking';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH_DIVERSE = 'Strategic Stretch Booking - Diverse';
+
+    // Assignment Roles & Hierarchies
+    public static final String ASSIGNED_TO_AM = 'Account Manager';
+    public static final String ASSIGNED_TO_SBPM = 'Strategic Business Planning Manager';
+
+    // StandardTaskGenerationBatch Constants
+    public static final String STANDARD_TASK_BATCH_FILTER = Label.BSF_Standard_Task_Batch_Filter;
+    public static final String PLANNED_TASK_TRIGGER_FILTER = Label.BSF_Planned_Task_Trigger_Filter;
+    public static final String TASK_FIELD_MAPPING_JSON = Label.BSF_Task_Field_Mapping_JSON;
+    public static final String TASK_OWNER_HIERARCHY_JSON = Label.BSF_Task_Owner_Hierarchy_JSON;
+    public static final String PE_FIELD_MAPPING_JSON = Label.BSF_PE_Field_Mapping_JSON;
 }

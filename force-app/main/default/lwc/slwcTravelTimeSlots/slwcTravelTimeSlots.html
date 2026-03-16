@@ -11,7 +11,9 @@
                 <lightning-button variant="brand" label="Save Master Schedule" onclick={handleSave} disabled={hasErrors}></lightning-button>
             </template>
             <template if:false={isEditing}>
-                <lightning-button label="Edit Schedule" onclick={handleEdit}></lightning-button>
+                <template if:false={isReadonly}>
+                    <lightning-button label="Edit Schedule" onclick={handleEdit}></lightning-button>
+                </template>
             </template>
         </div>
 

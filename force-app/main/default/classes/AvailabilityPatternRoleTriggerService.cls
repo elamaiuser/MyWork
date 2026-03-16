@@ -7,12 +7,11 @@ public without sharing class AvailabilityPatternRoleTriggerService {
         for(Availability_Pattern_Role__c newApRole : newList) {
             Availability_Pattern_Role__c oldApRole = oldMap?.get(newApRole.Id) ?? null;
 
-            if(oldApRole != null)  {
-                if(oldApRole.Min_Nbr_of_Role__c != newApRole.Min_Nbr_of_Role__c && newApRole.Min_Nbr_of_Role__c > 0) {
-                    colIds.add(newApRole.Collection_Operation__c);
-                    apIds.add(newApRole.Availability_Pattern__c);
-                }
-            }
+            if(newApRole.Min_Nbr_of_Role__c > 0 &&
+               (oldApRole == null || (oldApRole != null && oldApRole.Min_Nbr_of_Role__c != newApRole.Min_Nbr_of_Role__c))) {
+                   colIds.add(newApRole.Collection_Operation__c);
+                   apIds.add(newApRole.Availability_Pattern__c);
+               }
         }
 
         List<sked__Availability_Pattern_Resource__c> availabilityPatternResources = [
@@ -21,7 +20,8 @@ public without sharing class AvailabilityPatternRoleTriggerService {
             FROM sked__Availability_Pattern_Resource__c
             WHERE sked__Resource__r.sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_PERSON
             AND sked__Resource__r.sked__Is_Active__c = true
-            AND (sked_End_Date__c = null OR sked_End_Date__c > TODAY)
+            AND sked_Start_Date__c <= TODAY
+            AND (sked_End_Date__c = null OR sked_End_Date__c >= TODAY)
             AND sked__Resource__r.sked_Collection_Operation_Id__c IN :colIds
             AND sked__Availability_Pattern__c IN :apIds
             ORDER BY sked__Resource__c
@@ -34,16 +34,14 @@ public without sharing class AvailabilityPatternRoleTriggerService {
             ));
         }
 
-        skedHubBase.BypassUpdateTriggers = true;
         Database.SaveResult[] updateResults = Database.update(resourceListToUpdate, false);
         insert new List<BSF_Error_Log__c>(BSF_Utilities.createErrorLogWithObjectId(
             updateResults,
             'Resource Records update',
-            'CollectionOpAvailabilityTriggerService',
+            'AvailabilityPatternRoleTriggerService',
             'updateCoApStatusOnResources',
             'Error',
             'Record Update'
         ));
-        skedHubBase.BypassUpdateTriggers = false;
     }
 }

@@ -15,6 +15,8 @@
         <members>BSF_Batch_TaxonomyEndDateHelper</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
 		<members>PowerBIProxyController</members>
+		<members>skedResourceHandler</members>
+		<members>skedResourceTrigger_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>

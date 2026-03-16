@@ -9,7 +9,7 @@ global class BSF_TaskCreationBatch implements Schedulable, Database.Batchable<sO
 					? Date.today().addDays(recruitmentPlanningMeetingTaskThreshold) 
 					: Date.today().addDays(seventyuTwoHourTaskThreshold);
     Id MOBILE_OPP_RECTYPEID = SObjectType.Opportunity.getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();
-	public String query = 'SELECT Id, Drive_Date__c, Is_Template__c, RecordTypeId, RecordType.Name, Account_Manager__c, OwnerId, StageName FROM Opportunity'+
+	public String query = 'SELECT Id, Drive_Date__c, Is_Template__c, RecordTypeId, RecordType.Name, Account_Manager__c, OwnerId, StageName, DriveStatus__c FROM Opportunity'+
     ' WHERE Drive_Date__c <=: nextNDays AND Drive_Date__c >= TODAY AND StageName != \'Cancel\' AND Is_Template__c = false AND RecordTypeId =:MOBILE_OPP_RECTYPEID';
     global Database.QueryLocator start(Database.BatchableContext BC){
 		return Database.getQueryLocator(query);

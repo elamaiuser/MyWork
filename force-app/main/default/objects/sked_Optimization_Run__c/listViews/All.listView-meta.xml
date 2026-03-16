@@ -9,8 +9,14 @@
     <columns>sked_Run_ID__c</columns>
     <columns>sked_Message__c</columns>
     <columns>CREATED_DATE</columns>
-    <columns>CREATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>UPDATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>UPDATEDBY_USER</field>
+        <operation>equals</operation>
+        <value>Automated Process</value>
+    </filters>
     <label>All</label>
 </ListView>

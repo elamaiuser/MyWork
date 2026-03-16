@@ -735,14 +735,14 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 item.resource = this.resources.find(resource => resource.id === item.resourceId) || item.resource;
             })
 
-            if(indexDriveShift <= this.driveDetail1.driveShifts.length){
+            if(indexDriveShift <= this.driveDetail1.driveShifts.length-1){//HRP-16382
                 this.availator1.updateData(job, indexDriveShift);
                 return this.availator1.buildScheduledAllocations({
                     ignoreDedicatedSiteRule: true
                 })
                 .then((result) => {
                     if (result.possibleAllocations) {
-                        this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
+                        this.listPossibleAllocations = [...this.listPossibleAllocations,...this.buildPossibleAllocations(result.possibleAllocations)]; //HRP-16382
                     }
                     if (result.drive) {
                         this.driveDetail1 = this.buildDrive(result.drive);
@@ -763,7 +763,8 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
                 })
                 .then((result) => {
                     if (result.possibleAllocations) {
-                        this.listPossibleAllocations = this.buildPossibleAllocations(result.possibleAllocations);
+                        this.listPossibleAllocations = [...this.listPossibleAllocations,...this.buildPossibleAllocations(result.possibleAllocations)];//HRP-16382
+
                     }
                     if (result.drive) {
                         this.driveDetail2 = this.buildDrive(result.drive);

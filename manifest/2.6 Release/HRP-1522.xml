@@ -3,12 +3,18 @@
     <types>
 		<members>AvailabilityPatternRoleHandler</members>
 		<members>AvailabilityPatternRoleTriggerService</members>
+        <members>AvailabilityPatternRoleTrigger_Test</members>
 		<members>CollectionOpAvailabilityTriggerHandler</members>
 		<members>CollectionOpAvailabilityTriggerService</members>
+        <members>CollectionOpAvailabilityTrigger_Test</members>
 		<members>skedAvailabilityPatternResourceHandler</members>
+        <members>skedAPResourceTrigger_Test</members>
 		<members>skedConstants</members>
 		<members>skedNightlyUpdateCoApRoleTargetsBatch</members>
 		<members>skedUpdateCoApRoleTargetsBatchHelper</members>
+        <members>skedUpdateCoApRoleTargetsBatch_Test</members>
+		<members>skedResourceHandler</members>
+		<members>skedResourceTrigger_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -54,6 +60,7 @@
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Field_Permissions_Read</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Total_Field_Permissions</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions</members>
+		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions_Create</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_Resource_Field_Permissions</members>
 		<name>CustomMetadata</name>
 	</types>

@@ -1,5 +1,6 @@
 global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable<SObject>, Schedulable, Database.Stateful {
 
+    private Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
     private List<BSF_Error_Log__c> errorLogListToInsert = new List<BSF_Error_Log__c>();
     private Set<Id> primaryCoIds = new Set<Id>();
     private static final List<String> includedResourceCoApStatus = new List<String>{
@@ -7,7 +8,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
         skedConstants.CO_AP_STATUS_YET_TO_PROCESS_TOTALS,
         skedConstants.CO_AP_STATUS_ERROR
     };
-
+    
     public skedNightlyUpdateCoApRoleTargetsBatch() {}
 
     public skedNightlyUpdateCoApRoleTargetsBatch(Set<Id> primaryCoIds) {
@@ -23,7 +24,9 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
             'WHERE sked__Resource__r.sked__Resource_Type__c = \'' + skedConstants.RESOURCE_TYPE_PERSON + '\' '+
             'AND sked__Resource__r.sked__Is_Active__c = true '+
             'AND (sked__Resource__r.CO_AP_Status__c = null OR sked__Resource__r.CO_AP_Status__c IN :includedResourceCoApStatus) '+
-            'AND (sked_End_Date__c = null OR sked_End_Date__c > TODAY) ';
+            'AND sked__Resource__r.sked_Collection_Operation_Id__c != null '+
+            'AND sked_Start_Date__c <= TODAY '+
+            'AND (sked_End_Date__c = null OR sked_End_Date__c >= TODAY) ';
 
         if(!this.primaryCoIds.isEmpty()) {
             query += 'AND sked__Resource__r.sked_Collection_Operation_Id__c IN :primaryCoIds ';
@@ -41,11 +44,11 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
         for(sked__Availability_Pattern_Resource__c apResource : availabilityPatternResources) {
             resourceIds.add(apResource.sked__Resource__c);
 
-            String mapKey = apResource.sked__Resource__r.sked_Collection_Operation_Id__c + '_' + apResource.sked__Resource__r.sked_Biomed_Collection_Op_Center_Name__c;
+            String mapKey = apResource.sked__Resource__r.sked_Collection_Operation_Id__c + ':' + apResource.sked__Resource__r.sked_Biomed_Collection_Op_Center_Name__c;
             if(!map_coIdName_uniqueApIdNames.containsKey(mapKey)) {
                 map_coIdName_uniqueApIdNames.put(mapKey, new Set<String>());
             }
-            map_coIdName_uniqueApIdNames.get(mapKey).add(apResource.sked__Availability_Pattern__c + '_' + apResource.sked__Availability_Pattern__r.Name);
+            map_coIdName_uniqueApIdNames.get(mapKey).add(apResource.sked__Availability_Pattern__c + ':' + apResource.sked__Availability_Pattern__r.Name);
         }
 
         for (String key : map_coIdName_uniqueApIdNames.keySet()) {
@@ -54,9 +57,9 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
                 new Set<String>(map_coIdName_uniqueApIdNames.get(key))
             );
         }
-
+		
         errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.autoAssignCollectionOpAvailabilityRecordsAndGetErrorLogs(map_coIdName_uniqueApIdNames));
-        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(resourceIds, map_coIdName_uniqueApIdNamesCopy));
+        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(resourceIds, map_coIdName_uniqueApIdNamesCopy, map_coIdapIdKey_roleVsNoOfResourcesMap));
     }
 
     global void finish(Database.BatchableContext bc) {

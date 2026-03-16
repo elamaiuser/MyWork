@@ -260,6 +260,10 @@ global class skedModels {
         public string workdaySyncStatus;
         
         public transient Date availabilityDate;
+
+        public string timeConflictMessage; // HRP-13613
+        public decimal dailyTimeOffHoursMax; // HRP-13613
+        public boolean isAllDayLeaveAvailable = true; // HRP-13613
     }
     
     global virtual class availabilityCapacitySetting extends modelBase {
@@ -327,6 +331,7 @@ global class skedModels {
         public string notes;
         public resource resource;
         public string resourceId;
+        public decimal noOfRequestedHours;
     }
     
     global virtual class holiday extends modelBase {

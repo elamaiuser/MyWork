@@ -243,6 +243,173 @@ global class skedAvailabilityService extends skedEventService {
             }
         }
     }
+    
+    //HRP-13613
+    public static boolean hasConflictError = false;
+    public static string consolidateConflictErrorMessage = 'Existing unavailability time conflict';
+    public static List<skedModels.availability> verifyTimeConflict(List<skedModels.availability> unavailabilityList, String resourceId) {
+        Map<Date, List<sked__Availability__c>> availabilityMap = new Map<Date, List<sked__Availability__c>>();
+        Date startDate = skedDateTimeUtils.getDateFromIsoString(unavailabilityList[0].startDate);
+        Date endDate = skedDateTimeUtils.getDateFromIsoString(unavailabilityList[0].endDate);
+        for (skedModels.availability unavailability : unavailabilityList) {
+            Date tempStartDate = skedDateTimeUtils.getDateFromIsoString(unavailability.startDate);
+            Date tempEndDate = skedDateTimeUtils.getDateFromIsoString(unavailability.endDate);
+            if (tempEndDate > endDate) {
+                endDate = tempEndDate;
+            }
+            if (tempStartDate < startDate) {
+                startDate = tempStartDate;
+            }
+        }
+
+        // get existing unavailability
+        List<sked__Availability__c> existingUnavailabilityList = [
+            SELECT Id, sked_Start_Date__c, sked_Finish_Date__c, sked_Start_Time__c, sked_Finish_Time__c, sked__Type__c
+            FROM sked__Availability__c
+            WHERE sked__Resource__c = :resourceId
+            AND sked__Is_Available__c = FALSE
+            AND sked_Start_Date__c <= :endDate
+            AND sked_Finish_Date__c >= :startDate
+            AND sked__Status__c != :skedConstants.AVAILABILITY_STATUS_DECLINED
+        ];
+
+        for (sked__Availability__c availability : existingUnavailabilityList) {
+            Date startDateKey = availability.sked_Start_Date__c;
+            if (!availabilityMap.containsKey(startDateKey)) {
+                availabilityMap.put(startDateKey, new List<sked__Availability__c>());
+            }
+            availabilityMap.get(startDateKey).add(availability);
+        }
+
+        for (skedModels.availability unavailability : unavailabilityList) {
+            string timeConflictMessage = null;
+            Date inputDate = skedDateTimeUtils.getDateFromIsoString(unavailability.startDate);
+            Time inputStart = convertToTime(unavailability.startTime);
+            Time inputEnd = convertToTime(unavailability.endTime);
+            timeConflictMessage = hasConflictTime(availabilityMap, inputDate, inputStart, inputEnd, unavailability.id);
+            if (timeConflictMessage != null) {
+                consolidateConflictErrorMessage = consolidateConflictErrorMessage + '\n' + 'Date[' + unavailability.startDate + '] ' + timeConflictMessage;
+                unavailability.timeConflictMessage = 'Existing unavailability time conflict with ' + timeConflictMessage;
+            }
+        }
+        return unavailabilityList;
+    }
+
+    //HRP-13613
+    public static string hasConflictTime(
+        Map<Date, List<sked__Availability__c>> availabilityMap,
+        Date inputDate,
+        Time inputStart,
+        Time inputEnd,
+        String availabilityId
+    ) {
+        boolean conflictPresent = false;
+        String conflictMessage = null;
+        List<sked__Availability__c> dailySlots = availabilityMap.get(inputDate);
+
+        if (dailySlots == null) {
+            return null;
+        }
+
+        for (sked__Availability__c av : dailySlots) {
+            if (availabilityId == av.Id) {
+                continue;
+            }
+            if (conflictMessage == null) {
+                conflictMessage = '(' + av.sked__Type__c + ' : ' + formatTimeTo12Hr(av.sked_Start_Time__c) + ' - ' + formatTimeTo12Hr(av.sked_Finish_Time__c) + ')';
+            } else {
+                conflictMessage = conflictMessage + ' and ' + '(' + av.sked__Type__c + ' : ' + formatTimeTo12Hr(av.sked_Start_Time__c) + ' - ' + formatTimeTo12Hr(av.sked_Finish_Time__c) + ')';
+            }
+            if (inputStart < av.sked_Finish_Time__c && inputEnd > av.sked_Start_Time__c) {
+                hasConflictError = true;
+                conflictPresent = true;
+            }
+        }
+
+        return conflictPresent == true ? conflictMessage : null;
+    }
+
+    //HRP-13613
+    private static String formatTimeTo12Hr(Time t) {
+
+        if (t == null) return '';
+
+        Integer hour = t.hour();
+        Integer minute = t.minute();
+
+        String ampm;
+
+        if (hour >= 12) {
+            ampm = 'pm';
+        } else {
+            ampm = 'am';
+        }
+
+        if (hour > 12) {
+            hour = hour - 12;
+        } else if (hour == 0) {
+            hour = 12;
+        }
+
+        String minuteStr;
+        if (minute < 10) {
+            minuteStr = '0' + String.valueOf(minute);
+        } else {
+            minuteStr = String.valueOf(minute);
+        }
+
+        return hour + ':' + minuteStr + ampm;
+    }
+
+    //HRP-13613
+    public static Time convertToTime(Integer hhmm) {
+
+        Integer hour = hhmm / 100;
+        Integer minute = Math.mod(hhmm, 100);
+
+        if (hour > 23 || minute > 59) {
+            throw new IllegalArgumentException('Invalid time: ' + hhmm);
+        }
+
+        return Time.newInstance(hour, minute, 0, 0);
+    }
+
+    //HRP-13613 - v2
+    public static decimal fetchDailyTimeOffHoursMax(skedRacController.getAvailabilityDetailsRequest request) {
+        decimal dailyTimeOffHoursMax = 0.0;
+        Date startDate = skedDateTimeUtils.getDateFromIsoString(request.event.startDate);
+        Date endDate = skedDateTimeUtils.getDateFromIsoString(request.event.endDate);
+        sked__Availability__c availRec = [
+            SELECT Id, sked__Resource__c, sked__Resource__r.sked_Daily_Time_Off_Hours__c 
+            FROM sked__Availability__c
+            WHERE Id = :request.event.id 
+            LIMIT 1
+        ];
+
+        //get existing unavailability
+        List<sked__Availability__c> existingUnavailabilityList = [
+            SELECT Id, sked_Start_Date__c, sked_Finish_Date__c, sked__Type__c, sked_Is_All_Day__c, sked_Duration__c
+            FROM sked__Availability__c
+            WHERE sked__Resource__c = :availRec.sked__Resource__c
+            AND sked__Is_Available__c = FALSE
+            AND sked_Start_Date__c <= :endDate
+            AND sked_Finish_Date__c >= :startDate
+            AND sked__Status__c != :skedConstants.AVAILABILITY_STATUS_DECLINED 
+            AND Id !=: request.event.id
+        ];
+        
+        Decimal totalSubmitedDuration = 0.0;
+        for (sked__Availability__c unavailability : existingUnavailabilityList) {
+            totalSubmitedDuration = totalSubmitedDuration + unavailability.sked_Duration__c;
+        }
+        if (totalSubmitedDuration == 0.0) {
+            dailyTimeOffHoursMax = availRec.sked__Resource__r.sked_Daily_Time_Off_Hours__c;
+        }
+        else {
+            dailyTimeOffHoursMax = availRec.sked__Resource__r.sked_Daily_Time_Off_Hours__c - ((totalSubmitedDuration / 60).setScale(2));
+        }
+        return dailyTimeOffHoursMax;
+    }
 
     /*********************************************************** Nested classes ***********************************************************/
     public class queryModel extends skedEventService.queryModel {

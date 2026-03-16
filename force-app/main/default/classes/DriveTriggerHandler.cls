@@ -88,6 +88,9 @@ public class DriveTriggerHandler extends TriggerHandler{
             DriveTriggerService.populateLookupOnOpportunityDoc((List<sked_Drive__c>)trigger.new);
         }
         //Logic for HRP-11605--Ends here--
+        if(super.getTriggerMethodsToBypass().indexOf('triggerTaskGenerationOnConfirm') == -1) {
+            BSF_TaskPlanningService.triggerTaskGenerationOnConfirm((List<sked_Drive__c>)trigger.new, null);
+        }
     }
     
     public override void afterUpdate() {
@@ -107,6 +110,9 @@ public class DriveTriggerHandler extends TriggerHandler{
         }
         if(super.getTriggerMethodsToBypass().indexOf('handleOneWeekCheckIn') == -1) {
             DriveTriggerService.handleOneWeekCheckIn((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('triggerTaskGenerationOnConfirm') == -1) {
+            BSF_TaskPlanningService.triggerTaskGenerationOnConfirm((List<sked_Drive__c>)trigger.new, (Map<Id, sked_Drive__c>)trigger.oldMap);
         }
     }
     public override void beforeDelete()

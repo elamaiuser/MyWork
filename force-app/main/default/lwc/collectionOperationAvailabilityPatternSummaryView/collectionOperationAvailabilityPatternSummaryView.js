@@ -10,7 +10,7 @@ import {
     ShowToastEvent
 } from 'lightning/platformShowToastEvent';
 import { DateTime } from 'c/luxon';
-
+import { isNullOrEmpty } from 'c/slwcUtils';
 export default class CollectionOperationAvailabilityPatternSummaryView extends LightningElement {
     @api recordId;
     
@@ -49,7 +49,7 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                     ... this.model,
                     grandTotalAvailable: grandTotalAvailable,
                     grandTotalNeeded: grandTotalNeeded,
-                    collectionOperationAvailabilities: (this.model.collectionOperationAvailabilities?.filter(coAp => coAp.endDate >= this.todayIso) ?? []),
+                    collectionOperationAvailabilities: (this.model.collectionOperationAvailabilities?.filter(coAp => isNullOrEmpty(coAp.endDate) || coAp.endDate >= this.todayIso) ?? []),
                     variance: variance,
                     varianceClass: this.getColorClass(variance)
                 }
@@ -63,6 +63,7 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                         collectionOperationAvailabilities: this.model.collectionOperationAvailabilities.map(item => {
                             return { 
                                 ...item,
+                                totalTargetResources: (item.totalTargetResources ?? 0),
                                 totalVariance: (item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0),
                                 totalVarianceClass: this.getColorClass((item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0)),
                                 showApTotals: (queryResult?.some(apRole => apRole.colOpAvailabilityId === item.id)) ?? false,

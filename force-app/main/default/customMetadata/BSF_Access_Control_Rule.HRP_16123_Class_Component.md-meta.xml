@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>Component_API_Names__c</field>
-        <value xsi:type="xsd:string">BSF_AccountTaskPlanningCascadeBatch,BSF_TaskPlanningService,BSF_TaskPlanningWizardController,BSF_TemplateTaskPlanningCascadeBatch</value>
+        <value xsi:type="xsd:string">BSF_AccountTaskPlanningCascadeBatch,BSF_TaskPlanningService,BSF_TaskPlanningWizardController,BSF_TemplateTaskPlanningCascadeBatch,OpportunityTriggerHandler,AccountTriggerHandler,AccountService,BSF_Constants,OpportunityService</value>
     </values>
     <values>
         <field>Field_API_Names__c</field>
@@ -44,7 +44,7 @@
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_DRD,sked_Global_Admin,Skedulo_System_User</value>
+        <value xsi:type="xsd:string">sked_DRD,sked_Global_Admin,Skedulo_System_User,sked_APS_Manager,sked_APS_Admin,sked_APS_Planner</value>
     </values>
     <values>
         <field>Target_Type__c</field>

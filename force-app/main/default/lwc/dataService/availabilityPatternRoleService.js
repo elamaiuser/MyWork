@@ -1,4 +1,5 @@
 import { dataService, queryModelBase } from './base';
+import { isEmpty } from 'c/lodash';
 
 class availabilityPatternRoleService extends dataService {
   constructor() {
@@ -8,7 +9,7 @@ class availabilityPatternRoleService extends dataService {
 
   getQueryConditions(query) {
       let queryBuilder = query.getQueryBuilder(this.sObjectApiName);
-      if (query.colOpAvailabilityIds) {
+      if (query.colOpAvailabilityIds && !isEmpty(query.colOpAvailabilityIds)) {
         queryBuilder.addCondition({template: "Collection_Operation_Availability__c IN {0}", value: query.colOpAvailabilityIds, type: "array_string"});
       }
   }
