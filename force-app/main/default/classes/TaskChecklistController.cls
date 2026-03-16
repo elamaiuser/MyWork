@@ -26,7 +26,7 @@ public with sharing class TaskChecklistController {
             if(sObjName.equalsIgnoreCase('Opportunity')){
                 for(Task_Definition__c taskDef : [SELECT Name
                                                 FROM Task_Definition__c
-                                                WHERE Task_Type__c = 'Recruitment Strategy Meeting'
+                                                WHERE Task_Type__c = :BSF_Constants.TASK_TYPE_RECRUITMENT_STRATEGY_MEETING
                                                 AND Name != null]){
                     taskType = taskDef.Name;
                 }
