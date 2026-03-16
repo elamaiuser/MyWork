@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>OpportunityService</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>TaskService</members>
+        <members>BSF_TaskPlanningService</members>
+        <members>DriveTriggerService</members>
+        <members>BSF_TaskCreationBatch</members>
+        <members>TaskGenerationBatch</members>
+        <members>BSF_TaskCreationBatch_Test</members>
+        <members>TaskGenerationBatch_Test</members>
+        <members>BSFTaskChecklistTriggerHandler</members>
+        <members>TaskChecklistController</members>
+        <members>BSF_Batch_CreatePublicityTasks</members>
+        <members>BSF_Batch_CreatePublicityTasksTest</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+        <members>Task_Creation_on_Drive_Status_Complete</members>
+        <name>Flow</name>
+    </types>
+	<version>66.0</version>
+</Package>

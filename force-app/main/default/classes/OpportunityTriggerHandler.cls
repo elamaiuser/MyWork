@@ -600,19 +600,19 @@ public class OpportunityTriggerHandler extends TriggerHandler{
         //
         if(OpportunityRecursive.isOpportunity){
             
-            if(super.getTriggerMethodsToBypass().indexOf('createRecruitmentTask') == -1) {
+            /*if(super.getTriggerMethodsToBypass().indexOf('createRecruitmentTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Executing...');
                 //OpportunityService.createRecruitmentTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createRecruitmentTask() Bypassed');
-            }
+            }*/
             
-			if(super.getTriggerMethodsToBypass().indexOf('createSponsorPlanningMeetingTask') == -1) {
+			/*if(super.getTriggerMethodsToBypass().indexOf('createSponsorPlanningMeetingTask') == -1) {
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Executing...');
                 //OpportunityService.createSponsorPlanningMeetingTask((List<Opportunity>)trigger.new,(Map<Id,Opportunity>)trigger.oldMap);
             }else{
                 System.debug('OpportunityTriggerHandler.afterUpdate() - OpportunityService.createSponsorPlanningMeetingTask() Bypassed');
-            }
+            }*/
             
             // HRP-1760 
             if(super.getTriggerMethodsToBypass().indexOf('updateAccountWithEarliestDriveDate') == -1) {
@@ -690,11 +690,11 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             System.debug('Exiting method AfterUpdate');*/
             
             //HRP-7287
-            if(super.getTriggerMethodsToBypass().indexOf('closedOpportunity72HourTaskCreation') == -1) {
+            /*if(super.getTriggerMethodsToBypass().indexOf('closedOpportunity72HourTaskCreation') == -1) {
                  OpportunityService.closedOpportunity72HourTaskCreation((List<Opportunity>)trigger.new,(Map<Id, Opportunity>)trigger.oldMap);
              } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.closedOpportunity72HourTaskCreation() Bypassed');  
-            }
+            }*/
             System.debug('Exiting method AfterUpdate');
             
             //HRP-7362

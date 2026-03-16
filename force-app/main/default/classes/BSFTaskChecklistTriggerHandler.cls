@@ -10,7 +10,18 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         prepopulateValues((List<BSF_Task_Checklist__c>)Trigger.new);
     }
     public static void prepopulateValues(List<BSF_Task_Checklist__c> newList) {
-        final List<String> subjectList = new List<String>{BSF_Constants.POST_DRIVE_ANALYSIS_TASK,BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,BSF_Constants.RECRUITMENT_PLANNING_TASK};
+        List<String> subjectList;
+        List<Task_Definition__c> def = [SELECT Name, 
+                                            Task_Type__c 
+                                        FROM Task_Definition__c
+                                        WHERE Task_Type__c IN ('Post Drive Analysis SBPM','Post Drive Analysis AM','Recruitment Strategy Meeting')
+                                        AND Name != null];
+        for(Task_Definition__c taskDef : def){
+            subjectList.add(taskDef.Name);
+        }
+        if(subjectList.isEmpty()){
+                return;
+        }
         Set<String> taskIds = new Set<String>();
         Map<String,Id> taskVsOppMap = new Map<String,Id>();
         Map<String,Opportunity> taskVsOpportunityMap = new Map<String,Opportunity>();

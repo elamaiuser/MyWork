@@ -487,7 +487,7 @@ public with sharing class BSF_TaskPlanningService {
         return existingTaskMap.containsKey(taskKey);
     }
     
-    private static Map<Id, Map<String, Id>> buildRoleHierarchyMap(Set<Id> oppIds) {
+    public static Map<Id, Map<String, Id>> buildRoleHierarchyMap(Set<Id> oppIds) {
         Map<Id, Map<String, Id>> oppRolesMap = new Map<Id, Map<String, Id>>();
         if (oppIds.isEmpty()) return oppRolesMap;
 
