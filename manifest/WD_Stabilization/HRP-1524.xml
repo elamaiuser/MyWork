@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+
+    <types>
+        <members>BSF_LeaveReturnBatch</members>
+        <name>ApexClass</name>
+    </types>
+
+    <types>
+		<members>BSF_Workday_Staging__c.Leave_Report</members>
+		<name>RecordType</name>
+	</types>
+
+    <types>
+		<members>sked_Workday_XML_Template.Leave_Report</members>
+        <members>BSF_Access_Control_Rule.HRP_1524_Field_PermissionSet_WDStaging</members>
+		<name>CustomMetadata</name>
+	</types>
+
+    <types>
+		<members>BSF_Workday_Leave_Config__c</members>
+		<name>CustomObject</name>
+	</types>
+
+    <types>
+        <members>BSF_Workday_Leave_Config__c.Batch_Size__c</members>
+		<members>BSF_Workday_Leave_Config__c.Last_Successful_Run_Date__c</members>
+        <members>BSF_Workday_Staging__c.Anticipated_Leave_Return_Date__c</members>
+        <name>CustomField</name>
+    </types>
+
+    <version>65.0</version>
+</Package>
