@@ -130,7 +130,7 @@ public with sharing class TaskService {
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
-                                        WHERE Task_Type__c IN ('Post Drive Analysis SBPM','Post Drive Analysis AM')
+                                        WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, :BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM)
                                         AND Name != null];
         for(Task_Definition__c taskDef : def){
             taskSubjects.add(taskDef.Name);
@@ -231,7 +231,7 @@ public with sharing class TaskService {
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
-                                        WHERE Task_Type__c IN ('Publicity Order Not Created')
+                                        WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_PUBLICITY_ORDER_NOT_CREATED)
                                         AND Name != null];
         if(def.isEmpty()){
             return;
@@ -272,7 +272,7 @@ public with sharing class TaskService {
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
-                                        WHERE Task_Type__c IN ('Post Drive Analysis SBPM','Post Drive Analysis AM')
+                                        WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, :BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM)
                                         AND Name != null];
         for(Task_Definition__c taskDef : def){
             subjectList.add(taskDef.Name);
@@ -460,7 +460,7 @@ public with sharing class TaskService {
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
-                                        WHERE Task_Type__c = '72 Hour Check-In'
+                                        WHERE Task_Type__c = :BSF_Constants.TASK_TYPE_72_HOUR_CHECK_IN
                                         AND Name != null];
         if(!def.isEmpty()){
             taskSubject = def[0].Name;
@@ -698,7 +698,7 @@ public with sharing class TaskService {
             SELECT Id, WhatId
             FROM Task
             WHERE WhatId IN :oppids
-            AND Type = 'One Week Check-in'
+            AND Type = :BSF_Constants.TASK_TYPE_ONE_WEEK_CHECK_IN
             AND Status != :BSF_Constants.STATUS_CANCELLED
         ]) {
             t.Status = BSF_Constants.STATUS_CANCELLED;

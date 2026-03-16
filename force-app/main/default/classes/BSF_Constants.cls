@@ -408,4 +408,13 @@ public class BSF_Constants {
     public static final String TASK_FIELD_MAPPING_JSON = Label.BSF_Task_Field_Mapping_JSON;
     public static final String TASK_OWNER_HIERARCHY_JSON = Label.BSF_Task_Owner_Hierarchy_JSON;
     public static final String PE_FIELD_MAPPING_JSON = Label.BSF_PE_Field_Mapping_JSON;
+
+    // TaskTypes
+    public static final String TASK_TYPE_PUBLICITY_ORDER_NOT_CREATED = 'Publicity Order Not Created';
+    public static final String TASK_TYPE_PUBLICITY_REVIEW_NEEDED = 'Publicity Review Needed';
+    public static final String TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM = 'Post Drive Analysis SBPM';
+    public static final String TASK_TYPE_POST_DRIVE_ANALYSIS_AM = 'Post Drive Analysis AM';
+    public static final String TASK_TYPE_RECRUITMENT_STRATEGY_MEETING = 'Recruitment Strategy Meeting';
+    public static final String TASK_TYPE_72_HOUR_CHECK_IN = '72 Hour Check-In';
+    public static final String TASK_TYPE_ONE_WEEK_CHECK_IN = 'One Week Check-in';
 }

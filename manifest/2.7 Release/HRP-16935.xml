@@ -18,6 +18,7 @@
         <members>BSF_Batch_RecruitmentTaskCreation_Test</members>
         <members>BSF_BatchSendNotificationToDM</members>
         <members>BSF_BatchSendNotificationToDM_Test</members>
+        <members>BSF_Constants</members>
 		<name>ApexClass</name>
 	</types>
     <types>
