@@ -45,10 +45,6 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
             List<Id> indexItemIds = request.sked_Record_Ids__c.split(';');
             for (Id indexItemId : indexItemIds) {
                 sked_Travel_Time_Index_Item__c indexItem = mapIndexItem.get(indexItemId);
-                
-                system.debug('#indexItem.Id#' + indexItem.Id);
-                system.debug('#indexItem.sked_Ordering_Key__c#' + indexItem.sked_Ordering_Key__c);
-                
                 indexItems.add(indexItem);
             }
 
@@ -97,8 +93,6 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
                 } else {
                     timeBlocks = apiManager.getTravelTimeSetting(indexItems[0].sked_Timezone__c);
                 }
-
-                system.debug('#collectionOperationId#' + collectionOperationId);
                 
                 Set<string> fromGeocodeKeys = new Set<string>();
                 Set<string> toGeocodeKeys = new Set<string>();
@@ -141,14 +135,6 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
     public void finish(Database.BatchableContext BC) { }
 
     private Id getCollectionOperationId(sked_Travel_Time_Index_Item__c ttii) {
-        
-        system.debug('#getCollectionOperationId start#');
-        system.debug('#ttii.sked_Ordering_Key__c#' + ttii.sked_Ordering_Key__c);
-        system.debug('#ttii.sked_Ordering_Key__c CO_TO_SITE)#' + ttii.sked_Ordering_Key__c.startsWithIgnoreCase(skedConstants.TTII_DIRECTION_CO_TO_SITE));
-        system.debug('#ttii.Site_Collection_Operations__r#' + ttii.Site_Collection_Operations__r);
-        system.debug('#ttii.sked_Ordering_Key__c SITE_TO_CO)#' + ttii.sked_Ordering_Key__c.startsWithIgnoreCase(skedConstants.TTII_DIRECTION_SITE_TO_CO));
-        system.debug('#ttii.sked_Site_Collection_Operations__r#' + ttii.sked_Site_Collection_Operations__r);
-        
         if (ttii.sked_Ordering_Key__c != null) {
             if (ttii.sked_Ordering_Key__c.startsWithIgnoreCase(skedConstants.TTII_DIRECTION_CO_TO_SITE)) {
                 if (!ttii.Site_Collection_Operations__r.isEmpty()) {

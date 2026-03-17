@@ -398,6 +398,10 @@ public class OpportunityTriggerTest
     
     static testMethod void testSetCallListRecipientFlag()
     {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
         
@@ -622,6 +626,9 @@ public class OpportunityTriggerTest
     
     static testMethod void testGetTaskOwner()
     {
+        TriggerHandler.bypass('UserTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         /* DRD Users */
         List<User> userList = new List<User>();
         User drdUser1 = new User(
@@ -689,7 +696,7 @@ public class OpportunityTriggerTest
         testMobileOpp.Parent_Template_Id__c = testTemplate1.Id;
         testMobileOpp.Account_Manager__c = userList[0].Id;
         //testMobileOpp.Source__c = 'Adhoc';
-        insert testMobileOpp;
+        //insert testMobileOpp;
         
         Opportunity testMobileOpp2 = new Opportunity(
             Name = 'Test Opportunity 2',
@@ -713,7 +720,7 @@ public class OpportunityTriggerTest
         testMobileOpp2.Drive_Site__c = testMobileSite1.Id;
         testMobileOpp2.Parent_Template_Id__c = testTemplate1.Id;
         //testMobileOpp2.Source__c = 'Adhoc';
-        insert testMobileOpp2;
+        insert new List<Opportunity>{testMobileOpp, testMobileOpp2};
         
         List<OpportunityTeamMember> oppTeamList = new List<OpportunityTeamMember>();
         
@@ -733,7 +740,7 @@ public class OpportunityTriggerTest
         oppTeam2.OpportunityAccessLevel = 'Edit';
         oppTeamList.add(oppTeam2);
                 
-        Triggerhandler.bypass('OpportunityTriggerhandler');
+        Triggerhandler.bypass('OpportunityTriggerHandler');
         insert oppTeamList;
         //TriggerHandler.clearAllBypasses();
         
@@ -763,9 +770,11 @@ public class OpportunityTriggerTest
         oppNewList[0].ownerid=userList[0].Id;
         Triggerhandler.bypass('OpportunityTriggerHandler');
         update oppNewList[0];
-        //TriggerHandler.clearAllBypasses();
+        
         OpportunityService.UpdateOwnerSplit(oppNewList);
         opportunityService.deleteOpptyTeamMembers(setOfOpptyIds);
+        
+        TriggerHandler.clearAllBypasses();
         Test.stopTest();
      
 		Assert.isTrue(taskOwnerId1 == userList[0].Id);        
@@ -775,6 +784,13 @@ public class OpportunityTriggerTest
     {
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('AccountServiceRoleTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('AccountTeamMemberTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -872,6 +888,7 @@ public class OpportunityTriggerTest
         
             }
         TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassInsertTriggers = false;
         Test.stopTest();
     }
     
@@ -1614,6 +1631,9 @@ public class OpportunityTriggerTest
     
     static testMethod void testUpdateOriginalValueOnOpportunity()
     {        
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -1649,6 +1669,7 @@ public class OpportunityTriggerTest
             } catch (Exception ex) {
                 Assert.areEqual(true, ex.getMessage().containsIgnoreCase('Original values cannot be changed'));
             }
+        TriggerHandler.clearAllBypasses();
         Test.stopTest();
     }
     
@@ -1743,6 +1764,10 @@ public class OpportunityTriggerTest
     
     static testMethod void testUpdateOpportunitiesRelatedToTemplate()
     {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
         
@@ -1780,6 +1805,8 @@ public class OpportunityTriggerTest
 
 		List<Opportunity> oppAfterUpdate = [select Id, WB_Projected_Procedures__c,WholeBloodProceduresProjectedTemplate__c from Opportunity];
         Assert.isTrue(oppAfterUpdate[1].WholeBloodProceduresProjectedTemplate__c== oppAfterUpdate[0].WB_Projected_Procedures__c);        
+    	TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassInsertTriggers = false;
     }
     
     static testmethod void testInsertOrUpdateCovRecruiterOpportunitySplit() {
