@@ -276,7 +276,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'recalculateVphhQuantity', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -292,17 +292,19 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.moveLunchBreakToBeforeDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
-            $this.updateDriveTotalSlots()
+            $this.updateDriveTotalSlots();
           }
           else {
             $this.moveLunchBreakToDuringDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
