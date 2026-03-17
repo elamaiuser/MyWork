@@ -311,6 +311,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftTimeBlockId
         });
       }
+
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
+      }
     });
   }
 
@@ -463,6 +468,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDriveShiftContentionResolution,
           backupDriveShiftTimeBlockId
         });
+      }
+
+      this.drive.contentionResolutions = [];
+      if(this.drive.contentionResolution) {
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
     });
   }
@@ -1202,7 +1212,6 @@ export default class SlwcResolveDriveContentions extends LightningElement {
             contention.timeBlockId = timeBlockOptions.find(option => option.value === contention.driveShift.timeBlockId)?.value ?? '';
             contention.timeBlockOptions = timeBlockOptions;
             contention.showAcknowledgeDriveShiftOutOfTimeBlock = contention.contention !== DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS;
-
             return contention
           })
 
@@ -1400,7 +1409,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   handleConfirmTimeBlockBtn = () => {
-    const backupContentionResolution = this.drive.contentionResolutions ?? [];
+    const backupContentionResolution = this.drive ? (this.drive.contentionResolutions || []).join(';') : '';
     
     let allPassed = this.validateDriveTimeBlockContentions();
     if(!allPassed) {
@@ -1416,11 +1425,11 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     this.driveGeneratorInstance.resolveTimeBlockContentions(this.driveTimeBlockContentions)
     .then(() => {
       this.drive = this.driveGeneratorInstance.drive;
-      this.drive.contentionResolution = [...backupContentionResolution];
+      this.drive.contentionResolution = backupContentionResolution;
 
       this.drive.contentionResolutions = [];
       if(this.drive.contentionResolution) {
-        this.drive.contentionResolutions = cloneDeep(this.drive.contentionResolution);
+        this.drive.contentionResolutions = this.drive.contentionResolution.split(';');
       }
 
       return Promise.all([
@@ -1434,13 +1443,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   backupContentionResolutions = () => {
     if(!this.drive) {
       return {
-        backupContentionResolution: [],
+        backupContentionResolution: '',
         backupDriveShiftContention: [],
         backupDriveShiftContentionResolution: [],
         backupDriveShiftTimeBlockId: []
       }
     }
-    const backupContentionResolution = this.drive.contentionResolutions ?? [];
+    const backupContentionResolution = (this.drive.contentionResolutions || []).join(';');
     const backupDriveShiftContention = this.drive.driveShifts?.map(driveShift => driveShift.contention) ?? [];
     const backupDriveShiftContentionResolution = this.drive.driveShifts?.map(driveShift => driveShift.contentionResolution) ?? [];
     const backupDriveShiftTimeBlockId = this.drive.driveShifts?.map(driveShift => driveShift.timeBlockId) ?? [];
@@ -1454,12 +1463,12 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   restoreContentionResolutions = (drive, {
-    backupContentionResolution = [],
+    backupContentionResolution,
     backupDriveShiftContention = [],
     backupDriveShiftContentionResolution = [],
     backupDriveShiftTimeBlockId = []
   }) => {
-    drive.contentionResolution = [...backupContentionResolution];
+    drive.contentionResolution = backupContentionResolution;
 
     drive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.contention = backupDriveShiftContention[driveShiftIndex] ?? '';
@@ -1469,7 +1478,7 @@ export default class SlwcResolveDriveContentions extends LightningElement {
 
     drive.contentionResolutions = [];
     if(drive.contentionResolution) {
-      drive.contentionResolutions = cloneDeep(drive.contentionResolution);
+      drive.contentionResolutions = drive.contentionResolution.split(';');
     }
 
     return drive;

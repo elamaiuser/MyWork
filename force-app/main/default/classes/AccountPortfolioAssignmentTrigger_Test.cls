@@ -344,4 +344,68 @@ TriggerHandler.clearbypass('AccountTriggerHandler');
         
         
     }
+    @isTest
+    static void testEnsureTerritoryCoverage() {
+        Account acc = new Account(Name='Coverage Test Account', BillingPostalCode='99999');
+        insert acc;
+
+        BSF_Portfolio__c abAmPortfolio = new BSF_Portfolio__c(
+            Portfolio_Name__c='AB_AM_Portfolio',
+            Portfolio_Code__c='AB_AM_01',
+            Portfolio_Type__c='Account Manager',
+            Taxonomy_Type__c='Bio Account Portfolio',
+            Account_Based_Portfolio__c=true,
+            Territory_Portfolio__c=false,
+            Start_Date__c=System.today().addDays(-50),
+            End_Date__c=System.today().addDays(5)
+        );
+        insert abAmPortfolio;
+
+        Account_Portfolio_Assignment__c pendingAPA = new Account_Portfolio_Assignment__c(
+            Account__c=acc.Id,
+            BSF_Portfolio__c=abAmPortfolio.Id,
+            Start_Date__c=System.today().addDays(-20),
+            End_Date__c=System.today().addDays(5)
+        );
+        insert pendingAPA;
+
+        Taxonomy__c taxo = new Taxonomy__c(
+            Zip_Code__c='99999',
+            Start_Date__c=System.today().addDays(-100),
+            End_Date__c=System.today().addDays(300),
+            DRD_Territory_Name__c='Test Territory',
+            DRD_Territory_Code__c='TERR_001'
+        );
+        insert taxo;
+        BSF_Portfolio__c terrPortfolio = new BSF_Portfolio__c(
+            Portfolio_Name__c='Territory Portfolio',
+            Portfolio_Code__c='TERR_001',
+            Portfolio_Type__c='Account Manager',
+            Taxonomy_Type__c='Bio Recruitment CD',
+            Account_Based_Portfolio__c=false,
+            Territory_Portfolio__c=true,
+            Start_Date__c=System.today().addDays(-100),
+            End_Date__c=System.today().addDays(400)
+        );
+        insert terrPortfolio;
+
+        Test.startTest();
+        List<Account_Portfolio_Assignment__c> result =
+            AccountPortfolioAssignmentService.ensureTerritoryCoverage(
+                new List<Account_Portfolio_Assignment__c>{pendingAPA}
+            );
+        Test.stopTest();
+
+        System.assertNotEquals(null, result, 'Expected non-null result list');
+        System.assert(
+            result.size() > 0,
+            'Expected at least one tail APA to be generated for coverage gap'
+        );
+        System.assertEquals(acc.Id, result[0].Account__c);
+        System.assertEquals(terrPortfolio.Id, result[0].BSF_Portfolio__c);
+        System.assertEquals(Date.newInstance(4000, 12, 31), result[0].End_Date__c);
+    }
+
+
+
 }

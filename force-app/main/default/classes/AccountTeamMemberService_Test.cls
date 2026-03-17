@@ -228,16 +228,21 @@ public class AccountTeamMemberService_Test {
     {
         skedHubBase.BypassInsertTriggers=true;
         skedHubBase.BypassUpdateTriggers=true;
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
         // insert Mobile Account
         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
         testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
-        triggerHandler.bypass('AccountTriggerHandler');
         insert testMobileAccount;
-        
-        
+  
         // insert Mobile Site
         sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
         insert testMobileSite;
@@ -249,9 +254,7 @@ public class AccountTeamMemberService_Test {
         insert testTemplate;
         
         list<opportunity> opportunityList = new list<opportunity>();
-        
-        
-       Opportunity testMobileOpp1 = new Opportunity(
+        Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
         	StageName = 'Draft',
            	Type_of_Drive__c = 'Mobile',
@@ -272,7 +275,6 @@ public class AccountTeamMemberService_Test {
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
         opportunityList.add(testMobileOpp1);
-        TriggerHandler.bypass('OpportunityTriggerHandler');
         insert opportunityList;
         List<User> users = new List<User>();
         Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label
@@ -309,16 +311,21 @@ public class AccountTeamMemberService_Test {
     {
         skedHubBase.BypassInsertTriggers=true;
         skedHubBase.BypassUpdateTriggers=true;
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
         // insert Mobile Account
         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
         testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
-        triggerHandler.bypass('AccountTriggerHandler');
         insert testMobileAccount;
-        
-        
+                
         // insert Mobile Site
         sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
         insert testMobileSite;
@@ -329,10 +336,8 @@ public class AccountTeamMemberService_Test {
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
-        list<opportunity> opportunityList = new list<opportunity>();
-        
-        
-       Opportunity testMobileOpp1 = new Opportunity(
+        list<opportunity> opportunityList = new list<opportunity>();    
+        Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
         	StageName = 'Draft',
            	Type_of_Drive__c = 'Mobile',
@@ -352,8 +357,7 @@ public class AccountTeamMemberService_Test {
         testMobileOpp1.AccountId = testMobileAccount.Id;
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
-       opportunityList.add(testMobileOpp1);
-        TriggerHandler.bypass('OpportunityTriggerHandler');
+        opportunityList.add(testMobileOpp1);
         insert opportunityList;
         List<User> users = new List<User>();
         Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label
@@ -392,15 +396,20 @@ public class AccountTeamMemberService_Test {
     {
         skedHubBase.BypassInsertTriggers=true;
         skedHubBase.BypassUpdateTriggers=true;
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
         // insert Mobile Account
         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
         testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
-        triggerHandler.bypass('AccountTriggerHandler');
-        insert testMobileAccount;
-        
+        insert testMobileAccount;       
         
         // insert Mobile Site
         sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
@@ -412,9 +421,7 @@ public class AccountTeamMemberService_Test {
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
-        list<opportunity> opportunityList = new list<opportunity>();
-        
-        
+        list<opportunity> opportunityList = new list<opportunity>();   
        Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
         	StageName = 'Draft',
@@ -435,8 +442,7 @@ public class AccountTeamMemberService_Test {
         testMobileOpp1.AccountId = testMobileAccount.Id;
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
-       opportunityList.add(testMobileOpp1);
-        TriggerHandler.bypass('OpportunityTriggerHandler');
+        opportunityList.add(testMobileOpp1);
         insert opportunityList;
         List<User> users = new List<User>();
         Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label
@@ -500,8 +506,6 @@ public class AccountTeamMemberService_Test {
         portfolioAssignmentList.add(portfolioAssignments(AMPortfolioWithABM,drdUsers[2]));
         portfolioAssignmentList.add(portfolioAssignments(AMPortfolioWithoutABM,drdUsers[3]));
         
-        
-        
         List<Account_Portfolio_Assignment__c> accPortfolioAssignemnetList = new List<Account_Portfolio_Assignment__c>();
         Account_Portfolio_Assignment__c accPortfolio1 = new Account_Portfolio_Assignment__c();
         accPortfolio1.BSF_Portfolio__c =AMPortfolioWithABM.id;
@@ -513,15 +517,12 @@ public class AccountTeamMemberService_Test {
         
         insert accPortfolioAssignemnetList;
         test.StartTest();
-        system.debug('testMobileAccount.Id '+testMobileAccount.Id);
         
         TriggerHandler.bypass('PortfolioAssignmentTriggerHandler');
         insert portfolioAssignmentList;
         TriggerHandler.clearBypass('PortfolioAssignmentTriggerHandler');
-        system.debug('portfolioAssignmentList '+portfolioAssignmentList);
         AccountPortfolioAssignmentService.accTeamDateSyncOnAccPortUpdates(new list<id>{testMobileAccount.Id},null,new Set<id>(),new map<id,list<accountTeamMember>> (),new map<id,list<accountTeamMember>> ());
-        
-        
+  
         AccountTeamMember atm = [select id from accountTeamMember where accountId=:testMobileAccount.Id limit 1];
         
         bsf_constants.isTeamMemberCreatedFromBackend=false;
@@ -533,15 +534,20 @@ public class AccountTeamMemberService_Test {
     static void testdetermineTaskOwner(){
         skedHubBase.BypassInsertTriggers=true;
         skedHubBase.BypassUpdateTriggers=true;
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunityTeamMemberTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
         // insert Mobile Account
         Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
         testMobileAccount.Internal_Name__c =  'TEST ACCOUNT 1';
-        triggerHandler.bypass('AccountTriggerHandler');
-        insert testMobileAccount;
-        
+        insert testMobileAccount;      
         
         // insert Mobile Site
         sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
@@ -554,8 +560,6 @@ public class AccountTeamMemberService_Test {
         insert testTemplate;
         
         list<opportunity> opportunityList = new list<opportunity>();
-        
-        
        Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
         	StageName = 'Draft',
@@ -577,7 +581,7 @@ public class AccountTeamMemberService_Test {
         testMobileOpp1.Drive_Site__c = testMobileSite.Id;
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
         opportunityList.add(testMobileOpp1);
-        TriggerHandler.bypass('OpportunityTriggerHandler');
+        
         insert opportunityList;
         List<User> users = new List<User>();
         Profile drdProfile = [SELECT Id FROM Profile WHERE Name='DRD Profile']; //Keep this in Label

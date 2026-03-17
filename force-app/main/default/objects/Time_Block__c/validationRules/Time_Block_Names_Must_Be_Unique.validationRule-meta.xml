@@ -4,11 +4,13 @@
     <active>true</active>
     <errorConditionFormula>AND(
   CONTAINS(
+						LOWER(
       VLOOKUP( 
         $ObjectType.Time_Block__c.Fields.Name , 
-        $ObjectType.Time_Block__c.Fields.Name, Name
+        $ObjectType.Time_Block__c.Fields.Name, LOWER(Name)
+						)
       ), 
-      Name
+      LOWER(Name)
     ), 
   OR(
       ISNEW(), ISCHANGED(Name)

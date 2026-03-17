@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Drive_Operation_Type__c</fullName>
     <externalId>false</externalId>
-    <formula>IF ( ISPICKVAL(sked_Type_of_Drive__c, &#39;Fixed Site&#39;) &amp;&amp; sked_Operation_Type__c == &#39;Non Integrated WB&#39;, &#39;NIFS&#39;, TEXT(sked_Type_of_Drive__c) )</formula>
+    <formula>IF ( ISPICKVAL(sked_Type_of_Drive__c, &apos;Fixed Site&apos;) &amp;&amp; sked_Operation_Type__c == &apos;Non Integrated WB&apos;, &apos;NIFS&apos;, TEXT(sked_Type_of_Drive__c) )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Drive Operation Type</label>
     <required>false</required>

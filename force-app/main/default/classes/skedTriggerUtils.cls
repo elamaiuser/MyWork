@@ -80,10 +80,12 @@ public class skedTriggerUtils {
             }
     
             if (!Test.isRunningTest()) {
-                Database.executeBatch(new skedJobAllocationPostProcessBatch(
+                skedJobAllocationPostProcessBatch.schedule(new skedJobAllocationPostProcessBatch.batchSetting(), jobAllocationIds, 200, 0);
+                /*Database.executeBatch(new skedJobAllocationPostProcessBatch(
                     new skedJobAllocationPostProcessBatch.batchSetting(),
-                    jobAllocationIds
-                ));
+                    jobAllocationIds,
+                    200
+                ));*/
             }
         }
     }
@@ -182,5 +184,20 @@ public class skedTriggerUtils {
                 newRecord.addError(errorMessage);
             }
         }
+    }
+
+    public static boolean isFlexQueueLimitReached() {
+        boolean isLimitReached = false;
+
+        Integer existingHoldingJobsCount = [
+            SELECT COUNT()
+            FROM AsyncApexJob 
+            WHERE Status IN ('Holding')
+        ];
+        if(existingHoldingJobsCount == skedSetting.instance.jaPostProcessBatchConfig.allowedNumberOfJobsInFlexQueue) {
+            isLimitReached = true;
+        }
+
+        return isLimitReached;
     }
 }

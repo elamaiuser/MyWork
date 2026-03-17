@@ -206,10 +206,22 @@
         <label>VP/HH</label>
     </customValue>
     <customValue>
+        <fullName>Float</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Float</label>
+    </customValue>
+    <customValue>
         <fullName>Redcross Translator</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>Redcross Translator</label>
+    </customValue>
+    <customValue>
+        <fullName>Redcross Lead Donor Ambassador</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Redcross Lead Donor Ambassador</label>
     </customValue>
     <customValue>
         <fullName>Sponsor Lead Donor Ambassador</fullName>
@@ -230,16 +242,10 @@
         <label>Sponsor Volunteer Donor Ambassador</label>
     </customValue>
     <customValue>
-        <fullName>Redcross Lead Donor Ambassador</fullName>
+        <fullName>Work Restriction</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>Redcross Lead Donor Ambassador</label>
-    </customValue>
-    <customValue>
-        <fullName>Redcross Volunteer Donor Ambassador</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Redcross Volunteer Donor Ambassador</label>
+        <label>Work Restriction</label>
     </customValue>
     <customValue>
         <fullName>Volunteer Donor Ambassador</fullName>
@@ -254,22 +260,16 @@
         <label>Lead Donor Ambassador</label>
     </customValue>
     <customValue>
-        <fullName>Float</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Float</label>
-    </customValue>
-    <customValue>
         <fullName>Driver CDL A</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>Driver CDL A</label>
     </customValue>
     <customValue>
-        <fullName>Work Restriction</fullName>
+        <fullName>Redcross Volunteer Donor Ambassador</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>Work Restriction</label>
+        <label>Redcross Volunteer Donor Ambassador</label>
     </customValue>
     <masterLabel>Resource Roles</masterLabel>
     <sorted>true</sorted>

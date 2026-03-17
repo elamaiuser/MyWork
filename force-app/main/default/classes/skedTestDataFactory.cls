@@ -105,7 +105,7 @@ public class skedTestDataFactory {
 
         sked_Resource_Role_Group__c staffRoleGroup = new sked_Resource_Role_Group__c(
             sked_Resource_Role_Group__c = 'Staff roles',
-            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; Float; HH; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; VOL Limited HH; VP; VP/HH; Work Restriction'
+            sked_Resource_Roles__c = '2RBC; 2RBC Sign-off; Apheresis; HH; OJI; Plasma; Post Collections; Special Collections; Trainee; Translator; VOL Limited HH; VP; VP/HH'
         );
         predefinedData.add(staffRoleGroup);
 

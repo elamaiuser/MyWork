@@ -39,6 +39,10 @@ global class skedModels {
         public string timezoneSidId;
         
         public void updateDateTimeFields(string inputTimezoneSidId) {
+
+            system.debug('#event model inputTimezoneSidId#' + inputTimezoneSidId);
+
+
             this.startDate = this.start.format(skedDateTimeUtils.DATE_ISO_FORMAT, inputTimezoneSidId);
             this.endDate = this.finish.format(skedDateTimeUtils.DATE_ISO_FORMAT, inputTimezoneSidId);
             this.startTime = integer.valueOf(this.start.format('Hmm', inputTimezoneSidId));
@@ -625,6 +629,14 @@ global class skedModels {
         }
     }
 
+    global virtual class collectionOperationTimeBlock extends modelBase {
+        public string collectionOperationId;
+        public string effectiveEndDate;
+        public string effectiveStartDate;
+        public string timeBlockId;
+        public timeBlock timeBlock;
+    }
+    
     global virtual class collectionOperationTimeBlock extends modelBase {
         public string collectionOperationId;
         public string effectiveEndDate;

@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <actionCalls>
+        <name>Get_Default_Primary_Drive_Contact</name>
+        <label>Get Default Primary Drive Contact</label>
+        <locationX>1225</locationX>
+        <locationY>143</locationY>
+        <actionName>TemplateService</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Create_New_Drive</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>accountId</name>
+            <value>
+                <elementReference>Get_Account.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>TemplateService</nameSegment>
+        <offset>0</offset>
+        <outputParameters>
+            <assignToReference>defaultPrimaryDriveContact</assignToReference>
+            <name>output</name>
+        </outputParameters>
+    </actionCalls>
     <apiVersion>49.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
@@ -914,6 +938,12 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Primary_Drive_Contact__c</field>
+            <value>
+                <elementReference>Primary_Drive_Contact.recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>RecordTypeId</field>
             <value>
                 <elementReference>Get_Blood_Drive_Opp_Record_Type.Id</elementReference>
@@ -1085,7 +1115,7 @@
         <locationY>31</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Create_New_Drive</targetReference>
+            <targetReference>Get_Default_Primary_Drive_Contact</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -1498,6 +1528,46 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                         </width>
                     </styleProperties>
                 </fields>
+                <fields>
+                    <name>Primary_Drive_Contact</name>
+                    <extensionName>flowruntime:lookup</extensionName>
+                    <fieldType>ComponentInstance</fieldType>
+                    <inputParameters>
+                        <name>fieldApiName</name>
+                        <value>
+                            <stringValue>Primary_Drive_Contact__c</stringValue>
+                        </value>
+                    </inputParameters>
+                    <inputParameters>
+                        <name>label</name>
+                        <value>
+                            <stringValue>Primary Drive Contact</stringValue>
+                        </value>
+                    </inputParameters>
+                    <inputParameters>
+                        <name>objectApiName</name>
+                        <value>
+                            <stringValue>Opportunity</stringValue>
+                        </value>
+                    </inputParameters>
+                    <inputParameters>
+                        <name>recordId</name>
+                        <value>
+                            <elementReference>defaultPrimaryDriveContact</elementReference>
+                        </value>
+                    </inputParameters>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+                    <isRequired>true</isRequired>
+                    <storeOutputAutomatically>true</storeOutputAutomatically>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
+                </fields>
                 <inputParameters>
                     <name>width</name>
                     <value>
@@ -1854,6 +1924,13 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
     </start>
     <status>Active</status>
+    <variables>
+        <name>defaultPrimaryDriveContact</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
     <variables>
         <name>firstTemplateFoundRecordId</name>
         <dataType>String</dataType>

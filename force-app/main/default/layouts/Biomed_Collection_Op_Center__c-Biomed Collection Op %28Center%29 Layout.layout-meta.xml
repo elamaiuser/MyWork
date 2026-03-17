@@ -431,10 +431,12 @@
         <relatedList>sked_Role_Time_Detail__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>sked_Date_of_Constraint__c</fields>
         <fields>sked_Drive_Type__c</fields>
         <fields>sked_Total_Staff_Constraints__c</fields>
+        <fields>sked_Time_Block__c</fields>
         <relatedList>sked_Staffing_Constraint__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -451,6 +453,7 @@
         <fields>sked_Quantity__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
+        <fields>Time_Block__c</fields>
         <relatedList>sked_Operation_Drive_Limit__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>

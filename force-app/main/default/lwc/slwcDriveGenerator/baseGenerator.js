@@ -55,7 +55,7 @@ class BaseGenerator {
     pendingDriveChangeRequest : null,
     staffSetupExcludedRoles: [],
     skipAPTCalculation: true,
-    aptQuantity: null,
+    
     redcrossVolunteerMatrix: [],
     skipVolunteerRecalculation: true,
 
@@ -65,7 +65,6 @@ class BaseGenerator {
   mapSlotRecurrenceDates = {};
   errorMessages = [];
   isRegenerateDriveChange = false;
-  processingDCRs = false;
 
   constructor({
     fetch,
@@ -129,12 +128,12 @@ class BaseGenerator {
     if (this.drive.driveSite) {
       masterData.timezoneSidId = this.drive.driveSite.timezoneSidId;
     }
+    
     if (masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status === DRIVE_REQUEST_CHANGE_STATUS.PENDING && masterData.activeDriveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE)) {
       masterData.pendingDriveChangeRequest = masterData.activeDriveChangeRequest;
     }  else if(masterData.activeDriveChangeRequest && masterData.activeDriveChangeRequest.status !== DRIVE_REQUEST_CHANGE_STATUS.PENDING){
       masterData.waitingDriveChangeRequest = masterData.activeDriveChangeRequest;
     }
-    
     masterData.adminSetting.callListRecipientNone = masterData.adminSetting.callListRecipientNone / 100;
     masterData.adminSetting.callListRecipient = masterData.adminSetting.callListRecipient / 100;
     masterData.adminSetting.callListRecipientNoneFixedSite = masterData.adminSetting.callListRecipientNoneFixedSite / 100;
@@ -166,12 +165,12 @@ class BaseGenerator {
     } else {
       drive.driveShifts = [];
     }
-    
+
     if (this.helper.isMobileDrive(drive) && isNullOrEmpty(drive.numberOfVehicles)) {
       drive.numberOfVehicles = drive.totalVehicleRequested;
       drive.preferSystemGeneratedVehicles = true;
     }
-
+    
     return drive;
   }
 
@@ -430,21 +429,28 @@ class BaseGenerator {
         }
       })
 
-      let currentDriveContentions = cloneDeep(this.drive.pendingActionReasonCode)
+      let currentDriveContentions = this.drive.pendingActionReasonCode ? this.drive.pendingActionReasonCode.split(';') : [];
       remove(currentDriveContentions, item => [
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.OUT_OF_TIME_BLOCK,
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.FIT_MULTIPLE_TIME_BLOCKS,
         DRIVE_SHIFT_TIME_BLOCK_CONTENTION.MISSING_TIME_BLOCK
       ].includes(item));
       this.drive.pendingActionReasonCodes = currentDriveContentions;
-      this.drive.pendingActionReasonCode = currentDriveContentions;
+      this.drive.pendingActionReasonCode = currentDriveContentions.join(';');
 
       return this.drive;
     })
   }
 
-  populateDriveShiftTimeBlocks(driveShift) {
+  populateDriveShiftTimeBlocks(driveShift, driveShiftIndex) {
     if(!this.helper.isDriveUseTimeBlock(this.drive, this.masterData)) {
+      return;
+    }
+
+    let currentDriveShift = this.drive.driveShifts[driveShiftIndex];
+    if(currentDriveShift?.timeBlockManuallyChanged) {
+      driveShift.timeBlock = currentDriveShift.timeBlock;
+      driveShift.timeBlockId = currentDriveShift.timeBlockId;
       return;
     }
 
@@ -654,6 +660,7 @@ class BaseGenerator {
     driveShift.volunteerSetup = 0;
     driveShift.vehiclesNeeded = 0;
     driveShift.equipment = 0;
+
     const jobs = this.helper.getDriveShiftJobs(driveShift, {
       excludeManuallyCreatedFromStaffingModal: true
     })
@@ -743,20 +750,21 @@ class BaseGenerator {
   resetElectContentions() {
     const backupDrive = this.masterData.backupDrive;
     const currentDrive = this.drive;
-    let currentContentionResolutions = currentDrive.contentionResolution || [];
+    let currentContentionResolutions = currentDrive.contentionResolution ? currentDrive.contentionResolution.split(';') : [];
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_WITHIN_42_DAYS);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_STAFFING_COMPLEMENT_CHANGED_ACCEPT_NEW_CHANGE);
     remove(currentContentionResolutions, item => item === DRIVE_CONTENTION_RESOLUTION.ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT);
 
     if(backupDrive) {
-      //Drive Date changed or CO changed, reset all contention resolution
+      //Drive Date changed or CO changed, reset all contention resolution and timeBlockManuallyChanged
       if(currentDrive.driveDate !== backupDrive.driveDate || 
         currentDrive.collectionOperationId !== backupDrive.collectionOperationId) {
         currentContentionResolutions = [];
 
         this.drive.driveShifts?.forEach(driveShift => {
           driveShift.contentionResolution = ''
+          driveShift.timeBlockManuallyChanged = false;
         })
       }
 
@@ -796,7 +804,7 @@ class BaseGenerator {
       }
     }
 
-    this.drive.contentionResolution = [...currentContentionResolutions];
+    this.drive.contentionResolution = currentContentionResolutions.join(';');
   }
 
   onDriveDataChanged(properties, {
@@ -948,8 +956,10 @@ class BaseGenerator {
     if (!shiftKey || !job) return;
 
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
-    let newList = this.helper.getDriveShiftJobs(shift, {
-      excludeManuallyCreatedFromStaffingModal: true
+    let newList = job.volunteerRole ? this.helper.getDriveShiftJobs(shift, {
+      excludeManuallyCreatedFromStaffingModal : false 
+    }) : this.helper.getDriveShiftJobs(shift, {
+      excludeManuallyCreatedFromStaffingModal : true 
     });
     let target = job;
     let jobsToBeGenerated = [];
@@ -1016,8 +1026,7 @@ class BaseGenerator {
             0
           );
           target.quantity += totalQuantity;
-          target.systemQuantity = target.quantity;
-          
+
           for (let i = 0; i < otherPrimaryRoleJobIndexes.length; i++) {
             newList.splice(otherPrimaryRoleJobIndexes[i], 1); 
           }
@@ -1460,7 +1469,23 @@ class BaseGenerator {
           relatedJobs.forEach(job => {
             mapJobsToSave[job.id] = {
               id: job.id,
-              isLocked: !!sourceJob.isLocked
+              isLocked: !!sourceJob.isLocked,
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerRole)) {
+              mapJobsToSave[job.id].volunteerRole = sourceJob.volunteerRole;
+            }
+
+            if(!isNullOrEmpty(sourceJob.redcrossVolunteerQuantity)) {
+              mapJobsToSave[job.id].redcrossVolunteerQuantity = sourceJob.redcrossVolunteerQuantity;
+            }
+
+            if(!isNullOrEmpty(sourceJob.volunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].volunteerAdjustmentReason = sourceJob.volunteerAdjustmentReason;
+            }
+            
+            if(!isNullOrEmpty(sourceJob.otherVolunteerAdjustmentReason)) {
+              mapJobsToSave[job.id].otherVolunteerAdjustmentReason = sourceJob.otherVolunteerAdjustmentReason;
             }
           })
         })

@@ -78,97 +78,96 @@ public  without sharing class AccountService {//with sharing is not needed
     /**
 * AS-012769-SYSTEM: Mapping Converted Lead Fields to the Account
 * */
-    public static void updateAccountType(List<Account> oldAccounts, List<Account> newAccounts,Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap){
-        // System.debug('Entered method updateAccountType');
-        for(Account newAccount:newAccounts){
-            // System.debug('Processing newAccount with account_type_from_lead__c and Id values as ->'+newAccount.account_type_from_lead__c+','+newAccount.id);
-            if(String.isBlank(newAccount.account_type_from_lead__c) ==true)
-                continue;
-            if(newAccount.id == null){//coming in for first time
-                newAccount.type=newAccount.account_type_from_lead__c;
-                continue;
-            }
-            if(newAccount.id != null && oldAccountsMap!=null
-               && oldAccountsMap.get(newAccount.id)!=null){ //update scenario
-                   // System.debug('Processing oldAccount with account_type_from_lead__c and Id values as ->'+oldAccountsMap.get(newAccount.id).account_type_from_lead__c+','+newAccount.id);
-                   if(newAccount.account_type_from_lead__c != oldAccountsMap.get(newAccount.id).account_type_from_lead__c){
-                       newAccount.type=newAccount.account_type_from_lead__c;
-                   }
-                   if(String.isBlank(newAccount.Type) ==true){
-                       newAccount.type=newAccount.account_type_from_lead__c;
-                   }
-               }
-        }//end of for loop
-    }
-    //AS-013046-Account Shipping Address standardization, will be called from before insert and before update
-    public static void standardizeShippingAddress(List<Account> newAccounts, Map<Id, Account> oldMap,
-                                                  Map<Id, Account> newMap, String op)
-    {
-        // System.debug('Entered method standardizeShippingAddress with oldMap and newMap' + oldMap + ' : ' + newMap);
-        if (System.isFuture())
-        {//extremely important,only run for first time otherwise will get exception future cannot be called from future
-            return;
-        }
-        //collects all leads which need to be evaluated for clean address
-        List<Id> evaluateAddressAccountList = new List<Id>();
-        for (Account newAccount:newAccounts)
-        {
-            boolean isEmptyAddress = AddressUtility.isEmptyAddress(newAccount, AddressUtility.AccountShippingFieldsMap);
-            if (isEmptyAddress == null)
-            {
-                // System.debug('Address is null for incoming Account');
-                continue;
-            }
-            InformaticaStandardAddress stdAddr = null;
-            if (op.equals('INSERT'))
-            {
-                // System.debug('Coming in for first time insert without empty address for lead object:' + newAccount);
-                evaluateAddressAccountList.add(newAccount.id);//this is called from after insert, so id will be there always
-            }
-            else if (op.equals('UPDATE'))
-            {
-                // System.debug('Coming in as update');
-                Account oldAccount = oldMap.get(newAccount.id);
-                boolean isAddressChanged = AddressUtility.isAddresssChanged(oldAccount, newAccount, AddressUtility.AccountShippingFieldsMap);
-                // System.debug('isAddressChanged:' + isAddressChanged);
-                if (isAddressChanged == true)
-                {
-                    evaluateAddressAccountList.add(newAccount.id);//this is called from after insert/after update, so id will be there always
-                }
-            }
-            //Call Informatica API and clean addresses
-            
-        }
-        if(!evaluateAddressAccountList.isEmpty())
-        {
-            AddressUtility.cleanAccountShippingAddress(evaluateAddressAccountList);
-        }
-    }
-    //Create Notes on Account Starategy Change
-    public static void createNotesOnAccountStrategyupdate(List<Account> oldAccounts, List<Account> newAccounts,
-                                                          Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap)
-    {
-        List<ContentVersion> NotesList = new List<ContentVersion>();
-        for (Account newAccount:newAccounts)  {
-            //|| (newAccount.Account_Strategy__c != oldAccountsMap.get(newAccount.Id).Account_Strategy_Notes__c)
-            if(newAccount.Account_Strategy_Notes__c != null && ((newAccount.Account_Strategy_Notes__c != oldAccountsMap.get(newAccount.Id).Account_Strategy_Notes__c)
-                                                               )){
-                                                                   ContentVersion objCntNote = new ContentVersion();
-                                                                   objCntNote.Title = newAccount.Account_Strategy__c;
-                                                                   objCntNote.PathOnClient = objCntNote.Title + '.snote';
-                                                                   objCntNote.VersionData = Blob.valueOf((newAccount.Account_Strategy_Notes__c).escapeHtml4());
-                                                                   objCntNote.FirstPublishLocationId = newAccount.id;  // ParentId
-                                                                   NotesList.add(objCntNote);
-                                                                   //insert objCntNote;
-                                                               }
-        }
-        if(NotesList.size()>0) {
-            // Schema.DescribeSObjectResult ds = ContentVersion.sObjectType.getDescribe();
-            //if( ds.isCreateable() ){}
-            insert NotesList;
-        }
-    }
-    /* Commented Out for HRP - 10016 --> Start
+public static void updateAccountType(List<Account> oldAccounts, List<Account> newAccounts,Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap){
+// System.debug('Entered method updateAccountType');
+for(Account newAccount:newAccounts){
+// System.debug('Processing newAccount with account_type_from_lead__c and Id values as ->'+newAccount.account_type_from_lead__c+','+newAccount.id);
+if(String.isBlank(newAccount.account_type_from_lead__c) ==true)
+continue;
+if(newAccount.id == null){//coming in for first time
+newAccount.type=newAccount.account_type_from_lead__c;
+continue;
+}
+if(newAccount.id != null && oldAccountsMap!=null
+&& oldAccountsMap.get(newAccount.id)!=null){ //update scenario
+// System.debug('Processing oldAccount with account_type_from_lead__c and Id values as ->'+oldAccountsMap.get(newAccount.id).account_type_from_lead__c+','+newAccount.id);
+if(newAccount.account_type_from_lead__c != oldAccountsMap.get(newAccount.id).account_type_from_lead__c){
+newAccount.type=newAccount.account_type_from_lead__c;
+}
+if(String.isBlank(newAccount.Type) ==true){
+newAccount.type=newAccount.account_type_from_lead__c;
+}
+}
+}//end of for loop
+}
+//AS-013046-Account Shipping Address standardization, will be called from before insert and before update
+public static void standardizeShippingAddress(List<Account> newAccounts, Map<Id, Account> oldMap,
+Map<Id, Account> newMap, String op)
+{
+// System.debug('Entered method standardizeShippingAddress with oldMap and newMap' + oldMap + ' : ' + newMap);
+if (System.isFuture())
+{//extremely important,only run for first time otherwise will get exception future cannot be called from future
+return;
+}
+//collects all leads which need to be evaluated for clean address
+List<Id> evaluateAddressAccountList = new List<Id>();
+for (Account newAccount:newAccounts)
+{
+boolean isEmptyAddress = AddressUtility.isEmptyAddress(newAccount, AddressUtility.AccountShippingFieldsMap);
+if (isEmptyAddress == null)
+{
+// System.debug('Address is null for incoming Account');
+continue;
+}
+InformaticaStandardAddress stdAddr = null;
+if (op.equals('INSERT'))
+{
+// System.debug('Coming in for first time insert without empty address for lead object:' + newAccount);
+evaluateAddressAccountList.add(newAccount.id);//this is called from after insert, so id will be there always
+}
+else if (op.equals('UPDATE'))
+{
+// System.debug('Coming in as update');
+Account oldAccount = oldMap.get(newAccount.id);
+boolean isAddressChanged = AddressUtility.isAddresssChanged(oldAccount, newAccount, AddressUtility.AccountShippingFieldsMap);
+// System.debug('isAddressChanged:' + isAddressChanged);
+if (isAddressChanged == true)
+{
+evaluateAddressAccountList.add(newAccount.id);//this is called from after insert/after update, so id will be there always
+}
+}
+//Call Informatica API and clean addresses
+}
+if(!evaluateAddressAccountList.isEmpty())
+{
+AddressUtility.cleanAccountShippingAddress(evaluateAddressAccountList);
+}
+}
+//Create Notes on Account Starategy Change
+public static void createNotesOnAccountStrategyupdate(List<Account> oldAccounts, List<Account> newAccounts,
+Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap)
+{
+List<ContentVersion> NotesList = new List<ContentVersion>();
+for (Account newAccount:newAccounts)  {
+//|| (newAccount.Account_Strategy__c != oldAccountsMap.get(newAccount.Id).Account_Strategy_Notes__c)
+if(newAccount.Account_Strategy_Notes__c != null && ((newAccount.Account_Strategy_Notes__c != oldAccountsMap.get(newAccount.Id).Account_Strategy_Notes__c)
+)){
+ContentVersion objCntNote = new ContentVersion();
+objCntNote.Title = newAccount.Account_Strategy__c;
+objCntNote.PathOnClient = objCntNote.Title + '.snote';
+objCntNote.VersionData = Blob.valueOf((newAccount.Account_Strategy_Notes__c).escapeHtml4());
+objCntNote.FirstPublishLocationId = newAccount.id;  // ParentId
+NotesList.add(objCntNote);
+//insert objCntNote;
+}
+}
+if(NotesList.size()>0) {
+// Schema.DescribeSObjectResult ds = ContentVersion.sObjectType.getDescribe();
+//if( ds.isCreateable() ){}
+insert NotesList;
+}
+}
+/* Commented Out for HRP - 10016 --> Start
 * JIRA Ticket: HRP - 795,
 * Description: Designate Drives in the System to Include or Exclude from Future Calendar Build
 public static void checkRolloverFlagUpdateAccessability( List<Account> oldAccounts, List<Account> newAccounts,Map<Id,Account> oldAccountsMap,Map<Id,Account> newAccountsMap){

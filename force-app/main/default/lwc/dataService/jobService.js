@@ -33,7 +33,7 @@ class jobService extends dataService {
           queryBuilder.addCondition({template: "sked_Drive__r.sked_Drive_Date__c >= {0}", value: query.startDate});
           queryBuilder.addCondition({template: "sked_Drive__r.sked_Drive_Date__c <= {0}", value: query.endDate});
       }
-      if (query.selectedDates && query.selectedDates.length) {
+       if (query.selectedDates && query.selectedDates.length) {
         queryBuilder.addCondition({ template: "sked_Drive__r.sked_Drive_Date__c IN {0}", value: query.selectedDates, type: "array" });
       }
       if (query.driveTypes && query.driveTypes.length) {
@@ -78,12 +78,13 @@ class jobQueryModel extends queryModelBase {
   endDate;
   startDate;
   assetTypes;
+
   selectedDates;
   driveTypes;
   driveOperationTypes;
   driveLocationIds;
   driveExcludedIds;
-  
+
   isSubDriveQuery;
   isVounteerRole;
   includeDeletedJobAllocs;

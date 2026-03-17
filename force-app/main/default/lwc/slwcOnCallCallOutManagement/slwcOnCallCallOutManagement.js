@@ -16,6 +16,8 @@ import * as slwcAvailator from 'c/slwcAvailator';
 import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from "c/slwcDateUtils";
 
+
+
 const STEP = {
   SEARCH: 1,
   SELECT_EVENT: 2,
@@ -646,7 +648,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       )
       .map(apr => apr.patternName)
       .filter(Boolean)
-  }  
+  }
+  
 
   initStepReplaceResource = () => {
     //Reset values

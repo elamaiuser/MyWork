@@ -637,6 +637,32 @@ global virtual class skedRacController extends skedBaseController {
     }
     
     @remoteAction
+    global static skedRemoteResultModel getCollectionOperationTimeBlocks(getCollectionOperationTimeBlocksRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        try {
+            skedCollectionOpTimeBlockService.queryModel query = new skedCollectionOpTimeBlockService.queryModel();
+            query.collectionOperationIds = request.collectionOperationIds;
+            query.endDate = request.endDate;
+            query.startDate = request.startDate;
+            
+            skedCollectionOpTimeBlockService service = new skedCollectionOpTimeBlockService();
+            List<Collection_Operation_Time_Block__c> records = (List<Collection_Operation_Time_Block__c>)service.query(query);
+            
+            List<skedModels.collectionOperationTimeBlock> collectionOperationTimeBlocks = new List<skedModels.collectionOperationTimeBlock>();
+            skedAutoMapper autoMapper = skedAutoMapper.instance;
+            for (Collection_Operation_Time_Block__c record : records) {
+                skedModels.collectionOperationTimeBlock collectionOperationTimeBlock = (skedModels.collectionOperationTimeBlock)skedAutoMapper.instance.mapTo(record, skedModels.collectionOperationTimeBlock.class);
+                collectionOperationTimeBlocks.add(collectionOperationTimeBlock);
+            } 
+            result.data = collectionOperationTimeBlocks;
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+        }
+        return result;
+    }
+    
+    @remoteAction
     global static skedRemoteResultModel saveAvailability(saveAvailabilityRequestModel request) {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
@@ -1329,7 +1355,7 @@ global virtual class skedRacController extends skedBaseController {
             sked__Resource__c skedResource = [
                 SELECT Id, sked__Primary_Region__c, sked_FCC_Code__c,
                 sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,
-                (SELECT Id, sked__Tag__r.Name
+                (SELECT Id, sked__Tag__r.Name 
                  FROM sked__ResourceTags__r
                  WHERE sked__Tag__r.sked__Type__c = :skedConstants.TAG_TYPE_ROLE
                  AND sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE
@@ -1459,7 +1485,6 @@ global virtual class skedRacController extends skedBaseController {
             skedAvailabilityService service = (skedAvailabilityService)skedServiceFactory.instance.resolve('sked__Availability__c');
             skedDataService.saveResult saveResult = service.saveUnavailability(request.availability);
             result.data = saveResult.success == FALSE ? saveResult.returnedData : request.model;
-
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = false;
         }
         catch (Exception ex) {

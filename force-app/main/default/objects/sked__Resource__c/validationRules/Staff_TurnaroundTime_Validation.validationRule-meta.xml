@@ -3,12 +3,12 @@
     <fullName>Staff_TurnaroundTime_Validation</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-(RecordType.Name =&#39;Staff&#39;),
+(RecordType.Name =&apos;Staff&apos;),
 ISBLANK(sked_Turnaround_Time__c),
 $Profile.Name &lt;&gt; &quot;System Administrator&quot;,
 $Profile.Name &lt;&gt; &quot;Global Admin&quot;,
 $Profile.Name &lt;&gt; &quot;Informatica Integration Users&quot;
 )</errorConditionFormula>
     <errorDisplayField>sked_Turnaround_Time__c</errorDisplayField>
-    <errorMessage>&#39;Turnaround Time&#39; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
+    <errorMessage>&apos;Turnaround Time&apos; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
 </ValidationRule>

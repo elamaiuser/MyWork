@@ -4,7 +4,6 @@ import { LINK_DRIVE_TYPE, RESOURCE_TYPE, MANUALLY_CREATED_FROM, DRIVE_CHANGE_REQ
    RESOURCE_ROLE, DRIVE_CHANGE_REQUEST_ITEM_TYPE, DRIVE_CONTENTION, DRIVE_CONTENTION_RESOLUTION, 
    JOB_ALLOCATION_STATUS, DRIVE_APPROVAL_STATUS, OPERATION_DRIVE_LIMIT_TYPE, SKIP_BEST_VEHICLE_CALCULATION, 
    DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION} from 'c/slwcConstants';
-   
 import { DateTime } from 'c/luxon';
 import { isNullOrEmpty, parseJSON, getTravelTimeIndexKey, generateUUID } from 'c/slwcUtils';
 import { territoryCollectionOperationQueryModel, territoryCollectionOperationService } from 'c/dataService';
@@ -51,12 +50,12 @@ class DriveHelper {
       (loginUser.profileName.startsWith('APS'));
   }
 
-  isOnlyAPSUser(loginUser) {
-    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS');
-  }
-
   isAPSAdmin(loginUser) {
     return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS Admin');
+  }
+
+  isOnlyAPSUser(loginUser) {
+    return loginUser && loginUser.profileName && loginUser.profileName.startsWith('APS');
   }
 
   isAPSManagement(loginUser) {
@@ -604,7 +603,7 @@ class DriveHelper {
     if (driveTags.accountTags && driveTags.accountTags.length) {
       driveTags.accountTags.forEach((at) => {
         if (at.required) {
-          let resourceTypes = at.tag.resourceType;
+          let resourceTypes = at.tag.resourceType ? at.tag.resourceType.split(';') : [];
           if (resourceTypes.length === 0 || resourceTypes.includes(ASSET_TYPE.VEHICLE)) {
             vehicleTags.push(at.tag);
           }
@@ -614,7 +613,7 @@ class DriveHelper {
     if (driveTags.locationTags && driveTags.locationTags.length) {
       driveTags.locationTags.forEach((lt) => {
         if (lt.required) {
-          let resourceTypes = lt.tag.resourceType;
+          let resourceTypes = lt.tag.resourceType ? lt.tag.resourceType.split(';') : [];
           if (resourceTypes.length === 0 || resourceTypes.includes(ASSET_TYPE.VEHICLE)) {
             vehicleTags.push(lt.tag);
           }
@@ -642,7 +641,7 @@ class DriveHelper {
             item.fixedSiteOperationType !== drive.operationType) return;
           
           if (item.roleTimeDetailType == 'Global') {
-            let resourceRoleGroups = item.resourceRoleGroup;
+            let resourceRoleGroups = item.resourceRoleGroup.split(';');
             resourceRoleGroups.forEach((resourceRoleGroup) => {
               let resourceRoles = allResourceRoleGroups[resourceRoleGroup] || [];
               resourceRoles.forEach((resourceRole) => {
@@ -658,7 +657,7 @@ class DriveHelper {
             item.fixedSiteOperationType !== drive.operationType) return;
             
           if (item.roleTimeDetailType == 'Collection Operation') {
-            let resourceRoleGroups = item.resourceRoleGroup;
+            let resourceRoleGroups = item.resourceRoleGroup.split(';');
             resourceRoleGroups.forEach((resourceRoleGroup) => {
               let resourceRoles = allResourceRoleGroups[resourceRoleGroup] || [];
               resourceRoles.forEach((resourceRole) => {
@@ -672,7 +671,7 @@ class DriveHelper {
 
       if (roleTimeData.roleTimeVariances && roleTimeData.roleTimeVariances.length) {
         roleTimeData.roleTimeVariances.forEach((item) => {
-          let resourceRoleGroups = item.resourceRoleGroup || [];
+          let resourceRoleGroups = item.resourceRoleGroup.split(';');
           resourceRoleGroups.forEach((resourceRoleGroup) => {
             if (!roleGroupTimeVarianceMap[resourceRoleGroup]) {
               roleGroupTimeVarianceMap[resourceRoleGroup] = [];
@@ -785,6 +784,7 @@ class DriveHelper {
           startTime: true,
           endTime: true,
           driveSite: true,
+          timeBlock: true,
           projectedRegisteredDonors: true,
           driveShiftsMetadata: true,
           driveShiftsConfiguration: true,
@@ -812,6 +812,7 @@ class DriveHelper {
             startTime: true,
             endTime: true,
             driveSite: true,
+            timeBlock: true,
             projectedRegisteredDonors: true,
             driveShiftsMetadata: true,
             driveShiftsConfiguration: true, 
@@ -846,6 +847,7 @@ class DriveHelper {
             volunteerJobs: false,
             operationNotes: false,
             linkedDrives: false,
+            timeBlock: false,
             aptQuantity: isOnlyAPSUser ? false : true,
             mobileDriveVehicesInput: false,
             redcrossVolunteerRequired: isOnlyAPSUser || isAdminUser ? false : true,
@@ -869,6 +871,7 @@ class DriveHelper {
       startTime: isReadonly,
       endTime: isReadonly,
       driveSite: isReadonly,
+      timeBlock: isReadonly,
       projectedRegisteredDonors: isReadonly,
       driveShiftsMetadata: isReadonly,
       driveShiftsConfiguration: isReadonly,
@@ -904,6 +907,7 @@ class DriveHelper {
           fieldReadonlyMap.driveShiftsConfiguration = false;
           fieldReadonlyMap.driveShifts = false;
           fieldReadonlyMap.redcrossVolunteerRequired = false;
+          fieldReadonlyMap.timeBlock = false;
         }
         
         if(isAPSUser || isManufacturingUser) {
@@ -987,7 +991,7 @@ class DriveHelper {
     }
 
     let fieldsToCheckChanges = [];
-    driveChangeRequest.driveChangeRequestItems?.find(dcrItem => {
+    driveChangeRequest.driveChangeRequestItems.find(dcrItem => {
       if(dcrItem.type !== DRIVE_CHANGE_REQUEST_ITEM_TYPE.CHANGE) return;
 
       const mapping = autoMapper.mappingConfigContainerInstance.getMappingConfig(dcrItem.objectApiName);
@@ -1826,13 +1830,21 @@ class DriveHelper {
   calculateStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
     timezoneSidId 
-  }, ignoreLunchBreak = false) {
+  }, { ignoreLunchBreak = false, useDriveShift = false } = {}) {
     const resourceRoleCapacityFieldMap = {
       'Driver': 'driverCapacity',
       'Driver Support': 'driverSupportCapacity',
       '2RBC': 'x2RbcStaffCapacity',
       'Charge': 'chargeCapacity',
       'VP/HH': 'vpHhCapacity'
+    }
+    let lunchBreakSettings = driveShiftMetadata.lunchBreakSettings;
+    if (useDriveShift) {
+      const driveShift = drive.driveShifts?.find(item => item.driveShiftMetadata.key === driveShiftMetadata.key);
+      if (driveShift) {
+        lunchBreakSettings.lunchBreak = driveShift.lunchBreak;
+        lunchBreakSettings.lunchBreakBeforeDrawHours = driveShift.lunchBreakBeforeDrawHours;
+      }
     }
 
     const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
@@ -1855,6 +1867,9 @@ class DriveHelper {
       let dualRole = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
+        if (resourceRole === 'VP/HH') {
+          noOfResources = data.vphhQuantity || 0;
+        }
         dualRole = data.dualRole;
       }
 
@@ -1967,6 +1982,7 @@ class DriveHelper {
     const resourceQuantity = mapResourceQuantity.get(driveShiftMetadata.key);
     let staffCount = 0;
     Array.from(resourceQuantity.keys()).forEach(resourceRole => {
+      if(!resourceRole) return;
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       if(isObject(data)) {
@@ -2050,7 +2066,7 @@ class DriveHelper {
 
     const _setTags = (locationTag) => {
       let tag = locationTag.tag;
-      let resourceTypes = tag.resourceType || [];
+      let resourceTypes = tag.resourceType ? tag.resourceType.split(';') : [];
       let systemCreated = !!locationTag.systemCreated;
       if(!resourceTypes.length) {
         resourceTypes = [ASSET_TYPE.VEHICLE, ASSET_TYPE.EQUIPMENT, RESOURCE_TYPE.PERSON]; //add to all resource type
@@ -2285,6 +2301,27 @@ class DriveHelper {
     return false;
   }
 
+  checkForChangesToDriveShifts(drive, backupDrive) {
+    if (drive.driveShifts.length !== backupDrive.driveShifts.length) {
+      return true;
+    }
+
+    let requiresAssetValidation = false;
+    for (let i = 0; i < drive.driveShifts.length; i++) {
+      let driveShift = drive.driveShifts[i];
+      let backupDriveShift = backupDrive.driveShifts[i];
+      
+      const triggeringFields = ['timeBlockId'];
+      triggeringFields.forEach(field => {
+        if (driveShift[field] !== backupDriveShift?.[field]) {
+          requiresAssetValidation = true;
+        }
+      });
+    }
+    
+    return requiresAssetValidation;
+  }
+
   findDriveLimitByDay = (dateIso, driveLimits = [], type = null) => {
     if (!dateIso) return null;
 
@@ -2297,7 +2334,7 @@ class DriveHelper {
 
       return limit.type === type;
     }).forEach(item => {
-      const daysOfWeek = item.daysOfWeek || [];
+      const daysOfWeek = (item.daysOfWeek || '').split(';');
       const isDateRangeValid = (!item.effectiveStartDate || item.effectiveStartDate <= dateIso) && (!item.effectiveEndDate || dateIso <= item.effectiveEndDate);
       const isDayOfWeekValid = daysOfWeek.includes(dayOfWeek);
       const isOverrided = (item.operationDriveLimitOverrides || []).find(item => item.date == dateIso);
@@ -2335,7 +2372,7 @@ class DriveHelper {
         [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: [DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY]
       };
 
-      const driveContentionResolutions = drive.contentionResolution || [];
+      const driveContentionResolutions = drive.contentionResolution ? drive.contentionResolution.split(';') : [];
       const contentionOverrided = contentionResolutionMap[contention].find(contentionResolution => driveContentionResolutions.includes(contentionResolution));
       return !!contentionOverrided;
     }
@@ -2415,7 +2452,6 @@ class DriveHelper {
         noOfCurrentDrives: noOfConfirmedDrives,
         timeBlockValidations
       }
-
       const isDriveLimitViolated = !isNullOrEmpty(driveLimit) && driveLimit <= noOfConfirmedDrives;
       const isTimeBlockDriveLimitViolated = timeBlockValidations.find(validation => !validation.passed);
 
@@ -2673,7 +2709,6 @@ class DriveHelper {
         noOfCDLRequested,
         timeBlockValidations
       }
-
       const isCDLequestedViolated = noOfCDLRequested > 0 && !isNullOrEmpty(operationalLimit) && sameDateMobileDrivesCDLAllocated + noOfCDLRequested > operationalLimit
       const isTimeBlockCDLRequestedViolated = timeBlockValidations.find(validation => !validation.passed);
 
@@ -2877,6 +2912,7 @@ class DriveHelper {
       let mapStaffingConstraintByTimeBlockId = new Map();
       const timeBlockIds = [];
       const mapTimeBlockById = new Map();
+
       drive.driveShifts.forEach((driveShift) => {
         if(driveShift.timeBlockId) {
           if(!timeBlockIds.includes(driveShift.timeBlockId)) {
@@ -2916,6 +2952,7 @@ class DriveHelper {
       sameDateActivities.forEach((sameDateActivity) => {
         const timeBlockId = sameDateActivity.timeBlockId;
         let staffQuantity = 0;
+
         if(this.isFixedSiteDrive(drive)) {
           staffQuantity = sameDateActivity.fixedSiteStaffQuantity || 0;
         } else {
@@ -2976,6 +3013,7 @@ class DriveHelper {
         staffAvailable: totalStaffConstraints - sameDateDrivesStaffRequested - sameDateNceStaffRequested,
         timeBlockValidations
       }
+      
       result.violated = isStaffRequestedViolated || isTimeBlockStaffRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
       return result;
@@ -3360,7 +3398,11 @@ class DriveHelper {
     } else if (job.assetType) {
       return true;
     } else if (job.volunteerRole) { 
+      if(this.isMobileDrive(drive)) {
+        return false;
+      } else {
         return ['Donor Ambassador'].includes(job.volunteerRole);
+      }
       }
 
     return false;
@@ -3402,6 +3444,7 @@ class DriveHelper {
 
     currentDrive.driveShifts?.forEach((driveShift, driveShiftIndex) => {
       driveShift.jobs?.forEach(job => {
+        if(job.isManuallyCreated && job.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
         const isSystemGenerated = this.isSystemRole(job, currentDrive);
         if(!isSystemGenerated || !job.resourceRole) return;
 
@@ -3445,6 +3488,7 @@ class DriveHelper {
 
     backupDrive.driveShifts?.forEach((backupDriveShift, backupDriveShiftIndex) => {
       backupDriveShift.jobs?.forEach(backupJob => {
+        if(backupJob.isManuallyCreated && backupJob.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) return;
         const isSystemGenerated = this.isSystemRole(backupJob, backupDrive);
         if(!isSystemGenerated || !backupJob.resourceRole) return;
 
@@ -3608,7 +3652,12 @@ class DriveHelper {
         jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.procedureType === job.procedureType);
       }
       else {
-        jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
+        //jobFound = allJobs.find(item => this.isJobsSameRoles(item, job));
+        if(job.isManuallyCreated) {
+          jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && item.isManuallyCreated && item.manuallyCreatedFrom === job.manuallyCreatedFrom);
+        } else {
+          jobFound = allJobs.find(item => this.isJobsSameRoles(item, job) && !item.isManuallyCreated);
+        }
       }
     } else if (job.assetType) {
       if (job.assetType === ASSET_TYPE.EQUIPMENT) {
@@ -3806,24 +3855,6 @@ class DriveHelper {
     return allRolesValid;
   }
 
-  checkResourceQuantityMapContainsAnyManuallyChangedDualRole(resourceQuantityMap) {
-    if (!resourceQuantityMap) return false;
-
-    let found = false;
-    resourceQuantityMap.forEach((item, resourceRole) => {
-        if (found) return; // Exit early if already found
-
-        const quantityValid = resourceRole === 'VP/HH' ? item.vphhQuantity > 0 : item.quantity > 0;
-        if (!quantityValid) return;
-
-        if (item.isCreatedOrUpdatedViaDualRoleChange) {
-            found = true;
-        }
-    });
-
-    return found;
-  }
-
   getValidRolesInResourceQuantityMap(resourceQuantityMap) {
     if(!resourceQuantityMap) return false;
 
@@ -3870,7 +3901,6 @@ class DriveHelper {
           }
         })
       }
-      
       if(remainingQuantity2 > 0) {
         jobsToUpdate.push({
           previousJob: job2,
@@ -3885,7 +3915,6 @@ class DriveHelper {
           previousJob: job2
         });
       }
-    
       return {
         jobsToCreate,
         jobsToUpdate,
@@ -3914,7 +3943,6 @@ class DriveHelper {
           }
         })
       }
-
       jobsToUpdate.push({
         previousJob: job2,
         newJob: {

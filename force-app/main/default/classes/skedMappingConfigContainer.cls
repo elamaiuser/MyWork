@@ -487,8 +487,8 @@ public class skedMappingConfigContainer {
             mappingConfig.readonlyFields.add('Name');
             return mappingConfig;
         }
-    }
-
+    }    
+    
     public class collectionOperationTimeBlockMappingConfigFactory extends mappingConfigFactory {
         public override mappingConfigModel process() {
             mappingConfigModel mappingConfig = new mappingConfigModel();

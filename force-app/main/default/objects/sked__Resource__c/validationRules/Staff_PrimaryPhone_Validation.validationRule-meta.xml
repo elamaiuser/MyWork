@@ -3,12 +3,12 @@
     <fullName>Staff_PrimaryPhone_Validation</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-(RecordType.Name =&#39;Staff&#39;),
+(RecordType.Name =&apos;Staff&apos;),
 ISBLANK(sked__Primary_Phone__c),
 $Profile.Name &lt;&gt; &quot;System Administrator&quot;,
 $Profile.Name &lt;&gt; &quot;Global Admin&quot;,
 $Profile.Name &lt;&gt; &quot;Informatica Integration Users&quot;
 )</errorConditionFormula>
     <errorDisplayField>sked__Primary_Phone__c</errorDisplayField>
-    <errorMessage>&#39;Primary Phone&#39; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
+    <errorMessage>&apos;Primary Phone&apos; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
 </ValidationRule>

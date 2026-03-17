@@ -3216,9 +3216,9 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                             oppField.Parent_Template_Id = null;
                         }//HRP-10312 end
                     }
-                    if(data.containsKey('Cancellation_Detail__c') == true) {
-                        if(data.get('Cancellation_Detail__c') != null && oppRec.Cancellation_Detail__c != null && doc.sked_Cancellation_Detail__c != oppField.Cancellation_Detail) {
-                            oppField.Cancellation_Detail = doc != null ? doc.sked_Cancellation_Detail__c : oppRec.Cancellation_Detail__c;
+                    if(data.containsKey('Cancellation_Detail__c')) {
+                        if(data.get('Cancellation_Detail__c') != null && oppRec.Cancellation_Detail__c != null) {
+                            oppField.Cancellation_Detail = (doc != null && doc.sked_Cancellation_Detail__c != oppField.Cancellation_Detail) ? doc.sked_Cancellation_Detail__c : oppRec.Cancellation_Detail__c;
                         }
                         else {
                             oppField.Cancellation_Detail = '';
@@ -5270,4 +5270,15 @@ opp.StageName = 'Closed';
         }
     } 
     //HRP-701 --> Ends Here
+
+    //HRP-7470
+    public static void createPrimaryContactRoleAfterTemplateCreation(List<Opportunity> newOppList) {
+        List<Opportunity> templates = new List<Opportunity>();
+
+        for(Opportunity opp : newOppList) {
+            if(opp.Is_Template__c) templates.add(opp);
+        }
+
+        if(!templates.isEmpty()) TemplateService.createPrimaryContactDriveServiceRole(templates);
+    }
 }

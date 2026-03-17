@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">    
+	<types>
+        <members>slwcAppointmentModal</members>       
+		<members>slwcDriveGenerator</members>
+        <members>slwcDriveManagement</members>
+        <members>slwcLockAppointmentModal</members>
+        <members>slwcShiftSlots</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <version>63.0</version>
+</Package>

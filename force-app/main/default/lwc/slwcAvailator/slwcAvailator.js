@@ -333,8 +333,6 @@ class SlwcAvailator {
         item.latitude = item.job.latitude;
         item.longitude = item.job.longitude;
         item.driveName = item.job.driveName;
-
-        console.log(' item.driveName2->'+item.job.driveName);
         if (item.startWithTravelTime) {
           item.start = item.startWithTravelTime;
         }
@@ -1834,13 +1832,11 @@ class SlwcAvailator {
                 if(!resourceTag.tag) return;
 
                 const tagStartDateValid = resourceTag.startDate <= job.driveDate;
-                //HRP-10970 - Updated tagRestricted logic to check only restrictionStartDate is defined before comparing dates
                 const tagRestricted = isResourceTagRestricted(resourceTag, {
                   startDate: job.driveDate,
                   endDate: job.driveDate
                 })
 
-                //HRP-10970 ended
                 if (tagStartDateValid && !tagRestricted) {
                   validTagNames.push(resourceTag.tag.name);
                 } else {
@@ -1916,7 +1912,7 @@ class SlwcAvailator {
 
               for (let i = 0; i < dateSlotEvents.length; i++) {
                 let event = dateSlotEvents[i];
-                if(exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
+                if(!!event.id && exceptionLog.find(item => item?.availabilityId === event.id || item?.conflictedJobAllocationId === event.id || item?.activityId === event.id)) continue;
                 
                 if(isEventTransformationNeeded) {
                   let diff = this.dateUtils.diffDays(event.startJS, event.finishJS);

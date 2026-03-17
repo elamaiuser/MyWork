@@ -37,66 +37,81 @@ public with sharing class AccountStatusUpdateHelper
                 accWithDaysSinceLastDrive.put(acc.Id,daysSinceLastDrive);
             }
         }
-        
-        for(Account acc: accOppFuture)
-        {
-            for(opportunity opp : acc.opportunities)
-            {
-                //HRP-1982 Update Account Status to Active when opp is closed
-                if(opp.StageName == 'Closed'){
+
+        List<Account> accountsToUpdate = new List<Account>();
+        Date today = System.today();
+
+        // Pull Accounts with Opportunities
+        List<Account> accWithOpps = [
+            SELECT Id, 
+                    Account_Status__c, 
+                    CreatedDate,
+                   (SELECT Id, 
+                            Drive_Date__c, 
+                            StageName, 
+                            DriveStatus__c, 
+                            Is_Template__c
+                    FROM Opportunities
+                    WHERE Is_Template__c = FALSE
+                    AND StageName != :BSF_Constants.STAGE_CANCELLED
+                    ORDER BY Drive_Date__c DESC)
+            FROM Account
+            WHERE Id IN :accountIds
+        ];
+
+        for (Account acc : accWithOpps) {
+
+            if (acc.Opportunities.isEmpty()) {
+                Integer monthsOld = acc.CreatedDate.date().monthsBetween(today);
+
+                if (monthsOld <= 12 && acc.Account_Status__c != 'Active') {
                     acc.Account_Status__c = 'Active';
-                    accToUpdate.add(acc);
+                    accountsToUpdate.add(acc);
+                }else if (monthsOld >= 13 && monthsOld <= 24 && acc.Account_Status__c != 'Inactive') {
+                    acc.Account_Status__c = 'Inactive';
+                    accountsToUpdate.add(acc);
+                }else if (monthsOld > 24 && acc.Account_Status__c != 'Lapsed') {
+                    acc.Account_Status__c = 'Lapsed';
+                    accountsToUpdate.add(acc);
                 }
-                if(opp.Drive_Date__c >= tDay && acc.Account_Status__c != 'Defunct' && acc.Account_Status__c != 'Lost'
-                   && opp.StageName == 'Closed')
-                {
-                    Integer daysUntilNextClosedDrive = opp.Drive_Date__c.daysBetween(tDay);
-                    accWithDaysUntilNextClosedDrive.put(opp.AccountId,daysUntilNextClosedDrive);
-                }
-                else if(opp.Drive_Date__c == tDay && (acc.Account_Status__c == 'Defunct' || acc.Account_Status__c == 'Lost')
-                        && opp.StageName == 'Discovery' && acc.Account_Status__c != 'Reactivate')
-                {
-                    acc.Account_Status__c 		  = 'Reactivate';
-                    acc.Defunct_Effective_Date__c = null;
-                    acc.Lost_Reason__c			  = null;
-                    accToUpdate.add(acc);
-                }
-                accFutureOppMap.put(opp.AccountId,opp);
+                continue;
             }
-        }
-        
-       
-        for(Account acc: accOppFuture)
-        {
-            integer lastDrive;
-            integer nextDrive;
-            if(accWithDaysSinceLastDrive.get(acc.id)!=null){lastDrive = -accWithDaysSinceLastDrive.get(acc.id);}
-            if(accWithDaysUntilNextClosedDrive.get(acc.id)!=null){nextDrive = accWithDaysUntilNextClosedDrive.get(acc.id);}
-            system.debug(acc.id);
-            system.debug(lastDrive);
-            system.debug(nextDrive);
-            if(!accWithDaysSinceLastDrive.isEmpty() || !accWithDaysUntilNextClosedDrive.isEmpty() )
-            {
-                 system.debug('here');
-                if((nextDrive != null || lastDrive != null) && (nextDrive == 0 || lastDrive < 366)
-                  && acc.Account_Status__c != 'Active')
-                {
-                    acc.Account_Status__c 		  = 'Active';
-                    acc.Defunct_Effective_Date__c = null;
-                    acc.Lost_Reason__c			  = null;
-                    accToUpdate.add(acc);
+
+            Opportunity latestCompletedDrive;
+            Opportunity futureDrive;
+
+            for (Opportunity opp : acc.Opportunities) {
+                if (opp.Drive_Date__c == null){
+                    continue;
+                }
+
+                if (opp.Drive_Date__c >= today && opp.DriveStatus__c != BSF_Constants.driveStatusComplete) {
+                    futureDrive = opp;
+                }
+
+                if (opp.DriveStatus__c == BSF_Constants.driveStatusComplete &&
+                    (latestCompletedDrive == null || opp.Drive_Date__c > latestCompletedDrive.Drive_Date__c)) {
+                    latestCompletedDrive = opp;
                 }
             }
-            if(!accWithDaysSinceLastDrive.isEmpty())
-            {
-                system.debug('here');
-                if(lastDrive != null && accFutureOppMap.get(acc.id) == null && lastDrive >= 732
-                   && acc.Account_Status__c != 'Lapsed' )
-                {
-                    acc.Account_Status__c 		  = 'Lapsed';
-                    acc.Defunct_Effective_Date__c = null;
-                    acc.Lost_Reason__c			  = null;
-                    accToUpdate.add(acc);
+
+            if (futureDrive != null && acc.Account_Status__c != 'Active') {
+                acc.Account_Status__c = 'Active';
+                accountsToUpdate.add(acc);
+            }else if (futureDrive != null && 
+                futureDrive.Drive_Date__c >= today &&
+                futureDrive.StageName == BSF_Constants.STAGE_DISCOVERY &&
+                (acc.Account_Status__c == 'Lost' || acc.Account_Status__c == 'Defunct')) {
+                acc.Account_Status__c = 'Reactivate';
+                accountsToUpdate.add(acc);
+            }else if (latestCompletedDrive != null) {
+                Integer monthsSinceLastDrive = latestCompletedDrive.Drive_Date__c.monthsBetween(today);
+
+                if (monthsSinceLastDrive <= 12) {
+                    if (acc.Account_Status__c != 'Active') {
+                        acc.Account_Status__c = 'Active';
+                        accountsToUpdate.add(acc);
+                    }
                 }
                 else if((lastDrive != null && accFutureOppMap.get(acc.id) == null && lastDrive > 366 && lastDrive < 732)
                          && acc.Account_Status__c != 'Inactive')
@@ -122,12 +137,19 @@ public with sharing class AccountStatusUpdateHelper
                 {
                     System.debug('Successfully updated Account status Account ID: ' + sr.getId());
                 }
-                else 
-                {        
-                    for(Database.Error err : sr.getErrors()) 
-                    {System.debug('The Error in updating the Account Status is : '+err.getStatusCode() + ': ' + err.getMessage());}
+                else if (monthsSinceLastDrive > 24) {
+                    if (acc.Account_Status__c != 'Lapsed') {
+                        acc.Account_Status__c = 'Lapsed';
+                        accountsToUpdate.add(acc);
+                    }
                 }
             }*/
+        }
+
+        if (!accountsToUpdate.isEmpty()) {
+            Database.SaveResult[] srList = Database.update (accountsToUpdate,false);
+            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(srList, 'updating Account Status to Inactive','AccountStatusUpdateHelper','updateAcc','Error','Error in updating Account Status to Inactive');
+            InsertBsfErrorLog.insertBsfErrors(logList);
         }
     }
 }

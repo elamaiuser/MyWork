@@ -110,6 +110,16 @@ global class skedSetting {
         }
     }
 
+    private skedJAPostProcessBatchConfigSetting jaPostProcessBatchConfigSetting;
+    public skedJAPostProcessBatchConfigSetting jaPostProcessBatchConfig {
+        get {
+            if(jaPostProcessBatchConfigSetting == NULL) {
+                jaPostProcessBatchConfigSetting = new skedJAPostProcessBatchConfigSetting();
+            }
+            return jaPostProcessBatchConfigSetting;
+        }
+    }
+
     /*********************************************************** Singleton stuffs ***********************************************************/
     private static skedSetting mInstance = null;
 
@@ -424,6 +434,7 @@ global class skedSetting {
         public boolean enableManualRefreshBanner;
         public integer maxTravelTimeIndexItemsForPeriodicRefresh;
         public integer coGroupIndexRefreshPriority;
+        public string travelTimeRefreshEndpoint;
         
         public skedTravelTimeManager() {
             sked_Travel_Time_Manager__c setting = sked_Travel_Time_Manager__c.getOrgDefaults();
@@ -435,6 +446,7 @@ global class skedSetting {
             this.enableManualRefreshBanner = setting.sked_Enable_Manual_Refresh_Banner__c;
             this.maxTravelTimeIndexItemsForPeriodicRefresh = setting.sked_Max_TTI_Items_For_Periodic_Refresh__c != NULL ? integer.valueOf(setting.sked_Max_TTI_Items_For_Periodic_Refresh__c) : 10000;
             this.coGroupIndexRefreshPriority = setting.sked_CO_Group_Index_Refresh_Priority__c != NULL ? integer.valueOf(setting.sked_CO_Group_Index_Refresh_Priority__c) : 1000;
+            this.travelTimeRefreshEndpoint = setting.sked_TTI_Refresh_Endpoint__c;
         }
     }
 
@@ -452,8 +464,20 @@ global class skedSetting {
             this.maxRetries = setting.sked_Maximum_Retries__c;
             this.stuckThresholdMins = setting.sked_Stuck_Threshold_Minutes__c;
             this.rescheduleIntervalMins = setting.sked_Reschedule_Interval_Minutes__c;
-        }
+        } 
+    }
 
+    public class skedJAPostProcessBatchConfigSetting {
+        public integer maxRetries;
+        public integer allowedNumberOfJobsInFlexQueue;
+        public integer rescheduleIntervalSeconds;
+
+        public skedJAPostProcessBatchConfigSetting() {
+            sked_JA_Post_Process_Config__c setting = sked_JA_Post_Process_Config__c.getOrgDefaults();
+            this.allowedNumberOfJobsInFlexQueue = setting.sked_Allowed_No_of_Jobs_in_Flex_Queue__c.intValue();
+            this.maxRetries = setting.sked_Allowed_Maximum_Retries__c.intValue();
+            this.rescheduleIntervalSeconds = setting.sked_Reschedule_Interval_Sec_Flex_Queue__c.intValue();
+        } 
     }
 
     /*********************************************************** Abstract Classes ***********************************************************/
