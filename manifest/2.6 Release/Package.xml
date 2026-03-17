@@ -32,8 +32,10 @@
         <members>BSF_TaskCreationBatch_Test</members>
         <members>BSF_TaskPlanningService</members>
         <members>BSF_TaskPlanningWizardController</members>
+        <members>BSF_TemplateCDA_FutOppBatch_Test</members>
         <members>BSF_TemplateTaskPlanningCascadeBatch</members>
         <members>BSF_TravelTimePanelController</members>
+        <members>BSF_TravelTimePanelControllerTest</members>
         <members>BsfPortfolioSyncHelper_Test</members>
         <members>CollectionOpAvailabilityTriggerHandler</members>
         <members>CollectionOpAvailabilityTriggerService</members>
@@ -51,7 +53,9 @@
         <members>OpportunityServiceControllerTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>OpportunityTriggerTest</members>
+        <members>OpRecordStatusCorrectionTest</members>
         <members>PowerBIProxyController</members>
+        <members>ProductServiceTest</members>
         <members>SendBellNotificationDM4ATMExpiringTest</members>
         <members>SiteService</members>
         <members>SiteServiceTest</members>
@@ -72,7 +76,9 @@
         <members>UpdateTaskChecklistEventTrigger_Test</members>
         <members>UserCollOpQueAssngmentReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
+        <members>contactService_Test</members>
         <members>createPreDriveTaskBatch</members>
+        <members>populateDriveSupRoleBatch_Test</members>
         <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityHandler</members>
         <members>skedAvailabilityPatternResourceHandler</members>
@@ -109,6 +115,7 @@
         <members>skedStaffingBudgetCollOp_Test</members>
         <members>skedTestDataFactory</members>
         <members>skedTravelTimeIndexTravelTimeBatch</members>
+        <members>skedTravelTimeIndexTravelTimeBatch_Test</members>
         <members>skedTriggerUtils</members>
         <members>skedTriggerUtils_Test</members>
         <members>skedUntypedService_Test</members>
