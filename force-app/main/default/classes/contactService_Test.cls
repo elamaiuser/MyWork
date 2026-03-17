@@ -139,6 +139,8 @@ public class contactService_Test
     @isTest
     static void testRestrictInactiveContact()
     {
+        Test.startTest();
+        
         Account accObj = [Select Id from Account limit 1];
         Contact conObj = [select Id , Active__c from Contact limit 1];
         Opportunity oppObj = [Select Id, AccountId from Opportunity where AccountId =: accobj.Id];
@@ -150,25 +152,22 @@ public class contactService_Test
         insert accServiceRoleObj;
         
         // insert Drive Service Role
+        TriggerHandler.bypass('OpportunityContactRoleTriggerHandler');
         OpportunityContactRole driveServiceRoleObj = new OpportunityContactRole();
         driveServiceRoleObj.ContactId = conObj.Id;
         driveServiceRoleObj.OpportunityId = oppObj.Id;
         driveServiceRoleObj.Role = 'Primary Contact';
         insert driveServiceRoleObj;
+        TriggerHandler.clearBypass('OpportunityContactRoleTriggerHandler');
         
         conObj.Active__c = false;
         
-        try{
-            test.startTest();
+        try {
             update conObj;
-            test.stopTest();
-        }Catch(Exception ex)
-        {
-            String errormsg = ex.getMessage();
-            //system.debug('errormsg '+errormsg);
-            System.assert(errormsg.contains('Contact is associated with Active Template, Future Opportunities or Account. Please remove the association before inactivating the contact'));
+        } Catch(Exception ex) {
+            Assert.isTrue(ex.getMessage().contains('Contact is associated with Active Template, Future Opportunities or Account. Please remove the association before inactivating the contact'));
         }
-        
+        Test.stopTest();
     }
     
     @isTest
