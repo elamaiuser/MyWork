@@ -178,6 +178,10 @@
                 <behavior>Edit</behavior>
                 <field>sked__GeoLocation__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Next_Travel_Time_Refresh_Date__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
