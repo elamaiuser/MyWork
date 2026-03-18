@@ -185,11 +185,7 @@ public without sharing class DriveTriggerService {
 
         Set<Id> currentDriveIds = new Set<Id>();//HRP-16769 start
         Set<Id> currentOppIds = new Set<Id>();
-        Set<String> excludedStatuses = new Set<String>{
-            BSF_Constants.driveStatusCancel,
-            BSF_Constants.driveStatusComplete
-        };
-
+        
         for(sked_Drive__c drv : newList){
             if(drv.Id != null){
                 currentDriveIds.add(drv.Id);
@@ -203,7 +199,6 @@ public without sharing class DriveTriggerService {
                                                                                                         WHERE sked_Opportunity__c IN :currentOppIds
                                                                                                         AND Id NOT IN :currentDriveIds
                                                                                                         AND sked_Is_Surrogate__c = false
-                                                                                                        AND sked_status__c NOT IN : excludedStatuses
         ];
 
 		Set<Id> duplicateForOpps = new Set<Id>();
