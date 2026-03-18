@@ -7,7 +7,10 @@ private class dlrs_OpportunityTest
     @IsTest
     private static void testTrigger()
     {
-Test.startTest();
+        Test.startTest();
+        TriggerHandler.clearBypass('AccountTriggerHandler');
+        TriggerHandler.clearBypass('SiteTriggerHandler');
+
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
@@ -26,7 +29,7 @@ Test.startTest();
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
-         // insert Mobile Opp 1
+        // insert Mobile Opp 1
         Opportunity testMobileOpp1 = new Opportunity(
             Name = 'Test Opportunity 2',
             StageName = 'Draft',
@@ -49,6 +52,7 @@ Test.startTest();
         testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
         insert testMobileOpp1;
 
-Test.stopTest();
+        TriggerHandler.clearAllBypasses();
+        Test.stopTest();
     }
 }
