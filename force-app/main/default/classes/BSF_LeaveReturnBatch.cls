@@ -15,14 +15,10 @@
 //
 //           finish() queries resources whose anticipated leave return date
 //           has already passed and sets sked_Employment_Status__c = 'Active'.
-//           The return date field is intentionally preserved as an audit trail.
 //
 // Scheduling:
-//   String cronExp = '0 0 2 * * ?'; // 2 AM daily
+//   String cronExp = '0 0 3 * * ?'; // 3 AM daily
 //   System.schedule('Leave Return Sync', cronExp, new BSF_LeaveReturnBatch());
-//
-// Note: The Workday team is still finalising the Report_Run_Date filter
-//       parameter. See the TODO comment in buildEndpoint() below.
 // ─────────────────────────────────────────────────────────────────────────────
 public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper>, Database.AllowsCallouts, Database.Stateful, Schedulable {
 
@@ -32,6 +28,8 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // Workday JSON field name for the anticipated leave return date.
     // TODO: Update this constant once Workday finalises the field name.
     private static final String WD_RETURN_DATE_FIELD = 'Eastimated_Last_Day_Of_Leave';
+    private static final String WD_FIRST_DAY_OF_LEAVE_FIELD = 'First_Day_Of_Leave'; // Date field — used to determine if employee is currently mid-leave
+    private static final String WD_LAST_UPDATED_FIELD = 'Last_Functionally_Updated'; // DateTime field — Workday change detection key
 
     private static final Integer DEFAULT_BATCH_SIZE = 200;
 
@@ -46,13 +44,13 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
 
     // Additional staging fields needed by this batch beyond the base set
     private static final List<String> STAGING_FIELDS = new List<String>{
-        'Anticipated_Leave_Return_Date__c'
+        'Anticipated_Leave_Return_Date__c',
+        'Workday_Last_Functionally_Updated__c'
     };
 
-    // Additional resource fields needed by this batch beyond Id and sked_Employee_ID__c
+    // Additional resource fields needed by this batch beyond Id, sked_Employee_ID__c and sked_Employment_Status__c
     private static final List<String> RESOURCE_FIELDS = new List<String>{
-        'sked_Anticipated_Leave_Return_Date__c',
-        'sked_Employment_Status__c'
+        'sked_Anticipated_Leave_Return_Date__c'
     };
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -138,7 +136,22 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
 
         for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper wd : scope) {
 
+            String resourceEmploymentStatus;
             Date returnDate = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_RETURN_DATE_FIELD, JOB_LABEL);
+            DateTime lastFunctionallyUpdated = BSF_WorkdayBatchHelper.getExtraDateTime(wd, WD_LAST_UPDATED_FIELD, JOB_LABEL);
+            Date firstDayOfLeave = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_FIRST_DAY_OF_LEAVE_FIELD, JOB_LABEL);
+
+            if(returnDate == null || returnDate<System.today()){
+                System.debug(JOB_LABEL + ': Employee ' + wd.employeeId + ' has a return date of ' + returnDate + ' which is in the past — skipping');
+                continue;
+            }
+
+            // Set to 'Leave' only when the employee is currently mid-leave
+            // (firstDayOfLeave has passed AND returnDate is in the future).
+            // Remains null if the condition is not met — resource status is not changed.
+            if (firstDayOfLeave != null && firstDayOfLeave <= System.today() && returnDate > System.today()) {
+                resourceEmploymentStatus = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
+            }
 
             // ── Staging ──────────────────────────────────────────────────────
             if (stagingMap.containsKey(wd.employeeId)) {
@@ -146,7 +159,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                 BSF_Workday_Staging__c staging = stagingMap.get(wd.employeeId);
 
                 // Update only when something has actually changed
-                if (staging.Anticipated_Leave_Return_Date__c != returnDate) {
+                if (staging.Anticipated_Leave_Return_Date__c != returnDate || staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated) {
 
                     System.debug(JOB_LABEL + ': Updating staging for employee ' + wd.employeeId
                         + ' — return date: ' + returnDate);
@@ -157,9 +170,14 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                         fieldChanges += 'Anticipated_Leave_Return_Date: '
                             + staging.Anticipated_Leave_Return_Date__c + ' → ' + returnDate + '; ';
                     }
+                    if (staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated) {
+                        fieldChanges += 'Workday_Last_Functionally_Updated: '
+                            + staging.Workday_Last_Functionally_Updated__c + ' → ' + lastFunctionallyUpdated + '; ';
+                    }
 
                     BSF_WorkdayBatchHelper.applyCommonStagingUpdate(staging, wd, fieldChanges);
                     staging.Anticipated_Leave_Return_Date__c = returnDate;
+                    staging.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
 
                     stagingToUpsert.add(staging);
 
@@ -181,6 +199,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                     '1st time leave synced from Workday'
                 );
                 newRec.Anticipated_Leave_Return_Date__c = returnDate;
+                newRec.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
 
                 stagingToUpsert.add(newRec);
 
@@ -194,12 +213,14 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             if (resourceMap.containsKey(wd.employeeId)) {
                 sked__Resource__c r = resourceMap.get(wd.employeeId);
 
-                if (r.sked_Anticipated_Leave_Return_Date__c != returnDate) {
+                if (r.sked_Anticipated_Leave_Return_Date__c != returnDate || (resourceEmploymentStatus != null && r.sked_Employment_Status__c != resourceEmploymentStatus)) {
                     System.debug(JOB_LABEL + ': Updating Resource return date for employee '
                         + wd.employeeId + ' — return date: ' + returnDate);
 
                     r.sked_Anticipated_Leave_Return_Date__c = returnDate;
-                    //r.sked_Employment_Status__c = 'Leave'; TODO: need to check, that we need to set this or not
+                    if (resourceEmploymentStatus != null) {
+                        r.sked_Employment_Status__c = resourceEmploymentStatus;
+                    }
                     resourcesToUpdate.add(r);
                 }
             }
@@ -233,7 +254,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
         List<sked__Resource__c> toReactivate = [
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
-            WHERE  sked_Anticipated_Leave_Return_Date__c < :System.today()
+            WHERE  sked_Anticipated_Leave_Return_Date__c <= :System.today()
             AND    sked_Employment_Status__c = 'Leave'
         ];
 
@@ -266,11 +287,12 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // PRIVATE HELPERS
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Resolves the Workday endpoint from BSF_Workday_Leave_Config__c,
-    // falls back to the hardcoded URL, then appends format=json.
-    // TODO: Append Report_Run_Date parameter once Workday confirms the format:
-    //   endpoint = BSF_WorkdayBatchHelper.appendQueryParam(
-    //       endpoint, 'Report_Run_Date', String.valueOf(System.today()));
+    // Resolves the Workday endpoint from sked_Workday_XML_Template__mdt
+    // (DeveloperName = 'Leave_Report'), appends Report_Run_Date using
+    // the last successful run date as an incremental filter, then appends
+    // format=json. If the metadata record is missing or blank, endpoint will
+    // be null and appendQueryParam() will throw a NullPointerException —
+    // the metadata record must be deployed to all environments.
     private String buildEndpoint() {
         String endpoint;
         try {
@@ -290,9 +312,30 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
         }
 
         //TODO: The following line to append the Report_Run_Date filter once Workday confirms the expected format.
-        endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Report_Run_Date', '2026-01-01-08:00');
+        //endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Report_Run_Date', '2026-01-01-08:00');
+        Date filterDate = resolveFilterDate();
+        if (filterDate != null) {
+            endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Report_Run_Date', String.valueOf(filterDate));
+        }
         endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'format', 'json');
         return endpoint;
+    }
+
+    // Reads Last_Successful_Run_Date__c from BSF_Workday_Leave_Config__c and
+    // uses it as the Report_Run_Date filter sent to Workday. This makes the
+    // report incremental — Workday only returns records changed since the last
+    // successful run. Falls back to yesterday if the config is missing or blank,
+    // ensuring at least the previous day's changes are captured on first run.
+    private Date resolveFilterDate() {
+        try {
+            BSF_Workday_Leave_Config__c config = BSF_Workday_Leave_Config__c.getOrgDefaults();
+            if (config != null && config.Last_Successful_Run_Date__c != null) {
+                return config.Last_Successful_Run_Date__c;
+            }
+        } catch (Exception e) {
+            System.debug(JOB_LABEL + ': Error reading filter date from config — ' + e.getMessage());
+        }
+        return System.today().addDays(-1);
     }
 
     private Id getStagingRecordTypeId() {
