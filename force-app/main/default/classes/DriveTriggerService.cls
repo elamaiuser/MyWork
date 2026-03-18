@@ -15,7 +15,8 @@
  *  04/25/2024				 Raktim Ghosal				Populate Drive Lead / Charge (Supervisory Role) on Drive. (HRP-12493)
  *  08/19/2024				 Priti Jana					Logic for HRP-13056
  *  10/18/2024               Priti Jana                 Logic for HRP-9815
- *************************************************************************************************************************************************
+ *  03/17/2026               Krapy Tuli                 Logic for HRP-16769 to handle Concurrent transaction and fix Incorrect conditional logic for duplicate check
+ ********************************************************************************************************************************************************************
 */
 
 
@@ -177,38 +178,52 @@ public without sharing class DriveTriggerService {
     * HRP-11326 changes starts here
     */
     public static void validateOpportunity(Map<Id, sked_Drive__c> oldMap , List<sked_Drive__c> newList){
-        Map<Id, Integer> OpportunityMap = new Map<Id, Integer>();
+
         if(newList == null || newList.isEmpty()){
             return;
         }
+
+        Set<Id> currentDriveIds = new Set<Id>();//HRP-16769 start
+        Set<Id> currentOppIds = new Set<Id>();
+        
         for(sked_Drive__c drv : newList){
-            if(oldMap != null && !oldMap.isEmpty() && oldMap.containsKey(drv.Id)
-                    && oldMap.get(drv.Id).sked_Opportunity__c != null
-                    && oldMap.get(drv.Id).sked_Opportunity__c != drv.sked_Opportunity__c){
-                        drv.addError('BDO can not be changed/removed.');
-            }else if(drv.sked_Opportunity__c != null && !drv.sked_Is_Surrogate__c
-                    && (oldMap == null || oldMap.isEmpty() || (oldMap.containsKey(drv.Id)
-                    && oldMap.get(drv.Id).sked_Opportunity__c == null))){
-                        OpportunityMap.put(drv.sked_Opportunity__c,0);
+            if(drv.Id != null){
+                currentDriveIds.add(drv.Id);
+            }
+            if(drv.sked_Opportunity__c != null){
+                currentOppIds.add(drv.sked_Opportunity__c);
             }
         }
-        if(!OpportunityMap.isEmpty()){
-            for(AggregateResult ar : [SELECT Count(Id), 
-                                            sked_Opportunity__c 
-                                        FROM sked_Drive__c 
-                                        WHERE sked_Opportunity__c IN : OpportunityMap.keySet()
-                                        AND sked_Is_Surrogate__c = false
-                                        GROUP BY sked_Opportunity__c]){
-                OpportunityMap.put((Id)ar.get('sked_Opportunity__c'),Integer.valueOf(ar.get('expr0')));
-            }
-            for(sked_Drive__c drv : newList){
-                if(drv.sked_Opportunity__c != null && !drv.sked_Is_Surrogate__c
-                        && OpportunityMap.get(drv.sked_Opportunity__c) > 0
-                        && (oldMap == null || oldMap.isEmpty() || (oldMap.containsKey(drv.Id)
-                        && oldMap.get(drv.Id).sked_Opportunity__c == null))){
-                            drv.addError('DOC has been generated for this BDO.');
+
+        List<sked_Drive__c> existingDriveList = [SELECT Id, sked_Opportunity__c, sked_Is_Surrogate__c FROM sked_Drive__c
+                                                                                                        WHERE sked_Opportunity__c IN :currentOppIds
+                                                                                                        AND Id NOT IN :currentDriveIds
+                                                                                                        AND sked_Is_Surrogate__c = false
+        ];
+
+		Set<Id> duplicateForOpps = new Set<Id>();
+        for(sked_Drive__c drv : existingDriveList){
+            duplicateForOpps.add(drv.sked_Opportunity__c);
+        }//HRP-16769 end
+
+        for(sked_Drive__c drv : newList){
+
+            if(oldMap != null && oldMap.containsKey(drv.Id)){
+                sked_Drive__c oldDrv = oldMap.get(drv.Id);
+
+                if(oldDrv.sked_Opportunity__c != null 
+                && oldDrv.sked_Opportunity__c != drv.sked_Opportunity__c){
+
+                    drv.addError('BDO can not be changed/removed.');
+                    continue;
                 }
             }
+            //HRP-16769 start
+            if(drv.sked_Opportunity__c != null 
+            && !drv.sked_Is_Surrogate__c
+            && duplicateForOpps.contains(drv.sked_Opportunity__c)){
+				drv.addError('DOC has been generated for this BDO.');
+            }//HRP-16769 end
         }
     }
     /*
