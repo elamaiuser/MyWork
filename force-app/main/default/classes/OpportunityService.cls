@@ -5301,8 +5301,7 @@ opp.StageName = 'Closed';
             accountMap = new Map<Id, Account>([
                 SELECT Id, Planning_Path__c 
                 FROM Account 
-                WHERE Id IN :accountIds
-                WITH USER_MODE
+                WHERE Id IN :accountIds                
             ]);
         }
 
@@ -5312,8 +5311,7 @@ opp.StageName = 'Closed';
             templateMap = new Map<Id, Opportunity>([
                 SELECT Id, Planning_Path__c 
                 FROM Opportunity 
-                WHERE Id IN :templateIds
-                WITH USER_MODE
+                WHERE Id IN :templateIds                
             ]);
         }
 
