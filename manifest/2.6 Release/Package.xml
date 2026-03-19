@@ -22,7 +22,7 @@
         <members>BSF_Batch_TaxonomyEndDate_Test</members>        
         <members>BSF_Constants</members>
         <members>BSF_EmailNotification</members>
-        <members>BSF_EmailNotification_Test</members>        
+        <members>BSF_EmailNotification_Test</members>
         <members>BSF_TaskPlanningService</members>
         <members>BSF_TaskPlanningWizardController</members>
         <members>BSF_TemplateCDA_FutOppBatch_Test</members>
@@ -66,6 +66,7 @@
         <members>UserCollOpQueAssngmentReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>contactService_Test</members>
+        <members>dlrs_OpportunityTest</members>
         <members>populateDriveSupRoleBatch_Test</members>
         <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityHandler</members>
