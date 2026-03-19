@@ -8,8 +8,8 @@ private class dlrs_OpportunityTest
     private static void testTrigger()
     {
         Test.startTest();
-        TriggerHandler.clearBypass('AccountTriggerHandler');
-        TriggerHandler.clearBypass('SiteTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
 
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
