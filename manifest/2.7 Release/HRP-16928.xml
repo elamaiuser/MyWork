@@ -12,6 +12,11 @@
 		<name>Layout</name>
 	</types>
 	<types>
+		<members>Location_Record_Page</members>
+		<members>Location_Record_Page_for_Collection_Management_User</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>BSF_Access_Control_Rule.HRP_16928_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
 	</types>
