@@ -23,6 +23,9 @@ public class OpportunityTriggerTest
     static testMethod void testcheckAccept56DaysVoilation()
     {
         Test.startTest();
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
                 
@@ -41,42 +44,20 @@ public class OpportunityTriggerTest
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
-         // insert Mobile Opp 1
-        /*Opportunity testMobileOpp1 = new Opportunity(
-            Name = 'Test Opportunity 2',
-        	StageName = 'Draft',
-           	Type_of_Drive__c = 'Mobile',
-        	RecordTypeId =  Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId(),
-        	Drive_Name__c = 'Test Drive',
-        	Drive_Date__c = system.today().addDays(55),
-        	CloseDate = system.today(),
-        	Start_Time__c = Time.newInstance(10, 0, 0, 0),
-      		End_Time__c = Time.newInstance(15, 30, 0, 0),
-        	Flow_Start_Time_Field__c = '1000',
-        	Flow_End_Time_Field__c = '1530',
-        	WB_Projected_Procedures__c = 4,
-        	X2RBC_Projected_Procedures__c = 2,
-        	Anticipated_Registered_Donors__c = 25,
-            Online_Scheduling_Enabled__c = 'No'
-		);
-        testMobileOpp1.AccountId = testMobileAccount.Id;
-        testMobileOpp1.Drive_Site__c = testMobileSite.Id;
-        testMobileOpp1.Parent_Template_Id__c = testTemplate.Id;
-        insert testMobileOpp1;*/
-        
         // insert Mobile Opp 2
         Opportunity testMobileOpp2 = (Opportunity)mapTestData.get('MOBILE_OPP');
         testMobileOpp2.AccountId = testMobileAccount.Id;
         testMobileOpp2.Drive_Site__c = testMobileSite.Id;
         testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
+        
         try{
         	insert testMobileOpp2;
         }catch(Exception ex)
         {
             Assert.isTrue(ex.getMessage().contains('This drive date violates the 56 day rule.Please acknowledge.'));
         }
-        
-        
+     	
+        TriggerHandler.clearAllBypasses();
         Test.stopTest();    
     }
     
@@ -1102,6 +1083,10 @@ public class OpportunityTriggerTest
     
     static testmethod void testModifyTasksOnDriveDateChange()
     {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
@@ -1201,6 +1186,8 @@ public class OpportunityTriggerTest
         //oppList[0].Accepts_Automation__c = 'NO';
         Update oppList[0];
         
+        TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassInsertTriggers = false;
         Test.stopTest();        
     }
     
@@ -1591,7 +1578,11 @@ public class OpportunityTriggerTest
     }*/
     
     static testMethod void testTemplateActiveCheckValidation()
-    {        
+    {       
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
        
@@ -1626,6 +1617,8 @@ public class OpportunityTriggerTest
             Boolean expectedExceptionMsg =  ex.getMessage().contains('Template cannot be made inactive because of active related opportunities') ? true : false;
             Assert.areEqual(expectedExceptionMsg, true);
         }
+        TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassInsertTriggers = false;
         Test.stopTest();
     }
     
@@ -2341,6 +2334,9 @@ public class OpportunityTriggerTest
         {
             insert testDrdUser;
         }
+        
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
@@ -3163,6 +3159,9 @@ public class OpportunityTriggerTest
     }
     
     static testMethod void testbuildOppsByAccountIdMap() {
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
         
@@ -3181,15 +3180,18 @@ public class OpportunityTriggerTest
         testTemplate.Drive_Site__c = testMobileSite.Id;
         insert testTemplate;
         
+        Test.startTest();
+        
         // insert Mobile Opp 2
         Opportunity testMobileOpp2 = (Opportunity)mapTestData.get('MOBILE_OPP');
         testMobileOpp2.AccountId = testMobileAccount.Id;
         testMobileOpp2.Drive_Site__c = testMobileSite.Id;
         testMobileOpp2.Parent_Template_Id__c = testTemplate.Id;
         insert testMobileOpp2;
+        
         Map<Id, List<Opportunity>> oppMap = OpportunityService.buildOppsByAccountIdMap(new List<Opportunity>{testMobileOpp2});
-        system.debug('Opp: '+oppMap.get(testMobileAccount.Id));
         Assert.areEqual(oppMap.get(testMobileAccount.Id),testMobileOpp2);
-          
+        
+        Test.stopTest();  
     }
 }
