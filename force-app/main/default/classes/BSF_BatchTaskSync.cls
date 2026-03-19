@@ -69,6 +69,12 @@ global class  BSF_BatchTaskSync implements Database.Batchable<SObject>,Schedulab
         Map<Id,Id> orderIdOppIdMap = new Map<Id,Id>();
         Boolean marketTaskPresent=false;
         //HRP-12333 end
+        Id drdSystemUserId;
+        List<User> drdUsers = [SELECT Id, Name FROM User WHERE Name =:BSF_constants.DRDSystemUser AND IsActive = true LIMIT 1];
+        if(!drdUsers.isEmpty())
+        {
+            drdSystemUserId = drdUsers[0].Id;
+        }
         
         for(Task tk:scope)
         {
@@ -94,17 +100,7 @@ global class  BSF_BatchTaskSync implements Database.Batchable<SObject>,Schedulab
                 oppIdset.add(o.OpportunityId);
             }
         }
-        //HRP-12333 end
-        /*commented part of HRP-12333
-List<OpportunityTeamMember> oppteamlist = [Select Id,OpportunityId,TeamMemberRole,UserId from OpportunityTeamMember Where TeamMemberRole=:BSF_Constants.DISTRICT_MANAGER AND OpportunityId IN:oppIdset];
-Map<Id,OpportunityTeamMember> oppteammembermap = new Map<Id,OpportunityTeamMember>();
-for(OpportunityTeamMember oppteamem:oppteamlist){
-
-oppteammembermap.put(oppteamem.OpportunityId,oppteamem);
-}
-
-date date5=system.today()-5;
-commented part of HRP-12333*/
+        
         List<Opportunity> Opplist=[SELECT Id,AccountId,Drive_Date__c,Drive_site__c,ownerId,Account_Manager__c,(Select Id,OpportunityId,TeamMemberRole,UserId from OpportunityTeamMembers where opportunityId in:oppIdset) FROM Opportunity Where Id IN:oppIdset];// AND Drive_Date__c>=:date5];//HRP-12333 opportunity team child query
         Map<Id,List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id,List<OpportunityTeamMember>>();//HRP-12333
         Map<Id,Opportunity> oppIdMap = new Map<Id,Opportunity>();
@@ -130,8 +126,9 @@ commented part of HRP-12333*/
                 siteIdCollNameMap.put(sColl.sked_Site__c,sColl.sked_collection_operation__r.Name);
                 collNameSet.add(sColl.sked_collection_operation__r.Name+': DMDCR');
             }
-            
+            system.debug('collNameSet '+collNameSet);
             List<Group> queueList = [Select id,Name from Group where Name in:collNameSet];
+            system.debug('queueList '+queueList);
             for(Group grp:queueList)
             {
                 collNameQueIdMap.put(grp.name.subStringbefore(':'),grp.id);
@@ -172,58 +169,28 @@ commented part of HRP-12333*/
                     
                     
                 }
+                //HRP-16955 start
+                if(owner == null && drdSystemUserId != null)
+                {
+                    owner = drdSystemUserId;
+                }
+                //HRP-16955 end
                 
-                if(tsk.OwnerId!=owner)
+                if(owner != null && tsk.OwnerId!=owner)
                 {
                     tsk.OwnerId = owner;
                     updatedtasklist.add(tsk);
                 }
                 
             }
-            //HRP-12333 end
-            /* commented part of HRP-12333
-if(subjectassigntoMap.get(tsk.Subject)=='AM'){
-system.debug('entered 1');
-
-//already commented not part of HRP-12333
-//if(oppIdMap.containsKey(tsk.whatId) && oppIdMap.get(tsk.WhatId).Account_Manager__c !=oppIdMap.get(tsk.WhatId).ownerId && oppIdMap.get(tsk.WhatId).Drive_Date__c <system.today()){
-system.debug('entered 2');
-tsk.OwnerId=oppIdMap.get(tsk.WhatId).ownerId; 
-updatedtasklist.add(tsk);
-}else if(oppIdMap.containsKey(tsk.whatId) && oppIdMap.get(tsk.WhatId).Account_Manager__c != null){
-system.debug('entered3');
-tsk.OwnerId=oppIdMap.get(tsk.WhatId).Account_Manager__c;  
-updatedtasklist.add(tsk);
-}already commented not part of HRP-12333//
-
-if(oppIdMap.containsKey(tsk.whatId) && oppIdMap.get(tsk.WhatId).Account_Manager__c != null){
-system.debug('entered 2');
-tsk.OwnerId=oppIdMap.get(tsk.WhatId).Account_Manager__c; 
-updatedtasklist.add(tsk);
-}else if(oppIdMap.containsKey(tsk.whatId)){
-system.debug('entered3');
-tsk.OwnerId=oppIdMap.get(tsk.WhatId).ownerId;  
-updatedtasklist.add(tsk);
-}
-
-
-}
-else if(subjectassigntoMap.get(tsk.Subject)=='DM'){
-if(oppteammembermap.containsKey(tsk.WhatId) && oppteammembermap.get(tsk.WhatId).UserId!= null 
-&& oppteammembermap.get(tsk.WhatId).UserId!=tsk.ownerId){
-tsk.ownerId=oppteammembermap.get(tsk.WhatId).UserId;
-updatedtasklist.add(tsk);
-}
-
-}
-commented part of HRP-12333*/
             
         }
         
         
         if(updatedtasklist.size()>0)
         {
-            Database.SaveResult[] saveupdatedtasklist = Database.update(updatedtasklist);
+           // Database.SaveResult[] saveupdatedtasklist = Database.update(updatedtasklist); one bad record will not fail the whole batch chunk
+           Database.SaveResult[] saveupdatedtasklist = Database.update(updatedtasklist, false);
             List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(saveupdatedtasklist,'Task Sync','BSF_BatchTaskSync','execute','Error','Error in Syncing Task');
             InsertBsfErrorLog.insertBsfErrors(logList);
             System.debug('logList'+logList);

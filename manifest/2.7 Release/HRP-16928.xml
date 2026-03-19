@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>sked__Location__c.sked_Next_Travel_Time_Refresh_Date__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked__Location__c-Collections Management Profile Site Layout</members>
+		<members>sked__Location__c-DRD Profiles Site Layout</members>
+		<members>sked__Location__c-Fixed Site Layout</members>
+		<members>sked__Location__c-Mobile Site Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_16928_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+	<version>66.0</version>
+</Package>
