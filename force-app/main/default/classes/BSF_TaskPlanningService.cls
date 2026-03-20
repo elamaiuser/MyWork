@@ -429,12 +429,16 @@ public with sharing class BSF_TaskPlanningService {
 
         if (results instanceof List<Database.SaveResult>) {
             List<Database.SaveResult> srList = (List<Database.SaveResult>)results;
+            List<Database.SaveResult> failedSaves = new List<Database.SaveResult>(); 
             for (Database.SaveResult sr : srList) { 
                 if (!sr.isSuccess()) {
+                    failedSaves.add(sr);
                     errors.addAll(sr.getErrors()); 
                 }
             }
-            errorLogs = BSF_Utilities.createErrorLog(srList, context, className, 'handleDatabaseResults', 'Error', 'DML Save Error');
+            if (!failedSaves.isEmpty()) {
+                errorLogs = BSF_Utilities.createErrorLog(failedSaves, context, className, 'handleDatabaseResults', 'Error', 'DML Save Error');
+            }
         } 
         else if (results instanceof List<Database.DeleteResult>) {
             List<Database.DeleteResult> drList = (List<Database.DeleteResult>)results;
@@ -588,12 +592,20 @@ public with sharing class BSF_TaskPlanningService {
 
     private static GenerationContext setupContext(List<Planned_Task__c> plannedTasks, Boolean usePlatformEvent) {
         Set<Id> oppIds = new Set<Id>();
+        Set<Id> oppIdsToQuery = new Set<Id>();
         Set<String> taskTypes = new Set<String>();
+        List<String> routedTaskTypes = new List<String>{BSF_Constants.TASK_TYPE_PUBLICITY_ORDER_NOT_CREATED,
+                                                        BSF_Constants.TASK_TYPE_PUBLICITY_REVIEW_NEEDED};
 
         for (Planned_Task__c pt : plannedTasks) {
             if (pt.Related_Opportunity__c != null && pt.Status__c == BSF_Constants.PLANNED_TASK_STATUS_CONFIGURED) {
                 oppIds.add(pt.Related_Opportunity__c);
-                taskTypes.add(pt.Task_Definition__r.Task_Type__c);
+                if(String.isNotBlank(pt.Task_Definition__r.Task_Type__c)){
+                    taskTypes.add(pt.Task_Definition__r.Task_Type__c);
+                    if (routedTaskTypes.contains(pt.Task_Definition__r.Task_Type__c)) {
+                        oppIdsToQuery.add(pt.Related_Opportunity__c);
+                    }
+                }
             }
         }
 
@@ -605,6 +617,14 @@ public with sharing class BSF_TaskPlanningService {
         if(usePlatformEvent){
             ctx.peMapping = getDynamicPlatformEventFieldMapping();
         }
+        if (!oppIdsToQuery.isEmpty()) {
+            ctx.oppMap = new Map<Id, Opportunity>([
+                SELECT Id, No_Publicity_Needed__c, 
+                       (SELECT Id, Publicity_Approved__c FROM Orders) 
+                FROM Opportunity 
+                WHERE Id IN :oppIdsToQuery 
+            ]);
+        }
         return ctx;
     }
 
@@ -612,13 +632,20 @@ public with sharing class BSF_TaskPlanningService {
         Id ownerId = determineTaskOwner(pt.Task_Definition__r.Assigned_To__c, 
                                         ctx.roleHierarchyMap.get(pt.Related_Opportunity__c),
                                         ctx.fallbackHierarchyMap);
-        Task newTask = buildTask(pt, ctx.fieldMapping, ownerId);
-        System.debug(LoggingLevel.DEBUG, 'Built Task for Planned Task Id ' + pt.Id + ': ' + newTask);
-        if (usePlatformEvent) {
-            data.eventsToPublish.add(buildPlatformEvent(newTask, pt.Id, ctx.peMapping));
-        } else {
-            data.tasksToInsert.add(newTask);
-            data.indexMap.put(data.tasksToInsert.size() - 1, pt);
+        Task baseTask = buildTask(pt, ctx.fieldMapping, ownerId);
+        List<Task> finalTasks = dispatchTaskGeneration(pt, baseTask, ctx);
+        System.debug(LoggingLevel.DEBUG, 'Built Task for Planned Task Id ' + pt.Id + ': ' + finalTasks);
+        if(finalTasks.isEmpty()){
+            data.pTasksToUpdate.add(markProcessed(pt));
+        }else{
+            for (Task finalTask : finalTasks) {
+                if (usePlatformEvent) {
+                    data.eventsToPublish.add(buildPlatformEvent(finalTask, pt.Id, ctx.peMapping));
+                } else {
+                    data.tasksToInsert.add(finalTask);
+                    data.indexMap.put(data.tasksToInsert.size() - 1, pt);
+                }
+            }
         }
     }
 
@@ -634,7 +661,11 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!data.pTasksToUpdate.isEmpty()) {
-            handleDatabaseResults(Database.update(data.pTasksToUpdate, false), 'Planned Task Update');
+            Map<Id, Planned_Task__c> uniquePtsToUpdate = new Map<Id, Planned_Task__c>();
+            for (Planned_Task__c pt : data.pTasksToUpdate) {
+                uniquePtsToUpdate.put(pt.Id, pt);
+            }
+            handleDatabaseResults(Database.update(uniquePtsToUpdate.values(), false), 'Planned Task Update');
         }
     }
 
@@ -794,6 +825,59 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     // ============================================================================
+    // DYNAMIC TASK ROUTER (DISPATCHER)
+    // ============================================================================
+    
+    private static List<Task> dispatchTaskGeneration(Planned_Task__c pt, Task baseTask, GenerationContext ctx) {
+        String taskType = pt.Task_Definition__r.Task_Type__c;
+
+        if (taskType == BSF_Constants.TASK_TYPE_PUBLICITY_ORDER_NOT_CREATED) {
+            return handlePublicityOrderNotCreated(pt, baseTask, ctx.oppMap);
+            
+        } else if (taskType == BSF_Constants.TASK_TYPE_PUBLICITY_REVIEW_NEEDED) {
+            return handlePublicityReviewNeeded(pt, baseTask, ctx.oppMap);
+            
+        } 
+        // Add new Task Types here if the business needs.
+        
+        else {
+            return new List<Task>{ baseTask };
+        }
+    }
+
+    // ============================================================================
+    // SPECIFIC TASK HANDLERS
+    // ============================================================================
+
+    private static List<Task> handlePublicityOrderNotCreated(Planned_Task__c pt, Task baseTask, Map<Id, Opportunity> oppMap) {
+        Opportunity opp;
+        if (oppMap != null && !oppMap.isEmpty() && oppMap.containsKey(pt.Related_Opportunity__c)) { opp = oppMap.get(pt.Related_Opportunity__c); }
+        if (opp == null || opp.No_Publicity_Needed__c == true) { return new List<Task>(); }
+        if (opp.Orders != null && !opp.Orders.isEmpty()) { return new List<Task>(); }      
+        
+        return new List<Task>{ baseTask };
+    }
+
+    private static List<Task> handlePublicityReviewNeeded(Planned_Task__c pt, Task baseTask, Map<Id, Opportunity> oppMap) {
+        Opportunity opp;
+        if (oppMap != null && !oppMap.isEmpty() && oppMap.containsKey(pt.Related_Opportunity__c)) { opp = oppMap.get(pt.Related_Opportunity__c); }
+        if (opp == null || opp.No_Publicity_Needed__c == true) { return new List<Task>(); }
+        if (opp.Orders == null || opp.Orders.isEmpty()) { return new List<Task>(); }       
+
+        List<Task> tasksToCreate = new List<Task>();
+        
+        for (Order ord : opp.Orders) {
+            if (ord.Publicity_Approved__c == false) {
+                Task orderTask = baseTask.clone(false, true, false, false);
+                orderTask.put('Related_Order__c', ord.Id); 
+                tasksToCreate.add(orderTask);
+            }
+        }
+        
+        return tasksToCreate;
+    }
+
+    // ============================================================================
     // STANDARDTASKGENERATIONBATCH MAIN EXECUTE METHOD
     // ============================================================================
 
@@ -847,6 +931,7 @@ public with sharing class BSF_TaskPlanningService {
         Map<String, String> fieldMapping;
         Map<String, List<String>> fallbackHierarchyMap;
         Map<String, String> peMapping;
+        Map<Id, Opportunity> oppMap;
     }
 
     private class ProcessingData {
