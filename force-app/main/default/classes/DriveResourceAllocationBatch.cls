@@ -959,19 +959,9 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         // Separate Out Vehicle and Equipment Type resources from successfully evaluated resource map
         if(resourceMap!= NULL && !resourceMap.isEmpty()) {
             for(sked__Resource__c res : resourceMap.values()) {  
-                if(res.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && res.sked_Pres_Donor_Capacity__c >= 0) { // HRP-10212 start
-                    if(res.sked_DOT__c == True && 
-                        ((resourceModel.isDOTLimitPresent == TRUE && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) 
-                            || (resourceModel.isDOTLimitPresent == FALSE))) {
-                                vehicleTypeResourceForDOT.add(res);
-                    } else if(res.sked_CDL__c == True && 
-                        ((resourceModel.isCDLLimitPresent == TRUE && (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == NULL)) 
-                            || (resourceModel.isCDLLimitPresent == FALSE))) {
-                            vehicleTypeResourceForCDL.add(res);
-                    } else if(res.sked_CDL__c == FALSE && res.sked_DOT__c == FALSE) {
-                        vehicleTypeResourceForRegVechicle.add(res);
-                    }
-                    map_allVehicleResourceId_presDonorCapacity.put(res.Id, res.sked_Pres_Donor_Capacity__c); // HRP-10212 end
+                if(res.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && res.sked_Pres_Donor_Capacity__c >= 0) { 
+                    vehicleTypeResource.add(res);
+                    map_allVehicleResourceId_presDonorCapacity.put(res.Id, res.sked_Pres_Donor_Capacity__c);
                 } else if(res.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {
                     equipmentTypeResource.add(res);
                 }
@@ -979,13 +969,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
         }
         
-        if(!vehicleTypeResourceForCDL.isEmpty()) { // HRP-10212 start
-            vehicleTypeResource.addAll(vehicleTypeResourceForCDL);
-        }
-        if(!vehicleTypeResourceForDOT.isEmpty()) {
-            vehicleTypeResource.addAll(vehicleTypeResourceForDOT);
-        }
-        vehicleTypeResource.addAll(vehicleTypeResourceForRegVechicle); // HRP-10212 end
         JobAllocations jobAllocation = new JobAllocations();
         jobAllocation.equipmentAllocations = selectionForEquipments(drive, equipmentTypeJob, equipmentTypeResource, resourceVsResourceTagMap, jobVsJobTagMap);
         jobAllocation.vehicleAllocations = selectionForVehicles(drive, vehicleTypeJob, vehicleTypeResource, resourceVsResourceTagMap, jobVsJobTagMap, map_allVehicleResourceId_presDonorCapacity, resourceModel);
@@ -1041,8 +1024,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         Set<Id> assignedResourceId = new  Set<Id>();
         Set<Id> matchingTags;
         for(sked__Job__c vehicleJob : vehicleTypeJob) { // HRP-10212 start
-            if(!vehicleTypeResourceForCDL.isEmpty()) {
-                for(sked__Resource__c vehicleResource : vehicleTypeResourceForCDL) {
+            if(!vehicleTypeResource.isEmpty()) {
+                for(sked__Resource__c vehicleResource : vehicleTypeResource) {
                     if(!resourceVsResourceTagMap.get(vehicleResource.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.Id)) {
                         matchingTags = new Set<Id>();
                         for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vehicleResource.Id)) {
@@ -1072,101 +1055,86 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     }
                 }
             }
-            if(!vehicleTypeResourceForDOT.isEmpty()) {
-                for(sked__Resource__c vRes : vehicleTypeResourceForDOT) {
-                    if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id)) {
-                        matchingTags = new Set<Id>();
-                        for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vRes.Id)){
-                            if(resTag.sked_Start_Date__c  <= driveDate && (resTag.sked_Expiry_Date__c == NULL || (resTag.sked_Expiry_Date__c != NULL || driveDate <= resTag.sked_Expiry_Date__c))) {
-                                for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
-                                    if(jobTag.sked__Tag__c == resTag.sked__Tag__c){
-                                        matchingTags.add(resTag.sked__Tag__c);
-                                    }
-                                }
-                            }  
-                        } 
-                        if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()){
-                            if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
-                                map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
-                            }
-                            map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.Id);
-                            assignedResourceId.add(vRes.Id);
-                            resourceIdVsResourceDetails.put(vRes.Id, vRes);
-                        }
-                    }else if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && !jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id)){
-                        if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
-                            map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
-                        }
-                        map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.Id);
-                        assignedResourceId.add(vRes.Id);
-                        resourceIdVsResourceDetails.put(vRes.Id, vRes);
-                    }
-                }
-            }
-            for(sked__Resource__c vRes : vehicleTypeResourceForRegVechicle) { // HRP-10212 end
-                if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id) ){
-                    matchingTags = new Set<Id>();
-                    for(sked__Resource_Tag__c resTag : resourceVsResourceTagMap.get(vRes.Id)) {
-                        if(resTag.sked_Start_Date__c  <= drive.sked_Drive_Date__c && (resTag.sked_Expiry_Date__c == null || (resTag.sked_Expiry_Date__c != null || drive.sked_Drive_Date__c <= resTag.sked_Expiry_Date__c))){
-                            for(sked__Job_Tag__c jobTag : jobVsJobTagMap.get(vehicleJob.Id)) {
-                                if(jobTag.sked__Tag__c == resTag.sked__Tag__c) {
-                                    matchingTags.add(resTag.sked__Tag__c);
-                                }
-                            }
-                        }  
-                    }
-                    if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()) {
-                        if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
-                            map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
-                        }
-                        map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.Id);
-                        assignedResourceId.add(vRes.Id);
-                        resourceIdVsResourceDetails.put(vRes.Id, vRes); // HRP-10212
-                    }
-                } else if(!resourceVsResourceTagMap.get(vRes.Id).isEmpty() && !jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.Id)) {
-                    if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
-                        map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.Id});
-                    }
-                    map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.Id);
-                    assignedResourceId.add(vRes.Id);
-                    resourceIdVsResourceDetails.put(vRes.Id, vRes); // HRP-10212
-                }
-            }
         }
+
         Integer maxNoOfVehicles = 0;
         for (Id jobId : map_jobId_ResourceIds.keySet()) {
             Decimal pdC = 0;
             Set<Id> resourceIds = new Set<Id>();
-            for (Id resId : map_jobId_ResourceIds.get(jobId)) { // HRP-10212 and HRP-10213 start
-                if(!resourceModel.isCDLLimitPresent && !resourceModel.isDOTLimitPresent) {
-                    pdC += resourceIdVsCapacity.get(resId);
-                    resourceIds.add(resId);
-                } else if(resourceIdVsResourceDetails.containsKey(resId)) {
-                    if(resourceIdVsResourceDetails.get(resId).sked_DOT__c && (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) {
-                        resourceModel.remainingNoOfDOT = resourceModel.remainingNoOfDOT != NULL ? resourceModel.remainingNoOfDOT - 1 : NULL;
-                        pdC += resourceIdVsCapacity.containsKey(resId) && resourceIdVsCapacity.get(resId) != NULL ? resourceIdVsCapacity.get(resId) : 0;
-                        resourceIds.add(resId);
-                    } else if(resourceIdVsResourceDetails.get(resId).sked_CDL__c && (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == NULL)) {
-                        resourceModel.remainingNoOfCDL = resourceModel.remainingNoOfCDL != NULL ? resourceModel.remainingNoOfCDL - 1 : NULL;
-                        pdC += resourceIdVsCapacity.containsKey(resId) && resourceIdVsCapacity.get(resId) != NULL ? resourceIdVsCapacity.get(resId) : 0;
-                        resourceIds.add(resId);
-                    } // HRP-10212 and HRP-10213 end
-                    else if(!resourceIdVsResourceDetails.get(resId).sked_DOT__c && !resourceIdVsResourceDetails.get(resId).sked_CDL__c) { // HRP-14179
-                        pdC += resourceIdVsCapacity.get(resId);
-                        resourceIds.add(resId);
+
+            for(Integer i = 0; i < map_jobId_ResourceIds.get(jobId).size(); i++) {
+                Id currentResourceId = new List<Id>(map_jobId_ResourceIds.get(jobId))[i];
+                Decimal currentResourcePdc = resourceIdVsCapacity.get(currentResourceId);
+                if(currentResourcePdc >= drive.sked_Projected_Registered_Donors__c) {
+                    if(pdC == 0 || pdC >= currentResourcePdc) {
+                        pdC = currentResourcePdc;
+                        resourceIds = new Set<Id>{currentResourceId};
                     }
-                }
-                
-                if (pdC >= drive.sked_Projected_Registered_Donors__c) {
+                } else {
+                    if(pdC >= drive.sked_Projected_Registered_Donors__c) break;
+
+                    if(pdC + currentResourcePdc < drive.sked_Projected_Registered_Donors__c) {
+                        pdC += currentResourcePdc;
+                        resourceIds.add(currentResourceId);
+                        continue;
+                    }
+
+                    Decimal optimalPdc = currentResourcePdc;
+                    Decimal optimalSum = pdC + currentResourcePdc;
+                    Id bestResourceId = currentResourceId;
+
+                    // check resources with smaller pdc value
+                    for(Integer j = i + 1; j < map_jobId_ResourceIds.get(jobId).size(); j++) {
+                        Id nextResourceId = new List<Id>(map_jobId_ResourceIds.get(jobId))[j];
+                        Decimal nextResourcePdc = resourceIdVsCapacity.get(nextResourceId); 
+                        Decimal cumulativeSum = pdc + nextResourcePdc;
+
+                        if(cumulativeSum == optimalSum) continue;
+
+                        if(cumulativeSum >= drive.sked_Projected_Registered_Donors__c && cumulativeSum < optimalSum) {
+                            optimalSum = cumulativeSum;
+                            optimalPdc = nextResourcePdc;
+                            bestResourceId = nextResourceId;
+                            
+                            if(optimalSum == drive.sked_Projected_Registered_Donors__c) break;
+
+                        } else break;
+                    }
+
+                    pdC += optimalPdc;
+                    resourceIds.add(bestResourceId);
                     break;
                 }
             }
+                
+            jobVsResourceAllocations.put(jobId, resourceIds);
+            maxNoOfVehicles = resourceIds.size() > maxNoOfVehicles ? resourceIds.size() : maxNoOfVehicles;
+        }
+        
+        for(Id jobId : jobVsResourceAllocations.keySet()) {
+            for(Id resId : jobVsResourceAllocations.get(jobId)) {
+                Boolean canResourceBeAllocated = false;
+                sked__Resource__c resource = resourceIdVsResourceDetails.get(resId);
+                if(resource.sked_DOT__c && 
+                (resourceModel.isDOTLimitPresent == true && 
+                (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) || (resourceModel.isDOTLimitPresent == FALSE)) {
+                    resourceModel.remainingNoOfDOT = resourceModel.remainingNoOfDOT != null ? resourceModel.remainingNoOfDOT - 1 : null;
+                    canResourceBeAllocated = true;
+                } else if(resource.sked_CDL__c && 
+                (resourceModel.isCDLLimitPresent == true && 
+                (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == null)) || (resourceModel.isCDLLimitPresent == FALSE)) {
+                    resourceModel.remainingNoOfCDL = resourceModel.remainingNoOfCDL != null ? resourceModel.remainingNoOfCDL - 1 : null;
+                    canResourceBeAllocated = true;
+                } else if(!resource.sked_CDL__c && !resource.sked_DOT__c) {
+                    canResourceBeAllocated = true;
+                }
 
-            if(pdC >= drive.sked_Projected_Registered_Donors__c) {
-                jobVsResourceAllocations.put(jobId, resourceIds);
-                maxNoOfVehicles = resourceIds.size() > maxNoOfVehicles ? resourceIds.size() : maxNoOfVehicles;
+                if(!canResourceBeAllocated) {
+                    jobVsResourceAllocations.get(jobId).remove(resId);
+                }
             }
         }
+            
         noOfVehicles = maxNoOfVehicles;
         return jobVsResourceAllocations;
     }

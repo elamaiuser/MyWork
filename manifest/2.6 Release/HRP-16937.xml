@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>BSF_RealIdComplianceBatch_Test</members>
+		<members>BSF_TemplateCDA_FutOppBatch_Test</members>
+		<members>BSF_TravelTimePanelControllerTest</members>
+		<members>OpRecordStatusCorrectionTest</members>
+		<members>OpportunityTriggerTest</members>
+		<members>ProductServiceTest</members>
+		<members>contactService_Test</members>
+		<members>populateDriveSupRoleBatch_Test</members>
+		<members>skedResourceHandler_Test</members>
+		<members>skedTravelTimeIndexTravelTimeBatch</members>
+		<members>skedTravelTimeIndexTravelTimeBatch_Test</members>
+		<name>ApexClass</name>
+	</types>
+    <version>64.0</version>
+</Package>

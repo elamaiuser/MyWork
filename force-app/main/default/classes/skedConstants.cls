@@ -513,4 +513,9 @@ public class skedConstants {
     public static final string CRON_TRIGGER_EXECUTING = 'EXECUTING';
     public static final string CRON_TRIGGER_PAUSED = 'PAUSED';
 
+    /* Resource RealId Compliance Related */
+    public static final string STAGING_SYNC_STATUS_REMOVED = 'Removed';
+    public static final string STAGING_SYNC_STATUS_CREATED = 'Created';
+    public static final string STAGING_SYNC_STATUS_UPDATED = 'Updated';
+
 }

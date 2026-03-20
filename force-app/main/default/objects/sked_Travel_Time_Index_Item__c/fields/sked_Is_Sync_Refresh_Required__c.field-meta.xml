@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Is_Sync_Refresh_Required__c</fullName>
+    <formula>OR(
+  ISNULL(sked_Collection_Operation__r.sked_Next_Travel_Time_Refresh_Date__c),
+  DATEVALUE(sked_Last_Refresh_Date__c) &lt; sked_Collection_Operation__r.sked_Next_Travel_Time_Refresh_Date__c
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Is Sync Refresh Required</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

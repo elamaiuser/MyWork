@@ -263,6 +263,7 @@ global class skedModels {
 
         public string timeConflictMessage; // HRP-13613
         public decimal dailyTimeOffHoursMax; // HRP-13613
+        public boolean isAllDayLeaveAvailable = true; // HRP-13613
     }
     
     global virtual class availabilityCapacitySetting extends modelBase {
