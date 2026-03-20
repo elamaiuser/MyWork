@@ -44,7 +44,7 @@
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_APS,sked_APS_Admin,sked_APS_Manager,sked_APS_Planner,sked_DRD,sked_DRD_Readonly,sked_Global_Admin,sked_Manufacturing,sked_Recruitment_Admin,sked_Telerecruiter,Skedulo_System_User</value>
+        <value xsi:type="xsd:string">Campaign_Manager,Content_Manager,sked_ARC_Lead_Resource,sked_APS,sked_APS_Admin,sked_APS_Manager,sked_APS_Planner,sked_DRD,sked_DRD_Readonly,sked_Global_Admin,sked_Manufacturing,sked_Recruitment_Admin,sked_Telerecruiter,Skedulo_System_User</value>
     </values>
     <values>
         <field>Target_Type__c</field>

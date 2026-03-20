@@ -929,6 +929,16 @@
                 <identifier>Recordsked_GeoLocation_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.sked_Next_Travel_Time_Refresh_Date__c</fieldItem>
+                <identifier>Recordsked_Next_Travel_Time_Refresh_Date_cField2</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-89a28a1a-b56e-4b59-8022-c7cedf48b9e1</name>
         <type>Facet</type>
     </flexiPageRegions>
