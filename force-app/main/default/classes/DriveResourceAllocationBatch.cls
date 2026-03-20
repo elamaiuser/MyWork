@@ -478,7 +478,14 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; 
             
             for(sked_Drive__c drive : driveList) {
-                allScopedDrives.add(drive);
+                allScopedDrives.add(new sked_Drive__c(
+                    Id = drive.Id,
+                    sked_Type_of_Drive__c = drive.sked_Type_of_Drive__c,
+                    sked_Total_Equipment_Requested__c = drive.sked_Total_Equipment_Requested__c,
+                    sked_Total_Vehicle_Requested__c = drive.sked_Total_Vehicle_Requested__c,
+                    sked_Pending_Action_Reason_Code__c = drive.sked_Pending_Action_Reason_Code__c,
+                    sked_Opportunity__c = drive.sked_Opportunity__c
+                ));
                 if(drive.sked_Type_of_Drive__c != null) {
                     if(drive.sked_Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
                         fsSysGenCount++;
