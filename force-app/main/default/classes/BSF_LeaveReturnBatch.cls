@@ -45,7 +45,8 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // Additional staging fields needed by this batch beyond the base set
     private static final List<String> STAGING_FIELDS = new List<String>{
         'Anticipated_Leave_Return_Date__c',
-        'Workday_Last_Functionally_Updated__c'
+        'Workday_Last_Functionally_Updated__c',
+        'First_Day_of_Leave__c'
     };
 
     // Additional resource fields needed by this batch beyond Id, sked_Employee_ID__c and sked_Employment_Status__c
@@ -159,13 +160,17 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                 BSF_Workday_Staging__c staging = stagingMap.get(wd.employeeId);
 
                 // Update only when something has actually changed
-                if (staging.Anticipated_Leave_Return_Date__c != returnDate || staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated) {
+                if (staging.Anticipated_Leave_Return_Date__c != returnDate || staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated || staging.First_Day_of_Leave__c != firstDayOfLeave) {
 
                     System.debug(JOB_LABEL + ': Updating staging for employee ' + wd.employeeId
                         + ' — return date: ' + returnDate);
 
                     // Build change log BEFORE overwriting fields
                     String fieldChanges = '';
+                    if (staging.First_Day_of_Leave__c != firstDayOfLeave) {
+                        fieldChanges += 'First_Day_of_Leave: '
+                            + staging.First_Day_of_Leave__c + ' → ' + firstDayOfLeave + '; ';
+                    }
                     if (staging.Anticipated_Leave_Return_Date__c != returnDate) {
                         fieldChanges += 'Anticipated_Leave_Return_Date: '
                             + staging.Anticipated_Leave_Return_Date__c + ' → ' + returnDate + '; ';
@@ -178,6 +183,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                     BSF_WorkdayBatchHelper.applyCommonStagingUpdate(staging, wd, fieldChanges);
                     staging.Anticipated_Leave_Return_Date__c = returnDate;
                     staging.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
+                    staging.First_Day_of_Leave__c = firstDayOfLeave;
 
                     stagingToUpsert.add(staging);
 
@@ -200,6 +206,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                 );
                 newRec.Anticipated_Leave_Return_Date__c = returnDate;
                 newRec.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
+                newRec.First_Day_of_Leave__c = firstDayOfLeave;
 
                 stagingToUpsert.add(newRec);
 

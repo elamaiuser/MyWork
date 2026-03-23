@@ -28,6 +28,7 @@
 		<members>BSF_Workday_Leave_Config__c.Last_Successful_Run_Date__c</members>
         <members>BSF_Workday_Leave_Config__c.Initial_Backfill_Date__c</members>
         <members>BSF_Workday_Staging__c.Anticipated_Leave_Return_Date__c</members>
+        <members>BSF_Workday_Staging__c.First_Day_of_Leave__c</members>
         <name>CustomField</name>
     </types>
 
