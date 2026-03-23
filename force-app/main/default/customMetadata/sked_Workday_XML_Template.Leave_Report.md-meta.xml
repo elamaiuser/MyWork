@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Endpoint__c</field>
-        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo%20ISU/RPT_-_Leave_Report_-_BSF?Report_Run_Date=2026-01-01-08:00&amp;format=json</value>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo%20ISU/RPT_-_Leave_Report_-_BSF</value>
     </values>
     <values>
         <field>sked_Namespace__c</field>

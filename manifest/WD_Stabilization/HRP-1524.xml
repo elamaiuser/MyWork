@@ -3,6 +3,7 @@
 
     <types>
         <members>BSF_LeaveReturnBatch</members>
+        <members>BSF_LeaveReturnBatch_Test</members>
         <name>ApexClass</name>
     </types>
 
@@ -25,6 +26,7 @@
     <types>
         <members>BSF_Workday_Leave_Config__c.Batch_Size__c</members>
 		<members>BSF_Workday_Leave_Config__c.Last_Successful_Run_Date__c</members>
+        <members>BSF_Workday_Leave_Config__c.Initial_Backfill_Date__c</members>
         <members>BSF_Workday_Staging__c.Anticipated_Leave_Return_Date__c</members>
         <name>CustomField</name>
     </types>

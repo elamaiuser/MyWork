@@ -288,7 +288,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // ─────────────────────────────────────────────────────────────────────────
 
     // Resolves the Workday endpoint from sked_Workday_XML_Template__mdt
-    // (DeveloperName = 'Leave_Report'), appends Report_Run_Date using
+    // (DeveloperName = 'Leave_Report'), appends CF_-_Prompt using
     // the last successful run date as an incremental filter, then appends
     // format=json. If the metadata record is missing or blank, endpoint will
     // be null and appendQueryParam() will throw a NullPointerException —
@@ -311,18 +311,18 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             System.debug(JOB_LABEL + ': Could not read custom metadata endpoint, falling back to hardcoded default — ' + mdEx.getMessage());
         }
 
-        //TODO: The following line to append the Report_Run_Date filter once Workday confirms the expected format.
-        //endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Report_Run_Date', '2026-01-01-08:00');
+        //TODO: The following line to append the CF_-_Prompt filter once Workday confirms the expected format.
+        //endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'CF_-_Prompt', '2026-01-01-08:00');
         Date filterDate = resolveFilterDate();
         if (filterDate != null) {
-            endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'Report_Run_Date', String.valueOf(filterDate));
+            endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'CF_-_Prompt', String.valueOf(filterDate));
         }
         endpoint = BSF_WorkdayBatchHelper.appendQueryParam(endpoint, 'format', 'json');
         return endpoint;
     }
 
     // Reads Last_Successful_Run_Date__c from BSF_Workday_Leave_Config__c and
-    // uses it as the Report_Run_Date filter sent to Workday. This makes the
+    // uses it as the CF_-_Prompt filter sent to Workday. This makes the
     // report incremental — Workday only returns records changed since the last
     // successful run. Falls back to yesterday if the config is missing or blank,
     // ensuring at least the previous day's changes are captured on first run.
@@ -332,10 +332,13 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             if (config != null && config.Last_Successful_Run_Date__c != null) {
                 return config.Last_Successful_Run_Date__c;
             }
+            else if(config != null && config.Initial_Backfill_Date__c != null){
+                return config.Initial_Backfill_Date__c;
+            }
         } catch (Exception e) {
             System.debug(JOB_LABEL + ': Error reading filter date from config — ' + e.getMessage());
         }
-        return System.today().addDays(-1);
+        return System.today().addYears(-5);
     }
 
     private Id getStagingRecordTypeId() {
