@@ -25,10 +25,10 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     private static final String JOB_LABEL                = 'BSF_LeaveReturnBatch';
     private static final String STAGING_RT_DEVELOPER_NAME = 'Leave_Report';
 
-    // Workday JSON field name for the anticipated leave return date.
+    // Workday JSON field name for the anticipated leave return date. 
     // TODO: Update this constant once Workday finalises the field name.
-    private static final String WD_RETURN_DATE_FIELD = 'Eastimated_Last_Day_Of_Leave';
-    private static final String WD_FIRST_DAY_OF_LEAVE_FIELD = 'First_Day_Of_Leave'; // Date field — used to determine if employee is currently mid-leave
+    private static final String WD_RETURN_DATE_FIELD = 'Estimated_Last_Day_of_Leave';
+    private static final String WD_FIRST_DAY_OF_LEAVE_FIELD = 'First_Day_of_Leave'; // Date field — used to determine if employee is currently mid-leave
     private static final String WD_LAST_UPDATED_FIELD = 'Last_Functionally_Updated'; // DateTime field — Workday change detection key
 
     private static final Integer DEFAULT_BATCH_SIZE = 200;
