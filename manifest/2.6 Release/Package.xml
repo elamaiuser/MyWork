@@ -15,8 +15,9 @@
         <members>BSF_AccountTaskPlanningCascadeBatch</members>
         <members>BSF_BatchUpdateAccountForZipCodeTest</members>
         <members>BSF_Batch_CreateHandOffTasks</members>
-        <members>BSF_Batch_CreateHandOffTasks_Test</members>        
-        <members>BSF_Batch_OpportunityTeamMember_Test</members>        
+        <members>BSF_Batch_CreateHandOffTasks_Test</members>
+        <members>BSF_Batch_DriveStatusCorrection</members>        
+        <members>BSF_Batch_OpportunityTeamMember_Test</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
         <members>BSF_Batch_TaxonomyEndDateHelper</members>
         <members>BSF_Batch_TaxonomyEndDate_Test</members>        
@@ -35,7 +36,9 @@
         <members>CollectionOpAvailabilityTrigger_Test</members>
         <members>DMBellNotificationATMBatchHelperTest</members>
         <members>DefaultTerritoryPortfolioBatch_Test</members>
-        <members>DriveTriggerHandler</members>        
+        <members>DriveTriggerHandler</members>
+        <members>DriveTriggerService</members>
+		<members>DriveTriggerServiceTest</members>
         <members>GenerateDriveWorksheetPdfController</members>
         <members>InformaticaStandardAddress_Test</members>
         <members>LeadUtils_Test</members>
@@ -205,6 +208,7 @@
         <members>Task_Selected_Package__c.Account__c</members>
         <members>Task_Selected_Package__c.Opportunity__c</members>
         <members>Task_Selected_Package__c.Task_Package__c</members>
+        <members>Update_Event__e.Object_Data__c</members>
         <members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
         <members>sked_Travel_Time_Index_Refresh_Request__c.sked_Time_Slots__c</members>
         <members>sked_Travel_Time_Slot__c.sked_Collection_Operation__c</members>
@@ -259,7 +263,8 @@
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read_3</members>
         <members>BSF_Access_Control_Rule.HRP_16367_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_16372_Field_Permission_Set</members>
-        <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>        
+        <members>Custom_Messages.Batch_Size_for_DriveStatusCorrection</members>
+        <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
         <name>CustomMetadata</name>
     </types>
     <types>
