@@ -3,4 +3,23 @@
     <fullName>Leave_Report</fullName>
     <active>true</active>
     <label>Leave Report</label>
+    <picklistValues>
+        <picklist>Sync_Status__c</picklist>
+        <values>
+            <fullName>Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expired</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Removed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Updated</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
 </RecordType>
