@@ -4,20 +4,23 @@
 // Covers all major scenarios of BSF_LeaveReturnBatch:
 //   1.  New employee, future return date — staging created, resource updated
 //   2.  Existing employee, return date changed — staging updated with change log
-//   3.  Existing employee, lastFunctionallyUpdated changed — staging updated
-//   4.  Existing employee, no change — staging not touched
-//   5.  Employee with past return date — skipped entirely in execute()
-//   6.  Employee with null return date — skipped entirely in execute()
-//   7.  Workday employee with no matching Resource — silently skipped
-//   8.  finish() reactivation — Leave resource with past/today return date set to Active
-//   9.  finish() no reactivation — Leave resource with future return date not touched
-//   10. finish() only targets Leave status — Active resource with past date not changed
-//   11. Workday API failure — Last_Successful_Run_Date__c not updated
-//   12. Successful run — Last_Successful_Run_Date__c updated to today
-//   13. Empty Workday response — no DML, run date still stamped
-//   14. Scheduler — queues batch without error
-//   15. Constructor variants — null and negative batch size handled gracefully
-//   16. Multiple employees — future synced, past skipped, orphan skipped
+//   3.  Existing employee, Last_Functionally_Updated changed — staging updated
+//   4.  Existing employee, First_Day_of_Leave changed — staging updated
+//   5.  Existing employee, no change — staging not touched
+//   6.  Employee with past return date — skipped entirely in execute()
+//   7.  Employee with null return date — skipped entirely in execute()
+//   8.  Workday employee with no matching Resource — silently skipped
+//   9.  Mid-leave employee (First_Day_of_Leave past, returnDate future) — resource set to Leave
+//   10. Employee not yet on leave (First_Day_of_Leave future) — resource status not changed
+//   11. finish() reactivation — Leave resource with past/today return date set to Active
+//   12. finish() no reactivation — Leave resource with future return date not touched
+//   13. finish() only targets Leave status — Active resource with past date not changed
+//   14. Workday API failure — Last_Successful_Run_Date__c not updated
+//   15. Successful run — Last_Successful_Run_Date__c updated to today
+//   16. Empty Workday response — no DML, run date still stamped
+//   17. Scheduler — queues batch without error
+//   18. Constructor variants — null and negative batch size handled gracefully
+//   19. Multiple employees — future synced, past skipped, orphan skipped
 // ─────────────────────────────────────────────────────────────────────────────
 @isTest
 private class BSF_LeaveReturnBatch_Test {
@@ -181,8 +184,11 @@ private class BSF_LeaveReturnBatch_Test {
         insert resourceObj;
 
         // ── Leave config ──────────────────────────────────────────────────────
+        // Initial_Backfill_Date__c is used by resolveFilterDate() as the
+        // CF_-_Prompt filter fallback when Last_Successful_Run_Date__c is blank.
         BSF_Workday_Leave_Config__c config = new BSF_Workday_Leave_Config__c();
         config.Batch_Size__c               = 200;
+        config.Initial_Backfill_Date__c    = System.today().addYears(-5);
         upsert config;
     }
 
@@ -256,13 +262,16 @@ private class BSF_LeaveReturnBatch_Test {
 
     // Inserts a BSF_Workday_Staging__c leave record directly.
     // RecordTypeId is set to Leave_Report so buildStagingMap() finds it.
-    // Workday_Last_Functionally_Updated__c is included because it is in
-    // STAGING_FIELDS and is used as one of the two change-detection signals.
+    // All three change-detection fields are set:
+    //   - Anticipated_Leave_Return_Date__c
+    //   - Workday_Last_Functionally_Updated__c
+    //   - First_Day_of_Leave__c  (added in batch v2 — third change-detection signal)
     private static BSF_Workday_Staging__c insertStaging(
         String   empId,
         Id       resourceId,
         Date     returnDate,
-        DateTime lastUpdated
+        DateTime lastUpdated,
+        Date     firstDayOfLeave
     ) {
         BSF_Workday_Staging__c s               = new BSF_Workday_Staging__c();
         s.RecordTypeId                         = getStagingRecordTypeId();
@@ -270,14 +279,15 @@ private class BSF_LeaveReturnBatch_Test {
         s.Resource__c                          = resourceId;
         s.Anticipated_Leave_Return_Date__c     = returnDate;
         s.Workday_Last_Functionally_Updated__c = lastUpdated;
+        s.First_Day_of_Leave__c                = firstDayOfLeave;
         s.Sync_Comment__c                      = String.valueOf(System.today()) + ': initial';
         insert s;
         return s;
     }
 
     // Builds a Workday Report_Entry JSON string.
-    // Use 'Eastimated_Last_Day_Of_Leave' as the return date key — this is
-    // the value of WD_RETURN_DATE_FIELD in the batch class.
+    // Return date key is 'Estimated_Last_Day_of_Leave' — matches WD_RETURN_DATE_FIELD.
+    // First day of leave key is 'First_Day_of_Leave' — matches WD_FIRST_DAY_OF_LEAVE_FIELD.
     private static String buildWorkdayJson(List<Map<String, String>> entries) {
         List<String> entryStrings = new List<String>();
         for (Map<String, String> e : entries) {
@@ -295,20 +305,22 @@ private class BSF_LeaveReturnBatch_Test {
     // TEST 1 — New employee, future return date: staging created, resource updated
     // Uses the base resource (empId = '12345') created in @TestSetup.
     //
-    // skedHubBase bypass flags are set before executeBatch so downstream
-    // triggers on sked__Resource__c do not revert the field written by the batch.
+    // skedHubBase bypass flags set before executeBatch so downstream triggers
+    // on sked__Resource__c do not revert the field written by the batch.
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testNewEmployee_FutureReturnDate_StagingCreatedAndResourceUpdated() {
         sked__Resource__c resource = getBaseResource();
         Date futureDate = System.today().addDays(30);
+        Date firstDay   = System.today().addDays(-5);
 
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(futureDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -324,22 +336,25 @@ private class BSF_LeaveReturnBatch_Test {
         // ── Staging assertions ────────────────────────────────────────────────
         List<BSF_Workday_Staging__c> stagings = [
             SELECT Id, Employee_ID__c, Anticipated_Leave_Return_Date__c,
-                   Sync_Comment__c, Resource__c
+                   First_Day_of_Leave__c, Sync_Comment__c, Resource__c
             FROM   BSF_Workday_Staging__c
             WHERE  Employee_ID__c = '12345'
         ];
         System.assertEquals(1, stagings.size(), 'Expected 1 staging record to be created');
         System.assertEquals(futureDate, stagings[0].Anticipated_Leave_Return_Date__c, 'Staging should hold the return date');
+        System.assertEquals(firstDay, stagings[0].First_Day_of_Leave__c, 'Staging should hold the first day of leave');
         System.assert(stagings[0].Sync_Comment__c.contains('1st time leave synced from Workday'), 'Sync comment should record first-time sync');
         System.assertEquals(resource.Id, stagings[0].Resource__c, 'Staging should be linked to the correct Resource');
 
         // ── Resource assertions ───────────────────────────────────────────────
         sked__Resource__c updated = [
-            SELECT sked_Anticipated_Leave_Return_Date__c
+            SELECT sked_Anticipated_Leave_Return_Date__c, sked_Employment_Status__c
             FROM   sked__Resource__c
             WHERE  Id = :resource.Id
         ];
         System.assertEquals(futureDate, updated.sked_Anticipated_Leave_Return_Date__c, 'Resource return date should be set by the batch');
+        // firstDay is in the past and returnDate is in the future → employee is mid-leave
+        System.assertEquals('Leave', updated.sked_Employment_Status__c, 'Resource status should be set to Leave for a mid-leave employee');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -351,17 +366,18 @@ private class BSF_LeaveReturnBatch_Test {
         sked__Resource__c resource = getBaseResource();
         Date     oldDate    = System.today().addDays(10);
         Date     newDate    = System.today().addDays(30);
+        Date     firstDay   = System.today().addDays(-5);
         DateTime lastUpdated = DateTime.valueOf('2026-01-01 10:00:00');
 
-        insertStaging('12345', resource.Id, oldDate, lastUpdated);
+        insertStaging('12345', resource.Id, oldDate, lastUpdated, firstDay);
 
-        // Workday returns a new return date — same Last_Functionally_Updated
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(newDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(newDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -383,24 +399,25 @@ private class BSF_LeaveReturnBatch_Test {
 
     // ─────────────────────────────────────────────────────────────────────────
     // TEST 3 — Existing employee, only Last_Functionally_Updated changed:
-    //          staging updated even though return date is the same
+    //          staging updated even though return date and first day are the same
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testExistingEmployee_LastUpdatedChanged_StagingUpdated() {
         sked__Resource__c resource = getBaseResource();
         Date     futureDate  = System.today().addDays(30);
+        Date     firstDay    = System.today().addDays(-5);
         DateTime oldUpdated  = DateTime.valueOf('2025-01-01 10:00:00');
         DateTime newUpdated  = DateTime.valueOf('2026-02-01 10:00:00');
 
-        insertStaging('12345', resource.Id, futureDate, oldUpdated);
+        insertStaging('12345', resource.Id, futureDate, oldUpdated, firstDay);
 
-        // Workday returns the same return date but a newer Last_Functionally_Updated
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(futureDate),
-                'Last_Functionally_Updated'    => '2026-02-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-02-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -421,24 +438,67 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 4 — Existing employee, no change: staging not touched
-    // Both return date and Last_Functionally_Updated are identical to stored values.
+    // TEST 4 — Existing employee, only First_Day_of_Leave changed:
+    //          staging updated — exercises the third change-detection signal
+    // ─────────────────────────────────────────────────────────────────────────
+    @isTest
+    static void testExistingEmployee_FirstDayOfLeaveChanged_StagingUpdated() {
+        sked__Resource__c resource = getBaseResource();
+        Date     futureDate   = System.today().addDays(30);
+        Date     oldFirstDay  = System.today().addDays(-10);
+        Date     newFirstDay  = System.today().addDays(-3);
+        DateTime lastUpdated  = DateTime.valueOf('2026-01-01 10:00:00');
+
+        insertStaging('12345', resource.Id, futureDate, lastUpdated, oldFirstDay);
+
+        // Workday returns a changed First_Day_of_Leave but same return date and lastUpdated
+        String json = buildWorkdayJson(new List<Map<String, String>>{
+            new Map<String, String>{
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(newFirstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
+            }
+        });
+
+        Test.setMock(HttpCalloutMock.class, new WorkdayMock(json, 200));
+
+        Test.startTest();
+        Database.executeBatch(new BSF_LeaveReturnBatch(), 200);
+        Test.stopTest();
+
+        BSF_Workday_Staging__c updated = [
+            SELECT First_Day_of_Leave__c, Sync_Comment__c
+            FROM   BSF_Workday_Staging__c
+            WHERE  Employee_ID__c = '12345'
+        ];
+        System.assertEquals(newFirstDay, updated.First_Day_of_Leave__c, 'First_Day_of_Leave should be updated to the new value');
+        System.assert(updated.Sync_Comment__c.contains('Updated from Workday'), 'Sync comment should record the update');
+        System.assert(updated.Sync_Comment__c.contains('First_Day_of_Leave'), 'Sync comment should name the changed field');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 5 — Existing employee, no change: staging not touched
+    // All three change-detection fields are identical to stored values.
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testExistingEmployee_NoChange_StagingSkipped() {
         sked__Resource__c resource = getBaseResource();
         Date     futureDate  = System.today().addDays(30);
+        Date     firstDay    = System.today().addDays(-5);
         DateTime lastUpdated = DateTime.valueOf('2026-01-15 10:00:00');
 
-        insertStaging('12345', resource.Id, futureDate, lastUpdated);
+        insertStaging('12345', resource.Id, futureDate, lastUpdated, firstDay);
 
         // Workday returns exactly the same values as stored
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(futureDate),
-                'Last_Functionally_Updated'    => '2026-01-15T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-15T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -453,14 +513,12 @@ private class BSF_LeaveReturnBatch_Test {
             FROM   BSF_Workday_Staging__c
             WHERE  Employee_ID__c = '12345'
         ];
-        // Comment should still be the initial value — record was not touched
         System.assertEquals(String.valueOf(System.today()) + ': initial', unchanged.Sync_Comment__c,
             'Staging should not be updated when nothing changed');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 5 — Employee with past return date: skipped entirely in execute()
-    // No staging created, no resource updated.
+    // TEST 6 — Employee with past return date: skipped entirely in execute()
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testPastReturnDate_EmployeeSkipped() {
@@ -468,10 +526,11 @@ private class BSF_LeaveReturnBatch_Test {
 
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(pastDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(pastDate),
+                'First_Day_of_Leave'          => String.valueOf(System.today().addDays(-10)),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -492,12 +551,11 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 6 — Employee with null return date: skipped entirely in execute()
-    // Workday returns no Eastimated_Last_Day_Of_Leave field for this employee.
+    // TEST 7 — Employee with null return date: skipped entirely in execute()
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testNullReturnDate_EmployeeSkipped() {
-        // No Eastimated_Last_Day_Of_Leave field in the JSON at all
+        // No Estimated_Last_Day_of_Leave field in the JSON at all
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
                 'Employee_ID'               => '12345',
@@ -519,17 +577,17 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 7 — Workday employee with no matching Resource: silently skipped
+    // TEST 8 — Workday employee with no matching Resource: silently skipped
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testWorkdayEmployeeWithNoResource_Skipped() {
-        // 'EMPORPHAN' has no Resource record in Salesforce
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => 'EMPORPHAN',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(System.today().addDays(30)),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => 'EMPORPHAN',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(System.today().addDays(30)),
+                'First_Day_of_Leave'          => String.valueOf(System.today().addDays(-5)),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -546,22 +604,85 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 8 — finish() reactivation: Leave resource with return date <= today
-    //          is set to Active
-    // finish() uses sked_Anticipated_Leave_Return_Date__c <= today so an
-    // employee whose return date is today is reactivated on the same day.
+    // TEST 9 — Mid-leave employee: resource status set to Leave
+    // firstDayOfLeave <= today AND returnDate > today → resourceEmploymentStatus = Leave
+    // ─────────────────────────────────────────────────────────────────────────
+    @isTest
+    static void testMidLeaveEmployee_ResourceStatusSetToLeave() {
+        Date futureDate = System.today().addDays(30);
+        Date firstDay   = System.today().addDays(-5); // already started leave
+
+        String json = buildWorkdayJson(new List<Map<String, String>>{
+            new Map<String, String>{
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
+            }
+        });
+
+        Test.setMock(HttpCalloutMock.class, new WorkdayMock(json, 200));
+
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+
+        Test.startTest();
+        Database.executeBatch(new BSF_LeaveReturnBatch(), 200);
+        Test.stopTest();
+
+        sked__Resource__c updated = [
+            SELECT sked_Employment_Status__c
+            FROM   sked__Resource__c
+            WHERE  sked_Employee_ID__c = '12345'
+        ];
+        System.assertEquals('Leave', updated.sked_Employment_Status__c,
+            'Resource status should be set to Leave when employee is currently mid-leave');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 10 — Employee not yet on leave: resource status not changed
+    // firstDayOfLeave > today → employee has not started leave yet
+    // ─────────────────────────────────────────────────────────────────────────
+    @isTest
+    static void testEmployeeNotYetOnLeave_ResourceStatusNotChanged() {
+        Date futureDate     = System.today().addDays(30);
+        Date futureFirstDay = System.today().addDays(5); // leave has not started yet
+
+        String json = buildWorkdayJson(new List<Map<String, String>>{
+            new Map<String, String>{
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(futureFirstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
+            }
+        });
+
+        Test.setMock(HttpCalloutMock.class, new WorkdayMock(json, 200));
+
+        Test.startTest();
+        Database.executeBatch(new BSF_LeaveReturnBatch(), 200);
+        Test.stopTest();
+
+        sked__Resource__c resource = getBaseResource();
+        System.assertEquals('Active', resource.sked_Employment_Status__c,
+            'Resource status should remain Active when employee has not yet started leave');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 11 — finish() reactivation: Leave resource with return date <= today
+    //           is set to Active
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testFinish_ReactivatesLeaveResourceWithPastOrTodayReturnDate() {
-        // Set the base resource to Leave with a return date of today
         sked__Resource__c resource = getBaseResource();
 
         skedHubBase.BypassUpdateTriggers = true;
-        resource.sked_Employment_Status__c         = 'Leave';
+        resource.sked_Employment_Status__c             = 'Leave';
         resource.sked_Anticipated_Leave_Return_Date__c = System.today();
         update resource;
 
-        // Empty Workday response — finish() runs, execute() processes nothing
         String json = '{"Report_Entry":[]}';
         Test.setMock(HttpCalloutMock.class, new WorkdayMock(json, 200));
 
@@ -582,16 +703,15 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 9 — finish() no reactivation: Leave resource with future return date
-    //          is NOT touched
+    // TEST 12 — finish() no reactivation: Leave resource with future return date
+    //           is NOT touched
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testFinish_DoesNotReactivateLeaveResourceWithFutureReturnDate() {
-        // Set the base resource to Leave with a future return date
         sked__Resource__c resource = getBaseResource();
 
         skedHubBase.BypassUpdateTriggers = true;
-        resource.sked_Employment_Status__c         = 'Leave';
+        resource.sked_Employment_Status__c             = 'Leave';
         resource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(10);
         update resource;
 
@@ -612,16 +732,15 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 10 — finish() only targets Leave status: Active resource with a past
+    // TEST 13 — finish() only targets Leave status: Active resource with a past
     //           return date is NOT changed
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testFinish_DoesNotChangeActiveResourceWithPastReturnDate() {
-        // Set the base resource to Active with a past return date
         sked__Resource__c resource = getBaseResource();
 
         skedHubBase.BypassUpdateTriggers = true;
-        resource.sked_Employment_Status__c         = 'Active';
+        resource.sked_Employment_Status__c             = 'Active';
         resource.sked_Anticipated_Leave_Return_Date__c = System.today().addDays(-5);
         update resource;
 
@@ -642,11 +761,7 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 11 — Workday API failure: Last_Successful_Run_Date__c not updated
-    //
-    // CalloutException from start() surfaces through Test.stopTest().
-    // We catch it so the test method does not fail, then assert the run date
-    // was not advanced.
+    // TEST 14 — Workday API failure: Last_Successful_Run_Date__c not updated
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testApiFailure_RunDateNotUpdated() {
@@ -660,7 +775,7 @@ private class BSF_LeaveReturnBatch_Test {
         Test.startTest();
         Database.executeBatch(new BSF_LeaveReturnBatch(), 200);
         try {
-            Test.stopTest(); // CalloutException surfaces here in test context
+            Test.stopTest();
         } catch (Exception e) {
             // Expected — batch threw a CalloutException in start()
         }
@@ -671,17 +786,17 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 12 — Successful run: Last_Successful_Run_Date__c updated to today
+    // TEST 15 — Successful run: Last_Successful_Run_Date__c updated to today
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testSuccessfulRun_RunDateUpdated() {
-        // Future return date so the employee is processed, not skipped
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(System.today().addDays(30)),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(System.today().addDays(30)),
+                'First_Day_of_Leave'          => String.valueOf(System.today().addDays(-5)),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -697,7 +812,7 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 13 — Empty Workday response: no staging created, run date stamped
+    // TEST 16 — Empty Workday response: no staging created, run date stamped
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testEmptyWorkdayResponse_NoStagingCreated() {
@@ -717,7 +832,7 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 14 — Scheduler: queues batch when none is currently running
+    // TEST 17 — Scheduler: queues batch when none is currently running
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testScheduler_QueuesBatchWhenNoneRunning() {
@@ -732,14 +847,14 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 15 — Constructor variants: all instantiate without error
+    // TEST 18 — Constructor variants: all instantiate without error
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testConstructorVariants_AllInstantiateCleanly() {
-        BSF_LeaveReturnBatch b1 = new BSF_LeaveReturnBatch(50);   // valid custom size
-        BSF_LeaveReturnBatch b2 = new BSF_LeaveReturnBatch(null); // null — defaults to 200
-        BSF_LeaveReturnBatch b3 = new BSF_LeaveReturnBatch(-1);   // negative — defaults to 200
-        BSF_LeaveReturnBatch b4 = new BSF_LeaveReturnBatch();     // no-arg
+        BSF_LeaveReturnBatch b1 = new BSF_LeaveReturnBatch(50);
+        BSF_LeaveReturnBatch b2 = new BSF_LeaveReturnBatch(null);
+        BSF_LeaveReturnBatch b3 = new BSF_LeaveReturnBatch(-1);
+        BSF_LeaveReturnBatch b4 = new BSF_LeaveReturnBatch();
 
         System.assertNotEquals(null, b1, 'Batch with size 50 should instantiate');
         System.assertNotEquals(null, b2, 'Batch with null size should instantiate using default');
@@ -748,37 +863,40 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 16 — Multiple employees in one batch: correct routing per employee
-    // '12345'    = future return date  → staging created, resource updated
-    // 'EMP_PAST' = past return date    → skipped in execute()
-    // 'EMPNORES' = no Resource         → silently skipped
+    // TEST 19 — Multiple employees: correct routing per employee
+    // '12345'    = future return date → staging created, resource updated
+    // 'EMP_PAST' = past return date   → skipped in execute()
+    // 'EMPNORES' = no Resource        → silently skipped
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
     static void testMultipleEmployees_AllRoutedCorrectly() {
         Date futureDate = System.today().addDays(30);
         Date pastDate   = System.today().addDays(-5);
+        Date firstDay   = System.today().addDays(-3);
 
-        // EMP_PAST has a Resource but will be skipped because its return date is past
         sked__Resource__c pastResource = insertExtraResource('EMP_PAST', 'John', 'Past', 'ULID_PAST', 'Active');
 
         String json = buildWorkdayJson(new List<Map<String, String>>{
             new Map<String, String>{
-                'Employee_ID'                  => '12345',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(futureDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => '12345',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             },
             new Map<String, String>{
-                'Employee_ID'                  => 'EMP_PAST',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(pastDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => 'EMP_PAST',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(pastDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             },
             new Map<String, String>{
-                'Employee_ID'                  => 'EMPNORES',
-                'Eastimated_Last_Day_Of_Leave' => String.valueOf(futureDate),
-                'Last_Functionally_Updated'    => '2026-01-01T10:00:00.000-08:00',
-                'Created_Moment'               => '2025-06-01T08:00:00.000-08:00'
+                'Employee_ID'                 => 'EMPNORES',
+                'Estimated_Last_Day_of_Leave' => String.valueOf(futureDate),
+                'First_Day_of_Leave'          => String.valueOf(firstDay),
+                'Last_Functionally_Updated'   => '2026-01-01T10:00:00.000-08:00',
+                'Created_Moment'              => '2025-06-01T08:00:00.000-08:00'
             }
         });
 
@@ -788,25 +906,19 @@ private class BSF_LeaveReturnBatch_Test {
         Database.executeBatch(new BSF_LeaveReturnBatch(), 200);
         Test.stopTest();
 
-        // '12345' — staging created, return date set
         List<BSF_Workday_Staging__c> staging12345 = [
-            SELECT Anticipated_Leave_Return_Date__c
+            SELECT Anticipated_Leave_Return_Date__c, First_Day_of_Leave__c
             FROM   BSF_Workday_Staging__c
             WHERE  Employee_ID__c = '12345'
         ];
         System.assertEquals(1, staging12345.size(), 'Staging should be created for the future-dated employee');
         System.assertEquals(futureDate, staging12345[0].Anticipated_Leave_Return_Date__c, 'Return date should match');
+        System.assertEquals(firstDay, staging12345[0].First_Day_of_Leave__c, 'First day of leave should match');
 
-        // 'EMP_PAST' — skipped, no staging
-        Integer pastCount = [
-            SELECT COUNT() FROM BSF_Workday_Staging__c WHERE Employee_ID__c = 'EMP_PAST'
-        ];
+        Integer pastCount = [SELECT COUNT() FROM BSF_Workday_Staging__c WHERE Employee_ID__c = 'EMP_PAST'];
         System.assertEquals(0, pastCount, 'No staging should be created for a past-dated employee');
 
-        // 'EMPNORES' — skipped, no staging
-        Integer orphanCount = [
-            SELECT COUNT() FROM BSF_Workday_Staging__c WHERE Employee_ID__c = 'EMPNORES'
-        ];
+        Integer orphanCount = [SELECT COUNT() FROM BSF_Workday_Staging__c WHERE Employee_ID__c = 'EMPNORES'];
         System.assertEquals(0, orphanCount, 'No staging should be created for an employee with no Resource');
     }
 }
