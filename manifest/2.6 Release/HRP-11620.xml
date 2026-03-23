@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>skedBiomedCollectionOpHandler</members>
+		<members>skedUtils</members>
+		<name>ApexClass</name>
+	</types>
+  <types>
+	  <members>Biomed_Collection_Op_Center__c.sked_Maximum_Travel_Time_Slots__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_Collection_Operation__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_End_Time__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_Start_Time__c</members>
+		<members>sked_Travel_Time_Slot__c.sked_Weekday__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+  <types>
+		<members>sked_Travel_Time_Slot__c</members>
+		<name>CustomObject</name>
+  </types>
+	<types>
+		<members>Collection_Operation_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
+		<members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
+		<name>Layout</name>
+	</types>
+  <types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcTravelTimeSlots</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Biomed_Collection_Op_Center__c.Validate_Travel_Time_Slot_Limit</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>64.0</version>
+</Package>
