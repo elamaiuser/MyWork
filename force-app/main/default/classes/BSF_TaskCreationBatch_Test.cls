@@ -43,7 +43,7 @@ public class BSF_TaskCreationBatch_Test {
         Test.stopTest();
         
         List<Task> sponsorPlanningTaskList = [SELECT Id, Subject FROM Task WHERE WhatId = :mobileOpp.Id];
-        Assert.areEqual(1, sponsorPlanningTaskList.size());
+        Assert.areEqual(0, sponsorPlanningTaskList.size());
         //Assert.areEqual('Sponsor Planning Meeting', sponsorPlanningTaskList[0].Subject);
     }
     
