@@ -428,7 +428,7 @@ public with sharing class TaskService {
         Map<Id, Boolean> taskMap = new Map<Id, Boolean>();
         if(newList != null && !newList.isEmpty() && oldMap != null && !oldMap.isEmpty()){
             for(Task tsk : newList){
-                 System.debug('tsk.Subject.equals(taskSubject) : '+tsk.Subject.equals(taskSubject));
+                System.debug('tsk.Subject.equals(taskSubject) : '+tsk.Subject.equals(taskSubject));
                 System.debug('oldMap.get(tsk.Id).Status != tsk.Status : '+ (oldMap.get(tsk.Id).Status != tsk.Status));
                 if(tsk.Id != null
                         && String.isNotBlank(tsk.Subject) && tsk.Subject.equals(taskSubject) 
@@ -576,7 +576,7 @@ public with sharing class TaskService {
     //
     public static void subjectisRequired(List<Task> taskList){
         for(Task t : taskList){
-            if(String.isBlank(t.Subject) && t.TaskSubtype == 'Task'){
+            if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
                 t.addError('Subject is required.');
             }
         } 
