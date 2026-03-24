@@ -82,6 +82,7 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                         this.driveHelper.isTelerecuiterUser(this.masterData.loginUser)
                     ) {
                         rowActions.push({ label: 'Bulk Edit', name: 'bulk-edit-volunteer-jobs'});
+                        rowActions.push({ label: 'Bulk Add', name: 'bulk-add-volunteer-jobs'});
                     }
                 }
             }
@@ -117,6 +118,11 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
         fireEvent(this.pageRef, 'showBulkEditVolunteerJobsModal', eventValues);
     }
 
+    bulkAddVolunteerJobs(job) {
+        let eventValues = {action: "bulk-add-volunteer-jobs", drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
+        fireEvent(this.pageRef, 'showBulkEditVolunteerJobsModal', eventValues);
+    }
+
     deleteJob(job) {
         let eventValues = {action: "deleteJob", driveShift: this.shift, resourceType: this.resourceType, job: job};
         fireEvent(this.pageRef, 'openDriveShiftConfirmModal', eventValues);
@@ -132,6 +138,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                 break;
             case 'bulk-edit-volunteer-jobs':
                 this.bulkEditVolunteerJobs(row);
+                break;
+            case 'bulk-add-volunteer-jobs':
+                this.bulkAddVolunteerJobs(row);
                 break;
             case 'delete':
                 this.deleteJob(row);
@@ -149,6 +158,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                 break;
             case 'bulk-edit-volunteer-jobs':
                 this.bulkEditVolunteerJobs(row);
+                break;
+            case 'bulk-add-volunteer-jobs':
+                this.bulkAddVolunteerJobs(row);
                 break;
             case 'delete':
                 this.deleteJob(row);
