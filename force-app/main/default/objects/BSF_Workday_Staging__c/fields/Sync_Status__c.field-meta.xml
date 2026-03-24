@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Sync_Status__c</fullName>
     <description>Tracks the result of the most recent synchronization for this employee record.</description>
-    <label>Sync Status</label>
+    <label>RealId Sync Status</label>
     <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
