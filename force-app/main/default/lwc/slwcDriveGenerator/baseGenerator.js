@@ -1163,6 +1163,24 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
 
+  saveBulkAddVolunteerJob(shiftKey, job) {
+    if (!shiftKey || !job) return;
+
+    let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
+    let newList = this.helper.getDriveShiftJobs(shift);
+    const index = newList.findIndex((item) => item.key === job.key);
+    if (index == -1) {
+      return;
+    }
+
+    newList[index] = {
+      ...newList[index],
+      ...job
+    };
+    shift.jobs = newList;
+    return this.notifyDriveChanged();
+  }
+
   deleteJob(shiftKey, job) {
     if (!shiftKey || !job) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
@@ -1530,6 +1548,42 @@ class BaseGenerator {
         console.log('>>> calculateRecurrenceVolunteerJobs', error);
         return [];
       })
+  }
+
+  calculateRecurrenceNewVolunteerJobs(drive) {
+    const today = DateTime.fromObject({
+      zone: this.masterData.timezoneSidId
+    }).toISODate();
+
+    const newJobs = [];
+
+    drive.driveShifts?.forEach(driveShift => {
+      driveShift.jobs?.forEach(job => {
+        if (!job.bulkAddVolunteerJobsSelectedDrives?.length) return;
+
+        job.bulkAddVolunteerJobsSelectedDrives
+          .filter(target => target.driveDate >= today)
+          .forEach(target => {
+            newJobs.push({
+              driveId:                        target.driveId,
+              driveShiftId:                   target.driveShiftId,
+              driveSiteId:                    target.driveSiteId,
+              volunteerRole:                  job.volunteerRole,
+              redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
+              quantity:                       job.quantity,
+              isLocked:                       !!job.isLocked,
+              volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
+              otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
+              isManuallyCreated:              true,
+              manuallyCreatedFrom:            'DRIVE_SCHEDULING',
+              jobAllocationTimeSource:        false,
+              jobTags:                        []
+            });
+          });
+      });
+    });
+
+    return Promise.resolve(newJobs);
   }
 
   calculateRecurrenceSlots(drive) {

@@ -17,26 +17,28 @@
                     <template if:true={showStep1}>
                         <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
 
-                        <div class="slds-section-title--divider">
-                            Drive Criteria
-                        </div>
-                        <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
-                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <c-slwc-picklist
-                                    required
-                                    name="volunteerRole"
-                                    label="Volunteer Role"
-                                    unique-key={filters.volunteerRole} 
-                                    object-api-name="sked__Job__c" 
-                                    selected-value={filters.volunteerRole}  
-                                    pick-listfield-api-name="sked_Volunteer_Role__c"
-                                    onpicklistchange={handleOnFiltersChange}>
-                                </c-slwc-picklist>
+                        <template if:false={isAddMode}>
+                            <div class="slds-section-title--divider">
+                                Drive Criteria
                             </div>
-                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={filters.redcrossVolunteerQuantity} onchange={handleOnFiltersChange} autocomplete="off" required></lightning-input>
+                            <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
+                                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                    <c-slwc-picklist
+                                        required
+                                        name="volunteerRole"
+                                        label="Volunteer Role"
+                                        unique-key={filters.volunteerRole}
+                                        object-api-name="sked__Job__c"
+                                        selected-value={filters.volunteerRole}
+                                        pick-listfield-api-name="sked_Volunteer_Role__c"
+                                        onpicklistchange={handleOnFiltersChange}>
+                                    </c-slwc-picklist>
+                                </div>
+                                <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
+                                    <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={filters.redcrossVolunteerQuantity} onchange={handleOnFiltersChange} autocomplete="off" required></lightning-input>
+                                </div>
                             </div>
-                        </div>
+                        </template>
                         <div class="slds-section-title--divider">
                             Recurrence Dates
                         </div>
@@ -51,24 +53,32 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="slds-section-title--divider">
-                            Edit Fields
-                        </div>
+                        <template if:true={isAddMode}>
+                            <div class="slds-section-title--divider">
+                                Add Fields
+                            </div>
+                        </template>
+                        <template if:false={isAddMode}>
+                            <div class="slds-section-title--divider">
+                                Edit Fields
+                            </div>
+                        </template>
                         <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
                                 <c-slwc-picklist
                                     name="volunteerRole"
                                     label="Volunteer Role"
-                                    unique-key={model.volunteerRole} 
-                                    object-api-name="sked__Job__c" 
-                                    selected-value={model.volunteerRole}  
+                                    required={isAddMode}
+                                    unique-key={model.volunteerRole}
+                                    object-api-name="sked__Job__c"
+                                    selected-value={model.volunteerRole}
                                     pick-listfield-api-name="sked_Volunteer_Role__c"
                                     onpicklistchange={handleOnChange}
                                     dropdown-alignment="bottom-left">
                                 </c-slwc-picklist>
                             </div>
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={model.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={model.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off" required={isAddMode}></lightning-input>
                             </div>
                             <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
                                 <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={model.isLocked} autocomplete="off"></lightning-input>
@@ -105,49 +115,91 @@
                             <p>{appointmentAlertMessage}</p>
                             <p>{appointmentAlertInstructionMessage}</p>
                         </div>
-                        
-                        <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
-                            <div class="job-allocation-table">
-                                <div class="header">
-                                    <div class="row">
-                                        <div class="col-role-name">Role</div>
-                                        <div class="col-drive-name">Drive Name</div>
-                                        <div class="col-drive-status">Drive Status</div>
-                                        <div class="col-drive-issue">Issue</div>
+
+                        <template if:true={isAddMode}>
+                            <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
+                                <div class="job-allocation-table">
+                                    <div class="header">
+                                        <div class="row">
+                                            <div class="col-drive-name">Drive Name</div>
+                                            <div class="col-drive-status">Drive Status</div>
+                                            <div class="col-drive-issue">Issue</div>
+                                        </div>
+                                    </div>
+                                    <div class="body">
+                                        <template for:each={model.daysWithDrives} for:item="day">
+                                            <div key={day.dateIso}>
+                                                <div class="row sub-header">
+                                                    <lightning-formatted-date-time value={day.dateIso} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                                </div>
+                                                <div if:false={day.drives.length} class="row slds-text-color_error slds-p-around_small">No drives</div>
+                                                <template for:each={day.drives} for:item="drive">
+                                                    <div class="row" key={drive.id}>
+                                                        <div class="col-drive-name">
+                                                            <lightning-formatted-url value={drive.driveRecordUrl} label={drive.name} target="_blank"></lightning-formatted-url>
+                                                        </div>
+                                                        <div class="col-drive-status">{drive.status}</div>
+                                                        <div class="col-drive-issue">
+                                                            <template for:each={drive.errorMessages} for:item="errorMessage">
+                                                                <div
+                                                                    key={errorMessage}
+                                                                    class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
+                                                                    {errorMessage}
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
+                            </div>
+                        </template>
 
-                                <div class="body">
-                                    <template for:each={model.daysWithJobs} for:item="day">
-                                        <div key={day.dateIso}>
-                                            <div class="row sub-header">
-                                                <lightning-formatted-date-time value={day.dateIso} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
-                                            </div>
-                                            <div if:false={day.jobs.length} class="row slds-text-color_error slds-p-around_small">No jobs</div>
-                                            <template for:each={day.jobs} for:item="job">
-                                                <div class="row" key={job.id}>
-                                                    <div class="col-role-name">{job.volunteerRole}</div>
-                                                    <div class="col-drive-name">
-                                                        <lightning-formatted-url value={job.driveRecordUrl} label={job.driveName} target="_blank" ></lightning-formatted-url>
-                                                    </div>
-                                                    <div class="col-drive-status">{job.driveStatus}</div>
-                                                    <div class="col-drive-issue">
-                                                        <template for:each={job.errorMessages} for:item="errorMessage">
-                                                            <div
-                                                                key={errorMessage}
-                                                                class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
-                                                                {errorMessage}
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </template>
+                        <template if:false={isAddMode}>
+                            <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
+                                <div class="job-allocation-table">
+                                    <div class="header">
+                                        <div class="row">
+                                            <div class="col-role-name">Role</div>
+                                            <div class="col-drive-name">Drive Name</div>
+                                            <div class="col-drive-status">Drive Status</div>
+                                            <div class="col-drive-issue">Issue</div>
                                         </div>
-                                        
-                                    </template>
+                                    </div>
+
+                                    <div class="body">
+                                        <template for:each={model.daysWithJobs} for:item="day">
+                                            <div key={day.dateIso}>
+                                                <div class="row sub-header">
+                                                    <lightning-formatted-date-time value={day.dateIso} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
+                                                </div>
+                                                <div if:false={day.jobs.length} class="row slds-text-color_error slds-p-around_small">No jobs</div>
+                                                <template for:each={day.jobs} for:item="job">
+                                                    <div class="row" key={job.id}>
+                                                        <div class="col-role-name">{job.volunteerRole}</div>
+                                                        <div class="col-drive-name">
+                                                            <lightning-formatted-url value={job.driveRecordUrl} label={job.driveName} target="_blank"></lightning-formatted-url>
+                                                        </div>
+                                                        <div class="col-drive-status">{job.driveStatus}</div>
+                                                        <div class="col-drive-issue">
+                                                            <template for:each={job.errorMessages} for:item="errorMessage">
+                                                                <div
+                                                                    key={errorMessage}
+                                                                    class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
+                                                                    {errorMessage}
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
-                            </div>  
-                        </div>
+                            </div>
+                        </template>
                     </template>
                 </div>
             </div>
