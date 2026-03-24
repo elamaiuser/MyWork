@@ -138,20 +138,22 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
         for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper wd : scope) {
 
             String resourceEmploymentStatus;
-            Date returnDate = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_RETURN_DATE_FIELD, JOB_LABEL);
+            Date returnDate = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_RETURN_DATE_FIELD, JOB_LABEL)?.addDays(1); // Workday returns the last day of leave, but the resource becomes available the following day — add 1 day buffer to calculate the return date
             DateTime lastFunctionallyUpdated = BSF_WorkdayBatchHelper.getExtraDateTime(wd, WD_LAST_UPDATED_FIELD, JOB_LABEL);
             Date firstDayOfLeave = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_FIRST_DAY_OF_LEAVE_FIELD, JOB_LABEL);
 
-            if(returnDate == null || returnDate<System.today()){
-                System.debug(JOB_LABEL + ': Employee ' + wd.employeeId + ' has a return date of ' + returnDate + ' which is in the past — skipping');
-                continue;
-            }
+            // if(returnDate == null || returnDate<System.today()){
+            //     System.debug(JOB_LABEL + ': Employee ' + wd.employeeId + ' has a return date of ' + returnDate + ' which is in the past — skipping');
+            //     continue;
+            // }
 
             // Set to 'Leave' only when the employee is currently mid-leave
             // (firstDayOfLeave has passed AND returnDate is in the future).
-            // Remains null if the condition is not met — resource status is not changed.
-            if (firstDayOfLeave != null && firstDayOfLeave <= System.today() && returnDate > System.today()) {
+            if (firstDayOfLeave != null && firstDayOfLeave <= System.today() && returnDate != null && returnDate > System.today()) {
                 resourceEmploymentStatus = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
+            }
+            else{
+                resourceEmploymentStatus = skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE;
             }
 
             // ── Staging ──────────────────────────────────────────────────────
@@ -220,14 +222,19 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             if (resourceMap.containsKey(wd.employeeId)) {
                 sked__Resource__c r = resourceMap.get(wd.employeeId);
 
-                if (r.sked_Anticipated_Leave_Return_Date__c != returnDate || (resourceEmploymentStatus != null && r.sked_Employment_Status__c != resourceEmploymentStatus)) {
+                if ((r.sked_Anticipated_Leave_Return_Date__c != returnDate || (resourceEmploymentStatus != null && r.sked_Employment_Status__c != resourceEmploymentStatus)) && r.sked_Employment_Status__c != skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE) {
                     System.debug(JOB_LABEL + ': Updating Resource return date for employee '
                         + wd.employeeId + ' — return date: ' + returnDate);
 
-                    r.sked_Anticipated_Leave_Return_Date__c = returnDate;
+                    if(resourceEmploymentStatus == skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE){
+                        r.sked_Anticipated_Leave_Return_Date__c = null; // Clear the return date when reactivating an employee
+                    }else{
+                        r.sked_Anticipated_Leave_Return_Date__c = returnDate;
+                    }
                     if (resourceEmploymentStatus != null) {
                         r.sked_Employment_Status__c = resourceEmploymentStatus;
                     }
+                    
                     resourcesToUpdate.add(r);
                 }
             }
@@ -270,6 +277,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
 
             for (sked__Resource__c r : toReactivate) {
                 r.sked_Employment_Status__c = 'Active';
+                r.sked_Anticipated_Leave_Return_Date__c = null;
             }
 
             BSF_WorkdayBatchHelper.logSaveErrors(
