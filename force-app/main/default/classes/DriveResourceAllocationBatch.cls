@@ -55,8 +55,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     private static List<sked_Staffing_Constraint__c> staffConstraintList = new List<sked_Staffing_Constraint__c>();
     private static ResourceModel calculatedResourceModel;
     private Set<Id> errorLogIdsCreatedDuringBatchRun = new Set<Id>();
-    private List<sked_Drive__c> allScopedDrives = new List<sked_Drive__c>();
-    private Boolean cbDateEvalSet = false;
     public Set<Id> driveIdSet;
     public sked_Drive__c drive;
     public Integer noOfVehicles = 0; 
@@ -122,10 +120,26 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     targetCreatedDateFrom = datetime.newInstanceGMT(this.targetCreatedDate, Time.newInstance(0,0,0,0));
                 }
             }
-            // Drive query and count tracking moved to start()/execute() to avoid
+            cbLogWrapper.draftDriveListToBeProcessed = Database.Query(createDriveQuery());
+            if(this.typeOfDrive != NULL) {
+                if(this.typeOfDrive.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
+                    fsSysGenCount = cbLogWrapper.draftDriveListToBeProcessed != NULL ? (Decimal)cbLogWrapper.draftDriveListToBeProcessed.size() : 0;
+                } else if(this.typeOfDrive.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
+                    mobileSysGenCount = cbLogWrapper.draftDriveListToBeProcessed != NULL ? (Decimal)cbLogWrapper.draftDriveListToBeProcessed.size() : 0;
+                }
+            }
             if(this.driveSource != NULL && !String.isBlank(this.driveSource)) {
                 cbLogWrapper.opportunitySource = this.driveSource;
-            }
+                if(this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD) && cbLogWrapper.draftDriveListToBeProcessed != NULL && !cbLogWrapper.draftDriveListToBeProcessed.isEmpty()) {
+                   /* HRP-14179: One drive date is processed every day via CB, 
+                    but user can change the drive date within the 21 days gap before sys gen run.
+                    To correctly capture sys gen info, system should use parent CB drive's drive date to find existing CB log */
+                    
+                    sked_Drive__c newCBDrive = cbLogWrapper.draftDriveListToBeProcessed[0];
+                    this.driveDateToEval = newCBDrive.sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r.Drive_Date__c;
+                    cbLogWrapper.driveDateToEval = this.driveDateToEval;
+                }
+            } 
         } 
         catch(Exception ex) {
             if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368
@@ -144,9 +158,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
     }
     
-    public Database.QueryLocator start(Database.BatchableContext bc) {
-        // Using getQueryLocator to support up to 50M rows and avoid the
-        return Database.getQueryLocator(createDriveQuery());
+    public List<sked_Drive__c> start(Database.BatchableContext bc) {
+        return cbLogWrapper.draftDriveListToBeProcessed;
     }
 
     /**
@@ -478,35 +491,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; 
             
             for(sked_Drive__c drive : driveList) {
-                allScopedDrives.add(new sked_Drive__c(
-                    Id = drive.Id,
-                    sked_Type_of_Drive__c = drive.sked_Type_of_Drive__c,
-                    sked_Total_Equipment_Requested__c = drive.sked_Total_Equipment_Requested__c,
-                    sked_Total_Vehicle_Requested__c = drive.sked_Total_Vehicle_Requested__c,
-                    sked_Pending_Action_Reason_Code__c = drive.sked_Pending_Action_Reason_Code__c,
-                    sked_Opportunity__c = drive.sked_Opportunity__c
-                ));
-                if(drive.sked_Type_of_Drive__c != null) {
-                    if(drive.sked_Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) {
-                        fsSysGenCount++;
-                    } else if(drive.sked_Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.MOBILE_DRIVE)) {
-                        mobileSysGenCount++;
-                    }
-                }
-                /* HRP-14179: One drive date is processed every day via CB,
-                   but user can change the drive date within the 21 days gap
-                   before sys gen run. To correctly capture sys gen info,
-                   system should use parent CB drive's drive date to find
-                   existing CB log. Moved from constructor (HRP-16955). */
-                if(!cbDateEvalSet && this.driveSource != null
-                        && this.driveSource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)
-                        && drive.sked_Opportunity__r != null
-                        && drive.sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r != null) {
-                    this.driveDateToEval = drive.sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r.Drive_Date__c;
-                    cbLogWrapper.driveDateToEval = this.driveDateToEval;
-                    cbDateEvalSet = true;
-                }
-
                 driveSite = drive.sked_Drive_Site__c;
                 driveDate = drive.sked_Drive_Date__c;
                 driveCO = drive.sked_Collection_Operation__c;
@@ -668,11 +652,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public void finish(Database.BatchableContext bc) {
         //HRP-12706 --> Continues (Capturing the necessary info of the fields to log in the Calendar build Log Object)
         try {
-            // Sync cbLogWrapper with the drives that actually reached execute().
-            // Previously the constructor pre-populated this list; now that the
-            // query runs via Database.getQueryLocator() in start(), allScopedDrives
-            cbLogWrapper.draftDriveListToBeProcessed = allScopedDrives;
-
             Set<Id> failedOrWithResourceAllocationDriveIds = new Set<Id>();
             List<Calendar_Build_Error_Log__c> entriesForDrivesWithNoAllocation = new List<Calendar_Build_Error_Log__c>();
             Integer noOfDriveErrorLog = 0;
@@ -710,7 +689,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
             cbLogWrapper.errorLogIdsCreatedDuringBatchRun = errorLogIdsCreatedDuringBatchRun != NULL ? errorLogIdsCreatedDuringBatchRun : new Set<Id>();
             cbLogWrapper.drivesWOResourceAllocThoughRequested = new List<Calendar_Build_Error_Log__c>();
-            for(sked_Drive__c drive : allScopedDrives) {
+            for(sked_Drive__c drive : cbLogWrapper.draftDriveListToBeProcessed) {
                 if(failedOrWithResourceAllocationDriveIds.contains(drive.Id)) continue; 
 
                 Boolean isFlaggingNeeded = false;
