@@ -500,6 +500,8 @@ public with sharing class BSF_TaskPlanningService {
                                             AccountId, 
                                             Account_Manager__c, 
                                             OwnerId,
+                                            Drive_Date__c,
+                                            District_Manager__c,
                                             (SELECT UserId, 
                                                 TeamMemberRole 
                                             FROM OpportunityTeamMembers)
@@ -516,31 +518,48 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     private static Map<Id, Id> getAccountSpecialistMap(List<Opportunity> oppList) {
-        Set<Id> accountIds = new Set<Id>();
+        Map<Id, List<Opportunity>> accountIdvsOpps = new Map<Id, List<Opportunity>>();
         for (Opportunity opp : oppList) {
-            if (opp.AccountId != null) accountIds.add(opp.AccountId);
+            if (opp.AccountId != null && opp.Drive_Date__c != null) {
+                if (!accountIdvsOpps.containsKey(opp.AccountId)) {
+                    accountIdvsOpps.put(opp.AccountId, new List<Opportunity>());
+                }
+                accountIdvsOpps.get(opp.AccountId).add(opp);
+            }
         }
 
         Map<Id, Id> specialistMap = new Map<Id, Id>();
-        if (accountIds.isEmpty()) return specialistMap;
+        if (accountIdvsOpps.isEmpty()) return specialistMap;
 
         for (AccountTeamMember atm : [SELECT AccountId, 
                                                 UserId, 
+                                                Start_Date__c,
+                                                End_Date__c,
                                                 Is_Covering_Recruiter__c 
                                         FROM AccountTeamMember 
-                                        WHERE AccountId IN :accountIds 
+                                        WHERE AccountId IN :accountIdvsOpps.keySet() 
                                         AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
-                                        ORDER BY CreatedDate DESC]) {
-            if (!specialistMap.containsKey(atm.AccountId) || atm.Is_Covering_Recruiter__c) {
-                specialistMap.put(atm.AccountId, atm.UserId);
+                                        ORDER BY Is_Covering_Recruiter__c DESC, Start_Date__c ASC]) {
+            for(opportunity opp : accountIdvsOpps.get(atm.AccountId)) {
+                if (isActiveTeamMember(atm.Start_Date__c, atm.End_Date__c,opp.Drive_Date__c)) {
+                    specialistMap.put(opp.Id, atm.UserId);
+                }
             }
         }
         return specialistMap;
     }
 
+    private static Boolean isActiveTeamMember(Date startDate, Date endDate, Date referenceDate) {
+        if (referenceDate == null) { referenceDate = Date.today(); }
+        Boolean isActive = (startDate == null || startDate <= referenceDate) && 
+                            (endDate == null || endDate >= referenceDate);
+        return isActive;
+    }
+
     private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<Id, Id> accSpecMap) {
         Map<String, Id> roles = new Map<String, Id>{
             BSF_Constants.ACCOUNT_MANAGER => opp.Account_Manager__c,
+            BSF_Constants.DISTRICT_MANAGER  => opp.District_Manager__c,
             BSF_Constants.OPPORTUNITY_OWNER => opp.OwnerId,
             BSF_Constants.DRD_SYSTEM_USER   => systemUserId
         };
@@ -549,14 +568,13 @@ public with sharing class BSF_TaskPlanningService {
             String role = otm.TeamMemberRole;
             if (String.isNotBlank(role) && 
                     (role.equalsIgnoreCase(BSF_Constants.AREA_BOOKING_MANAGER) || 
-                    role.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER) || 
                     role.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST))) {
                             roles.put(otm.TeamMemberRole, otm.UserId);
             }
         }
 
-        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && accSpecMap.containsKey(opp.AccountId)) {
-            roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accSpecMap.get(opp.AccountId));
+        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && accSpecMap.containsKey(opp.Id)) {
+            roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accSpecMap.get(opp.Id));
         }
 
         return roles;
@@ -868,8 +886,11 @@ public with sharing class BSF_TaskPlanningService {
         
         for (Order ord : opp.Orders) {
             if (ord.Publicity_Approved__c == false) {
-                Task orderTask = baseTask.clone(false, true, false, false);
-                orderTask.put('Related_Order__c', ord.Id); 
+                Task oppTask = baseTask.clone(false, true, false, false);
+                oppTask.Related_Order__c = ord.Id;
+                tasksToCreate.add(oppTask);
+                Task orderTask = oppTask.clone(false, true, false, false);
+                orderTask.OwnerId = ord.Id;
                 tasksToCreate.add(orderTask);
             }
         }
