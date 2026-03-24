@@ -24,7 +24,12 @@ public with sharing class TaskChecklistController {
                 taskSubjectList.add(objPickList.getValue());
             }
             if(sObjName.equalsIgnoreCase('Opportunity')){
-                taskType = BSF_Constants.RECRUITMENT_PLANNING_TASK;
+                for(Task_Definition__c taskDef : [SELECT Name
+                                                FROM Task_Definition__c
+                                                WHERE Task_Type__c = :BSF_Constants.TASK_TYPE_RECRUITMENT_STRATEGY_MEETING
+                                                AND Name != null]){
+                    taskType = taskDef.Name;
+                }
                 isOpportunity = true;
                 oppId = recordId;
                 String taskFilter = '';

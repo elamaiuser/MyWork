@@ -34,10 +34,6 @@ private class populateDriveSupRoleBatch_Test {
             
         );
         
-        //insert AdminUser ;
-        
-        //UserRole urole  = [select id from userrole where developername =: rolename ];
-        
         User DRDAMUser = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Manager'].Id,
             LastName = 'last',
@@ -52,9 +48,7 @@ private class populateDriveSupRoleBatch_Test {
             LocaleSidKey = 'en_US'
             //UserRoleId = urole.Id
         );
-        
-        
-        
+ 
         System.runAs( AdminUser ){
             insert DRDAMUser;
         }
@@ -87,13 +81,8 @@ private class populateDriveSupRoleBatch_Test {
             atm.End_Date__c = Date.Today().addDays(10);
             atm.Start_Date__c = Date.Today().addDays(-10);
             atmList.add(atm);
-            
-            
             insert atmList;
-            
-            
-            
-            
+
             Contact conObj = new Contact();
             conObj.AccountId = mobileAccList[0].Id;
             conObj.FirstName = 'Test';
@@ -115,11 +104,9 @@ private class populateDriveSupRoleBatch_Test {
             
             sked__Tag__c skedTag = new sked__Tag__c();
             skedTag.Name = 'Outside';
-            skedTag.sked__Type__c = 'Physical Location Type'; 
-            
+            skedTag.sked__Type__c = 'Physical Location Type';            
             insert skedTag; 
-            
-            
+   
             sked__Location__c siteObj = new sked__Location__c();
             siteObj.RecordTypeId = siteRecTypeId;
             siteObj.Name = 'Test Site';
@@ -154,10 +141,7 @@ private class populateDriveSupRoleBatch_Test {
             skedHubBase.BypassInsertTriggers = true;
             TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
-            
-            
-            
-            
+             
             List<Opportunity> oppsobjlist = new List<Opportunity>();
             Opportunity optyObj ; // = new Opportunity();
             optyObj = new Opportunity();
@@ -174,11 +158,8 @@ private class populateDriveSupRoleBatch_Test {
             optyObj.WB_Projected_Procedures__c = 1;
             optyObj.X2RBC_Projected_Procedures__c = 1;
             optyObj.Anticipated_Registered_Donors__c = 1;
-            
             oppsobjlist.add( optyObj );
-            
-              
-            
+            TriggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
 
             Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
@@ -311,6 +292,7 @@ private class populateDriveSupRoleBatch_Test {
             
             System.assertEquals('Confirmed', joballc1.sked__Status__c,'status should match');
         	}
+        TriggerHandler.clearAllbypasses();
         }
     	
     @isTest

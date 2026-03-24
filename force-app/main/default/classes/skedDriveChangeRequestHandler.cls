@@ -38,6 +38,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             onCancelledRejected(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
             onBackToPending(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
             createRequestToSyncOppsWithDrives(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
+            publishDriveChangeEvent(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
         }
     }
 
@@ -448,6 +449,22 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
         }
     }
     
+    private void publishDriveChangeEvent(List<sked_Drive_Change_Request__c> newRecords, Map<Id, sked_Drive_Change_Request__c> oldMap) {
+        List<sked_Drive_Change_Request_Event__e> events = new List<sked_Drive_Change_Request_Event__e>();
+        for (sked_Drive_Change_Request__c newRecord : newRecords) {
+            sked_Drive_Change_Request__c oldRecord = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Process_Counter__c != oldRecord.sked_Process_Counter__c) {
+                events.add(new sked_Drive_Change_Request_Event__e(
+                    sked_Drive_Change_Request_Id__c = newRecord.Id,
+                    sked_Opportunity_Id__c = newRecord.sked_Opportunity_Id__c
+                ));
+            }
+        }
+        if (!events.isEmpty()) {
+            EventBus.publish(events);
+        }
+    }
+
     /*********************************************************** Nested Class ***********************************************************/
     public class UpdateEventDataModel {
         public string objectName;

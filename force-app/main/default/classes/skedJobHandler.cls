@@ -269,6 +269,9 @@ public class skedJobHandler extends skedTriggerHub {
             if (newRecord.sked__Start__c != oldData.sked__Start__c || newRecord.sked__Finish__c != oldData.sked__Finish__c) {
                 newRecord.sked__Duration__c = skedDateTimeUtils.getDifferentMinutes(newRecord.sked__Start__c, newRecord.sked__Finish__c);
             }
+            if (newRecord.sked_Volunteer_Role__c != oldData.sked_Volunteer_Role__c) {
+                newRecord.sked__Type__c = newRecord.sked_Volunteer_Role__c;
+            }
             if (newRecord.sked_Is_Geolocation_Mismatched__c == TRUE || newRecord.sked__Location__c != oldData.sked__Location__c) {
                 locationIds.add(newRecord.sked__Location__c);
                 recordsToPopulate.add(newRecord);

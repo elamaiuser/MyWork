@@ -1157,9 +1157,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             }
                         })
                     })
-                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
+                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors, canHandleDriveProjRegDonorsWithLowerCapacity }) => {
                         //vehicles
-                        if (!canHandleDriveProjectedRegisteredDonors) {
+                        if (!canHandleDriveProjectedRegisteredDonors || canHandleDriveProjRegDonorsWithLowerCapacity) {
                             driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
                                 targetName: 'totalVehicleRequestedChanged',
                                 targetValue: {
