@@ -268,14 +268,16 @@ public with sharing class TaskService {
     }
     //HRP-12583 End
     public static void updateRelatedAccountAndOpportunity(List<Task> newList, Map<Id, Task> oldMap){
-        List<String> subjectList;
+        List<String> subjectList = new List<String>();
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
                                         WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, :BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM)
                                         AND Name != null];
-        for(Task_Definition__c taskDef : def){
-            subjectList.add(taskDef.Name);
+        if(def != null && !def.isEmpty()) {
+            for(Task_Definition__c taskDef : def){
+                subjectList.add(taskDef.Name);
+            }
         }
         if(subjectList.isEmpty()){
                 return;
