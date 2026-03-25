@@ -9,217 +9,232 @@
 */
 global class  BSF_BatchTaskSync implements Database.Batchable<SObject>,Schedulable 
 {
-    //HRP-12333 Start
-    Public List<Id> whatIdList;
-    Public List<Id> tasKIdList;
-    Public Map<String,String> subjectassigntoMap = new Map<String,String>();
-    Public Set<String> subjectSet = new Set<String>();
-    Public Boolean isAll = True;
-    global BSF_BatchTaskSync()
-    {
-        getMetaData();
+    private static final Integer BATCH_SIZE = 200;
+    private final Boolean isFullRun;
+    private final List<Id> specificWhatIds;
+    private final List<Id> specificTaskIds;
+    private final Map<String, String> typeToRoleMap = new Map<String, String>();
+    private final Set<String> monitoredTaskTypes = new Set<String>();
+
+    global BSF_BatchTaskSync() {
+        this.isFullRun = true;
+        this.specificWhatIds = null;
+        this.specificTaskIds = null;
+        loadTaskDefinitions();
     }
-    global BSF_BatchTaskSync(List<Id> whatIdList,List<Id> tasKIdList)
-    {
-        this.isAll=false;
-        this.whatIdList=whatIdList;
-        this.tasKIdList=tasKIdList;
-        getMetaData();
+    
+    global BSF_BatchTaskSync(List<Id> whatIdList, List<Id> taskIdList) {
+        this.isFullRun = false;
+        this.specificWhatIds = whatIdList;
+        this.specificTaskIds = taskIdList;
+        loadTaskDefinitions();
     }
-    //HRP-12333 End
-    global void execute(System.SchedulableContext ctx) 
-    {
-        BSF_BatchTaskSync batchtsksyc = new BSF_BatchTaskSync();
-        Database.executeBatch(batchtsksyc);
+
+    global void execute(SchedulableContext ctx) {
+        Database.executeBatch(new BSF_BatchTaskSync(), BATCH_SIZE);
     }
-    public Database.QueryLocator start(Database.BatchableContext BC)
-    {
-        Set<String> subjectSet = new Set<String>(this.subjectSet);
-        String query='SELECT WhatId,Account_Manager__c,Subject,OwnerId,RecordTypeId FROM Task Where Status!=\'Completed\' AND Status!=\'Cancelled\' AND Subject IN:subjectSet';
-        
-        //HRP-12333 start
-        if(whatIdList!=null && tasKIdList!=null)
-        {
-            query+=' AND WhatId IN:whatIdList AND Id IN:tasKIdList';
+
+    global Database.QueryLocator start(Database.BatchableContext bc) {
+        String marketingSubject = BSF_Constants.MARKETING_EXCEPTION_TASK;
+
+        String query =
+            'SELECT Id, WhatId, Subject, Type, OwnerId ' +
+            'FROM Task ' +
+            'WHERE IsClosed = FALSE ' +
+            '  AND Status != \'Completed\' ' +
+            '  AND Status != \'Cancelled\' ' +
+            '  AND WhatId != NULL ' +
+            '  AND (Type IN :monitoredTaskTypes OR Subject = :marketingSubject)';
+
+        if (isPopulated(specificWhatIds)) {
+            query += ' AND WhatId IN :specificWhatIds';
         }
-        else if(whatIdList!=null)
-        {
-            query+=' AND WhatId IN:whatIdList';
-            
+        if (isPopulated(specificTaskIds)) {
+            query += ' AND Id IN :specificTaskIds';
         }
-        else if(tasKIdList!=null)
-        {
-            query+=' AND Id IN:tasKIdList';
-        }
-        //HRP-12333 end
+
         return Database.getQueryLocator(query);
     }
-    
-    public void execute(Database.BatchableContext BC, List<Task> scope)
-    {
-        Map<String,String> taskoppmap = new Map<String,String>();
-        List<Task> updatedtasklist = new List<Task>();
-        set<Id> oppIdset = new set<Id>();
-        
-        //HRP-12333 start
-        Set<Id> orderIdSet = new Set<Id>();
-        Map<Id,String> siteIdCollNameMap = new Map<Id,String>();
-        set<string> collNameSet = new Set<String>();
-        Map<String,Id> collNameQueIdMap = new Map<String,Id>();
-        Map<Id,Id> orderIdOppIdMap = new Map<Id,Id>();
-        Boolean marketTaskPresent=false;
-        //HRP-12333 end
-        Id drdSystemUserId;
-        List<User> drdUsers = [SELECT Id, Name FROM User WHERE Name =:BSF_constants.DRDSystemUser AND IsActive = true LIMIT 1];
-        if(!drdUsers.isEmpty())
-        {
-            drdSystemUserId = drdUsers[0].Id;
-        }
-        
-        for(Task tk:scope)
-        {
-            oppIdset.add(tk.WhatId);
-            taskoppmap.put(tk.Id,tk.WhatId);
-            //HRP-12333 start
-            if(tk.Subject==BSF_Constants.PUBLICITY_REVIEW_NEEDED_TASK)
-            {
-                OrderIdSet.add(tk.WhatId);
+
+    global void execute(Database.BatchableContext bc, List<Task> scope) {
+
+        Set<Id> oppIds = new Set<Id>();
+        Set<Id> orderIds = new Set<Id>();
+        Boolean hasMarketing = false;
+        Boolean hasOnlyMarketing  = true;
+
+        for (Task t : scope) {
+            if(isOrder(t.WhatId)){
+                orderIds.add(t.WhatId);
+            }else if(isOpportunity(t.WhatId)) {
+                oppIds.add(t.WhatId);
             }
-            if(tk.Subject==BSF_Constants.MARKETING_EXCEPTION_TASK && !marketTaskPresent)
-                marketTaskPresent = true;
-            //HRP-12333 end
-        }
-        
-        //HRP-12333 start
-        if(!OrderIdSet.isEmpty())
-        {
-            List<Order> orderList =[select id,OpportunityId from Order where Id IN :OrderIdSet];
-            for(Order o:orderList)
-            {
-                orderIdOppIdMap.put(o.Id,o.OpportunityId);
-                oppIdset.add(o.OpportunityId);
+            if(isMarketingTask(t)){
+                hasMarketing = true;
+            }else{
+                hasOnlyMarketing = false;
             }
         }
-        
-        List<Opportunity> Opplist=[SELECT Id,AccountId,Drive_Date__c,Drive_site__c,ownerId,Account_Manager__c,(Select Id,OpportunityId,TeamMemberRole,UserId from OpportunityTeamMembers where opportunityId in:oppIdset) FROM Opportunity Where Id IN:oppIdset];// AND Drive_Date__c>=:date5];//HRP-12333 opportunity team child query
-        Map<Id,List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id,List<OpportunityTeamMember>>();//HRP-12333
-        Map<Id,Opportunity> oppIdMap = new Map<Id,Opportunity>();
-        Map<Id,Id> oppIdDriveSiteIdMap = new Map<Id,Id>();
-        for(Opportunity opp:Opplist)
-        {
-            
-            oppIdMap.put(opp.Id,opp);
-            //HRP-12333 start
-            oppIdDriveSiteIdMap.put(opp.Id,opp.Drive_site__c);
-            if(opp.OpportunityTeamMembers!=null)
-                oppTeamMembersMap.put(opp.id,opp.OpportunityTeamMembers);
-            //HRP-12333 end
-        }
-        
-        
-        //HRP-12333 start
-        if(marketTaskPresent)
-        {
-            List<Sked_Site_Collection_Operation__c> siteCollOpList = [select id,sked_Site__c,sked_Start_Date__c,sked_End_Date__c,sked_collection_operation__r.Name from Sked_Site_Collection_Operation__c where sked_Site__c in :oppIdDriveSiteIdMap.values() and sked_Start_Date__c<=today and sked_end_Date__c>=Today];
-            for(Sked_Site_Collection_Operation__c sColl:siteCollOpList)
-            {
-                siteIdCollNameMap.put(sColl.sked_Site__c,sColl.sked_collection_operation__r.Name);
-                collNameSet.add(sColl.sked_collection_operation__r.Name+': DMDCR');
-            }
-            system.debug('collNameSet '+collNameSet);
-            List<Group> queueList = [Select id,Name from Group where Name in:collNameSet];
-            system.debug('queueList '+queueList);
-            for(Group grp:queueList)
-            {
-                collNameQueIdMap.put(grp.name.subStringbefore(':'),grp.id);
+
+        Map<Id, Id> orderToOppMap = resolveOrderOpportunities(orderIds, oppIds);
+
+        if (oppIds.isEmpty()) return;
+
+        Map<Id, Opportunity> oppMap = hasMarketing ? fetchOpportunities(oppIds) : new Map<Id, Opportunity>();
+        Map<Id, Id> siteToQueueMap = hasMarketing ? resolveMarketingQueues(oppMap.values()) : new Map<Id, Id>();
+        Map<Id, Map<String, Id>> roleHierarchyMap = !hasOnlyMarketing ? BSF_TaskPlanningService.buildRoleHierarchyMap(oppIds) : new Map<Id, Map<String, Id>>();
+        Map<String, List<String>> fallbackMap = !hasOnlyMarketing ? BSF_TaskPlanningService.getRoleFallbackHierarchyMap() : new Map<String, List<String>>();
+        Id systemUserId = !hasOnlyMarketing ? TaskService.getDRDSystemUser() : null;
+
+
+        List<Task> tasksToUpdate = new List<Task>();
+
+        for (Task tsk : scope) {
+            Id contextOppId = getContextOppId(tsk, orderToOppMap);
+            if (contextOppId == null) continue;
+
+            Id expectedOwner = resolveExpectedOwner(tsk, contextOppId, oppMap, siteToQueueMap, roleHierarchyMap, fallbackMap, systemUserId);
+            if (expectedOwner != null && tsk.OwnerId != expectedOwner) {
+                tsk.OwnerId = expectedOwner;
+                tasksToUpdate.add(tsk);
             }
         }
-        //HRP-12333 end
-        
-        for(Task tsk: scope)
-        {
-            //HRP-12333 start
-            if(this.subjectassigntoMap.containsKey(tsk.Subject))
-            {
-                Id owner;
-                if(this.subjectassigntoMap.get(tsk.Subject)==BSF_Constants.ACCOUNT_MANAGER && 
-                   (oppIdMap.containsKey(tsk.whatId) || (tsk.Subject==BSF_Constants.PUBLICITY_REVIEW_NEEDED_TASK && orderIdOppIdMap!=null && orderIdOppIdMap.containsKey(tsk.whatId))))
-                {
-                    Opportunity opp;
-                    if(tsk.Subject!=BSF_Constants.PUBLICITY_REVIEW_NEEDED_TASK)
-                    {
-                        opp=oppIdMap.get(tsk.whatId);
-                    }
-                    else 
-                    {
-                        Opp= oppIdMap.get(orderIdOppIdMap.get(tsk.whatId));
-                    }
-                    if(Opp!=null)
-                        owner=opportunityService.getTaskOwner(Opp,oppTeamMembersMap,this.subjectassigntoMap.get(tsk.Subject));
-                }
-                else if(tsk.Subject==BSF_Constants.MARKETING_EXCEPTION_TASK)
-                {
-                    if(oppIdDriveSiteIdMap.containsKey(tsk.WhatId) && siteIdCollNameMap.containsKey(oppIdDriveSiteIdMap.get(tsk.WhatId)) && 
-                       collNameQueIdMap.containsKey(siteIdCollNameMap.get(oppIdDriveSiteIdMap.get(tsk.WhatId))))
-                    {
-                        system.debug(tsk.whatId);
-                        system.debug(collNameQueIdMap.get(siteIdCollNameMap.get(oppIdDriveSiteIdMap.get(tsk.WhatId))));
-                        owner= collNameQueIdMap.get(siteIdCollNameMap.get(oppIdDriveSiteIdMap.get(tsk.WhatId)));
-                    }
-                    
-                    
-                }
-                //HRP-16955 start
-                if(owner == null && drdSystemUserId != null)
-                {
-                    owner = drdSystemUserId;
-                }
-                //HRP-16955 end
-                
-                if(owner != null && tsk.OwnerId!=owner)
-                {
-                    tsk.OwnerId = owner;
-                    updatedtasklist.add(tsk);
-                }
-                
-            }
-            
+
+        if (!tasksToUpdate.isEmpty()) {
+            BSF_TaskPlanningService.handleDatabaseResults(
+                Database.update(tasksToUpdate, false),
+                'BSF_BatchTaskSync Reassignment'
+            );
         }
-        
-        
-        if(updatedtasklist.size()>0)
-        {
-           // Database.SaveResult[] saveupdatedtasklist = Database.update(updatedtasklist); one bad record will not fail the whole batch chunk
-           Database.SaveResult[] saveupdatedtasklist = Database.update(updatedtasklist, false);
-            List<BSF_Error_Log__c> logList = BSF_Utilities.createErrorLog(saveupdatedtasklist,'Task Sync','BSF_BatchTaskSync','execute','Error','Error in Syncing Task');
-            InsertBsfErrorLog.insertBsfErrors(logList);
-            System.debug('logList'+logList);
-        }
-        
-        
-        
     }
-    global void finish(Database.BatchableContext BC)
-    {
-        //HRP-12333 start
-        if(!Test.isRunningTest() && this.isAll)
-            DataBase.executebatch(new BSF_Batch_CreateHandOffTasks());
-        //HRP-12333 End
-    }
-    
-    //HRP-12333 start
-    Private Void getMetaData()
-    {
-        for(Task_Reassignment_Matrix__mdt tm :Task_Reassignment_Matrix__mdt.getAll().values())
-        {
-            if(tm.Category__c==BSF_constants.opportunityTasks)
-            {
-                this.subjectassigntoMap.put(tm.Task_Subject__c,tm.Assigned_To__c);
-                this.subjectSet.add(tm.Task_Subject__c);
-            }
-            
+
+    global void finish(Database.BatchableContext bc) {
+        if (isFullRun && !Test.isRunningTest()) {
+            Database.executeBatch(new BSF_Batch_CreateHandOffTasks());
         }
-        
     }
-    //HRP-12333 End
+
+    private void loadTaskDefinitions() {
+        for(Task_Definition__c def : [SELECT Task_Type__c, 
+                                                Assigned_To__c
+                                        FROM Task_Definition__c
+                                        WHERE Task_Type__c != NULL
+                                         AND Assigned_To__c != NULL]) {
+            typeToRoleMap.put(def.Task_Type__c, def.Assigned_To__c);
+            monitoredTaskTypes.add(def.Task_Type__c);
+        }
+    }
+
+    private Map<Id, Id> resolveOrderOpportunities(Set<Id> orderIds, Set<Id> oppIds) {
+        Map<Id, Id> orderToOppMap = new Map<Id, Id>();
+        if (orderIds.isEmpty()) return orderToOppMap;
+
+        for (Order ord : [SELECT Id, 
+                                OpportunityId 
+                            FROM Order 
+                            WHERE Id IN :orderIds WITH USER_MODE]) {
+            if(ord.OpportunityId == null) continue;
+
+            orderToOppMap.put(ord.Id, ord.OpportunityId);
+            oppIds.add(ord.OpportunityId);
+        }
+        return orderToOppMap;
+    }
+
+    private Map<Id, Opportunity> fetchOpportunities(Set<Id> oppIds) {
+        return new Map<Id, Opportunity>([
+            SELECT Id, 
+                    Drive_site__c, 
+                    OwnerId
+            FROM Opportunity
+            WHERE Id IN :oppIds
+            WITH USER_MODE
+        ]);
+    }
+
+    private Id getContextOppId(Task tsk, Map<Id, Id> orderToOppMap) {
+        return isOrder(tsk.WhatId) ? orderToOppMap.get(tsk.WhatId) : tsk.WhatId;
+    }
+
+    private Map<Id, Id> resolveMarketingQueues(List<Opportunity> opps) {
+        Set<Id> siteIds = new Set<Id>();
+        for (Opportunity opp : opps) {
+            if (opp.Drive_site__c != null){
+                siteIds.add(opp.Drive_site__c);
+            }
+        }
+        if (siteIds.isEmpty()) return new Map<Id, Id>();
+
+        Map<Id, String> siteToCollName  = new Map<Id, String>();
+        Set<String> queueNames = new Set<String>();
+
+        for (Sked_Site_Collection_Operation__c sc : [SELECT sked_Site__c, 
+                                                            sked_collection_operation__r.Name
+                                                    FROM Sked_Site_Collection_Operation__c
+                                                    WHERE sked_Site__c IN :siteIds
+                                                    AND sked_Start_Date__c <= TODAY
+                                                    AND (sked_End_Date__c >= TODAY 
+                                                    OR sked_End_Date__c = NULL)]) {
+            String collName = sc.sked_collection_operation__r.Name;
+            siteToCollName.put(sc.sked_Site__c, collName);
+            queueNames.add(collName + ': DMDCR');
+        }
+
+        if (queueNames.isEmpty()) return new Map<Id, Id>();
+
+        Map<String, Id> queueNameToId = new Map<String, Id>();
+        for (Group grp : [SELECT Id, 
+                                Name 
+                            FROM Group 
+                            WHERE Type = 'Queue' 
+                            AND Name IN :queueNames]) {
+            queueNameToId.put(grp.Name.substringBefore(':').trim(), grp.Id);
+        }
+
+        Map<Id, Id> siteToQueueMap = new Map<Id, Id>();
+        for (Id siteId : siteToCollName.keySet()) {
+            String collName = siteToCollName.get(siteId);
+            Id queueId  = queueNameToId.get(collName);
+            if(queueId != null){
+                siteToQueueMap.put(siteId, queueId);
+            }
+        }
+        return siteToQueueMap;
+    }
+
+    private Id resolveExpectedOwner(Task tsk, Id contextOppId, Map<Id, Opportunity> oppMap, 
+                                    Map<Id, Id> siteToQueueMap, Map<Id, Map<String, Id>> roleHierarchyMap, 
+                                    Map<String, List<String>> fallbackMap, Id systemUserId) {
+        if (isMarketingTask(tsk)) {
+            Opportunity opp = oppMap.get(contextOppId);
+            return (opp?.Drive_site__c != null) ? siteToQueueMap.get(opp.Drive_site__c) : null;
+        }
+
+        if (String.isBlank(tsk.Type)
+            || !typeToRoleMap.containsKey(tsk.Type)
+            || !roleHierarchyMap.containsKey(contextOppId)) return null;
+
+        Id resolved = BSF_TaskPlanningService.determineTaskOwner(
+            typeToRoleMap.get(tsk.Type),
+            roleHierarchyMap.get(contextOppId),
+            fallbackMap
+        );
+        return resolved != null ? resolved : systemUserId;
+    }
+
+    private static Boolean isPopulated(List<Id> ids) {
+        return ids != null && !ids.isEmpty();
+    }
+
+    private static Boolean isOrder(Id recordId) {
+        return recordId != null && recordId.getSObjectType() == Order.sObjectType;
+    }
+
+    private static Boolean isOpportunity(Id recordId) {
+        return recordId != null && recordId.getSObjectType() == Opportunity.sObjectType;
+    }
+
+    private static Boolean isMarketingTask(Task tsk) {
+        return tsk.Subject == BSF_Constants.MARKETING_EXCEPTION_TASK;
+    }
 }
