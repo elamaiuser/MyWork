@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>HRP-16928 Field Permission Set Read</label>
+    <label>HRP-13176 Field Permission Set Read</label>
     <protected>false</protected>
     <values>
         <field>Component_API_Names__c</field>
@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Field_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_Next_Travel_Time_Refresh_Date__c</value>
+        <value xsi:type="xsd:string">sked_Future_Inactive_Date__c</value>
     </values>
     <values>
         <field>Is_Enabled__c</field>
@@ -40,11 +40,11 @@
     </values>
     <values>
         <field>SObject_API_Name__c</field>
-        <value xsi:type="xsd:string">sked__Location__c</value>
+        <value xsi:type="xsd:string">sked__Resource__c</value>
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">Campaign_Manager,Content_Manager,sked_ARC_Lead_Resource,sked_APS,sked_APS_Admin,sked_APS_Manager,sked_APS_Planner,sked_DRD,sked_DRD_Readonly,sked_Global_Admin,sked_Manufacturing,sked_Recruitment_Admin,sked_Telerecruiter,Skedulo_System_User</value>
+        <value xsi:type="xsd:string">sked_DRD,sked_DRD_Readonly,sked_DRD_Readonly_1</value>
     </values>
     <values>
         <field>Target_Type__c</field>

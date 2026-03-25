@@ -17,6 +17,8 @@
 		<members>PowerBIProxyController</members>
 		<members>skedResourceHandler</members>
 		<members>skedResourceTrigger_Test</members>
+		<members>BSF_Batch_DriveStatusCorrection</members>
+		<members>OpRecordStatusCorrectionTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -24,10 +26,12 @@
 		<members>Contact.Primary_Phone_Number_New__c</members>
 		<members>sked_Drive__c.sked_Is_Drive_Name_Mismatched__c</members>
 		<members>sked__Location__c.sked_Staff_Personal_Parking_Directions__c</members>
+		<members>Update_Event__e.Object_Data__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
 		<members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
+		<members>Custom_Messages__mdt.Batch_Size_for_DriveStatusCorrection</members>
 		<members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
 	</types>
