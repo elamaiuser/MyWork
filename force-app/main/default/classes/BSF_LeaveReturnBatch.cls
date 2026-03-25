@@ -265,6 +265,10 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     public void finish(Database.BatchableContext bc) {
         System.debug(JOB_LABEL + ': finish() — querying resources to reactivate');
 
+        // Update any resources that should be on leave. This ensures we don't miss any return dates for employees who are currently on leave but haven't been updated to 'Leave' status yet because their return date is in the future.
+        resourceUpdateToLeave();
+
+        //reactivate resource upon return from leave
         List<sked__Resource__c> toReactivate = [
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
@@ -389,6 +393,47 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             System.debug(JOB_LABEL + ': Last_Successful_Run_Date__c updated to ' + System.today());
         } catch (Exception e) {
             System.debug(JOB_LABEL + ': Could not update Last_Successful_Run_Date__c — ' + e.getMessage());
+        }
+    }
+
+    private void resourceUpdateToLeave(){
+        // Query staging records directly to capture the date value
+        List<BSF_Workday_Staging__c> leaveStaging = [
+            SELECT Resource__c, Anticipated_Leave_Return_Date__c
+            FROM   BSF_Workday_Staging__c
+            WHERE  RecordType.DeveloperName = :STAGING_RT_DEVELOPER_NAME
+            AND    Anticipated_Leave_Return_Date__c != null
+            AND    First_Day_of_Leave__c <= :System.today()
+            AND    Anticipated_Leave_Return_Date__c > :System.today()
+        ];
+
+        // Build a map: Resource Id → Anticipated Leave Return Date
+        Map<Id, Date> resourceToLeaveDateMap = new Map<Id, Date>();
+        for (BSF_Workday_Staging__c stg : leaveStaging) {
+            resourceToLeaveDateMap.put(stg.Resource__c, stg.Anticipated_Leave_Return_Date__c);
+        }
+
+        // Query resources using the collected Ids
+        List<sked__Resource__c> toUpdateToLeave = [
+            SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
+            FROM   sked__Resource__c
+            WHERE  Id IN :resourceToLeaveDateMap.keySet()
+            AND    sked_Employment_Status__c = 'Active'
+        ];
+
+        if (!toUpdateToLeave.isEmpty()) {
+            System.debug(JOB_LABEL + ': Updating ' + toUpdateToLeave.size() + ' Resource record(s) to Leave status');
+
+            for (sked__Resource__c r : toUpdateToLeave) {
+                r.sked_Employment_Status__c = 'Leave';
+                r.sked_Anticipated_Leave_Return_Date__c = resourceToLeaveDateMap.get(r.Id);
+            }
+
+            BSF_WorkdayBatchHelper.logSaveErrors(
+                Database.update(toUpdateToLeave, false),
+                'finish resource leave status update',
+                JOB_LABEL
+            );
         }
     }
 }
