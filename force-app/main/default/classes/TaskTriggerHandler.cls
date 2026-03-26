@@ -34,6 +34,12 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         	TaskService.check72hourCheckInTaskCompletion((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
         }
         //HRP-12627 end
+        //
+       //HRP-16830
+        if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
+            TaskService.subjectisRequired((List<Task>)Trigger.new);
+        }   
+        
     }
     
     public override void beforeInsert(){
@@ -51,12 +57,17 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('assignDefaultTaskOwner') == -1) { 
             TaskService.assignDefaultTaskOwner((List<Task>)Trigger.new);
         }
-        //HRP-12627 end
-    }
+       
     
-    /*public override void afterInsert(){
+    }
+    //HRP-16830
+    public override void afterInsert(){
         
-    }*/
+        if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
+            TaskService.subjectisRequired((List<Task>)Trigger.new);
+        }
+        
+    }
     
     
     public override void afterUpdate(){
@@ -183,4 +194,13 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         }
         
     }
+    
+   
+  
+    
+    
+  
+  
+    
+    
 }
