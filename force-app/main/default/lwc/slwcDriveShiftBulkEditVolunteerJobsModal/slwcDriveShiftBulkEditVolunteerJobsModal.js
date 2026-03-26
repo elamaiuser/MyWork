@@ -197,11 +197,18 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                     message: 'Volunteer Role is required.'
                 })
             }
-    
+
             if (slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity)) {
                 this.errorMessages.push({
                     message: 'Red Cross Volunteer Quantity is required.'
                 })
+            }
+
+            // Check if the volunteer role already exists for the current drive shift
+            if (this.driveShift?.jobs?.find(job => job.volunteerRole === this.model.volunteerRole)) {
+                this.errorMessages.push({
+                    message: `${this.model.volunteerRole} role already exists.`
+                });
             }
         }
 
@@ -377,7 +384,6 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 DRIVE_STATUS.CONFIRMED,
                 DRIVE_STATUS.HOLD
             ];
-            driveQuery.excludedIds = [this.drive.id];
             driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
 
             const driveSvc = new driveService();
