@@ -570,4 +570,17 @@ public with sharing class TaskService {
         return drdSystemUserId;
     }
     // HRP-13426 --> end
+
+
+     //HRP-16830
+    //
+    public static void subjectisRequired(List<Task> taskList){
+        for(Task t : taskList){
+            if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
+                t.addError('Subject is required.');
+            }
+        } 
+          
+          
+      }
 }
