@@ -1,0 +1,34 @@
+.scheduling-status__filter-item {
+    padding: .5rem .75rem .8125rem;
+    border-bottom: solid 2px transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+}
+
+.scheduling-status__filter-item:hover {
+    border-color: rgba(0,112,210,.5);
+}
+
+.scheduling-status__filter-item + .scheduling-status__filter-item {
+    margin-left: .5rem;
+}
+
+.scheduling-status__filter-item.is-selected {
+    border-color: #1d92d2;
+}
+
+.scheduling-status__filter-item .drives-count {
+    margin-left: .75rem;
+    padding: 0 .75rem;
+    border-radius: .25rem;
+    color: #fff;
+    background: #767676;
+}
+
+.scheduling-status__filter-item .drives-count.status__completed {
+    background: #59b66e;
+}
+
+.scheduling-status__filter-item .drives-count.status__error {
+    background: #d23331;
+}

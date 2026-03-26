@@ -690,7 +690,8 @@ fetchJobTags(driveId){
     timezoneSidId,
     excludedDriveIds = [],
     excludedActivityIds = [],
-    collectionOperationIds = []
+    collectionOperationIds = [],
+    resourceIds = []
   }) {
     console.log('>>> Start fetching data', new Date());
     return Promise.resolve()
@@ -708,7 +709,7 @@ fetchJobTags(driveId){
     })
     .then(() => {
       console.log('>>> Start fetching resources', new Date());
-      return this.fetchResources(1, null, true);
+      return this.fetchResources(1, null, true, resourceIds.length ? { recordIds: resourceIds } : null);
     })
     .then(() => {
       console.log('>>> Finished Fetching data', new Date());

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>slwcAllocationService</members>
+		<members>slwcDriveService</members>
+		<members>slwcResourceService</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>slwcAvailator</members>
+		<members>dataService</members>
+		<members>slwcSchedulingConsole</members>
+		<members>slwcVehiclePicker</members>
+		<members>slwcVehiclePickerModal</members>
+		<members>slwcVehicleReplacementConsole</members>
+		<members>slwcVehicleReplacementDriveList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>65.0</version>
+</Package>

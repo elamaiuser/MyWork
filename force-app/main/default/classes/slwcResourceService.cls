@@ -338,4 +338,76 @@ global class slwcResourceService {
         @AuraEnabled public object totalRecords {get;set;}
     }
 
+    // HRP-13941 — Vehicle Replacement Workflow
+
+    @AuraEnabled
+    public static slwcAuraResult getVehiclesForCOs(getVehiclesForCOsRequestModel request) {
+        slwcAuraResult result = new slwcAuraResult();
+        Set<Id> collectionOperationIds = new Set<Id>(request.collectionOperationIds);
+        result.returnedData = queryVehiclesForCOs(collectionOperationIds, request.startDate, request.endDate);
+        return result;
+    }
+
+    private static vehicleListDataModel queryVehiclesForCOs(
+        Set<Id> collectionOperationIds,
+        String startDateStr,
+        String endDateStr
+    ) {
+        Date startDate = String.isBlank(startDateStr) ? Date.today() : skedDateTimeUtils.getDateFromIsoString(startDateStr);
+        Date endDate   = String.isBlank(endDateStr)   ? Date.today().addYears(1) : skedDateTimeUtils.getDateFromIsoString(endDateStr);
+
+        // Separate query for relocated resource IDs — same pattern as slwcAllocationService.getResourceData()
+        Set<Id> relocatedResourceIds = new Set<Id>();
+        for (sked__Resource_Override__c ro : [
+            SELECT Id, sked__Resource__c
+            FROM sked__Resource_Override__c
+            WHERE sked_Collection_Operation__c IN :collectionOperationIds
+            AND   sked_Start_Date__c <= :endDate
+            AND   sked_End_Date__c   >= :startDate
+        ]) {
+            relocatedResourceIds.add(ro.sked__Resource__c);
+        }
+
+        Set<Id> secondaryCoVehicleIds = new Set<Id>();
+        for (sked_Resource_Biomed_Collection_Op__c rco : [
+            SELECT sked_Resource__c
+            FROM sked_Resource_Biomed_Collection_Op__c
+            WHERE sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds
+            AND   (sked_Start_Date__c = null OR sked_Start_Date__c <= :endDate)
+            AND   (sked_End_Date__c   = null OR sked_End_Date__c   >= :startDate)
+        ]) {
+            secondaryCoVehicleIds.add(rco.sked_Resource__c);
+        }
+
+        Set<Id> additionalVehicleIds = new Set<Id>(secondaryCoVehicleIds);
+        additionalVehicleIds.addAll(relocatedResourceIds);
+
+        List<sked__Resource__c> vehicles = [
+            SELECT Id, Name, sked__Category__c, sked_Pres_Donor_Capacity__c, sked__Is_Active__c,
+                   sked_Effective_Date__c, sked_Future_Inactive_Date__c
+            FROM sked__Resource__c
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_ASSET
+            AND   sked_Asset_Type__c = :skedConstants.ASSET_TYPE_VEHICLE
+            AND   (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds
+                   OR Id IN :additionalVehicleIds)
+            ORDER BY Name
+        ];
+
+        vehicleListDataModel data = new vehicleListDataModel();
+        data.vehicles = vehicles;
+        data.relocatedIds = new List<Id>(relocatedResourceIds);
+        return data;
+    }
+
+    public class getVehiclesForCOsRequestModel {
+        @AuraEnabled public List<Id> collectionOperationIds {get;set;}
+        @AuraEnabled public String startDate {get;set;}
+        @AuraEnabled public String endDate {get;set;}
+    }
+
+    public class vehicleListDataModel {
+        @AuraEnabled public List<sked__Resource__c> vehicles {get;set;}
+        @AuraEnabled public List<Id> relocatedIds {get;set;}
+    }
+
 }
