@@ -57,11 +57,15 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     }
 
     get appointmentAlertMessage() {
-        return "Volunteer updates will only be applied to drives with no issues.";
+        return this.isAddMode
+            ? "Volunteer additions will only be applied to drives with no issues."
+            : "Volunteer updates will only be applied to drives with no issues.";
     }
 
     get appointmentAlertInstructionMessage() {
-        return "To update a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
+        return this.isAddMode
+            ? "To add a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the addition on the drive."
+            : "To update a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
     }
 
     get isOtherVolunteerAdjustmentReasonSelected() {
@@ -342,7 +346,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         const mapDrivesByDate = groupBy(drives, 'driveDate');
 
         const result = [];
-        this.model.recurrenceDates.forEach(dateIso => {
+        [...this.model.recurrenceDates].sort().forEach(dateIso => {
             const drivesForDate = mapDrivesByDate[dateIso] || [];
             result.push({
                 dateIso,
