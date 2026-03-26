@@ -554,7 +554,7 @@
         <fields>Drive_Date__c</fields>
         <fields>Is_Template__c</fields>
         <fields>OPPORTUNITY.STAGE_NAME</fields>
-        <fields>Drive_Status__c</fields>
+        <fields>DriveStatus__c</fields>
         <fields>Parent_Template_Id__c</fields>
         <relatedList>RelatedOpportunityList</relatedList>
         <sortField>Is_Template__c</sortField>
