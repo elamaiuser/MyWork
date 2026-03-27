@@ -389,6 +389,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 DRIVE_STATUS.HOLD
             ];
             driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
+            driveQuery.excludedIds = [this.drive.id];
 
             const driveSvc = new driveService();
             return driveSvc.query(driveQuery);
@@ -433,10 +434,12 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
                 acc.push(...day.drives
                     .filter(drive => !drive.errorMessages.length)
                     .map(drive => ({
-                        driveId:      drive.id,
-                        driveShiftId: drive.driveShifts?.[0]?.id,
-                        driveSiteId:  drive.driveSiteId,
-                        driveDate:    drive.driveDate
+                        driveId:          drive.id,
+                        driveShiftId:     drive.driveShifts?.[0]?.id,
+                        driveShiftStart:  drive.driveShifts?.[0]?.start,
+                        driveShiftFinish: drive.driveShifts?.[0]?.finish,
+                        driveSiteId:      drive.driveSiteId,
+                        driveDate:        drive.driveDate
                     }))
                 );
                 return acc;

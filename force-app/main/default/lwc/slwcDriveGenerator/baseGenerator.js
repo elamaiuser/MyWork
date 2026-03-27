@@ -1568,6 +1568,8 @@ class BaseGenerator {
               driveId:                        target.driveId,
               driveShiftId:                   target.driveShiftId,
               driveSiteId:                    target.driveSiteId,
+              start:                          target.driveShiftStart,
+              finish:                         target.driveShiftFinish,
               volunteerRole:                  job.volunteerRole,
               redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
               quantity:                       job.quantity,
@@ -1575,7 +1577,7 @@ class BaseGenerator {
               volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
               otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
               isManuallyCreated:              true,
-              manuallyCreatedFrom:            'DRIVE_SCHEDULING',
+              manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
               jobAllocationTimeSource:        false,
               jobTags:                        []
             });
