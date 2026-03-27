@@ -45,7 +45,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     public static Map<Id,ResourceContext> resourceIdVsResourceDetails = new Map<Id,ResourceContext>();	
     public static Map<Id,List<sked__Resource_Tag__c>> resourceVsResourceTagMap = new Map<Id,List<sked__Resource_Tag__c>>();	
     public static Map<Id,sked_Operation_Drive_Limit__c> map_operationDriveLimitId_operationDriveLimit = new Map<Id,sked_Operation_Drive_Limit__c>();
-    public static Map<Id, ResourceContext> resourceCtxMap = new Map<Id, ResourceContext>();
     public static Decimal remainingStaff = 0; 
     public static Decimal reCalTotalNoOfStaffRequired = 0; 
     private Map<String, Set<Id>> map_driveType_failedDriveIds = new Map<String,  Set<Id>>();
@@ -143,12 +142,13 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             } 
         } 
         catch(Exception ex) {
+            Date driveDate = this.driveDateToEval != NULL ? this.driveDateToEval : Date.today(); 
             if(source != NULL && !String.isBlank(source) && source.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) { //No need for Adhoc CB drives HRP-11368
-                DateTime dt = Helper.getSameDayOfPrevYear(this.driveDateToEval);
-                this.driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                DateTime dT = Helper.getSameDayOfPrevYear(driveDate);
+                driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
             }
             cbLogWrapper = new DriveGenerationUtil.CalendarBuildLogWrapper(
-                this.driveDateToEval, 
+                driveDate, 
                 BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), 
                 runType
             );
@@ -487,62 +487,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
 
     public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
-        System.debug('driveList==> '+driveList.size());
+        Map<Id, ResourceContext> resourceCtxMap = new Map<Id, ResourceContext>();
         Savepoint sp = Database.setSavepoint(); //HRP-13347
         try{
-            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; 
-            
-            Set<Id> siteIds = new Set<Id>();
-            for(sked_Drive__c dr : driveList) {
-                siteIds.add(dr.sked_Drive_Site__c);
-            }
-            
-            List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(siteIds)); 
-                
-            Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>(resList);
-                
-            for(Id resourceId : resMap.keySet()){
-               resourceCtxMap.put(resourceId, new ResourceContext(resMap.get(resourceId)));
-            }
-            
-            for(sked_Resource_Biomed_Collection_Op__c resourceCO : [SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c FROM sked_Resource_Biomed_Collection_Op__c WHERE sked_Resource__c IN: resMap.keySet()]){
-                    resourceCtxMap.get(resourceCO.sked_Resource__c).biomedOps.add(resourceCO);
-            }
-                
-            for(sked__Account_Resource_Score__c accountResScore: [SELECT sked__Blacklisted__c,sked__Account__c, sked__Resource__c FROM sked__Account_Resource_Score__c where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(accountResScore.sked__Resource__c).accountScores.add(accountResScore);
-            }
-            
-            for(sked__Resource_Override__c resourceOverride: [SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Override__c Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(resourceOverride.sked__Resource__c).overrides.add(resourceOverride);
-            }
-            
-            for(sked__Location_Resource_Score__c locationResourceScore: [SELECT sked__Blacklisted__c,sked__Location__c, sked__Resource__c FROM sked__Location_Resource_Score__c  where sked__Blacklisted__c = true AND sked__Location__c = :driveSite AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(locationResourceScore.sked__Resource__c).locationScores.add(locationResourceScore);
-            }
-            
-            // for(sked__Availability__c availabilities: [SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availability__c where sked__Status__c = 'Approved' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet() LIMIT 10000]){
-            //     resourceCtxMap.get(availabilities.sked__Resource__c).availabilities.add(availabilities);
-            // }
-            
-            for(sked__Job_Allocation__c jobAllocations: [SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocation__c Where sked__Status__c  != 'Deleted' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(jobAllocations.sked__Resource__c).jobAllocations.add(jobAllocations);
-            }
-            
-            for(sked__Activity__c activities: [SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activity__c where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(activities.sked__Resource__c).activities.add(activities);
-            }
-            
-            for(sked__Activity_Resource__c activityResources: [SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resource__c Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(activityResources.sked__Resource__c).activityResource.add(activityResources);
-            }
-            
-            for(sked__Resource_Tag__c resourceTags: [SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__Resource_Tag__c WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate) AND sked__Resource__c IN: resMap.keySet()]){
-                resourceCtxMap.get(resourceTags.sked__Resource__c).tags.add(resourceTags);
-            }
-            
-            List<ResourceContext> resourceContextList = new List<ResourceContext>();
-            resourceContextList.addAll(resourceCtxMap.values());
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
             
             for(sked_Drive__c drive : driveList) {
                 driveSite = drive.sked_Drive_Site__c;
@@ -617,17 +565,59 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     continue; //continue to next drive
                 }
 
+                List<sked__Resource__c> resList = Database.Query(getResourcesToAllocate(drive)); 
+                    
+                Map<Id, sked__Resource__c> resMap = new Map<Id, sked__Resource__c>(resList);
+                    
+                for(Id resourceId : resMap.keySet()){
+                   resourceCtxMap.put(resourceId, new ResourceContext(resMap.get(resourceId)));
+                }
+                
+                for(sked_Resource_Biomed_Collection_Op__c resourceCO : [SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c FROM sked_Resource_Biomed_Collection_Op__c WHERE sked_Resource__c IN: resMap.keySet()]){
+                        resourceCtxMap.get(resourceCO.sked_Resource__c).biomedOps.add(resourceCO);
+                }
+                    
+                for(sked__Account_Resource_Score__c accountResScore: [SELECT sked__Blacklisted__c,sked__Account__c, sked__Resource__c FROM sked__Account_Resource_Score__c where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(accountResScore.sked__Resource__c).accountScores.add(accountResScore);
+                }
+                
+                for(sked__Resource_Override__c resourceOverride: [SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Override__c Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(resourceOverride.sked__Resource__c).overrides.add(resourceOverride);
+                }
+                
+                for(sked__Location_Resource_Score__c locationResourceScore: [SELECT sked__Blacklisted__c,sked__Location__c, sked__Resource__c FROM sked__Location_Resource_Score__c  where sked__Blacklisted__c = true AND sked__Location__c = :driveSite AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(locationResourceScore.sked__Resource__c).locationScores.add(locationResourceScore);
+                }
+                
+                for(sked__Availability__c availabilities: [SELECT Id, Name,sked_Start_Date__c, sked__Status__c, sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c, sked__Finish__c FROM sked__Availability__c where sked__Status__c = 'Approved' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(availabilities.sked__Resource__c).availabilities.add(availabilities);
+                }
+                
+                for(sked__Job_Allocation__c jobAllocations: [SELECT sked__Status__c ,sked__Resource__c,sked_Start_Date__c,sked_Set_End_Date__c,sked_Start_Time__c, sked_Set_End_Time__c, sked__Start__c, sked__Set_End__c FROM sked__Job_Allocation__c Where sked__Status__c  != 'Deleted' AND sked_Start_Date__c <= :driveDate AND sked_Set_End_Date__c >= :driveDate AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(jobAllocations.sked__Resource__c).jobAllocations.add(jobAllocations);
+                }
+                
+                for(sked__Activity__c activities: [SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activity__c where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(activities.sked__Resource__c).activities.add(activities);
+                }
+                
+                for(sked__Activity_Resource__c activityResources: [SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resource__c Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(activityResources.sked__Resource__c).activityResource.add(activityResources);
+                }
+                
+                for(sked__Resource_Tag__c resourceTags: [SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__Resource_Tag__c WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate) AND sked__Resource__c IN: resMap.keySet()]){
+                    resourceCtxMap.get(resourceTags.sked__Resource__c).tags.add(resourceTags);
+                }
+
                 resourceModelDriveLevel = calculatedResourceModel;
                 evaluateResourceEligibilityAndAllocateResources(resourceCtxMap.values(), drive, resourceModelDriveLevel);
             }
             sp = Database.setSavepoint(); //HRP-13347
     	} catch(Exception ex) {
             Database.rollback(sp); //HRP-13347
-            System.debug('Log==> typeOfDrive: '+typeOfDrive);
-            System.debug('BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive): '+BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive));
-            System.debug('ex: '+ex);
-            System.debug('String.valueOf(drive.Id.getSobjectType()): '+String.valueOf(drive.Id.getSobjectType()));
-            List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), String.valueOf(drive.Id.getSobjectType()), String.valueOf(drive.Id))};
+            String sobjectType = drive != null ? String.valueOf(drive.Id.getSobjectType()) : 'sked_Drive__c';
+            String driveIdStr = drive != null ? String.valueOf(drive.Id) : 'Unknown';
+            List<BSF_Error_Log__c> bsfErrorLogToInsertList = new List<BSF_Error_Log__c>{BSF_Utilities.createBsfErrorLogForExceptions(ex, 'DriveResourceAllocationBatch', 'Execute Method', BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), BSF_Constants.MAP_DRIVETYPE_BATCHTYPE.get(typeOfDrive), sobjectType, driveIdStr)};
             if(!map_driveType_failedDriveIds.containsKey(drive.sked_Type_of_Drive__c)) {
                 map_driveType_failedDriveIds.put(drive.sked_Type_of_Drive__c, new Set<Id>());
             }
@@ -641,9 +631,8 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     private static String getResourcesToAllocate (sked_Drive__c drive) {	
         String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
             ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c '+
-            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite)' ; // HRP-11001
-
-        // HRP-11908 --> Starts Here
+            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true' ; 
+        
         if(isFixedSiteDrive(drive)) {
             queryString += ' AND (sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')';
         } else {
@@ -651,17 +640,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                             ' ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST';
         }
         // HRP-11908 --> Ends Here
-        return queryString;
-    }
-    
-    private static String getResourcesToAllocate (Set<Id> siteIds) {	
-        String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
-            ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c '+
-            '(SELECT Id, Name,sked_Start_Date__c, sked__Status__c,sked_Finish_Date__c, sked__Resource__c,sked__Type__c,sked_Start_Time__c, sked_Finish_Time__c, sked__Start__c,'+
-            ' sked__Finish__c FROM sked__Availabilities1__r where sked__Status__c = \'Approved\' AND sked__Is_Available__c = false AND sked_Start_Date__c <=: driveDate AND sked_Finish_Date__c >=: driveDate)'+
-            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c IN :siteIds)'+
-            ' AND (sked_Asset_Type__c = \'Vehicle\' OR sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')' +
-                            ' ORDER BY sked_Pres_Donor_Capacity__c DESC NULLS LAST';
 
         return queryString;
     }
@@ -690,7 +668,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         }
         if(targetCreatedDate != NULL) {
             queryString += ' AND CreatedDate >= :targetCreatedDateFrom AND CreatedDate <= :targetCreatedDateTo' ;
-        }
+        }  
         queryString += ' AND sked_Type_of_Drive__c =: typeOfDrive ORDER BY sked_Drive_Date__c DESC, sked_Rank__c';
         //HRP-12706 --> Ends Here
         return queryString; //HRP-11793
@@ -873,10 +851,10 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Boolean isResourceAvailable = TRUE;
 
             //a. Check for Unavailability
-            if(!res.resource.sked__Availabilities1__r.isEmpty()) {
-                for(sked__Availability__c unavailablity : res.resource.sked__Availabilities1__r) {
+            if(!res.availabilities.isEmpty()) {
+                for(sked__Availability__c unavailablity : res.availabilities) {
                     if(unavailabilityTypes.contains(unavailablity.sked__Type__c)) {
-                        isResourceAvailable = isResourceAvailableDuringJob(res.resource.sked__Availabilities1__r, drive, res.resource); //HRP-12760
+                        isResourceAvailable = isResourceAvailableDuringJob(res.availabilities, drive, res.resource); //HRP-12760
                     }
                 }
             }
@@ -1037,7 +1015,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 } else if(res.resource.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {
                     equipmentTypeResource.add(res);
                 }
-                resourceVsResourceTagMap.put(res.resource.Id,res.resource.sked__ResourceTags__r);
+                resourceVsResourceTagMap.put(res.resource.Id,res.tags);
             }
         }
         
@@ -1078,7 +1056,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                             if(count >= jobVsJobTagMap.get(equipmentJob.Id).size()) {
                                 if (!map_jobId_ResourceIds.containsKey(equipmentJob.Id)) {
                                     map_jobId_ResourceIds.put(equipmentJob.Id, new Set<Id>{equipmentResource.resource.Id});
-                                    resourceCtxMap.remove(equipmentResource.resource.Id);
                                 }
                                 map_jobId_ResourceIds.get(equipmentJob.Id).add(equipmentResource.resource.Id);
                                 assignedResourceId.add(equipmentResource.resource.Id);
@@ -1086,7 +1063,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         } else if(!jobVsJobTagMap.containskey(equipmentJob.Id) && !assignedResourceId.contains(equipmentResource.resource.Id)) {
                             if (!map_jobId_ResourceIds.containsKey(equipmentJob.Id)) {
                                 map_jobId_ResourceIds.put(equipmentJob.Id, new Set<Id>{equipmentResource.resource.Id});
-                                resourceCtxMap.remove(equipmentResource.resource.Id);
                             }
                             map_jobId_ResourceIds.get(equipmentJob.Id).add(equipmentResource.resource.Id);
                             assignedResourceId.add(equipmentResource.resource.Id);
@@ -1121,7 +1097,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()) {
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.resource.Id});
-                            	resourceCtxMap.remove(vehicleResource.resource.Id);
                             }
                             map_jobId_ResourceIds.get(vehicleJob.Id).add(vehicleResource.resource.Id);
                             assignedResourceId.add(vehicleResource.resource.Id);
@@ -1130,7 +1105,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     }else if(!resourceVsResourceTagMap.get(vehicleResource.resource.Id).isEmpty() && !jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vehicleResource.resource.Id)){
                         if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                             map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vehicleResource.resource.Id});
-                            resourceCtxMap.remove(vehicleResource.resource.Id);
                         }
                         map_jobId_ResourceIds.get(vehicleJob.Id).add(vehicleResource.resource.Id);
                         assignedResourceId.add(vehicleResource.resource.Id);
@@ -1154,7 +1128,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()){
                             if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                                 map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.resource.Id});
-                            	resourceCtxMap.remove(vRes.resource.Id);
                             }
                             map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.resource.Id);
                             assignedResourceId.add(vRes.resource.Id);
@@ -1163,7 +1136,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     }else if(!resourceVsResourceTagMap.get(vRes.resource.Id).isEmpty() && !jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.resource.Id)){
                         if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                             map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.resource.Id});
-                            resourceCtxMap.remove(vRes.resource.Id);
                         }
                         map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.resource.Id);
                         assignedResourceId.add(vRes.resource.Id);
@@ -1186,7 +1158,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                     if(matchingTags.size() == jobVsJobTagMap.get(vehicleJob.Id).size()) {
                         if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                             map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.resource.Id});
-                            resourceCtxMap.remove(vRes.resource.Id);
                         }
                         map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.resource.Id);
                         assignedResourceId.add(vRes.resource.Id);
@@ -1195,7 +1166,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 } else if(!resourceVsResourceTagMap.get(vRes.resource.Id).isEmpty() && !jobVsJobTagMap.containskey(vehicleJob.Id) && !assignedResourceId.contains(vRes.resource.Id)) {
                     if (!map_jobId_ResourceIds.containsKey(vehicleJob.Id)) {
                         map_jobId_ResourceIds.put(vehicleJob.Id, new Set<Id>{vRes.resource.Id});
-                        resourceCtxMap.remove(vRes.resource.Id);
                     }
                     map_jobId_ResourceIds.get(vehicleJob.Id).add(vRes.resource.Id);
                     assignedResourceId.add(vRes.resource.Id);
