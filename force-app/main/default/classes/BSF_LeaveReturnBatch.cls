@@ -25,7 +25,7 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     private static final String JOB_LABEL                = 'BSF_LeaveReturnBatch';
     private static final String STAGING_RT_DEVELOPER_NAME = 'Leave_Report';
 
-    // Workday JSON field name for the anticipated leave return date. 
+    // Workday JSON field name for the anticipated leave return date.
     // TODO: Update this constant once Workday finalises the field name.
     private static final String WD_RETURN_DATE_FIELD = 'Estimated_Last_Day_of_Leave';
     private static final String WD_FIRST_DAY_OF_LEAVE_FIELD = 'First_Day_of_Leave'; // Date field — used to determine if employee is currently mid-leave
@@ -70,14 +70,13 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // ─────────────────────────────────────────────────────────────────────────
     // SCHEDULABLE — prevents duplicate runs if a previous batch is still active
     // ─────────────────────────────────────────────────────────────────────────
-    public void execute(SchedulableContext sc) {
+    public void execute(SchedulableContext schedulableContext) {
         System.debug(JOB_LABEL + ': Scheduled trigger fired');
 
         if (!BSF_WorkdayBatchHelper.isBatchAlreadyRunning(JOB_LABEL)) {
-            Integer size = getConfiguredBatchSize();
-            BSF_LeaveReturnBatch batch = new BSF_LeaveReturnBatch(size);
+            Integer configuredBatchSize = getConfiguredBatchSize();
+            BSF_LeaveReturnBatch batch = new BSF_LeaveReturnBatch(configuredBatchSize);
             Database.executeBatch(batch, batch.batchSize);
-            System.debug(JOB_LABEL + ': Batch queued with batch size ' + size);
         } else {
             System.debug(JOB_LABEL + ': Batch already running — skipping this scheduled trigger');
         }
@@ -88,20 +87,18 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // Resolves the Workday endpoint, makes the callout via the helper,
     // and returns the full employee list as the batch iterable scope
     // ─────────────────────────────────────────────────────────────────────────
-    public Iterable<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> start(Database.BatchableContext bc) {
-        System.debug(JOB_LABEL + ': start() — batch job ID: ' + bc.getJobId());
+    public Iterable<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> start(Database.BatchableContext batchableContext) {
+        System.debug(JOB_LABEL + ': start() — batch job ID: ' + batchableContext.getJobId());
 
         List<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> employees;
 
         try {
             employees = BSF_WorkdayBatchHelper.fetchWorkdayData(buildEndpoint(), JOB_LABEL);
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
+        } catch (Exception caughtException) {
+            errorMessage = caughtException.getMessage();
             System.debug(JOB_LABEL + ': Fatal error in start() — ' + errorMessage);
-            throw e;
+            throw caughtException;
         }
-
-        System.debug(JOB_LABEL + ': Workday returned ' + employees.size() + ' employee record(s)');
         return employees;
     }
 
@@ -110,13 +107,12 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // Processes one chunk of Workday employees. Builds staging and resource
     // maps via the helper, then applies Leave-specific business logic.
     // ─────────────────────────────────────────────────────────────────────────
-    public void execute(Database.BatchableContext bc, List<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> scope) {
-        System.debug(JOB_LABEL + ': execute() — processing chunk of ' + scope.size() + ' employee(s)');
+    public void execute(Database.BatchableContext batchableContext, List<BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper> scope) {
 
         // Collect employee IDs in this chunk for targeted SOQL
         Set<String> employeeIds = new Set<String>();
-        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper w : scope) {
-            employeeIds.add(w.employeeId);
+        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper employeeWrapper : scope) {
+            employeeIds.add(employeeWrapper.employeeId);
         }
 
         Map<String, BSF_Workday_Staging__c> stagingMap = BSF_WorkdayBatchHelper.buildStagingMap(
@@ -124,132 +120,120 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             STAGING_RT_DEVELOPER_NAME,
             STAGING_FIELDS
         );
-        System.debug(JOB_LABEL + ': Found ' + stagingMap.size() + ' existing staging record(s) for this chunk');
 
         Map<String, sked__Resource__c> resourceMap = BSF_WorkdayBatchHelper.buildResourceMap(
             employeeIds,
             RESOURCE_FIELDS
         );
-        System.debug(JOB_LABEL + ': Found ' + resourceMap.size() + ' matching Resource record(s) for this chunk');
 
         List<BSF_Workday_Staging__c> stagingToUpsert  = new List<BSF_Workday_Staging__c>();
         List<sked__Resource__c>      resourcesToUpdate = new List<sked__Resource__c>();
 
-        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper wd : scope) {
+        for (BSF_WorkdayBatchHelper.WorkdayEmployeeWrapper workdayEmployee : scope) {
 
             String resourceEmploymentStatus;
-            Date returnDate = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_RETURN_DATE_FIELD, JOB_LABEL)?.addDays(1); // Workday returns the last day of leave, but the resource becomes available the following day — add 1 day buffer to calculate the return date
-            DateTime lastFunctionallyUpdated = BSF_WorkdayBatchHelper.getExtraDateTime(wd, WD_LAST_UPDATED_FIELD, JOB_LABEL);
-            Date firstDayOfLeave = BSF_WorkdayBatchHelper.getExtraDate(wd, WD_FIRST_DAY_OF_LEAVE_FIELD, JOB_LABEL);
-
-            // if(returnDate == null || returnDate<System.today()){
-            //     System.debug(JOB_LABEL + ': Employee ' + wd.employeeId + ' has a return date of ' + returnDate + ' which is in the past — skipping');
-            //     continue;
-            // }
+            Date     returnDate             = BSF_WorkdayBatchHelper.getExtraDate(workdayEmployee, WD_RETURN_DATE_FIELD, JOB_LABEL)?.addDays(1); // Workday returns the last day of leave, but the resource becomes available the following day — add 1 day buffer to calculate the return date
+            DateTime lastFunctionallyUpdated = BSF_WorkdayBatchHelper.getExtraDateTime(workdayEmployee, WD_LAST_UPDATED_FIELD, JOB_LABEL);
+            Date     firstDayOfLeave        = BSF_WorkdayBatchHelper.getExtraDate(workdayEmployee, WD_FIRST_DAY_OF_LEAVE_FIELD, JOB_LABEL);
 
             // Set to 'Leave' only when the employee is currently mid-leave
             // (firstDayOfLeave has passed AND returnDate is in the future).
             if (firstDayOfLeave != null && firstDayOfLeave <= System.today() && returnDate != null && returnDate > System.today()) {
                 resourceEmploymentStatus = skedConstants.RESOURCE_EMPLOYMENT_STATUS_LEAVE;
-            }
-            else{
+            } else {
                 resourceEmploymentStatus = skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE;
             }
 
             // ── Staging ──────────────────────────────────────────────────────
-            if (stagingMap.containsKey(wd.employeeId)) {
+            if (stagingMap.containsKey(workdayEmployee.employeeId)) {
 
-                BSF_Workday_Staging__c staging = stagingMap.get(wd.employeeId);
+                BSF_Workday_Staging__c existingStaging = stagingMap.get(workdayEmployee.employeeId);
 
                 // Update only when something has actually changed
-                if (staging.Anticipated_Leave_Return_Date__c != returnDate || staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated || staging.First_Day_of_Leave__c != firstDayOfLeave) {
+                if (existingStaging.Anticipated_Leave_Return_Date__c != returnDate
+                    || existingStaging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated
+                    || existingStaging.First_Day_of_Leave__c != firstDayOfLeave) {
 
-                    System.debug(JOB_LABEL + ': Updating staging for employee ' + wd.employeeId
-                        + ' — return date: ' + returnDate);
 
                     // Build change log BEFORE overwriting fields
                     String fieldChanges = '';
-                    if (staging.First_Day_of_Leave__c != firstDayOfLeave) {
+                    if (existingStaging.First_Day_of_Leave__c != firstDayOfLeave) {
                         fieldChanges += 'First_Day_of_Leave: '
-                            + staging.First_Day_of_Leave__c + ' → ' + firstDayOfLeave + '; ';
+                            + existingStaging.First_Day_of_Leave__c + ' → ' + firstDayOfLeave + '; ';
                     }
-                    if (staging.Anticipated_Leave_Return_Date__c != returnDate) {
+                    if (existingStaging.Anticipated_Leave_Return_Date__c != returnDate) {
                         fieldChanges += 'Anticipated_Leave_Return_Date: '
-                            + staging.Anticipated_Leave_Return_Date__c + ' → ' + returnDate + '; ';
+                            + existingStaging.Anticipated_Leave_Return_Date__c + ' → ' + returnDate + '; ';
                     }
-                    if (staging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated) {
+                    if (existingStaging.Workday_Last_Functionally_Updated__c != lastFunctionallyUpdated) {
                         fieldChanges += 'Workday_Last_Functionally_Updated: '
-                            + staging.Workday_Last_Functionally_Updated__c + ' → ' + lastFunctionallyUpdated + '; ';
+                            + existingStaging.Workday_Last_Functionally_Updated__c + ' → ' + lastFunctionallyUpdated + '; ';
                     }
 
-                    BSF_WorkdayBatchHelper.applyCommonStagingUpdate(staging, wd, fieldChanges);
-                    staging.Anticipated_Leave_Return_Date__c = returnDate;
-                    staging.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
-                    staging.First_Day_of_Leave__c = firstDayOfLeave;
+                    BSF_WorkdayBatchHelper.applyCommonStagingUpdate(existingStaging, workdayEmployee, fieldChanges);
+                    existingStaging.Anticipated_Leave_Return_Date__c     = returnDate;
+                    existingStaging.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
+                    existingStaging.First_Day_of_Leave__c                = firstDayOfLeave;
 
-                    stagingToUpsert.add(staging);
+                    stagingToUpsert.add(existingStaging);
 
                 } else {
-                    System.debug(JOB_LABEL + ': No changes for employee ' + wd.employeeId + ' — skipping staging');
+                    System.debug(JOB_LABEL + ': No changes for employee ' + workdayEmployee.employeeId + ' — skipping staging');
                 }
 
-            } else if (resourceMap.containsKey(wd.employeeId)) {
+            } else if (resourceMap.containsKey(workdayEmployee.employeeId)) {
 
                 // No staging yet but a matching Resource exists — create staging.
                 // Orphaned Workday employees with no Resource are silently skipped.
-                System.debug(JOB_LABEL + ': Creating staging for employee ' + wd.employeeId
-                    + ' — return date: ' + returnDate);
 
-                BSF_Workday_Staging__c newRec = BSF_WorkdayBatchHelper.buildNewStagingRecord(
-                    wd,
-                    resourceMap.get(wd.employeeId).Id,
+                BSF_Workday_Staging__c newStagingRecord = BSF_WorkdayBatchHelper.buildNewStagingRecord(
+                    workdayEmployee,
+                    resourceMap.get(workdayEmployee.employeeId).Id,
                     getStagingRecordTypeId(),
                     '1st time leave synced from Workday'
                 );
-                newRec.Anticipated_Leave_Return_Date__c = returnDate;
-                newRec.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
-                newRec.First_Day_of_Leave__c = firstDayOfLeave;
+                newStagingRecord.Anticipated_Leave_Return_Date__c     = returnDate;
+                newStagingRecord.Workday_Last_Functionally_Updated__c = lastFunctionallyUpdated;
+                newStagingRecord.First_Day_of_Leave__c                = firstDayOfLeave;
 
-                stagingToUpsert.add(newRec);
+                stagingToUpsert.add(newStagingRecord);
 
             } else {
-                System.debug(JOB_LABEL + ': No Resource found for employee ' + wd.employeeId + ' — skipping');
+                System.debug(JOB_LABEL + ': No Resource found for employee ' + workdayEmployee.employeeId + ' — skipping');
             }
 
             // ── Resource ─────────────────────────────────────────────────────
             // Always sync the return date on the resource regardless of whether
             // staging changed — resource field is what scheduling reads for availability
-            if (resourceMap.containsKey(wd.employeeId)) {
-                sked__Resource__c r = resourceMap.get(wd.employeeId);
+            if (resourceMap.containsKey(workdayEmployee.employeeId)) {
+                sked__Resource__c resourceRecord = resourceMap.get(workdayEmployee.employeeId);
 
-                if ((r.sked_Anticipated_Leave_Return_Date__c != returnDate || (resourceEmploymentStatus != null && r.sked_Employment_Status__c != resourceEmploymentStatus)) && r.sked_Employment_Status__c != skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE) {
-                    System.debug(JOB_LABEL + ': Updating Resource return date for employee '
-                        + wd.employeeId + ' — return date: ' + returnDate);
+                if ((resourceRecord.sked_Anticipated_Leave_Return_Date__c != returnDate
+                    || (resourceEmploymentStatus != null && resourceRecord.sked_Employment_Status__c != resourceEmploymentStatus))
+                    && resourceRecord.sked_Employment_Status__c != skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE) {
 
-                    if(resourceEmploymentStatus == skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE){
-                        r.sked_Anticipated_Leave_Return_Date__c = null; // Clear the return date when reactivating an employee
-                    }else{
-                        r.sked_Anticipated_Leave_Return_Date__c = returnDate;
+                    if (resourceEmploymentStatus == skedConstants.RESOURCE_EMPLOYMENT_STATUS_ACTIVE) {
+                        resourceRecord.sked_Anticipated_Leave_Return_Date__c = null; // Clear the return date when reactivating an employee
+                    } else {
+                        resourceRecord.sked_Anticipated_Leave_Return_Date__c = returnDate;
                     }
                     if (resourceEmploymentStatus != null) {
-                        r.sked_Employment_Status__c = resourceEmploymentStatus;
+                        resourceRecord.sked_Employment_Status__c = resourceEmploymentStatus;
                     }
-                    
-                    resourcesToUpdate.add(r);
+
+                    resourcesToUpdate.add(resourceRecord);
                 }
             }
         }
 
         if (!stagingToUpsert.isEmpty()) {
-            System.debug(JOB_LABEL + ': Upserting ' + stagingToUpsert.size() + ' staging record(s)');
             List<Database.UpsertResult> upsertResults = Database.upsert(stagingToUpsert, BSF_Workday_Staging__c.Employee_ID__c, false);
             BSF_WorkdayBatchHelper.logUpsertErrors(upsertResults, 'staging upsert', JOB_LABEL);
         }
 
         if (!resourcesToUpdate.isEmpty()) {
-            System.debug(JOB_LABEL + ': Updating ' + resourcesToUpdate.size() + ' Resource record(s)');
-            List<Database.SaveResult> resourceResults = Database.update(resourcesToUpdate, false);
-            BSF_WorkdayBatchHelper.logSaveErrors(resourceResults, 'resource update', JOB_LABEL);
+            List<Database.SaveResult> resourceSaveResults = Database.update(resourcesToUpdate, false);
+            BSF_WorkdayBatchHelper.logSaveErrors(resourceSaveResults, 'resource update', JOB_LABEL);
         }
     }
 
@@ -262,30 +246,30 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // Sets sked_Employment_Status__c = 'Active'.
     // The return date field is intentionally preserved as an audit trail.
     // ─────────────────────────────────────────────────────────────────────────
-    public void finish(Database.BatchableContext bc) {
-        System.debug(JOB_LABEL + ': finish() — querying resources to reactivate');
+    public void finish(Database.BatchableContext batchableContext) {
 
-        // Update any resources that should be on leave. This ensures we don't miss any return dates for employees who are currently on leave but haven't been updated to 'Leave' status yet because their return date is in the future.
+        // Update any resources that should be on leave. This ensures we don't miss any return dates
+        // for employees who are currently on leave but haven't been updated to 'Leave' status yet
+        // because their return date is in the future.
         resourceUpdateToLeave();
 
-        //reactivate resource upon return from leave
-        List<sked__Resource__c> toReactivate = [
+        // Reactivate resources upon return from leave
+        List<sked__Resource__c> resourcesToReactivate = [
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
             WHERE  sked_Anticipated_Leave_Return_Date__c <= :System.today()
             AND    sked_Employment_Status__c = 'Leave'
         ];
 
-        if (!toReactivate.isEmpty()) {
-            System.debug(JOB_LABEL + ': Reactivating ' + toReactivate.size() + ' Resource record(s) whose leave return date has passed');
+        if (!resourcesToReactivate.isEmpty()) {
 
-            for (sked__Resource__c r : toReactivate) {
-                r.sked_Employment_Status__c = 'Active';
-                r.sked_Anticipated_Leave_Return_Date__c = null;
+            for (sked__Resource__c resourceRecord : resourcesToReactivate) {
+                resourceRecord.sked_Employment_Status__c             = 'Active';
+                resourceRecord.sked_Anticipated_Leave_Return_Date__c = null;
             }
 
             BSF_WorkdayBatchHelper.logSaveErrors(
-                Database.update(toReactivate, false),
+                Database.update(resourcesToReactivate, false),
                 'finish resource reactivation',
                 JOB_LABEL
             );
@@ -315,19 +299,18 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     private String buildEndpoint() {
         String endpoint;
         try {
-            sked_Workday_XML_Template__mdt xml = [
+            sked_Workday_XML_Template__mdt xmlTemplate = [
                 SELECT sked_Endpoint__c
-                FROM sked_Workday_XML_Template__mdt
-                WHERE DeveloperName = 'Leave_Report'
-                LIMIT 1
+                FROM   sked_Workday_XML_Template__mdt
+                WHERE  DeveloperName = 'Leave_Report'
+                LIMIT  1
             ];
 
-            if (xml != null && String.isNotBlank(xml.sked_Endpoint__c)) {
-                endpoint = xml.sked_Endpoint__c;
-                System.debug(JOB_LABEL + ': Using endpoint from custom metadata — ' + endpoint);
+            if (xmlTemplate != null && String.isNotBlank(xmlTemplate.sked_Endpoint__c)) {
+                endpoint = xmlTemplate.sked_Endpoint__c;
             }
-        } catch (Exception mdEx) {
-            System.debug(JOB_LABEL + ': Could not read custom metadata endpoint, falling back to hardcoded default — ' + mdEx.getMessage());
+        } catch (Exception caughtException) {
+            System.debug(JOB_LABEL + ': Could not read custom metadata endpoint, falling back to hardcoded default — ' + caughtException.getMessage());
         }
 
         //TODO: The following line to append the CF_-_Prompt filter once Workday confirms the expected format.
@@ -347,15 +330,14 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     // ensuring at least the previous day's changes are captured on first run.
     private Date resolveFilterDate() {
         try {
-            BSF_Workday_Leave_Config__c config = BSF_Workday_Leave_Config__c.getOrgDefaults();
-            if (config != null && config.Last_Successful_Run_Date__c != null) {
-                return config.Last_Successful_Run_Date__c;
+            BSF_Workday_Leave_Config__c leaveConfig = BSF_Workday_Leave_Config__c.getOrgDefaults();
+            if (leaveConfig != null && leaveConfig.Last_Successful_Run_Date__c != null) {
+                return leaveConfig.Last_Successful_Run_Date__c;
+            } else if (leaveConfig != null && leaveConfig.Initial_Backfill_Date__c != null) {
+                return leaveConfig.Initial_Backfill_Date__c;
             }
-            else if(config != null && config.Initial_Backfill_Date__c != null){
-                return config.Initial_Backfill_Date__c;
-            }
-        } catch (Exception e) {
-            System.debug(JOB_LABEL + ': Error reading filter date from config — ' + e.getMessage());
+        } catch (Exception caughtException) {
+            System.debug(JOB_LABEL + ': Error reading filter date from config — ' + caughtException.getMessage());
         }
         return System.today().addYears(-5);
     }
@@ -373,30 +355,29 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
     }
 
     private Integer getConfiguredBatchSize() {
-        Integer size;
+        Integer configuredBatchSize;
         try {
-            BSF_Workday_Leave_Config__c config = BSF_Workday_Leave_Config__c.getOrgDefaults();
-            if (config != null && config.Batch_Size__c != null && config.Batch_Size__c > 0) {
-                size = config.Batch_Size__c.intValue();
+            BSF_Workday_Leave_Config__c leaveConfig = BSF_Workday_Leave_Config__c.getOrgDefaults();
+            if (leaveConfig != null && leaveConfig.Batch_Size__c != null && leaveConfig.Batch_Size__c > 0) {
+                configuredBatchSize = leaveConfig.Batch_Size__c.intValue();
             }
-        } catch (Exception e) {
-            System.debug(JOB_LABEL + ': Error reading batch size from config — ' + e.getMessage());
+        } catch (Exception caughtException) {
+            System.debug(JOB_LABEL + ': Error reading batch size from config — ' + caughtException.getMessage());
         }
-        return (size != null && size > 0) ? size : DEFAULT_BATCH_SIZE;
+        return (configuredBatchSize != null && configuredBatchSize > 0) ? configuredBatchSize : DEFAULT_BATCH_SIZE;
     }
 
     private void updateLastSuccessfulRunDate() {
         try {
-            BSF_Workday_Leave_Config__c config = BSF_Workday_Leave_Config__c.getOrgDefaults();
-            config.Last_Successful_Run_Date__c = System.today();
-            upsert config;
-            System.debug(JOB_LABEL + ': Last_Successful_Run_Date__c updated to ' + System.today());
-        } catch (Exception e) {
-            System.debug(JOB_LABEL + ': Could not update Last_Successful_Run_Date__c — ' + e.getMessage());
+            BSF_Workday_Leave_Config__c leaveConfig    = BSF_Workday_Leave_Config__c.getOrgDefaults();
+            leaveConfig.Last_Successful_Run_Date__c    = System.today();
+            upsert leaveConfig;
+        } catch (Exception caughtException) {
+            System.debug(JOB_LABEL + ': Could not update Last_Successful_Run_Date__c — ' + caughtException.getMessage());
         }
     }
 
-    private void resourceUpdateToLeave(){
+    private void resourceUpdateToLeave() {
         // Query staging records directly to capture the date value
         List<BSF_Workday_Staging__c> leaveStaging = [
             SELECT Resource__c, Anticipated_Leave_Return_Date__c
@@ -408,29 +389,28 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
         ];
 
         // Build a map: Resource Id → Anticipated Leave Return Date
-        Map<Id, Date> resourceToLeaveDateMap = new Map<Id, Date>();
-        for (BSF_Workday_Staging__c stg : leaveStaging) {
-            resourceToLeaveDateMap.put(stg.Resource__c, stg.Anticipated_Leave_Return_Date__c);
+        Map<Id, Date> resourceIdToLeaveDateMap = new Map<Id, Date>();
+        for (BSF_Workday_Staging__c stagingRecord : leaveStaging) {
+            resourceIdToLeaveDateMap.put(stagingRecord.Resource__c, stagingRecord.Anticipated_Leave_Return_Date__c);
         }
 
         // Query resources using the collected Ids
-        List<sked__Resource__c> toUpdateToLeave = [
+        List<sked__Resource__c> resourcesToUpdateToLeave = [
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
-            WHERE  Id IN :resourceToLeaveDateMap.keySet()
+            WHERE  Id IN :resourceIdToLeaveDateMap.keySet()
             AND    sked_Employment_Status__c = 'Active'
         ];
 
-        if (!toUpdateToLeave.isEmpty()) {
-            System.debug(JOB_LABEL + ': Updating ' + toUpdateToLeave.size() + ' Resource record(s) to Leave status');
+        if (!resourcesToUpdateToLeave.isEmpty()) {
 
-            for (sked__Resource__c r : toUpdateToLeave) {
-                r.sked_Employment_Status__c = 'Leave';
-                r.sked_Anticipated_Leave_Return_Date__c = resourceToLeaveDateMap.get(r.Id);
+            for (sked__Resource__c resourceRecord : resourcesToUpdateToLeave) {
+                resourceRecord.sked_Employment_Status__c             = 'Leave';
+                resourceRecord.sked_Anticipated_Leave_Return_Date__c = resourceIdToLeaveDateMap.get(resourceRecord.Id);
             }
 
             BSF_WorkdayBatchHelper.logSaveErrors(
-                Database.update(toUpdateToLeave, false),
+                Database.update(resourcesToUpdateToLeave, false),
                 'finish resource leave status update',
                 JOB_LABEL
             );
