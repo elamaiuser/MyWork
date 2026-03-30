@@ -7,6 +7,7 @@
         <members>BSF_TaskPlanningWizardControllerTest</members>
         <members>BSF_AccountTaskPlanningCascadeBatchTest</members>
         <members>BSF_TemplateTaskPlanningCascadeBatchTest</members>
+        <members>TaskTriggerTest</members>
 		<name>ApexClass</name>
     </types>
 	<version>66.0</version>
