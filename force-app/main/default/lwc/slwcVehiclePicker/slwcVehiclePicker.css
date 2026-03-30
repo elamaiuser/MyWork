@@ -31,6 +31,6 @@
 
 .slds-listbox {
     min-height: 2.375rem;
-    max-height: 18rem;
+    max-height: 12.5rem;
     overflow-y: auto;
 }

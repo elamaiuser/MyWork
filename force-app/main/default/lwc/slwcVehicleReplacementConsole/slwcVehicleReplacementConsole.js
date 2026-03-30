@@ -6,6 +6,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import * as slwcUtils from 'c/slwcUtils';
 import { resourceService, driveService } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
+import SlwcVehicleReplacementConfirmModal from 'c/slwcVehicleReplacementConfirmModal';
 
 const _resourceService = new resourceService();
 const _driveService = new driveService();
@@ -216,6 +217,20 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
 
   handleApply() {
     if (this.isApplyDisabled) return;
+    const selectedDrives = this._allDrives.filter(d => this.selectedDriveIds.has(d.id));
+    SlwcVehicleReplacementConfirmModal.open({
+      size: 'medium',
+      currentVehicle: this.vehicleToChange,
+      replacementVehicle: this.replacementVehicle,
+      drives: selectedDrives
+    }).then(result => {
+      if (result === 'confirm') {
+        this._executeApply();
+      }
+    });
+  }
+
+  _executeApply() {
     this.isApplying = true;
     const driveIds = Array.from(this.selectedDriveIds);
     _driveService.applyVehicleReplacement({ request: {

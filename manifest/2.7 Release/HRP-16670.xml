@@ -15,6 +15,7 @@
 		<members>slwcSchedulingConsole</members>
 		<members>slwcVehiclePicker</members>
 		<members>slwcVehiclePickerModal</members>
+		<members>slwcVehicleReplacementConfirmModal</members>
 		<members>slwcVehicleReplacementConsole</members>
 		<members>slwcVehicleReplacementDriveList</members>
 		<name>LightningComponentBundle</name>
