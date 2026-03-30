@@ -21,6 +21,7 @@ export default class SlwcVehiclePickerModal extends LightningModal {
       .map(v => ({
         ...v,
         isSelected: v.id === this.currentSelectedId,
+        rowClass: v.id === this.currentSelectedId ? 'slds-is-selected' : '',
         relocatedKey: `${v.id}_relocated`,
         showRelocated: !this.hideExceptions && v.isRelocated,
         effectiveDateDisplay: v.effectiveDate ? DateTime.fromISO(v.effectiveDate).toFormat('MMM dd, yyyy') : '',
@@ -41,7 +42,7 @@ export default class SlwcVehiclePickerModal extends LightningModal {
   }
 
   handleVehicleSelect(event) {
-    this.currentSelectedId = event.target.dataset.id;
+    this.currentSelectedId = event.currentTarget.dataset.id;
   }
 
   handleSave() {

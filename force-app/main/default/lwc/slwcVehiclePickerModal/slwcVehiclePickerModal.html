@@ -24,17 +24,11 @@
         </thead>
         <tbody>
           <template for:each={filteredVehicles} for:item="vehicle">
-            <tr key={vehicle.id}>
-              <td>
-                <lightning-input
-                  type="radio"
-                  name="vehicleSelect"
-                  label=""
-                  value={vehicle.id}
-                  checked={vehicle.isSelected}
-                  onchange={handleVehicleSelect}
-                  data-id={vehicle.id}>
-                </lightning-input>
+            <tr key={vehicle.id} class={vehicle.rowClass} data-id={vehicle.id} onclick={handleVehicleSelect} style="cursor:pointer;">
+              <td class="slds-text-align_center">
+                <template if:true={vehicle.isSelected}>
+                  <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Selected"></lightning-icon>
+                </template>
               </td>
               <td><div class="slds-truncate" title={vehicle.name}>{vehicle.name}</div></td>
               <td><div class="slds-truncate" title={vehicle.category}>{vehicle.category}</div></td>

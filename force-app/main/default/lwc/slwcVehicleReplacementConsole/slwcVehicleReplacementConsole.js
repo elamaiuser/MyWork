@@ -10,12 +10,6 @@ import * as autoMapper from 'c/autoMapper';
 const _resourceService = new resourceService();
 const _driveService = new driveService();
 
-const EXCEPTION_CODE_MAP = {
-  'UNAVAILABLE': { severity: 'error', message: 'Resource is unavailable during this period' },
-  'OVERLAPPING': { severity: 'error', message: 'Resource has an overlapping allocation' },
-  'OUT_OF_REGION': { severity: 'error', message: 'Resource is outside the collection operation region' },
-  'RELOCATED': { severity: 'error', message: 'Resource is relocated during this period' }
-};
 
 export default class SlwcVehicleReplacementConsole extends LightningElement {
   @track filters = {
@@ -40,7 +34,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   @track isEnriching = false;
   @track isApplying = false;
   @track selectedDriveIds = new Set();
-  @track overriddenDriveIds = new Set();
   @track acknowledgedContentionIds = new Set();
 
   get headerTitle() {
@@ -90,6 +83,17 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     return this.vehicleToChange ? this.vehicleToChange.id : null;
   }
 
+  get activeVehicles() {
+    const { startDate, endDate } = this.filters;
+    if (!startDate || !endDate) return this.availableVehicles;
+    return this.availableVehicles.filter(v => {
+      if (!v.effectiveDate && !v.futureInactiveDate) return v.isActive;
+      const effectiveOk = !v.effectiveDate || v.effectiveDate <= endDate;
+      const inactiveOk = !v.futureInactiveDate || v.futureInactiveDate >= startDate;
+      return effectiveOk && inactiveOk;
+    });
+  }
+
   get isReplacementDisabled() {
     return !this.vehicleToChange || this.isLoadingVehicles;
   }
@@ -98,9 +102,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     return Array.from(this.selectedDriveIds);
   }
 
-  get overriddenDriveIdsArray() {
-    return Array.from(this.overriddenDriveIds);
-  }
 
   get acknowledgedContentionIdsArray() {
     return Array.from(this.acknowledgedContentionIds);
@@ -187,16 +188,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.selectedDriveIds = newSet;
   }
 
-  handleOverrideChanged(event) {
-    const { overrideKey, isOverridden } = event.detail;
-    const newSet = new Set(this.overriddenDriveIds);
-    if (isOverridden) {
-      newSet.add(overrideKey);
-    } else {
-      newSet.delete(overrideKey);
-    }
-    this.overriddenDriveIds = newSet;
-  }
 
   handleContentionAcknowledgeChanged(event) {
     const { conKey, isAcknowledged } = event.detail;
@@ -266,7 +257,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.impactedDrives = [];
     this.totalMatches = 0;
     this.selectedDriveIds = new Set();
-    this.overriddenDriveIds = new Set();
+
     this.acknowledgedContentionIds = new Set();
     this.currentPage = 1;
   }
@@ -315,8 +306,18 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
       collectionOperationIds: coIds
     } })
       .then(result => {
-        const drives = (result && result.returnedData && result.returnedData.drives) || [];
-        const mappedDrives = drives.map(r => autoMapper.autoMapperInstance.mapTo('sked_Drive__c', r));
+        const data = (result && result.returnedData) || {};
+        const jobsByDriveId = {};
+        (data.jobs || []).forEach(rawJob => {
+          const job = autoMapper.autoMapperInstance.mapTo('sked__Job__c', rawJob);
+          if (!jobsByDriveId[job.driveId]) jobsByDriveId[job.driveId] = [];
+          jobsByDriveId[job.driveId].push(job);
+        });
+        const mappedDrives = (data.drives || []).map(r => {
+          const drive = autoMapper.autoMapperInstance.mapTo('sked_Drive__c', r);
+          drive.jobs = jobsByDriveId[drive.id] || [];
+          return drive;
+        });
         return this._enrichWithExceptions(mappedDrives);
       })
       .then(enrichedDrives => {
@@ -345,19 +346,23 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     if (!drives.length || !this.replacementVehicle) return Promise.resolve(drives);
 
     const availator = slwcAvailator.getInstance({ mapApis: null, considerDateOnly: true });
-    const jobs = drives.map(d => ({
-      id: d.id,
-      assetType: ASSET_TYPE.VEHICLE,
-      start: d.jobs && d.jobs[0] ? d.jobs[0].start : null,
-      finish: d.jobs && d.jobs[0] ? d.jobs[0].finish : null,
-      driveDate: d.driveDate,
-      collectionOperationIds: d.collectionOperationId ? [d.collectionOperationId] : []
-    }));
+    const jobs = drives.map(d => {
+      const [vehicleJob] = d.jobs || [];
+      return {
+        id: d.id,
+        assetType: ASSET_TYPE.VEHICLE,
+        start: vehicleJob ? vehicleJob.start : null,
+        finish: vehicleJob ? vehicleJob.finish : null,
+        jobTags: vehicleJob ? vehicleJob.jobTags : [],
+        driveDate: d.driveDate,
+        collectionOperationIds: d.collectionOperationId ? [d.collectionOperationId] : []
+      };
+    });
 
     const collectionOperationIds = [...new Set(drives.map(d => d.collectionOperationId).filter(Boolean))];
 
     return availator.fetchAssetsDataDriveCalendar(jobs, {
-      timezoneSidId: null,
+      timezoneSidId: this.vehicleToChange.timezoneId,
       collectionOperationIds,
       excludedDriveIds: [],
       resourceIds: [this.replacementVehicle.id]
@@ -371,7 +376,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
 
         drives.forEach(drive => {
           const pa = paByJobId[drive.id];
-          drive.exceptions = pa ? this._mapExceptionLog(pa.exceptionLog) : [];
+          drive.exceptions = pa ? (pa.exceptionLog || []).map(e => ({ severity: 'error', message: e.exception })) : [];
 
           const remainingCapacity = (drive.vehicleCapacity || 0) - (this.vehicleToChange.presDonorCapacity || 0);
           const minRequiredCapacity = (drive.projectedRegisteredDonors || 0) - remainingCapacity;
@@ -394,15 +399,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
       });
   }
 
-  _mapExceptionLog(exceptionLog) {
-    if (!exceptionLog || !exceptionLog.length) return [];
-    return exceptionLog.map(entry => {
-      const mapped = EXCEPTION_CODE_MAP[entry.exception];
-      return mapped
-        ? { severity: mapped.severity, message: mapped.message }
-        : { severity: 'error', message: entry.exception };
-    });
-  }
 
   setLastQuery() {
     slwcUtils.setLastQuery(this.pageName, this.filters);
@@ -435,7 +431,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.totalMatches = 0;
     this.currentPage = 1;
     this.selectedDriveIds = new Set();
-    this.overriddenDriveIds = new Set();
+
     this.acknowledgedContentionIds = new Set();
   }
 

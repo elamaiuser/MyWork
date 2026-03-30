@@ -9,10 +9,11 @@
                aria-expanded={isDropdownOpen}
                aria-haspopup="listbox"
                role="combobox">
-            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+            <div class={formElementClass} role="none">
+              <lightning-icon icon-name={iconName} size="small" class={selectIconClass}></lightning-icon>
               <input
                 type="text"
-                class="slds-input slds-combobox__input has-custom-height"
+                class={inputClass}
                 value={inputValue}
                 placeholder="Search..."
                 readonly={isInputReadonly}

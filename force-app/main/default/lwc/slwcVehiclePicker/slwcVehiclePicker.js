@@ -34,6 +34,19 @@ export default class SlwcVehiclePicker extends LightningElement {
     return `slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click${this.isDropdownOpen ? ' slds-is-open' : ''}`;
   }
 
+  get formElementClass() {
+    const iconSide = this.selectedVehicle ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
+    return `slds-combobox__form-element slds-input-has-icon ${iconSide}`;
+  }
+
+  get selectIconClass() {
+    return `slds-combobox__input-entity-icon${this.selectedVehicle ? '' : ' slds-hide'}`;
+  }
+
+  get inputClass() {
+    return `slds-input slds-combobox__input slds-combobox__input-value has-custom-height${this.selectedVehicle ? ' has-custom-border' : ''}`;
+  }
+
   handleSearchInput(event) {
     this.searchTerm = event.target.value;
     this.isDropdownOpen = true;

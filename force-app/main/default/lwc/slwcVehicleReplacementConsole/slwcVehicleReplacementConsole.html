@@ -25,7 +25,7 @@
                   data-id="replacementVehicle"
                   label="Replacement Vehicle"
                   icon-name="utility:transport_heavy_truck"
-                  vehicles={availableVehicles}
+                  vehicles={activeVehicles}
                   exclude-vehicle-id={replacementVehicleExcludeId}
                   disabled={isReplacementDisabled}
                   onvehicleselected={handleReplacementVehicleSelected}
@@ -71,14 +71,12 @@
         <c-slwc-vehicle-replacement-drive-list
           drives={impactedDrives}
           selected-drive-ids={selectedDriveIdsArray}
-          overridden-drive-ids={overriddenDriveIdsArray}
           acknowledged-contention-ids={acknowledgedContentionIdsArray}
           total-matches={totalMatches}
           current-page={currentPage}
           current-vehicle={vehicleToChange}
           replacement-vehicle={replacementVehicle}
           onrowselection={handleRowSelection}
-          onoverride={handleOverrideChanged}
           oncontentionacknowledge={handleContentionAcknowledgeChanged}
           onpaginate={handlePageChange}>
         </c-slwc-vehicle-replacement-drive-list>

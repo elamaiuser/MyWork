@@ -802,18 +802,21 @@ global class slwcDriveService {
         if (startDate <= today) startDate = today.addDays(1);
 
         Set<Id> vehicleDriveIds = new Set<Id>();
+        Set<Id> vehicleJobIds = new Set<Id>();
         for (sked__Job_Allocation__c ja : [
-            SELECT sked__Job__r.sked_Drive__c
+            SELECT sked__Job__c, sked__Job__r.sked_Drive__c
             FROM sked__Job_Allocation__c
             WHERE sked__Resource__c = :request.vehicleToChangeId
             AND   sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
             AND   sked__Job__r.sked_Drive__c != null
             AND   sked__Job__r.sked_Start_Date__c >= :startDate
             AND   sked__Job__r.sked_Start_Date__c <= :endDate
+            AND   sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
             AND   sked__Job__r.sked_Drive__r.sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
             AND   sked__Job__r.sked_Drive__r.sked_Status__c != :skedConstants.DRIVE_STATUS_COMPLETE
         ]) {
             vehicleDriveIds.add(ja.sked__Job__r.sked_Drive__c);
+            vehicleJobIds.add(ja.sked__Job__c);
         }
 
         Set<Id> collectionOperationIds = new Set<Id>(request.collectionOperationIds);
@@ -823,10 +826,7 @@ global class slwcDriveService {
                    sked_Projected_Registered_Donors__c,
                    sked_Vehicle_Capacity__c,
                    sked_Collection_Operation__c,
-                   sked_Timezone__c,
-                   (SELECT Id, sked__Start__c, sked__Finish__c
-                    FROM sked_Jobs__r
-                    WHERE sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED)
+                   sked_Timezone__c
             FROM sked_Drive__c
             WHERE sked_Drive_Date__c >= :startDate
             AND   sked_Drive_Date__c <= :endDate
@@ -837,8 +837,16 @@ global class slwcDriveService {
             ORDER BY sked_Drive_Date__c ASC
         ];
 
+        List<sked__Job__c> vehicleJobs = [
+            SELECT Id, sked__Start__c, sked__Finish__c, sked_Drive__r.Id,
+                   (SELECT Id, sked__Tag__r.Id, sked__Tag__r.Name FROM sked__JobTags__r)
+            FROM sked__Job__c
+            WHERE Id IN :vehicleJobIds
+        ];
+
         impactedDrivesDataModel data = new impactedDrivesDataModel();
         data.drives = drives;
+        data.jobs = vehicleJobs;
         result.returnedData = data;
         return result;
     }
@@ -887,6 +895,7 @@ global class slwcDriveService {
 
     public class impactedDrivesDataModel {
         @AuraEnabled public List<sked_Drive__c> drives {get;set;}
+        @AuraEnabled public List<sked__Job__c> jobs {get;set;}
     }
 
 }

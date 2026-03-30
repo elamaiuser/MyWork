@@ -384,7 +384,13 @@ global class slwcResourceService {
 
         List<sked__Resource__c> vehicles = [
             SELECT Id, Name, sked__Category__c, sked_Pres_Donor_Capacity__c, sked__Is_Active__c,
-                   sked_Effective_Date__c, sked_Future_Inactive_Date__c
+                   sked_Effective_Date__c, sked_Future_Inactive_Date__c,
+                   sked__Primary_Region__r.sked__Timezone__c,
+                   (SELECT Id, Name, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c
+                    FROM sked__ResourceTags__r
+                    WHERE sked_Start_Date__c <= :endDate
+                    AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :startDate)
+                    AND (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE))
             FROM sked__Resource__c
             WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_ASSET
             AND   sked_Asset_Type__c = :skedConstants.ASSET_TYPE_VEHICLE

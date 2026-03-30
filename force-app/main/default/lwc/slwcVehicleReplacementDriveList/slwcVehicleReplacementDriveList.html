@@ -73,16 +73,6 @@
               <td colspan="7" class="slds-p-horizontal_medium slds-p-vertical_x-small" style={exc.bandStyle}>
                 <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
                   <span class="slds-text-body_small">{exc.message}</span>
-                  <template if:true={exc.isError}>
-                    <lightning-input
-                      type="checkbox"
-                      label="OVERRIDE EXCEPTION"
-                      checked={exc.isOverridden}
-                      onchange={handleOverrideChange}
-                      data-drive-id={drive.id}
-                      data-exc-key={exc.key}>
-                    </lightning-input>
-                  </template>
                 </div>
               </td>
             </tr>

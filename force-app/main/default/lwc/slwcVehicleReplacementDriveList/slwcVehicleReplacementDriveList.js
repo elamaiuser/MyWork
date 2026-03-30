@@ -22,7 +22,6 @@ const WARNING_BAND_STYLE = 'background:#fffbe6;border-left:4px solid #f8c900;';
 export default class SlwcVehicleReplacementDriveList extends LightningElement {
   @api drives = [];
   @api selectedDriveIds;
-  @api overriddenDriveIds;
   @api totalMatches = 0;
   @api currentPage = 1;
   @api pageSize = 10;
@@ -34,19 +33,16 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
 
   get enrichedDrives() {
     const selected = new Set(this.selectedDriveIds || []);
-    const overridden = new Set(this.overriddenDriveIds || []);
     const acknowledged = new Set(this.acknowledgedContentionIds || []);
     return (this.drives || []).map(drive => {
       const isSelected = selected.has(drive.id);
       const exceptions = (drive.exceptions || []).map((exc, idx) => {
         const isError = exc.severity === 'error';
         const key = `${drive.id}_exc_${idx}`;
-        const overrideKey = `${drive.id}_${idx}`;
         return {
           ...exc,
           key,
           isError,
-          isOverridden: overridden.has(overrideKey),
           bandClass: isError ? 'exception-band exception-band_error' : 'exception-band exception-band_warning',
           bandStyle: isError ? ERROR_BAND_STYLE : WARNING_BAND_STYLE
         };
@@ -143,14 +139,6 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
     const isAcknowledged = event.target.checked;
     this.dispatchEvent(new CustomEvent('contentionacknowledge', {
       detail: { conKey, isAcknowledged }
-    }));
-  }
-
-  handleOverrideChange(event) {
-    const overrideKey = event.target.dataset.excKey;
-    const isOverridden = event.target.checked;
-    this.dispatchEvent(new CustomEvent('override', {
-      detail: { overrideKey, isOverridden }
     }));
   }
 
