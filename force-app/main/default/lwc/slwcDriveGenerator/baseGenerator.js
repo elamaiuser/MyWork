@@ -1166,6 +1166,15 @@ class BaseGenerator {
   saveBulkAddVolunteerJob(shiftKey, job) {
     if (!shiftKey || !job) return;
 
+    console.log('[Bulk Add Volunteer Job] saveBulkAddVolunteerJob - temp confirmed jobs to save (will be revalidated again when calculateRecurrenceNewVolunteerJobs is called):', JSON.stringify({
+      volunteerRole: job.volunteerRole,
+      redcrossVolunteerQuantity: job.redcrossVolunteerQuantity,
+      quantity: job.quantity,
+      isLocked: job.isLocked,
+      volunteerAdjustmentReason: job.volunteerAdjustmentReason,
+      bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives
+    }));
+
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = this.helper.getDriveShiftJobs(shift);
     const index = newList.findIndex((item) => item.key === job.key);
@@ -1555,15 +1564,23 @@ class BaseGenerator {
       zone: this.masterData.timezoneSidId
     }).toISODate();
 
+    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - today (org timezone):', today);
+
     const newJobs = [];
 
     drive.driveShifts?.forEach(driveShift => {
       driveShift.jobs?.forEach(job => {
         if (!job.bulkAddVolunteerJobsSelectedDrives?.length) return;
 
-        job.bulkAddVolunteerJobsSelectedDrives
-          .filter(target => target.driveDate >= today)
-          .forEach(target => {
+        const allTargets = job.bulkAddVolunteerJobsSelectedDrives;
+        const filteredTargets = allTargets.filter(target => target.driveDate >= today);
+        const skippedTargets = allTargets.filter(target => target.driveDate < today);
+
+        console.log('[Bulk Add Volunteer Job] job:', job.volunteerRole, '| all targets:', allTargets.length,
+          '| skipped (past):', skippedTargets.map(t => t.driveDate),
+          '| will save:', filteredTargets.map(t => t.driveDate));
+
+        filteredTargets.forEach(target => {
             newJobs.push({
               driveId:                        target.driveId,
               driveShiftId:                   target.driveShiftId,
@@ -1584,6 +1601,10 @@ class BaseGenerator {
           });
       });
     });
+
+    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - total new jobs to save:', newJobs.length,
+      newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
+    );
 
     return Promise.resolve(newJobs);
   }

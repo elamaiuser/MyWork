@@ -1,4 +1,4 @@
-import { debugLogService, driveQueryModel, driveService, jobQueryModel, jobService, sObjectType } from 'c/dataService';
+import { debugLogService, jobQueryModel, jobService } from 'c/dataService';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DRIVE_TYPE, DRIVE_STATUS, OPERATION_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
 import { DriveHelper } from 'c/slwcDriveGenerator';
@@ -24,7 +24,6 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     @api resourceType;
     @api type;
  
-    @track isAddMode = false;
     @track showModal = false;
     @track showSpinner = false;
     @track step = STEP.STEP_1;
@@ -38,7 +37,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     masterData = {};
 
     get modalHeader() {
-        return this.isAddMode ? 'Bulk Add Volunteer Jobs' : 'Bulk Edit Volunteer Jobs';
+        return 'Bulk Edit Volunteer Jobs'
     }
     
     get modalSize() {
@@ -57,15 +56,11 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     }
 
     get appointmentAlertMessage() {
-        return this.isAddMode
-            ? "Volunteer additions will only be applied to drives with no issues."
-            : "Volunteer updates will only be applied to drives with no issues.";
+        return "Volunteer updates will only be applied to drives with no issues.";
     }
 
     get appointmentAlertInstructionMessage() {
-        return this.isAddMode
-            ? "To add a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the addition on the drive."
-            : "To update a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
+        return "To update a volunteer on a drive with a pending issue, resolve the issue and come back to this screen to confirm the update on the drive.";
     }
 
     get isOtherVolunteerAdjustmentReasonSelected() {
@@ -77,7 +72,6 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     }
 
     get isVolunteerAdjustmentReasonRequired () {
-        if (this.isAddMode) return true;
         return this.model?.volunteerRole || this.model?.redcrossVolunteerQuantity;
     }
     
@@ -94,7 +88,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
     }
 
     get modalOverflowInitial() {
-        return this.showStep1;
+        return false;
     }
     
     connectedCallback() {
@@ -155,11 +149,10 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             this.showModal = true;
             this.step = STEP.STEP_1;
             this.action = detail.action;
-            this.isAddMode = detail.action === 'bulk-add-volunteer-jobs';
             this.resourceType = detail.resourceType;
             this.type = detail.type;
             this.driveShift = detail.driveShift;
-            this.drive = detail.drive;
+            this.drive = detail.drive;  
             this.job = detail.job;
             this.errorMessages = [];
 
@@ -195,27 +188,6 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
             })
         }
 
-        if (this.isAddMode) {
-            if (slwcUtils.isNullOrEmpty(this.model.volunteerRole)) {
-                this.errorMessages.push({
-                    message: 'Volunteer Role is required.'
-                })
-            }
-
-            if (slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity)) {
-                this.errorMessages.push({
-                    message: 'Red Cross Volunteer Quantity is required.'
-                })
-            }
-
-            // Check if the volunteer role already exists for the current drive shift
-            if (this.driveShift?.jobs?.find(job => job.volunteerRole === this.model.volunteerRole)) {
-                this.errorMessages.push({
-                    message: `${this.model.volunteerRole} role already exists.`
-                });
-            }
-        }
-
         if (!this.model.recurrenceDates?.length) {
             this.errorMessages.push({
                 message: 'Please select at least 1 recurrence day.'
@@ -233,12 +205,8 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
 
     handleSaveStep1() {
         if(!this.validateStep1()) return;
-        if (this.isAddMode) {
-            this.initStep2ForAdd();
-        } else {
-            this.step = STEP.STEP_2;
-            this.initStep2();
-        }
+        this.step = STEP.STEP_2;
+        this.initStep2();
     }
 
     populateDaysWithJobs(jobs = []) {
@@ -340,82 +308,6 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         .finally(this.hideLoading);
     }
 
-    populateDaysWithDrives(drives = [], existingJobs = []) {
-        const mapJobsByDriveId = groupBy(existingJobs, 'driveId');
-
-        const mapDrivesByDate = groupBy(drives, 'driveDate');
-
-        const result = [];
-        [...this.model.recurrenceDates].sort().forEach(dateIso => {
-            const drivesForDate = mapDrivesByDate[dateIso] || [];
-            result.push({
-                dateIso,
-                drives: drivesForDate.map(drive => {
-                    const errorMessages = [];
-                    const driveJobs = mapJobsByDriveId[drive.id] || [];
-                    const roleAlreadyExists = driveJobs.some(job => job.volunteerRole === this.model.volunteerRole);
-
-                    if (roleAlreadyExists) {
-                        errorMessages.push('Role already exists');
-                    }
-
-                    return {
-                        ...drive,
-                        driveRecordUrl: '/' + drive.id,
-                        errorMessages
-                    };
-                })
-            });
-        });
-
-        this.model.daysWithDrives = result;
-    }
-
-    initStep2ForAdd() {
-        this.showLoading();
-        let fetchedDrives = [];
-        Promise.resolve()
-        .then(() => {
-            let driveQuery = new driveQueryModel();
-            driveQuery.selectedDates = this.model.recurrenceDates;
-            driveQuery.eventTypes = [DRIVE_TYPE.FIXED_SITE];
-            driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
-            driveQuery.collectionOpIds = [this.drive.collectionOperationId];
-            driveQuery.locationIds = [this.drive.driveSiteId];
-            driveQuery.statuses = [
-                DRIVE_STATUS.SYSTEM_GENERATED,
-                DRIVE_STATUS.TENTATIVE,
-                DRIVE_STATUS.CONFIRMED,
-                DRIVE_STATUS.HOLD
-            ];
-            driveQuery.subQueryIndicator = sObjectType.DRIVE_SHIFT;
-            driveQuery.excludedIds = [this.drive.id];
-
-            const driveSvc = new driveService();
-            return driveSvc.query(driveQuery);
-        })
-        .then((drives) => {
-            fetchedDrives = drives;
-            const driveIds = drives.map(d => d.id);
-            if (!driveIds.length) return [];
-
-            let jobQuery = new jobQueryModel();
-            jobQuery.driveIds = driveIds;
-            jobQuery.isVounteerRole = true;
-
-            const jobSvc = new jobService();
-            return jobSvc.query(jobQuery);
-        })
-        .then((existingJobs) => {
-            this.populateDaysWithDrives(fetchedDrives, existingJobs);
-        })
-        .then(() => {
-            this.step = STEP.STEP_2;
-        })
-        .catch(error => this.exceptionHandler(error))
-        .finally(this.hideLoading);
-    }
-
     handleBack() {
        this.step = STEP.STEP_1;
     }
@@ -424,55 +316,16 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         if(this.step === STEP.STEP_1) {
             return this.handleSaveStep1();
         }
-
-        if (this.isAddMode) {
-            const redcrossVolunteerQuantity = Number(this.model.redcrossVolunteerQuantity);
-            const sponsorVolunteerQuantity = Number(this.job.sponsorVolunteerQuantity || 0);
-            const quantity = redcrossVolunteerQuantity + sponsorVolunteerQuantity;
-
-            const bulkAddVolunteerJobsSelectedDrives = (this.model.daysWithDrives || []).reduce((acc, day) => {
-                acc.push(...day.drives
-                    .filter(drive => !drive.errorMessages.length)
-                    .map(drive => ({
-                        driveId:          drive.id,
-                        driveShiftId:     drive.driveShifts?.[0]?.id,
-                        driveShiftStart:  drive.driveShifts?.[0]?.start,
-                        driveShiftFinish: drive.driveShifts?.[0]?.finish,
-                        driveSiteId:      drive.driveSiteId,
-                        driveDate:        drive.driveDate
-                    }))
-                );
-                return acc;
-            }, []);
-
-            let eventValues = {
-                action: this.action,
-                shiftKey: this.driveShift.key,
-                job: {
-                    ...this.job,
-                    isLocked: !!this.model.isLocked,
-                    volunteerRole: this.model.volunteerRole,
-                    redcrossVolunteerQuantity: redcrossVolunteerQuantity,
-                    quantity: quantity,
-                    volunteerAdjustmentReason: this.model.volunteerAdjustmentReason,
-                    otherVolunteerAdjustmentReason: this.model.otherVolunteerAdjustmentReason,
-                    bulkAddVolunteerJobsSelectedDrives
-                }
-            };
-            fireEvent(this.pageRef, 'saveBulkAddVolunteerJobModal', eventValues);
-            this.closeModal();
-            return;
-        }
-
+                
         const updatedVolunteerRole = !slwcUtils.isNullOrEmpty(this.model.volunteerRole) ? this.model.volunteerRole : this.job.volunteerRole;
         const updatedRedCrossVolunteerQuantity = !slwcUtils.isNullOrEmpty(this.model.redcrossVolunteerQuantity)
         ? Number(this.model.redcrossVolunteerQuantity): Number(this.job.redcrossVolunteerQuantity || 0);
         const sponsorVolunteerQuantity = Number(this.job.sponsorVolunteerQuantity || 0);
         const quantity = updatedRedCrossVolunteerQuantity + sponsorVolunteerQuantity;
-
+                
         let eventValues = {
-            action: this.action,
-            shiftKey: this.driveShift.key,
+            action: this.action, 
+            shiftKey: this.driveShift.key, 
             job: {
                 ...this.job,
                 isLocked: !!this.model.isLocked,
@@ -492,7 +345,7 @@ export default class SlwcDriveShiftBulkEditVolunteerJobsModal extends LightningE
         };
         fireEvent(this.pageRef, 'saveBulkEditVolunteerJobModal', eventValues);
         this.closeModal();
-    }
+    }   
 
     /* Recurrence Dates Picker modal */
     openRecurrenceDatesPickerModalData() {

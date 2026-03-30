@@ -1,7 +1,7 @@
 <template>
     <template if:true={showModal}>
-        <c-slwc-custom-modal 
-            onclosecustommodal={handleCloseModal} 
+        <c-slwc-custom-modal
+            onclosecustommodal={handleCloseModal}
             onsavecustommodal={handleSaveModal}
             cancel-btn-label={modalCancelBtnLabel}
             save-btn-label={modalSaveBtnLabel}
@@ -13,30 +13,10 @@
                     <template if:true={showSpinner}>
                         <lightning-spinner class="spins" size="medium"></lightning-spinner>
                     </template>
-                    
+
                     <template if:true={showStep1}>
                         <c-slwc-page-errors validities={errorMessages}></c-slwc-page-errors>
 
-                        <div class="slds-section-title--divider">
-                            Drive Criteria
-                        </div>
-                        <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
-                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <c-slwc-picklist
-                                    required
-                                    name="volunteerRole"
-                                    label="Volunteer Role"
-                                    unique-key={filters.volunteerRole} 
-                                    object-api-name="sked__Job__c" 
-                                    selected-value={filters.volunteerRole}  
-                                    pick-listfield-api-name="sked_Volunteer_Role__c"
-                                    onpicklistchange={handleOnFiltersChange}>
-                                </c-slwc-picklist>
-                            </div>
-                            <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={filters.redcrossVolunteerQuantity} onchange={handleOnFiltersChange} autocomplete="off" required></lightning-input>
-                            </div>
-                        </div>
                         <div class="slds-section-title--divider">
                             Recurrence Dates
                         </div>
@@ -51,53 +31,53 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="slds-section-title--divider">
-                            Edit Fields
+                            Add Fields
                         </div>
                         <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
                                 <c-slwc-picklist
+                                    required
                                     name="volunteerRole"
                                     label="Volunteer Role"
-                                    unique-key={model.volunteerRole} 
-                                    object-api-name="sked__Job__c" 
-                                    selected-value={model.volunteerRole}  
+                                    unique-key={model.volunteerRole}
+                                    object-api-name="sked__Job__c"
+                                    selected-value={model.volunteerRole}
                                     pick-listfield-api-name="sked_Volunteer_Role__c"
                                     onpicklistchange={handleOnChange}
                                     dropdown-alignment="bottom-left">
                                 </c-slwc-picklist>
                             </div>
                             <div class="slds-col slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-m-bottom--small">
-                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={model.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off"></lightning-input>
+                                <lightning-input name="redcrossVolunteerQuantity" label="Red Cross Volunteer Quantity" type="number" value={model.redcrossVolunteerQuantity} onchange={handleOnChange} autocomplete="off" required></lightning-input>
                             </div>
                             <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
                                 <lightning-input name="isLocked" label="Lock" type="checkbox" onchange={handleOnChange} checked={model.isLocked} autocomplete="off"></lightning-input>
                             </div>
                         </div>
 
-                        <template if:true={isVolunteerAdjustmentReasonRequired}>
-                            <div class="slds-section-title--divider">
-                                Volunteer Adjustment Reason
+                        <div class="slds-section-title--divider">
+                            Volunteer Adjustment Reason
+                        </div>
+                        <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
+                            <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                <c-slwc-picklist
+                                    required
+                                    name="volunteerAdjustmentReason"
+                                    label="Volunteer Adjustment Reason"
+                                    unique-key={model.volunteerAdjustmentReason}
+                                    object-api-name="sked__Job__c"
+                                    selected-value={model.volunteerAdjustmentReason}
+                                    pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
+                                    onpicklistchange={handleOnChange}
+                                    dropdown-alignment="bottom-left">
+                                </c-slwc-picklist>
                             </div>
-                            <div class="slds-grid slds-wrap slds-gutters slds-p-around_x-small">
-                                <div class="slds-col slds-size_1-of-1 slds-m-bottom--small">
-                                    <c-slwc-picklist
-                                        required
-                                        name="volunteerAdjustmentReason"
-                                        label="Volunteer Adjustment Reason"
-                                        unique-key={model.volunteerAdjustmentReason} 
-                                        object-api-name="sked__Job__c" 
-                                        selected-value={model.volunteerAdjustmentReason}  
-                                        pick-listfield-api-name="sked_Volunteer_Adjustment_Reason__c"
-                                        onpicklistchange={handleOnChange}
-                                        dropdown-alignment="bottom-left">
-                                    </c-slwc-picklist>
-                                </div>
-                                <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
-                                    <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={model.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required></lightning-input>
-                                </div>
+                            <div if:true={isOtherVolunteerAdjustmentReasonSelected} class="slds-col slds-size_1-of-1 slds-m-bottom--small">
+                                <lightning-input name="otherVolunteerAdjustmentReason" label="Other Reason" type="text" value={model.otherVolunteerAdjustmentReason} onchange={handleOnChange} autocomplete="off" required></lightning-input>
                             </div>
-                        </template>
+                        </div>
                     </template>
 
                     <template if:true={showStep2}>
@@ -105,34 +85,31 @@
                             <p>{appointmentAlertMessage}</p>
                             <p>{appointmentAlertInstructionMessage}</p>
                         </div>
-                        
+
                         <div class="slds-p-horizontal_medium slds-p-vertical_small slds-scrollable_y slds-grow">
                             <div class="job-allocation-table">
                                 <div class="header">
                                     <div class="row">
-                                        <div class="col-role-name">Role</div>
                                         <div class="col-drive-name">Drive Name</div>
                                         <div class="col-drive-status">Drive Status</div>
                                         <div class="col-drive-issue">Issue</div>
                                     </div>
                                 </div>
-
                                 <div class="body">
-                                    <template for:each={model.daysWithJobs} for:item="day">
+                                    <template for:each={model.daysWithDrives} for:item="day">
                                         <div key={day.dateIso}>
                                             <div class="row sub-header">
                                                 <lightning-formatted-date-time value={day.dateIso} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
                                             </div>
-                                            <div if:false={day.jobs.length} class="row slds-text-color_error slds-p-around_small">No jobs</div>
-                                            <template for:each={day.jobs} for:item="job">
-                                                <div class="row" key={job.id}>
-                                                    <div class="col-role-name">{job.volunteerRole}</div>
+                                            <div if:false={day.drives.length} class="row slds-text-color_error slds-p-around_small">No drives</div>
+                                            <template for:each={day.drives} for:item="drive">
+                                                <div class="row" key={drive.id}>
                                                     <div class="col-drive-name">
-                                                        <lightning-formatted-url value={job.driveRecordUrl} label={job.driveName} target="_blank" ></lightning-formatted-url>
+                                                        <lightning-formatted-url value={drive.driveRecordUrl} label={drive.name} target="_blank"></lightning-formatted-url>
                                                     </div>
-                                                    <div class="col-drive-status">{job.driveStatus}</div>
+                                                    <div class="col-drive-status">{drive.status}</div>
                                                     <div class="col-drive-issue">
-                                                        <template for:each={job.errorMessages} for:item="errorMessage">
+                                                        <template for:each={drive.errorMessages} for:item="errorMessage">
                                                             <div
                                                                 key={errorMessage}
                                                                 class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
@@ -143,10 +120,9 @@
                                                 </div>
                                             </template>
                                         </div>
-                                        
                                     </template>
                                 </div>
-                            </div>  
+                            </div>
                         </div>
                     </template>
                 </div>

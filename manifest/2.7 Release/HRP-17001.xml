@@ -7,8 +7,9 @@
 	<types>
 		<members>slwcDriveGenerator</members>
 		<members>slwcDriveManagement</members>
-		<members>slwcDriveShiftBulkEditVolunteerJobsModal</members>
+		<members>slwcDriveShiftBulkAddVolunteerJobsModal</members>
 		<members>slwcDriveShiftJobTable</members>
+		<members>slwcDriveStaffingDetails</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>65.0</version>
