@@ -256,6 +256,7 @@
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Object_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Object_PS</members>
+        <members>BSF_Access_Control_Rule.HRP_16286_Page_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_2</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read</members>
