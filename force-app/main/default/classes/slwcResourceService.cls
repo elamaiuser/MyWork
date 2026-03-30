@@ -386,7 +386,7 @@ global class slwcResourceService {
             SELECT Id, Name, sked__Category__c, sked_Pres_Donor_Capacity__c, sked__Is_Active__c,
                    sked_Effective_Date__c, sked_Future_Inactive_Date__c,
                    sked__Primary_Region__r.sked__Timezone__c,
-                   (SELECT Id, Name, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked_Expiry_Date__c, sked__Tag__r.sked__Type__c
+                   (SELECT Id, Name, sked__Tag__c, sked__Tag__r.Id, sked__Tag__r.Name, sked__Tag__r.sked__Type__c, sked_Start_Date__c, sked_Expiry_Date__c
                     FROM sked__ResourceTags__r
                     WHERE sked_Start_Date__c <= :endDate
                     AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :startDate)
