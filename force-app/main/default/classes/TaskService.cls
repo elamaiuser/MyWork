@@ -126,7 +126,7 @@ public with sharing class TaskService {
     //HRP-12142 --> Start
     public static void updateRelatedAccountAndOpportunity(List<Task> taskList){
         
-        List<String> taskSubjects;
+        List<String> taskSubjects = new List<String>{};
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
