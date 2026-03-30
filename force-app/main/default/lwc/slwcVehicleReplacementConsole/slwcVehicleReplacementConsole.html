@@ -71,13 +71,13 @@
         <c-slwc-vehicle-replacement-drive-list
           drives={impactedDrives}
           selected-drive-ids={selectedDriveIdsArray}
-          acknowledged-contention-ids={acknowledgedContentionIdsArray}
+          selected-contention-resolutions={selectedContentionResolutionsData}
           total-matches={totalMatches}
           current-page={currentPage}
           current-vehicle={vehicleToChange}
           replacement-vehicle={replacementVehicle}
           onrowselection={handleRowSelection}
-          oncontentionacknowledge={handleContentionAcknowledgeChanged}
+          oncontentionresolution={handleContentionResolutionChanged}
           onpaginate={handlePageChange}>
         </c-slwc-vehicle-replacement-drive-list>
 

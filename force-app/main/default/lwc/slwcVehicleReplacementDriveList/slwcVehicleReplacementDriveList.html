@@ -80,15 +80,20 @@
           <template for:each={drive.contentions} for:item="con">
             <tr key={con.key} class="exception-band exception-band_warning">
               <td colspan="7" class="slds-p-horizontal_medium slds-p-vertical_x-small" style="background:#fffbe6;border-left:4px solid #f8c900;">
-                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                  <span class="slds-text-body_small">{con.message}</span>
-                  <lightning-input
-                    type="checkbox"
-                    label="Acknowledge"
-                    checked={con.isAcknowledged}
-                    onchange={handleContentionAcknowledge}
-                    data-con-key={con.key}>
-                  </lightning-input>
+                <span class="slds-text-body_small">{con.message}</span>
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-top_xx-small">
+                  <template for:each={con.options} for:item="opt">
+                    <label key={opt.value} class="contention-radio slds-m-right_large">
+                      <input
+                        type="radio"
+                        name={opt.name}
+                        value={opt.value}
+                        checked={opt.isChecked}
+                        onchange={handleContentionResolution}
+                        data-con-key={con.key}>
+                      <span class="slds-m-left_xx-small slds-text-body_small">{opt.value}</span>
+                    </label>
+                  </template>
                 </div>
               </td>
             </tr>

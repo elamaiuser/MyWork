@@ -26,9 +26,7 @@
               <td><div class="slds-truncate">{drive.driveDateDisplay}</div></td>
               <td>
                 <template if:true={drive.hasContentions}>
-                  <template for:each={drive.contentionMessages} for:item="con">
-                    <div key={con.key} class="slds-text-body_small slds-text-color_weak">{con.message}</div>
-                  </template>
+                  <span class="slds-text-body_small slds-text-color_weak">{drive.selectedResolution}</span>
                 </template>
               </td>
             </tr>

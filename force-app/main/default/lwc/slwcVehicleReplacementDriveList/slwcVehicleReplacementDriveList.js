@@ -27,13 +27,13 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
   @api pageSize = 10;
   @api currentVehicle;
   @api replacementVehicle;
-  @api acknowledgedContentionIds;
+  @api selectedContentionResolutions;
 
   @track selectedTab = TAB.ALL;
 
   get enrichedDrives() {
     const selected = new Set(this.selectedDriveIds || []);
-    const acknowledged = new Set(this.acknowledgedContentionIds || []);
+    const resolutions = this.selectedContentionResolutions || {};
     return (this.drives || []).map(drive => {
       const isSelected = selected.has(drive.id);
       const exceptions = (drive.exceptions || []).map((exc, idx) => {
@@ -49,9 +49,15 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
       });
       const contentions = (drive.contentions || []).map((c, idx) => {
         const key = `${drive.id}_con_${idx}`;
-        return { ...c, key, isAcknowledged: acknowledged.has(key) };
+        const selectedResolution = resolutions[key] || null;
+        const options = (c.resolutionOptions || []).map(opt => ({
+          ...opt,
+          name: key,
+          isChecked: selectedResolution === opt.value
+        }));
+        return { ...c, key, selectedResolution, options };
       });
-      const isCheckboxDisabled = contentions.some(c => !c.isAcknowledged);
+      const isCheckboxDisabled = contentions.length > 0 && !contentions.some(c => c.selectedResolution);
       return {
         ...drive,
         isSelected,
@@ -134,11 +140,11 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
     }));
   }
 
-  handleContentionAcknowledge(event) {
+  handleContentionResolution(event) {
     const conKey = event.target.dataset.conKey;
-    const isAcknowledged = event.target.checked;
-    this.dispatchEvent(new CustomEvent('contentionacknowledge', {
-      detail: { conKey, isAcknowledged }
+    const resolution = event.target.value;
+    this.dispatchEvent(new CustomEvent('contentionresolution', {
+      detail: { conKey, resolution }
     }));
   }
 

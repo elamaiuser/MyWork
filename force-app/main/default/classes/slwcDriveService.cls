@@ -884,8 +884,34 @@ global class slwcDriveService {
         insert newAllocations;
 
         reassignDriverJaFlags(driveIds);
+        saveContentionResolutions(driveIds, request.contentionResolutions);
 
         return result;
+    }
+
+    private static void saveContentionResolutions(Set<Id> driveIds, Map<String, String> contentionResolutions) {
+        if (contentionResolutions == null || contentionResolutions.isEmpty()) return;
+
+        List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
+        for (sked_Drive__c drive : [
+            SELECT Id, sked_Contention_Resolution__c
+            FROM sked_Drive__c
+            WHERE Id IN :driveIds
+            AND   Id IN :contentionResolutions.keySet()
+        ]) {
+            Set<String> existing = new Set<String>();
+            if (!String.isBlank(drive.sked_Contention_Resolution__c)) {
+                existing.addAll(drive.sked_Contention_Resolution__c.split(';'));
+            }
+            for (String resolution : contentionResolutions.get(drive.Id).split(';')) {
+                existing.add(resolution);
+            }
+            drive.sked_Contention_Resolution__c = String.join(new List<String>(existing), ';');
+            drivesToUpdate.add(drive);
+        }
+        if (!drivesToUpdate.isEmpty()) {
+            update drivesToUpdate;
+        }
     }
 
     private static void reassignDriverJaFlags(Set<Id> driveIds) {
@@ -1035,6 +1061,7 @@ global class slwcDriveService {
         @AuraEnabled public String vehicleToChangeId {get;set;}
         @AuraEnabled public String replacementVehicleId {get;set;}
         @AuraEnabled public List<Id> driveIds {get;set;}
+        @AuraEnabled public Map<String, String> contentionResolutions {get;set;}
     }
 
     public class impactedDrivesDataModel {

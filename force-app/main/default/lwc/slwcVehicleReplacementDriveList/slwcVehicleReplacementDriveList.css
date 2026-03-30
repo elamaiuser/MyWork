@@ -32,3 +32,9 @@
 .scheduling-status__filter-item .drives-count.status__error {
     background: #d23331;
 }
+
+.contention-radio {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}

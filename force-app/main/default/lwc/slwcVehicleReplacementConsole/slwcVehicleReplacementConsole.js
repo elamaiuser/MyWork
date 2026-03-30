@@ -1,6 +1,6 @@
 import { LightningElement, track } from 'lwc';
 import * as slwcAvailator from 'c/slwcAvailator';
-import { ASSET_TYPE } from 'c/slwcConstants';
+import { ASSET_TYPE, DRIVE_CONTENTION_RESOLUTION } from 'c/slwcConstants';
 import { keyBy, pick } from 'c/lodash';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import * as slwcUtils from 'c/slwcUtils';
@@ -35,7 +35,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   @track isEnriching = false;
   @track isApplying = false;
   @track selectedDriveIds = new Set();
-  @track acknowledgedContentionIds = new Set();
+  @track selectedContentionResolutions = {};
 
   get headerTitle() {
     return this.vehicleToChange
@@ -104,8 +104,8 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   }
 
 
-  get acknowledgedContentionIdsArray() {
-    return Array.from(this.acknowledgedContentionIds);
+  get selectedContentionResolutionsData() {
+    return { ...this.selectedContentionResolutions };
   }
 
   handleCollectionOperationChanged(event) {
@@ -174,7 +174,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
       drive.hasException = false;
     });
     this.selectedDriveIds = new Set();
-    this.acknowledgedContentionIds = new Set();
+    this.selectedContentionResolutions = {};
     this._updatePage(this.currentPage);
   }
 
@@ -190,19 +190,22 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   }
 
 
-  handleContentionAcknowledgeChanged(event) {
-    const { conKey, isAcknowledged } = event.detail;
-    const newAcknowledged = new Set(this.acknowledgedContentionIds);
-    if (isAcknowledged) {
-      newAcknowledged.add(conKey);
+  handleContentionResolutionChanged(event) {
+    const { conKey, resolution } = event.detail;
+    const updated = { ...this.selectedContentionResolutions };
+    if (resolution) {
+      updated[conKey] = resolution;
     } else {
-      newAcknowledged.delete(conKey);
+      delete updated[conKey];
       const driveId = conKey.split('_con_')[0];
-      const newSelected = new Set(this.selectedDriveIds);
-      newSelected.delete(driveId);
-      this.selectedDriveIds = newSelected;
+      const hasOtherResolved = Object.keys(updated).some(k => k.startsWith(driveId + '_con_'));
+      if (!hasOtherResolved) {
+        const newSelected = new Set(this.selectedDriveIds);
+        newSelected.delete(driveId);
+        this.selectedDriveIds = newSelected;
+      }
     }
-    this.acknowledgedContentionIds = newAcknowledged;
+    this.selectedContentionResolutions = updated;
   }
 
   handlePageChange(event) {
@@ -217,7 +220,15 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
 
   handleApply() {
     if (this.isApplyDisabled) return;
-    const selectedDrives = this._allDrives.filter(d => this.selectedDriveIds.has(d.id));
+    const resolutionMap = this.selectedContentionResolutions;
+    const selectedDrives = this._allDrives
+      .filter(d => this.selectedDriveIds.has(d.id))
+      .map(d => {
+        const resolution = (d.contentions || [])
+          .map((_, idx) => resolutionMap[`${d.id}_con_${idx}`])
+          .find(Boolean);
+        return { ...d, selectedResolution: resolution || null };
+      });
     SlwcVehicleReplacementConfirmModal.open({
       size: 'medium',
       currentVehicle: this.vehicleToChange,
@@ -233,10 +244,23 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   _executeApply() {
     this.isApplying = true;
     const driveIds = Array.from(this.selectedDriveIds);
+    const resolutionMap = this.selectedContentionResolutions;
+    const contentionResolutions = {};
+    this._allDrives
+      .filter(d => this.selectedDriveIds.has(d.id))
+      .forEach(d => {
+        const resolutions = (d.contentions || [])
+          .map((_, idx) => resolutionMap[`${d.id}_con_${idx}`])
+          .filter(Boolean);
+        if (resolutions.length) {
+          contentionResolutions[d.id] = resolutions.join(';');
+        }
+      });
     _driveService.applyVehicleReplacement({ request: {
       vehicleToChangeId: this.vehicleToChange.id,
       replacementVehicleId: this.replacementVehicle.id,
-      driveIds
+      driveIds,
+      contentionResolutions
     } })
       .then(() => {
         this.dispatchEvent(new ShowToastEvent({
@@ -273,7 +297,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.totalMatches = 0;
     this.selectedDriveIds = new Set();
 
-    this.acknowledgedContentionIds = new Set();
+    this.selectedContentionResolutions = {};
     this.currentPage = 1;
   }
 
@@ -396,7 +420,13 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
           const remainingCapacity = (drive.vehicleCapacity || 0) - (this.vehicleToChange.presDonorCapacity || 0);
           const minRequiredCapacity = (drive.projectedRegisteredDonors || 0) - remainingCapacity;
           drive.contentions = this.replacementVehicle.presDonorCapacity < minRequiredCapacity
-            ? [{ message: `Capacity gap: replacement vehicle capacity of ${this.replacementVehicle.presDonorCapacity} is less than the required ${minRequiredCapacity}` }]
+            ? [{
+              message: `Capacity gap: replacement vehicle capacity of ${this.replacementVehicle.presDonorCapacity} is less than the required ${minRequiredCapacity}`,
+              resolutionOptions: [
+                { value: DRIVE_CONTENTION_RESOLUTION.ELECT_LACKING_VEHICLE_USE_RENTAL },
+                { value: DRIVE_CONTENTION_RESOLUTION.ELECT_LACKING_VEHICLE_INSUFFICIENT_CAPACITY }
+              ]
+            }]
             : [];
 
           drive.hasException = drive.exceptions.length > 0 || drive.contentions.length > 0;
@@ -447,7 +477,7 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.currentPage = 1;
     this.selectedDriveIds = new Set();
 
-    this.acknowledgedContentionIds = new Set();
+    this.selectedContentionResolutions = {};
   }
 
   _clearPickerSelection(dataId) {
