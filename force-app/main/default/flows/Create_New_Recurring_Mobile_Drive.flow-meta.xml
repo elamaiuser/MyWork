@@ -146,6 +146,7 @@
         </outputParameters>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>AddToCollection</name>
         <label>AddToCollection</label>
@@ -1656,7 +1657,7 @@
             <label>End Flow</label>
         </rules>
     </decisions>
-    <description>HRP-13190 Populating APT Requirements from Template</description>
+    <description>HRP-16977 - Disabling 180 day Validation for Recurring Pattern Start Date</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
@@ -3633,7 +3634,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <inputParameters>
                 <name>InputStartDateOffset</name>
                 <value>
-                    <numberValue>180.0</numberValue>
+                    <numberValue>0.0</numberValue>
                 </value>
             </inputParameters>
             <inputParameters>
