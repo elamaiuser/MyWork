@@ -570,7 +570,161 @@ public with sharing class TaskService {
         return drdSystemUserId;
     }
     // HRP-13426 --> end
+    public static void populateTaskTypeFromMetadata(List<Task> newTasks) {
 
+        if(newTasks == null || newTasks.isEmpty()){
+            return;
+        }
+
+        Set<String> subjectsNeedingType = new Set<String>();
+
+        for(Task t : newTasks){
+            if(String.isBlank(t.Type) && String.isNotBlank(t.Subject)){
+                subjectsNeedingType.add(t.Subject.trim());
+            }
+        }
+
+        if(subjectsNeedingType.isEmpty()){
+            return;
+        }
+
+        Map<String, String> subjectToTypeMap = new Map<String, String>();
+
+        for(Task_Reassignment_Matrix__mdt mdt :
+            [
+                SELECT Task_Subject__c, Task_Type__c
+                FROM Task_Reassignment_Matrix__mdt
+                WHERE Task_Subject__c IN :subjectsNeedingType
+                AND Task_Type__c != null
+            ]
+        ){
+            subjectToTypeMap.put(mdt.Task_Subject__c, mdt.Task_Type__c);
+        }
+
+        if(subjectToTypeMap.isEmpty()){
+            return;
+        }
+
+        for(Task t : newTasks){
+            if(String.isBlank(t.Type) && String.isNotBlank(t.Subject)){
+                String resolvedType = subjectToTypeMap.get(t.Subject);
+                if(resolvedType != null){
+                    t.Type = resolvedType;
+                }
+            }
+        }
+    }
+    public static void createOneWeekCheckInTasks(Map<Id, Opportunity> oppMap) {
+        if(oppMap == null || oppMap.isEmpty()){
+            return;
+        }
+        Task_Reassignment_Matrix__mdt matrix = Task_Reassignment_Matrix__mdt.getInstance('One_Week_Check_in');
+
+        Map<Id, Task> existingTasksByOpp = new Map<Id, Task>();
+        for (Task t : [
+            SELECT Id, WhatId
+            FROM Task
+            WHERE WhatId IN :oppMap.keySet()
+            AND Type = :matrix.Task_Type__c
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ]) {
+            existingTasksByOpp.put(t.WhatId, t);
+        }
+
+        List<Task> tasksToInsert = new List<Task>();
+
+        List<OpportunityTeamMember> allOpportunityTeamMembers = [SELECT Id, OpportunityId, TeamMemberRole, UserId
+                                                                 FROM OpportunityTeamMember
+                                                                 WHERE TeamMemberRole IN (:BSF_Constants.DISTRICT_MANAGER, :BSF_Constants.ACCOUNT_SPECIALIST, :BSF_Constants.ACCOUNT_SPECIALIST)
+                                                                 AND OpportunityId IN :oppMap.keySet()
+                                                                ];
+        
+        
+        Map<Id, List<OpportunityTeamMember>> oppTeamMembersMap = new Map<Id, List<OpportunityTeamMember>>();
+        for (OpportunityTeamMember oppteamem : allOpportunityTeamMembers) {
+            if (!oppTeamMembersMap.containsKey(oppteamem.OpportunityId)) {
+                oppTeamMembersMap.put(oppteamem.OpportunityId, new List<OpportunityTeamMember>());
+            }
+            oppTeamMembersMap.get(oppteamem.OpportunityId).add(oppteamem);
+        }
+
+        for (Id oppId : oppMap.keySet()) {
+            if (existingTasksByOpp.containsKey(oppId)){
+                continue;
+            }
+
+            Opportunity opp = oppMap.get(oppId);
+            Id distmng, accsp;
+            if(oppTeamMembersMap.containsKey(opp.Id)){
+                for (OpportunityTeamMember t : oppTeamMembersMap.get(opp.Id)) {
+                    if (t.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER){
+                        distmng = t.UserId;
+                    }
+                    if (t.TeamMemberRole == BSF_Constants.ACCOUNT_SPECIALIST){
+                        accsp = t.UserId;
+                    }
+                }
+            }
+
+            Task t = new Task();
+            t.Subject = matrix.Task_Subject__c;
+            t.WhatId = oppId;
+            t.Type = matrix.Task_Type__c;
+            t.ActivityDate = opp.Drive_Date__c != null
+                            ? opp.Drive_Date__c.addDays(0 - Integer.valueOf(matrix.Due_Date_Offset__c))
+                            : null;
+            t.Status = BSF_Constants.STATUS_NOT_STARTED;
+            t.Priority = BSF_Constants.NORMAL_PRIORITY_TASK;
+            t.Drive_Date__c = opp.Drive_Date__c;
+            if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_MANAGER)){
+                t.OwnerId = opp.Account_Manager__c != null ? opp.Account_Manager__c :
+                            accsp != null ? accsp : distmng != null ? distmng : opp.OwnerId;
+
+            }else if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.ACCOUNT_SPECIALIST)){
+                t.OwnerId = accsp != null ? accsp : distmng != null ? distmng : opp.OwnerId;
+
+            }else if(String.isNotBlank(matrix.Assigned_To__c) && matrix.Assigned_To__c.equalsIgnoreCase(BSF_Constants.DISTRICT_MANAGER)){
+                t.OwnerId = distmng != null ? distmng : opp.OwnerId;
+
+            }
+            tasksToInsert.add(t);
+        }
+
+        if (tasksToInsert.size() > 0) {
+            Database.SaveResult[] srList = Database.insert(tasksToInsert, false);
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Insert task','TaskService','createOneWeekCheckInTasks','Error', 'Error in Inserting Tasks for One Week Check-In');
+            if(!errorList.isEmpty()){
+                Database.insert(errorList, true);
+            }
+        } 
+    }
+
+    public static void cancelOneWeekCheckInTasks(Set<Id> oppids) {
+        if(oppids == null || oppids.isEmpty()){
+            return;
+        }
+        Task_Reassignment_Matrix__mdt matrix = Task_Reassignment_Matrix__mdt.getInstance('One_Week_Check_in');
+
+        Map<Id, Task> existingTasksByOpp = new Map<Id, Task>();
+        List<Task> tasksToUpdate = new List<Task>();
+        for (Task t : [
+            SELECT Id, WhatId
+            FROM Task
+            WHERE WhatId IN :oppids
+            AND Type = :matrix.Task_Type__c
+            AND Status != :BSF_Constants.STATUS_CANCELLED
+        ]) {
+            t.Status = BSF_Constants.STATUS_CANCELLED;
+            tasksToUpdate.add(t);
+        }
+        if (tasksToUpdate.size() > 0) {
+            Database.SaveResult[] srList = Database.update(tasksToUpdate, false);
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOneWeekCheckInTasks','Error', 'Error in Cancelling Tasks for One Week Check-In');
+            if(!errorList.isEmpty()){
+                Database.insert(errorList, true);
+            }
+        } 
+    }
 
      //HRP-16830
     //
@@ -579,8 +733,6 @@ public with sharing class TaskService {
             if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
                 t.addError('Subject is required.');
             }
-        } 
-          
-          
-      }
+        }          
+    }
 }
