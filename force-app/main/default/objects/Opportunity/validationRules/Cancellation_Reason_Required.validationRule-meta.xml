@@ -2,6 +2,6 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Cancellation_Reason_Required</fullName>
     <active>true</active>
-    <errorConditionFormula>AND(ISPICKVAL(StageName  , &#39;Cancelled&#39;) ,( ISPICKVAL( sked_Cancellation_Reason__c , &#39;&#39;) ))</errorConditionFormula>
+    <errorConditionFormula>AND(ISPICKVAL(StageName  , &apos;Cancelled&apos;) ,( ISPICKVAL( sked_Cancellation_Reason__c , &apos;&apos;) ))</errorConditionFormula>
     <errorMessage>In order to mark this opportunity stage = canceled, please select initiated by and cancellation reasons first.</errorMessage>
 </ValidationRule>

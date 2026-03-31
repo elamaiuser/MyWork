@@ -11,6 +11,9 @@ public class PowerBIProxyController
 {
     public string redirectURL{get;set;}
  	public string jid;
+    public PowerBIProxyController() {
+        generateUrl(); // Populate redirectURL on page load
+    }
     //This Method is called from the Report VF pages(StagingSheetReport & WeeklyStaffingRoleReport)
     public PageReference redirect() 
     {
@@ -18,7 +21,7 @@ public class PowerBIProxyController
         reference.setRedirect(true);
         return reference;
     }
-    
+
     public string generateUrl()
     {
         String pageName = ApexPages.currentPage().getUrl().substringAfter('apex/').split('\\?')[0];

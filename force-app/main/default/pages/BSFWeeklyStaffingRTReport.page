@@ -6,15 +6,15 @@
         $Lightning.createComponent(
         "c:bsfWeeklyStaffingRoleTimeReport",
         {
-          selecteddivision: '{!div}',
-          selectedregion: '{!reg}',
-          selecteddistict: '{!dist}',
-          selectedcollopp: '{!coll}',
-          selectedstartdate: '{!startDate}',
-          selectedenddate: '{!endDate}',
-          selecteddrivetype: 'mobile',
+          selecteddivision: "{!JSENCODE(div)}",
+          selectedregion: "{!JSENCODE(reg)}",
+          selecteddistict: "{!JSENCODE(dist)}",
+          selectedcollopp: "{!JSENCODE(coll)}",
+          selectedstartdate: "{!JSENCODE(startDate)}",
+          selectedenddate: "{!JSENCODE(endDate)}",
+          selecteddrivetype: "mobile",
           selecteddrivedispatched: 'true',
-          vfdata: '{!vfdata}',
+          vfdata: "{!vfdata}",
           frommobile: true
         },
         "LwcId",

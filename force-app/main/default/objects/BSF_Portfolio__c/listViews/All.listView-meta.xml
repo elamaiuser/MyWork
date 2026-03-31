@@ -13,9 +13,14 @@
     <columns>End_Date__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>End_Date__c</field>
+        <field>Portfolio_Type__c</field>
         <operation>equals</operation>
-        <value>12/31/4000</value>
+        <value>Account Manager</value>
+    </filters>
+    <filters>
+        <field>Taxonomy_Type__c</field>
+        <operation>equals</operation>
+        <value>Bio Recruitment Supervisor</value>
     </filters>
     <label>All BSF Portfolios</label>
 </ListView>

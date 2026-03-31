@@ -1027,6 +1027,22 @@ global virtual class skedRacController extends skedBaseController {
         }
         return result;
     }
+
+    @remoteAction
+    global static skedRemoteResultModel validatePattern(savePatternRequestModel request) {
+        skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
+        try {
+            skedAvailabilityPatternService service = (skedAvailabilityPatternService)skedServiceFactory.instance.resolve('sked__Availability_Pattern__c');
+            skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+			service.validateOverlappingPatternResources(request.availabilityPattern);
+
+            result.data = request.availabilityPattern;
+        }
+        catch (Exception ex) {
+            result.getError(ex);
+        }
+        return result;
+    }
     
     @remoteAction
     global static skedRemoteResultModel savePattern(savePatternRequestModel request) {

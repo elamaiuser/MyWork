@@ -724,5 +724,36 @@ private class slwcApprovalService_Test {
         
         Test.stopTest();
     }
-    
+    @isTest
+    static void getLatestDCRStatus_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', System.today().addMonths(6), 14);
+        Map<String, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
+
+        // Create DCR
+        sked_Drive_Change_Request__c testDcr = new sked_Drive_Change_Request__c();
+        testDcr.sked_Auto_Process__c = true;
+        testDcr.sked_Description__c = 'Test Request';
+        testDcr.sked_Drive__c = testDrive.Id;
+        testDcr.sked_Drive_Contention__c = 'Exceed Operation Drive Limit';
+        testDcr.sked_Notes__c = 'Test Request';
+        testDcr.sked_Reason__c = 'Sponsor Initiated'; 
+        testDcr.sked_Route_Approval_Request_To__c = 'Request DM evaluation';
+        testDcr.sked_Status__c = 'Submitted';
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('skedDriveChangeRequestHandler');
+        insert testDcr;
+
+        Test.startTest();
+
+        slwcAuraResult result = slwcApprovalService.getLatestDCRStatus(testDcr.Id);
+
+        Test.stopTest();
+
+        System.assert(result != null, 'Result should not be null');
+        System.assertEquals('Submitted', (String)result.returnedData);
+    }
+
 }

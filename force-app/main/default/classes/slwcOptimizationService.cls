@@ -504,7 +504,7 @@ global class slwcOptimizationService implements Callable {
                                                                                              FROM sked_CollectionOperationOptimizerSetting__c
                                                                                              WHERE sked_Optimization_Run__c IN :optimizationIds];              
 
-        if (!optimizationRuns.isEmpty() && !test.isRunningTest()) {
+        if (!optimizationRuns.isEmpty()) {
             for (sked_Optimization_Run__c optimizationRun : optimizationRuns) {                                
                 try {
                     skedSkeduloApiData.OptimizationRunStatisticsResult optRunStatResponse = api.getOptimizerRunStatistics(optimizationRun.sked_Run_ID__c);
