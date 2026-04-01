@@ -10,6 +10,14 @@
       </template>
     </div>
 
+    <!-- Bulk Selection Links -->
+    <template if:true={replacementVehicle}>
+      <div class="slds-p-horizontal_small slds-p-vertical_xx-small">
+        <a class="slds-text-body_small slds-m-right_medium" href="javascript:void(0);" onclick={handleSelectAllTab}>Select all</a>
+        <a class="slds-text-body_small" href="javascript:void(0);" onclick={handleDeselectAllTab}>Deselect all</a>
+      </div>
+    </template>
+
     <!-- Drive Table -->
     <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" role="grid">
       <thead>

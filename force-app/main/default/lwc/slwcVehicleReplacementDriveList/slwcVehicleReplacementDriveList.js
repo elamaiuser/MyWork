@@ -148,6 +148,18 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
     }));
   }
 
+  handleSelectAllTab() {
+    this.dispatchEvent(new CustomEvent('selectalltab', {
+      detail: { tab: this.selectedTab }
+    }));
+  }
+
+  handleDeselectAllTab() {
+    this.dispatchEvent(new CustomEvent('deselectalltab', {
+      detail: { tab: this.selectedTab }
+    }));
+  }
+
   handlePrev() {
     this.dispatchEvent(new CustomEvent('paginate', { detail: { direction: 'prev' } }));
   }

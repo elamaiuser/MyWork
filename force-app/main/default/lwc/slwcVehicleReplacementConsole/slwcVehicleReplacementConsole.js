@@ -208,6 +208,38 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.selectedContentionResolutions = updated;
   }
 
+  handleSelectAllTab(event) {
+    const { tab } = event.detail;
+    const drives = this._getDrivesForTab(tab);
+    const newSet = new Set(this.selectedDriveIds);
+    drives.forEach(d => {
+      if (!this._isDriveCheckboxDisabled(d)) {
+        newSet.add(d.id);
+      }
+    });
+    this.selectedDriveIds = newSet;
+  }
+
+  handleDeselectAllTab(event) {
+    const { tab } = event.detail;
+    const drives = this._getDrivesForTab(tab);
+    const idsToRemove = new Set(drives.map(d => d.id));
+    const newSet = new Set(this.selectedDriveIds);
+    idsToRemove.forEach(id => newSet.delete(id));
+    this.selectedDriveIds = newSet;
+  }
+
+  _getDrivesForTab(tab) {
+    if (tab === 'Successful') return this._allDrives.filter(d => !d.hasException);
+    if (tab === 'Error') return this._allDrives.filter(d => d.hasException);
+    return this._allDrives;
+  }
+
+  _isDriveCheckboxDisabled(drive) {
+    if (!drive.contentions || !drive.contentions.length) return false;
+    return !drive.contentions.some((_, idx) => this.selectedContentionResolutions[`${drive.id}_con_${idx}`]);
+  }
+
   handlePageChange(event) {
     const { direction } = event.detail;
     if (direction === 'prev' && this.currentPage > 1) {

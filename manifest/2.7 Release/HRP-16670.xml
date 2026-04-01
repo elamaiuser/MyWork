@@ -3,9 +3,13 @@
 	<types>
 		<members>skedConstants</members>
 		<members>skedJobAllocationHandler</members>
+		<members>skedJobAllocationTrigger_Test</members>
 		<members>slwcAllocationService</members>
+		<members>slwcAllocationService_Test</members>
 		<members>slwcDriveService</members>
+		<members>slwcDriveService_Test</members>
 		<members>slwcResourceService</members>
+		<members>slwcResourceService_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
