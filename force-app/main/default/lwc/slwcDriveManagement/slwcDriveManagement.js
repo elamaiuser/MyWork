@@ -317,6 +317,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         registerListener('deleteJob', this.handleDeleteJob, this);
 
         registerListener('saveBulkEditVolunteerJobModal', this.handleSaveBulkEditVolunteerJobModal, this);
+        registerListener('saveBulkAddVolunteerJobModal', this.handleSaveBulkAddVolunteerJobModal, this);
         registerListener('saveDualRoleAssignmentModal', this.handleSaveDualRoleAssignmentModal, this);
 
         registerListener('saveDriveShiftTag', this.handleSaveDriveShiftTag, this);
@@ -994,6 +995,21 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     })
             })
             .then(() => {
+                if (!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
+                return driveGeneratorInstance.calculateRecurrenceNewVolunteerJobs(model)
+                    .then((jobsToSave = []) => {
+                        if (!jobsToSave.length) return;
+
+                        const jobSvc = new jobService();
+                        const promises = chunk(jobsToSave, 50).map(chunkJobs => {
+                            return () => {
+                                return jobSvc.saveList(chunkJobs);
+                            }
+                        });
+                        return slwcUtils.serial(promises);
+                    })
+            })
+            .then(() => {
                 let message = `Drive ${this.drive.name} was ${this.drive.id ? 'saved' : 'created'}.`;
           
                 this.dispatchEvent(new ShowToastEvent({
@@ -1357,6 +1373,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     handleSaveBulkEditVolunteerJobModal(detail) {
         driveGeneratorInstance.saveBulkEditVolunteerJob(detail.shiftKey, detail.job);
+    }
+
+    handleSaveBulkAddVolunteerJobModal(detail) {
+        driveGeneratorInstance.saveBulkAddVolunteerJob(detail.shiftKey, detail.job);
     }
 
     /** Confirm Modal **/
