@@ -487,6 +487,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
 
 
     public void execute(Database.BatchableContext bc, List<sked_Drive__c> driveList) {
+        this.drive = driveList[0]; // since batch is running 1 drive at a time, we can use the first record from the list to set the instance variables used in helper methods called in this execute method
         Map<Id, ResourceContext> resourceCtxMap = new Map<Id, ResourceContext>();
         Savepoint sp = Database.setSavepoint(); //HRP-13347
         try{
@@ -753,7 +754,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                             Category__c = BSF_Constants.MAP_DRIVETYPE_ERRORCATEGORY.get(drive.sked_Type_of_Drive__c),
                             Drive__c = drive.Id,
                             Opportunity__c = drive.sked_Opportunity__c,
-                            Error_Information__c = map_driveId_noAllocationReason.containsKey(drive.Id) ? map_driveId_noAllocationReason.get(drive.Id) : 'No resource available'
+                            Error_Information__c = map_driveId_noAllocationReason.containsKey(drive.Id) ? map_driveId_noAllocationReason.get(drive.Id) : 'Unknown error occurred!\nPlease contact system administrator for more details.'
                         )
                     ); 
                 }
