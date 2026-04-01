@@ -471,7 +471,7 @@
         <fields>Drive_Date_Day__c</fields>
         <fields>Start_Time__c</fields>
         <fields>End_Time__c</fields>
-        <fields>Drive_Status__c</fields>
+        <fields>DriveStatus__c</fields>
         <fields>WB_Projected_Procedures__c</fields>
         <fields>X2RBC_Projected_Procedures__c</fields>
         <fields>Plasma_Pheresis_Projected_Procedures__c</fields>
