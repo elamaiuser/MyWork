@@ -3,6 +3,8 @@
     <types>
 		<members>skedDriveChangeRequestHandler</members>
 		<members>skedDriveChangeRequestHandler_Test</members>
+		<members>skedUtils</members>
+		<members>skedUtils_Test</members>
 		<name>ApexClass</name>
 	</types>
     <types>
