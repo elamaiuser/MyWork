@@ -444,11 +444,7 @@
         <values>
             <fullName>Novi MI</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>OBI Arkansas</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Oakland MI</fullName>
             <default>false</default>
