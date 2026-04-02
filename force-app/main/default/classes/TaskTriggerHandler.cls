@@ -67,8 +67,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         
         if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
             TaskService.subjectisRequired((List<Task>)Trigger.new);
-        }
-        
+        }        
     }
     
     

@@ -2,7 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>dataService</members>
-    	<members>slwcMobileCallOutContactInformationForm</members>
+    <members>slwcMobileCallOutContactInformationForm</members>
 		<members>slwcAvailator</members>		
 		<name>LightningComponentBundle</name>
 	</types>
@@ -14,9 +14,5 @@
     <members>skedMobileCallOutContactInformationForm</members>
 		<name>AuraDefinitionBundle</name>
 	</types>
-	<types>        
-    <members>BSF_Access_Control_Rule.HRP_16286_Page_Permission_Set</members>        
-    <name>CustomMetadata</name>
-  </types>
     <version>64.0</version>
 </Package>
