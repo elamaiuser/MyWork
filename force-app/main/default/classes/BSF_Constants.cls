@@ -159,15 +159,30 @@ public class BSF_Constants {
     public static final String STATUS_NOT_STARTED = 'Not Started';
     public static final String STATUS_IN_PROGRESS = 'In Progress';
     public static final String STATUS_COMPLETED = 'Completed';
-    public static final String STATUS_CANCELLED = 'Cancelled';
+    public static final String STATUS_CANCELLED = 'Cancelled';    
+
+    // Planned Task Status
+    public static final String PLANNED_TASK_STATUS_CONFIGURED = 'Configured';
+    public static final String PLANNED_TASK_STATUS_PROCESSED = 'Processed';
+
+    // Planned Task Scheduling Methods
+    public static final String PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET = 'Days Offset';
+    public static final String PLANNED_TASK_SCHEDULING_METHOD_TARGET_DATE = 'Target Date';
+
+    // Account and Opportunity Task Planning Paths
+    public static final String PATH_FLEXIBLE = 'Flexible';
+    public static final String PATH_STANDARD = 'Standard';
+
+    // Allowed Lookups for Task Planning
+    public static final Set<String> ALLOWED_PLANNING_DEFAULT_LOOKUPS = new Set<String>{ 'Account__c', 'Template_Opportunity__c' };
+    public static final Set<String> ALLOWED_SELECTED_PACKAGE_LOOKUPS = new Set<String>{ 'Account__c', 'Opportunity__c' };
 
     // Site Record Types
     public static final String MOBILE_SITE_RECORD_TYPE = 'Mobile Site';
     public static final String FIXED_SITE_RECORD_TYPE = 'Fixed Site';
 
     // Batch Related Stuffs
-    public static final String DEFAULT_TERRITORY ='Called from DefaultTerritoryPortfolioBatchHelper';
-    
+    public static final String DEFAULT_TERRITORY ='Called from DefaultTerritoryPortfolioBatchHelper';    
 
     // Profiles
     public static final String SYS_ADMIN = 'System Administrator';

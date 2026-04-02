@@ -14,20 +14,23 @@ public class ProductServiceTest {
     public static String mobileSiteRecType = 'Mobile Site';    
     public static Map<String,Id> recordTypeMap  = new Map<String,Id>();
     static String Id_CollectionOperation = '';
-    
-    
+
     @testSetup 
-    public static void prepareDataset(){
+    public static void prepareDataset() {
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('UserTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+		TriggerHandler.bypass('OpportunityTriggerHandler');
+		TriggerHandler.bypass('DriveTriggerHandler');        
+        
         recordTypeMap = recordTypeMap( 'Opportunity' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
         Id optyRecTypeId = recordTypeMap.get(mobileOppRecType);
         
         recordTypeMap = recordTypeMap( 'Account' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
         Id accRecTypeId = recordTypeMap.get(mobileAccRecType);
         
         recordTypeMap = recordTypeMap( 'sked__Location__c' );
-        System.debug( '#debug#1 is ' + recordTypeMap );
         Id siteRecTypeId = recordTypeMap.get(mobileSiteRecType);
         
         User AdminUser = new User(
@@ -58,14 +61,12 @@ public class ProductServiceTest {
             LanguageLocaleKey = 'en_US',
             LocaleSidKey = 'en_US'
         );
-        
-        
-        System.runAs( AdminUser ){
+
+        System.runAs( AdminUser ) {
             insert DRDAMUser;
         }
-        System.runAs( AdminUser ){
-            skedHubBase.BypassInsertTriggers = true;
-
+        
+        System.runAs( AdminUser ) {
             List<Account> mobileAccList = new List<Account>();
             
             Account accObj;
@@ -78,7 +79,6 @@ public class ProductServiceTest {
             accObj.Account_Manager__c = DRDAMUser.Id;
             
             mobileAccList.add(accobj);
-            TriggerHandler.bypass('AccountTriggerHandler');
             insert mobileAccList;
             
             Contact conObj = new Contact();
@@ -99,10 +99,8 @@ public class ProductServiceTest {
             sked__Tag__c skedTag = new sked__Tag__c();
             skedTag.Name = 'Outside';
             skedTag.sked__Type__c = 'Physical Location Type'; 
-            
             insert skedTag; 
-            
-            
+
             sked__Location__c siteObj = new sked__Location__c();
             siteObj.RecordTypeId = siteRecTypeId;
             siteObj.Name = 'Test Site';
@@ -134,7 +132,6 @@ public class ProductServiceTest {
         	siteObj.sked_Zip_Code__c = 'test123';
         	siteObj.sked_City__c = 'test';
             siteObj.sked_Wireless_Policy__c = 'Accepted';
-            TriggerHandler.bypass('SiteTriggerHandler');
             insert siteObj;
             
             Opportunity optyObj = new Opportunity();
@@ -151,7 +148,6 @@ public class ProductServiceTest {
             optyObj.X2RBC_Projected_Procedures__c = 1;
             optyObj.Anticipated_Registered_Donors__c = 1;
             optyObj.Drive_Status__c = 'Draft';
-            TriggerHandler.bypass('OpportunityTriggerHandler');
             insert optyObj;
             
             
@@ -180,9 +176,10 @@ public class ProductServiceTest {
                                                      	sked_WB_Projected_Procedures__c = 2,
                                                         sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED);
         insert testDrive1;
-        
             
         }
+        skedHubBase.BypassInsertTriggers = false;
+        Triggerhandler.clearAllBypasses();
     }
     
     @isTest 
@@ -210,7 +207,6 @@ public class ProductServiceTest {
         order.Pricebook2Id =  pricebookId ;
         
         insert order;
-                
         
         // Insert PricebookEntry
         

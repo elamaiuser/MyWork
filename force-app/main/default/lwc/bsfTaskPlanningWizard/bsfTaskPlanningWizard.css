@@ -1,0 +1,27 @@
+.short-input {
+    width: 80px;
+    display: inline-block;
+}
+
+.header-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Enhances the accordion header appearance */
+.slds-section__title {
+    background-color: #f3f2f2;
+    border-radius: 4px;
+    cursor: pointer; /* Suggests clickability on header */
+}
+
+/* Ensure footer buttons look good */
+.footer-sticky {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    z-index: 5;
+    padding-top: 10px;
+    border-top: 1px solid #dddbda;
+}

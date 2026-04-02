@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Availability_Pattern__c</fullName>
+    <description>Created as part of HRP-1522</description>
+    <label>Availability Pattern</label>
+    <referenceTo>sked__Availability_Pattern__c</referenceTo>
+    <relationshipLabel>Collection Operation Availabilities</relationshipLabel>
+    <relationshipName>Collection_Operation_Availabilities</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
