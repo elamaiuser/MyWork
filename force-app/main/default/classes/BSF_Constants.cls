@@ -143,7 +143,7 @@ public class BSF_Constants {
     public static final String PUBLICITY_REVIEW_NEEDED_TASK = 'Publicity Review Needed';
     public static final String PRE_DRIVE_SECURITY_TASK = 'Security Information Completion';
     public static final String X72_HOUR_CHECK_IN_TASK = '72 Hour Check in - System Generated';
-    public static final String RECRUITMENT_TASK = 'Recruitment Task - System Generated';
+    public static final String RECRUITMENT_TASK = 'Recruitment Strategy Meeting';
     public static final String SPONSOR_PLANNING_MEETING_TASK = 'Sponsor Planning Meeting - System Generated';
     public static final String MARKETING_EXCEPTION_TASK = 'Request for Marketing Exception';
 
@@ -160,6 +160,34 @@ public class BSF_Constants {
     public static final String STATUS_IN_PROGRESS = 'In Progress';
     public static final String STATUS_COMPLETED = 'Completed';
     public static final String STATUS_CANCELLED = 'Cancelled';    
+
+    // Planned Task Status
+    public static final String PLANNED_TASK_STATUS_CONFIGURED = 'Configured';
+    public static final String PLANNED_TASK_STATUS_PROCESSED = 'Processed';
+
+    // Planned Task Scheduling Methods
+    public static final String PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET = 'Days Offset';
+    public static final String PLANNED_TASK_SCHEDULING_METHOD_TARGET_DATE = 'Target Date';
+
+    // Account and Opportunity Task Planning Paths
+    public static final String PATH_FLEXIBLE = 'Flexible';
+    public static final String PATH_STANDARD = 'Standard';
+
+    // Allowed Lookups for Task Planning
+    public static final Set<String> ALLOWED_PLANNING_DEFAULT_LOOKUPS = new Set<String>{ 'Account__c', 'Template_Opportunity__c' };
+    public static final Set<String> ALLOWED_SELECTED_PACKAGE_LOOKUPS = new Set<String>{ 'Account__c', 'Opportunity__c' };
+
+    // Task Types
+    public static final String SPONSOR_PLANNING_MEETING = 'Sponsor Planning Meeting';
+    public static final String RECRUITMENT_PLANNING_MEETING = 'Recruitment Planning Meeting';
+    public static final String X72_HOUR_CHECK_IN = '72 Hour Check In';
+    public static final String REQUEST_FOR_MARKETING_EXCEPTION = 'Request for Marketing Exception';
+    public static final String SECURITY_INFORMATION_COMPLETION = 'Security Information Completion';
+    public static final String POST_DRIVE_ANALYSIS_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_SBPM = 'Post Drive Analysis SBPM';
+    public static final String PUBLICITY_ORDER_NOT_CREATED = 'Publicity Order Not Created';
+    public static final String PUBLICITY_REVIEW_NEEDED = 'Publicity Review Needed';
+    public static final String TEMPLATE_ORDER_TASK = 'Template Order Task';
 
     // Planned Task Status
     public static final String PLANNED_TASK_STATUS_CONFIGURED = 'Configured';
@@ -357,7 +385,7 @@ public class BSF_Constants {
       
     //HRP-7123 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK = 'Post Drive Analysis';
-    public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Planning Meeting';
+    public static final String RECRUITMENT_PLANNING_TASK = 'Recruitment Strategy Meeting';
     public static final String OPP_TYPE_Mobile = 'Mobile Opp';
     
     public static final String ACCOUNT_TYPE_EDUCATION = 'Education';
@@ -375,7 +403,7 @@ public class BSF_Constants {
 
     //HRP-13426 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
-    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis SBPM';
+    public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis / Future Drive Planning SBPM';
     public static final String DRD_SYSTEM_USER = 'DRD System UserM';
 
     //Special Circumstances Badges -> HRP-701

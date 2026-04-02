@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSF_TravelTimePanelController</members>
+		<members>skedCOGroupTravelTimeIndexRefreshBatch</members>
+		<members>skedConstants</members>
+		<members>skedImmediateRefreshTravelTimeIndexBatch</members>
+		<members>skedNightlyRefreshTravelTimeIndexBatch</members>
+		<members>skedRefreshTravelTimeIndexBatchBase</members>
+		<members>skedTravelTimeIndexItemHandler</members>
+		<members>skedTravelTimeIndexItemUtils</members>
+		<members>slwcSiteCollectionOperationService</members>
+		<name>ApexClass</name>
+	</types>
+	<types>		
+		<members>skedTravelTimeIndexItemTrigger</members>
+		<name>ApexTrigger</name>
+	</types>
+	<types>
+		<members>sked_Travel_Time_Index_Item__c.sked_Travel_Time_Breakdown_JSON_Backup__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>auraProxy</members>
+		<members>dataService</members>
+		<members>slwcRefreshTravelTimeBanner</members>
+		<members>travelTimeBreakdown</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>63.0</version>
+</Package>

@@ -4,6 +4,8 @@
         <members>skedAvailabilityPatternResourceHandler</members>
         <members>skedCaptureAPExceptionLogBatch</members>
         <members>skedCaptureAPExceptionLogBatch_Test</members>
+        <members>skedExceptionLogService</members>
+        <members>skedHCExceptionHandler</members>
 		<name>ApexClass</name>
 	</types>
     <types>
