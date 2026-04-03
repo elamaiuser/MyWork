@@ -17,5 +17,10 @@
         <operation>equals</operation>
         <value>Not Submitted</value>
     </filters>
+    <filters>
+        <field>sked_Drive_Date__c</field>
+        <operation>equals</operation>
+        <value>12/10/2024</value>
+    </filters>
     <label>Not Submitted Op-Records</label>
 </ListView>
