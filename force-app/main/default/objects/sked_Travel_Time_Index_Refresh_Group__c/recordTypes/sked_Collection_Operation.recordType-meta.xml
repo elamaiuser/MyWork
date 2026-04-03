@@ -500,11 +500,7 @@
         <values>
             <fullName>Quincy IL</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Richland WA</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Richmond VA</fullName>
             <default>false</default>
