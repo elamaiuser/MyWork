@@ -560,11 +560,7 @@
         <values>
             <fullName>Seattle WA</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Springfield Fixed Site</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Springfield MA</fullName>
             <default>false</default>
