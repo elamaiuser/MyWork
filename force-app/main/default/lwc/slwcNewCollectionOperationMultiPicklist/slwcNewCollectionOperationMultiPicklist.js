@@ -85,6 +85,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   @track timeBlockState = {
     timeBlockOptions: [],
     selectedTimeBlocks: [],
+    isFilteringMissingTimeBlock: false,
     disabled: false
   };
 
@@ -460,6 +461,7 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
     let timeBlockOptions = [];
     let selectedTimeBlocks = [];
+
     timeBlocks.forEach(timeBlock => {
       let option = {
         label: timeBlock.name,
@@ -485,11 +487,28 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
     this.applyTimeBlock();
   }
 
+  handleMissingTimeBlockToggle = (event) => {
+    const isFilteringMissingTimeBlock = event.target.checked;
+
+    event.stopPropagation(); // Prevent bubbling up to parent elements that may cause unwanted side effects due to event `onchange`
+    this.timeBlockState = {
+      ...this.timeBlockState,
+      timeBlockOptions: this.timeBlockState.timeBlockOptions.map(x => ({ ...x, selected: false })),
+      selectedTimeBlocks: [],
+      isFilteringMissingTimeBlock: isFilteringMissingTimeBlock,
+      disabled: isFilteringMissingTimeBlock
+    }
+
+    this.applyTimeBlock();
+  }
+
   applyTimeBlock = () => {
     const selectedTerritoryCollectionOperations = this.getSelectedTerritoryCollectionOperations(this.collectionOperationPicklistState.collectionOperationTreeData);
     const selectedDivisions = this.territoryPopverState.selectedDivisions;
     const selectedARCRegions = this.territoryPopverState.selectedARCRegions;
     const selectedDistricts = this.territoryPopverState.selectedDistricts;
+    const isFilteringMissingTimeBlock = this.timeBlockState.isFilteringMissingTimeBlock;
+    const selectedTimeBlocks = isFilteringMissingTimeBlock ? [] : this.timeBlockState.selectedTimeBlocks;
     this.collectionOperationPicklistState.selectedTerritoryCollectionOperations = cloneDeep(selectedTerritoryCollectionOperations);
 
     const eventDetail = {
@@ -497,7 +516,8 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
       selectedARCRegions: selectedARCRegions,
       selectedDistricts: selectedDistricts,
       selectedTerritoryCollectionOperations: selectedTerritoryCollectionOperations,
-      selectedTimeBlocks: this.timeBlockState.selectedTimeBlocks
+      selectedTimeBlocks: selectedTimeBlocks,
+      isFilteringMissingTimeBlock: isFilteringMissingTimeBlock
     };
 
     const pickValuesChangeEvent = new CustomEvent('timeblockchange', {

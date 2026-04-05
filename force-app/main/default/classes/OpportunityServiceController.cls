@@ -421,4 +421,26 @@ public without sharing class OpportunityServiceController {
                 update opps;
             }
     }
+
+    public static void populateLatestValuesUponTemplateChange(Opportunity newOpportunity, Opportunity templateOpportunity, String templateChangeText) {
+        if(newOpportunity != null && templateOpportunity != null) {
+            newOpportunity.WholeBloodProceduresProjectedTemplate__c = templateOpportunity.WB_Projected_Procedures__c;
+            newOpportunity.Double_Red_Procedures_Projected_Template__c = templateOpportunity.X2RBC_Projected_Procedures__c;
+            newOpportunity.Anticipated_Registered_Donors_Template__c = templateOpportunity.Anticipated_Registered_Donors__c;
+            newOpportunity.Direct_Donors_To__c = templateOpportunity.Direct_Donors_To__c;
+            
+            if(newOpportunity.WB_Projected_Procedures__c != templateOpportunity.WB_Projected_Procedures__c) {
+                newOpportunity.WB_Projected_Procedures__c = templateOpportunity.WB_Projected_Procedures__c;
+                newOpportunity.WholeBloodProcedureProjectedChangeReason__c = templateChangeText;
+            }
+            if(newOpportunity.X2RBC_Projected_Procedures__c != templateOpportunity.X2RBC_Projected_Procedures__c) {
+                newOpportunity.X2RBC_Projected_Procedures__c = templateOpportunity.X2RBC_Projected_Procedures__c;
+                newOpportunity.DoubleRedProceduresProjectedChangeReason__c = templateChangeText;
+            }
+            if(newOpportunity.Anticipated_Registered_Donors__c != templateOpportunity.Anticipated_Registered_Donors__c) {
+                newOpportunity.Anticipated_Registered_Donors__c = templateOpportunity.Anticipated_Registered_Donors__c;
+                newOpportunity.AnticipatedRegisterDonorChangeReason__c = templateChangeText;
+            }
+        }
+    }
 }

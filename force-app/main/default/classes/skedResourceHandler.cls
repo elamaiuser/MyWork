@@ -11,7 +11,7 @@ public class skedResourceHandler extends skedTriggerHub {
     public static boolean canUpdateResourceRole = false;
     
     public override void onBeforeInsert() {
-        validate(this.context.newRecords);
+        validate(this.context.newRecords, null);
         populateData(this.context.newRecords);
         populateSupervisor(this.context.newRecords);
         populateTaxonomyData(this.context.newRecords);
@@ -36,7 +36,7 @@ public class skedResourceHandler extends skedTriggerHub {
     }
     
     public override void onBeforeUpdate() {
-        validate(this.context.newRecords);
+        validate(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         if (!skedSetting.instance.Admin.migrationMode) {
             revertAccidientallyChangedGeolocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
@@ -63,15 +63,16 @@ public class skedResourceHandler extends skedTriggerHub {
             cancelTimeOffOnResourceTerminationOrLeave(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
             populateGeoLocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
             captureWorkDaysPerWeekException(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
+            onDeactivateResources(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
     }
 
     public override void onBeforeDelete() {
-        validate(this.context.oldRecords);
+        validate(this.context.oldRecords, null);
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
-    private void validate(List<sked__Resource__c> newRecords) {
+    private void validate(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
         for (sked__Resource__c newRecord : newRecords) {
             if (newRecord.sked__Geolocation__Longitude__s != NULL || newRecord.sked__GeoLocation__Latitude__s != NULL) {
                 if (newRecord.sked__Geolocation__Longitude__s < -180 || newRecord.sked__Geolocation__Longitude__s >= -30  || newRecord.sked__GeoLocation__Latitude__s > 71 || newRecord.sked__GeoLocation__Latitude__s < 25) {
@@ -84,7 +85,14 @@ public class skedResourceHandler extends skedTriggerHub {
             }
 
             if (String.isBlank(newRecord.sked_Asset_Type__c) || newRecord.sked_Asset_Type__c == skedConstants.ASSET_TYPE_VEHICLE) {
-                if(newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) {
+                sked__Resource__c oldRecord;
+                if(oldMap != null) {
+                    oldRecord = oldMap.get(newRecord.Id);
+                }
+
+                if((newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) 
+                && (oldRecord == null || (oldRecord != null && newRecord.sked_Dedicated_to_Site__c != oldRecord.sked_Dedicated_to_Site__c))) {
+                    system.debug('getting inside validation oldRecord '+oldRecord.sked_Dedicated_to_Site__c+' newRecord '+newRecord.sked_Dedicated_to_Site__c);
                     newRecord.sked_Dedicated_to_Site__c.addError(Custom_Messages__mdt.getInstance('Asset_Validation_for_Dedicated_to_Site').Value__c);
                 }
             }
@@ -668,6 +676,7 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (newRecord.sked_Max_Hours_Per_Week__c == NULL) {
                     newRecord.sked_Max_Hours_Per_Week__c = 40;
                 }
+                newRecord.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_CO;
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
                 if (newRecord.sked_Site_Type__c == NULL) {
@@ -701,6 +710,9 @@ public class skedResourceHandler extends skedTriggerHub {
                 }
                 if (newRecord.sked_Max_Hours_Per_Week__c != oldData.sked_Max_Hours_Per_Week__c && newRecord.sked_Max_Hours_Per_Week__c == NULL) {
                     newRecord.sked_Max_Hours_Per_Week__c = 40;
+                }
+                if(newRecord.sked__Primary_Region__c != oldData.sked__Primary_Region__c) {
+                    newRecord.CO_AP_Status__c = skedConstants.CO_AP_STATUS_YET_TO_PROCESS_CO;
                 }
             }
             else if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET) {
@@ -1406,6 +1418,38 @@ public class skedResourceHandler extends skedTriggerHub {
                 if (newRecord.sked_Anticipated_Leave_Return_Date__c != null) {
                     newRecord.sked_Anticipated_Leave_Return_Date__c = null;
                 }
+            }
+        }
+    }
+
+    private void onDeactivateResources(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
+        Set<Id> deactivatedResourceIds = new Set<Id>();
+        for (sked__Resource__c newRecord : newRecords) {
+            sked__Resource__c oldData = oldMap.get(newRecord.Id);
+            boolean isPersonResourceDeactivated = newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_PERSON  
+                && newRecord.sked_Employment_Status__c != oldData.sked_Employment_Status__c
+                && newRecord.sked_Employment_Status__c == skedConstants.RESOURCE_EMPLOYMENT_STATUS_INACTIVE;
+            boolean isAssetResourceDeactivated = newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET
+                && newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c 
+                && newRecord.sked__Is_Active__c == FALSE;
+            if (isPersonResourceDeactivated || isAssetResourceDeactivated) {
+                deactivatedResourceIds.add(newRecord.Id);
+            }
+        }
+        if (!deactivatedResourceIds.isEmpty()) {
+            DateTime currentTime = system.now();
+            List<sked__Availability_Pattern_Resource__c> patternResources = [
+                SELECT Id, sked__End__c
+                FROM sked__Availability_Pattern_Resource__c
+                WHERE sked__Resource__c IN :deactivatedResourceIds
+                AND (sked__End__c = NULL OR sked__End__c >= :currentTime)
+            ];
+
+            if (!patternResources.isEmpty()) {
+                for (sked__Availability_Pattern_Resource__c patternResource : patternResources) {
+                    patternResource.sked__End__c = currentTime;
+                }
+                update patternResources;
             }
         }
     }

@@ -348,6 +348,39 @@
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Travel Time Slot Settings</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Maximum_Travel_Time_Slots__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns/>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Grand Totals (AP)</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Grand_Total_Available_AP__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Grand_Total_Needed_AP__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
@@ -413,6 +446,13 @@
         <relatedList>sked_Role_Time_Detail__c.sked_Collection_Operation__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>NAME</fields>
+        <fields>sked_Site__c</fields>
+        <fields>sked_Start_Date__c</fields>
+        <fields>sked_End_Date__c</fields>
+        <relatedList>sked_Site_Collection_Operation__c.sked_Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>sked_Date_of_Constraint__c</fields>
@@ -466,6 +506,13 @@
         <fields>Effective_Start_Date__c</fields>
         <fields>Effective_End_Date__c</fields>
         <relatedList>Collection_Operation_Time_Block__c.Collection_Operation__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>sked__Availability_Pattern__c.NAME</fields>
+        <fields>Effective_Start_Date__c</fields>
+        <fields>Effective_End_Date__c</fields>
+        <relatedList>Collection_Operation_Availability__c.Collection_Operation__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
