@@ -170,6 +170,11 @@
             <field>sked_REAL_ID_Compliant_indicator__c</field>
             <table>sked__Resource__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Real_ID_Expiration_Date__c</field>
+            <table>sked__Resource__c</table>
+        </columns>
         <masterLabel>Resources</masterLabel>
     </sections>
     <sections>
@@ -201,6 +206,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Duration__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_WID__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
@@ -301,11 +311,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Call_Out_Created_By_Resource__c</field>
-            <table>sked__Resource__c.sked__Availabilities1__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_SBA_Count__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>
@@ -661,6 +666,16 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>CreatedBy.Profile.UserType</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Requested_Time_Off_Hours__c</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Related_Call_Out__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <masterLabel>Availabilities</masterLabel>

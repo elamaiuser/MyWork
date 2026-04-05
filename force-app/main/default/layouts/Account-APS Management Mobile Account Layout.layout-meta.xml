@@ -588,7 +588,7 @@
         <fields>Drive_Date__c</fields>
         <fields>OPPORTUNITY.CLOSE_DATE</fields>
         <fields>OPPORTUNITY.STAGE_NAME</fields>
-        <fields>Drive_Status__c</fields>
+        <fields>DriveStatus__c</fields>
         <fields>OPPORTUNITY.CREATED_DATE</fields>
         <fields>Drive_Name__c</fields>
         <fields>Total_Projections__c</fields>

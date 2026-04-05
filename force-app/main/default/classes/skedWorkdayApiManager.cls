@@ -46,7 +46,7 @@ public class skedWorkdayApiManager {
         request.setHeader('Referrer-Policy', 'strict-origin');
         request.setHeader('Set-Cookie', 'secure; HttpOnly; Samesite=lax');
         request.setHeader('Access-Control-Allow-Methods', 'GET, POST HEAD');
-        request.setTimeout(20000);
+        request.setTimeout(120000);
         request.setEndpoint(endpoint);
         request.setMethod(method);
 
@@ -109,8 +109,9 @@ public class skedWorkdayApiManager {
             HttpResponse res = absenceManagement.Enter_Time_Off_Http(businessProcessParams, enterTimeOffData);
             Dom.Document responseDoc = res.getBodyDocument();
             Dom.XmlNode rootNode = responseDoc.getRootElement();
-            result.response = res.getBody();
+            result.response = res.getBody().replaceAll('><', '>\n<');//HRP-13728
             result.statusCode = res.getStatusCode();
+            result.request = absenceManagement.requestXML;//HRP-13728
 
             if (res.getStatusCode() != 200) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
@@ -155,7 +156,7 @@ public class skedWorkdayApiManager {
 
             skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_Entry_DataType adjustTimeOffEntry = new skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_Entry_DataType();
             adjustTimeOffEntry.Adjustment_to_Requested =  timeOffEntry.adjustment;
-            adjustTimeOffEntry.Comment = timeOffEntry.comment;
+            adjustTimeOffEntry.Comment = timeOffEntry.comment;//HRP-13728
             adjustTimeOffEntry.Time_Off_Entry_Reference = timeOffEntryReference;
             adjustTimeOffEntryData.add(adjustTimeOffEntry);
         }
@@ -169,8 +170,9 @@ public class skedWorkdayApiManager {
             HttpResponse res = absenceManagement.Adjust_Time_Off_Http(businessProcessParams, adjustTimeOffData);
             Dom.Document responseDoc = res.getBodyDocument();
             Dom.XmlNode rootNode = responseDoc.getRootElement();
-            result.response = res.getBody();
+            result.response = res.getBody().replaceAll('><', '>\n<');//HRP-13728
             result.statusCode = res.getStatusCode();
+            result.request = absenceManagement.requestXML;//HRP-13728
 
             if (res.getStatusCode() != 200) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
@@ -200,7 +202,7 @@ public class skedWorkdayApiManager {
 
         HttpRequest req = getHttpRequest(endpoint, HTTP_METHOD_GET);
         String logCategory;
-        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint(), ptoPlanBalanceRequest.isCallOut);
+        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint());
         try {
             Http h = new Http();
             HttpResponse res = h.send(req);

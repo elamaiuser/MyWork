@@ -21,7 +21,7 @@
                 <field>Has_Elevator__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
@@ -178,6 +178,10 @@
                 <behavior>Edit</behavior>
                 <field>sked__GeoLocation__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>sked_Next_Travel_Time_Refresh_Date__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
@@ -196,7 +200,7 @@
                 <field>sked_Days_of_Week_Declined__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -485,13 +489,28 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
         <actionListContext>Record</actionListContext>
+        <platformActionListItems>
+            <actionName>PrintableView</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>6</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>Delete</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>7</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>LogACall</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>8</sortOrder>
+        </platformActionListItems>
         <platformActionListItems>
             <actionName>Edit</actionName>
             <actionType>StandardButton</actionType>
@@ -521,21 +540,6 @@
             <actionName>SendEmail</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>5</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>PrintableView</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>6</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Delete</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>7</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>LogACall</actionName>
-            <actionType>QuickAction</actionType>
-            <sortOrder>8</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <relatedLists>

@@ -50,6 +50,13 @@
         <value>SELECT Id, sked_Collection_Operation__c, sked__Region__c,sked_Timezone__c FROM sked__Location__c WHERE sked_Active__c = true</value>
     </labels>
     <labels>
+        <fullName>BSF_Generate_Tasks_From_Events</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Generate_Tasks_From_Events</shortDescription>
+        <value>TRUE</value>
+    </labels>
+    <labels>
         <fullName>BSF_Mass_Account_Service_Role_Warning_Message</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -92,11 +99,53 @@
         <value>bsfsystem@redcross.org</value>
     </labels>
     <labels>
+        <fullName>BSF_PE_Field_Mapping_JSON</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_PE_Field_Mapping_JSON</shortDescription>
+        <value>{ &quot;Subject&quot;: &quot;Subject__c&quot;, &quot;ActivityDate&quot;: &quot;ActivityDate__c&quot;, &quot;OwnerId&quot;: &quot;OwnerId__c&quot;, &quot;WhatId&quot;: &quot;WhatId__c&quot;, &quot;Drive_Date__c&quot;: &quot;Drive_Date__c&quot;, &quot;Type&quot;: &quot;Type__c&quot; }</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Planned_Task_Trigger_Filter</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Planned_Task_Trigger_Filter</shortDescription>
+        <value>Related_Opportunity__c IN :opportunityIds AND Status__c = &apos;Configured&apos; AND Creation_Offset__c = null</value>
+    </labels>
+    <labels>
         <fullName>BSF_SUPPORT_EMAIL_ID</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>BSF_SUPPORT_EMAIL_ID</shortDescription>
-        <value>subhajit.bose@exavalu.com,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
+        <value>kata.manishreddy@redcross.org,barnojit.sharma@exavalu.com,fitsum.worku@redcross.org,neyti.blome@redcross.org,testingarcbsfcust@gmail.com,soumojit.sur@redcross.org</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Standard_Task_Batch_Filter</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Standard_Task_Batch_Filter</shortDescription>
+        <value>Status__c = &apos;Configured&apos; AND Related_Opportunity__c != null AND Related_Opportunity__r.DriveStatus__c != &apos;Cancelled&apos; AND ((Creation_Offset__c != null AND Calculated_Creation_Date__c &lt;= TODAY) OR (Creation_Offset__c = null AND Related_Opportunity__r.DriveStatus__c = &apos;Confirmed&apos;))</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Task_Batch_Size</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Task_Batch_Size</shortDescription>
+        <value>200</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Task_Field_Mapping_JSON</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Task_Field_Mapping_JSON</shortDescription>
+        <value>{&quot;Subject__c&quot;: &quot;Subject&quot;, &quot;Calculated_Target_Date__c&quot;: &quot;ActivityDate&quot;, &quot;Related_Opportunity__c&quot;: &quot;WhatId&quot;, &quot;Task_Definition__r.Task_Type__c&quot;: &quot;Type&quot;, &quot;Related_Opportunity__r.Drive_Date__c&quot;: &quot;Drive_Date__c&quot;}</value>
+    </labels>
+    <labels>
+        <fullName>BSF_Task_Owner_Hierarchy_JSON</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BSF_Task_Owner_Hierarchy_JSON</shortDescription>
+        <value>{ &quot;Account Manager&quot;: [&quot;Account Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Area Booking Manager&quot;: [&quot;Area Booking Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Account Specialist&quot;: [&quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;District Manager&quot;: [&quot;District Manager&quot;, &quot;DRD System User&quot;] }</value>
     </labels>
     <labels>
         <fullName>Block_ZipCode_Update_On_Site</fullName>
@@ -172,7 +221,7 @@
         <fullName>DRD_Can_t_Create_Fixed_Account_Error_Msg</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>DRD Can&#39;t Create Fixed Account Error Msg</shortDescription>
+        <shortDescription>DRD Can&apos;t Create Fixed Account Error Msg</shortDescription>
         <value>DRD Users Can Not Create a Fixed Site Account.</value>
     </labels>
     <labels>
@@ -236,7 +285,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Drive Worksheet Report Drive Status</shortDescription>
-        <value>&#39;Confirmed&#39;</value>
+        <value>&apos;Confirmed&apos;</value>
     </labels>
     <labels>
         <fullName>Eligible_Account_Statuses_for_HandOff_Tasks</fullName>
@@ -447,6 +496,30 @@
         <value>6</value>
     </labels>
     <labels>
+        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
+        <categories>Validation Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
+        <value>Effective Start/End Dates must fall within the associated Time Block&apos;s effective
+            date range.</value>
+    </labels>
+    <labels>
+        <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
+        <categories>Validation Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
+        <value>Time Block is not associated with this Collection Operation.</value>
+    </labels>
+    <labels>
+        <fullName>Online_Donor_Message_Length_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Online Donor Message Length Error</shortDescription>
+        <value>Online Donor Message cannot exceed 100 characters.</value>
+    </labels>
+    <labels>
         <fullName>OnlyForMigration</fullName>
         <categories>Used In OpportunityTriggerHandler</categories>
         <language>en_US</language>
@@ -459,7 +532,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>OpportunitySplitErrorMsg</shortDescription>
-        <value>The user\&#39;s current profile is not allowed to modify the opportunity split</value>
+        <value>The user\&apos;s current profile is not allowed to modify the opportunity split</value>
     </labels>
     <labels>
         <fullName>OpportunitySplitService</fullName>
@@ -685,7 +758,7 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Restrict_Operation_Type_Change_Error_Msg</shortDescription>
-        <value>You can&#39;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
+        <value>You can&apos;t change operation type as drives have already been generated. Please create a new fixed site with the desired operation type.</value>
     </labels>
     <labels>
         <fullName>Restrict_Theme_Product_Add_Error_Msg</fullName>
@@ -850,29 +923,5 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>storeProfileToCreateBsfPortfolioTask</shortDescription>
         <value>System Administrator</value>
-    </labels>
-    <labels>
-        <fullName>ODL_DateRangeOutsideTimeBlock</fullName>
-        <categories>Validation Message</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ODL_DateRangeOutsideTimeBlock</shortDescription>
-        <value>Effective Start/End Dates must fall within the associated Time Block&#39;s effective
-            date range.</value>
-    </labels>
-    <labels>
-        <fullName>ODL_TimeBlockNotAssociatedWithCO</fullName>
-        <categories>Validation Message</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
-        <value>Time Block is not associated with this Collection Operation.</value>
-    </labels>
-    <labels>
-        <fullName>Online_Donor_Message_Length_Error</fullName>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Online Donor Message Length Error</shortDescription>
-        <value>Online Donor Message cannot exceed 100 characters.</value>
     </labels>
 </CustomLabels>

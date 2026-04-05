@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Employee_ID__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Stores the Workday Employee ID returned from the Workday Real ID RaaS report.
+This value is used as the primary key to match the Workday employee record with the Salesforce Resource record</description>
+    <externalId>true</externalId>
+    <label>Employee ID</label>
+    <length>50</length>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

@@ -204,8 +204,8 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     query.statuses = this.filters.statuses;
     query.startDate = this.filters.startDate;
     query.endDate = this.filters.endDate;
-    query.submissionStartDate = this.filters.submissionStartDate;
-    query.submissionEndDate = this.filters.submissionEndDate;
+    query.submissionStartDate = DateTime.fromISO(this.filters.submissionStartDate, { zone: TIME_ZONE }).startOf('day').toUTC().toISO(); //HRP-16490
+    query.submissionEndDate = DateTime.fromISO(this.filters.submissionEndDate, { zone: TIME_ZONE }).endOf('day').toUTC().toISO(); //HRP-16490
     query.exceptionType = 'linkedDrive';
     query.limit = 20;
     query.offset = (this.exceptionLog || []).length;
@@ -220,7 +220,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
         result.forEach((exception) => {
           exception.recordUrl = '/' + exception.id;
           if (exception.createdDate) { 
-            exception.createdDateStr = DateTime.fromISO(exception.createdDate).toLocaleString({ month: 'short', day: '2-digit', year: 'numeric'});
+            exception.createdDateStr = DateTime.fromISO(exception.createdDate, { zone: TIME_ZONE }).toLocaleString({ month: 'short', day: '2-digit', year: 'numeric'}); //HRP-16490
           }
           if (exception.linkedDriveId) {
             exception.linkedDriveUrl = '/' + exception.linkedDriveId;
@@ -283,7 +283,7 @@ export default class SlwcLinkedDriveExceptionList extends LightningElement {
     this.exceptionLog = [];
     this.fetchExceptionData()
       .then(result => {
-        this.exceptionLog = result;        
+        this.exceptionLog = result;
         if (this.sortedBy && this.sortedDirection) {
           this.sortData(this.sortedBy, this.sortedDirection);
         }

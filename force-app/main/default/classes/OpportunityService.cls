@@ -503,7 +503,7 @@ if(ds.isCreateable()){}*/
     }
     
     //SYSTEM Generating Recruitment Meeting task during Closed Stage - HRP -2072
-    public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         System.debug('Entered method createRecruitmentTask with opp items->' + newItems);
         if (newItems == null || newItems.size() < 1)
             return;
@@ -560,7 +560,7 @@ if(ds.isCreateable()){}*/
                 }else if(taskDueDayString.equalsIgnoreCase('Sun')){
                     taskDueDate = taskDueDate.addDays(-2);
                 }*/
-                recruitmentTask.ActivityDate = taskDueDate;
+                /*recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
                 recruitmentTask.subject = taskSubject;
                 recruitmentTask.Type = taskType;
@@ -613,10 +613,10 @@ if(ds.isCreateable()){}*/
             }
             //HRP-10788
         }   
-    }
+    }*/
     
     //Generate Sponsor Planning Meeting task when Opportunity stage is set to committed or closed
-    public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         if (newItems == null || newItems.size() < 1)
             return;
         set<id> oppIds = new set<id>();
@@ -694,7 +694,7 @@ if(ds.isCreateable()){}*/
                 }
             }
         }   
-    } 
+    } */
     
     public static void setCallListRecipientFlag(set<id> accIDs) {
         Map<id, opportunity> oppMap = new Map<id, opportunity>([select id,Accountid from opportunity where Accountid = :accIDs]);
@@ -3550,7 +3550,7 @@ opp.StageName = 'Closed';
         }
     }
     
-    Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
+    /*Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
     {
         
         set<id> oppIds = new set<id>();
@@ -3631,7 +3631,7 @@ opp.StageName = 'Closed';
                 }
             }
         }   
-    }
+    }*/
     
     public static void updateDoubleRedProcedures(List<Opportunity> listOfnewOppties, Map<Id, Opportunity> mapOfOfOldOppties) { 
         Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId();
@@ -4109,10 +4109,10 @@ opp.StageName = 'Closed';
         Id districtManager;
         Id accountSpecialist;
         Id owner=opp.OwnerId;
-        
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }
@@ -4121,14 +4121,15 @@ opp.StageName = 'Closed';
                 }
             }
         }
+
         if (accountManager != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333
         {
             return accountManager;
         } else if (accountSpecialist != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333 reordered specialist before DM
-        {
+        { 
             return accountSpecialist;
         }else if (districtManager != null) 
-        {
+        { 
             return districtManager;
         }  else 
         {
@@ -5309,7 +5310,8 @@ opp.StageName = 'Closed';
             accountMap = new Map<Id, Account>([
                 SELECT Id, Planning_Path__c 
                 FROM Account 
-                WHERE Id IN :accountIds                
+                WHERE Id IN :accountIds
+                WITH USER_MODE
             ]);
         }
 
@@ -5319,7 +5321,8 @@ opp.StageName = 'Closed';
             templateMap = new Map<Id, Opportunity>([
                 SELECT Id, Planning_Path__c 
                 FROM Opportunity 
-                WHERE Id IN :templateIds                
+                WHERE Id IN :templateIds
+                WITH USER_MODE
             ]);
         }
 

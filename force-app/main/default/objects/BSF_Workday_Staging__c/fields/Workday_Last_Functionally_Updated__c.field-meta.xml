@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workday_Last_Functionally_Updated__c</fullName>
+    <description>Stores the value of Last_Functionally_Updated from the Workday report.</description>
+    <label>Workday Last Functionally Updated</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>
