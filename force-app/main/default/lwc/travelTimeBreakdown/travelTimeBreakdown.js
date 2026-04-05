@@ -43,13 +43,24 @@ export default class TravelTimeBreakdown extends LightningElement {
                 }
                 //return {...record, hasBeenModified: false};
                 return newRecord;
-                
             });
+
+            // Sort records: 'CO to Site' first, then 'Site to CO'
+            this.records.sort((a, b) => {
+                if (a.direction === 'CO to Site' && b.direction !== 'CO to Site') {
+                    return -1;
+                }
+                if (a.direction !== 'CO to Site' && b.direction === 'CO to Site') {
+                    return 1;
+                }
+                return 0;
+            });
+
             this.initialRecords = JSON.parse(JSON.stringify(this.records));
 
-            const systemOverrideRecordsToUpdate = data.filter(record => record.systemOverride === true);                     
+            const systemOverrideRecordsToUpdate = data.filter(record => record.systemOverride === true);
             if(systemOverrideRecordsToUpdate.length > 0){
-                saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate })
+                saveUpdatedRecords({ updatedRecords: systemOverrideRecordsToUpdate, siteCO_Id: this.recordId })
                 .then(result => {
                     console.log('Records updated successfully');                    
                     window.location.reload();
@@ -314,8 +325,8 @@ export default class TravelTimeBreakdown extends LightningElement {
         }
     
         console.log('Data Wrappers Being Sent to Apex:', JSON.stringify(updatedDataWrappers, null, 2));
-    
-        saveUpdatedRecords({ updatedRecords: updatedDataWrappers })
+
+        saveUpdatedRecords({ updatedRecords: updatedDataWrappers, siteCO_Id: this.recordId })
             .then(result => {
                 console.log('Records updated successfully');
                 this.exitEditMode();
