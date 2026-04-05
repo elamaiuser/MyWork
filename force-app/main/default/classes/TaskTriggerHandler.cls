@@ -57,16 +57,14 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('assignDefaultTaskOwner') == -1) { 
             TaskService.assignDefaultTaskOwner((List<Task>)Trigger.new);
         }
-       
-    
+        //HRP-12627 end
     }
     //HRP-16830
     public override void afterInsert(){
         
         if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
             TaskService.subjectisRequired((List<Task>)Trigger.new);
-        }
-        
+        }        
     }
     
     

@@ -842,6 +842,9 @@ class BaseGenerator {
       }
     })
 
+    const skipGenerateSlotsProperties = ['roleTimeDetailChanged', 'travelTimeChanged'];
+    this.masterData.skipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
+
     let actionGroups = this.mergeFieldChanged(properties, this.DRIVE_FIELD_CHANGE_MAPPING, this.DRIVE_ACTION_GROUPS_ORDER);
     return this.runActions(actionGroups)
       .then(() => {

@@ -1,15 +1,15 @@
 <template>
     <lightning-card title="Time Block Compliance Report" icon-name="standard:report">
-        <!-- Search Panel -->
-        <c-bsf-staffing-report-search-panel onselectevent={handleSelectedValues} onresetevent={handleResetValues}
-            prepopulatevalues={showNothing} enablecofilter enabledrivetype={showNothing}
+        <c-bsf-staffing-report-search-panel
+            onselectevent={handleSelectedValues}
+            onresetevent={handleResetValues}
+            prepopulatevalues={showNothing}
+            enablecofilter
+            enabledrivetype={showNothing}
             enableviolationtoggle={showNothing}>
         </c-bsf-staffing-report-search-panel>
 
-        <!-- Custom Filters -->
         <div class="slds-grid slds-wrap slds-p-horizontal_medium slds-m-top_medium">
-
-            <!-- Drive Status -->
             <div class="slds-col slds-size_1-of-2 slds-p-right_small">
                 <c-bsf-multi-select-combobox
                     name="driveStatus"
@@ -21,7 +21,6 @@
                 </c-bsf-multi-select-combobox>
             </div>
 
-            <!-- Time Block -->
             <div class="slds-col slds-size_1-of-2 slds-p-left_small">
                 <c-bsf-multi-select-combobox
                     name="timeBlock"
@@ -32,7 +31,6 @@
                 </c-bsf-multi-select-combobox>
             </div>
 
-            <!-- Show Violations -->
             <div class="slds-col slds-size_1-of-2 slds-p-right_small slds-m-top_small">
                 <lightning-input
                     type="checkbox"
@@ -42,7 +40,6 @@
                 </lightning-input>
             </div>
 
-            <!-- Account Manager Name -->
             <div class="slds-col slds-size_1-of-2 slds-p-left_small slds-m-top_small">
                 <lightning-input
                     label="Account Manager Name"
@@ -51,31 +48,41 @@
                     onchange={handleAccountManagerInput}>
                 </lightning-input>
             </div>
-
         </div>
 
-
-        <!-- Action Buttons -->
-        <div class="slds-m-top_medium slds-p-horizontal_medium">            
+        <div class="slds-m-top_medium slds-p-horizontal_medium">
             <lightning-button label="Search" variant="brand" onclick={handleSearch}></lightning-button>
             <template if:false={Hide}>
-                <lightning-button label="View PDF" variant="brand-outline" onclick={handleViewPdf}
-                disabled={disablePdfButton} class="slds-m-left_small"></lightning-button>
-                <lightning-button label="Download PDF" variant="neutral" onclick={exportToPdf} disabled={disablePdfButton}
-                class="slds-m-left_small"></lightning-button>
+                <lightning-button
+                    label="View PDF"
+                    variant="brand-outline"
+                    onclick={handleViewPdf}
+                    disabled={disablePdfButton}
+                    class="slds-m-left_small">
+                </lightning-button>
+                <lightning-button
+                    label="Download PDF"
+                    variant="neutral"
+                    onclick={exportToPdf}
+                    disabled={disablePdfButton}
+                    class="slds-m-left_small">
+                </lightning-button>
             </template>
-            <lightning-button label="Download Excel" variant="neutral" onclick={exportToExcel}
-            disabled={disablePdfButton} class="slds-m-left_small"></lightning-button>
+            <lightning-button
+                label="Download Excel"
+                variant="neutral"
+                onclick={exportToExcel}
+                disabled={disablePdfButton}
+                class="slds-m-left_small">
+            </lightning-button>
         </div>
 
-        <!-- Spinner -->
         <template if:true={loaded}>
             <div class="slds-p-horizontal_medium slds-m-top_medium">
                 <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
             </div>
         </template>
 
-        <!-- Error Message -->
         <template if:true={hasError}>
             <div class="slds-notify slds-notify_alert slds-alert_error slds-m-top_medium slds-p-horizontal_medium">
                 <span class="slds-assistive-text">Error</span>
@@ -83,7 +90,6 @@
             </div>
         </template>
 
-        <!-- Data Table -->
         <template if:true={hasRecords}>
             <div class="slds-p-around_medium slds-box slds-theme_default">
                 <div class="slds-grid slds-wrap">
@@ -93,36 +99,39 @@
                     </div>
                     <div class="slds-col slds-size_1-of-4">
                         <p class="slds-text-title">Total Violations</p>
-                        <p class="slds-text-heading_small">{totalCompliant}</p>                        
+                        <p class="slds-text-heading_small">{totalCompliant}</p>
                     </div>
                     <div class="slds-col slds-size_1-of-4">
                         <p class="slds-text-title">% Violation</p>
-                        <p class="slds-text-heading_small">{compliancePercent}%</p>                        
+                        <p class="slds-text-heading_small">{compliancePercent}%</p>
                     </div>
                 </div>
             </div>
-            <div class="scroll-wrapper">
-                <div class="scroll-inner">
+
+            <div class="datatable-container">
                     <lightning-datatable
                         style="min-width: 2000px;"
-                        key-field="driveName"
+                        key-field="rowId"
                         data={dataArry}
                         columns={columns}
+                        sorted-by={sortBy}
+                        sorted-direction={sortDirection}
+                        onsort={handleSort}
                         hide-checkbox-column
-                        wrap-text-max-lines="5">
+                        wrap-text-max-lines="3"
+                        column-widths-mode="fixed"
+                        min-column-width="120">
                     </lightning-datatable>
-                </div>
             </div>
-
         </template>
-        <!-- PDF Iframe Popup -->
+
         <template if:true={showPopup}>
             <section class="slds-modal slds-fade-in-open slds-modal_large" role="dialog">
                 <div class="slds-modal__container">
-                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                    <button
+                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
                         onclick={handleClosePopupHandler}>
-                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
-                            size="small"></lightning-icon>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
                     </button>
                     <div class="slds-modal__content slds-p-around_medium">
                         <iframe src={getPopUpRedirectUrl} width="100%" height="600px" frameborder="0"></iframe>

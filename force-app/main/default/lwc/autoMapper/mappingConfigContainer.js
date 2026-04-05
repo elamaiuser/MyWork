@@ -25,8 +25,8 @@ import {
     ResourceTagMappingConfigFactory, RoleTimeDetailMappingConfigFactory, RoleTimeVarianceMappingConfigFactory, 
     SiteBridgeApiMappingConfigFactory, SiteCollectionOperationMappingConfigFactory, SiteFeedbackMappingConfigFactory, SlotMappingConfigFactory, 
     StagingLocationMappingConfigFactory, StaffingConstraintMappingConfigFactory, StaffingDecisionMatrixMappingConfigFactory, TagMappingConfigFactory, TerritoryCollectionOperationMappingConfigFactory,
-    TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
-    CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory
+    TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, TravelTimeSlotConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
+    CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory, CollectionOpAvailabilityMappingConfigFactory, AvailabilityPatternRoleMappingConfigFactory
 } from './index.js';
 
 class mappingConfigContainer {
@@ -121,11 +121,14 @@ class mappingConfigContainer {
             'sked_Territory__cMappingConfigFactory' : TerritoryMappingConfigFactory,
             'Time_Block__cMappingConfigFactory' : TimeBlockMappingConfigFactory,
             'sked_Travel_Time_Index_Item__cMappingConfigFactory' : TravelTimeIndexItemMappingConfigFactory,
+            'sked_Travel_Time_Slot__cMappingConfigFactory' : TravelTimeSlotConfigFactory,
             'skedHC__Exception__cMappingConfigFactory' : ExceptionMappingConfigFactory,
             'BSF_Portfolio__cMappingConfigFactory' : BsfPortfolioMappingConfigFactory,
             'sked_Staff_Setup_Excluded_Role__cMappingConfigFactory' : StaffSetupExcludedRoleMappingConfigFactory,
             'sked_Staff_Meal_Rest_Break_Setting__cMappingConfigFactory' : StaffMealAndRestBreakMappingConfigFactory,
-            'sked_CollectionOperationOptimizerSetting__cMappingConfigFactory' : CollectionOperationOptimizerSettingConfigFactory
+            'sked_CollectionOperationOptimizerSetting__cMappingConfigFactory' : CollectionOperationOptimizerSettingConfigFactory,
+            'Collection_Operation_Availability__cMappingConfigFactory' : CollectionOpAvailabilityMappingConfigFactory,
+            'Availability_Pattern_Role__cMappingConfigFactory' : AvailabilityPatternRoleMappingConfigFactory,
         };
     }
 
