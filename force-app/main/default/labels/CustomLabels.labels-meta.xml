@@ -867,5 +867,12 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <protected>false</protected>
         <shortDescription>ODL_TimeBlockNotAssociatedWithCO</shortDescription>
         <value>Time Block is not associated with this Collection Operation.</value>
-    </labels>    
+    </labels>
+    <labels>
+        <fullName>Online_Donor_Message_Length_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Online Donor Message Length Error</shortDescription>
+        <value>Online Donor Message cannot exceed 100 characters.</value>
+    </labels>
 </CustomLabels>
