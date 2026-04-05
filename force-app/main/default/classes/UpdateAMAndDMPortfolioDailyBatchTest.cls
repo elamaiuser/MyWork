@@ -263,7 +263,7 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         Opportunity optyObj1 ; // = new Opportunity();
         optyObj1 = new Opportunity();
         optyObj1.RecordTypeId = optyRecTypeId;
-        optyObj1.AccountId = mobileAccList[0].Id;
+        optyObj1.AccountId = mobileAccList[1].Id;
         optyObj1.Drive_Site__c = siteObj.Id;
         optyObj1.Name = 'Test Drive Test';
         optyObj1.StageName = 'Discovery'; 
@@ -275,7 +275,6 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         optyObj1.WB_Projected_Procedures__c = 1;
         optyObj1.X2RBC_Projected_Procedures__c = 1;
         optyObj1.Anticipated_Registered_Donors__c = 1;
-        
         oppsobjlist.add( optyObj1 );
 
         // insert Account Team and add DRDAMUser
@@ -292,8 +291,6 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         atm.Start_Date__c = System.today();
         atm.Is_Covering_Recruiter__c = TRUE;
         atm.End_Date__c = System.today().AddDays(2);
-        
-        
         atmList.add(atm);
         
         atm = new AccountTeammember();
@@ -303,10 +300,10 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         atm.userId = DRDAMUser.Id ;
         atm.AccountId = mobileAccList[1].Id ;
         atm.TeamMemberRole = 'Account Manager';
-        atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
+        //atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
         atm.Start_Date__c = System.today();
         atm.End_Date__c = System.today().AddDays(2);
-        atm.Is_Covering_Recruiter__c = TRUE;
+        atm.Is_Covering_Recruiter__c = false;
         
         atmList.add(atm);
 
@@ -314,17 +311,28 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
         atm.AccountAccessLevel = 'Edit';
         atm.CaseAccessLevel = 'Edit';
         atm.OpportunityAccessLevel = 'Edit';
-        atm.userId = DRDAMUser.Id ;
+        atm.userId = DRDDMUser.Id ;
         atm.AccountId = mobileAccList[1].Id ;
         atm.TeamMemberRole = 'District Manager';
         atm.BSF_Portfolio__c = bParentportfolioList[0].Id;
         atm.Start_Date__c = System.today();
         atm.End_Date__c = System.today().AddDays(2);
         atm.Is_Covering_Recruiter__c = FALSE;
-        
         atmList.add(atm);
         
-        
+        atm = new AccountTeammember();
+        atm.AccountAccessLevel = 'Edit';
+        atm.CaseAccessLevel = 'Edit';
+        atm.OpportunityAccessLevel = 'Edit';
+        atm.userId = DRDDMUser.Id ;
+        atm.AccountId = mobileAccList[0].Id ;
+        atm.TeamMemberRole = 'District Manager';
+        atm.BSF_Portfolio__c = bParentportfolioList[0].Id;
+        atm.Start_Date__c = System.today();
+        atm.End_Date__c = System.today().AddDays(2);
+        atm.Is_Covering_Recruiter__c = true;
+        atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
+        atmList.add(atm);
         insert atmList;
         
         skedHubBase.BypassInsertTriggers = true;
@@ -374,9 +382,18 @@ private class UpdateAMAndDMPortfolioDailyBatchTest {
     private static void updateAMandDMPortfOnOppAndDOCDailyBatchConstructor2_Test(){
         Date todayDate = Date.today();
 		Date futureDate  = todayDate.addDays(5);
+        
         Test.startTest();
             UpdateAMandDMPortfOnOppAndDOCDailyBatch batchObject = new UpdateAMandDMPortfOnOppAndDOCDailyBatch(todayDate,futureDate);
             Database.executeBatch(batchObject,2);
+        Test.stopTest();
+    }
+    
+    @isTest
+    private static void updateAMandDMPortfolioDailyBatchScheduler_Test() {
+        Test.startTest();
+            UpdateAMAndDMPortfDailyBatchScheduler batchSchedule = new UpdateAMAndDMPortfDailyBatchScheduler();
+            batchSchedule.execute(null);
         Test.stopTest();
     }
 

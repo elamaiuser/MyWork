@@ -517,7 +517,37 @@ global class skedExceptionLogService extends skedDataService {
         }
         List<skedHC__Exception__c> exceptionLog = generateAPExceptionLogs(activityResources);
         if (!exceptionLog.isEmpty()) {
-            insert exceptionLog;
+            upsertAPExceptionLog(newRecords, exceptionLog);
+        }
+    }
+
+    private void upsertAPExceptionLog(List<sked__Activity_Resource__c> newRecords, List<skedHC__Exception__c> activeExceptionLog) {
+        List<skedHC__Exception__c> exceptionLogToInsert = new List<skedHC__Exception__c>();
+        
+        Set<string> exceptionKeys = new Set<string>();
+        for (sked__Activity_Resource__c newRecord : newRecords) {
+            exceptionKeys.add(newRecord.sked__Activity__c + ':' + newRecord.sked__Resource__c + ':' + skedConstants.EXCEPTION_CODE_ACTIVITY_OUTSIDE_OF_AVAILABILITY_PATTERN);
+        }
+        List<skedHC__Exception__c> existingExceptionLog = [
+            SELECT Id, sked_UniqueKey__c, skedHC__Activity__c, skedHC__Resource__c, sked_Exception_Code__c
+            FROM skedHC__Exception__c
+            WHERE sked_UniqueKey__c IN :exceptionKeys
+            AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN
+        ];
+        Map<string, skedHC__Exception__c> mapExistingException = new Map<string, skedHC__Exception__c>();
+        for (skedHC__Exception__c existingException : existingExceptionLog) {
+            mapExistingException.put(existingException.sked_UniqueKey__c, existingException);
+        }
+        
+        for (skedHC__Exception__c exceptionItem : activeExceptionLog) {
+            string key = exceptionItem.skedHC__Activity__c + ':' + exceptionItem.skedHC__Resource__c + ':' + exceptionItem.sked_Exception_Code__c;
+            if (!mapExistingException.containsKey(key)) {
+                exceptionLogToInsert.add(exceptionItem);
+            }
+        }
+        
+        if (!exceptionLogToInsert.isEmpty()) {
+            insert exceptionLogToInsert;
         }
     }
     

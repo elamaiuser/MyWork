@@ -24,6 +24,7 @@ import _getCurrentApprovalData from '@salesforce/apex/slwcApprovalService.getCur
 import _saveDesignatedApprover from '@salesforce/apex/slwcApprovalService.saveDesignatedApprover';
 import _isPendingApproval from '@salesforce/apex/slwcApprovalService.isPendingApproval';
 import _withdraw from '@salesforce/apex/slwcApprovalService.withdraw';
+import _getLatestDCRStatus from '@salesforce/apex/slwcApprovalService.getLatestDCRStatus';
 
 import _getAssetDataCompact from '@salesforce/apex/slwcAllocationService.getAssetDataCompact';
 import _getResourceData from '@salesforce/apex/slwcAllocationService.getResourceData';
@@ -113,6 +114,7 @@ class auraService {
   saveDesignatedApprover = (params) => this.execute(_saveDesignatedApprover, params);
   isPendingApproval = (params) => this.execute(_isPendingApproval, params);
   withdraw = (params) => this.execute(_withdraw, params);
+  getLatestDCRStatus = (params) => this.execute(_getLatestDCRStatus, params);
   getResourceData = (params) => this.execute(_getResourceData, params);
   getAssetDataCompact = (params) => this.execute(_getAssetDataCompact, params);
   getLinkedDrivesResourceIds = (params) => this.execute(_getLinkedDrivesResourceIds, params);

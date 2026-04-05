@@ -67,8 +67,10 @@ global class slwcAllocationService {
                                                              FROM sked__Job_Allocation__c
                                                              WHERE sked__Job__c IN :request.jobIds
                                                              AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED];
+		Set<Id> existingAllocationIds = new Set<Id>();
         request.allocatedResourceIds = new List<string>();
         for (sked__Job_Allocation__c existingAllocation : existingAllocations) {
+            existingAllocationIds.add(existingAllocation.Id);
             request.allocatedResourceIds.add(existingAllocation.sked__Resource__c);
         }
         
@@ -189,6 +191,20 @@ global class slwcAllocationService {
         if (request.pageNo == 1) {
             data.totalRecords = request.recordIds != NULL ? request.recordIds.size() : (request.getAssetsOnly == TRUE ? numberOfAssets(request) : numberOfResources(request));
         }
+        
+        
+        
+        List<string> pendingTradeStatuses = new List<string>();
+        pendingTradeStatuses.add(skedConstants.DRIVE_SHIFT_TRADE_STATUS_PENDING_APPROVAL);
+        
+        data.pendingTrades = [
+            SELECT Id, sked_Status__c, sked_Requesting_Staff_Job_Allocation__c, sked_Trading_Staff_Job_Allocation__c,
+            sked_Requesting_Staff__r.Id, sked_Requesting_Staff__r.Name, sked_Requesting_Staff_Trading_Event_Name__c, sked_Requesting_Staff_Trading_Event_Date__c,
+            sked_Trading_Staff__r.Id, sked_Trading_Staff__r.Name, sked_Trading_Staff_Trading_Event_Name__c, sked_Trading_Staff_Trading_Event_Date__c
+            FROM sked_Drive_Shift_Trade__c
+            WHERE sked_Status__c IN :pendingTradeStatuses
+        ];
+        
         result.returnedData = data;
         return result;
     }
@@ -605,29 +621,31 @@ global class slwcAllocationService {
     }
     
     private static Integer numberOfResources(getResourceDataRequestModel request) {
-        AggregateResult aggResult = [SELECT count(Id) numberOfResource
-                                     FROM sked__Resource__c
-                                     WHERE Id IN :request.allocatedResourceIds
-                                     OR 
-                                     (
-                                         (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds 
-                                          OR Id IN :request.additionalResourceIds)
-                                         AND (
-                                             (sked__Resource_Type__c = 'Person' AND sked_Employment_Status__c = 'Active') 
-                                             OR (
-                                                 sked__Resource_Type__c = 'Person' 
-                                                 AND sked_Employment_Status__c = 'Leave' 
-                                                 AND sked_Anticipated_Leave_Return_Date__c <= :request.maxDate
-                                             )
-                                             OR (
-                                                 sked__Resource_Type__c = 'Asset' 
-                                                 AND sked__Is_Active__c = TRUE
-                                                 AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
-                                             )
-                                         )
-                                         AND (sked_Termination_Date__c = NULL OR sked_Termination_Date__c > :request.minDate)
-                                         AND (sked_Planned_Termination_Date__c = NULL OR sked_Planned_Termination_Date__c > :request.minDate)
-                                     )];
+        AggregateResult aggResult = [
+            SELECT count(Id) numberOfResource
+            FROM sked__Resource__c
+            WHERE Id IN :request.allocatedResourceIds
+            OR 
+            (
+                (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds 
+                 OR Id IN :request.additionalResourceIds)
+                AND (
+                    (sked__Resource_Type__c = 'Person' AND sked_Employment_Status__c = 'Active') 
+                    OR (
+                        sked__Resource_Type__c = 'Person' 
+                        AND sked_Employment_Status__c = 'Leave' 
+                        AND sked_Anticipated_Leave_Return_Date__c <= :request.maxDate
+                    )
+                    OR (
+                        sked__Resource_Type__c = 'Asset' 
+                        AND sked__Is_Active__c = TRUE
+                        AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                    )
+                )
+                AND (sked_Termination_Date__c = NULL OR sked_Termination_Date__c > :request.minDate)
+                AND (sked_Planned_Termination_Date__c = NULL OR sked_Planned_Termination_Date__c > :request.minDate)
+            )
+        ];
         return (integer)aggResult.get('numberOfResource');
     }
     
@@ -685,6 +703,7 @@ global class slwcAllocationService {
         @AuraEnabled public object resourceHoursRecordDetails {get;set;}
         @AuraEnabled public object tradedJobAllocations {get;set;}
         @AuraEnabled public object prevCancelledJobAllocations {get;set;}
+        @AuraEnabled public object pendingTrades {get;set;}
     }
     
 }
