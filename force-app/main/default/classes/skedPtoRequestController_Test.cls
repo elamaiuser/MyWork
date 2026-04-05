@@ -193,6 +193,7 @@ private class skedPtoRequestController_Test {
         Test.startTest();
 
         skedRemoteResultModel deleteAvailabilityResult = skedPtoRequestController.cancelAvailability(model);
+        skedPtoRequestController testInstance = new skedPtoRequestController();
 
         Test.stopTest();
     }
@@ -254,6 +255,7 @@ private class skedPtoRequestController_Test {
         Test.startTest();
         
         skedRemoteResultModel deleteCustomAvailabilityResult = skedPtoRequestController.deleteCustomAvailability(model);
+        skedRemoteResultModel cancelCustomAvailabilityResult = skedPtoRequestController.cancelCustomAvailability(model);
         
         Test.stopTest();
     }

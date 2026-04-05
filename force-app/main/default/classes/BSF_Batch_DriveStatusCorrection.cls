@@ -1,9 +1,9 @@
-global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Batchable<sObject>{
-	private Integer batchSize = 50;
+global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Batchable<sObject> {
     private DateTime targetDriveDate;
     private DateTime presetDate;
     private List<String> statusList = new List<String>{'Confirmed','Complete','Cancel'}; 
-	global BSF_Batch_DriveStatusCorrection(){
+
+	global BSF_Batch_DriveStatusCorrection() {
 		Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numberOfDays = Integer.valueOf(cbMetadata?.No_of_Days_for_Status_Correction_Batch__c);
         if (numberOfDays != null) {
@@ -13,13 +13,15 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
         }
         this.presetDate = DateTime.newInstance(2023, 1, 30);
 	}
-    global BSF_Batch_DriveStatusCorrection(Date manualRunDate, Date manualPresetDate){
+
+    global BSF_Batch_DriveStatusCorrection(Date manualRunDate, Date manualPresetDate) {
 		if (manualRunDate != null && manualPresetDate != null) {
             this.targetDriveDate = DateTime.newInstance(manualRunDate.year(),manualRunDate.month(),manualRunDate.day());
             this.presetDate = DateTime.newInstance(manualPresetDate.year(),manualPresetDate.month(),manualPresetDate.day());
         }
 	}
-	global Database.QueryLocator start(Database.BatchableContext BC){
+
+	global Database.QueryLocator start(Database.BatchableContext BC) {
 		return Database.getQueryLocator('SELECT Id, sked_Status__c, sked_Drive_Date__c, sked_Type_of_Drive__c'+
                                         ' FROM sked_Drive__c WHERE'+
                                         ' sked_Drive_Date__c >= '+this.presetDate.format('yyyy-MM-dd')+
@@ -27,7 +29,8 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
                                         ' AND sked_Status__c NOT IN (\''+String.join(this.statusList, '\',\'')+'\')'+
                                         ' ORDER BY sked_Drive_Date__c ASC');
 	}
-	global void execute(Database.BatchableContext BC, List<sked_Drive__c> scope){
+
+	global void execute(Database.BatchableContext BC, List<sked_Drive__c> scope) {
 		List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
         Map<Id, sked_Drive__c> driveMap = new Map<Id, sked_Drive__c>(scope);
         for(Id driveId : driveMap.keySet()){
@@ -54,8 +57,10 @@ global class BSF_Batch_DriveStatusCorrection implements Schedulable, Database.Ba
             Database.SaveResult[] logResultList = Database.Insert(logListForDriveStatusUpdate, false);
         }
 	}
-	global void execute(SchedulableContext scon){
-		Database.executeBatch(new BSF_Batch_DriveStatusCorrection(),batchSize);
+
+	global void execute(SchedulableContext scon) {
+		Database.executeBatch(new BSF_Batch_DriveStatusCorrection(), Integer.valueOf(Custom_Messages__mdt.getInstance('Batch_Size_for_DriveStatusCorrection').value__c));
 	}
-	global void finish(Database.BatchableContext BC){}
+
+	global void finish(Database.BatchableContext BC) {}
 }

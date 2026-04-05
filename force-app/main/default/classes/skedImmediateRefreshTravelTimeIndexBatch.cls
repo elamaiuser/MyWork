@@ -13,12 +13,14 @@ public class skedImmediateRefreshTravelTimeIndexBatch extends skedRefreshTravelT
         this.siteCollectionOperationId = siteCollectionOperationId;
     }
 
-    protected override Database.QueryLocator getQueryLocator() {        
+    protected override Database.QueryLocator getQueryLocator() {
         return Database.getQueryLocator([
             SELECT Id, sked_Timezone__c, sked_Ordering_Key__c,
             sked_From__c, sked_To__c, User_Override__c,
             sked_Travel_Time_Breakdown_JSON__c,
-            sked_Travel_Time_Breakdown_JSON_Backup__c
+            sked_Travel_Time_Breakdown_JSON_Backup__c,
+            (SELECT sked_Collection_Operation__c FROM Site_Collection_Operations__r WHERE sked_Start_Date__c <= TODAY AND sked_End_Date__c >= TODAY),
+            (SELECT sked_Collection_Operation__c FROM sked_Site_Collection_Operations__r WHERE sked_Start_Date__c <= TODAY AND sked_End_Date__c >= TODAY)
             FROM sked_Travel_Time_Index_Item__c
             WHERE Id IN :travelTimeIndexIds
             ORDER BY sked_Ordering_Key__c ASC, Id ASC

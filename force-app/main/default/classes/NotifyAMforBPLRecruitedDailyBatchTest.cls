@@ -1,9 +1,8 @@
 @isTest
 public class NotifyAMforBPLRecruitedDailyBatchTest {
+    
     @testSetup
-    public static void DataSetup(){
-        Test.startTest();   
-        
+    static void prepareTestData() {
         Account acc = new account();
         acc.name='testAccount';
         acc.Recruited_By__c = 'BPL Recruited';
@@ -39,25 +38,44 @@ public class NotifyAMforBPLRecruitedDailyBatchTest {
 		opp2.End_Time__c = Time.newInstance(15, 0, 0, 0);
         opp2.Source__c = 'Adhoc';
         oppList.add(opp2);
-        
         insert oppList;
-        
-        NotifyAM4BPLRecruitedDailyBatchScheduler notifyAMBPLSch = new NotifyAM4BPLRecruitedDailyBatchScheduler(100);
-		System.schedule('Notify AM BPL Recruited Batch1', '0 0 2 * * ?', notifyAMBPLSch);
-        
-        Test.stopTest();
     }
     
     @isTest
-    public static void NotifyAMforBPLRecruitedDailyBatchHelperTest(){
+    private static void notifyAMforBPLRecruitedDailyBatchHelperTest() {
+        Test.startTest();
+        
         List<Account> accBplRecruitedList = [SELECT Id,Recruited_By__c,Account_Manager__c 
                                              FROM Account WHERE Recruited_By__c ='BPL Recruited'];
         Id batchJobId = Database.executeBatch(new NotifyAMforBPLRecruitedDailyBatch(), 200);
-        System.assert( batchJobId != null );
+        
+        Test.stopTest();
+        Assert.isTrue( batchJobId != null );
     }
     
-    static Date AddBusinessDays(Date startDate, Integer businessDaysToAdd)
-    {
+    @isTest
+    private static void notifyAMforBPLRecruitedDailyBatchSchdulerTest() {
+        Test.startTest();
+        
+        NotifyAM4BPLRecruitedDailyBatchScheduler testNotifyAMBPLSch = new NotifyAM4BPLRecruitedDailyBatchScheduler(100);
+		System.schedule('Test Notify AM BPL Recruited Batch', '0 0 2 * * ?', testNotifyAMBPLSch);
+        
+        Test.stopTest();
+        Assert.isTrue([SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = 'Test Notify AM BPL Recruited Batch'].Id != null);
+    }
+    
+    @isTest
+    private static void notifyAMforBPLRecruitedDailyBatchSchdulTest() {
+        Test.startTest();
+        
+        NotifyAMforBPLRecruitedDailyBatchSchdul testNotifyAMBPLSch = new NotifyAMforBPLRecruitedDailyBatchSchdul(100);
+		System.schedule('Test Notify AM BPL Recruited Batch1', '0 0 2 * * ?', testNotifyAMBPLSch);
+        
+        Test.stopTest();
+        Assert.isTrue([SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = 'Test Notify AM BPL Recruited Batch1'].Id != null);
+    }
+    
+    static Date AddBusinessDays(Date startDate, Integer businessDaysToAdd) {
         Date finalDate = startDate;
         Integer direction = businessDaysToAdd < 0 ? -1 : 1;
         while(businessDaysToAdd != 0)
@@ -70,8 +88,8 @@ public class NotifyAMforBPLRecruitedDailyBatchTest {
         }
         return finalDate;
     }
-    static Boolean IsWeekend(Date myDate)
-    {
+    
+    static Boolean IsWeekend(Date myDate) {
         String myDateString = Datetime.newInstance(myDate.year(), myDate.month(),myDate.day()).format('EEE');
         return 'Sat'.equals(myDateString) || 'Sun'.equals(myDateString);
     }
