@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   HRP-16515 — Package manifest: Ops Record direct Workday submission.
-  File: manifest/package-HRP-16515.xml
+  File: manifest/HRP-16515.xml
   Includes all components created or modified for direct Workday submission.
   Update this file as new components are added during implementation.
 
