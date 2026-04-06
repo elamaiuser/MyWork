@@ -4,5 +4,10 @@
 		<members>sked_Drive_Change_Request__c.Restrict_Status_Change_For_DRD_Profiles</members>
 		<name>ValidationRule</name>
 	</types>
+	 <types>
+		<members>slwcDriveManagement</members>
+		<members>slwcDriveGenerator</members>
+		<name>LightningComponentBundle</name>
+	</types>
     <version>59.0</version>
 </Package>
