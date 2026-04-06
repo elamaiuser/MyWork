@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>Release_Tag__c</field>
-        <value xsi:type="xsd:string">2.7</value>
+        <value xsi:type="xsd:string">2.7 Release</value>
     </values>
     <values>
         <field>Rule_Type__c</field>
