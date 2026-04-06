@@ -3,6 +3,13 @@
   Package manifest for Ops Record Direct Workday project.
   Includes all components created or modified for direct Workday submission.
   Update this file as new components are added during implementation.
+
+  To refresh only the Workday Direct Submission CMDT default record and its page layout
+  from a connected org without deploying the full package, use targeted metadata:
+    sf project retrieve start \
+      --metadata "CustomMetadata:BSF_Workday_Direct_Submission_Config.Default_Config" \
+      --metadata "Layout:BSF_Workday_Direct_Submission_Config__mdt-Workday Direct Submission Config Layout" \
+      --target-org ReleaseQA
 -->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <!-- Apex: new and modified classes -->
@@ -44,7 +51,7 @@
     </types>
     <!-- Layouts (include Workday Direct Submission Config layout) -->
     <types>
-        <members>BSF_Workday_Direct_Submission_Config__mdt-BSF Workday Direct Submission Config Layout</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt-Workday Direct Submission Config Layout</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt-*</members>
         <name>Layout</name>
     </types>
