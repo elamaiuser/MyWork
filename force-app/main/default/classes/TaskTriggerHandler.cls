@@ -58,6 +58,9 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
             TaskService.assignDefaultTaskOwner((List<Task>)Trigger.new);
         }
         //HRP-12627 end
+        if(super.getTriggerMethodsToBypass().indexOf('populateTaskTypeFromMetadata') == -1) { 
+            TaskService.populateTaskTypeFromMetadata((List<Task>)Trigger.new);
+        }    
     }
     //HRP-16830
     public override void afterInsert(){

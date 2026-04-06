@@ -31,4 +31,54 @@
         <default>false</default>
         <label>Clone Blood Drive</label>
     </standardValue>
+    <standardValue>
+        <fullName>Recruitment Planning Meeting</fullName>
+        <default>false</default>
+        <label>Recruitment Planning Meeting</label>
+    </standardValue>
+    <standardValue>
+        <fullName>72 Hour Check In</fullName>
+        <default>false</default>
+        <label>72 Hour Check In</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Request for Marketing Exception</fullName>
+        <default>false</default>
+        <label>Request for Marketing Exception</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Security Information Completion</fullName>
+        <default>false</default>
+        <label>Security Information Completion</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Post Drive Analysis AM</fullName>
+        <default>false</default>
+        <label>Post Drive Analysis AM</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Post Drive Analysis SBPM</fullName>
+        <default>false</default>
+        <label>Post Drive Analysis SBPM</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Publicity Order Not Created</fullName>
+        <default>false</default>
+        <label>Publicity Order Not Created</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Publicity Review Needed</fullName>
+        <default>false</default>
+        <label>Publicity Review Needed</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Template Order Task</fullName>
+        <default>false</default>
+        <label>Template Order Task</label>
+    </standardValue>
+    <standardValue>
+        <fullName>1 Week Check-In</fullName>
+        <default>false</default>
+        <label>1 Week Check-In</label>
+    </standardValue>
 </StandardValueSet>

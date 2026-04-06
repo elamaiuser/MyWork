@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:type="xsd:string">https://app.powerbi.com/groups/me/apps/8b2bb450-2c52-4c43-a4bc-427676b44185/reports/7c17e7b4-3da7-40b7-8a92-28b13cce7893/eee92c68fc3e3be28123?ctid=dd5b5d42-c0d3-4ad2-b5f1-60edb3af2771&amp;experience=power-bi</value>
+        <value xsi:type="xsd:string">https://app.powerbi.com/groups/me/apps/1bf85886-e730-4e80-9ea2-4330448f7aa5/reports/b70b8b63-b94e-4afc-94f3-f508db82b22d/eee92c68fc3e3be28123?experience=power-bi</value>
     </values>
     <values>
         <field>Report_Name__c</field>
@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>Task_Subject__c</field>
-        <value xsi:type="xsd:string">Post Drive Analysis SBPM</value>
+        <value xsi:type="xsd:string">Post Drive Analysis / Future Drive Planning SBPM</value>
     </values>
     <values>
         <field>Task_Type__c</field>
