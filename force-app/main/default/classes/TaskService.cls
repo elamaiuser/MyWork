@@ -727,6 +727,6 @@ public with sharing class TaskService {
             if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
                 t.addError('Subject is required.');
             }
-        } 
+        }
     }
 }
