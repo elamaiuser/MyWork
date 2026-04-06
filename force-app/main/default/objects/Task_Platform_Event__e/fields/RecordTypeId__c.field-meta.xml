@@ -7,7 +7,7 @@
     <isSortingDisabled>false</isSortingDisabled>
     <label>RecordTypeId</label>
     <length>20</length>
-    <required>true</required>
+    <required>false</required>
     <type>Text</type>
     <unique>false</unique>
 </CustomField>

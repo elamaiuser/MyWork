@@ -536,7 +536,8 @@ class DriveHelper {
         return {
           availableVehicles: vehicles.filter(vehicle => availableVehicleIds.includes(vehicle.id)),
           availableEquipments: availableEquipments,
-          availableButNotSharedAssetIds
+          availableButNotSharedAssetIds,
+          possibleAllocations: result.possibleAllocations || []
         }
       })
   }
@@ -595,6 +596,59 @@ class DriveHelper {
       assignedEquipments: assignedEquipments,
       lockedEquipments: lockedEquipments
     }
+  }
+
+  getCurrentLockedStaff(drive) {
+    let lockedStaff = [];
+    if (drive.driveShifts && drive.driveShifts.length) {
+      drive.driveShifts.forEach(driveShift => {
+        (driveShift.jobs || []).forEach(job => {
+          if (!job.resourceRole) return;
+          (job.jobAllocations || [])
+            .filter(ja => ja.status !== JOB_ALLOCATION_STATUS.DELETED && ja.locked)
+            .forEach(ja => {
+              lockedStaff.push(ja.resource);
+            });
+        });
+      });
+    }
+    return { lockedStaff };
+  }
+
+  getLockedStaffAvailability(drive) {
+    const { lockedStaff } = this.getCurrentLockedStaff(drive);
+    const lockedStaffIds = lockedStaff.map(r => r.id);
+    if (!lockedStaffIds.length) {
+      return Promise.resolve([]);
+    }
+
+    const roleJobs = [];
+    drive.driveShifts?.forEach(driveShift => {
+      (driveShift.jobs || []).forEach(job => {
+        if (job.resourceRole) {
+          roleJobs.push(job);
+        }
+      });
+    });
+
+    let availator = slwcAvailator.getInstance({
+      mapApis: window.google ? window.google.maps : null
+    });
+
+    return availator.fetchDataForDriveGenerator(drive, roleJobs.map(job => {
+      return {
+        ...job,
+        driveDate: drive.driveDate,
+        start: typeof job.start === 'string' ? job.start : job.start.toISOString(),
+        finish: typeof job.finish === 'string' ? job.finish : job.finish.toISOString()
+      }
+    }), lockedStaff)
+      .then(() => {
+        return availator.buildScheduledAllocations();
+      })
+      .then((result) => {
+        return result.possibleAllocations || [];
+      });
   }
 
   getVehicleTags(driveTags) {
@@ -2406,6 +2460,7 @@ class DriveHelper {
         [DRIVE_CONTENTION.DUAL_ROLE_REMOVAL]: [DRIVE_CONTENTION_RESOLUTION.ELECT_DUAL_ROLE_REMOVAL],     
         [DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS]: [DRIVE_CONTENTION_RESOLUTION.ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE],
         [DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO]: [DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO],
+        [DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE]: [DRIVE_CONTENTION_RESOLUTION.ELECT_LOCKED_RESOURCE_UNAVAILABLE],
         [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: [DRIVE_CONTENTION_RESOLUTION.ELECT_EXCESS_STAFF_CAPACITY]
       };
 
@@ -3247,6 +3302,33 @@ class DriveHelper {
       return result;
     }
 
+    const validateLockedResourceUnavailable = (drive, { availableAssetsInfo = {} }) => {
+      let result = {
+        contention: DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
+        violated: false,
+        passed: true,
+        data: {}
+      }
+
+      const possibleAllocations = availableAssetsInfo.possibleAllocations || [];
+      const unavailableResourceIds = new Set(
+        possibleAllocations
+          .filter(posAl => (posAl.exceptionLog || []).length > 0)
+          .map(posAl => posAl.resourceId)
+      );
+
+      const { lockedVehicles } = this.getCurrentAssignedVehicles(drive);
+      const { lockedEquipments } = this.getCurrentAssignedEquipments(drive);
+      const { lockedStaff } = this.getCurrentLockedStaff(drive);
+      const allLockedResources = [...lockedVehicles, ...lockedEquipments, ...lockedStaff];
+
+      const unavailableLockedResources = allLockedResources.filter(r => unavailableResourceIds.has(r.id));
+
+      result.violated = unavailableLockedResources.length > 0;
+      result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE);
+      return result;
+    }
+
     let contentions = [];
     let pendingActionReasonCodes = [];
     let allPassed = true;
@@ -3268,6 +3350,7 @@ class DriveHelper {
       [DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED]: validateStaffingComplementChanged,
       [DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS]: validateCOChangeCrossRegions,
       [DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO]: validateAssetsNotSharedWithNewCO,
+      [DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE]: validateLockedResourceUnavailable,
       [DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY]: validateExcessStaffCapacity
     }
     let validateFns = orderBy(contentionsToValidate,(contention) => {

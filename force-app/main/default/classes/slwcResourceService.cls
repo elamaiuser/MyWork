@@ -223,9 +223,9 @@ global class slwcResourceService {
             sked__Start__c = unavailabilityStart,
             sked__Resource__c = request.resourceId,
             sked__Notes__c = request.callOutNotes,
-            sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
+            sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
             sked__Timezone__c = unavailabilityTimezone,
-            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+            sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED,
             sked_Call_Out_For_Activity__c = request.activityId,
             sked_Call_Out_For_Job_Allocation__c = request.jobAllocationId,
             sked_Call_Out_Notes__c = request.callOutNotes,
@@ -235,7 +235,8 @@ global class slwcResourceService {
             sked_DateTime_Call_Out_Received__c = request.callOutReceivedDateTime,
             sked_DateTime_of_Call_Out__c = currentTime,
             sked_Time_Off_Plan__c = request.timeOffPlan,
-            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode            
+            sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
+            sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NA            
         );
 
         if (request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
@@ -246,24 +247,38 @@ global class slwcResourceService {
             callOutAvailability.sked__Finish__c = callOutFinish.addMinutes(-1);
         }
 
-        if (request.usePtoForCallOut == false || request.usePtoForCallOut == null) {
-            callOutAvailability.sked_Workday_Sync_Status__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NA;
-            callOutAvailability.sked_Workday_Sync_Message__c = request.hasTimeOffPlans ? 'User chose to not submit time off' : 'No time off plan for workday sync';
-            callOutAvailability.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-            callOutAvailability.sked__Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-        }
-
         if (callOutAvailability.sked_DateTime_of_Call_Out__c != NULL && callOutAvailability.sked__Start__c != NULL) {
             callOutAvailability.sked_Call_Out_Notice__c = skedDateTimeUtils.getDifferentMinutesText(callOutAvailability.sked_DateTime_of_Call_Out__c, callOutAvailability.sked__Start__c);
         	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
         }
-        insert callOutAvailability;
+        if (request.usePtoForCallOut == false && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NoTimeOFF_message;
+        }
         
         if (!notes.isEmpty()) {
             String driveUFIDNotes = String.join(notes, ' - ');
             if (!string.isBlank(callOutAvailability.sked__Notes__c)) {
                 callOutAvailability.sked__Notes__c = driveUFIDNotes + '. ' + callOutAvailability.sked__Notes__c;
             }
+        }
+        insert callOutAvailability;
+        
+        if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            sked__Availability__c relatedAvailability = new sked__Availability__c(
+                sked__Type__c = request.timeOffPlan,
+                sked__Is_Available__c = FALSE,
+                sked__Finish__c = callOutAvailability.sked__Finish__c,
+                sked__Start__c = callOutAvailability.sked__Start__c,
+                sked_Is_All_Day__c = callOutAvailability.sked_Is_All_Day__c,
+                sked__Resource__c = request.resourceId,
+                sked__Notes__c = request.callOutNotes,
+                sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
+                sked__Timezone__c = unavailabilityTimezone,
+                sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+                sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
+                sked_Related_Call_Out__c = callOutAvailability.Id
+            );
+            insert relatedAvailability;
         }
     }
     
@@ -321,6 +336,84 @@ global class slwcResourceService {
         @AuraEnabled public object groupActivities {get;set;}
         @AuraEnabled public object resources {get;set;}
         @AuraEnabled public object totalRecords {get;set;}
+    }
+
+    // HRP-13941 — Vehicle Replacement Workflow
+
+    @AuraEnabled
+    public static slwcAuraResult getVehiclesForCOs(getVehiclesForCOsRequestModel request) {
+        slwcAuraResult result = new slwcAuraResult();
+        Set<Id> collectionOperationIds = new Set<Id>(request.collectionOperationIds);
+        result.returnedData = queryVehiclesForCOs(collectionOperationIds, request.startDate, request.endDate);
+        return result;
+    }
+
+    private static vehicleListDataModel queryVehiclesForCOs(
+        Set<Id> collectionOperationIds,
+        String startDateStr,
+        String endDateStr
+    ) {
+        Date startDate = String.isBlank(startDateStr) ? Date.today() : skedDateTimeUtils.getDateFromIsoString(startDateStr);
+        Date endDate   = String.isBlank(endDateStr)   ? Date.today().addYears(1) : skedDateTimeUtils.getDateFromIsoString(endDateStr);
+
+        // Separate query for relocated resource IDs — same pattern as slwcAllocationService.getResourceData()
+        Set<Id> relocatedResourceIds = new Set<Id>();
+        for (sked__Resource_Override__c ro : [
+            SELECT Id, sked__Resource__c
+            FROM sked__Resource_Override__c
+            WHERE sked_Collection_Operation__c IN :collectionOperationIds
+            AND   sked_Start_Date__c <= :endDate
+            AND   sked_End_Date__c   >= :startDate
+        ]) {
+            relocatedResourceIds.add(ro.sked__Resource__c);
+        }
+
+        Set<Id> secondaryCoVehicleIds = new Set<Id>();
+        for (sked_Resource_Biomed_Collection_Op__c rco : [
+            SELECT sked_Resource__c
+            FROM sked_Resource_Biomed_Collection_Op__c
+            WHERE sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds
+            AND   (sked_Start_Date__c = null OR sked_Start_Date__c <= :endDate)
+            AND   (sked_End_Date__c   = null OR sked_End_Date__c   >= :startDate)
+        ]) {
+            secondaryCoVehicleIds.add(rco.sked_Resource__c);
+        }
+
+        Set<Id> additionalVehicleIds = new Set<Id>(secondaryCoVehicleIds);
+        additionalVehicleIds.addAll(relocatedResourceIds);
+
+        List<sked__Resource__c> vehicles = [
+            SELECT Id, Name, sked__Category__c, sked_Pres_Donor_Capacity__c, sked__Is_Active__c,
+                   sked_Effective_Date__c, sked_Future_Inactive_Date__c,
+                   sked__Primary_Region__r.sked__Timezone__c,
+                   (SELECT Id, Name, sked__Tag__c, sked__Tag__r.Id, sked__Tag__r.Name, sked__Tag__r.sked__Type__c, sked_Start_Date__c, sked_Expiry_Date__c
+                    FROM sked__ResourceTags__r
+                    WHERE sked_Start_Date__c <= :endDate
+                    AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :startDate)
+                    AND (sked_Role_Status__c = NULL OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE))
+            FROM sked__Resource__c
+            WHERE sked__Resource_Type__c = :skedConstants.RESOURCE_TYPE_ASSET
+            AND   sked_Asset_Type__c = :skedConstants.ASSET_TYPE_VEHICLE
+            AND   (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :collectionOperationIds
+                   OR Id IN :additionalVehicleIds)
+            ORDER BY Name
+        ];
+
+        vehicleListDataModel data = new vehicleListDataModel();
+        data.vehicles = vehicles;
+        data.relocatedIds = new List<Id>(relocatedResourceIds);
+        return data;
+    }
+
+    public class getVehiclesForCOsRequestModel {
+        @AuraEnabled public List<Id> collectionOperationIds {get;set;}
+        @AuraEnabled public String startDate {get;set;}
+        @AuraEnabled public String endDate {get;set;}
+    }
+
+    public class vehicleListDataModel {
+        @AuraEnabled public List<sked__Resource__c> vehicles {get;set;}
+        @AuraEnabled public List<Id> relocatedIds {get;set;}
     }
 
 }

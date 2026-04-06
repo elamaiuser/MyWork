@@ -20,21 +20,14 @@ public class skedWorkdayGetPlanBalanceResponse extends skedWorkdayApiResponse {
     }
 
     public skedWorkdayGetPlanBalanceResponse(String request) {
-        this(request, false);
-    }
-
-    public skedWorkdayGetPlanBalanceResponse(String request, Boolean isCallOut) {
         super(request);
         this.timeOffPlansByLabel = new Map<String, timeOffPlan>{
             skedConstants.AVAILABILITY_TYPE_PTO => null,
+            skedConstants.AVAILABILITY_TYPE_FLOATING_HOLIDAY => null,
             skedConstants.UNAVAILABILITY_TYPE_BEREAVEMENT => new timeOffPlan(skedConstants.UNAVAILABILITY_TYPE_BEREAVEMENT, 0),
             skedConstants.UNAVAILABILITY_TYPE_PERSONAL => null,
             skedConstants.UNAVAILABILITY_TYPE_SICK => null
         };
-
-        if (!isCallOut) {
-            this.timeOffPlansByLabel.put(skedConstants.AVAILABILITY_TYPE_FLOATING_HOLIDAY, null);
-        }
     }
 
     public override String toString() {

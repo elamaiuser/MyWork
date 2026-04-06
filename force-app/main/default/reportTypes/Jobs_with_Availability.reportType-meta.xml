@@ -51,16 +51,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>sked_Cancellation_Reason__c</field>
-            <table>sked__Job__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_Cancellation_Reason_Notes__c</field>
-            <table>sked__Job__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>sked_Drive__c</field>
             <table>sked__Job__c</table>
         </columns>
@@ -322,6 +312,16 @@
             <field>JA_Last_Modified_Date_Time__c</field>
             <table>sked__Job__c.sked__Job_Allocations__r</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Staffing_Reason__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Replacement_For__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r</table>
+        </columns>
         <masterLabel>Job Allocations</masterLabel>
     </sections>
     <sections>
@@ -463,11 +463,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>sked_Time_Call_Out_Received__c</field>
-            <table>sked__Job__c.sked__Job_Allocations__r.sked_Availabilities__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>sked_SBA_Count__c</field>
             <table>sked__Job__c.sked__Job_Allocations__r.sked_Availabilities__r</table>
         </columns>
         <columns>
@@ -658,6 +653,16 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>CreatedBy.Profile.UserType</field>
+            <table>sked__Job__c.sked__Job_Allocations__r.sked_Availabilities__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Requested_Time_Off_Hours__c</field>
+            <table>sked__Job__c.sked__Job_Allocations__r.sked_Availabilities__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Related_Call_Out__c</field>
             <table>sked__Job__c.sked__Job_Allocations__r.sked_Availabilities__r</table>
         </columns>
         <masterLabel>Availabilities</masterLabel>
