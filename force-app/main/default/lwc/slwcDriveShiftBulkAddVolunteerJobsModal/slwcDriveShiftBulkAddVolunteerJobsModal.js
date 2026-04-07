@@ -1,5 +1,6 @@
 import { debugLogService, driveQueryModel, driveService, jobQueryModel, jobService, sObjectType } from 'c/dataService';
 import { cloneDeep, groupBy } from 'c/lodash';
+import { DateTime } from 'c/luxon';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 import { DRIVE_TYPE, DRIVE_STATUS, OPERATION_TYPE, VOLUNTEER_COUNTS_ADJUSTMENT_REASON } from 'c/slwcConstants';
 import { DriveHelper } from 'c/slwcDriveGenerator';
@@ -134,6 +135,7 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
                 this.driveShift = detail.driveShift;
                 this.drive = detail.drive;
                 this.job = detail.job;
+                this.masterData = detail.masterData;
                 this.errorMessages = [];
 
                 this.model.isLocked = !!this.job.isLocked;
@@ -141,8 +143,8 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
                 this.model.volunteerRole = '';
                 this.model.volunteerAdjustmentReason = '';
                 this.model.otherVolunteerAdjustmentReason = '';
-                this.model.recurrenceDates = cloneDeep(this.job.bulkEditVolunteerJobsSelectedDays) ?? [];
-                this.model.recurrenceDriveIds = cloneDeep(this.job.bulkEditVolunteerJobsSelectedJobIds) ?? [];
+                this.model.recurrenceDates = cloneDeep((this.job.bulkAddVolunteerJobsSelectedDrives || []).map(d => d.driveDate)) ?? [];
+                this.model.recurrenceDriveIds = cloneDeep((this.job.bulkAddVolunteerJobsSelectedDrives || []).map(d => d.driveId)) ?? [];
             })
             .catch(error => this.exceptionHandler(error))
             .finally(this.hideLoading);
@@ -197,31 +199,24 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
     populateDaysWithDrives(drives = [], existingJobs = []) {
         const mapJobsByDriveId = groupBy(existingJobs, 'driveId');
         const mapDrivesByDate = groupBy(drives, 'driveDate');
+        const today = DateTime.fromObject({ zone: this.masterData?.timezoneSidId }).toISODate();
 
-        const result = [];
-        [...this.model.recurrenceDates].sort().forEach(dateIso => {
-            const drivesForDate = mapDrivesByDate[dateIso] || [];
-            result.push({
+        this.model.daysWithDrives = [...this.model.recurrenceDates]
+            .filter(d => d >= today)
+            .sort()
+            .map(dateIso => ({
                 dateIso,
-                drives: drivesForDate.map(drive => {
-                    const errorMessages = [];
+                drives: (mapDrivesByDate[dateIso] || []).map(drive => {
                     const driveJobs = mapJobsByDriveId[drive.id] || [];
-                    const roleAlreadyExists = driveJobs.some(job => job.volunteerRole === this.model.volunteerRole);
-
-                    if (roleAlreadyExists) {
-                        errorMessages.push('Role already exists');
-                    }
+                    const hasRoleExist = driveJobs.some(job => job.volunteerRole === this.model.volunteerRole);
 
                     return {
                         ...drive,
                         driveRecordUrl: '/' + drive.id,
-                        errorMessages
+                        errorMessages: hasRoleExist ? ['Role already exists'] : []
                     };
                 })
-            });
-        });
-
-        this.model.daysWithDrives = result;
+            }));
     }
 
     initStep2() {
@@ -231,8 +226,9 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
             .then(() => {
                 const driveSvc = new driveService();
                 const driveQuery = new driveQueryModel();
+                const today = DateTime.fromObject({ zone: this.masterData?.timezoneSidId }).toISODate();
 
-                driveQuery.selectedDates = this.model.recurrenceDates;
+                driveQuery.selectedDates = this.model.recurrenceDates.filter(d => d >= today);
                 driveQuery.eventTypes = [DRIVE_TYPE.FIXED_SITE];
                 driveQuery.operationTypes = [OPERATION_TYPE.INTEGRATED, OPERATION_TYPE.NON_INTEGRATED_APH, OPERATION_TYPE.NON_INTEGRATED_WB];
                 driveQuery.collectionOpIds = [this.drive.collectionOperationId];
