@@ -172,109 +172,115 @@ global without sharing class slwcOperationRecordService {
                 throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_RequestNull').value__c);
             }
 
-            skedOpsRecordApiManager apiManager = new skedOpsRecordApiManager();
-            skedOpsRecordApiData.resultBase opsRecordResult = apiManager.updateStaffRecord(opsRecordRequest);
-
-            logSummary = 'Submission Details: ' + 
-                        '\n\nRequest: ' + JSON.serialize(opsRecordRequest) +
-                        '\n\nResponse: ' + JSON.serialize(opsRecordResult);
-
-            if (opsRecordResult == null) {
-                throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_RequestNull').value__c);
-            }
-
-            logSummary += '\n\nSuccess: ' + opsRecordResult.success +
-                            '\nStatus Code: ' + opsRecordResult.statusCode +
-                            '\nStatus: ' + opsRecordResult.status + 
-                            '\nMessage: ' + opsRecordResult.message;
-            
-            if (opsRecordResult.success == false && (opsRecordResult.statusCode == null || opsRecordResult.statusCode >= 500)) {
-                throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_500_599').value__c);
-            }
-            else if (!opsRecordResult.success) {
-                throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_400_499').value__c);
-            }
-
-            if (opsRecordResult.success == true) {
+            // Direct Workday path: save as Draft and let batch submit to Workday
+            if (BSF_WorkdayDirectSubmissionConfig.isDirectWorkdayEnabled()) {
                 opRecord.sked_Submitted_By__c = skedTriggerHub_Cache.getCurrentUserResource().Id;
                 opRecord.sked_Locked__c = true;
                 opRecord.sked_Status__c = skedConstants.OPERATION_STATUS_SUBMITTED;
+                opRecord.sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STATUS_DRAFT;
                 Database.SaveResult[] srList = Database.update(new List<sked_Operation_Record__c>{opRecord}, false);
-                for (Database.SaveResult sr : srList){
-                    if(!sr.isSuccess()) {
-                        for(Database.Error err : sr.getErrors()) {
-                            logSummary += 'Error Details: ' +
-                            '\n\nMessage: ' + err.getMessage() +
-                            '\nField: ' + err.getFields();
+                for (Database.SaveResult sr : srList) {
+                    if (!sr.isSuccess()) {
+                        for (Database.Error err : sr.getErrors()) {
+                            logSummary += 'Error Details: ' + '\n\nMessage: ' + err.getMessage() + '\nField: ' + err.getFields();
                         }
                         throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_SubmittedButSFRecordFail').value__c);
                     }
                 }
+                logSummary = 'Direct Workday: Op Record saved as Draft. Batch will submit to Workday.';
+                isSuccess = true;
+                logMessage = Custom_Messages__mdt.getInstance('OpRecordMessage_Submitted').value__c;
+            } else {
+                // Legacy Azure path
+                skedOpsRecordApiManager apiManager = new skedOpsRecordApiManager();
+                skedOpsRecordApiData.resultBase opsRecordResult = apiManager.updateStaffRecord(opsRecordRequest);
 
-                List<sked_Drive__c> drivesList = [SELECT Id, 
-                                                        sked_Status__c, 
-                                                        (SELECT Id
-                                                        FROM sked_Drive_Shifts__r) 
-                                                    FROM sked_Drive__c 
-                                                    WHERE Id = :opRecord.sked_Drive__c];
+                logSummary = 'Submission Details: ' +
+                        '\n\nRequest: ' + JSON.serialize(opsRecordRequest) +
+                        '\n\nResponse: ' + JSON.serialize(opsRecordResult);
+
+                if (opsRecordResult == null) {
+                    throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_RequestNull').value__c);
+                }
+
+                logSummary += '\n\nSuccess: ' + opsRecordResult.success +
+                        '\nStatus Code: ' + opsRecordResult.statusCode +
+                        '\nStatus: ' + opsRecordResult.status +
+                        '\nMessage: ' + opsRecordResult.message;
+
+                if (opsRecordResult.success == false && (opsRecordResult.statusCode == null || opsRecordResult.statusCode >= 500)) {
+                    throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_500_599').value__c);
+                } else if (!opsRecordResult.success) {
+                    throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_400_499').value__c);
+                }
+
+                if (opsRecordResult.success == true) {
+                    opRecord.sked_Submitted_By__c = skedTriggerHub_Cache.getCurrentUserResource().Id;
+                    opRecord.sked_Locked__c = true;
+                    opRecord.sked_Status__c = skedConstants.OPERATION_STATUS_SUBMITTED;
+                    Database.SaveResult[] srList = Database.update(new List<sked_Operation_Record__c>{opRecord}, false);
+                    for (Database.SaveResult sr : srList) {
+                        if (!sr.isSuccess()) {
+                            for (Database.Error err : sr.getErrors()) {
+                                logSummary += 'Error Details: ' + '\n\nMessage: ' + err.getMessage() + '\nField: ' + err.getFields();
+                            }
+                            throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_SubmittedButSFRecordFail').value__c);
+                        }
+                    }
+                    isSuccess = true;
+                }
+            }
+
+            // Drive completion: if all op records for the drive are Submitted, set drive to Complete (both Direct and Azure paths)
+            if (isSuccess && opRecord != null && opRecord.sked_Drive__c != null) {
+                List<sked_Drive__c> drivesList = [SELECT Id, sked_Status__c,
+                    (SELECT Id FROM sked_Drive_Shifts__r)
+                    FROM sked_Drive__c
+                    WHERE Id = :opRecord.sked_Drive__c];
                 if (!drivesList.isEmpty()) {
                     sked_Drive__c drive = drivesList[0];
-                    if ((drive.sked_Status__c != skedConstants.DRIVE_STATUS_COMPLETE)) {
+                    if (drive.sked_Status__c != skedConstants.DRIVE_STATUS_COMPLETE) {
                         driveStatus = drive.sked_Status__c;
                         Boolean isAllOpRecordsSubmitted = true;
-                        Map<Id, Boolean> opRecordSumbmittedMap =new Map<Id, Boolean>();
+                        Map<Id, Boolean> opRecordSumbmittedMap = new Map<Id, Boolean>();
                         if (drive.sked_Drive_Shifts__r != null) {
                             for (sked_Drive_Shift__c drvShift : drive.sked_Drive_Shifts__r) {
-                                opRecordSumbmittedMap.put(drvShift.Id,false);
+                                opRecordSumbmittedMap.put(drvShift.Id, false);
                             }
-                            List<sked_Operation_Record__c> opRecordSumbmittedList = [SELECT Id, 
-                                                                                            sked_Status__c,
-                                                                                            sked_Drive_Shift__c
-                                                                                    FROM sked_Operation_Record__c
-                                                                                    WHERE sked_Drive_Shift__c IN :opRecordSumbmittedMap.keySet()
-                                                                                    AND sked_Status__c = :skedConstants.OPERATION_STATUS_SUBMITTED];
+                            List<sked_Operation_Record__c> opRecordSumbmittedList = [SELECT Id, sked_Status__c, sked_Drive_Shift__c
+                                FROM sked_Operation_Record__c
+                                WHERE sked_Drive_Shift__c IN :opRecordSumbmittedMap.keySet()
+                                AND sked_Status__c = :skedConstants.OPERATION_STATUS_SUBMITTED];
                             for (sked_Operation_Record__c opRecSub : opRecordSumbmittedList) {
-                                opRecordSumbmittedMap.put(opRecSub.sked_Drive_Shift__c,true);
+                                opRecordSumbmittedMap.put(opRecSub.sked_Drive_Shift__c, true);
                             }
                             for (Id shiftId : opRecordSumbmittedMap.keySet()) {
                                 if (!opRecordSumbmittedMap.get(shiftId)) {
                                     isAllOpRecordsSubmitted = false;
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             isAllOpRecordsSubmitted = false;
                         }
-
                         if (!isAllOpRecordsSubmitted) {
-                            isSuccess = true;
                             logMessage = Custom_Messages__mdt.getInstance('OpRecordMessage_SubmittedButDOCFailed').value__c;
-                        }
-                        else {
+                        } else {
                             drive.sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE;
                             Database.SaveResult[] srListDOC = Database.update(new List<sked_Drive__c>{drive}, false);
                             for (Database.SaveResult sr : srListDOC) {
                                 if (!sr.isSuccess()) {
                                     String expMessage = '';
                                     for (Database.Error err : sr.getErrors()) {
-                                        logSummary += 'Error Details: ' +
-                                                    '\n\nMessage: ' + err.getMessage() +
-                                                    '\nField: ' + err.getFields();
-                                        expMessage +=' Field: ' + err.getFields()+
-                                                    ' Message: ' + err.getMessage();
+                                        logSummary += 'Error Details: ' + '\n\nMessage: ' + err.getMessage() + '\nField: ' + err.getFields();
+                                        expMessage += ' Field: ' + err.getFields() + ' Message: ' + err.getMessage();
                                     }
-                                    throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_SubmittedButDOCFailedExp').value__c+expMessage);
+                                    throw new OperationRecordServiceException(Custom_Messages__mdt.getInstance('OpRecordMessage_SubmittedButDOCFailedExp').value__c + expMessage);
                                 }
-                                else {
-                                    driveStatus = skedConstants.DRIVE_STATUS_COMPLETE;
-                                    isSuccess = true;
-                                    logMessage = Custom_Messages__mdt.getInstance('OpRecordMessage_Submitted').value__c;
-                                }
+                                driveStatus = skedConstants.DRIVE_STATUS_COMPLETE;
+                                logMessage = Custom_Messages__mdt.getInstance('OpRecordMessage_Submitted').value__c;
                             }
                         }
-                    }
-                    else {
-                        isSuccess = true;
+                    } else {
                         logMessage = Custom_Messages__mdt.getInstance('OpRecordMessage_Submitted').value__c;
                     }
                 }
