@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   HRP-16515 — Package manifest: Ops Record direct Workday submission.
-  File: manifest/HRP-16515.xml
+  File: manifest/2.7 Release/HRP-16515.xml
   Includes all components created or modified for direct Workday submission.
   Update this file as new components are added during implementation.
-
- -->
+-->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <!-- Apex: new and modified classes -->
     <types>
@@ -17,12 +16,9 @@
         <members>slwcOperationRecordService</members>
         <members>skedWorkdayTimeTrackingBsvc</members>
         <members>skedWorkdayImportTimeBlockResponse</members>
-
         <members>BSF_OpsRecordToTimeBlockMapper_Test</members>
-       <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
-        <members>BSF_WorkdayOpsRecordDirectService_Test</members>
-
-       
+        <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
+        <members>BSF_WorkdayOpsRecordDirectService_Test</members>        
         <name>ApexClass</name>
     </types>
     <!-- Custom Metadata Type definition and records -->
