@@ -482,7 +482,7 @@ private class TaskTriggerTest {
         insert t;
 
         Test.startTest();
-        TaskService.cancelOneWeekCheckInTasks(new Set<Id>{mobileOpp.Id});
+        TaskService.cancelOpportunityTasks(new Set<Id>{mobileOpp.Id});
         Id drdUser = TaskService.getDRDSystemUser();
         Test.stopTest();
 

@@ -685,7 +685,7 @@ public without sharing class DriveTriggerService {
 
     }
     //HRP-701 -> Ends Here
-    public static void handleOneWeekCheckIn(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> oldDriveMap) {
+    public static void handleTaskCancellation(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> oldDriveMap) {
         if(newDriveList == NULL || newDriveList.isEmpty() || oldDriveMap == NULL || oldDriveMap.isEmpty()) {
             return;
         }
@@ -713,7 +713,7 @@ public without sharing class DriveTriggerService {
             TaskService.createOneWeekCheckInTasks(oppMap);
         }*/
         if(!oppIdsToCancelTasks.isEmpty()) {
-            TaskService.cancelOneWeekCheckInTasks(oppIdsToCancelTasks);
+            TaskService.cancelOpportunityTasks(oppIdsToCancelTasks);
         }
 
     }
