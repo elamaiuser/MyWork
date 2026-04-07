@@ -41,6 +41,12 @@ export default class SlwcVehiclePickerModal extends LightningModal {
     this.searchTerm = event.target.value;
   }
 
+  handleLinkClick(event) {
+    event.stopPropagation();
+    const vehicleId = event.currentTarget.dataset.id;
+    window.open(`/${vehicleId}`, '_blank');
+  }
+
   handleVehicleSelect(event) {
     this.currentSelectedId = event.currentTarget.dataset.id;
   }

@@ -30,7 +30,7 @@
                   <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Selected"></lightning-icon>
                 </template>
               </td>
-              <td><div class="slds-truncate" title={vehicle.name}>{vehicle.name}</div></td>
+              <td><div class="slds-truncate" title={vehicle.name}><a data-id={vehicle.id} onclick={handleLinkClick}>{vehicle.name}</a></div></td>
               <td><div class="slds-truncate" title={vehicle.category}>{vehicle.category}</div></td>
               <td><div class="slds-truncate" title={vehicle.presDonorCapacity}>{vehicle.presDonorCapacity}</div></td>
               <td><div class="slds-truncate" title={vehicle.status}>{vehicle.status}</div></td>
