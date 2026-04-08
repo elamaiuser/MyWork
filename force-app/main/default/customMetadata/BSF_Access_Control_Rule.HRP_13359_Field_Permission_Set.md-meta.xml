@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>Component_API_Names__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Field_API_Names__c</field>

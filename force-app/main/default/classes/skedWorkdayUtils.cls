@@ -437,7 +437,7 @@ public class skedWorkdayUtils implements Callable {
         }
         
         return debugLog;
-}
+    }
 
    private static String extractTimeOffEntryId(String xml) {
     sked__Debug_Log__c log = new sked__Debug_Log__c();
@@ -495,7 +495,7 @@ public class skedWorkdayUtils implements Callable {
     }
 
     return null;
-}
+}   
 
     public static string fetchXML(DOM.Document doc) {//HRP-13728
         String xml = doc.toXmlString();
