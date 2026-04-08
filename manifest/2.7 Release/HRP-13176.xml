@@ -14,7 +14,7 @@
 		<members>BSF_Access_Control_Rule.HRP_13176_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
 	</types>
-  <types>
+	<types>
 		<members>sked__Resource__c-Asset Layout</members>
 		<name>Layout</name>
 	</types>
