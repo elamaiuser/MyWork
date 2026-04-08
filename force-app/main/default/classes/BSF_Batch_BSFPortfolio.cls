@@ -56,8 +56,7 @@ global class BSF_Batch_BSFPortfolio implements Database.Batchable<sObject>,Sched
             
             this.runAssignmentBatch = runAssignmentBatch;
             
-            BSF_Utilities.metaDataupdate(System.now(),null,true,'Opportunity_Team_Sync_Batch');//HRP-10890
-            
+            BSF_Utilities.metaDataupdate(System.now(),null,true,'Opportunity_Team_Sync_Batch');//HRP-10890            
        
         }  catch (Exception e) {//HRP-14316
             Taxo_Utilities.logErrorForException( e,'BSF_Batch_BSFPortfolio', 'Constructor', e.getMessage(),e.getMessage(),'Taxonomy_Run__c',recordType,taxoVerKey);  

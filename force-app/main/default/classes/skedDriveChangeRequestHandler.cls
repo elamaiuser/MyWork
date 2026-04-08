@@ -267,15 +267,24 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
     private void onCancelledRejected(List<sked_Drive_Change_Request__c> newRecords, Map<Id, sked_Drive_Change_Request__c> oldMap) {
         Set<Id> rejectedDriveChangeRequestIds = new Set<Id>();
         List<String> aptQuantityRevertNeededFor = new List<String>{'X2RBC_Projected_Procedures__c', 'WB_Projected_Procedures__c', 'APT_Required__c'};
+        Set<Id> driveIds = new Set<Id>();
         for (sked_Drive_Change_Request__c newRecord : newRecords) {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c) {
                 if (newRecord.sked_Status__c == skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED || newRecord.sked_Status__c == skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED) {
                     rejectedDriveChangeRequestIds.add(newRecord.Id);
+                    driveIds.add(newRecord.sked_Drive__c);
                 }
             }
         }
         if (!rejectedDriveChangeRequestIds.isEmpty()) {
+            Map<Id, sked_Drive__c> mapOfDoc = new Map<Id, sked_Drive__c>([SELECT Id, sked_Drive_Date__c,sked_Status__c,sked_Start_Time__c,sked_End_Time__c,sked_Drive_Site__c,sked_Replacement_Drive__c,
+                                                                        sked_Projected_Registered_Donors__c,sked_WB_Projected_Procedures__c,sked_2RBC_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,
+                                                                        sked_Plasma_Projected_Procedures__c,sked_Number_of_2RBC_Assets__c,sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,
+                                                                        sked_Cancellation_Reason__c,sked_Opportunity__c, sked_Pending_Action__c 
+                                                                        FROM sked_Drive__c 
+                                                                        WHERE Id in : driveIds]);
+
             List<sked_Drive_Change_Request__c> rejectedDCRs = [SELECT Id, sked_Drive__c, sked_Opportunity_Id__c, sked_Drive__r.sked_APT_Quantity__c,
                                                                (SELECT Id, sked_Field_API_Name__c, sked_Field_Type__c, 
                                                                 sked_Old_Value__c
@@ -285,15 +294,20 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                                                                WHERE Id IN :rejectedDriveChangeRequestIds];
             Map<String, Schema.SObjectField> mapSObjectOptyField = Schema.SObjectType.Opportunity.fields.getMap();
             List<Opportunity> oppLst = new List<Opportunity>();
-            Set<Id> driveIds = new Set<Id>();
             for (sked_Drive_Change_Request__c rejectedDCR : rejectedDCRs) {
-                driveIds.add(rejectedDCR.sked_Drive__c);
                 
                 if (rejectedDCR.sked_Drive_Change_Request_Items__r != NULL && !rejectedDCR.sked_Drive_Change_Request_Items__r.isEmpty()) {
 					Opportunity oppRec = new Opportunity(Id = rejectedDCR.sked_Opportunity_Id__c);
                     for (sked_Drive_Change_Request_Item__c item : rejectedDCR.sked_Drive_Change_Request_Items__r) {
                         string oppDataField = item.sked_Field_API_Name__c;
                         object fieldVal = skedUtils.getFieldValue(item.sked_Old_Value__c, item.sked_Field_Type__c);
+                        object currentDocFieldVal = skedUtils.getFieldValue(String.valueOf(mapOfDoc.get(rejectedDCR.sked_Drive__c).get(genDriveFieldByOppFieldMap.get(item.sked_Field_API_Name__c))), item.sked_Field_Type__c);
+                        Boolean isDifferentChangeReasonNeeded = false;
+
+                        if(fieldVal !== currentDocFieldVal) {
+                            fieldVal = currentDocFieldVal;
+                            isDifferentChangeReasonNeeded = true;
+                        }
                         
 						oppRec.put(oppDataField, fieldVal);
 
@@ -306,7 +320,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                         
                         if (skedDriveHandler.mapReasonFields.containsKey(oppDataField)) {
                             string reasonField = skedDriveHandler.mapReasonFields.get(oppDataField);
-                            string reason = 'Drive Change Requested is rejected. ' + system.now();
+                            string reason = (isDifferentChangeReasonNeeded ? 'Changed from Drive record. ' : 'Drive Change Requested is rejected. ') + system.now();
                             oppRec.put(reasonField, reason);
                         }
                     }
@@ -321,11 +335,8 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             }
             
             if (!driveIds.isEmpty()) {
-                List<sked_Drive__c> skedDrives = [SELECT Id, sked_Pending_Action__c
-                                                  FROM sked_Drive__c
-                                                  WHERE Id IN :driveIds];
                 List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
-                for (sked_Drive__c skedDrive : skedDrives) {
+                for (sked_Drive__c skedDrive : mapOfDoc.values()) {
                     if (skedDrive.sked_Pending_Action__c != NULL) {
                         List<string> pendingActions = skedDrive.sked_Pending_Action__c.split(';');
                         for (integer i = pendingActions.size() - 1; i >= 0; i--) {

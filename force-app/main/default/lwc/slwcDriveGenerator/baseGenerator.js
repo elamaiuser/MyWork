@@ -1166,26 +1166,32 @@ class BaseGenerator {
   saveBulkAddVolunteerJob(shiftKey, job) {
     if (!shiftKey || !job) return;
 
-    console.log('[Bulk Add Volunteer Job] saveBulkAddVolunteerJob - temp confirmed jobs to save (will be revalidated again when calculateRecurrenceNewVolunteerJobs is called):', JSON.stringify({
-      volunteerRole: job.volunteerRole,
-      redcrossVolunteerQuantity: job.redcrossVolunteerQuantity,
-      quantity: job.quantity,
-      isLocked: job.isLocked,
-      volunteerAdjustmentReason: job.volunteerAdjustmentReason,
-      bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives
-    }));
-
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = this.helper.getDriveShiftJobs(shift);
-    const index = newList.findIndex((item) => item.key === job.key);
-    if (index == -1) {
-      return;
-    }
 
-    newList[index] = {
-      ...newList[index],
-      ...job
+    // Insert a new job (no id) for the current drive — do NOT update the existing job.
+    // The existing role must remain; the user is adding a new role on top of it.
+    const newJob = {
+      key:                            generateUUID(),  // LWC in-memory identifier — not persisted to Salesforce
+      driveId:                        this.drive.id,
+      driveShiftId:                   shift.id,
+      driveSiteId:                    this.drive.driveSiteId,
+      start:                          shift.start,
+      finish:                         shift.finish,
+      volunteerRole:                  job.volunteerRole,
+      redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
+      quantity:                       job.quantity,
+      isLocked:                       !!job.isLocked,
+      volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
+      otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
+      isManuallyCreated:              true,
+      manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+      jobAllocationTimeSource:        false,
+      jobTags:                        [],
+      bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives,
     };
+
+    newList.push(newJob);
     shift.jobs = newList;
     return this.notifyDriveChanged();
   }
