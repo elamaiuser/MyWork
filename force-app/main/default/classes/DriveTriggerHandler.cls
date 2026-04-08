@@ -109,8 +109,8 @@ public class DriveTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('removeFirstTimeFlagUponDriveCompletion') == -1) {
             DriveTriggerService.removeFirstTimeFlagUponDriveCompletion((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
         }
-        if(super.getTriggerMethodsToBypass().indexOf('handleOneWeekCheckIn') == -1) {
-            DriveTriggerService.handleOneWeekCheckIn((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
+        if(super.getTriggerMethodsToBypass().indexOf('handleTaskCancellation') == -1) {
+            DriveTriggerService.handleTaskCancellation((List<sked_Drive__c>) Trigger.new, (Map<Id, sked_Drive__c>) Trigger.oldMap);
         }
         if(super.getTriggerMethodsToBypass().indexOf('triggerTaskGenerationOnConfirm') == -1) {
             BSF_TaskPlanningService.triggerTaskGenerationOnConfirm((List<sked_Drive__c>)trigger.new, (Map<Id, sked_Drive__c>)trigger.oldMap);
