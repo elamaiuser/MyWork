@@ -1,5 +1,4 @@
-<apex:page 
-    title="StagingSheetReport" 
+<apex:page title="StagingSheetReport" 
     controller="PowerBIProxyController"  
     docType="html-5.0" >
 
