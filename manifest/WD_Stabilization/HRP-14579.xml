@@ -37,6 +37,7 @@
 		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_Resource</members>
 		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_WDStaging</members>
 		<members>BSF_Access_Control_Rule.HRP_14579_Object_PermissionSet_WDStaging</members>
+        <members>BSF_Access_Control_Rule.HRP_14579_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
 

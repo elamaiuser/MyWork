@@ -62,23 +62,22 @@ public class BSF_WorkdayBatchHelper {
     //                  System.debug and sked__Debug_Log__c entries
     // ─────────────────────────────────────────────────────────────────────────
     public static List<WorkdayEmployeeWrapper> fetchWorkdayData(String endpoint, String jobLabel) {
-        System.debug(jobLabel + ': Calling Workday endpoint — ' + endpoint);
 
-        HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint, 'GET');
-        req.setHeader('Content-Type', 'application/json; charset=UTF-8');
-        req.setHeader('Accept', 'application/json');
+        HttpRequest httpRequest = skedWorkdayApiManager.getHttpRequest(endpoint, 'GET');
+        httpRequest.setHeader('Content-Type', 'application/json; charset=UTF-8');
+        httpRequest.setHeader('Accept', 'application/json');
 
-        Http         h   = new Http();
-        HttpResponse res = h.send(req);
+        Http         httpClient   = new Http();
+        HttpResponse httpResponse = httpClient.send(httpRequest);
 
-        String responseBody = res.getBody();
+        String responseBody = httpResponse.getBody();
 
-        if (res.getStatusCode() >= 200 && res.getStatusCode() <= 299) {
-            System.debug(jobLabel + ': Workday API call successful — HTTP ' + res.getStatusCode());
+        if (httpResponse.getStatusCode() >= 200 && httpResponse.getStatusCode() <= 299) {
+            //System.debug(jobLabel + ': Workday API call successful — HTTP ' + httpResponse.getStatusCode());
         } else {
-            String msg = 'Workday API call failed — HTTP ' + res.getStatusCode() + ' — ' + responseBody;
-            System.debug(jobLabel + ': ' + msg);
-            throw new CalloutException(msg);
+            String errorMessage = 'Workday API call failed — HTTP ' + httpResponse.getStatusCode() + ' — ' + responseBody;
+            System.debug(jobLabel + ': ' + errorMessage);
+            throw new CalloutException(errorMessage);
         }
 
         return parseWorkdayResponse(responseBody, jobLabel);
@@ -102,45 +101,42 @@ public class BSF_WorkdayBatchHelper {
     public static List<WorkdayEmployeeWrapper> parseWorkdayResponse(String jsonBody, String jobLabel) {
         List<WorkdayEmployeeWrapper> result = new List<WorkdayEmployeeWrapper>();
 
-        Map<String, Object> root = (Map<String, Object>) JSON.deserializeUntyped(jsonBody);
+        Map<String, Object> rootNode = (Map<String, Object>) JSON.deserializeUntyped(jsonBody);
 
-        if (!root.containsKey('Report_Entry')) {
+        if (!rootNode.containsKey('Report_Entry')) {
             System.debug(jobLabel + ': No Report_Entry key found in Workday response — nothing to process');
             return result;
         }
 
-        List<Object> entries = (List<Object>) root.get('Report_Entry');
-        System.debug(jobLabel + ': Parsing ' + entries.size() + ' Report_Entry record(s)');
+        List<Object> reportEntries = (List<Object>) rootNode.get('Report_Entry');
 
-        for (Object o : entries) {
-            Map<String, Object> entry = (Map<String, Object>) o;
+        for (Object rawEntryObject : reportEntries) {
+            Map<String, Object> entryFieldMap = (Map<String, Object>) rawEntryObject;
 
-            WorkdayEmployeeWrapper w = new WorkdayEmployeeWrapper();
-            w.employeeId = (String) entry.get('Employee_ID');
+            WorkdayEmployeeWrapper employeeWrapper = new WorkdayEmployeeWrapper();
+            employeeWrapper.employeeId = (String) entryFieldMap.get('Employee_ID');
 
             // Skip records with no Employee_ID — they cannot be matched to a Resource
-            if (String.isBlank(w.employeeId)) {
-                System.debug(jobLabel + ': Skipping entry with blank Employee_ID');
+            if (String.isBlank(employeeWrapper.employeeId)) {
                 continue;
             }
 
             // Store all fields except Employee_ID in extraFields.
             // Null values are omitted — extraFields only contains fields that
             // Workday actually returned with a value in this response.
-            for (String key : entry.keySet()) {
-                if (key == 'Employee_ID') {
+            for (String fieldName : entryFieldMap.keySet()) {
+                if (fieldName == 'Employee_ID') {
                     continue;
                 }
-                Object val = entry.get(key);
-                if (val != null) {
-                    w.extraFields.put(key, String.valueOf(val));
+                Object fieldValue = entryFieldMap.get(fieldName);
+                if (fieldValue != null) {
+                    employeeWrapper.extraFields.put(fieldName, String.valueOf(fieldValue));
                 }
             }
 
-            result.add(w);
+            result.add(employeeWrapper);
         }
 
-        System.debug(jobLabel + ': Successfully parsed ' + result.size() + ' employee record(s) from response');
         return result;
     }
 
@@ -156,18 +152,18 @@ public class BSF_WorkdayBatchHelper {
     // because Apex's DateTime.valueOf() does not accept the full ISO 8601 format.
     // Returns null if the input is blank or unparseable.
     //
-    // @param raw        Raw datetime string from the Workday JSON field
+    // @param rawValue   Raw datetime string from the Workday JSON field
     // @param fieldName  Workday JSON field name — used in the debug log on failure
     // @param empId      Employee ID — used in the debug log on failure
     // @param jobLabel   Calling batch class name for debug log prefixing
-    public static DateTime parseWorkdayDatetime(String raw, String fieldName, String empId, String jobLabel) {
-        if (String.isBlank(raw)) {
+    public static DateTime parseWorkdayDatetime(String rawValue, String fieldName, String empId, String jobLabel) {
+        if (String.isBlank(rawValue)) {
             return null;
         }
         try {
-            return DateTime.valueOf(raw.replace('T', ' ').substring(0, 19));
-        } catch (Exception e) {
-            System.debug(jobLabel + ': Could not parse ' + fieldName + ' for employee ' + empId + ' — ' + e.getMessage());
+            return DateTime.valueOf(rawValue.replace('T', ' ').substring(0, 19));
+        } catch (Exception caughtException) {
+            System.debug(jobLabel + ': Could not parse ' + fieldName + ' for employee ' + empId + ' — ' + caughtException.getMessage());
             return null;
         }
     }
@@ -175,18 +171,18 @@ public class BSF_WorkdayBatchHelper {
     // Parses a Workday date string in YYYY-MM-DD format into a Salesforce Date.
     // Returns null if the input is blank or unparseable.
     //
-    // @param raw        Raw date string from the Workday JSON field
+    // @param rawValue   Raw date string from the Workday JSON field
     // @param fieldName  Workday JSON field name — used in the debug log on failure
     // @param empId      Employee ID — used in the debug log on failure
     // @param jobLabel   Calling batch class name for debug log prefixing
-    public static Date parseWorkdayDate(String raw, String fieldName, String empId, String jobLabel) {
-        if (String.isBlank(raw)) {
+    public static Date parseWorkdayDate(String rawValue, String fieldName, String empId, String jobLabel) {
+        if (String.isBlank(rawValue)) {
             return null;
         }
         try {
-            return Date.valueOf(raw);
-        } catch (Exception e) {
-            System.debug(jobLabel + ': Could not parse ' + fieldName + ' for employee ' + empId + ' — ' + e.getMessage());
+            return Date.valueOf(rawValue);
+        } catch (Exception caughtException) {
+            System.debug(jobLabel + ': Could not parse ' + fieldName + ' for employee ' + empId + ' — ' + caughtException.getMessage());
             return null;
         }
     }
@@ -203,36 +199,36 @@ public class BSF_WorkdayBatchHelper {
     // Returns a parsed Date from extraFields for the given Workday JSON field name.
     // Returns null if the key is missing, the value is blank, or parsing fails.
     //
-    // @param w         Wrapper containing the extraFields map
-    // @param key       Workday JSON field name e.g. 'Expiration_Date'
-    // @param jobLabel  Calling batch class name for debug log prefixing
-    public static Date getExtraDate(WorkdayEmployeeWrapper w, String key, String jobLabel) {
-        if (!w.extraFields.containsKey(key) || String.isBlank(w.extraFields.get(key))) {
+    // @param employeeWrapper  Wrapper containing the extraFields map
+    // @param key              Workday JSON field name e.g. 'Expiration_Date'
+    // @param jobLabel         Calling batch class name for debug log prefixing
+    public static Date getExtraDate(WorkdayEmployeeWrapper employeeWrapper, String key, String jobLabel) {
+        if (!employeeWrapper.extraFields.containsKey(key) || String.isBlank(employeeWrapper.extraFields.get(key))) {
             return null;
         }
-        return parseWorkdayDate(w.extraFields.get(key), key, w.employeeId, jobLabel);
+        return parseWorkdayDate(employeeWrapper.extraFields.get(key), key, employeeWrapper.employeeId, jobLabel);
     }
 
     // Returns a parsed DateTime from extraFields for the given Workday JSON field name.
     // Returns null if the key is missing, the value is blank, or parsing fails.
     //
-    // @param w         Wrapper containing the extraFields map
-    // @param key       Workday JSON field name e.g. 'Last_Functionally_Updated'
-    // @param jobLabel  Calling batch class name for debug log prefixing
-    public static DateTime getExtraDateTime(WorkdayEmployeeWrapper w, String key, String jobLabel) {
-        if (!w.extraFields.containsKey(key) || String.isBlank(w.extraFields.get(key))) {
+    // @param employeeWrapper  Wrapper containing the extraFields map
+    // @param key              Workday JSON field name e.g. 'Last_Functionally_Updated'
+    // @param jobLabel         Calling batch class name for debug log prefixing
+    public static DateTime getExtraDateTime(WorkdayEmployeeWrapper employeeWrapper, String key, String jobLabel) {
+        if (!employeeWrapper.extraFields.containsKey(key) || String.isBlank(employeeWrapper.extraFields.get(key))) {
             return null;
         }
-        return parseWorkdayDatetime(w.extraFields.get(key), key, w.employeeId, jobLabel);
+        return parseWorkdayDatetime(employeeWrapper.extraFields.get(key), key, employeeWrapper.employeeId, jobLabel);
     }
 
     // Returns the raw String value from extraFields for the given key,
     // or null if the key is not present in the map.
     //
-    // @param w    Wrapper containing the extraFields map
-    // @param key  Workday JSON field name
-    public static String getExtraString(WorkdayEmployeeWrapper w, String key) {
-        return w.extraFields.containsKey(key) ? w.extraFields.get(key) : null;
+    // @param employeeWrapper  Wrapper containing the extraFields map
+    // @param key              Workday JSON field name
+    public static String getExtraString(WorkdayEmployeeWrapper employeeWrapper, String key) {
+        return employeeWrapper.extraFields.containsKey(key) ? employeeWrapper.extraFields.get(key) : null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -258,26 +254,26 @@ public class BSF_WorkdayBatchHelper {
         String       recordTypeDeveloperName,
         List<String> additionalFields
     ) {
-        List<String> fields = new List<String>{
+        List<String> selectedFields = new List<String>{
             'Id',
             'Employee_ID__c',
             'Resource__c',
             'Sync_Comment__c'
         };
         if (additionalFields != null) {
-            fields.addAll(additionalFields);
+            selectedFields.addAll(additionalFields);
         }
 
-        String soql = 'SELECT ' + String.join(fields, ', ')
+        String soqlQuery = 'SELECT ' + String.join(selectedFields, ', ')
             + ' FROM BSF_Workday_Staging__c'
             + ' WHERE Employee_ID__c IN :employeeIds'
             + ' AND RecordType.DeveloperName = \'' + String.escapeSingleQuotes(recordTypeDeveloperName) + '\'';
 
-        Map<String, BSF_Workday_Staging__c> stagingMap = new Map<String, BSF_Workday_Staging__c>();
-        for (BSF_Workday_Staging__c s : Database.query(soql)) {
-            stagingMap.put(s.Employee_ID__c, s);
+        Map<String, BSF_Workday_Staging__c> stagingByEmployeeId = new Map<String, BSF_Workday_Staging__c>();
+        for (BSF_Workday_Staging__c stagingRecord : Database.query(soqlQuery)) {
+            stagingByEmployeeId.put(stagingRecord.Employee_ID__c, stagingRecord);
         }
-        return stagingMap;
+        return stagingByEmployeeId;
     }
 
     // Builds a Map<employeeId, sked__Resource__c> for the given employee IDs.
@@ -294,25 +290,25 @@ public class BSF_WorkdayBatchHelper {
         Set<String>  employeeIds,
         List<String> additionalFields
     ) {
-        List<String> fields = new List<String>{
+        List<String> selectedFields = new List<String>{
             'Id',
             'sked_Employee_ID__c',
             'sked_Employment_Status__c'
         };
         if (additionalFields != null) {
-            fields.addAll(additionalFields);
+            selectedFields.addAll(additionalFields);
         }
 
-        String soql = 'SELECT ' + String.join(fields, ', ')
+        String soqlQuery = 'SELECT ' + String.join(selectedFields, ', ')
             + ' FROM sked__Resource__c'
             + ' WHERE sked_Employee_ID__c IN :employeeIds'
             + ' AND sked_Employment_Status__c !=: INACTIVE_STATUS';
 
-        Map<String, sked__Resource__c> resourceMap = new Map<String, sked__Resource__c>();
-        for (sked__Resource__c r : Database.query(soql)) {
-            resourceMap.put(r.sked_Employee_ID__c, r);
+        Map<String, sked__Resource__c> resourceByEmployeeId = new Map<String, sked__Resource__c>();
+        for (sked__Resource__c resourceRecord : Database.query(soqlQuery)) {
+            resourceByEmployeeId.put(resourceRecord.sked_Employee_ID__c, resourceRecord);
         }
-        return resourceMap;
+        return resourceByEmployeeId;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -325,23 +321,23 @@ public class BSF_WorkdayBatchHelper {
     // (e.g. Real_ID_Compliant__c, Workday_Last_Functionally_Updated__c, Sync_Status__c)
     // on the returned record before adding it to the upsert list.
     //
-    // @param wd               Parsed Workday employee wrapper for this record
+    // @param employeeWrapper  Parsed Workday employee wrapper for this record
     // @param resourceId       Salesforce Id of the matched sked__Resource__c record
     // @param recordTypeId     Record type Id for this job's staging record type
     // @param firstSyncComment Short description appended to Sync_Comment__c on creation
     //                         e.g. '1st time certification synced from Workday'
     public static BSF_Workday_Staging__c buildNewStagingRecord(
-        WorkdayEmployeeWrapper wd,
+        WorkdayEmployeeWrapper employeeWrapper,
         Id                     resourceId,
         Id                     recordTypeId,
         String                 firstSyncComment
     ) {
-        BSF_Workday_Staging__c s = new BSF_Workday_Staging__c();
-        s.RecordTypeId           = recordTypeId;
-        s.Employee_ID__c         = wd.employeeId;
-        s.Resource__c            = resourceId;
-        s.Sync_Comment__c        = String.valueOf(System.today()) + ': ' + firstSyncComment;
-        return s;
+        BSF_Workday_Staging__c newStagingRecord = new BSF_Workday_Staging__c();
+        newStagingRecord.RecordTypeId    = recordTypeId;
+        newStagingRecord.Employee_ID__c  = employeeWrapper.employeeId;
+        newStagingRecord.Resource__c     = resourceId;
+        newStagingRecord.Sync_Comment__c = String.valueOf(System.today()) + ': ' + firstSyncComment;
+        return newStagingRecord;
     }
 
     // Appends a dated change log entry to Sync_Comment__c on an existing
@@ -352,18 +348,18 @@ public class BSF_WorkdayBatchHelper {
     // Text Area with a maximum of 32,768 characters. Monitor its growth over
     // time — consider switching to overwrite-only if audit history grows too large.
     //
-    // @param staging      Existing staging record mutated in place
-    // @param wd           Parsed Workday employee wrapper (not used directly here
-    //                     but passed for consistency with buildNewStagingRecord)
-    // @param fieldChanges Human-readable diff string built by the caller before
-    //                     any fields are overwritten, e.g.
-    //                     'Compliant: true → false; Expiration_Date: 2026-01-01 → 2025-12-01; '
+    // @param stagingRecord    Existing staging record mutated in place
+    // @param employeeWrapper  Parsed Workday employee wrapper (not used directly here
+    //                         but passed for consistency with buildNewStagingRecord)
+    // @param fieldChanges     Human-readable diff string built by the caller before
+    //                         any fields are overwritten, e.g.
+    //                         'Compliant: true → false; Expiration_Date: 2026-01-01 → 2025-12-01; '
     public static void applyCommonStagingUpdate(
-        BSF_Workday_Staging__c staging,
-        WorkdayEmployeeWrapper wd,
+        BSF_Workday_Staging__c stagingRecord,
+        WorkdayEmployeeWrapper employeeWrapper,
         String                 fieldChanges
     ) {
-        staging.Sync_Comment__c = staging.Sync_Comment__c
+        stagingRecord.Sync_Comment__c = stagingRecord.Sync_Comment__c
             + '\n' + String.valueOf(System.today())
             + ': Updated from Workday. Changes: ' + fieldChanges;
     }
@@ -383,18 +379,18 @@ public class BSF_WorkdayBatchHelper {
     //                  Included in both the debug log and sked__Debug_Log__c summary
     // @param jobLabel  Calling batch class name for debug log prefixing
     public static void logUpsertErrors(List<Database.UpsertResult> results, String context, String jobLabel) {
-        List<sked__Debug_Log__c> logsToInsert = new List<sked__Debug_Log__c>();
-        for (Database.UpsertResult ur : results) {
-            if (!ur.isSuccess()) {
-                for (Database.Error err : ur.getErrors()) {
-                    String detail = 'Status Code: ' + err.getStatusCode() + ' — ' + err.getMessage();
-                    System.debug(jobLabel + ': DML error [' + context + '] — ' + detail);
-                    logsToInsert.add(buildDebugLog(context, detail, jobLabel));
+        List<sked__Debug_Log__c> debugLogsToInsert = new List<sked__Debug_Log__c>();
+        for (Database.UpsertResult upsertResult : results) {
+            if (!upsertResult.isSuccess()) {
+                for (Database.Error dmlError : upsertResult.getErrors()) {
+                    String errorDetail = 'Status Code: ' + dmlError.getStatusCode() + ' — ' + dmlError.getMessage();
+                    System.debug(jobLabel + ': DML error [' + context + '] — ' + errorDetail);
+                    debugLogsToInsert.add(buildDebugLog(context, errorDetail, jobLabel));
                 }
             }
         }
-        if (!logsToInsert.isEmpty()) {
-            Database.insert(logsToInsert, false);
+        if (!debugLogsToInsert.isEmpty()) {
+            Database.insert(debugLogsToInsert, false);
         }
     }
 
@@ -405,18 +401,18 @@ public class BSF_WorkdayBatchHelper {
     //                  Included in both the debug log and sked__Debug_Log__c summary
     // @param jobLabel  Calling batch class name for debug log prefixing
     public static void logSaveErrors(List<Database.SaveResult> results, String context, String jobLabel) {
-        List<sked__Debug_Log__c> logsToInsert = new List<sked__Debug_Log__c>();
-        for (Database.SaveResult sr : results) {
-            if (!sr.isSuccess()) {
-                for (Database.Error err : sr.getErrors()) {
-                    String detail = 'Status Code: ' + err.getStatusCode() + ' — ' + err.getMessage();
-                    System.debug(jobLabel + ': DML error [' + context + '] — ' + detail);
-                    logsToInsert.add(buildDebugLog(context, detail, jobLabel));
+        List<sked__Debug_Log__c> debugLogsToInsert = new List<sked__Debug_Log__c>();
+        for (Database.SaveResult saveResult : results) {
+            if (!saveResult.isSuccess()) {
+                for (Database.Error dmlError : saveResult.getErrors()) {
+                    String errorDetail = 'Status Code: ' + dmlError.getStatusCode() + ' — ' + dmlError.getMessage();
+                    System.debug(jobLabel + ': DML error [' + context + '] — ' + errorDetail);
+                    debugLogsToInsert.add(buildDebugLog(context, errorDetail, jobLabel));
                 }
             }
         }
-        if (!logsToInsert.isEmpty()) {
-            Database.insert(logsToInsert, false);
+        if (!debugLogsToInsert.isEmpty()) {
+            Database.insert(debugLogsToInsert, false);
         }
     }
 
@@ -424,13 +420,13 @@ public class BSF_WorkdayBatchHelper {
     // Called by both logUpsertErrors and logSaveErrors so all batch jobs produce
     // identical log entries regardless of which DML operation failed.
     private static sked__Debug_Log__c buildDebugLog(String context, String errorDetail, String jobLabel) {
-        sked__Debug_Log__c log = new sked__Debug_Log__c();
-        log.sked__Type__c      = 'Error Log';
-        log.sked_Category__c   = 'System Error';
-        log.sked__Summary__c   = jobLabel + ' DML error [' + context + ']';
-        log.sked__Message__c   = errorDetail;
-        log.sked_Request__c    = 'Batch context: ' + context;
-        return log;
+        sked__Debug_Log__c debugLogRecord  = new sked__Debug_Log__c();
+        debugLogRecord.sked__Type__c       = 'Error Log';
+        debugLogRecord.sked_Category__c    = 'System Error';
+        debugLogRecord.sked__Summary__c    = jobLabel + ' DML error [' + context + ']';
+        debugLogRecord.sked__Message__c    = errorDetail;
+        debugLogRecord.sked_Request__c     = 'Batch context: ' + context;
+        return debugLogRecord;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -443,14 +439,14 @@ public class BSF_WorkdayBatchHelper {
     // @param batchClassName  Apex class name to check e.g. 'BSF_LeaveReturnBatch'
     // ─────────────────────────────────────────────────────────────────────────
     public static Boolean isBatchAlreadyRunning(String batchClassName) {
-        Integer count = [
+        Integer activeJobCount = [
             SELECT COUNT()
             FROM   AsyncApexJob
             WHERE  ApexClass.Name = :batchClassName
             AND    JobType        = 'BatchApex'
             AND    Status         IN ('Holding', 'Queued', 'Preparing', 'Processing')
         ];
-        return count > 0;
+        return activeJobCount > 0;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -464,8 +460,8 @@ public class BSF_WorkdayBatchHelper {
     // @param paramValue  Raw parameter value — URL-encoded by this method
     // ─────────────────────────────────────────────────────────────────────────
     public static String appendQueryParam(String endpoint, String paramName, String paramValue) {
-        String separator = endpoint.contains('?') ? '&' : '?';
-        String encoded   = EncodingUtil.urlEncode(paramValue, 'UTF-8');
-        return endpoint + separator + paramName + '=' + encoded;
+        String separator    = endpoint.contains('?') ? '&' : '?';
+        String encodedValue = EncodingUtil.urlEncode(paramValue, 'UTF-8');
+        return endpoint + separator + paramName + '=' + encodedValue;
     }
 }

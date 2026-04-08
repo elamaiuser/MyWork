@@ -5,13 +5,13 @@
 		<members>DriveProjectionRoundingBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
-  <types>
-    <members>Drive_Projection_Rounding_Config.Default</members>
-    <name>CustomMetadata</name>
-  </types>
-  <types>
-    <members>Drive_Projection_Rounding_Config__mdt</members>
-    <name>CustomObject</name>
-  </types>
+    	<types>
+        <members>Drive_Projection_Rounding_Config.Default</members>
+          <name>CustomMetadata</name>
+    </types>
+    <types>
+<members>Drive_Projection_Rounding_Config__mdt</members>
+<name>CustomObject</name>
+</types>
 	<version>65.0</version>
 </Package>

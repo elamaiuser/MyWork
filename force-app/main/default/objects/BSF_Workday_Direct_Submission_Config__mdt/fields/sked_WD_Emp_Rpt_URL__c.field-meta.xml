@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_WD_Emp_Rpt_URL__c</fullName>
+    <description>Base URL for Workday Employee Report API (BSF_No_Time_Entered_with_TZ).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Workday Employee Report API URL</label>
+    <required>false</required>
+    <type>Url</type>
+</CustomField>
