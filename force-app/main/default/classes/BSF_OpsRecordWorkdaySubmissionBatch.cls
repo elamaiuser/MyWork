@@ -36,7 +36,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
     }
 
     public void execute(SchedulableContext sc) {
-        Database.executeBatch(new BSF_OpsRecordWorkdaySubmissionBatch(), 20);
+        Database.executeBatch(new BSF_OpsRecordWorkdaySubmissionBatch(), BSF_WorkdayDirectSubmissionConfig.getBatchScopeSize());
     }
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
