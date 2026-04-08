@@ -159,23 +159,7 @@ public class BSF_Constants {
     public static final String STATUS_NOT_STARTED = 'Not Started';
     public static final String STATUS_IN_PROGRESS = 'In Progress';
     public static final String STATUS_COMPLETED = 'Completed';
-    public static final String STATUS_CANCELLED = 'Cancelled';    
-
-    // Planned Task Status
-    public static final String PLANNED_TASK_STATUS_CONFIGURED = 'Configured';
-    public static final String PLANNED_TASK_STATUS_PROCESSED = 'Processed';
-
-    // Planned Task Scheduling Methods
-    public static final String PLANNED_TASK_SCHEDULING_METHOD_DAYS_OFFSET = 'Days Offset';
-    public static final String PLANNED_TASK_SCHEDULING_METHOD_TARGET_DATE = 'Target Date';
-
-    // Account and Opportunity Task Planning Paths
-    public static final String PATH_FLEXIBLE = 'Flexible';
-    public static final String PATH_STANDARD = 'Standard';
-
-    // Allowed Lookups for Task Planning
-    public static final Set<String> ALLOWED_PLANNING_DEFAULT_LOOKUPS = new Set<String>{ 'Account__c', 'Template_Opportunity__c' };
-    public static final Set<String> ALLOWED_SELECTED_PACKAGE_LOOKUPS = new Set<String>{ 'Account__c', 'Opportunity__c' };
+    public static final String STATUS_CANCELLED = 'Cancelled';
 
     // Task Types
     public static final String SPONSOR_PLANNING_MEETING = 'Sponsor Planning Meeting';
