@@ -503,7 +503,7 @@ if(ds.isCreateable()){}*/
     }
     
     //SYSTEM Generating Recruitment Meeting task during Closed Stage - HRP -2072
-    public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         System.debug('Entered method createRecruitmentTask with opp items->' + newItems);
         if (newItems == null || newItems.size() < 1)
             return;
@@ -535,7 +535,9 @@ if(ds.isCreateable()){}*/
         }
         //part of ticket HRP-9562***ends here***
         //HRP-10788
-        list<Task> existingRecruitmentTaskList=[select id,whoId,whatId from task where subject = 'Recruitment Planning Meeting' and whatId in:oppIds];// Changes for HRP-7123
+        String taskSubject = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Task_Subject__c;//HRP-16392 changes
+        String taskType = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Task_Type__c;//HRP-16392 changes
+        list<Task> existingRecruitmentTaskList=[select id,whoId,whatId from task where Type = :taskType and whatId in:oppIds];// Changes for HRP-7123
         map<id,task> oppidTaskMap = new map<id,task>();
         for(Task t:existingRecruitmentTaskList)
         {
@@ -545,20 +547,23 @@ if(ds.isCreateable()){}*/
         for (Opportunity opp : newItems) {
             //HRP-10788 earlier the below if condition was only checking stageName change. added check change in Call_List_Recipient_Exist__c
             //if (!oppidTaskMap.containskey(opp.id) && (oldMap == NULL ? (opp.StageName == 'Closed' && opp.Call_List_Recipient_Exist__c) : (((opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName) && opp.Call_List_Recipient_Exist__c) || (opp.Call_List_Recipient_Exist__c && opp.Call_List_Recipient_Exist__c != oldMap.get(opp.id).Call_List_Recipient_Exist__c) && opp.StageName == 'Closed'))) {
-            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled') && (oldMap == NULL ? opp.StageName == 'Closed' : (opp.StageName == 'Closed' && opp.StageName != oldMap.get(opp.id).stageName))) // HRP-12284  //Changes for HRP-13850
+            if (!oppidTaskMap.containskey(opp.id) && !opp.StageName.equalsIgnoreCase('Cancelled'))
               {
                 task recruitmentTask = new task();
                 recruitmentTask.RecordTypeId = recTypeId;
-                Date taskDueDate = opp.Drive_Date__c.addDays(-50);
-                String taskDueDayString = Datetime.newInstance(taskDueDate.year(), taskDueDate.month(),taskDueDate.day()).format('EEE'); 
+                Integer daysFromDriveDate = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Due_Date_Offset__c != null 
+                                            ? Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Due_Date_Offset__c.intValue() : 0;
+                Date taskDueDate = opp.Drive_Date__c.addDays(0 - daysFromDriveDate);
+                /*String taskDueDayString = Datetime.newInstance(taskDueDate.year(), taskDueDate.month(),taskDueDate.day()).format('EEE'); 
                 if(taskDueDayString.equalsIgnoreCase('Sat')){
                     taskDueDate = taskDueDate.addDays(-1);
                 }else if(taskDueDayString.equalsIgnoreCase('Sun')){
                     taskDueDate = taskDueDate.addDays(-2);
-                }
-                recruitmentTask.ActivityDate = taskDueDate;
+                }*/
+                /*recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
-                recruitmentTask.subject = 'Recruitment Planning Meeting';
+                recruitmentTask.subject = taskSubject;
+                recruitmentTask.Type = taskType;
                 recruitmentTask.WhatId = opp.id;
                 recruitmentTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                 taskList.add(recruitmentTask);
@@ -608,10 +613,10 @@ if(ds.isCreateable()){}*/
             }
             //HRP-10788
         }   
-    }
+    }*/
     
     //Generate Sponsor Planning Meeting task when Opportunity stage is set to committed or closed
-    public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         if (newItems == null || newItems.size() < 1)
             return;
         set<id> oppIds = new set<id>();
@@ -627,7 +632,8 @@ if(ds.isCreateable()){}*/
         
         set<id> taskIds = new set<id>();
         String taskSubject = Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Task_Subject__c;//HRP-5337 changes
-        List<task> staskList = [select WhatId from task where Subject =: taskSubject And WhatId = :oppIds];//HRP-5337 changes
+        String taskType = Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Task_Type__c;//HRP-16392 changes
+        List<task> staskList = [select WhatId from task where Type =: taskType And WhatId = :oppIds];//HRP-5337 changes
         for(Task t : staskList) {
             taskIds.add(t.WhatId);
         }
@@ -663,7 +669,7 @@ if(ds.isCreateable()){}*/
                     sponsorPlanningTask.ActivityDate = opp.Drive_Date__c.addDays(-daysFromDriveDate);
                     sponsorPlanningTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Sponsor_Planning').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter
                     sponsorPlanningTask.subject = taskSubject;//HRP-5337 changes
-                    sponsorPlanningTask.Type = 'Sponsor Planning Meeting';
+                    sponsorPlanningTask.Type = taskType;//HRP-16392 changes
                     sponsorPlanningTask.Status = 'Not Started';
                     sponsorPlanningTask.Priority = 'Normal';
                     sponsorPlanningTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
@@ -688,7 +694,7 @@ if(ds.isCreateable()){}*/
                 }
             }
         }   
-    } 
+    } */
     
     public static void setCallListRecipientFlag(set<id> accIDs) {
         Map<id, opportunity> oppMap = new Map<id, opportunity>([select id,Accountid from opportunity where Accountid = :accIDs]);
@@ -3544,7 +3550,7 @@ opp.StageName = 'Closed';
         }
     }
     
-    Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
+    /*Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
     {
         
         set<id> oppIds = new set<id>();
@@ -3577,9 +3583,10 @@ opp.StageName = 'Closed';
         if(!oppIds.isEmpty()){
             List<Task> taskList = [SELECT Id, 
                                         WhatId, 
-                                        Subject 
+                                        Subject,
+                                        Type 
                                     FROM Task 
-                                    WHERE Subject =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c
+                                    WHERE Type =: Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Type__c
                                     AND WhatId IN :oppIds];
             for(Task t : taskList){
                 checkOppHas72hourTask.put(t.WhatId,true);
@@ -3599,6 +3606,7 @@ opp.StageName = 'Closed';
                     Task newTask = new task();
                     newTask.RecordTypeId = recTypeId;
                     newTask.subject =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c;//HRP-12627
+                    newTask.Type =Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Type__c;//HRP-16392
                     newTask.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
                     newTask.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
                     newTask.WhatId = opp.id;
@@ -3623,7 +3631,7 @@ opp.StageName = 'Closed';
                 }
             }
         }   
-    }
+    }*/
     
     public static void updateDoubleRedProcedures(List<Opportunity> listOfnewOppties, Map<Id, Opportunity> mapOfOfOldOppties) { 
         Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId();
@@ -5301,7 +5309,8 @@ opp.StageName = 'Closed';
             accountMap = new Map<Id, Account>([
                 SELECT Id, Planning_Path__c 
                 FROM Account 
-                WHERE Id IN :accountIds                
+                WHERE Id IN :accountIds
+                WITH USER_MODE
             ]);
         }
 
@@ -5311,7 +5320,8 @@ opp.StageName = 'Closed';
             templateMap = new Map<Id, Opportunity>([
                 SELECT Id, Planning_Path__c 
                 FROM Opportunity 
-                WHERE Id IN :templateIds                
+                WHERE Id IN :templateIds
+                WITH USER_MODE
             ]);
         }
 

@@ -86,7 +86,7 @@ public class skedTravelTimeIndexTravelTimeBatch implements Database.Batchable<sk
 
                 Id collectionOperationId = getCollectionOperationId(indexItems[0]);
                 List<string> timeBlocks;
-                
+
                 List<sked_Travel_Time_Slot__c> travelTimeSlots = collectionOperationId != null ? map_collectionOpId_travelTimeSlots.get(collectionOperationId) : null;
                 if (travelTimeSlots != null && !travelTimeSlots.isEmpty()) {
                     timeBlocks = buildTimeBlocksFromSlots(travelTimeSlots, indexItems[0].sked_Timezone__c);

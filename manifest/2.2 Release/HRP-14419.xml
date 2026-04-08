@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>sked__Resource__c.sked_REAL_ID_Compliant_indicator__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>Resource_Tag_with_Sked_Region_and_Territory</members>
+		<members>Resources_with_Activity</members>
+		<members>Resources_with_Availability</members>
+		<members>Resources_with_Collection_Op</members>
+		<members>Resources_with_Job_Allocation</members>
+		<members>Resources_with_ResourceTag_and_CollectionOp</members>
+		<members>Resources_with_Users</members>
+		<members>Resources_with_or_without_Users</members>
+		<name>ReportType</name>
+	</types>
+	<version>63.0</version>
+</Package>

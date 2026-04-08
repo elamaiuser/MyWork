@@ -1,31 +1,40 @@
-/* @Description:1.
-*               2. This is Triggered from OpportunityService.createRecruitmentTask
-* **********************************************************************************************************************************************
-* Modification Log 
-*  Date                          Developer Name                 Comments
-* ***********************************************************************************************************************************************
-* 10/26/2023                     Balaji N              Logic for HRP-10788 (Created this Trigger)
-************************************************************************************************************************************************
-*/
+/**
+ * @description Consumer trigger for Task Platform Events.
+ * Handles Task creation with hardcoded defaults and updates the source Planned Task.
+ */
+trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
+    List<Task> taskList = new List<Task>();
+    Map<Id, Planned_Task__c> ptsToUpdateMap = new Map<Id, Planned_Task__c>();
+    Map<String, String> peMapping = BSF_TaskPlanningService.getDynamicPlatformEventFieldMapping();
 
-trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) 
-{
-    list<task> taskList = new list<task>();
-    for(Task_Platform_Event__e tp : trigger.new)
-    {
-                task t = new task();
-                t.RecordTypeId = tp.RecordTypeId__c;
-                t.ActivityDate = tp.ActivityDate__c;
-                t.OwnerId = tp.OwnerId__c;//part of ticket HRP-9562
-                t.subject = tp.Subject__c;
-                t.Drive_Date__c = tp.Drive_Date__c;
-                t.WhatId = tp.WhatId__c;
-                taskList.add(t);
+    for (Task_Platform_Event__e tp : Trigger.new) {
+        System.debug(LoggingLevel.DEBUG, 'Event Details: ' + tp);
+        taskList.add(BSF_TaskPlanningService.buildTaskFromEvent(tp, peMapping));
     }
     
-    if(!taskList.isEmpty())
-    {
+    if (!taskList.isEmpty()) {
         Database.SaveResult[] srList = Database.insert(taskList, false);
+        
+        for (Integer i = 0; i < srList.size(); i++) {
+            Task_Platform_Event__e originalEvent = Trigger.new[i];
+            
+            if (srList[i].isSuccess()) {
+                if (String.isNotBlank(originalEvent.Planned_Task_Id__c)) {
+                    ptsToUpdateMap.put(
+                        originalEvent.Planned_Task_Id__c, 
+                        new Planned_Task__c(
+                            Id = originalEvent.Planned_Task_Id__c,
+                            Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED
+                        )
+                    );
+                }
+            } else {
+                System.debug(LoggingLevel.ERROR, 'Task Insert Failed for ' + originalEvent.WhatId__c + ': ' + srList[i].getErrors()[0].getMessage());
+            }
+        }
     }
-    
+    System.debug(LoggingLevel.INFO, 'Total Tasks Processed: ' + taskList.size() + ', Planned Tasks to Update: ' + ptsToUpdateMap.size());
+    if (!ptsToUpdateMap.isEmpty()) {
+        BSF_TaskPlanningService.handleDatabaseResults(Database.update(ptsToUpdateMap.values(), false), 'Planned Task Update from Platform Event');
+    }
 }

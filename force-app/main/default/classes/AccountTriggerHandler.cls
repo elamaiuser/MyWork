@@ -273,6 +273,9 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
         }else{
             System.debug('AccountTriggerHandler.afterInsert() - AccountService.createAccountTeamMembers() Bypassed');
         }
+        if(super.getTriggerMethodsToBypass().indexOf('initializeAccountTaskConfigs') == -1) {
+            BSF_TaskPlanningService.initializeAccountTaskConfigs((List<Account>) trigger.new);    
+        }  
     }
     
     public override void beforeDelete()

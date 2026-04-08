@@ -894,6 +894,14 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         calendarOverview: `Assets are not shared with new Collection Operation`
       }
     }
+
+    if (contention === DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE) {
+      return {
+        requested: ``,
+        current: ``,
+        calendarOverview: `Locked resources are unavailable for the updated drive time`
+      }
+    }
   }
 
   getContentionActions = (item) => {
@@ -1099,6 +1107,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO)
       }]
     }
+
+    if (contention === DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE) {
+      return [{
+        label: DRIVE_CONTENTION_RESOLUTION.ELECT_LOCKED_RESOURCE_UNAVAILABLE,
+        value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_LOCKED_RESOURCE_UNAVAILABLE)
+      }]
+    }
   }
 
   validateDriveStaffingChangedContention = () => {
@@ -1159,7 +1174,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       .then(() => {
         return this.driveHelper.getAvailableAssets(this.masterData.vehicles, this.drive, true);
       })
-      .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }) => {
+      .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [], possibleAllocations = [] }) => {
+        return this.driveHelper.getLockedStaffAvailability(this.drive)
+          .then((staffPossibleAllocations) => {
+            return {
+              availableVehicles,
+              availableEquipments,
+              availableButNotSharedAssetIds,
+              possibleAllocations: possibleAllocations.concat(staffPossibleAllocations)
+            };
+          });
+      })
+      .then(({ availableVehicles, availableEquipments, availableButNotSharedAssetIds, possibleAllocations }) => {
         let contentionsToValidate = [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -1172,7 +1198,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           DRIVE_CONTENTION.WITHIN_42_DAYS,
           DRIVE_CONTENTION.CONFIRM_WITHIN_42_DAYS,
           DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
-          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE
+          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE
         ];
         if(this.drive.typeOfDrive === DRIVE_TYPE.MOBILE) {
           contentionsToValidate.push(DRIVE_CONTENTION.LACKING_VEHICLE);
@@ -1199,6 +1226,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
           availableAssetsInfo: {
             availableButNotSharedAssetIds
+          },
+          availabilityData: {
+            possibleAllocations
           }
         }, contentionsToValidate, originalContentions);
 

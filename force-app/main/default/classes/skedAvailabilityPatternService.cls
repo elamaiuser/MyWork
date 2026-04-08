@@ -474,7 +474,7 @@ global class skedAvailabilityPatternService extends skedDataService {
         Date currentDate = overlapStartDate;
         while (currentDate <= overlapEndDate) {
             string weekdayName = getWeekdayName(currentDate);
-            
+
             if (commonWeekdays.contains(weekdayName)) {
                 boolean pattern1Working = isPatternWorkingOnDate(currentDate, pattern1StartDate, repeatWeeks1);
                 boolean pattern2Working = isPatternWorkingOnDate(currentDate, pattern2StartDate, repeatWeeks2);

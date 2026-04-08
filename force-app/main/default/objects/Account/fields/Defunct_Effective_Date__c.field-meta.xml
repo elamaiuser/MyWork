@@ -3,7 +3,7 @@
     <fullName>Defunct_Effective_Date__c</fullName>
     <description>When the Account Status field is updated to &quot;Defunct&quot; or &quot;Lost,&quot; this field should auto-populate with that day&#39;s date. Workflow will populate.</description>
     <externalId>false</externalId>
-    <inlineHelpText>Based on date Account moved to Defunct Status</inlineHelpText>
+    <inlineHelpText>Based on date Account moved to Defunct or Lost Status</inlineHelpText>
     <label>Effective Date</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

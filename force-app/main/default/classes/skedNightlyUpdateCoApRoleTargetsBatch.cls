@@ -41,7 +41,6 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
         Map<String, Set<String>> map_coIdName_uniqueApIdNamesCopy = new Map<String, Set<String>>();
         Set<Id> resourceIds = new Set<Id>();
 
-        
         for(sked__Availability_Pattern_Resource__c apResource : availabilityPatternResources) {
             resourceIds.add(apResource.sked__Resource__c);
 

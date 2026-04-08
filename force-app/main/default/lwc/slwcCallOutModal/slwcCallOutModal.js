@@ -40,9 +40,9 @@ export default class SlwcCallOutModal extends LightningElement {
                 if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                     this.model.hasTimeOffPlans = true;
 
-                    // if (this.model.callOutType == 'Call Out') {
-                    //     this.model.usePtoForCallOut = true;
-                    // }
+                     if (this.model.callOutType == 'Call Out') {
+                        this.model.usePtoForCallOut = true;
+                    }
                 }
             })
             .catch(error => {
@@ -183,9 +183,9 @@ export default class SlwcCallOutModal extends LightningElement {
             if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                 this.model.hasTimeOffPlans = true;
 
-                // if (this.model.callOutType == 'Call Out') {
-                //     this.model.usePtoForCallOut = true;
-                // }
+                if (this.model.callOutType == 'Call Out') {
+                    this.model.usePtoForCallOut = true;
+                }
             }
         })
         .catch(error => {
@@ -205,12 +205,12 @@ export default class SlwcCallOutModal extends LightningElement {
     }
 
     handleOnCallOutTypeChange(event) {
-        // let callOutType = getValueFromEvent(event);
-        // if (callOutType == 'Call Out' && this.model.hasTimeOffPlans) {
-        //     this.model.usePtoForCallOut = true;
-        // } else {
-        //     this.model.usePtoForCallOut = false;
-        // }
+         let callOutType = getValueFromEvent(event);
+        if (callOutType == 'Call Out' && this.model.hasTimeOffPlans) {
+            this.model.usePtoForCallOut = true;
+         } else {
+             this.model.usePtoForCallOut = false;
+         }
 
         this.handleOnChange(event);
     }
