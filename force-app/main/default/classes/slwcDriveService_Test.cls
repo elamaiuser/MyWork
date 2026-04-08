@@ -415,4 +415,202 @@ private class slwcDriveService_Test {
         request.fieldLabel = 'Role Time Variance Changed';
         slwcDriveService.skedCaptureNonUserChangeDCRs(request);
     }
+
+    static testmethod void getImpactedDrives_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked__Region__c testRegion1 = (sked__Region__c) mapTestData.get('testRegion1');
+        Biomed_Collection_Op_Center__c testCo = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
+        sked_Drive__c testDrive1 = (sked_Drive__c) mapTestData.get('testDrive1');
+        sked__Resource__c testVehicle1 = (sked__Resource__c) mapTestData.get('testVehicle1');
+
+        Test.startTest();
+
+        sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20, 0, 0, 0),
+            sked_Start_Time__c = Time.newInstance(14, 0, 0, 0),
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(20, 0, 0, 0)),
+            sked_Start__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(14, 0, 0, 0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert testDriveShift;
+
+        sked__Job__c testVehicleJob = new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked_Asset_Type__c = 'Vehicle',
+            sked_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        insert testVehicleJob;
+
+        sked__Job_Allocation__c vehicleJa = new sked__Job_Allocation__c(
+            sked__Job__c = testVehicleJob.Id,
+            sked__Resource__c = testVehicle1.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
+            sked_Roles_Assignment_Str__c = '2RBC'
+        );
+        insert vehicleJa;
+
+        slwcDriveService.getImpactedDrivesRequestModel model = new slwcDriveService.getImpactedDrivesRequestModel();
+        model.vehicleToChangeId = testVehicle1.Id;
+        model.collectionOperationIds = new List<Id>{ testCo.Id };
+        model.startDate = String.valueOf(testDrive1.sked_Drive_Date__c);
+        model.endDate = String.valueOf(testDrive1.sked_Drive_Date__c.addDays(7));
+        slwcAuraResult result = slwcDriveService.getImpactedDrives(model);
+
+        Test.stopTest();
+
+        System.assertNotEquals(null, result.returnedData, 'Result should have returned data');
+        slwcDriveService.impactedDrivesDataModel data = (slwcDriveService.impactedDrivesDataModel) result.returnedData;
+        System.assertNotEquals(null, data.drives, 'Drives list should not be null');
+        System.assertEquals(1, data.drives.size(), 'Should return 1 impacted drive');
+        System.assertEquals(testDrive1.Id, data.drives[0].Id, 'Impacted drive should be testDrive1');
+        System.assertNotEquals(null, data.jobs, 'Jobs list should not be null');
+        System.assertEquals(1, data.jobs.size(), 'Should return 1 vehicle job');
+        System.assertEquals(testVehicleJob.Id, data.jobs[0].Id, 'Vehicle job should match');
+    }
+
+    static testmethod void applyVehicleReplacement_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked__Region__c testRegion1 = (sked__Region__c) mapTestData.get('testRegion1');
+        sked_Drive__c testDrive1 = (sked_Drive__c) mapTestData.get('testDrive1');
+        sked__Resource__c testVehicle1 = (sked__Resource__c) mapTestData.get('testVehicle1');
+        sked__Resource__c testVehicle2 = (sked__Resource__c) mapTestData.get('testVehicle2');
+        sked__Resource__c testResource1 = (sked__Resource__c) mapTestData.get('testResource1');
+
+        Test.startTest();
+
+        sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20, 0, 0, 0),
+            sked_Start_Time__c = Time.newInstance(14, 0, 0, 0),
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(20, 0, 0, 0)),
+            sked_Start__c = DateTime.newInstance(testDrive1.sked_Drive_Date__c, Time.newInstance(14, 0, 0, 0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert testDriveShift;
+
+        sked__Job__c testVehicleJob = new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked_Asset_Type__c = 'Vehicle',
+            sked_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        sked__Job__c testDriverJob = new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Resource_Role__c = skedConstants.JOB_RESOURCE_ROLE_DRIVER,
+            sked_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        insert new List<SObject>{ testVehicleJob, testDriverJob };
+
+        sked__Job_Allocation__c vehicleJa = new sked__Job_Allocation__c(
+            sked__Job__c = testVehicleJob.Id,
+            sked__Resource__c = testVehicle1.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
+            sked_Roles_Assignment_Str__c = '2RBC'
+        );
+        sked__Job_Allocation__c driverJa = new sked__Job_Allocation__c(
+            sked__Job__c = testDriverJob.Id,
+            sked__Resource__c = testResource1.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
+            sked_Roles_Assignment_Str__c = skedConstants.JOB_RESOURCE_ROLE_DRIVER,
+            sked_DOT__c = false,
+            sked_CDL__c = false
+        );
+        insert new List<SObject>{ vehicleJa, driverJa };
+
+        slwcDriveService.applyVehicleReplacementRequestModel model = new slwcDriveService.applyVehicleReplacementRequestModel();
+        model.vehicleToChangeId = testVehicle1.Id;
+        model.replacementVehicleId = testVehicle2.Id;
+        model.driveIds = new List<Id>{ testDrive1.Id };
+        model.contentionResolutions = new Map<String, String>{
+            testDrive1.Id => 'Elect to use a vehicle with insufficient capacity'
+        };
+        slwcAuraResult result = slwcDriveService.applyVehicleReplacement(model);
+
+        Test.stopTest();
+
+        // Verify old allocation is marked as deleted
+        sked__Job_Allocation__c oldJa = [
+            SELECT sked__Status__c
+            FROM sked__Job_Allocation__c
+            WHERE Id = :vehicleJa.Id
+        ];
+        System.assertEquals(skedConstants.JOB_ALLOCATION_STATUS_DELETED, oldJa.sked__Status__c,
+            'Old vehicle allocation should be marked as Deleted');
+
+        // Verify new allocation was created for replacement vehicle
+        List<sked__Job_Allocation__c> newJas = [
+            SELECT sked__Resource__c, sked__Status__c, sked_Replacement_For__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Job__c = :testVehicleJob.Id
+            AND sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+        ];
+        System.assertEquals(1, newJas.size(), 'Should have 1 active allocation on the vehicle job');
+        System.assertEquals(testVehicle2.Id, newJas[0].sked__Resource__c, 'New allocation should be for replacement vehicle');
+        System.assertEquals(vehicleJa.Id, newJas[0].sked_Replacement_For__c, 'Replacement should reference old allocation');
+
+        // Verify contention resolution was saved on the drive
+        sked_Drive__c updatedDrive = [
+            SELECT sked_Contention_Resolution__c
+            FROM sked_Drive__c
+            WHERE Id = :testDrive1.Id
+        ];
+        System.assert(updatedDrive.sked_Contention_Resolution__c.contains('Elect to use a vehicle with insufficient capacity'),
+            'Drive should have the contention resolution saved');
+    }
 }

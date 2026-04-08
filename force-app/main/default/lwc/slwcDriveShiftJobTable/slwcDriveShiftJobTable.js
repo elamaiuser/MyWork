@@ -119,7 +119,7 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
     }
 
     bulkAddVolunteerJobs(job) {
-        let eventValues = {drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
+        let eventValues = {drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job, masterData: this.masterData};
         fireEvent(this.pageRef, 'showBulkAddVolunteerJobsModal', eventValues);
     }
 
