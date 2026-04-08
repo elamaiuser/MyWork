@@ -495,65 +495,7 @@ public class skedWorkdayUtils implements Callable {
     }
 
     return null;
-}
-
-   private static String extractTimeOffEntryId(String xml) {
-    sked__Debug_Log__c log = new sked__Debug_Log__c();
-    log.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_WORKDAY_API;
-    log.sked__Summary__c = 'Parse Time_Off_Entry_ID';
-    log.sked_Request__c = 'Parsing Workday Response';
-    log.sked_Response__c = xml;
-
-    if (String.isBlank(xml)) {
-        log.sked__Message__c = 'XML response is NULL or EMPTY';
-        insert log;
-        return null;
-    }
-
-    try {
-        Dom.Document doc = new Dom.Document();
-        doc.load(xml);
-
-        Dom.XmlNode root = doc.getRootElement();
-        Dom.XmlNode body = root.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
-
-        if (body == null) {
-            log.sked__Message__c = 'SOAP Body not found';
-            insert log;
-            return null;
-        }
-
-        List<Dom.XmlNode> nodes = new List<Dom.XmlNode>{ body };
-
-        while (!nodes.isEmpty()) {
-            Dom.XmlNode node = nodes.remove(0);
-
-            if (
-                node.getName() == 'ID' &&
-                (
-                    node.getAttribute('type', null) == 'Time_Off_Entry_ID' ||
-                    node.getAttribute('type', 'urn:com.workday/bsvc') == 'Time_Off_Entry_ID'
-                )
-            ) {
-                String entryId = node.getText();
-                log.sked__Message__c = 'FOUND Time_Off_Entry_ID = ' + entryId;
-                insert log;
-                return entryId;
-            }
-
-            nodes.addAll(node.getChildElements());
-        }
-
-        log.sked__Message__c = 'Time_Off_Entry_ID NOT FOUND in response';
-        insert log;
-
-    } catch (Exception e) {
-        log.sked__Message__c = 'Parser Exception: ' + e.getMessage();
-        insert log;
-    }
-
-    return null;
-}
+}   
 
     public static string fetchXML(DOM.Document doc) {//HRP-13728
         String xml = doc.toXmlString();
