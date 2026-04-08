@@ -420,8 +420,11 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
                     otherExceptionCodes.add(otherExceptionCode);
                 }
                 if (allocation.sked_Additional_Roles__c != oldData.sked_Additional_Roles__c) {
-                    string otherExceptionCode = 'additionalRolesException';    
+                    string otherExceptionCode = 'additionalRolesException';
                     otherExceptionCodes.add(otherExceptionCode);
+                }
+                if (allocation.sked_DOT__c != oldData.sked_DOT__c || allocation.sked_CDL__c != oldData.sked_CDL__c) {
+                    otherExceptionCodes.add('requiredTagException');
                 }
                 for (string otherExceptionCode : otherExceptionCodes) {
                     List<sked__Job_Allocation__c> recordsToProcess = mapRecordsToProcess.get(otherExceptionCode);
@@ -913,6 +916,10 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         if (otherExceptionCode == 'additionalRolesException') {
             exceptionLog.addAll(captureAdditionalRolesExceptionLog(master));
         }
+
+        if (otherExceptionCode == 'requiredTagException') {
+            exceptionLog.addAll(captureRequiredTagExceptionLog(master));
+        }
         
         if (!exceptionLog.isEmpty()) {
             upsert exceptionLog;
@@ -1191,6 +1198,86 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
         return exceptionLog;
     }
     
+    private static List<skedHC__Exception__c> captureRequiredTagExceptionLog(skedExceptionMasterModel master) {
+        List<string> driverTagNames = new List<string>{
+            skedConstants.TAG_DRIVER,
+            skedConstants.TAG_DRIVER_DOT,
+            skedConstants.TAG_DRIVER_CDL
+        };
+        Map<string, sked__Tag__c> mapDriverTag = new Map<string, sked__Tag__c>();
+        for (sked__Tag__c driverTag : [SELECT Id, Name FROM sked__Tag__c WHERE Name IN :driverTagNames]) {
+            mapDriverTag.put(driverTag.Name, driverTag);
+        }
+
+        List<skedHC__Exception__c> exceptionLog = new List<skedHC__Exception__c>();
+        for (sked__Job_Allocation__c skedAllocation : master.jobAllocations) {
+            sked__Job__c job = master.mapJob.get(skedAllocation.sked__Job__c);
+            if (job.sked__JobTags__r == null || job.sked__JobTags__r.isEmpty()) continue;
+            if (!master.mapResource.containsKey(skedAllocation.sked__Resource__c)) continue;
+
+            sked__Resource__c resource = master.mapResource.get(skedAllocation.sked__Resource__c);
+            Set<Id> resourceTagIds = new Set<Id>();
+            if (resource.sked__ResourceTags__r != null) {
+                for (sked__Resource_Tag__c resourceTag : resource.sked__ResourceTags__r) {
+                    if (resourceTag.sked_Start_Date__c <= job.sked_Drive__r.sked_Drive_Date__c) {
+                        resourceTagIds.add(resourceTag.sked__Tag__c);
+                    }
+                }
+            }
+
+            // Find existing MISSING_REQUIRED_TAG exceptions for driver tags only
+            Map<string, skedHC__Exception__c> existingExceptions = new Map<string, skedHC__Exception__c>();
+            if (skedAllocation.skedHC__Exception_Log__r != null) {
+                for (skedHC__Exception__c exc : skedAllocation.skedHC__Exception_Log__r) {
+                    if (exc.sked_Exception_Code__c == skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG) {
+                        for (string tagName : driverTagNames) {
+                            if (exc.skedHC__Exception__c == 'Missing required tag ' + tagName) {
+                                existingExceptions.put(exc.skedHC__Exception__c, exc);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Set<string> activeExceptions = new Set<string>();
+            for (sked__Job_Tag__c jobTag : job.sked__JobTags__r) {
+                Id requiredTagId = jobTag.sked__Tag__c;
+                string requiredTagName = jobTag.sked__Tag__r.Name;
+
+                sked__Tag__c driverTag = mapDriverTag.get(skedConstants.TAG_DRIVER);
+                if (driverTag != null && requiredTagId == driverTag.Id) {
+                    if (skedAllocation.sked_DOT__c == true) {
+                        sked__Tag__c driverDotTag = mapDriverTag.get(skedConstants.TAG_DRIVER_DOT);
+                        requiredTagId = driverDotTag.Id;
+                        requiredTagName = driverDotTag.Name;
+                    }
+                    if (skedAllocation.sked_CDL__c == true) {
+                        sked__Tag__c driverCdlTag = mapDriverTag.get(skedConstants.TAG_DRIVER_CDL);
+                        requiredTagId = driverCdlTag.Id;
+                        requiredTagName = driverCdlTag.Name;
+                    }
+                }
+
+                if (!resourceTagIds.contains(requiredTagId)) {
+                    string exceptionText = 'Missing required tag ' + requiredTagName;
+                    activeExceptions.add(exceptionText);
+                    if (!existingExceptions.containsKey(exceptionText)) {
+                        exceptionLog.add(skedExceptionUtils.generateException(skedAllocation, skedConstants.EXCEPTION_CODE_MISSING_REQUIRED_TAG, exceptionText));
+                    }
+                }
+            }
+
+            // Close exceptions that are no longer active
+            for (skedHC__Exception__c exc : existingExceptions.values()) {
+                if (!activeExceptions.contains(exc.skedHC__Exception__c)) {
+                    exc.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                    exceptionLog.add(exc);
+                }
+            }
+        }
+        return exceptionLog;
+    }
+
     private void sendNotifications(List<sked__Job_Allocation__c> newRecords, Map<Id, sked__Job_Allocation__c> oldMap) {
         List<sked__Job_Allocation__c> impactedJobAllocations = new List<sked__Job_Allocation__c>();
         Map<Id, sked__Job_Allocation__c> oldImpactedJobAllocationMap = new Map<Id, sked__Job_Allocation__c>();

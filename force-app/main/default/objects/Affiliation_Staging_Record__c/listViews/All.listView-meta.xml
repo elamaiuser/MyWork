@@ -6,15 +6,16 @@
     <columns>Account_UFID__c</columns>
     <columns>Account_Id__c</columns>
     <columns>Account__c</columns>
-    <columns>Referenced_Account_UFID__c</columns>
     <columns>Affiliation_UFID__c</columns>
     <columns>Affiliation_Id__c</columns>
     <columns>Affiliation__c</columns>
-    <columns>Referenced_Affiliation_UFID__c</columns>
-    <columns>Date_Assigned__c</columns>
-    <columns>Date_Removed__c</columns>
-    <columns>Source_File_Record_Note__c</columns>
+    <columns>Status__c</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Account_Id__c</field>
+        <operation>equals</operation>
+        <value>0015c00002IpRx0AAF</value>
+    </filters>
     <label>All</label>
 </ListView>

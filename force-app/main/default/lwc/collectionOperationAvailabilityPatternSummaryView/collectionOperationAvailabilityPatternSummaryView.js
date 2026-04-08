@@ -30,7 +30,6 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
         this.showLoading();
         let service = new collectionOperationService();
         let query = new collectionOperationQueryModel();
-        console.log(this.recordId);
         query.recordIds = [this.recordId];
         query.subQueryIndicator = sObjectType.COLLECTION_OPERATION_AVAILABILITY;
         return Promise.resolve()

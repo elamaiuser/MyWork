@@ -769,6 +769,13 @@ class MobileGenerator extends BaseGenerator {
         ]);
       })
       .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
+        return this.helper.getLockedStaffAvailability(this.drive)
+          .then((staffPossibleAllocations) => {
+            availableAssetsInfo.possibleAllocations = (availableAssetsInfo.possibleAllocations || []).concat(staffPossibleAllocations);
+            return [driveLimitResult, staffingConstraintResult, availableAssetsInfo];
+          });
+      })
+      .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
         let {
           passed,
           pendingActionReasonCodes
@@ -776,7 +783,10 @@ class MobileGenerator extends BaseGenerator {
           ...this.masterData,
           driveLimits: driveLimitResult,
           staffingConstraints: staffingConstraintResult,
-          availableAssetsInfo
+          availableAssetsInfo,
+          availabilityData: {
+            possibleAllocations: availableAssetsInfo.possibleAllocations || []
+          }
         }, [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -794,6 +804,7 @@ class MobileGenerator extends BaseGenerator {
           DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
           DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS,
           DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
           DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
         ])
 
@@ -2088,7 +2099,7 @@ class MobileGenerator extends BaseGenerator {
         job = cloneDeep(jobTemplate);
         job.key = generateUUID();
         job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
-      } else job.jobTags = [...job.jobTags];
+      } else job.jobTags = [...(job.jobTags || [])];
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
       if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {
