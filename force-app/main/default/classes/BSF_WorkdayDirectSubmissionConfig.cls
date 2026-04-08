@@ -32,7 +32,8 @@ public with sharing class BSF_WorkdayDirectSubmissionConfig {
                 sked_Workday_Max_Retry_Attempts__c,
                 sked_Notification_From_Email__c,
                 sked_Business_Distribution_List__c,
-                sked_Reschedule_Delay_Minutes__c
+                sked_Reschedule_Delay_Minutes__c,
+                sked_Ops_Record_Batch_Scope_Size__c
             FROM BSF_Workday_Direct_Submission_Config__mdt
             LIMIT 1
         ];
@@ -61,6 +62,24 @@ public with sharing class BSF_WorkdayDirectSubmissionConfig {
             return 15;
         }
         return config.sked_Reschedule_Delay_Minutes__c.intValue();
+    }
+
+    /**
+     */
+    public static Integer getBatchScopeSize() {
+        BSF_Workday_Direct_Submission_Config__mdt config = getConfig();
+        Integer defaultSize = 200;
+        if (config == null || config.sked_Ops_Record_Batch_Scope_Size__c == null) {
+            return defaultSize;
+        }
+        Integer batchSize = config.sked_Ops_Record_Batch_Scope_Size__c.intValue();
+        if (batchSize < 1) {
+            return 1;
+        }
+        if (batchSize > 2000) {
+            return 2000;
+        }
+        return batchSize;
     }
 
 }
