@@ -3302,7 +3302,7 @@ class DriveHelper {
       return result;
     }
 
-    const validateLockedResourceUnavailable = (drive, { availableAssetsInfo = {} }) => {
+    const validateLockedResourceUnavailable = (drive, { availabilityData = {} }) => {
       let result = {
         contention: DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
         violated: false,
@@ -3310,21 +3310,28 @@ class DriveHelper {
         data: {}
       }
 
-      const possibleAllocations = availableAssetsInfo.possibleAllocations || [];
-      const unavailableResourceIds = new Set(
-        possibleAllocations
-          .filter(posAl => (posAl.exceptionLog || []).length > 0)
-          .map(posAl => posAl.resourceId)
-      );
+      const possibleAllocations = availabilityData.possibleAllocations || [];
+      const lockedJobAllocations = [];
+      (drive.driveShifts || []).forEach(driveShift => {
+        (driveShift.jobs || []).forEach(job => {
+          (job.jobAllocations || [])
+            .filter(ja => ja.status !== JOB_ALLOCATION_STATUS.DELETED)
+            .filter(ja => ja.isLocked || ja.locked)
+            .forEach(ja => {
+              lockedJobAllocations.push({
+                jobId: job.id,
+                resourceId: ja.resourceId
+              });
+            });
+        });
+      });
 
-      const { lockedVehicles } = this.getCurrentAssignedVehicles(drive);
-      const { lockedEquipments } = this.getCurrentAssignedEquipments(drive);
-      const { lockedStaff } = this.getCurrentLockedStaff(drive);
-      const allLockedResources = [...lockedVehicles, ...lockedEquipments, ...lockedStaff];
+      const hasUnavailableLocked = lockedJobAllocations.some(lockedJa => {
+        const posAl = possibleAllocations.find(pa => pa.jobId === lockedJa.jobId && pa.resourceId === lockedJa.resourceId);
+        return posAl && (posAl.exceptionLog || []).length > 0;
+      });
 
-      const unavailableLockedResources = allLockedResources.filter(r => unavailableResourceIds.has(r.id));
-
-      result.violated = unavailableLockedResources.length > 0;
+      result.violated = hasUnavailableLocked;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE);
       return result;
     }

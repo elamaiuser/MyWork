@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Role_Certification_Match__c</fullName>
     <defaultValue>false</defaultValue>
-    <externalId>false</externalId>
     <label>Role / Certification Match</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

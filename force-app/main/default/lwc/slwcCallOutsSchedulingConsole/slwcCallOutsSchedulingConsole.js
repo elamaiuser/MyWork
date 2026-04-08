@@ -27,7 +27,8 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
     { label: 'Resource', sortable: true, sortField: 'resourceName', fieldName: 'resourceRecordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'resourceName' }, target: '_blank'} },
     { label: 'Call Out Type', sortable: true, fieldName: 'callOutType', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'Call Out Reason Code', sortable: true, fieldName: 'callOutReasonCode', type: 'text', hideDefaultActions: true, wrapText: true },
-    { label: 'Status', sortable: true, fieldName: 'status', type: 'text', hideDefaultActions: true, wrapText: true }
+    { label: 'Status', sortable: true, fieldName: 'status', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Workday Sync Message',sortable: true,fieldName: 'workdaySyncMessage',type: 'text',hideDefaultActions: true,wrapText: true}
   ];
 
   ACTIVITY_COLUMNS = [
@@ -53,7 +54,8 @@ export default class SlwcCallOutsSchedulingConsole extends LightningElement {
     { label: 'Resource', sortable: true, sortField: 'resourceName', fieldName: 'resourceRecordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'resourceName' }, target: '_blank'} },
     { label: 'Call Out Type', sortable: true, fieldName: 'callOutType', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'Call Out Reason Code', sortable: true, fieldName: 'callOutReasonCode', type: 'text', hideDefaultActions: true, wrapText: true },
-    { label: 'Status', sortable: true, fieldName: 'status', type: 'text', hideDefaultActions: true, wrapText: true }
+    { label: 'Status', sortable: true, fieldName: 'status', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Workday Sync Message',sortable: true,fieldName: 'workdaySyncMessage',type: 'text',hideDefaultActions: true,wrapText: true}
   ];
 
   initialized = false;

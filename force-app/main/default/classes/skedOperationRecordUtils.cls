@@ -3,14 +3,15 @@ public class skedOperationRecordUtils {
     public static final integer THRESHOLD_MINUTES_TO_REDUCE_LUNCH_BREAK = 360;
     
     public static List<sked_Operation_Record__c> getOpsRecords(Set<Id> recordIds) {
-        return [
+        List<sked_Operation_Record__c> result = [
             SELECT Id, Name, sked_Drive__c, sked_Drive__r.sked_UFID__c, sked_Drive__r.sked_Drive_Date__c,
-                sked_Donor_Ambassadors_Actual__c, sked_Actual_Drive_Start__c, sked_Actual_Drive_End__c,
+                sked_Drive__r.sked_Type_of_Drive__c, sked_Donor_Ambassadors_Actual__c, sked_Actual_Drive_Start__c, sked_Actual_Drive_End__c,
                 sked_Power_Red_Machines_Sent__c, sked_Power_Red_Machines_Used__c, 
                 sked_Drive__r.sked_Projected_Registered_Donors__c, sked_Drive_Issues__c,
                 sked_Late_End_Reason__c, sked_Late_End_Drive_Approved_By__c,
                 sked_Submitted_By__r.sked_Employee_ID__c, sked_Submitted_By__r.sked__Email__c,
                 sked_Locked__c, sked_ShiftID_Integer__c, sked_Status__c, sked_Drive__r.sked_Status__c,
+                sked_Workday_Submission_Status__c, sked_Workday_Submission_Attempt__c, sked_WD_Last_Submission_Date__c,
                 (SELECT Id, sked_Job__r.sked__Actual_Start__c, 
                  sked_Job__r.sked__Actual_End__c,
                  sked_Job__r.sked__Location__r.sked_Room_Size__c,
@@ -26,11 +27,13 @@ public class skedOperationRecordUtils {
                  sked_Resource__r.sked_First_Name__c, sked_Resource__r.sked_eBDR_ID__c,
                  sked_Added_Staff__c, sked_Role__c, sked_Actual_Shift_Start__c,
                  sked_Actual_Shift_End__c, sked_No_Meal__c, sked_Premiums_Op_Pay__c, sked_Actual_Roles__c,
-                 sked_Absent__c, sked_Timezone__c
+                 sked_Absent__c, sked_Timezone__c, sked_Workday_Submission_Status__c,
+                 sked_Time_Already_Existed_In_Workday__c
                  FROM sked_Operation_Record_Staff__r)
             FROM sked_Operation_Record__c
             WHERE Id IN :recordIds
         ];
+        return result;
     }
 
     public static List<skedOpsRecordApiData.opsRecordRequest> getOpsRecordRequests(List<sked_Operation_Record__c> opRecords) {
@@ -103,8 +106,23 @@ public class skedOperationRecordUtils {
                 request.maximumPossibleHH = 1;
                 request.maximumPossibleBeds = opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c != NULL ? Integer.valueOf(opRecordStaff.sked_Job__r.sked__Location__r.sked_Maximum_Beds__c) : 1;
                 request.lockRecord = true;
-                request.lockedByEmployeeId = skedTriggerHub_Cache.getCurrentUserResource().sked_Employee_ID__c;
-                request.lockedByEmployeeEmail = skedTriggerHub_Cache.getCurrentUserResource().sked__Email__c;
+                // Use the original submitter's employee id/email when available (as we are doing submission later by system),
+                // otherwise fall back to the current user's linked resource.
+                if (opRecord.sked_Submitted_By__r != null) {
+                    request.lockedByEmployeeId = opRecord.sked_Submitted_By__r.sked_Employee_ID__c;
+                    request.lockedByEmployeeEmail = opRecord.sked_Submitted_By__r.sked__Email__c;
+                } else {
+                    sked__Resource__c currentRes = null;
+                    try {
+                        currentRes = skedTriggerHub_Cache.getCurrentUserResource();
+                    } catch (Exception e) {
+                        // If there's no current user resource, leave lockedBy* blank
+                    }
+                    if (currentRes != null) {
+                        request.lockedByEmployeeId = currentRes.sked_Employee_ID__c;
+                        request.lockedByEmployeeEmail = currentRes.sked__Email__c;
+                    }
+                }
                 request.lateEndDriveReason = !string.isBlank(opRecord.sked_Late_End_Reason__c) ? opRecord.sked_Late_End_Reason__c : ''; 
                 request.lateEndDriveApprovedBy = !string.isBlank(opRecord.sked_Late_End_Drive_Approved_By__c) ? opRecord.sked_Late_End_Drive_Approved_By__c : '';  
                 request.goal = 0;
