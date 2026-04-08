@@ -373,7 +373,9 @@ public class skedConstants {
     public static final string TAG_FIXED_SITE = 'Fixed Site';
     public static final string TAG_MOBILE = 'Mobile';
     public static final string TAG_REAL_ID = 'REAL ID';
-
+    public static final string TAG_DRIVER = 'Driver';
+    public static final string TAG_DRIVER_DOT = 'Driver - DOT';
+    public static final string TAG_DRIVER_CDL = 'Driver CDL B';
 
     public static final string TAG_ROLE_STATUS_ACTIVE = 'Active';
     public static final string TAG_ROLE_STATUS_INACTIVE = 'Inactive';
