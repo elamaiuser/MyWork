@@ -7,10 +7,12 @@
         <members>DriveTriggerService</members>
         <members>DriveTriggerHandler</members>
         <members>TaskTriggerTest</members>
+        <members>BSFTaskChecklistTriggerHandler</members>
 		<name>ApexClass</name>
     </types>
     <types>
         <members>Task_Checklist_Setting_mdt.Subject__c</members>
+        <members>Task_Report_Link__mdt.Task_Type__c</members>
 		<name>CustomField</name>
     </types>
     <types>
@@ -106,6 +108,32 @@
 		<members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
 		<members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
 		<members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
+        <members>Task_Report_Link.Drive_Worksheet_Report</members>
+        <members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
+        <members>Task_Report_Link.After_Drive_Analysis</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer</members>
+        <members>Task_Report_Link.Ferritin_Deferrals</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results</members>
+        <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+        <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+        <members>Task_Report_Link.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link.DRMS_Audit_report</members>
+        <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
+        <members>Task_Report_Link.APL_Material_Review_and_Approval_Form</members>
+        <members>Task_Report_Link.Blood_Drive_Ambassador_Playbook</members>
+        <members>Task_Report_Link.In_Memory_of_In_Honor_of_Resource_Suppor</members>
+        <members>Task_Report_Link.Managing_Donor_Appointment_Playbook</members>
+        <members>Task_Report_Link.Request_Marketing_Communications_Suppo</members>
+        <members>Task_Report_Link.Site_Playbook</members>
+        <members>Task_Report_Link.Sponsor_Planning_Report</members>
+        <members>Task_Report_Link.Temporary_License_Agreement</members>
+        <members>Task_Report_Link.Volunteer_Quick_Guide</members>
 		<name>CustomMetadata</name>
     </types>
 	<version>66.0</version>
