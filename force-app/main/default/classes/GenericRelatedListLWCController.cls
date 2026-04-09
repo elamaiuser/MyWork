@@ -81,11 +81,19 @@ public class GenericRelatedListLWCController {
         Integer safeLimit  = (recordLimit  != null && recordLimit  > 0) ? recordLimit  : 5;
         Integer safeOffset = (recordOffset != null && recordOffset >= 0) ? recordOffset : 0;
         Integer queryLimit = safeLimit + 1;
-
+        
+        String whereClause;
+        
+        if (objDescribe.getName() == 'Task') {
+            whereClause = '(' + safeFilterField + ' IN :recordId OR Delegate__c IN :recordId)';
+        } else {
+            whereClause = safeFilterField + ' IN :recordId';
+        }
+        
         String safeQuery =
             'SELECT '    + String.join(safeSelectFields, ', ') +
             ' FROM '     + objDescribe.getName() +
-            ' WHERE '    + safeFilterField + ' IN :recordId' +
+            ' WHERE '    + whereClause +
             additionalWhereClause +
             ' ORDER BY ' + safeOrderBy +
             ' LIMIT :queryLimit OFFSET :safeOffset';
