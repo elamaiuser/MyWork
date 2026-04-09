@@ -11,6 +11,7 @@ export class AvailabilityMappingConfigFactory {
         mappingConfig.addFieldConfig('Id', 'id', MAPPING_TYPE.direct);        
         mappingConfig.addFieldConfig('Name', 'name', MAPPING_TYPE.direct);
         mappingConfig.addFieldConfig('sked_Custom_Status__c', 'status', MAPPING_TYPE.direct);
+        mappingConfig.addFieldConfig('sked_Workday_Sync_Message__c', 'workdaySyncMessage', MAPPING_TYPE.direct);
         mappingConfig.addFieldConfig('sked__Finish__c', 'finish', MAPPING_TYPE.direct);
         mappingConfig.addFieldConfig('sked_Finish_Date__c', 'endDate', MAPPING_TYPE.direct);
         mappingConfig.addFieldConfig('sked__Is_Available__c', 'isAvailable', MAPPING_TYPE.direct);

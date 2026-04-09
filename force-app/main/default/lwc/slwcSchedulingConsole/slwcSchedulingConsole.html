@@ -72,6 +72,11 @@
                             <c-slwc-call-outs-scheduling-console if:true={showCallOutsTab}></c-slwc-call-outs-scheduling-console>
                         </lightning-tab>
                     </template>
+                    <template if:true={vehicleReplacementTabEnabled}>
+                        <lightning-tab label="Vehicle Replacement" value={TABS.VEHICLE_REPLACEMENT} onactive={handleChangeTab}>
+                            <c-slwc-vehicle-replacement-console if:true={showVehicleReplacementTab}></c-slwc-vehicle-replacement-console>
+                        </lightning-tab>
+                    </template>
                 </lightning-tabset>
             </div>
         </div>
