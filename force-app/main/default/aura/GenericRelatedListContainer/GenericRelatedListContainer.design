@@ -1,12 +1,15 @@
 <design:component>
-	<design:attribute name="headerName" label="Title" />
-    
-    <design:attribute name="SOQLQuery" label="SOQL Query" />
-    <design:attribute name="ColumnName" label="Column Name" />  
+    <design:attribute name="headerName" label="Title" />
+    <design:attribute name="childObjectName" label="Child Object API Name" />
+    <design:attribute name="fieldsApiNames" label="Field API Names" />
+    <design:attribute name="filterFieldApiName" label="Filter Field API Name" />
+    <design:attribute name="additionalFilter" label="Additional Filter" />
+    <design:attribute name="ColumnName" label="Column Name" /> 
     <design:attribute name="iconName" label="Icon Name" />
     <design:attribute name="recordButton" label="Record Action Button"/>
     <design:attribute name="hyperLinkColumn" label="Column with Hyperlink"/>
+    <design:attribute name="fieldwithOrderBy" label="Field with Order By"/>
     <design:attribute name="dateFormatType" label="Date Format Type" datasource="Custom Date Format,SF OOTB Date Format,Jan-1-2020"/>
-    <design:attribute name="loggedinuserid" label="Pass Logged in User Id"/> 
-    
+    <design:attribute name="loggedinuserid" label="Pass Logged in User Id"/>
+    <design:attribute name="SOQLQuery" label="SOQL Query (Legacy - Do Not Use)" />
 </design:component>

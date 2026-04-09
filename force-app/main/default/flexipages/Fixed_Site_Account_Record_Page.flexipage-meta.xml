@@ -262,6 +262,52 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>additionalFilter</name>
+                    <value>Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>childObjectName</name>
+                    <value>opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columnName</name>
+                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>dateFormatType</name>
+                    <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>AccountId</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>headerName</name>
+                    <value>Draft Booking Gap Opportunities</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hyperLinkColumn</name>
+                    <value>Blood Drive Opportunity Name</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>iconName</name>
+                    <value>standard:opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>recordButton</name>
+                    <value>Edit,Delete</value>
+                </componentInstanceProperties>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
@@ -381,6 +427,59 @@
                 </componentInstanceProperties>
                 <componentName>GenericRelatedList</componentName>
                 <identifier>GenericRelatedList2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>additionalFilter</name>
+                    <value>StageName = &apos;Cancelled&apos;</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>childObjectName</name>
+                    <value>opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columnName</name>
+                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>dateFormatType</name>
+                    <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldwithOrderBy</name>
+                    <value>Drive_Date__c ASC</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>AccountId</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>headerName</name>
+                    <value>Cancelled Blood Drives</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hyperLinkColumn</name>
+                    <value>Drive Name</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>iconName</name>
+                    <value>standard:opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>objectApiName</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>recordButton</name>
+                    <value>Edit,Delete</value>
+                </componentInstanceProperties>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-1451e1df-eedf-4426-91c5-4aed3eab7972</name>
