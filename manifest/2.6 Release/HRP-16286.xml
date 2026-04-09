@@ -7,12 +7,16 @@
 		<name>LightningComponentBundle</name>
 	</types>
 	<types>
-    	<members>skedMobileCallOutContactInformationForm</members>
+    <members>skedMobileCallOutContactInformationForm</members>
 		<name>ApexPage</name>
 	</types>
 	<types>
-    	<members>skedMobileCallOutContactInformationForm</members>
+    <members>skedMobileCallOutContactInformationForm</members>
 		<name>AuraDefinitionBundle</name>
 	</types>
+	<types>        
+    <members>BSF_Access_Control_Rule.HRP_16286_Page_Permission_Set</members>        
+    <name>CustomMetadata</name>
+  </types>
     <version>64.0</version>
 </Package>

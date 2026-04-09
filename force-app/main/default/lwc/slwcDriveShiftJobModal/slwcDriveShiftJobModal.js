@@ -467,8 +467,8 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 return false;
             }
         }
-        
-          if(this.isVolunteerResource && this.action === 'create') {
+
+         if(this.isVolunteerResource && this.action === 'create') {
              const existed = this.driveShift.jobs?.find(job => job.volunteerRole === this.job.volunteerRole);
              if(existed) {
                 this.errorMessages.push({
@@ -476,7 +476,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 })
                 return false;
             }
-        }
+        }        
 
         return allValid && !this.errorMessages.length;
     }

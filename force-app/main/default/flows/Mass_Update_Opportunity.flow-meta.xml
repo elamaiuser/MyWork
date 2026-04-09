@@ -3,8 +3,8 @@
     <actionCalls>
         <name>Format_DateTime</name>
         <label>Format DateTime</label>
-        <locationX>182</locationX>
-        <locationY>1274</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <actionName>DateTimeFormat</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -18,6 +18,7 @@
             </value>
         </inputParameters>
         <nameSegment>DateTimeFormat</nameSegment>
+        <offset>0</offset>
         <outputParameters>
             <assignToReference>formattedDateTime1</assignToReference>
             <name>output</name>
@@ -26,8 +27,8 @@
     <actionCalls>
         <name>Update_Opportunity_using_Apex_and_Batch</name>
         <label>Update Opportunity using Apex and Batch</label>
-        <locationX>182</locationX>
-        <locationY>2906</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <actionName>MassUpdateOpportunity</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -170,13 +171,15 @@
             </value>
         </inputParameters>
         <nameSegment>MassUpdateOpportunity</nameSegment>
+        <offset>0</offset>
     </actionCalls>
-    <apiVersion>52.0</apiVersion>
+    <apiVersion>66.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_Start_End_Time</name>
         <label>Assign Start &amp; End Time</label>
-        <locationX>182</locationX>
-        <locationY>2498</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>txt_tmpFlowStartTime</assignToReference>
             <operator>Assign</operator>
@@ -198,8 +201,8 @@
     <assignments>
         <name>Canellation_by_Arch</name>
         <label>Canellation by Arch</label>
-        <locationX>50</locationX>
-        <locationY>1706</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>StageCancellationReason</assignToReference>
             <operator>Assign</operator>
@@ -214,8 +217,8 @@
     <assignments>
         <name>DateTime_assignment</name>
         <label>Final DateTime Assignment after Apex Method</label>
-        <locationX>182</locationX>
-        <locationY>1382</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>finalFormatedDateTime</assignToReference>
             <operator>Assign</operator>
@@ -230,8 +233,8 @@
     <assignments>
         <name>Fixed_Site_Variable_Assignment</name>
         <label>Fixed Site Variable Assignment</label>
-        <locationX>50</locationX>
-        <locationY>1082</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>Is_Fixed_Site_Opportunities</assignToReference>
             <operator>Assign</operator>
@@ -246,8 +249,8 @@
     <assignments>
         <name>Opportunity_Record_Type_Id_Assignment</name>
         <label>Opportunity Record Type Id Assignment</label>
-        <locationX>270</locationX>
-        <locationY>674</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>Opp_Record_Type_Id</assignToReference>
             <operator>Assign</operator>
@@ -429,8 +432,8 @@
     <decisions>
         <name>Check_Account_Is_Fixed_Type</name>
         <label>Check Account Is Fixed Type</label>
-        <locationX>182</locationX>
-        <locationY>974</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Format_DateTime</targetReference>
         </defaultConnector>
@@ -454,8 +457,8 @@
     <decisions>
         <name>Check_if_any_opp_is_selected</name>
         <label>Check if any opp is selected</label>
-        <locationX>512</locationX>
-        <locationY>242</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>No_Opp_Selected_Screen</targetReference>
         </defaultConnector>
@@ -479,8 +482,8 @@
     <decisions>
         <name>Check_If_DR_Proc_Proj_Dependency</name>
         <label>Check If DR Proc Proj Dependency</label>
-        <locationX>182</locationX>
-        <locationY>2198</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Assign_Start_End_Time</targetReference>
         </defaultConnector>
@@ -518,8 +521,8 @@
     <decisions>
         <name>Check_If_End_Time_Gt_Start_Time</name>
         <label>Check If End Time &gt; Start Time</label>
-        <locationX>182</locationX>
-        <locationY>2606</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Update_Opportunity_using_Apex_and_Batch</targetReference>
         </defaultConnector>
@@ -557,8 +560,8 @@
     <decisions>
         <name>Check_If_User_Input_Data</name>
         <label>Check If User Input Data</label>
-        <locationX>182</locationX>
-        <locationY>3014</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Screen_No_User_Input</targetReference>
         </defaultConnector>
@@ -813,8 +816,8 @@
     <decisions>
         <name>Check_If_WB_Proc_Proj_Dependency</name>
         <label>Check If WB Proc Proj Dependency</label>
-        <locationX>182</locationX>
-        <locationY>1898</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Check_If_DR_Proc_Proj_Dependency</targetReference>
         </defaultConnector>
@@ -852,8 +855,8 @@
     <decisions>
         <name>Stage</name>
         <label>Check Stage value</label>
-        <locationX>182</locationX>
-        <locationY>1598</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Check_If_WB_Proc_Proj_Dependency</targetReference>
         </defaultConnector>
@@ -1005,6 +1008,11 @@
         <scale>2</scale>
     </formulas>
     <formulas>
+        <name>OnlineDonorLengthValidationMessage</name>
+        <dataType>String</dataType>
+        <expression>{!$Label.Online_Donor_Message_Length_Error}</expression>
+    </formulas>
+    <formulas>
         <name>oppo_num_anti_proce_proj</name>
         <dataType>Number</dataType>
         <expression>{!oppo_num_Anti_proc_proj}</expression>
@@ -1016,8 +1024,8 @@
     <loops>
         <name>Get_Opportunity_Ids</name>
         <label>Get Opportunity Ids</label>
-        <locationX>182</locationX>
-        <locationY>458</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <collectionReference>Get_Opportunities</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -1049,8 +1057,8 @@
     <recordLookups>
         <name>Get_Fixed_Record_ID</name>
         <label>Get Fixed Record ID</label>
-        <locationX>182</locationX>
-        <locationY>866</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Check_Account_Is_Fixed_Type</targetReference>
@@ -1077,8 +1085,8 @@
     <recordLookups>
         <name>Get_Opportunities</name>
         <label>Get Opportunities</label>
-        <locationX>182</locationX>
-        <locationY>350</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Opportunity_Ids</targetReference>
@@ -1098,8 +1106,8 @@
     <recordLookups>
         <name>Get_Opportunity_Record_Type</name>
         <label>Get Opportunity Record Type</label>
-        <locationX>270</locationX>
-        <locationY>566</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Opportunity_Record_Type_Id_Assignment</targetReference>
@@ -1122,8 +1130,8 @@
     <screens>
         <name>Display_WBProcProj_ChgRn_Error</name>
         <label>Screen WBProcProj ChgRn Error</label>
-        <locationX>50</locationX>
-        <locationY>2006</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -1134,6 +1142,14 @@
             <name>Display_WBProcProcProj_ChgRn_ErrorMsg</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(199, 5, 5);&quot;&gt;Whole Blood Projected Procedure Change Reason is mandatory when &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(199, 5, 5);&quot;&gt;Whole Blood Projected Procedure is set. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(11, 22, 234);&quot;&gt;Please go to &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(31, 31, 31);&quot;&gt;Previous &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(11, 22, 234);&quot;&gt;step to specify a value&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1141,8 +1157,8 @@
     <screens>
         <name>DisplayOppo1</name>
         <label>Display Opportunities Selected</label>
-        <locationX>50</locationX>
-        <locationY>3122</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1150,6 +1166,14 @@
             <name>DisplaySelectedOpportunity</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(11, 19, 250);&quot;&gt;Request to mass update selected opportunities has been submitted. Please wait for few minutes for the process to get completed.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1157,8 +1181,8 @@
     <screens>
         <name>Input_Values_to_Mass_Update</name>
         <label>Input Values to Mass Update</label>
-        <locationX>182</locationX>
-        <locationY>1490</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -1169,6 +1193,14 @@
             <name>Header</name>
             <fieldText>&lt;p&gt;&lt;b style=&quot;font-size: 18px;&quot;&gt;Enter Values to Mass Update&lt;/b&gt;&lt;b style=&quot;font-size: 16px;&quot;&gt;﻿&lt;/b&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_Start_Time</name>
@@ -1178,6 +1210,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_End_Time</name>
@@ -1187,6 +1227,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Anticipated_Registered_Donors</name>
@@ -1196,6 +1244,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Anticipated_Registered_Donors_Change_Reason</name>
@@ -1207,6 +1263,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_WB_Proc_Proj</name>
@@ -1216,6 +1280,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_WB_Proc_Proj_Chg_Reason</name>
@@ -1227,6 +1299,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_DR_Proc_Proj</name>
@@ -1236,6 +1316,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_DR_Proc_Proj_Chg_Reason</name>
@@ -1247,6 +1335,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_PP_Proj_Proc</name>
@@ -1256,6 +1352,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_Platelet_Proc_Proj</name>
@@ -1265,6 +1369,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_2RC_Assets</name>
@@ -1274,6 +1386,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_Plasma_Assets</name>
@@ -1283,6 +1403,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_num_Platelet_Assets</name>
@@ -1292,6 +1420,14 @@
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
             <scale>0</scale>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_Stage</name>
@@ -1303,6 +1439,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Initiated_By_oppty</name>
@@ -1313,6 +1457,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -1346,6 +1498,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -1365,6 +1525,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>oppo_txt_Online_Donor_Msg</name>
@@ -1373,6 +1541,18 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+            <validationRule>
+                <errorMessage>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;{!OnlineDonorLengthValidationMessage}&lt;/span&gt;&lt;/p&gt;</errorMessage>
+                <formulaExpression>LEN({!oppo_txt_Online_Donor_Msg}) &lt;=100</formulaExpression>
+            </validationRule>
         </fields>
         <fields>
             <name>oppo_txt_Calendar_Desc</name>
@@ -1382,6 +1562,14 @@
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Drive_Keyword</name>
@@ -1390,6 +1578,14 @@
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -1407,8 +1603,8 @@
     <screens>
         <name>Mass_Update_Opportunity_Errot</name>
         <label>Mass Update Opportunity Errot</label>
-        <locationX>578</locationX>
-        <locationY>3014</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1416,6 +1612,14 @@
             <name>display_Error</name>
             <fieldText>&lt;p&gt;&lt;code style=&quot;font-family: Monaco, Consolas, &amp;quot;Bitstream Vera Sans Mono&amp;quot;, &amp;quot;Courier New&amp;quot;, Courier, monospace; background-color: initial; color: rgb(40, 34, 211);&quot;&gt;Sorry, but you can’t opportunity update records at this time.&lt;/code&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;code style=&quot;font-family: Monaco, Consolas, &amp;quot;Bitstream Vera Sans Mono&amp;quot;, &amp;quot;Courier New&amp;quot;, Courier, monospace; background-color: initial; color: black;&quot;&gt;Please inform IT Department of the same and include this error message:&lt;/code&gt;&lt;/p&gt;&lt;p&gt;&lt;code style=&quot;font-family: Monaco, Consolas, &amp;quot;Bitstream Vera Sans Mono&amp;quot;, &amp;quot;Courier New&amp;quot;, Courier, monospace; background-color: initial; color: rgb(182, 16, 21);&quot;&gt;{!$Flow.FaultMessage}&lt;/code&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1423,8 +1627,8 @@
     <screens>
         <name>No_Opp_Selected_Screen</name>
         <label>No Opp Selected Screen</label>
-        <locationX>842</locationX>
-        <locationY>350</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1432,6 +1636,14 @@
             <name>No_Opp_Selected_Text</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(247, 10, 10);&quot;&gt;No Opportunity is selected for mass update. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(8, 37, 255);&quot;&gt;Please apply required filters and select opportunities to run mass update for. {!recordId}&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1439,8 +1651,8 @@
     <screens>
         <name>Screen_DRProcProj_ChgRn_Error</name>
         <label>Screen DRProcProj ChgRn Error</label>
-        <locationX>50</locationX>
-        <locationY>2306</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -1451,6 +1663,14 @@
             <name>Display_DRProcProj_ChgRn_ErrorMsg</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(199, 5, 5);&quot;&gt;Double Red Projected Procedure Change Reason is mandatory when Double Red&lt;/span&gt;&lt;span style=&quot;color: rgb(199, 5, 5); background-color: rgb(255, 255, 255);&quot;&gt; Projected Procedure is set. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(11, 22, 234); background-color: rgb(255, 255, 255);&quot;&gt;Please go to &lt;/span&gt;&lt;b style=&quot;color: rgb(31, 31, 31); background-color: rgb(255, 255, 255);&quot;&gt;Previous &lt;/b&gt;&lt;span style=&quot;color: rgb(11, 22, 234); background-color: rgb(255, 255, 255);&quot;&gt;step to specify a value&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1458,8 +1678,8 @@
     <screens>
         <name>Screen_EndTime_Greater_StartTime_Error</name>
         <label>Screen_EndTime_Greater_StartTime_Error</label>
-        <locationX>50</locationX>
-        <locationY>2714</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -1470,6 +1690,14 @@
             <name>Display_EndTime_Greater_StartTime_ErrorMsg</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(173, 7, 28); font-size: 14px;&quot;&gt;You selected an End Time &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(173, 7, 28); font-size: 14px;&quot;&gt;({!oppo_txt_End_Time}) &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(173, 7, 28); font-size: 14px;&quot;&gt;that is prior or equal to the Start Time &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(173, 7, 28); font-size: 14px;&quot;&gt;({!oppo_txt_Start_Time}).&lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(173, 7, 28); font-size: 14px;&quot;&gt;  &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(8, 12, 247); font-size: 14px;&quot;&gt;Please make sure the End Time is always after the Start Time. &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(11, 22, 234);&quot;&gt;Please go to &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(31, 31, 31);&quot;&gt;Previous &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(11, 22, 234);&quot;&gt;step to specify correct values.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1477,8 +1705,8 @@
     <screens>
         <name>Screen_No_User_Input</name>
         <label>No User Input</label>
-        <locationX>314</locationX>
-        <locationY>3122</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1486,6 +1714,14 @@
             <name>Display_No_User_Input</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(169, 21, 21);&quot;&gt;None of the Fields were changed by User.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(68, 26, 255);&quot;&gt;Skipping Update&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -1493,8 +1729,8 @@
     <screens>
         <name>Search_Panel_Opportunity_Filtering_Screen</name>
         <label>Search Panel &amp; Opportunity Filtering Screen</label>
-        <locationX>512</locationX>
-        <locationY>134</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1505,6 +1741,14 @@
             <name>Search_Panel_Header</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 18px;&quot;&gt;Search Panel&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Search_Panel</name>
@@ -1598,19 +1842,27 @@
                 <assignToReference>varSelectedSiteOperationType</assignToReference>
                 <name>tempSiteOperationType</name>
             </outputParameters>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Next</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
     <start>
-        <locationX>386</locationX>
+        <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Search_Panel_Opportunity_Filtering_Screen</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <textTemplates>
         <name>dataTime_flow</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>

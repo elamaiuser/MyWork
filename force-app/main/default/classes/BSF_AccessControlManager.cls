@@ -215,8 +215,11 @@ public without sharing class BSF_AccessControlManager {
             }
         }
        
-        List<sObject> recordsToInsert = new List<sObject>();
-        List<sObject> recordsToUpdate = new List<sObject>();
+        // FIX: Separate lists for specific sObject types to prevent DML chunking limit errors
+        List<ObjectPermissions> objPermsToInsert = new List<ObjectPermissions>();
+        List<ObjectPermissions> objPermsToUpdate = new List<ObjectPermissions>();
+        List<FieldPermissions> fldPermsToInsert = new List<FieldPermissions>();
+        List<FieldPermissions> fldPermsToUpdate = new List<FieldPermissions>();
 
         for (BSF_Access_Control_Rule__mdt rule : rules) {
             String sObjectName = String.isBlank(rule.SObject_API_Name__c) ? '' : rule.SObject_API_Name__c.trim();
@@ -233,11 +236,11 @@ public without sharing class BSF_AccessControlManager {
                     String key = permSetId + '-' + sObjectName;
                     ObjectPermissions op = existingObjectPerms.get(key);
                     if (op == null) {
-                        recordsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
+                        objPermsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
                         summary.objInserted++;
                     } else if (op.PermissionsRead!=rule.PermissionsRead__c || op.PermissionsCreate!=rule.PermissionsCreate__c || op.PermissionsEdit!=rule.PermissionsEdit__c || op.PermissionsDelete!=rule.PermissionsDelete__c) {
                         op.PermissionsRead=rule.PermissionsRead__c; op.PermissionsCreate=rule.PermissionsCreate__c; op.PermissionsEdit=rule.PermissionsEdit__c; op.PermissionsDelete=rule.PermissionsDelete__c;
-                        recordsToUpdate.add(op);
+                        objPermsToUpdate.add(op);
                         summary.objUpdated++;
                     }
                 } else {
@@ -267,19 +270,24 @@ public without sharing class BSF_AccessControlManager {
                         String key = permSetId + '-' + fullFieldApiName;
                         FieldPermissions fp = existingFieldPerms.get(key);
                         if (fp == null) {
-                            recordsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
+                            fldPermsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
                             summary.fldInserted++;
                         } else if (fp.PermissionsRead != rule.PermissionsRead__c || fp.PermissionsEdit != effectiveEdit) {
                             fp.PermissionsRead=rule.PermissionsRead__c; fp.PermissionsEdit=effectiveEdit;
-                            recordsToUpdate.add(fp);
+                            fldPermsToUpdate.add(fp);
                             summary.fldUpdated++;
                         }
                     }
                 }
             }
         }
-        executeDml(recordsToInsert, 'insert', summary);
-        executeDml(recordsToUpdate, 'update', summary);
+        
+        // FIX: Execute DML on each specific list independently. 
+        // Your executeDml helper already checks if the list is empty, making this perfectly safe.
+        executeDml(objPermsToInsert, 'insert', summary);
+        executeDml(fldPermsToInsert, 'insert', summary);
+        executeDml(objPermsToUpdate, 'update', summary);
+        executeDml(fldPermsToUpdate, 'update', summary);
     }
 
     /**

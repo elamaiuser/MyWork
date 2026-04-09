@@ -33,11 +33,14 @@ import _getLinkedDrivesResourceIds from '@salesforce/apex/slwcAllocationService.
 import _getPatternResources  from '@salesforce/apex/skedLexResourceController.getPatternResources';
 import _getResourceTemplates  from '@salesforce/apex/skedLexResourceController.getResourceTemplates';
 import _saveCallOut  from '@salesforce/apex/slwcResourceService.saveCallOut';
+import _getVehiclesForCOs from '@salesforce/apex/slwcResourceService.getVehiclesForCOs';
 
 import _cloneOpportunity from '@salesforce/apex/slwcOpportunityService.cloneOpportunity';
 
 import _getLoginUser from '@salesforce/apex/slwcUserService.getLoginUser';
 
+import _getImpactedDrives from '@salesforce/apex/slwcDriveService.getImpactedDrives';
+import _applyVehicleReplacement from '@salesforce/apex/slwcDriveService.applyVehicleReplacement';
 import _dispatchDrives from '@salesforce/apex/slwcDriveService.dispatchDrives';
 import _captureDriveImpact from '@salesforce/apex/slwcDriveService.captureDriveImpact';
 import _searchDriveSite from '@salesforce/apex/slwcDriveService.searchDriveSite';
@@ -121,8 +124,11 @@ class auraService {
   getPatternResources = (params) => this.execute(_getPatternResources, params);
   getResourceTemplates = (params) => this.execute(_getResourceTemplates, params);
   saveCallOut = (params) => this.execute(_saveCallOut, params);
+  getVehiclesForCOs = (params) => this.execute(_getVehiclesForCOs, params);
   cloneOpportunity = (params) => this.execute(_cloneOpportunity, params);
   getLoginUser = (params) => this.execute(_getLoginUser, params);
+  getImpactedDrives = (params) => this.execute(_getImpactedDrives, params);
+  applyVehicleReplacement = (params) => this.execute(_applyVehicleReplacement, params);
   dispatchDrives = (params) => this.execute(_dispatchDrives, params);
   captureDriveImpact = (params) => this.execute(_captureDriveImpact, params);
   searchDriveSite = (params) => this.execute(_searchDriveSite, params);
