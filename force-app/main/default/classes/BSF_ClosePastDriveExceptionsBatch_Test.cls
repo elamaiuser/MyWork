@@ -52,6 +52,14 @@ public class BSF_ClosePastDriveExceptionsBatch_Test {
         );
         insert testJobAllocation;
         
+        sked__Job_Allocation__c allocDeleted =
+            new sked__Job_Allocation__c(
+                sked__Job__c = testJob.Id,
+                sked__Resource__c = testResource.Id,
+                sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            );
+        insert allocDeleted;
+        
         skedHC__Exception__c testException = new skedHC__Exception__c(
             sked_Drive__c = testDrive.Id,
             skedHC__Job_Allocation__c = testJobAllocation.Id,
@@ -61,6 +69,17 @@ public class BSF_ClosePastDriveExceptionsBatch_Test {
             skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
         );
         insert testException;
+
+        skedHC__Exception__c exDeleted =
+            new skedHC__Exception__c(
+                sked_Drive__c = testDrive.Id,
+                skedHC__Job_Allocation__c = allocDeleted.Id,
+                skedHC__Job__c = testJob.Id,
+                skedHC__Resource__c = testResource.Id,
+                sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT,
+                skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN
+            );
+        insert exDeleted;
         
         String cronExp = '0 0 1 * * ?';
         System.schedule('Test BSF Scheduler', cronExp, new BSF_ClosePastDriveExceptionsBatch());
