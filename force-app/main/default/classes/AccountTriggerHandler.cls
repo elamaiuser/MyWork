@@ -107,7 +107,7 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
     }
     
     public override void beforeInsert() {
-         checkRecursive.isNewlyCreatedAccount = true;
+        checkRecursive.isNewlyCreatedAccount = true;
         
         if(super.getTriggerMethodsToBypass().indexOf('updateAccountType') == -1) {
             System.debug('AccountTriggerHandler.beforeInsert() - AccountService.updateAccountType() Executing...');
@@ -222,12 +222,11 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
             System.debug('AccountTriggerHandler.afterInsert() - AccountService.createAccountTeamMembers() Bypassed');
         }
             
-        if(super.getTriggerMethodsToBypass().indexOf('updateBloodDriveOpportunitiesForInternalNameChange') == -1) {
-            System.debug('AccountTriggerHandler.afterUpdate() - AccountService.updateBloodDriveOpportunitiesForInternalNameChange() Executing...');
-            Set<Id> accountIds =AccountService.getInternalNameChangedAccounts((Map<Id, Account>)trigger.oldMap, (List<Account>)trigger.new);
-            AccountService.updateBloodDriveOpportunitiesForInternalNameChangeAsync(accountIds);       
+        if(super.getTriggerMethodsToBypass().indexOf('updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync') == -1) {
+            System.debug('AccountTriggerHandler.afterUpdate() - AccountService.updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync() Executing...');
+            AccountService.updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync((List<Account>)trigger.new, (Map<Id, Account>)trigger.oldMap);       
         }else{
-            System.debug('AccountTriggerHandler.afterUpdate() - AccountService.updateBloodDriveOpportunitiesForInternalNameChange() Bypassed');
+            System.debug('AccountTriggerHandler.afterUpdate() - AccountService.updateBloodDriveOpportunitiesForNameOrInternalNameChangeAsync() Bypassed');
         }
             
             // HRP- 9520/11951 --> Starts Here
@@ -244,7 +243,11 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
             	BSFTaskChecklistTriggerHandler.updateTaskChecklist((List<Account>)trigger.new,(Map<Id,Account>)trigger.oldMap); 
             }
             // HRP- 12142 --> Ends Here
-      }
+       }
+
+        if(super.getTriggerMethodsToBypass().indexOf('handleTaskPlanningPathChange') == -1) {
+            AccountService.handleTaskPlanningPathChange((List<Account>) trigger.new, (Map<Id, Account>) trigger.oldMap);    
+        }  
     }
     
     

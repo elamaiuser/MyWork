@@ -4,6 +4,92 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>createQuickActionName</name>
+                    <value>NewOpportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>lookupFieldName</name>
+                    <value>Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>titleFieldName</name>
+                    <value>Template Blood Drive Opportunity Details</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>updateQuickActionName</name>
+                    <value>Opportunity.Template_Opportunity</value>
+                </componentInstanceProperties>
+                <componentName>console:relatedRecord</componentName>
+                <identifier>console_relatedRecord</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>true</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-8ef781ff-cda7-4e07-93cb-a4b8de5c7567</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>bsfTaskPlanningWizard</componentName>
+                <identifier>c_bsfTaskPlanningWizard</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-76c6e297-f698-457b-8ebf-68824ce12160</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>active</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-8ef781ff-cda7-4e07-93cb-a4b8de5c7567</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.candidateDetails</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-76c6e297-f698-457b-8ebf-68824ce12160</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Task Planning Wizard</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab3</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Type_of_Drive__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Mobile</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-ed8b92db-1868-4b04-874b-0be68143478a</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
@@ -297,23 +383,11 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>createQuickActionName</name>
-                    <value>NewOpportunity</value>
+                    <name>tabs</name>
+                    <value>Facet-ed8b92db-1868-4b04-874b-0be68143478a</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>lookupFieldName</name>
-                    <value>Id</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>titleFieldName</name>
-                    <value>Template Blood Drive Opportunity Details</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>updateQuickActionName</name>
-                    <value>Opportunity.Template_Opportunity</value>
-                </componentInstanceProperties>
-                <componentName>console:relatedRecord</componentName>
-                <identifier>console_relatedRecord</identifier>
+                <componentName>flexipage:tabset</componentName>
+                <identifier>flexipage_tabset3</identifier>
                 <visibilityRule>
                     <criteria>
                         <leftValue>{!Record.Is_Template__c}</leftValue>
@@ -555,6 +629,40 @@
                 </visibilityRule>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>createQuickActionName</name>
+                    <value>NewOpportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>lookupFieldName</name>
+                    <value>Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>titleFieldName</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>updateQuickActionName</name>
+                    <value>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</value>
+                </componentInstanceProperties>
+                <componentName>console:relatedRecord</componentName>
+                <identifier>console_relatedRecord2</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Account_Type__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Military</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Is_Template__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>false</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
         <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
@@ -750,6 +858,16 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-jad8iarf8sc</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>bsfTaskPlanningWizard</componentName>
+                <identifier>c_bsfTaskPlanningWizard2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-4512b637-730d-4818-b860-17b3a7fcbccf</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -955,6 +1073,27 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>customTab5</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-4512b637-730d-4818-b860-17b3a7fcbccf</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Task Planning Wizard</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab4</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.Type_of_Drive__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Mobile</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>

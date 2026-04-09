@@ -14,6 +14,7 @@
  * 12/02/2024				 Barnojit Sharma		  BDO can not be confirmed if DCR or Pending Action is in progress. (HRP-10912)
  * 17/04/2024                Ankit Kundu              Method added as part of HRP-12170
  * 18/10/2024                Priti Jana               Logic for HRP-9815
+ * 03/10/2026                Souvik Mukherjee         HRP-16769 - Uncommenting validateOpportunity() to enable back validation to block multiple Drive Creation against single opportunity 
  ************************************************************************************************************************************************
 */
 public class DriveTriggerHandler extends TriggerHandler{ 
@@ -32,7 +33,7 @@ public class DriveTriggerHandler extends TriggerHandler{
         }
         //Start HRP-11326
         if (super.getTriggerMethodsToBypass().indexOf('validateOpportunity') == -1) {
-            //DriveTriggerService.validateOpportunity((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);
+            DriveTriggerService.validateOpportunity((Map<Id, sked_Drive__c>)trigger.oldMap, (List<sked_Drive__c>)trigger.new);          //Uncommented for HRP-16769
         }
         //End HRP-11326
         //Start HRP-11640
@@ -73,7 +74,7 @@ public class DriveTriggerHandler extends TriggerHandler{
         } //HRP-10359 End
         //Start HRP-11326
         if (super.getTriggerMethodsToBypass().indexOf('validateOpportunity') == -1) {
-            //DriveTriggerService.validateOpportunity(null, (List<sked_Drive__c>)trigger.new);
+            DriveTriggerService.validateOpportunity(null, (List<sked_Drive__c>)trigger.new);                                            //Uncommented for HRP-16769
         }
         //End HRP-11326
     }

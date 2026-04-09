@@ -91,7 +91,8 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             arcRegions: [],
             districts: [],
             territoryCollectionOperations: [],
-            timeBlocks: []
+            timeBlocks: [],
+            isFilteringMissingTimeBlock: false
         },
         selectedMonth: DateTime.local().toISODate()
     }
@@ -165,7 +166,8 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             arcRegions: event.detail.selectedARCRegions,
             districts: event.detail.selectedDistricts,
             territoryCollectionOperations: event.detail.selectedTerritoryCollectionOperations,
-            timeBlocks: event.detail.selectedTimeBlocks
+            timeBlocks: event.detail.selectedTimeBlocks,
+            isFilteringMissingTimeBlock: event.detail.isFilteringMissingTimeBlock
         }
     
         this.handleSearch();

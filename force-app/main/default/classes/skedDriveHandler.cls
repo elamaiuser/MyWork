@@ -791,7 +791,7 @@ public class skedDriveHandler extends skedTriggerHub {
         List<sked_Drive__c> recordsToPopulate = new List<sked_Drive__c>();
         for (sked_Drive__c newRecord : newRecords) {
             sked_Drive__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Drive_Site__c != oldData.sked_Drive_Site__c || newRecord.sked_Account__c != oldData.sked_Account__c) {
+            if (newRecord.sked_Drive_Site__c != oldData.sked_Drive_Site__c || newRecord.sked_Account__c != oldData.sked_Account__c || newRecord.sked_Is_Drive_Name_Mismatched__c) {
                 recordsToPopulate.add(newRecord);
             }
         }

@@ -29,11 +29,12 @@ public class skedTestDataFactory {
         List<sObject> predefinedData = new List<sObject>();
 
         List<string> roles = skedUtils.getPickListValues('sked__Resource__c', 'sked_Roles__c');
-        for (string role : roles) {
+        for (Integer i = 0; i < roles.size(); i++) {
             sked__Tag__c roleTag = new sked__Tag__c(
-                Name = role,
+                Name = roles[i],
                 sked__Type__c = 'Role',
-                sked_Priority__c = 9
+                sked_Priority__c = 9,
+                sked_Role_ID__c = 'SKED-T-' + i
             );
             predefinedData.add(roleTag);
         }
@@ -408,7 +409,7 @@ public class skedTestDataFactory {
         skedAvailabilityPatternData weeklyPatternData = new skedAvailabilityPatternData();
         weeklyPatternData.type = 'weekly';
         weeklyPatternData.repeatWeeks = 1;
-        List<string> weekdays = new List<string> {'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'};
+        List<string> weekdays = new List<string> {'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'};
         weeklyPatternData.days = new List<skedAvailabilityPatternData.dayModel>();
         for (string weekday : weekdays) {
             skedAvailabilityPatternData.dayModel day = new skedAvailabilityPatternData.dayModel();
@@ -433,7 +434,7 @@ public class skedTestDataFactory {
         customPatternData.type = 'custom';
         customPatternData.repeatWeeks = 1;
         customPatternData.lengthDays = 1;
-        List<string> customWeekdays = new List<string> {'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'};
+        List<string> customWeekdays = new List<string> {'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'};
         customPatternData.days = new List<skedAvailabilityPatternData.dayModel>();
         for (integer index = 0; index < customWeekdays.size(); index++) {
             string weekday = customWeekdays.get(index);
@@ -1029,6 +1030,7 @@ public class skedTestDataFactory {
         insert staffSetupExcludedRoles;
 
         Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Territory__c testTerritory1 = (sked_Territory__c)mapTestData.get('testTerritory1');
         sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
         sked__Location__c testLocation2 = (sked__Location__c)mapTestData.get('testLocation2');
         sked_Staging_Location__c testStagingLocation1 = (sked_Staging_Location__c) mapTestData.get('testStagingLocation1');
@@ -1101,6 +1103,7 @@ public class skedTestDataFactory {
 
         sked_Drive__c testDrive1 = new sked_Drive__c(
             Name = 'Test Drive',
+            sked_District__c = testTerritory1.Id,
             sked_Collection_Operation__c = testCollectionOperation1.Id,
             sked_Drive_Date__c = driveStartDate,
             sked_Day_of_Week__c = driveDateDayOfWeek,

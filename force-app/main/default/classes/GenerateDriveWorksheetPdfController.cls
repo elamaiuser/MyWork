@@ -24,6 +24,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
 
     public class ReportWrapper{
         public String driveName {get; set;}
+        public Boolean isFixedSite { get; set; }
         public OprationalInformation oppInfo {get; set;}
         public List<DriveJobInformation> jobInfoList {get; set;}
         public DriveShiftInformation shiftInfo {get; set;}
@@ -437,6 +438,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                         		sked_Drive_Site__r.Site_Smoking_Policy__c, // added for HRP-10052
                                                                         		sked_Drive_Site__r.EAP_Map_Available__c, // added for HRP-12166
                                                                         		sked_Drive_Site__r.AED_Available__c, // added for HRP-12166
+                                                                                sked_Drive_Site__r.sked_Site_Contact_Phone__c, // added for HRP-16313
+                                                                                sked_Opportunity__r.RecordType.DeveloperName, // added for HRP-16313
                                                                                 sked_Status__c,
                                                                                 sked_Open_to_Public__c,
                                                                                 Operational_Notes__c,
@@ -464,16 +467,36 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     rw.driveName = drive.Name;
                     rw.oppInfo.report = shiftNoMap.get(shift.id)+' of '+driveTotalMap.get(drive.Id);
                     rw.oppInfo.accountName = drive.sked_Account__c != null ? drive.sked_Account__r.Name : '';
+
+                    if (drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.RecordType != null
+                                && drive.sked_Opportunity__r.RecordType.DeveloperName == 'Fixed_Site_Opp') {
+                                rw.isFixedSite = true;
+                    }else{
+                        rw.isFixedSite = false;
+                    }
                     
                     //HRP-12505 -start
-					if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
+                    if (drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.RecordType != null
+                                && drive.sked_Opportunity__r.RecordType.DeveloperName == 'Fixed_Site_Opp') {
+                                rw.oppInfo.accountManager = (drive.sked_Drive_Site__c != null 
+                                                            && drive.sked_Drive_Site__r.sked_Site_Contact__c != null)
+                                                            ? drive.sked_Drive_Site__r.sked_Site_Contact__r.Name
+                                                            : '';
+
+                    }else if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
 					   drive.sked_Opportunity__r.Account_Manager__r.Name != null){
 					   rw.oppInfo.accountManager = drive.sked_Opportunity__r.Account_Manager__r.Name;   
 					}else{
 					   rw.oppInfo.accountManager  = '';  
 					}
 
-                    if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
+                    if (drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.RecordType != null
+                                && drive.sked_Opportunity__r.RecordType.DeveloperName == 'Fixed_Site_Opp') {
+                                rw.oppInfo.phone = drive.sked_Drive_Site__c != null
+                                                    ? drive.sked_Drive_Site__r.sked_Site_Contact_Phone__c
+                                                    : '';
+
+                    }else if(drive.sked_Opportunity__c != null && drive.sked_Opportunity__r.Account_Manager__c != null && 
 					   drive.sked_Opportunity__r.Account_Manager__r.WorkPhone__c != null){
 					   rw.oppInfo.phone = drive.sked_Opportunity__r.Account_Manager__r.WorkPhone__c;   
 					}else{
