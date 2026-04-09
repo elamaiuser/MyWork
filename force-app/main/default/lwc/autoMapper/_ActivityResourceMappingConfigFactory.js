@@ -16,6 +16,7 @@ export class ActivityResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Start_Date__c', 'startDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_End__c', 'finish', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_End_Date__c', 'endDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Replacement_For__c', 'replacementFor', MAPPING_TYPE.direct);
 
       mappingConfig.addFieldConfig('sked__Activity__r', 'activity', MAPPING_TYPE.related, 'sked__Activity__c');
       mappingConfig.addFieldConfig('sked__Resource__r', 'resource', MAPPING_TYPE.related, 'sked__Resource__c');

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>AccountService</members>
+		<members>AccountTriggerHandler</members>
+		<members>BSF_TaskPlanningService</members>
+		<members>OpportunityService</members>
+		<members>OpportunityTriggerHandler</members>
+		<name>ApexClass</name>
+	</types>
+    <version>64.0</version>
+</Package>

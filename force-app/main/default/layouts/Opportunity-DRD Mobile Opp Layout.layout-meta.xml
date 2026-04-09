@@ -39,10 +39,6 @@
                 <behavior>Edit</behavior>
                 <field>Is_this_part_of_MultiDay_Drive__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>AcceptblankMilitaryAuthNamePhone__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -384,8 +380,7 @@
                 <field>Parent_Template_Id__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
-        <style>TwoColumnsLeftToRight</style>
+        <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>

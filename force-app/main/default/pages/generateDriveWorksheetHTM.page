@@ -46,9 +46,9 @@
                         <td style=" width: 10%;"> {!shiftObj.oppInfo.wBEligibility} </td>
                     </tr>
                     <tr>
-                        <td style=" width: 10%;font-weight: bold;"> Account Manager: </td>
+                        <td style=" width: 10%;font-weight: bold;"> {!IF(shiftObj.isFixedSite, 'Site Contact:', 'Account Manager:')} </td>
                         <td style=" width: 10%;">{!shiftObj.oppInfo.accountManager} </td>
-                        <td style=" width: 8%;font-weight: bold;"> Phone: </td>
+                        <td style=" width: 8%;font-weight: bold;"> {!IF(shiftObj.isFixedSite, 'Site Contact Phone:', 'Phone:')} </td>
                         <td style=" width: 11%;"> {!shiftObj.oppInfo.phone}</td>
                         <td style=" width: 8%;font-weight: bold;"> Draw Start: </td>
                         <td style=" width: 10%;"> {!shiftObj.oppInfo.drawStart} </td>

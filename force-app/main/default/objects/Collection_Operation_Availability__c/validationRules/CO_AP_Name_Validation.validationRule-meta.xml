@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CO_AP_Name_Validation</fullName>
+    <active>true</active>
+    <description>CO AP Name should be concentration of CO Name, Space, AP Name</description>
+    <errorConditionFormula>Name  &lt;&gt;  Collection_Operation__r.Name  + &apos; &apos;  +  Availability_Pattern__r.Name</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>Name should be concentration of CO Name, Space, AP Name</errorMessage>
+</ValidationRule>

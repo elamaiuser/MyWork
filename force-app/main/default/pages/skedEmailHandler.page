@@ -9,9 +9,9 @@
         </apex:pageBlock>
     </body>
     <script type="text/javascript">
-        let availabilityId = '{!$CurrentPage.parameters.availabilityId}';
-        let token = '{!$CurrentPage.parameters.token}';
-        let action = '{!$CurrentPage.parameters.action}';
+        let availabilityId = '{!JSENCODE($CurrentPage.parameters.availabilityId)}';
+        let token = '{!JSENCODE($CurrentPage.parameters.token)}';
+        let action = '{!JSENCODE($CurrentPage.parameters.action)}';
 
     	function isMobile(){
             if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
@@ -31,7 +31,7 @@
                     if (isMobile()) {
                         window.location.href = 'skedulox://customform/skedPTORequestSubmission'
                     } else {
-                        window.location.href = '{!availabilityUrl}';
+                        window.location.href = '{!JSENCODE(availabilityUrl)}';
                     }
                 }
                 else {

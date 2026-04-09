@@ -2,9 +2,21 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Primary_Phone_Number_New__c</fullName>
     <externalId>false</externalId>
-    <formula>IF( ISPICKVAL(  Primary_Phone__c , &#39;Work Phone&#39;) , OtherPhone ,
-IF( ISPICKVAL( Primary_Phone__c , &#39;Mobile Phone&#39;) , MobilePhone ,
-IF( ISPICKVAL( Primary_Phone__c , &#39;Home Phone&#39;) , HomePhone , &#39;&#39;)))</formula>
+    <formula>IF(
+  ISPICKVAL(Primary_Phone__c, &apos;Work Phone&apos;),
+  &apos;(&apos; &amp; LEFT(OtherPhone, 3) &amp; &apos;) &apos; &amp; MID(OtherPhone, 4, 3) &amp; &apos;-&apos; &amp; RIGHT(OtherPhone, 4),
+
+  IF(
+    ISPICKVAL(Primary_Phone__c, &apos;Mobile Phone&apos;),
+    &apos;(&apos; &amp; LEFT(MobilePhone, 3) &amp; &apos;) &apos; &amp; MID(MobilePhone, 4, 3) &amp; &apos;-&apos; &amp; RIGHT(MobilePhone, 4),
+
+    IF(
+      ISPICKVAL(Primary_Phone__c, &apos;Home Phone&apos;),
+      &apos;(&apos; &amp; LEFT(HomePhone,3) &amp; &apos;) &apos; &amp; MID(HomePhone, 4, 3) &amp; &apos;-&apos; &amp; RIGHT(HomePhone, 4),
+      &apos;&apos;
+    )
+  )
+)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Primary Phone Number</label>
     <required>false</required>

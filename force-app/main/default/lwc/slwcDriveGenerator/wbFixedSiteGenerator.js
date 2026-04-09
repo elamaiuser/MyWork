@@ -1337,7 +1337,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
       this.updateDriveExcessStaffCapacity();
       this.updateDriveRequestedResources();
 
-      if(!skipGenerateSlots) {
+      if(!skipGenerateSlots && !this.masterData.skipGenerateSlots) {
         this.drive.driveShifts.forEach((driveShift) => {
           this.generateShiftSlots(driveShift);
         })
@@ -1398,6 +1398,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
         let originalDriveShift = this.drive.driveShifts[index];
         driveShift.id = originalDriveShift.id;
         driveShift.key = originalDriveShift.key;
+        
+        driveShift.slots = originalDriveShift.slots;
+        driveShift.canGenerateSlots = driveShift.slots?.length > 0;
+        driveShift.default2rbcSlots = originalDriveShift.default2rbcSlots;
+        driveShift.defaultWbSlots = originalDriveShift.defaultWbSlots;
 
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {

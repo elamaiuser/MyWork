@@ -578,14 +578,15 @@ for (sked__Job_Allocation__c alloc : allocCheck) {
             sked__Resource__c = resourcestaff.Id, 
             sked__Start__c = futureDate,
             sked_Start_Date__c = futureDate,
-            sked_Start_Time__c = startTime
+            sked_Start_Time__c = startTime,
+            sked__End__c = Date.today().addDays(30)
         );
         insert testPatternResource1;
             skedSetting.instance.Admin.dateTimeConversion = true;
             
             sked__Activity__c activity = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
+            sked__Type__c = 'Training',
             sked_Activity_Title__c = 'On Call 1',
             sked_Start_Date__c =  Date.today(),
             sked_End_Date__c =  Date.today().addDays(1),
@@ -614,7 +615,7 @@ for (sked__Job_Allocation__c alloc : allocCheck) {
             
             sked__Activity__c activity1 = new sked__Activity__c(
             sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
+            sked__Type__c = 'Training',
             sked_Activity_Title__c = 'On Call 1',
             sked_Start_Date__c =  Date.today().addDays(2),
             sked_End_Date__c =  Date.today().addDays(2),
@@ -682,11 +683,14 @@ for (sked__Activity_Resource__c ar : acts) {
         Biomed_Collection_Op_Center__c testCO = [SELECT Id FROM Biomed_Collection_Op_Center__c LIMIT 1];
         sked_Territory__c division = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'Division' LIMIT 1];
         sked_Territory__c region = [SELECT Id FROM sked_Territory__c WHERE RecordType.Name = 'ARC Region' LIMIT 1];
+        
 
-        Date startDate = Date.today();
-        Date endDate = Date.today().addDays(5);
+
+        Date startDate = Date.today().addDays(-5);
+        Date endDate = Date.today().addDays(30);
         List<String> coList = new List<String>{testCO.Id};
         List<String> driveStatusList = new List<String>{ skedConstants.DRIVE_STATUS_DRAFT };
+            List<String> driveOpList   = new list<string>{'Mobile','Fixed Site','Non Integrated WB'};
 
         Test.startTest();
         
@@ -698,8 +702,11 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
     region.Id,
     coList,
     driveStatusList,
-    false, // violationOnly
-    false   // includeTrades
+    driveOpList,
+    true, // violationOnly
+    true,
+    'driveName',
+    'asc'
 );
 
         Test.stopTest();
@@ -745,4 +752,47 @@ APComplianceReportController.DatableConfigWrapper wrapper = APComplianceReportCo
         System.debug('>>> Paginated Pages Count: ' + pages.size());
         Test.stopTest();
     }
+    @isTest
+static void testSortHelpersCoverage_APCompliance() {
+    List<Map<String, String>> dataList = new List<Map<String, String>>();
+
+    dataList.add(new Map<String, String>{
+        'driveName' => 'bbb',
+        'co' => 'CO 2',
+        'division' => 'Div B',
+        'region' => 'Reg B',
+        'driveLink' => '/lightning/r/sked_Drive__c/001/view',
+        'rowId' => '1'
+    });
+
+    dataList.add(new Map<String, String>{
+        'driveName' => 'AAA',
+        'co' => null,
+        'division' => 'Div A',
+        'region' => 'Reg A',
+        'driveLink' => '/lightning/r/sked_Drive__c/002/view',
+        'rowId' => '2'
+    });
+
+    dataList.add(new Map<String, String>{
+        'driveName' => '  cCc  ',
+        'co' => 'co 1',
+        'division' => null,
+        'region' => 'reg c',
+        'driveLink' => '/lightning/r/sked_Drive__c/003/view',
+        'rowId' => '3'
+    });
+
+    Test.startTest();
+
+    APComplianceReportController.sortDataList(dataList, 'driveName', null);
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'asc');
+    APComplianceReportController.sortDataList(dataList, 'driveName', 'DESC');
+
+    APComplianceReportController.sortDataList(dataList, 'driveLink', 'asc');
+
+    APComplianceReportController.sortDataList(dataList, 'co', '');
+
+    Test.stopTest();
+}
 }
