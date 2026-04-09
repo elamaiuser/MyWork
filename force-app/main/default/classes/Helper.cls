@@ -10,7 +10,7 @@
  * 									the only way the "From" address can be configured for programatically generated emails
  * 									is via org wide email addresses.
  * 08/05/24    Priti Jana           Added new method to get same day porevious year for HRP-12706
- * 04/02/2026   Souvik Mukherjee    Changed Logic to Correct getSameDayOfNextYear method so that Cslculatation of Calender Build Roll Over Drive date is corrected.
+ * 04/02/2026   Souvik Mukherjee    Changed Logic for HRP-17095 to Correct getSameDayOfNextYear method so that Cslculatation of Calender Build Roll Over Drive date is corrected.
  *                                  such that after adding 1 year to the drive that of the drive being rolled if the day of week is same as that of the source drive
  *                                  date, then the logic to decrement the next year drive date to find the date on the same day of week is skipped.
  ***********************************************************************************************************************/
