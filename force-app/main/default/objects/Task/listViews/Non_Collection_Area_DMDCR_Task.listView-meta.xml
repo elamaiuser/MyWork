@@ -2,9 +2,9 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Non_Collection_Area_DMDCR_Task</fullName>
     <filterScope>Queue</filterScope>
-    <label>Non-Collection Area: DMDCR</label>
-    <queue>Non_Collection_Area_DMDCR</queue>
+    <label>Non-Collection AreaTEST: DMDCR</label>
+    <queue>Non_Collection_AreaTEST_DMDCR</queue>
     <sharedTo>
-        <allInternalUsers></allInternalUsers>
+        <allInternalUsers />
     </sharedTo>
 </ListView>
