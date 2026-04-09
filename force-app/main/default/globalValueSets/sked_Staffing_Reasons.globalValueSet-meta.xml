@@ -31,6 +31,11 @@
         <label>Trade</label>
     </customValue>
     <customValue>
+        <fullName>Training</fullName>
+        <default>false</default>
+        <label>Training</label>
+    </customValue>
+    <customValue>
         <fullName>Volunteer</fullName>
         <default>false</default>
         <label>Volunteer</label>

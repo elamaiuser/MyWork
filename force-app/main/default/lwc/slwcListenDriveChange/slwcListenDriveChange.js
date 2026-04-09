@@ -7,7 +7,7 @@ export default class SlwcListenDriveChange extends NavigationMixin(LightningElem
     
     @track showSpinner = false;
     @track showModal = false;
-    @track driveChangeRequest = null;
+    @track driveChangeEvent = null;
     
     @wire(CurrentPageReference) pageRef;
 
@@ -19,7 +19,7 @@ export default class SlwcListenDriveChange extends NavigationMixin(LightningElem
 
     connectedCallback() {
         console.log("connectedCallback recordId::"+this.recordId);
-        subscribe("/topic/DriveChangeRequestUpserts", -1, this.messageCallback).then(
+        subscribe("/event/sked_Drive_Change_Request_Event__e", -1, this.messageCallback).then(
             (response) => {
                 console.log(
                     "Subscription request sent to: ",
@@ -30,10 +30,10 @@ export default class SlwcListenDriveChange extends NavigationMixin(LightningElem
     }
 
     messageCallback = (response) => {
-        if (response.data.sobject.sked_Opportunity_Id__c === this.recordId) {
+        if (response.data.payload.sked_Opportunity_Id__c === this.recordId) {
             console.log("Listen Change Model");
            this.showModal = true;
-           this.driveChangeRequest = response.data.sobject;
+           this.driveChangeEvent = response.data.payload;
         }
     }; 
 

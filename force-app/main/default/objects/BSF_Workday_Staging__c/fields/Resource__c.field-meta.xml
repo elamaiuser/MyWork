@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resource__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Reference to the Salesforce Resource record associated with the employee.
+This allows the staging record to be directly linked to the Resource that receives the Real ID compliance update.</description>
+    <label>Resource</label>
+    <referenceTo>sked__Resource__c</referenceTo>
+    <relationshipName>Workday_Real_ID_Compliance_Stagings</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

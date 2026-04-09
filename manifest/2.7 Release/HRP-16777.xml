@@ -8,6 +8,8 @@
         <members>StandardTaskGenerationBatchTest</members>
         <members>TaskPlatformEventTriggerTest</members>
         <members>DriveTriggerHandler</members>
+        <members>AccountTriggerHandler</members>
+        <members>AccountService</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -19,6 +21,7 @@
         <members>Task_Platform_Event__e.Planned_Task_Id__c</members>
         <members>Task_Platform_Event__e.Type__c</members>
         <members>Task_Platform_Event__e.RecordTypeId__c</members>
+        <members>Account.Planning_Path__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
