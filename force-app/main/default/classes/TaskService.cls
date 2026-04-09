@@ -78,11 +78,12 @@ public with sharing class TaskService {
         String driveExternalId = '';
         String driveUFID = '';
         if(taskId != null){
-            List<Task> taskList = [SELECT Subject,
+            List<Task> taskList = [SELECT Type,
                                             WhatId
                                         FROM Task 
-                                        WHERE Id = :taskId];
-            if(!taskList.isEmpty() && taskList[0].Subject != null){
+                                        WHERE Id = :taskId
+                                        AND Type != null];
+            if(!taskList.isEmpty() && taskList[0].Type != null){
                 Map<Id,Sked_Drive__c> oppVsDocMap = new Map<Id,Sked_Drive__c>();
                 //HRP-12627 changes starts
                 if(taskList[0].WhatId != null){
@@ -106,7 +107,7 @@ public with sharing class TaskService {
                                                                 Report_Name__c,
                                                                 DeveloperName
                                                         FROM Task_Report_Link__mdt 
-                                                        WHERE Task_Subject__c =:taskList[0].Subject
+                                                        WHERE Task_Type__c =:taskList[0].Type
                                                         AND Active__c = true
                                                         ORDER BY Report_Name__c ASC]){
                 
