@@ -159,7 +159,7 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Travel Time Index Refresh Groups</pluralLabel>
-    <searchLayouts />
+    <searchLayouts></searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
