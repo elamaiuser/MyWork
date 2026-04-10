@@ -134,6 +134,9 @@
         <members>Task_Report_Link.Sponsor_Planning_Report</members>
         <members>Task_Report_Link.Temporary_License_Agreement</members>
         <members>Task_Report_Link.Volunteer_Quick_Guide</members>
+        <members>Task_Report_Link.Community_Agreement_Policy</members>
+        <members>Task_Report_Link.Authorization_Form</members>
+        <members>Task_Report_Link.Contingency_Worksheet_Task</members>
 		<name>CustomMetadata</name>
     </types>
 	<version>66.0</version>
