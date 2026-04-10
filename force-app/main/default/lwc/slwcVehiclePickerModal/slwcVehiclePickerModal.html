@@ -24,26 +24,34 @@
         </thead>
         <tbody>
           <template for:each={filteredVehicles} for:item="vehicle">
-            <tr key={vehicle.id} class={vehicle.rowClass} data-id={vehicle.id} onclick={handleVehicleSelect} style="cursor:pointer;">
+            <tr key={vehicle.id} class={vehicle.rowClass} data-id={vehicle.id} onclick={handleVehicleSelect} ondblclick={handleVehicleDoubleClick} style="cursor:pointer;">
               <td class="slds-text-align_center">
                 <template if:true={vehicle.isSelected}>
                   <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Selected"></lightning-icon>
                 </template>
               </td>
-              <td><div class="slds-truncate" title={vehicle.name}><a data-id={vehicle.id} onclick={handleLinkClick}>{vehicle.name}</a></div></td>
+              <td>
+                <div class="slds-truncate" title={vehicle.name}><a data-id={vehicle.id} onclick={handleLinkClick}>{vehicle.name}</a></div>
+                <template if:true={vehicle.hasBadge}>
+                  <div>
+                    <template if:true={vehicle.isRelocated}>
+                      <div class="slds-badge slds-theme_warning color-white size65rem bg-purple slds-m-top_xx-small">Temporary CO</div>
+                    </template>
+                    <template if:true={vehicle.DOT}>
+                      <div class="slds-badge slds-theme_warning color-white size65rem bg-blue slds-m-top_xx-small">DOT</div>
+                    </template>
+                    <template if:true={vehicle.CDL}>
+                      <div class="slds-badge slds-theme_warning color-white size65rem slds-m-top_xx-small">CDL</div>
+                    </template>
+                  </div>
+                </template>
+              </td>
               <td><div class="slds-truncate" title={vehicle.category}>{vehicle.category}</div></td>
               <td><div class="slds-truncate" title={vehicle.presDonorCapacity}>{vehicle.presDonorCapacity}</div></td>
               <td><div class="slds-truncate" title={vehicle.status}>{vehicle.status}</div></td>
               <td><div class="slds-truncate">{vehicle.effectiveDateDisplay}</div></td>
               <td><div class="slds-truncate">{vehicle.futureInactiveDateDisplay}</div></td>
             </tr>
-            <template if:true={vehicle.showRelocated}>
-              <tr key={vehicle.relocatedKey}>
-                <td colspan="7" class="slds-p-around_x-small" style="background:#fffbe6;border-left:4px solid #f8c900;">
-                  <span class="slds-text-body_small">This vehicle is relocated</span>
-                </td>
-              </tr>
-            </template>
           </template>
           <template if:true={noResults}>
             <tr>
