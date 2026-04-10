@@ -256,23 +256,24 @@ global class slwcAllocationService {
                                              sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
-                                             
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
+
                                              (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate),
-                                             
+
                                              (SELECT Id, sked_Resource__c, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked_Resource_Biomed_Collection_Ops__r
-                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate) 
+                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate)
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :request.minDate))
-                                             
+
                                              FROM sked__Resource__c
-                                             WHERE (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds 
+                                             WHERE (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds
                                                     OR Id IN :request.additionalResourceIds)
                                              AND sked_Asset_Type__c != NULL
                                              AND sked__Is_Active__c = TRUE
                                              AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                             AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                              ORDER BY Name
                                              LIMIT :request.pageSize
                                              OFFSET :request.offset];
@@ -536,17 +537,17 @@ global class slwcAllocationService {
                                              sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
-                                             
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
+
                                              (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Account_Resource_Scores__r
                                               WHERE sked__Account__c IN :request.accountIds),
-                                             
+
                                              (SELECT Id, sked__Location__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Location_Resource_Scores__r
                                               WHERE sked__Location__c IN :request.locationIds),
-                                             
-                                             (SELECT Id, sked__Description__c, sked__End__c, sked_End_Date__c, sked__GeoLocation__c, sked__GeoLocation__Longitude__s, 
+
+                                             (SELECT Id, sked__Description__c, sked__End__c, sked_End_Date__c, sked__GeoLocation__c, sked__GeoLocation__Longitude__s,
                                               sked__GeoLocation__Latitude__s, sked__Home_Address__c, sked__Resource__c, sked__Start__c, sked_Start_Date__c,
                                               sked_Is_Travel_Required__c
                                               FROM sked__Resource_Overrides__r
@@ -615,6 +616,7 @@ global class slwcAllocationService {
                                                      AND (
                                                          sked__Is_Active__c = TRUE
                                                          AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                                         AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                                      )
                                                  )
                                              )
@@ -636,7 +638,7 @@ global class slwcAllocationService {
                                              sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
 
                                              (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Account_Resource_Scores__r
@@ -752,6 +754,7 @@ global class slwcAllocationService {
                                              AND (
                                                  sked__Is_Active__c = TRUE
                                                  AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                                 AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                              )
                                          )
                                      )];

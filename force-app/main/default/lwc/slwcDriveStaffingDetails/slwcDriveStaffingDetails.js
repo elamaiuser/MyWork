@@ -2151,6 +2151,10 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             return true;
         }
 
+        if(resource.futureInactiveDate && resource.futureInactiveDate <= drive.driveDate) {
+            return true;
+        }
+
         return false;
     }
 
