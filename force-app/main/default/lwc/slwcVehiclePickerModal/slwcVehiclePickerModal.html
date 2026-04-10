@@ -29,6 +29,9 @@
                 <template if:true={vehicle.isSelected}>
                   <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Selected"></lightning-icon>
                 </template>
+                <template if:false={vehicle.isSelected}>
+                  <lightning-icon icon-name="utility:steps" size="x-small" alternative-text="Unselected"></lightning-icon>
+                </template>
               </td>
               <td>
                 <div class="slds-truncate" title={vehicle.name}><a data-id={vehicle.id} onclick={handleLinkClick}>{vehicle.name}</a></div>
