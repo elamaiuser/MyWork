@@ -842,7 +842,7 @@
                                                     Termination Date: <lightning-formatted-date-time value={resource.terminationDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
                                                 </div>
                                                 <div
-                                                    if:true={resource.futureInactiveDate}
+                                                    if:true={resource.showFutureInactiveDate}
                                                     class="slds-text-color_error slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
                                                     Inactivation Date: <lightning-formatted-date-time value={resource.futureInactiveDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
                                                 </div>

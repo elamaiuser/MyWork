@@ -326,8 +326,8 @@ global class slwcAllocationService {
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
                                              sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
-                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c,
+                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
                                              sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              
@@ -446,8 +446,8 @@ global class slwcAllocationService {
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
                                              sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
-                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c,
+                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
                                              sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              

@@ -1785,6 +1785,7 @@ export default class SlwcDriveStaffingDetails extends LightningElement {
             categoryText: compact([item.category, item.employmentType]).join(' - '),
             isPerson: item.resourceType === TYPE_RESOURCE.RESOURCE,
             isVehicle: item.assetType === TYPE_RESOURCE.VEHICLE,
+            showFutureInactiveDate: item.assetType === TYPE_RESOURCE.VEHICLE && !!item.futureInactiveDate,
             isOnCall: item.isOnCall,
             isVolunteer: item.isVolunteer,
             weeklyHours: weeklyHours,
