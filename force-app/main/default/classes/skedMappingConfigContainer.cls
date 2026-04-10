@@ -937,7 +937,8 @@ public class skedMappingConfigContainer {
             mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center_Name__c', 'biomedCollectionOpName', 'direct');
             mappingConfig.addFieldConfig('sked_Daily_Time_Off_Hours__c', 'dailyTimeOffHours', 'direct');
             mappingConfig.addFieldConfig('sked_District_Name__c', 'districtName', 'direct'); 
-            mappingConfig.addFieldConfig('sked_Effective_Date__c', 'effectiveDate', 'direct'); 
+            mappingConfig.addFieldConfig('sked_Effective_Date__c', 'effectiveDate', 'direct');
+            mappingConfig.addFieldConfig('sked_Future_Inactive_Date__c', 'futureInactiveDate', 'direct');
             mappingConfig.addFieldConfig('sked_Employment_Status__c', 'employmentStatus', 'direct'); 
             mappingConfig.addFieldConfig('sked_Pres_Donor_Capacity__c', 'presDonorCapacity', 'direct');
             mappingConfig.addFieldConfig('sked_Quantity__c', 'quantity', 'direct');
