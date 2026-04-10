@@ -268,7 +268,7 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_Workday
                 if (resourceRecord.sked_REAL_ID_Compliant_indicator__c != isCompliant ||
                     resourceRecord.sked_Real_ID_Expiration_Date__c != expirationDate) {
                     resourceRecord.sked_REAL_ID_Compliant_indicator__c = isCompliant;
-                    resourceRecord.sked_Real_ID_Expiration_Date__c     = expirationDate;
+                    resourceRecord.sked_Real_ID_Expiration_Date__c     = isCompliant ? expirationDate : null;
                     resourcesToUpdate.add(resourceRecord);
                 }
             }
