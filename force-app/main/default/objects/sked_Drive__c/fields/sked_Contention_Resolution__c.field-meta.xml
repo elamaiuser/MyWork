@@ -98,6 +98,11 @@
                 <label>Elect to acknowledge the drive has assets that are not shared with new Collection Operation</label>
             </value>
             <value>
+                <fullName>Elect to acknowledge locked resource unavailable</fullName>
+                <default>false</default>
+                <label>Elect to acknowledge locked resource unavailable</label>
+            </value>
+            <value>
                 <fullName>Elect to Proceed with Excess Staff Capacity</fullName>
                 <default>false</default>
                 <label>Elect to Proceed with Excess Staff Capacity</label>

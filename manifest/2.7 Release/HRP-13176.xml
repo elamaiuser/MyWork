@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>skedVehicleFutureInactivateBatch</members>
@@ -13,6 +13,10 @@
 		<members>BSF_Access_Control_Rule.HRP_13176_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_13176_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>sked__Resource__c-Asset Layout</members>
+		<name>Layout</name>
 	</types>
 	<version>66.0</version>
 </Package>
