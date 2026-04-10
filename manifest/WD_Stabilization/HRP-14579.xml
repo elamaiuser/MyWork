@@ -46,5 +46,10 @@
 		<name>RecordType</name>
 	</types>
 
+    <types>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
+	</types>
+
     <version>65.0</version>
 </Package>
