@@ -7,7 +7,21 @@ export default class SlwcVehiclePicker extends LightningElement {
   @api vehicles = [];
   @api excludeVehicleId = null;
   @api disabled = false;
-  @api hideExceptions = false;
+
+  _selectedVehicleId = null;
+  @api
+  get selectedVehicleId() {
+    return this._selectedVehicleId;
+  }
+  set selectedVehicleId(value) {
+    const prev = this._selectedVehicleId;
+    this._selectedVehicleId = value;
+    if (!value && prev) {
+      this.selectedVehicle = null;
+      this.searchTerm = '';
+      this.isDropdownOpen = false;
+    }
+  }
 
   @track selectedVehicle = null;
   @track searchTerm = '';
@@ -68,7 +82,6 @@ export default class SlwcVehiclePicker extends LightningElement {
     }
   }
 
-  @api
   clearSelection() {
     this.selectedVehicle = null;
     this.searchTerm = '';
@@ -84,7 +97,6 @@ export default class SlwcVehiclePicker extends LightningElement {
     SlwcVehiclePickerModal.open({
       size: 'medium',
       vehicles: this.availableVehicles,
-      hideExceptions: this.hideExceptions,
       selectedVehicleId: this.selectedVehicle ? this.selectedVehicle.id : null
     }).then(result => {
       if (result) {
