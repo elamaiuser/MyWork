@@ -384,7 +384,7 @@
                     </flexTableSortInfo>
                     <hideChatterPhotos>true</hideChatterPhotos>
                 </flexComponentProperties>
-                <groupingSortProperties/>
+                <groupingSortProperties />
                 <header>Fixed Site Opportunities</header>
                 <report>BSFRecruitment/FS_Opps_for_Dashboard_snr</report>
             </dashboardComponent>
@@ -396,8 +396,8 @@
     </dashboardGridLayout>
     <dashboardType>MyTeamUser</dashboardType>
     <isGridLayout>true</isGridLayout>
-    <owner>shubham.tiwari@redcross.org</owner>
-    <runningUser>heather.olsen@redcross.org</runningUser>
+    <owner>deploymentuser@redcross.org</owner>
+    <runningUser>deploymentuser@redcross.org</runningUser>
     <textColor>#000000</textColor>
     <title>Fixed Site Dashboard: Central Atlantic Division</title>
     <titleColor>#000000</titleColor>

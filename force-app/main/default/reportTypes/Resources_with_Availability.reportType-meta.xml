@@ -170,6 +170,11 @@
             <field>sked_REAL_ID_Compliant_indicator__c</field>
             <table>sked__Resource__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Real_ID_Expiration_Date__c</field>
+            <table>sked__Resource__c</table>
+        </columns>
         <masterLabel>Resources</masterLabel>
     </sections>
     <sections>
@@ -661,6 +666,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>CreatedBy.Profile.UserType</field>
+            <table>sked__Resource__c.sked__Availabilities1__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Related_Call_Out__c</field>
             <table>sked__Resource__c.sked__Availabilities1__r</table>
         </columns>
         <columns>

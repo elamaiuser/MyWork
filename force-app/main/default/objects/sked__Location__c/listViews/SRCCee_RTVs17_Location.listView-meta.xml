@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SRCCee_RTVs17_Location</fullName>
+    <filterScope>Queue</filterScope>
+    <label>SRCCee: RTVs</label>
+    <queue>SRCCee_RTVs17</queue>
+    <sharedTo>
+        <allInternalUsers />
+    </sharedTo>
+</ListView>

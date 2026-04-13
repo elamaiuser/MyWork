@@ -281,7 +281,7 @@ Process using multiple criteria.</description>
     <formulas>
         <name>Approved_Rejected_By</name>
         <dataType>String</dataType>
-        <expression>{!$Record.LastModifiedBy.FirstName} + &apos; &apos; + {!$Record.LastModifiedBy.LastName} + &apos;. &apos;</expression>
+        <expression>{!$Record.LastModifiedBy.FirstName} + &#39; &#39; + {!$Record.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
     <formulas>
         <name>Approved_Rejected_Date</name>
@@ -296,14 +296,14 @@ Process using multiple criteria.</description>
     <formulas>
         <name>Notification_Message_Approved</name>
         <dataType>String</dataType>
-        <expression>&apos;Hi &apos; + {!$Record.CreatedBy.FirstName} + &apos; &apos; + {!$Record.CreatedBy.LastName} + &apos;, &apos; +
-&apos;Your Request has been approved by &apos; + {!$Record.LastModifiedBy.FirstName} + &apos; &apos; + {!$Record.LastModifiedBy.LastName} + &apos;. &apos;</expression>
+        <expression>&#39;Hi &#39; + {!$Record.CreatedBy.FirstName} + &#39; &#39; + {!$Record.CreatedBy.LastName} + &#39;, &#39; +
+&#39;Your Request has been approved by &#39; + {!$Record.LastModifiedBy.FirstName} + &#39; &#39; + {!$Record.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
     <formulas>
         <name>Notification_Message_Rejected</name>
         <dataType>String</dataType>
-        <expression>&apos;Hi &apos; + {!$Record.CreatedBy.FirstName} + &apos; &apos; + {!$Record.CreatedBy.LastName} + &apos;, &apos; +
-&apos;Your Request has been rejected by &apos; + {!$Record.LastModifiedBy.FirstName} + &apos; &apos; + {!$Record.LastModifiedBy.LastName} + &apos;. &apos;</expression>
+        <expression>&#39;Hi &#39; + {!$Record.CreatedBy.FirstName} + &#39; &#39; + {!$Record.CreatedBy.LastName} + &#39;, &#39; +
+&#39;Your Request has been rejected by &#39; + {!$Record.LastModifiedBy.FirstName} + &#39; &#39; + {!$Record.LastModifiedBy.LastName} + &#39;. &#39;</expression>
     </formulas>
     <interviewLabel>Send Bell and Email Notifications for Task {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Send Bell and Email Notifications for Task</label>
