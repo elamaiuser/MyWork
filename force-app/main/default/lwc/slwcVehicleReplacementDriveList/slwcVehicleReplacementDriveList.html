@@ -91,10 +91,9 @@
                 <span class="slds-text-body_small">{con.message}</span>
                 <div class="slds-grid slds-grid_vertical-align-center slds-m-top_xx-small">
                   <template for:each={con.options} for:item="opt">
-                    <label key={opt.value} class="contention-radio slds-m-right_large">
+                    <label key={opt.value} class="contention-checkbox slds-m-right_large">
                       <input
-                        type="radio"
-                        name={opt.name}
+                        type="checkbox"
                         value={opt.value}
                         checked={opt.isChecked}
                         onchange={handleContentionResolution}

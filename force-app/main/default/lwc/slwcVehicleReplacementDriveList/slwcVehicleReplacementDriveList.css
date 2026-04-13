@@ -33,7 +33,7 @@
     background: #d23331;
 }
 
-.contention-radio {
+.contention-checkbox {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
