@@ -143,7 +143,7 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>This object stores Workday Real ID compliance data received from the Workday RaaS report and acts as an integration staging layer between Workday and Salesforce.</description>
+    <description>This object stores Workday data received from the Workday RaaS report and acts as an integration staging layer between Workday and Salesforce.</description>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -155,8 +155,8 @@
     <enableStreamingApi>true</enableStreamingApi>
     <label>Workday Staging</label>
     <nameField>
-        <displayFormat>RealID-{000000}</displayFormat>
-        <label>RealID Staging Name</label>
+        <displayFormat>S-{000000}</displayFormat>
+        <label>Staging Name</label>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Workday Stagings</pluralLabel>
