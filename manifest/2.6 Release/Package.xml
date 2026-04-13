@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>APComplianceReportController</members>
@@ -16,14 +16,21 @@
         <members>BSF_BatchUpdateAccountForZipCodeTest</members>
         <members>BSF_Batch_CreateHandOffTasks</members>
         <members>BSF_Batch_CreateHandOffTasks_Test</members>
-        <members>BSF_Batch_DriveStatusCorrection</members>        
+        <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
+        <members>BSF_Batch_DriveStatusCorrection</members>
         <members>BSF_Batch_OpportunityTeamMember_Test</members>
+        <members>BSF_Batch_TaskRename</members>
+        <members>BSF_Batch_TaskRename_Test</members>
         <members>BSF_Batch_TaxonomyEndDateHandler</members>
         <members>BSF_Batch_TaxonomyEndDateHelper</members>
-        <members>BSF_Batch_TaxonomyEndDate_Test</members>        
+        <members>BSF_Batch_TaxonomyEndDate_Test</members>
+        <members>BSF_Batch_UpdateTaskType</members>
+        <members>BSF_Batch_UpdateTaskType_Test</members>
         <members>BSF_Constants</members>
         <members>BSF_EmailNotification</members>
         <members>BSF_EmailNotification_Test</members>
+        <members>BSF_TaskCreationBatch</members>
+        <members>BSF_TaskCreationBatch_Test</members>
         <members>BSF_TaskPlanningService</members>
         <members>BSF_TaskPlanningWizardController</members>
         <members>BSF_TemplateCDA_FutOppBatch_Test</members>
@@ -38,7 +45,6 @@
         <members>DefaultTerritoryPortfolioBatch_Test</members>
         <members>DriveTriggerHandler</members>
         <members>DriveTriggerService</members>
-		<members>DriveTriggerServiceTest</members>
         <members>GenerateDriveWorksheetPdfController</members>
         <members>InformaticaStandardAddress_Test</members>
         <members>LeadUtils_Test</members>
@@ -55,7 +61,10 @@
         <members>SiteService</members>
         <members>SiteServiceTest</members>
         <members>SiteTriggerHandler</members>
-        <members>SponsorPlanningReportController_Test</members>        
+        <members>SponsorPlanningReportController_Test</members>
+        <members>TaskGenerationBatch</members>
+        <members>TaskService</members>
+        <members>TaskTriggerHandler</members>
         <members>TemplateCDA_FutureOpportunityBatch_Test</members>
         <members>TerritoryTriggerHandler</members>
         <members>TimeBlockComplianceReportController</members>
@@ -69,7 +78,7 @@
         <members>UserCollOpQueAssngmentReportController</members>
         <members>WeeklyStaffScheduleReportControllerTest</members>
         <members>contactService_Test</members>
-        <members>dlrs_OpportunityTest</members>
+        <members>createPreDriveTaskBatch</members>
         <members>populateDriveSupRoleBatch_Test</members>
         <members>skedAPResourceTrigger_Test</members>
         <members>skedAvailabilityHandler</members>
@@ -103,7 +112,7 @@
         <members>skedRefreshTravelTimeIndexBatchBase</members>
         <members>skedResourceHandler</members>
         <members>skedResourceHandler_Test</members>
-        <members>skedResourceTrigger_Test</members>        
+        <members>skedResourceTrigger_Test</members>
         <members>skedStaffingBudgetCollOp_Test</members>
         <members>skedTestDataFactory</members>
         <members>skedTravelTimeIndexTravelTimeBatch</members>
@@ -121,7 +130,7 @@
         <members>slwcApprovalService_Test</members>
         <members>slwcDriveShiftTradeService_Test</members>
         <members>slwcOptimizationService</members>
-        <members>slwcOptimizationService_Test</members>	
+        <members>slwcOptimizationService_Test</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -152,7 +161,8 @@
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
-        <members>Account.Planning_Path__c</members>        
+        <members>Account.Planning_Path__c</members>
+        <members>Activity.Location__c</members>
         <members>Availability_Pattern_Role__c.Actual_Count_of_Role__c</members>
         <members>Availability_Pattern_Role__c.Availability_Pattern__c</members>
         <members>Availability_Pattern_Role__c.Collection_Operation_Availability__c</members>
@@ -183,7 +193,8 @@
         <members>Planned_Task__c.Target_Date__c</members>
         <members>Planned_Task__c.Task_Definition__c</members>
         <members>Planned_Task__c.Task_Package__c</members>
-        <members>Planned_Task__c.User_Defined_Offset__c</members>        
+        <members>Planned_Task__c.User_Defined_Offset__c</members>
+        <members>Task.Type</members>
         <members>Task_Definition__c.Assigned_To__c</members>
         <members>Task_Definition__c.Category__c</members>
         <members>Task_Definition__c.Creation_Date_Offset__c</members>
@@ -204,7 +215,8 @@
         <members>Task_Planning_Default__c.Scheduling_Method__c</members>
         <members>Task_Planning_Default__c.Task_Definition__c</members>
         <members>Task_Planning_Default__c.Task_Package__c</members>
-        <members>Task_Planning_Default__c.Template_Opportunity__c</members>        
+        <members>Task_Planning_Default__c.Template_Opportunity__c</members>
+        <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
         <members>Task_Selected_Package__c.Account__c</members>
         <members>Task_Selected_Package__c.Opportunity__c</members>
         <members>Task_Selected_Package__c.Task_Package__c</members>
@@ -225,7 +237,8 @@
         <members>sked__Resource__c.CO_AP_Status__c</members>
         <name>CustomField</name>
     </types>
-    <types>        
+    <types>
+        <members>BSF_Access_Control_Rule.HRP_13441_Class_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_1522_APR_Field_Permissions_Read</members>
         <members>BSF_Access_Control_Rule.HRP_1522_AP_Role_Field_Permissions</members>
         <members>BSF_Access_Control_Rule.HRP_1522_AP_Role_Field_Permissions_Read</members>
@@ -235,12 +248,14 @@
         <members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Field_Permissions_Read</members>
         <members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions</members>
         <members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Total_Field_Permissions</members>
-        <members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions_Create</members>
         <members>BSF_Access_Control_Rule.HRP_1522_Resource_Field_Permissions</members>
         <members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_15861_Field_Permission_Set_Read</members>
         <members>BSF_Access_Control_Rule.HRP_15876_Field_Permission_Set_Read</members>
-        <members>BSF_Access_Control_Rule.HRP_15890_Field_Permission_Set</members>        
+        <members>BSF_Access_Control_Rule.HRP_15890_Field_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
+        <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
         <members>BSF_Access_Control_Rule.HRP_16123_Account_Path_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16123_Class_Component</members>
         <members>BSF_Access_Control_Rule.HRP_16123_Opportunity_Path_Field_PS</members>
@@ -256,7 +271,6 @@
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Object_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Object_PS</members>
-        <members>BSF_Access_Control_Rule.HRP_16286_Page_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_2</members>
         <members>BSF_Access_Control_Rule.HRP_16337_Field_Permission_Set_Read</members>
@@ -266,6 +280,24 @@
         <members>BSF_Access_Control_Rule.HRP_16372_Field_Permission_Set</members>
         <members>Custom_Messages.Batch_Size_for_DriveStatusCorrection</members>
         <members>Custom_Messages.Logistics_Chg_Rsn_Upon_Template_Change</members>
+        <members>Task_Reassignment_Matrix.Marketing_Exception</members>
+        <members>Task_Reassignment_Matrix.One_Week_Check_in</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+        <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+        <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
+        <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
+        <members>Task_Reassignment_Matrix.Recruitment_Task</members>
+        <members>Task_Reassignment_Matrix.Security_Information_Completion</members>
+        <members>Task_Reassignment_Matrix.Sponsor_Planning</members>
+        <members>Task_Reassignment_Matrix.Template_Order_Task</members>
+        <members>Task_Reassignment_Matrix.X72_Hour</members>
+        <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+        <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+        <members>Task_Report_Link.Contingency_Worksheet_Recruitment_Task</members>
+        <members>Task_Report_Link.DRMS_Audit_report</members>
+        <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
+        <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+        <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -293,7 +325,11 @@
         <members>Mobile_Account_Record_Page</members>
         <members>Mobile_Opp_Record_Page</members>
         <name>FlexiPage</name>
-    </types>    
+    </types>
+    <types>
+        <members>Task_Creation_on_Drive_Status_Complete</members>
+        <name>Flow</name>
+    </types>
     <types>
         <members>Account-APS Management Fixed Site Account Layout</members>
         <members>Account-APS Management Mobile Account Layout</members>
@@ -316,9 +352,14 @@
         <members>Opportunity-Mobile Opp Layout</members>
         <members>Opportunity-Opportunity Layout</members>
         <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
-        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>        
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Task-Marketing Exception</members>
+        <members>Task-Task 72hrs Layout</members>
+        <members>Task-Task Layout</members>
         <members>Task_Definition__c-Task Definition Layout</members>
-        <members>Task_Package__c-Task Package Layout</members>        
+        <members>Task_Package__c-Task Package Layout</members>
+        <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
+        <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
         <members>sked_Site_Collection_Operation__c-Site Collection Operation Layout</members>
         <name>Layout</name>
     </types>
@@ -357,7 +398,16 @@
     <types>
         <members>Opportunity.Update_Checkbox_to_Accept_Millitary_Auth_Name_Phone</members>
         <name>QuickAction</name>
-    </types>    
+    </types>
+    <types>
+        <members>Task.General_Task</members>
+        <members>Task.General_Task_for_Global_Action</members>
+        <members>Task.Marketing_Exception</members>
+        <members>Task.Recruitment_Meeting</members>
+        <members>Task.Team_Portfolio_Assignment</members>
+        <members>Task.X72_Hour_CheckIn</members>
+        <name>RecordType</name>
+    </types>
     <types>
         <members>unfiled$public/Real_ID_Staff_at_Real_ID_Drives_Report_8LK</members>
         <name>Report</name>
@@ -365,7 +415,11 @@
     <types>
         <members>Job_Allocation_with_Drive_Location_and_Resource</members>
         <name>ReportType</name>
-    </types>    
+    </types>
+    <types>
+        <members>TaskType</members>
+        <name>StandardValueSet</name>
+    </types>
     <types>
         <members>sked_HLT_Dist</members>
         <members>sked_HLT_Vendors</members>

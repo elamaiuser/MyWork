@@ -4,8 +4,10 @@
     <columns>NAME</columns>
     <columns>Version_Key__c</columns>
     <columns>RECORDTYPE</columns>
-    <columns>ABM_Code__c</columns>
-    <columns>ABM_Name__c</columns>
+    <columns>DS_Region_Code__c</columns>
+    <columns>DS_Region_Name__c</columns>
+    <columns>Team_Code__c</columns>
+    <columns>Team_Name__c</columns>
     <columns>DRD_Territory_Name__c</columns>
     <columns>DRD_Territory_Code__c</columns>
     <columns>Zip_Code__c</columns>

@@ -50,22 +50,14 @@
     <columns>
         <field>Account.Account_Manager_Portfolio__c</field>
     </columns>
+    <columns>
+        <field>Account.HS_Relationship_Manager__c</field>
+    </columns>
+    <columns>
+        <field>Account.HS_Relationship_Manager_Notes__c</field>
+    </columns>
     <description>Number of Business Plans Completed</description>
     <filter>
-        <criteriaItems>
-            <column>Account.Division__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value></value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>Account.District__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>contains</operator>
-            <value></value>
-        </criteriaItems>
         <criteriaItems>
             <column>Account.Account_Manager_Portfolio__c</column>
             <columnToColumn>false</columnToColumn>
@@ -81,6 +73,27 @@
             <value>Account.Mobile_Account</value>
         </criteriaItems>
         <criteriaItems>
+            <column>Account.Account_Status__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Active,Reactivate,Prospect</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Account.Account_Strategy__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>,Maintain,Upgrade,Recovery,Sunset</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Account.Division__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value></value>
+        </criteriaItems>
+        <criteriaItems>
             <column>Account.ARC_Region__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
@@ -88,18 +101,18 @@
             <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>Account.Account_Status__c</column>
+            <column>Account.District__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Active</value>
+            <operator>contains</operator>
+            <value></value>
         </criteriaItems>
         <criteriaItems>
-            <column>Account.Account_Strategy__c</column>
+            <column>Account.District__c</column>
             <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
+            <isUnlocked>false</isUnlocked>
             <operator>equals</operator>
-            <value>Maintain,Upgrade,Recovery,Sunset</value>
+            <value>Madison WI</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
