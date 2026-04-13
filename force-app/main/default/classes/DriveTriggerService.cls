@@ -198,7 +198,7 @@ public without sharing class DriveTriggerService {
         List<sked_Drive__c> existingDriveList = [SELECT Id, sked_Opportunity__c, sked_Is_Surrogate__c FROM sked_Drive__c
                                                                                                         WHERE sked_Opportunity__c IN :currentOppIds
                                                                                                         AND Id NOT IN :currentDriveIds
-                                        AND sked_Is_Surrogate__c = false
+                                                                                                        AND sked_Is_Surrogate__c = false
         ];
 
 		Set<Id> duplicateForOpps = new Set<Id>();
@@ -206,7 +206,7 @@ public without sharing class DriveTriggerService {
             duplicateForOpps.add(drv.sked_Opportunity__c);
         }//HRP-16769 end
 
-            for(sked_Drive__c drv : newList){
+        for(sked_Drive__c drv : newList){
 
             if(oldMap != null && oldMap.containsKey(drv.Id)){
                 sked_Drive__c oldDrv = oldMap.get(drv.Id);
@@ -222,7 +222,7 @@ public without sharing class DriveTriggerService {
             if(drv.sked_Opportunity__c != null 
             && !drv.sked_Is_Surrogate__c
             && duplicateForOpps.contains(drv.sked_Opportunity__c)){
-                            drv.addError('DOC has been generated for this BDO.');
+				drv.addError('DOC has been generated for this BDO.');
             }//HRP-16769 end
         }
     }
