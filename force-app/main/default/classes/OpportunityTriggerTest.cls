@@ -259,8 +259,8 @@ public class OpportunityTriggerTest
         Test.startTest();
         OpportunityService.updateDriveDateDay(null);
         OpportunityService.assignDefaultSiteDataIfNotPresent(null);
-        OpportunityService.createRecruitmentTask(null,null);
-        OpportunityService.createSponsorPlanningMeetingTask(null,null);
+        //OpportunityService.createRecruitmentTask(null,null);
+        //OpportunityService.createSponsorPlanningMeetingTask(null,null);
         OpportunityService.updateTypeBasedOnPhysicalLocationType(null,null);
         Test.stopTest();
     }

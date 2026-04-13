@@ -81,11 +81,11 @@ class exceptionService extends dataService {
         queryBuilder.addCondition({template: "skedHC__Job__r.sked__Type__c IN {0}", value: query.jobTypes, type: "array_string"});
       }
       if (query.submissionStartDate) {
-            queryBuilder.addCondition({ template: `DAY_ONLY(CreatedDate) >= {0}`, value: query.submissionStartDate});
+            queryBuilder.addCondition({ template: "CreatedDate >= {0}", value: query.submissionStartDate}); //HRP-16490
         }
 
       if (query.submissionEndDate) {
-          queryBuilder.addCondition({ template: `DAY_ONLY(CreatedDate) <= {0}`, value: query.submissionEndDate});
+          queryBuilder.addCondition({ template: "CreatedDate <= {0}", value: query.submissionEndDate}); //HRP-16490
       }
       
       if (query.exceptionType == "drive") {

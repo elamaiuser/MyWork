@@ -276,7 +276,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'recalculateVphhQuantity', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity','updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -292,17 +292,19 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.moveLunchBreakToBeforeDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
-            $this.updateDriveTotalSlots()
+            $this.updateDriveTotalSlots();
           }
           else {
             $this.moveLunchBreakToDuringDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
@@ -644,7 +646,7 @@ class MobileGenerator extends BaseGenerator {
         return availableVehicleIds.includes(assignedVehicle.id) || (availableButNotSharedAssetIds.includes(assignedVehicle.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
       })
 
-      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
+      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity !== maxRegisteredDonors) {
         let { maxRegisteredDonorsToAllocate, availableVehiclesCanBeUsed, remainingMaxDOT, remainingMaxCDL } = this.helper.preProcessSuggestVehicles(maxRegisteredDonors, availableVehicles, lockedVehicles, {
           maxDOT,
           maxCDL
@@ -667,12 +669,18 @@ class MobileGenerator extends BaseGenerator {
         });
         if (drivesWithVehicles && drivesWithVehicles.length) {
           let currentDrive = drivesWithVehicles.find(drive => drive.driveKey == this.drive.key);
+          let newVehiclesTotalCapacity = 0;
+          currentDrive.vehicles.forEach(vehicle => {
+            newVehiclesTotalCapacity += (vehicle.presDonorCapacity || 0)
+          })
+          
           //if calculateNumberOfVehicles has result, it means that new vehicles can handle drive donors
           return {
             allAssignedVehiclesValid: false,
             newVehicles: currentDrive.vehicles,
             lockedVehicles: lockedVehicles,
-            canHandleDriveProjectedRegisteredDonors: true
+            canHandleDriveProjectedRegisteredDonors: true,
+            canHandleDriveProjRegDonorsWithLowerCapacity: totalCurrentAssignedVehiclesCapacity > newVehiclesTotalCapacity
           }
         } else {
           return {
@@ -722,7 +730,7 @@ class MobileGenerator extends BaseGenerator {
     ])
       .then(([ driveLimits = [], { availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }])  => {
         const { allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments } = validateEqipments(newDrive, availableEquipments, availableButNotSharedAssetIds);
-        const { allAssignedVehiclesValid, newVehicles, lockedVehicles, canHandleDriveProjectedRegisteredDonors } = validateVehicles(newDrive, availableVehicles, driveLimits, availableButNotSharedAssetIds);
+        const { allAssignedVehiclesValid, newVehicles, lockedVehicles, canHandleDriveProjectedRegisteredDonors, canHandleDriveProjRegDonorsWithLowerCapacity = false } = validateVehicles(newDrive, availableVehicles, driveLimits, availableButNotSharedAssetIds);
 
         return {
           allAssignedEquipmentsValid,
@@ -731,7 +739,8 @@ class MobileGenerator extends BaseGenerator {
           allAssignedVehiclesValid,
           newVehicles,
           lockedVehicles,
-          canHandleDriveProjectedRegisteredDonors
+          canHandleDriveProjectedRegisteredDonors,
+          canHandleDriveProjRegDonorsWithLowerCapacity
         }
       })
   }
@@ -760,6 +769,13 @@ class MobileGenerator extends BaseGenerator {
         ]);
       })
       .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
+        return this.helper.getLockedStaffAvailability(this.drive)
+          .then((staffPossibleAllocations) => {
+            availableAssetsInfo.possibleAllocations = (availableAssetsInfo.possibleAllocations || []).concat(staffPossibleAllocations);
+            return [driveLimitResult, staffingConstraintResult, availableAssetsInfo];
+          });
+      })
+      .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo]) => {
         let {
           passed,
           pendingActionReasonCodes
@@ -767,7 +783,10 @@ class MobileGenerator extends BaseGenerator {
           ...this.masterData,
           driveLimits: driveLimitResult,
           staffingConstraints: staffingConstraintResult,
-          availableAssetsInfo
+          availableAssetsInfo,
+          availabilityData: {
+            possibleAllocations: availableAssetsInfo.possibleAllocations || []
+          }
         }, [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -785,6 +804,7 @@ class MobileGenerator extends BaseGenerator {
           DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
           DRIVE_CONTENTION.CO_CHANGED_CROSS_REGIONS,
           DRIVE_CONTENTION.ASSETS_NOT_SHARED_WITH_NEW_CO,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
           DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
         ])
 
@@ -2079,7 +2099,7 @@ class MobileGenerator extends BaseGenerator {
         job = cloneDeep(jobTemplate);
         job.key = generateUUID();
         job.jobTags = cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]);
-      } else job.jobTags = [...job.jobTags];
+      } else job.jobTags = [...(job.jobTags || [])];
       job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
       job.volunteerRole = volunteerRole;
       if (volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR) {

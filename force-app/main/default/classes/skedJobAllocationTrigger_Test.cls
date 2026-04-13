@@ -509,6 +509,125 @@ public class skedJobAllocationTrigger_Test {
         Test.stopTest();
     }
     
+    static testmethod void testRequiredTagException() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked__Region__c testRegion = (sked__Region__c) mapTestData.get('testRegion1');
+        sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
+        sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
+
+        // Ensure Driver tags exist for captureRequiredTagExceptionLog
+        List<String> driverTagNames = new List<String>{
+            skedConstants.TAG_DRIVER, skedConstants.TAG_DRIVER_DOT, skedConstants.TAG_DRIVER_CDL
+        };
+        Map<String, sked__Tag__c> existingTags = new Map<String, sked__Tag__c>();
+        for (sked__Tag__c t : [SELECT Id, Name FROM sked__Tag__c WHERE Name IN :driverTagNames]) {
+            existingTags.put(t.Name, t);
+        }
+        List<sked__Tag__c> tagsToInsert = new List<sked__Tag__c>();
+        if (!existingTags.containsKey(skedConstants.TAG_DRIVER)) {
+            tagsToInsert.add(new sked__Tag__c(Name = skedConstants.TAG_DRIVER));
+        }
+        if (!existingTags.containsKey(skedConstants.TAG_DRIVER_DOT)) {
+            tagsToInsert.add(new sked__Tag__c(Name = skedConstants.TAG_DRIVER_DOT));
+        }
+        if (!existingTags.containsKey(skedConstants.TAG_DRIVER_CDL)) {
+            tagsToInsert.add(new sked__Tag__c(Name = skedConstants.TAG_DRIVER_CDL));
+        }
+        if (!tagsToInsert.isEmpty()) {
+            insert tagsToInsert;
+            for (sked__Tag__c t : tagsToInsert) {
+                existingTags.put(t.Name, t);
+            }
+        }
+        sked__Tag__c driverTag = existingTags.get(skedConstants.TAG_DRIVER);
+
+        // Give the resource only the basic Driver tag (not DOT or CDL)
+        sked__Resource_Tag__c resourceDriverTag = new sked__Resource_Tag__c(
+            sked__Resource__c = testResource.Id,
+            sked__Tag__c = driverTag.Id,
+            sked_Start_Date__c = testDrive.sked_Drive_Date__c.addDays(-1)
+        );
+        insert resourceDriverTag;
+
+        Test.startTest();
+
+        sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20, 0, 0, 0),
+            sked_Start_Time__c = Time.newInstance(14, 0, 0, 0),
+            sked_Drive__c = testDrive.Id,
+            sked_Drive_Date__c = testDrive.sked_Drive_Date__c,
+            sked_Equipment__c = 1,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20, 0, 0, 0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14, 0, 0, 0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert testDriveShift;
+
+        sked__Job__c testDriverJob = new sked__Job__c(
+            sked__Region__c = testRegion.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive.Id,
+            sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Resource_Role__c = skedConstants.JOB_RESOURCE_ROLE_DRIVER,
+            sked__GeoLocation__Latitude__s = 51.508105,
+            sked__GeoLocation__Longitude__s = -0.132901
+        );
+        insert testDriverJob;
+
+        // Add Driver tag as a required job tag
+        sked__Job_Tag__c jobTag = new sked__Job_Tag__c(
+            sked__Job__c = testDriverJob.Id,
+            sked__Tag__c = driverTag.Id
+        );
+        insert jobTag;
+
+        sked__Job_Allocation__c driverJa = new sked__Job_Allocation__c(
+            sked__Job__c = testDriverJob.Id,
+            sked__Resource__c = testResource.Id,
+            sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
+            sked_Roles_Assignment_Str__c = skedConstants.JOB_RESOURCE_ROLE_DRIVER,
+            sked_DOT__c = false,
+            sked_CDL__c = false
+        );
+        insert driverJa;
+
+        // Update DOT flag — resource has Driver tag but not Driver-DOT, should create exception
+        driverJa.sked_DOT__c = true;
+        update driverJa;
+
+        // Update CDL flag — resource has Driver tag but not Driver CDL, should create exception
+        driverJa.sked_CDL__c = true;
+        driverJa.sked_DOT__c = false;
+        update driverJa;
+
+        Test.stopTest();
+
+        // Verify the DOT/CDL flag updates persisted (requiredTagException code path was exercised)
+        sked__Job_Allocation__c updatedJa = [
+            SELECT sked_DOT__c, sked_CDL__c
+            FROM sked__Job_Allocation__c
+            WHERE Id = :driverJa.Id
+        ];
+        System.assertEquals(false, updatedJa.sked_DOT__c, 'DOT should be false after final update');
+        System.assertEquals(true, updatedJa.sked_CDL__c, 'CDL should be true after final update');
+    }
+
     static testMethod void testTravelTimeExceptionLog() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();

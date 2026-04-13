@@ -1,0 +1,72 @@
+<template>
+  <lightning-modal-header label="Select Vehicle"></lightning-modal-header>
+  <lightning-modal-body>
+    <div class="slds-m-bottom_small">
+      <lightning-input
+        type="search"
+        label="Search by Name"
+        value={searchTerm}
+        onchange={handleSearch}>
+      </lightning-input>
+    </div>
+    <div class="slds-scrollable_y" style="max-height:400px;">
+      <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" role="grid">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th scope="col" style="width:3rem;"></th>
+            <th scope="col"><div class="slds-truncate">Name</div></th>
+            <th scope="col"><div class="slds-truncate">Vehicle Category</div></th>
+            <th scope="col"><div class="slds-truncate">Vehicle Capacity</div></th>
+            <th scope="col"><div class="slds-truncate">Status</div></th>
+            <th scope="col"><div class="slds-truncate">Effective Date</div></th>
+            <th scope="col"><div class="slds-truncate">Inactive Date</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={filteredVehicles} for:item="vehicle">
+            <tr key={vehicle.id} class={vehicle.rowClass} data-id={vehicle.id} onclick={handleVehicleSelect} style="cursor:pointer;">
+              <td class="slds-text-align_center">
+                <template if:true={vehicle.isSelected}>
+                  <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Selected"></lightning-icon>
+                </template>
+              </td>
+              <td><div class="slds-truncate" title={vehicle.name}><a data-id={vehicle.id} onclick={handleLinkClick}>{vehicle.name}</a></div></td>
+              <td><div class="slds-truncate" title={vehicle.category}>{vehicle.category}</div></td>
+              <td><div class="slds-truncate" title={vehicle.presDonorCapacity}>{vehicle.presDonorCapacity}</div></td>
+              <td><div class="slds-truncate" title={vehicle.status}>{vehicle.status}</div></td>
+              <td><div class="slds-truncate">{vehicle.effectiveDateDisplay}</div></td>
+              <td><div class="slds-truncate">{vehicle.futureInactiveDateDisplay}</div></td>
+            </tr>
+            <template if:true={vehicle.showRelocated}>
+              <tr key={vehicle.relocatedKey}>
+                <td colspan="7" class="slds-p-around_x-small" style="background:#fffbe6;border-left:4px solid #f8c900;">
+                  <span class="slds-text-body_small">This vehicle is relocated</span>
+                </td>
+              </tr>
+            </template>
+          </template>
+          <template if:true={noResults}>
+            <tr>
+              <td colspan="7" class="slds-text-align_center slds-p-around_medium">
+                <span class="slds-text-color_weak">No vehicles found</span>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </lightning-modal-body>
+  <lightning-modal-footer>
+    <lightning-button
+      label="Cancel"
+      onclick={handleCancel}
+      class="slds-m-right_x-small">
+    </lightning-button>
+    <lightning-button
+      label="Select"
+      variant="brand"
+      disabled={isSaveDisabled}
+      onclick={handleSave}>
+    </lightning-button>
+  </lightning-modal-footer>
+</template>

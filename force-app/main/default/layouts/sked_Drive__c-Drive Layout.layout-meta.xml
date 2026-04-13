@@ -198,11 +198,7 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>sked_Is_Surrogate__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Shadow_Drive__c</field>
-            </layoutItems>
+            </layoutItems>            
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Platelet_Projected_Procedures__c</field>
