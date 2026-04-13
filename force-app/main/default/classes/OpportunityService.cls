@@ -4109,10 +4109,10 @@ opp.StageName = 'Closed';
         Id districtManager;
         Id accountSpecialist;
         Id owner=opp.OwnerId;
-        
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }
@@ -4121,14 +4121,15 @@ opp.StageName = 'Closed';
                 }
             }
         }
+
         if (accountManager != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333
         {
             return accountManager;
         } else if (accountSpecialist != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333 reordered specialist before DM
-        {
+        { 
             return accountSpecialist;
         }else if (districtManager != null) 
-        {
+        { 
             return districtManager;
         }  else 
         {

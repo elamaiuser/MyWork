@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Default Config</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Business_Distribution_List__c</field>
+        <value xsi:type="xsd:string">anil.kallu@redcross.org, kata.manishreddy@redcross.org</value>
+    </values>
+    <values>
+        <field>sked_Enable_Direct_Workday_Submission__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Notification_From_Email__c</field>
+        <value xsi:type="xsd:string">bsfsystem@redcross.org</value>
+    </values>
+    <values>
+        <field>sked_Reschedule_Delay_Minutes__c</field>
+        <value xsi:type="xsd:double">45.0</value>
+    </values>
+    <values>
+        <field>sked_Technical_Team_Distribution_List__c</field>
+        <value xsi:type="xsd:string">kata.manishreddy@redcross.org</value>
+    </values>
+    <values>
+        <field>sked_WD_Emp_Rpt_URL__c</field>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo%20ISU/BSF_No_Time_Entered_with_TZ</value>
+    </values>
+    <values>
+        <field>sked_WD_End_Date_Param__c</field>
+        <value xsi:type="xsd:string">End_Date</value>
+    </values>
+    <values>
+        <field>sked_WD_Import_Blocks_URL__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_WD_Start_Date_Param__c</field>
+        <value xsi:type="xsd:string">Start_Date</value>
+    </values>
+    <values>
+        <field>sked_WD_Worker_Param__c</field>
+        <value xsi:type="xsd:string">Worker!Employee_ID</value>
+    </values>
+    <values>
+        <field>sked_Workday_Max_Retry_Attempts__c</field>
+        <value xsi:type="xsd:double">3.0</value>
+    </values>
+    <values>
+        <field>sked_Ops_Record_Batch_Scope_Size__c</field>
+        <value xsi:type="xsd:double">200.0</value>
+    </values>
+</CustomMetadata>
