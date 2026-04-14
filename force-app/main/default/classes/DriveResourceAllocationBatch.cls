@@ -928,7 +928,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         for(ResourceContext res : resourceList) {
             if(res.resource.sked_Dedicated_to_Site__c != NULL && res.resource.sked_Dedicated_to_Site__c == driveSite) {
                 successfullyEvaluatedResourceMap.put(res.resource.Id, res);
-            } else {
+            } else if(res.resource.sked_Dedicated_to_Site__c == NULL) {
                 resourceListToReturn.add(res);
             }
         }
