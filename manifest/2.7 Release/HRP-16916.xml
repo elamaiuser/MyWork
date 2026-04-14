@@ -23,6 +23,8 @@
 		<members>BSF_Access_Control_Rule.HRP_16916_CO_AP_Total_Field_Permissions</members>
 		<members>BSF_Access_Control_Rule.HRP_16916_Field_Permission_Set</members>
 		<members>BSF_Access_Control_Rule.HRP_16916_Field_Permission_Set_Read</members>
+		<members>BSF_Access_Control_Rule.HRP_16916_CO_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_16916_CO_Field_Permission_Set_Read</members>
 		<name>CustomMetadata</name>
 	</types>
     <types>
