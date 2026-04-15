@@ -28,6 +28,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Ops_Record_Batch_Scope_Size__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_WD_Import_Blocks_URL__c</field>
             </layoutItems>
             <layoutItems>

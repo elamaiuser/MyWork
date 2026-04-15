@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   HRP-16515 — Package manifest: Ops Record direct Workday submission.
-  File: manifest/HRP-16515.xml
+  File: manifest/2.7 Release/HRP-16515.xml
   Includes all components created or modified for direct Workday submission.
   Update this file as new components are added during implementation.
-
 -->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <!-- Apex: new and modified classes -->
@@ -64,6 +63,7 @@
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Business_Distribution_List__c</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Technical_Team_Distribution_List__c</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Reschedule_Delay_Minutes__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Ops_Record_Batch_Scope_Size__c</members>
         <members>sked__Debug_Log__c.sked__Type__c</members>
         <name>CustomField</name>
     </types>

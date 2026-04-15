@@ -217,9 +217,9 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
                     } else {
                         resourceRecord.sked_Anticipated_Leave_Return_Date__c = returnDate;
                     }
-                    if (resourceEmploymentStatus != null) {
-                        resourceRecord.sked_Employment_Status__c = resourceEmploymentStatus;
-                    }
+                    // if (resourceEmploymentStatus != null) {
+                    //     resourceRecord.sked_Employment_Status__c = resourceEmploymentStatus;
+                    // }
 
                     resourcesToUpdate.add(resourceRecord);
                 }
@@ -258,13 +258,13 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
             WHERE  sked_Anticipated_Leave_Return_Date__c <= :System.today()
-            AND    sked_Employment_Status__c = 'Leave'
+            //AND    sked_Employment_Status__c = 'Leave'
         ];
 
         if (!resourcesToReactivate.isEmpty()) {
 
             for (sked__Resource__c resourceRecord : resourcesToReactivate) {
-                resourceRecord.sked_Employment_Status__c             = 'Active';
+                //resourceRecord.sked_Employment_Status__c             = 'Active';
                 resourceRecord.sked_Anticipated_Leave_Return_Date__c = null;
             }
 
@@ -399,13 +399,13 @@ public class BSF_LeaveReturnBatch implements Database.Batchable<BSF_WorkdayBatch
             SELECT Id, sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
             WHERE  Id IN :resourceIdToLeaveDateMap.keySet()
-            AND    sked_Employment_Status__c = 'Active'
+            //AND    sked_Employment_Status__c = 'Active'
         ];
 
         if (!resourcesToUpdateToLeave.isEmpty()) {
 
             for (sked__Resource__c resourceRecord : resourcesToUpdateToLeave) {
-                resourceRecord.sked_Employment_Status__c             = 'Leave';
+                //resourceRecord.sked_Employment_Status__c             = 'Leave';
                 resourceRecord.sked_Anticipated_Leave_Return_Date__c = resourceIdToLeaveDateMap.get(resourceRecord.Id);
             }
 

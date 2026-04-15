@@ -46,4 +46,8 @@
         <field>sked_Workday_Max_Retry_Attempts__c</field>
         <value xsi:type="xsd:double">3.0</value>
     </values>
+    <values>
+        <field>sked_Ops_Record_Batch_Scope_Size__c</field>
+        <value xsi:type="xsd:double">200.0</value>
+    </values>
 </CustomMetadata>

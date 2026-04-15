@@ -10,6 +10,25 @@
 public without sharing class BSF_AccessControlManager {
 
     /**
+     * @description DTO to capture specific, row-level details of what was changed.
+     */
+    private class ChangeDetail {
+        String operation;
+        String componentType;
+        String targetName;
+        String permSetName;
+        String accessLevel;
+
+        public ChangeDetail(String operation, String componentType, String targetName, String permSetName, String accessLevel) {
+            this.operation = operation;
+            this.componentType = componentType;
+            this.targetName = targetName;
+            this.permSetName = permSetName;
+            this.accessLevel = accessLevel;
+        }
+    }
+
+    /**
      * @description A private inner class used as a data transfer object (DTO) to accumulate
      *              all statistics and warnings from a single execution run.
      */
@@ -22,6 +41,7 @@ public without sharing class BSF_AccessControlManager {
         List<String> undescribedObjectList = new List<String>();
         List<String> dmlErrors = new List<String>();
         Datetime startedAt, endedAt;
+        List<ChangeDetail> detailedLogs = new List<ChangeDetail>();
     }
     
     /**
@@ -98,6 +118,36 @@ public without sharing class BSF_AccessControlManager {
                 row.Error_Description_Long__c = longMsg.left(131072);                
                 
                 Database.SaveResult result = Database.insert(row, false);
+
+                if (result.isSuccess() && !summary.detailedLogs.isEmpty()) {
+                    // 1. Build the CSV Header
+                    String csvContent = 'Operation,Component Type,Target API Name,Permission Set,Access Granted\n';
+                    
+                    // 2. Build the CSV Rows
+                    for (ChangeDetail log : summary.detailedLogs) {
+                        csvContent += '"' + log.operation + '","' 
+                                    + log.componentType + '","' 
+                                    + log.targetName + '","' 
+                                    + log.permSetName + '","' 
+                                    + log.accessLevel + '"\n';
+                    }
+                    
+                    // 3. Create the File (ContentVersion)
+                    ContentVersion cv = new ContentVersion();
+                    cv.Title = 'Detailed_Access_Log_' + releaseTag + '.csv';
+                    cv.PathOnClient = 'Detailed_Access_Log_' + releaseTag + '.csv';
+                    cv.VersionData = Blob.valueOf(csvContent);
+                    insert cv;
+                    
+                    // 4. Link the File to the Error Log Record
+                    Id conDocId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id].ContentDocumentId;
+                    ContentDocumentLink cdl = new ContentDocumentLink();
+                    cdl.ContentDocumentId = conDocId;
+                    cdl.LinkedEntityId = row.Id; // Attach to the newly created Error Log record
+                    cdl.ShareType = 'V'; // Viewer permission
+                    insert cdl;
+                }
+                
                 if (!result.isSuccess()) {
                     System.debug(LoggingLevel.WARN, 'BSF_Error_Log__c single-row insert failed: ' + result.getErrors()[0].getMessage());
                 }
@@ -215,8 +265,11 @@ public without sharing class BSF_AccessControlManager {
             }
         }
        
-        List<sObject> recordsToInsert = new List<sObject>();
-        List<sObject> recordsToUpdate = new List<sObject>();
+        // FIX: Separate lists for specific sObject types to prevent DML chunking limit errors
+        List<ObjectPermissions> objPermsToInsert = new List<ObjectPermissions>();
+        List<ObjectPermissions> objPermsToUpdate = new List<ObjectPermissions>();
+        List<FieldPermissions> fldPermsToInsert = new List<FieldPermissions>();
+        List<FieldPermissions> fldPermsToUpdate = new List<FieldPermissions>();
 
         for (BSF_Access_Control_Rule__mdt rule : rules) {
             String sObjectName = String.isBlank(rule.SObject_API_Name__c) ? '' : rule.SObject_API_Name__c.trim();
@@ -233,12 +286,14 @@ public without sharing class BSF_AccessControlManager {
                     String key = permSetId + '-' + sObjectName;
                     ObjectPermissions op = existingObjectPerms.get(key);
                     if (op == null) {
-                        recordsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
-                        summary.objInserted++;
+                        objPermsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
+                        summary.objInserted++;                        
+                        summary.detailedLogs.add(new ChangeDetail('Insert', 'Object', sObjectName, psName, 'R:'+rule.PermissionsRead__c+' C:'+rule.PermissionsCreate__c+' E:'+rule.PermissionsEdit__c+' D:'+rule.PermissionsDelete__c));
                     } else if (op.PermissionsRead!=rule.PermissionsRead__c || op.PermissionsCreate!=rule.PermissionsCreate__c || op.PermissionsEdit!=rule.PermissionsEdit__c || op.PermissionsDelete!=rule.PermissionsDelete__c) {
                         op.PermissionsRead=rule.PermissionsRead__c; op.PermissionsCreate=rule.PermissionsCreate__c; op.PermissionsEdit=rule.PermissionsEdit__c; op.PermissionsDelete=rule.PermissionsDelete__c;
-                        recordsToUpdate.add(op);
+                        objPermsToUpdate.add(op);
                         summary.objUpdated++;
+                        summary.detailedLogs.add(new ChangeDetail('Update', 'Object', sObjectName, psName, 'R:'+rule.PermissionsRead__c+' C:'+rule.PermissionsCreate__c+' E:'+rule.PermissionsEdit__c+' D:'+rule.PermissionsDelete__c));
                     }
                 } else {
                     Map<String, Schema.SObjectField> fieldMap = objectFieldMaps.get(sObjectName);
@@ -267,19 +322,26 @@ public without sharing class BSF_AccessControlManager {
                         String key = permSetId + '-' + fullFieldApiName;
                         FieldPermissions fp = existingFieldPerms.get(key);
                         if (fp == null) {
-                            recordsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
+                            fldPermsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
                             summary.fldInserted++;
+                            summary.detailedLogs.add(new ChangeDetail('Insert', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
                         } else if (fp.PermissionsRead != rule.PermissionsRead__c || fp.PermissionsEdit != effectiveEdit) {
                             fp.PermissionsRead=rule.PermissionsRead__c; fp.PermissionsEdit=effectiveEdit;
-                            recordsToUpdate.add(fp);
+                            fldPermsToUpdate.add(fp);
                             summary.fldUpdated++;
+                            summary.detailedLogs.add(new ChangeDetail('Update', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
                         }
                     }
                 }
             }
         }
-        executeDml(recordsToInsert, 'insert', summary);
-        executeDml(recordsToUpdate, 'update', summary);
+        
+        // FIX: Execute DML on each specific list independently. 
+        // Your executeDml helper already checks if the list is empty, making this perfectly safe.
+        executeDml(objPermsToInsert, 'insert', summary);
+        executeDml(fldPermsToInsert, 'insert', summary);
+        executeDml(objPermsToUpdate, 'update', summary);
+        executeDml(fldPermsToUpdate, 'update', summary);
     }
 
     /**
@@ -351,6 +413,7 @@ public without sharing class BSF_AccessControlManager {
                         if (childEntityType == 'ApexPage') {
                             summary.pageInserted++;
                         }
+                        summary.detailedLogs.add(new ChangeDetail('Insert', childEntityType, compName, psName, 'Enabled'));
                     }
                 }
             }
