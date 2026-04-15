@@ -80,6 +80,14 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     return this.selectedDriveIds.size === 0 || this.isApplying;
   }
 
+  get currentVehicleId() {
+    return this.vehicleToChange ? this.vehicleToChange.id : null;
+  }
+
+  get replacementVehicleId() {
+    return this.replacementVehicle ? this.replacementVehicle.id : null;
+  }
+
   get replacementVehicleExcludeId() {
     return this.vehicleToChange ? this.vehicleToChange.id : null;
   }
@@ -117,7 +125,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     };
     this.setLastQuery();
     this.vehicleToChange = null;
-    this._clearPickerSelection('currentVehicle');
     this._resetDownstream();
     this.loadVehicles();
   }
@@ -316,19 +323,12 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
   }
 
   handleCancel() {
-    this.filters = {
-      collectionOperationValues: { divisions: [], arcRegions: [], districts: [], territoryCollectionOperations: [] },
-      startDate: null,
-      endDate: null
-    };
     this.vehicleToChange = null;
     this.replacementVehicle = null;
-    this.availableVehicles = [];
     this._allDrives = [];
     this.impactedDrives = [];
     this.totalMatches = 0;
     this.selectedDriveIds = new Set();
-
     this.selectedContentionResolutions = {};
     this.currentPage = 1;
   }
@@ -502,7 +502,6 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
 
   _resetDownstream() {
     this.replacementVehicle = null;
-    this._clearPickerSelection('replacementVehicle');
     this._allDrives = [];
     this.impactedDrives = [];
     this.totalMatches = 0;
@@ -510,12 +509,5 @@ export default class SlwcVehicleReplacementConsole extends LightningElement {
     this.selectedDriveIds = new Set();
 
     this.selectedContentionResolutions = {};
-  }
-
-  _clearPickerSelection(dataId) {
-    const picker = this.template.querySelector(`c-slwc-vehicle-picker[data-id="${dataId}"]`);
-    if (picker) {
-      picker.clearSelection();
-    }
   }
 }
