@@ -10,6 +10,7 @@ private class AffiliationTriggerTest {
     static void prepareDataset() {
  		skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('UserTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('SiteTriggerHandler');
         TriggerHandler.bypass('OpportunityTriggerHandler');
@@ -18,9 +19,27 @@ private class AffiliationTriggerTest {
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
         List<BSF_Portfolio__c> bsfPortf = new List<BSF_Portfolio__c>();
         
+        //Admin User
+        User testAdminUser = new User(
+            ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
+            LastName = 'testingLast',
+            Email = 'adminuser000@amamama.com',
+            Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
+            CompanyName = 'TEST',
+            Title = 'title',
+            Alias = 'alias',
+            TimeZoneSidKey = 'America/Los_Angeles',
+            EmailEncodingKey = 'UTF-8',
+            LanguageLocaleKey = 'en_US',
+            LocaleSidKey = 'en_US',
+            IsActive = true
+        );
+        
         //insert DRD User
         User testDRDUser = (User)mapTestData.get('DRD_USER');
-        system.runAs(new User(Id = UserInfo.getUserId())) {
+       	testDRDUser.IsActive = true;
+        
+        system.runAs(testAdminUser) {
             insert testDRDUser;
         }
         
@@ -107,13 +126,8 @@ private class AffiliationTriggerTest {
         TriggerHandler.bypass('AccountAffiliationTriggerHandler');
         TriggerHandler.bypass('DriveMarketingProgramTriggerHandler');
         
-        User testUser = [SELECT Id, IsActive FROM User LIMIT 1];
-        TriggerHandler.bypass('UserTriggerHandler');
-        skedHubBase.BypassUpdateTriggers = true;
-        update new User(Id = testUser.Id, IsActive = true);
-        skedHubBase.BypassUpdateTriggers = false;
-        TriggerHandler.clearBypass('UserTriggerHandler');
-
+        User testUser = [SELECT Id, IsActive FROM User WHERE LastName = 'DRDLastName' AND Profile.Name = 'DRD Profile' LIMIT 1];
+       
         System.runAs(testUser) {
         	AffiliationService.populateEndDateInAccountAffiliation([SELECT Id FROM Marketing_Program__c], 'Update');
 

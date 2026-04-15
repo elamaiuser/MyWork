@@ -21,6 +21,7 @@
 
     <types>
 		<members>BSF_Workday_Leave_Config__c</members>
+        <members>BSF_Workday_Staging__c</members>
 		<name>CustomObject</name>
 	</types>
 

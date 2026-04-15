@@ -78,11 +78,12 @@ public with sharing class TaskService {
         String driveExternalId = '';
         String driveUFID = '';
         if(taskId != null){
-            List<Task> taskList = [SELECT Subject,
+            List<Task> taskList = [SELECT Type,
                                             WhatId
                                         FROM Task 
-                                        WHERE Id = :taskId];
-            if(!taskList.isEmpty() && taskList[0].Subject != null){
+                                        WHERE Id = :taskId
+                                        AND Type != null];
+            if(!taskList.isEmpty() && taskList[0].Type != null){
                 Map<Id,Sked_Drive__c> oppVsDocMap = new Map<Id,Sked_Drive__c>();
                 //HRP-12627 changes starts
                 if(taskList[0].WhatId != null){
@@ -106,7 +107,7 @@ public with sharing class TaskService {
                                                                 Report_Name__c,
                                                                 DeveloperName
                                                         FROM Task_Report_Link__mdt 
-                                                        WHERE Task_Subject__c =:taskList[0].Subject
+                                                        WHERE Task_Type__c =:taskList[0].Type
                                                         AND Active__c = true
                                                         ORDER BY Report_Name__c ASC]){
                 
@@ -695,7 +696,7 @@ public with sharing class TaskService {
         } 
     }*/
 
-    public static void cancelOneWeekCheckInTasks(Set<Id> oppids) {
+    public static void cancelOpportunityTasks(Set<Id> oppids) {
         if(oppids == null || oppids.isEmpty()){
             return;
         }
@@ -705,7 +706,6 @@ public with sharing class TaskService {
             SELECT Id, WhatId
             FROM Task
             WHERE WhatId IN :oppids
-            AND Type = :BSF_Constants.TASK_TYPE_ONE_WEEK_CHECK_IN
             AND Status != :BSF_Constants.STATUS_CANCELLED
         ]) {
             t.Status = BSF_Constants.STATUS_CANCELLED;
@@ -713,7 +713,7 @@ public with sharing class TaskService {
         }
         if (tasksToUpdate.size() > 0) {
             Database.SaveResult[] srList = Database.update(tasksToUpdate, false);
-            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOneWeekCheckInTasks','Error', 'Error in Cancelling Tasks for One Week Check-In');
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOpportunityTasks','Error', 'Error in Cancelling Tasks for Opportunity');
             if(!errorList.isEmpty()){
                 Database.insert(errorList, true);
             }
