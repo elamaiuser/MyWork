@@ -8,8 +8,7 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:type="xsd:string">file:///C:/TheField/Donor Marketing/ln
-Honor of_In Memory of Program/IHO IMO Authorization Form.pdf - Click once to follow. Click and hold to select this cell.</value>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Marketing/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Marketing%2FIn%20Honor%20of%5FIn%20Memory%20of%20Program%2FIHO%20IMO%20Authorization%20Form%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Marketing%2FIn%20Honor%20of%5FIn%20Memory%20of%20Program</value>
     </values>
     <values>
         <field>Report_Name__c</field>
