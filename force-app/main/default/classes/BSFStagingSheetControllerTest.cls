@@ -4,7 +4,7 @@ private class BSFStagingSheetControllerTest {
     static void makeData() {
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
-
+        
         Map<String,Schema.RecordTypeInfo> recordTypeMapByName = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName();
         
         sked_Territory__c division = new sked_Territory__c();
@@ -15,7 +15,7 @@ private class BSFStagingSheetControllerTest {
         division.sked_Parent__c = null;
         TriggerHandler.bypass('TerritoryTriggerHandler');
         insert division;
-
+        
         sked_Territory__c region = new sked_Territory__c();
         region.RecordTypeId = recordTypeMapByName.get('ARC Region').getRecordTypeId();
         region.Name = 'ARC Region';
@@ -24,7 +24,7 @@ private class BSFStagingSheetControllerTest {
         region.sked_Parent__c = division.Id;
         TriggerHandler.bypass('TerritoryTriggerHandler');
         insert region;
-
+        
         sked_Territory__c district = new sked_Territory__c();
         district.RecordTypeId = recordTypeMapByName.get('District').getRecordTypeId();
         district.Name = 'District';
@@ -33,7 +33,7 @@ private class BSFStagingSheetControllerTest {
         district.sked_Parent__c = region.Id;
         TriggerHandler.bypass('TerritoryTriggerHandler');
         insert district;
-
+        
         Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c();
         testCollectionOperation1.Name = 'Collection Operation 1';
         testCollectionOperation1.sked_Lunch_Break_Duration_Fixed_Site__c = '30';
@@ -49,7 +49,7 @@ private class BSFStagingSheetControllerTest {
         testCollectionOperation1.sked_IMPACT_End_Date__c = Date.today().addDays(500);
         TriggerHandler.bypass('CollectionOperationTriggerHandler');
         insert testCollectionOperation1;
-
+        
         sked_Territory_Collection_Operation__c territoryCollOp = new sked_Territory_Collection_Operation__c();
         territoryCollOp.sked_Start_Date__c = Date.today().addDays(-500);
         territoryCollOp.sked_End_Date__c =  Date.today().addDays(500);
@@ -57,11 +57,11 @@ private class BSFStagingSheetControllerTest {
         territoryCollOp.sked_Territory__c = district.Id;
         TriggerHandler.bypass('TerritoryCollOpTriggerHandler');
         insert territoryCollOp;
-
+        
         Test.startTest();
         prepareDataset();
         Test.stopTest();
-
+        
         sked__Resource__c testResource1 = [SELECT Id FROM sked__Resource__c WHERE RecordType.Name = 'Staff' AND sked__Resource_Type__c = 'Person' LIMIT 1];
         List<String> availabilityType = Custom_Report_Config__mdt.getInstance('AvailabilityType').Value__c.split(',');
         sked__Availability__c availability1 = new sked__Availability__c(
@@ -82,23 +82,23 @@ private class BSFStagingSheetControllerTest {
         insert availability1;
         
     }
-
+    
     
     @isTest
     private static void testmethod1(){
         String collOpIds = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1].Id;
-       Test.startTest();
-       Id staffRecordTypeId = Schema.SObjectType.sked__Resource__c.getRecordTypeInfosByName().get('Staff').getRecordTypeId();
+        Test.startTest();
+        Id staffRecordTypeId = Schema.SObjectType.sked__Resource__c.getRecordTypeInfosByName().get('Staff').getRecordTypeId();
         List<sked__Resource__c> resource =[SELECT id,
-                                                sked__User__c,
-                                                sked__Primary_Region__c,
-                                                sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c
-                                            FROM sked__Resource__c 
-                                            WHERE recordTypeId =:staffRecordTypeId 
-                                            AND sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c != null
-                                            AND sked__Is_Active__c = true LIMIT 1];
+                                           sked__User__c,
+                                           sked__Primary_Region__c,
+                                           sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c
+                                           FROM sked__Resource__c 
+                                           WHERE recordTypeId =:staffRecordTypeId 
+                                           AND sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c != null
+                                           AND sked__Is_Active__c = true LIMIT 1];
         
-            
+        
         resource[0].sked__User__c = UserInfo.getUserId();
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
@@ -157,6 +157,27 @@ private class BSFStagingSheetControllerTest {
         PageReference pr2 = ext.OpenSearchPanel();
         Test.stopTest();
     }
+    
+    @isTest
+    private static void testmethod31(){
+        
+        Test.startTest();
+        PageReference pr = Page.BSFStagingSheetVF;
+        pr.getParameters().put('startdate',null);
+        pr.getParameters().put('enddate',null);
+        pr.getParameters().put('collopids',null);
+        pr.getParameters().put('appeal','No');
+        pr.getParameters().put('ufid','D14R7R');
+        pr.getParameters().put('jobid',null);
+        pr.getParameters().put('moe','false');
+        pr.getParameters().put('renderas','html');
+        Test.setCurrentPage(pr);
+        BSFStagingSheetController ext = new BSFStagingSheetController(); 
+        PageReference pr1 = ext.downloadPdf();
+        PageReference pr2 = ext.OpenSearchPanel();
+        Test.stopTest();
+    }
+    
     @isTest
     private static void testmethod4(){
         String jobid = [SELECT Id FROM sked__Job__c LIMIT 1].Id;
@@ -246,7 +267,20 @@ private class BSFStagingSheetControllerTest {
         PageReference pr4 = ext.OpenStagingSheetMOEAppeal();
         Test.stopTest();
     }
-
+    @isTest
+    private static void testmethod81(){
+        Test.startTest();
+        PageReference pr = Page.BSFStagingSheetLinks;
+        pr.getParameters().put('appeal',null);
+        Test.setCurrentPage(pr);
+        BSFStagingSheetLinkController ext = new BSFStagingSheetLinkController(); 
+        PageReference pr1 = ext.OpenStagingSheetStandard();
+        PageReference pr2 = ext.OpenStagingSheetAppeal();
+        PageReference pr3 = ext.OpenStagingSheetMOEStandard();
+        PageReference pr4 = ext.OpenStagingSheetMOEAppeal();
+        Test.stopTest();
+    }
+    
     //Method to get the map of recordType Name as key and recordTypeId as value 
     private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
@@ -260,7 +294,7 @@ private class BSFStagingSheetControllerTest {
     //Method to get the one picklist value of the Sobject field
     private static String picklistValues(String objectName, String fieldName) {
         String result;
-
+        
         List<Schema.DescribeSobjectResult> sobjectlist = Schema.describeSObjects(new List<String>{objectName});
         
         for(Schema.DescribeSobjectResult sobj : sobjectlist) {
@@ -271,10 +305,10 @@ private class BSFStagingSheetControllerTest {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
     private static void prepareDataset(){
         skedHubBase.BypassInsertTriggers = true;
         skedHubBase.BypassUpdateTriggers = true;
@@ -347,7 +381,7 @@ private class BSFStagingSheetControllerTest {
         
         System.runAs( AdminUser ){
             insert new List<User>{DRDAMUser,DRDAMUser1};
-        }
+                }
         System.runAs( AdminUser ){
             List<Account> mobileAccList = new List<Account>();
             
@@ -357,11 +391,29 @@ private class BSFStagingSheetControllerTest {
             accObj.RecordTypeId = accRecTypeId;
             accObj.Name = 'Exavalu';
             accObj.BillingPostalCode = '30622';
-            accObj.Internal_Name__c ='Exavalu';            
+            accObj.Internal_Name__c ='Exavalu';
+            accObj.Type = 'Education';
+            accObj.Industry_Code__c = 'High School';            
             mobileAccList.add(accobj); 
             
             triggerHandler.bypass('AccountTriggerHandler');
             insert mobileAccList;
+            
+            List<Account> mobileAccListTest = new List<Account>();
+            
+            Account accObjTest;
+            
+            accObjTest = new Account();
+            accObjTest.RecordTypeId = accRecTypeId;
+            accObjTest.Name = 'Exavalu';
+            accObjTest.BillingPostalCode = '30622';
+            accObjTest.Internal_Name__c ='Exavalu';
+            accObjTest.Type = 'Education';
+            accObjTest.Industry_Code__c = 'College / University';            
+            mobileAccListTest.add(accObjTest); 
+            
+            triggerHandler.bypass('AccountTriggerHandler');
+            insert mobileAccListTest;         
             
             List<AccountTeammember> atmList = new List<AccountTeammember>();
             AccountTeammember atm;
@@ -507,9 +559,11 @@ private class BSFStagingSheetControllerTest {
             optyObj.X2RBC_Projected_Procedures__c = 1;
             optyObj.Anticipated_Registered_Donors__c = 1;
             optyObj.Account_Manager__c = DRDAMUser1.Id;
+            optyObj.Additional_Drive_Logistics__c = 'Other';
+            optyObj.Drive_Logistics_Other__c = 'test';
             
             oppsobjlist.add( optyObj );
-
+            
             Opportunity optyObj1 ; // = new Opportunity();
             optyObj1 = new Opportunity();
             optyObj1.RecordTypeId = optyRecTypeId;
@@ -528,47 +582,69 @@ private class BSFStagingSheetControllerTest {
             
             oppsobjlist.add( optyObj1 );
             
-                
+            
             triggerHandler.bypass('OpportunityTriggerHandler');
             insert oppsobjlist;
-
+            
             Biomed_Collection_Op_Center__c testCollectionOperation1 = [SELECT Id, Name FROM Biomed_Collection_Op_Center__c WHERE Name = 'Collection Operation 1' LIMIT 1];
             
-
+            
             
             triggerHandler.bypass('DriveTriggerHandler');
             sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
-                                                        sked_Collection_Operation__c = testCollectionOperation1.Id,
-                                                        sked_Drive_Date__c = System.today(),
-                                                        sked_Drive_Site__c = siteObj.Id,
-                                                        sked_Opportunity__c = oppsobjlist.get(0).Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
-                                                        sked_Account__c = mobileAccList.get(0).Id,
-                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
-                                                        sked_Drive_Productivity_Planned__c = 0.8,
-                                                        sked_Projected_Registered_Donors__c = 100,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED,
-                                                        sked_Drive_Dispatched__c = false,
-                                                        sked_Staff_Capacity__c = 52,
-                                                            sked_2RBC_Projected_Procedures__c = 2);
+                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
+                                                         sked_Drive_Date__c = System.today(),
+                                                         sked_Drive_Site__c = siteObj.Id,
+                                                         sked_Opportunity__c = oppsobjlist.get(0).Id,
+                                                         sked_Type_of_Drive__c = 'Fixed Site',
+                                                         sked_Account__c = mobileAccList.get(0).Id,
+                                                         sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                         sked_Drive_Productivity_Planned__c = 0.8,
+                                                         sked_Projected_Registered_Donors__c = 100,
+                                                         sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED,
+                                                         sked_Drive_Dispatched__c = false,
+                                                         sked_Staff_Capacity__c = 52,
+                                                         sked_UFID__c = 'D14R7R',
+                                                         sked_Purple_Top_Drive__c = true,
+                                                         
+                                                         sked_2RBC_Projected_Procedures__c = 2);
             insert testDrive1;
             sked_Drive__c testDrive2 = new sked_Drive__c(Name = 'Testtwo Drive',
-                                                        sked_Collection_Operation__c = testCollectionOperation1.Id,
-                                                        sked_Drive_Date__c = System.today().addDays(60),
-                                                        sked_Drive_Site__c = siteObj.Id,
-                                                        sked_Opportunity__c = oppsobjlist.get(1).Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
-                                                        sked_Account__c = mobileAccList.get(0).Id,
-                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
-                                                        sked_Drive_Productivity_Planned__c = 0.8,
-                                                        sked_Projected_Registered_Donors__c = 100,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED,
-                                                        sked_Drive_Dispatched__c = true,
-                                                        sked_Staff_Capacity__c = 52,
-                                                        sked_2RBC_Projected_Procedures__c = 2);
+                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
+                                                         sked_Drive_Date__c = System.today().addDays(60),
+                                                         sked_Drive_Site__c = siteObj.Id,
+                                                         sked_Opportunity__c = oppsobjlist.get(1).Id,
+                                                         sked_Type_of_Drive__c = 'Fixed Site',
+                                                         sked_Account__c = mobileAccList.get(0).Id,
+                                                         sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                         sked_Drive_Productivity_Planned__c = 0.8,
+                                                         sked_Projected_Registered_Donors__c = 100,
+                                                         sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED,
+                                                         sked_Drive_Dispatched__c = true,
+                                                         sked_Staff_Capacity__c = 52,
+                                                         
+                                                         sked_2RBC_Projected_Procedures__c = 2);
             insert testDrive2;
+            
+            sked_Drive__c testDrive3 = new sked_Drive__c(Name = 'Testthree Drive',
+                                                         sked_Collection_Operation__c = testCollectionOperation1.Id,
+                                                         sked_Drive_Date__c = System.today().addDays(60),
+                                                         sked_Drive_Site__c = siteObj.Id,
+                                                         sked_Opportunity__c = oppsobjlist.get(1).Id,
+                                                         sked_Type_of_Drive__c = 'Fixed Site',
+                                                         sked_Account__c = mobileAccListTest.get(0).Id,
+                                                         sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                         sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                         sked_Drive_Productivity_Planned__c = 0.8,
+                                                         sked_Projected_Registered_Donors__c = 100,
+                                                         sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED,
+                                                         sked_Drive_Dispatched__c = true,
+                                                         sked_Staff_Capacity__c = 52);
+            
+            
+            insert testDrive3;
             sked_Drive_Shift__c shiftData = new sked_Drive_Shift__c(Name = 'test shift 1',
                                                                     sked_Max_Donor_Capacity__c = 25,
                                                                     sked_2RBC_Projected_Procedures__c = 6,
@@ -584,23 +660,23 @@ private class BSFStagingSheetControllerTest {
                                                                     sked_Lunch_Break_Before_Draw_Hours__c = true);
             insert shiftData;
             sked_Drive_Shift__c shiftData2 = new sked_Drive_Shift__c(Name = 'test shift 2',
-                                                                    sked_Max_Donor_Capacity__c = 25,
-                                                                    sked_2RBC_Projected_Procedures__c = 6,
-                                                                    sked_WB_Projected_Procedures__c = 6,
-                                                                    sked_Staff_Setup__c = 15,
-                                                                    sked_Equipment_Allocated__c = 4,
-                                                                    sked_Lunch_Break_Start_Time__c = Time.newInstance(8, 0, 0, 0),
-                                                                    sked_Lunch_Break_End_Time__c = Time.newInstance(9, 0, 0, 0),
-                                                                    sked_Drive__c = testDrive2.Id,
-                                                                    sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                                    sked_End_Time__c = Time.newInstance(12, 0, 0, 0));
+                                                                     sked_Max_Donor_Capacity__c = 25,
+                                                                     sked_2RBC_Projected_Procedures__c = 6,
+                                                                     sked_WB_Projected_Procedures__c = 6,
+                                                                     sked_Staff_Setup__c = 15,
+                                                                     sked_Equipment_Allocated__c = 4,
+                                                                     sked_Lunch_Break_Start_Time__c = Time.newInstance(8, 0, 0, 0),
+                                                                     sked_Lunch_Break_End_Time__c = Time.newInstance(9, 0, 0, 0),
+                                                                     sked_Drive__c = testDrive2.Id,
+                                                                     sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                                     sked_End_Time__c = Time.newInstance(12, 0, 0, 0));
             insert shiftData2;
             System.debug('dfghjk ### 2'+shiftData2.Id);
             sked_Drive_Delivery_Job__c drivejob = new sked_Drive_Delivery_Job__c(sked_Drive__c = testDrive1.Id);
             insert drivejob;
             sked__Region__c reg = new sked__Region__c(Name = 'ABCD',
-                                                        sked__Timezone__c = UserInfo.getTimeZone().getID(),
-                                                        sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id);
+                                                      sked__Timezone__c = UserInfo.getTimeZone().getID(),
+                                                      sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id);
             insert reg;
             String rll = picklistValues('sked__Job__c','sked_Resource_Role__c');
             sked__Job__c skedjob = new sked__Job__c(sked_Drive_Shift__c = shiftData.Id,
@@ -625,185 +701,185 @@ private class BSFStagingSheetControllerTest {
             skedHubBase.BypassUpdateTriggers = true;
             insert skedjob;
             sked__Job__c skedjob1 = new sked__Job__c(sked_Drive_Shift__c = shiftData2.Id,
-                                                    sked_Drive__c = testDrive2.Id,
-                                                    sked__Region__c = reg.Id,
-                                                    sked__Duration__c = 50,
-                                                    sked_Resource_Role__c = rll,
-                                                    sked_Lead_Time__c = 5,
-                                                    sked_Travel_Time__c = 5,
-                                                    sked_Setup_Time__c = 5,
-                                                    sked_Breakdown_Time__c = 5,
-                                                    sked_Travel_Time2__c = 5,
-                                                    sked_Wrap_up_Time__c = 5,
-                                                    sked_Sponsor_Volunteer_Quantity__c = 1,
-                                                    sked_Redcross_Volunteer_Quantity__c = 1,
-                                                    sked_Start_Time__c = Datetime.now().time(),
-                                                    sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
+                                                     sked_Drive__c = testDrive2.Id,
+                                                     sked__Region__c = reg.Id,
+                                                     sked__Duration__c = 50,
+                                                     sked_Resource_Role__c = rll,
+                                                     sked_Lead_Time__c = 5,
+                                                     sked_Travel_Time__c = 5,
+                                                     sked_Setup_Time__c = 5,
+                                                     sked_Breakdown_Time__c = 5,
+                                                     sked_Travel_Time2__c = 5,
+                                                     sked_Wrap_up_Time__c = 5,
+                                                     sked_Sponsor_Volunteer_Quantity__c = 1,
+                                                     sked_Redcross_Volunteer_Quantity__c = 1,
+                                                     sked_Start_Time__c = Datetime.now().time(),
+                                                     sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobTriggerHandler');
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             insert skedjob1;
             sked__Job__c skedjob2 = new sked__Job__c(sked_Drive_Shift__c = shiftData.Id,
-                                                    sked_Drive__c = testDrive1.Id,
-                                                    sked__Region__c = reg.Id,
-                                                    sked__Duration__c = 50,
-                                                    sked_Asset_Type__c = 'Vehicle',
-                                                    sked__Type__c = 'Vehicle',
-                                                    sked_Lead_Time__c = 5,
-                                                    sked_Travel_Time__c = 5,
-                                                    sked_Setup_Time__c = 5,
-                                                    sked_Breakdown_Time__c = 5,
-                                                    sked_Travel_Time2__c = 5,
-                                                    sked_Wrap_up_Time__c = 5,
-                                                    sked_Start_Time__c = Datetime.now().time(),
-                                                    sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
+                                                     sked_Drive__c = testDrive1.Id,
+                                                     sked__Region__c = reg.Id,
+                                                     sked__Duration__c = 50,
+                                                     sked_Asset_Type__c = 'Vehicle',
+                                                     sked__Type__c = 'Vehicle',
+                                                     sked_Lead_Time__c = 5,
+                                                     sked_Travel_Time__c = 5,
+                                                     sked_Setup_Time__c = 5,
+                                                     sked_Breakdown_Time__c = 5,
+                                                     sked_Travel_Time2__c = 5,
+                                                     sked_Wrap_up_Time__c = 5,
+                                                     sked_Start_Time__c = Datetime.now().time(),
+                                                     sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobTriggerHandler');
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             insert skedjob2;
             sked__Job__c skedjob3 = new sked__Job__c(sked_Drive_Shift__c = shiftData2.Id,
-                                                    sked_Drive__c = testDrive2.Id,
-                                                    sked__Region__c = reg.Id,
-                                                    sked__Duration__c = 50,
-                                                    sked_Asset_Type__c = 'Vehicle',
-                                                    sked__Type__c = 'Vehicle',
-                                                    sked_Lead_Time__c = 5,
-                                                    sked_Travel_Time__c = 5,
-                                                    sked_Setup_Time__c = 5,
-                                                    sked_Breakdown_Time__c = 5,
-                                                    sked_Travel_Time2__c = 5,
-                                                    sked_Wrap_up_Time__c = 5,
-                                                    sked_Start_Time__c = Datetime.now().time(),
-                                                    sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
+                                                     sked_Drive__c = testDrive2.Id,
+                                                     sked__Region__c = reg.Id,
+                                                     sked__Duration__c = 50,
+                                                     sked_Asset_Type__c = 'Vehicle',
+                                                     sked__Type__c = 'Vehicle',
+                                                     sked_Lead_Time__c = 5,
+                                                     sked_Travel_Time__c = 5,
+                                                     sked_Setup_Time__c = 5,
+                                                     sked_Breakdown_Time__c = 5,
+                                                     sked_Travel_Time2__c = 5,
+                                                     sked_Wrap_up_Time__c = 5,
+                                                     sked_Start_Time__c = Datetime.now().time(),
+                                                     sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobTriggerHandler');
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             insert skedjob3;
             sked__Job__c skedjob4 = new sked__Job__c(sked_Drive_Shift__c = shiftData2.Id,
-                                                    sked_Drive__c = testDrive2.Id,
-                                                    sked__Region__c = reg.Id,
-                                                    sked__Duration__c = 50,
-                                                    sked_Asset_Type__c = 'Equipment',
-                                                    sked__Type__c = 'Equipment',
-                                                    sked_Lead_Time__c = 5,
-                                                    sked_Travel_Time__c = 5,
-                                                    sked_Setup_Time__c = 5,
-                                                    sked_Breakdown_Time__c = 5,
-                                                    sked_Travel_Time2__c = 5,
-                                                    sked_Wrap_up_Time__c = 5,
-                                                    sked_Start_Time__c = Datetime.now().time(),
-                                                    sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
+                                                     sked_Drive__c = testDrive2.Id,
+                                                     sked__Region__c = reg.Id,
+                                                     sked__Duration__c = 50,
+                                                     sked_Asset_Type__c = 'Equipment',
+                                                     sked__Type__c = 'Equipment',
+                                                     sked_Lead_Time__c = 5,
+                                                     sked_Travel_Time__c = 5,
+                                                     sked_Setup_Time__c = 5,
+                                                     sked_Breakdown_Time__c = 5,
+                                                     sked_Travel_Time2__c = 5,
+                                                     sked_Wrap_up_Time__c = 5,
+                                                     sked_Start_Time__c = Datetime.now().time(),
+                                                     sked_Finish_Time__c = Datetime.now().addMinutes(406).time());
             triggerHandler.bypass('OpportunityTriggerHandler');
             triggerHandler.bypass('JobTriggerHandler');
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             insert skedjob4;
             /*
-            * HRP-10127 Changes starts here 
-            * @Description: New test data added for HRP-10127 changes coverage
-            */
+* HRP-10127 Changes starts here 
+* @Description: New test data added for HRP-10127 changes coverage
+*/
             sked__Tag__c tagObj = new sked__Tag__c(Name = 'Inside',
-                                                sked__Classification__c = 'Global',
-                                                sked__Type__c = 'Physical Location Type'
-                                                );
-
+                                                   sked__Classification__c = 'Global',
+                                                   sked__Type__c = 'Physical Location Type'
+                                                  );
+            
             insert tagObj;
             Assert.areEqual('Inside', tagObj.Name,' Name should match');
-
+            
             Id staffRecordTypeId = Schema.SObjectType.sked__Resource__c.getRecordTypeInfosByName().get('Staff').getRecordTypeId();
             sked__Resource__c resourcestaff = new sked__Resource__c(
-                                                recordTypeId = staffRecordTypeId,
-                                                sked__Email__c = 'fghjkl123@yupmail.com',
-                                                sked_Employee_ID__c = '23456765',
-                                                sked__Is_Active__c = true,
-                                                sked_Title__c = 'Test',
-                                                sked_First_Name__c = 'Barnojit',
-                                                sked_Preferred_First_Name__c = 'barnojit',
-                                                sked_Last_Name__c = 'testone',
-                                                sked_ULID__c = 'ULID123',
-                                                sked__Category__c = 'Employee',
-                                                sked_Employment_Status__c = 'Active',
-                                                sked_Timezone__c = 'America/Los_Angeles',
-                                                sked__Resource_Type__c = 'Person',
-                                                sked_Primary_Phone_Type__c = 'Home Phone',
-                                                sked_Home_Phone__c = '123-123-4321',
-                                                sked__Primary_Phone__c = '123-123-4321',
-                                                sked_Address_Referenced_for_Scheduling__c = 'Work',
-                                                sked_Mobile_Type__c = 'Inside',
-                                                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
-                                                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
-                                                sked_Work_Country__c = 'USA',
-                                                sked_Work_City__c = 'Sylmar',
-                                                sked_Work_State__c = 'CA',
-                                                sked_Work_Address_1__c = '11970 Gager St',
-                                                sked_Work_Zip_Code__c = '91342',
-                                                sked__Primary_Region__c = reg.Id
-                                                );
-
+                recordTypeId = staffRecordTypeId,
+                sked__Email__c = 'fghjkl123@yupmail.com',
+                sked_Employee_ID__c = '23456765',
+                sked__Is_Active__c = true,
+                sked_Title__c = 'Test',
+                sked_First_Name__c = 'Barnojit',
+                sked_Preferred_First_Name__c = 'barnojit',
+                sked_Last_Name__c = 'testone',
+                sked_ULID__c = 'ULID123',
+                sked__Category__c = 'Employee',
+                sked_Employment_Status__c = 'Active',
+                sked_Timezone__c = 'America/Los_Angeles',
+                sked__Resource_Type__c = 'Person',
+                sked_Primary_Phone_Type__c = 'Home Phone',
+                sked_Home_Phone__c = '123-123-4321',
+                sked__Primary_Phone__c = '123-123-4321',
+                sked_Address_Referenced_for_Scheduling__c = 'Work',
+                sked_Mobile_Type__c = 'Inside',
+                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
+                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
+                sked_Work_Country__c = 'USA',
+                sked_Work_City__c = 'Sylmar',
+                sked_Work_State__c = 'CA',
+                sked_Work_Address_1__c = '11970 Gager St',
+                sked_Work_Zip_Code__c = '91342',
+                sked__Primary_Region__c = reg.Id
+            );
+            
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             triggerHandler.bypass('ResourceTriggerHandler');
             insert resourcestaff;
             Assert.areEqual('Barnojit', resourcestaff.sked_First_Name__c,'Frist Name should match');
-
+            
             Id vkRecordTypeId = Schema.SObjectType.sked__Resource__c.getRecordTypeInfosByName().get('Asset').getRecordTypeId();
             sked__Resource__c resourceVehicle = new sked__Resource__c(
-                                                recordTypeId = vkRecordTypeId,
-                                                sked_Asset_Type__c = 'Vehicle',
-                                                sked__Resource_Type__c = 'Asset',
-                                                sked_Element_Unit__c = '23456765',
-                                                sked__Is_Active__c = true,
-                                                sked_Long_Desc__c = 'toyota 4x',
-                                                sked_Short_Desc__c = 'XUV4',
-                                                sked__Category__c = 'ProMaster',
-                                                sked_ULID__c = 'ULID124',
-                                                sked_Timezone__c = 'America/Los_Angeles',
-                                                sked_Primary_Phone_Type__c = 'Home Phone',
-                                                sked_Home_Phone__c = '123-123-4322',
-                                                sked__Primary_Phone__c = '123-123-4322',
-                                                sked_Address_Referenced_for_Scheduling__c = 'Work',
-                                                sked_Mobile_Type__c = 'Inside',
-                                                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
-                                                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
-                                                sked_Work_Country__c = 'USA',
-                                                sked_Work_City__c = 'Sylmar',
-                                                sked_Work_State__c = 'CA',
-                                                sked_Work_Address_1__c = '11970 Gager St',
-                                                sked_Work_Zip_Code__c = '91342'
-                                                );
-
+                recordTypeId = vkRecordTypeId,
+                sked_Asset_Type__c = 'Vehicle',
+                sked__Resource_Type__c = 'Asset',
+                sked_Element_Unit__c = '23456765',
+                sked__Is_Active__c = true,
+                sked_Long_Desc__c = 'toyota 4x',
+                sked_Short_Desc__c = 'XUV4',
+                sked__Category__c = 'ProMaster',
+                sked_ULID__c = 'ULID124',
+                sked_Timezone__c = 'America/Los_Angeles',
+                sked_Primary_Phone_Type__c = 'Home Phone',
+                sked_Home_Phone__c = '123-123-4322',
+                sked__Primary_Phone__c = '123-123-4322',
+                sked_Address_Referenced_for_Scheduling__c = 'Work',
+                sked_Mobile_Type__c = 'Inside',
+                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
+                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
+                sked_Work_Country__c = 'USA',
+                sked_Work_City__c = 'Sylmar',
+                sked_Work_State__c = 'CA',
+                sked_Work_Address_1__c = '11970 Gager St',
+                sked_Work_Zip_Code__c = '91342'
+            );
+            
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             triggerHandler.bypass('ResourceTriggerHandler');
             insert resourceVehicle;
             sked__Resource__c resourceEquipment = new sked__Resource__c(
-                                                recordTypeId = vkRecordTypeId,
-                                                sked_Asset_Type__c = 'Equipment',
-                                                sked__Resource_Type__c = 'Asset',
-                                                sked_Element_Unit__c = '23456766',
-                                                sked__Is_Active__c = true,
-                                                sked_Long_Desc__c = 'toyota 4x',
-                                                sked_Short_Desc__c = 'XUV4',
-                                                sked__Category__c = 'ProMaster',
-                                                sked_ULID__c = 'ULID125',
-                                                sked_Timezone__c = 'America/Los_Angeles',
-                                                sked_Primary_Phone_Type__c = 'Home Phone',
-                                                sked_Home_Phone__c = '123-123-4322',
-                                                sked__Primary_Phone__c = '123-123-4322',
-                                                sked_Address_Referenced_for_Scheduling__c = 'Work',
-                                                sked_Mobile_Type__c = 'Inside',
-                                                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
-                                                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
-                                                sked_Work_Country__c = 'USA',
-                                                sked_Work_City__c = 'Sylmar',
-                                                sked_Work_State__c = 'CA',
-                                                sked_Work_Address_1__c = '11970 Gager St',
-                                                sked_Work_Zip_Code__c = '91342'
-                                                );
-
+                recordTypeId = vkRecordTypeId,
+                sked_Asset_Type__c = 'Equipment',
+                sked__Resource_Type__c = 'Asset',
+                sked_Element_Unit__c = '23456766',
+                sked__Is_Active__c = true,
+                sked_Long_Desc__c = 'toyota 4x',
+                sked_Short_Desc__c = 'XUV4',
+                sked__Category__c = 'ProMaster',
+                sked_ULID__c = 'ULID125',
+                sked_Timezone__c = 'America/Los_Angeles',
+                sked_Primary_Phone_Type__c = 'Home Phone',
+                sked_Home_Phone__c = '123-123-4322',
+                sked__Primary_Phone__c = '123-123-4322',
+                sked_Address_Referenced_for_Scheduling__c = 'Work',
+                sked_Mobile_Type__c = 'Inside',
+                sked_Work_Address_GeoLocation__Latitude__s = 34.280308,
+                sked_Work_Address_GeoLocation__Longitude__s = -118.393922,
+                sked_Work_Country__c = 'USA',
+                sked_Work_City__c = 'Sylmar',
+                sked_Work_State__c = 'CA',
+                sked_Work_Address_1__c = '11970 Gager St',
+                sked_Work_Zip_Code__c = '91342'
+            );
+            
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             triggerHandler.bypass('ResourceTriggerHandler');
@@ -835,7 +911,7 @@ private class BSFStagingSheetControllerTest {
             skedHubBase.BypassInsertTriggers = true;
             skedHubBase.BypassUpdateTriggers = true;
             insert joballc3;
-
+            
             sked__Job_Allocation__c joballc2 = new sked__Job_Allocation__c(
                 sked__Job__c = skedjob2.id,
                 sked__Resource__c = resourceVehicle.id,
@@ -875,21 +951,21 @@ private class BSFStagingSheetControllerTest {
             
             
             sked__Activity__c activity = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now(),
-            sked_Start_Date__c =  Date.today(),
-            sked_End_Date__c =  Date.today().addDays(1),
-            sked__End__c = Datetime.now().addDays(1),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive1.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+                sked__Start__c = Datetime.now(),
+                sked_Start_Date__c =  Date.today(),
+                sked_End_Date__c =  Date.today().addDays(1),
+                sked__End__c = Datetime.now().addDays(1),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_Drive__c = testDrive1.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
             skedHubBase.BypassInsertTriggers = true;
             insert activity;
@@ -900,21 +976,21 @@ private class BSFStagingSheetControllerTest {
             skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource;
             sked__Activity__c activity1 = new sked__Activity__c(
-            sked__Resource__c = resourcestaff.Id,
-            sked__Type__c = 'On Call',
-            sked_Activity_Title__c = 'On Call 1',
-            sked__Start__c = Datetime.now().addDays(1),
-            sked_Start_Date__c =  Date.today().addDays(1),
-            sked_End_Date__c =  Date.today().addDays(2),
-            sked__End__c = Datetime.now().addDays(2),
-            sked_Start_Time__c = Datetime.now().time(),
-            sked_End_Time__c = Datetime.now().addMinutes(66).time(),
-            sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Drive__c = testDrive2.Id,
-            sked_Region__c = reg.Id,
-            sked__Address__c = 'Test Address',
-            sked__Notes__c = 'Test notes',
-            sked_Is_Group_Activity__c = true
+                sked__Resource__c = resourcestaff.Id,
+                sked__Type__c = 'On Call',
+                sked_Activity_Title__c = 'On Call 1',
+                sked__Start__c = Datetime.now().addDays(1),
+                sked_Start_Date__c =  Date.today().addDays(1),
+                sked_End_Date__c =  Date.today().addDays(2),
+                sked__End__c = Datetime.now().addDays(2),
+                sked_Start_Time__c = Datetime.now().time(),
+                sked_End_Time__c = Datetime.now().addMinutes(66).time(),
+                sked_Collection_Operation__c = testCollectionOperation1.Id,
+                sked_Drive__c = testDrive2.Id,
+                sked_Region__c = reg.Id,
+                sked__Address__c = 'Test Address',
+                sked__Notes__c = 'Test notes',
+                sked_Is_Group_Activity__c = true
             );
             skedHubBase.BypassInsertTriggers = true;
             insert activity1;
@@ -924,8 +1000,34 @@ private class BSFStagingSheetControllerTest {
             );
             skedHubBase.BypassInsertTriggers = true;
             insert skedActivityResource1;
+            
+            sked_Drive_Delivery_Job__c deliveryJobs = new sked_Drive_Delivery_Job__c();
+            deliveryJobs.sked_Type__c = 'Pick Up';
+            deliveryJobs.sked_Drive__c = testDrive1.Id;
+            insert deliveryJobs;
+            // Assert Pick Up job exists
+            System.assertEquals(1, [ SELECT COUNT()  FROM sked_Drive_Delivery_Job__c  WHERE sked_Type__c = 'Pick Up']);
+            
+            sked_Drive_Delivery_Job__c deliveryJobs2 = new sked_Drive_Delivery_Job__c();
+            deliveryJobs2.sked_Type__c = 'Bag';
+            deliveryJobs2.sked_Drive__c = testDrive2.Id;
+            insert deliveryJobs2;
+            
+            sked_Drive_Bag__c driveBag = new  sked_Drive_Bag__c();
+            driveBag.sked_Bag_Type__c = 'FB Bioflex Double';
+            driveBag.sked_Quantity__c = 1;
+            driveBag.sked_Drive_Delivery_Job__c = deliveryJobs2.Id;
+            insert driveBag;
+            
+            // Assert Drive Bag is linked to a 'Bag' type job
+            System.assertEquals(1, [ SELECT COUNT() FROM sked_Drive_Bag__c WHERE sked_Drive_Delivery_Job__r.sked_Type__c = 'Bag']);
+            
         }        
         
     }
-
+    
+    
+    
+    
+    
 }
