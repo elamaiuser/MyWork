@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:type="xsd:string">file:TheField/Donor Recruitment/Forms/AllItems.aspx?id=\teams\TheField\Donor Recruitment\Drive Planning\Planning Support Tools\Site Tools (found within playbook)\Community Agreement Policy.pdf&amp;parent=\teams\TheField\Donor Recruitment\Drive Planning\Planning Support Tools\Site Tools (found within playbook)</value>
+        <value xsi:type="xsd:string">https://americanredcross.sharepoint.com/teams/TheField/Donor%20Recruitment/Forms/AllItems.aspx?id=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29%2FCommunity%20Agreement%20Policy%2Epdf&amp;parent=%2Fteams%2FTheField%2FDonor%20Recruitment%2FDrive%20Planning%2FPlanning%20Support%20Tools%2FSite%20Tools%20%28found%20within%20playbook%29</value>
     </values>
     <values>
         <field>Report_Name__c</field>
