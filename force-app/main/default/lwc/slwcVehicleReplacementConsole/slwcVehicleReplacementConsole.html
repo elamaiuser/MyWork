@@ -14,8 +14,8 @@
                   label="Current Vehicle"
                   icon-name="utility:transport_heavy_truck"
                   vehicles={availableVehicles}
+                  selected-vehicle-id={currentVehicleId}
                   disabled={isLoadingVehicles}
-                  hide-exceptions
                   onvehicleselected={handleCurrentVehicleSelected}
                   onvehiclecleared={handleCurrentVehicleCleared}>
                 </c-slwc-vehicle-picker>
@@ -26,6 +26,7 @@
                   label="Replacement Vehicle"
                   icon-name="utility:transport_heavy_truck"
                   vehicles={activeVehicles}
+                  selected-vehicle-id={replacementVehicleId}
                   exclude-vehicle-id={replacementVehicleExcludeId}
                   disabled={isReplacementDisabled}
                   onvehicleselected={handleReplacementVehicleSelected}
