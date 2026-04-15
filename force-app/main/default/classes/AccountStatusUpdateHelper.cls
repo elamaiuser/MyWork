@@ -63,7 +63,7 @@ public inherited sharing class AccountStatusUpdateHelper {
 				
                 Integer monthsOld = acc.CreatedDate.date().monthsBetween(today);
 
-                if (monthsOld <= 12 && acc.Account_Status__c != 'Active') {
+                if (monthsOld <= 12 && acc.Account_Status__c != 'Active' && acc.Account_Status__c != 'Prospect') { // EK-HRP-16871 added Prospect condition
                     acc.Account_Status__c = 'Active';
                     accountsToUpdate.add(acc);					
                 }else if (monthsOld >= 13 && monthsOld <= 24 && acc.Account_Status__c != 'Inactive') {
@@ -78,12 +78,19 @@ public inherited sharing class AccountStatusUpdateHelper {
 
             Opportunity latestCompletedDrive;
             Opportunity futureDrive;
+            Opportunity futureConfirmedDrive; // EK-HRP-16871
 
             for (Opportunity opp : acc.Opportunities) {
                 if (opp.Drive_Date__c == null){
                     continue;
                 }
 
+                // EK-HRP-16871 begin
+                if (opp.Drive_Date__c >= today && opp.DriveStatus__c == BSF_Constants.driveStatusConfirmed) {
+                    futureConfirmedDrive = opp;
+                }
+                // EK-HRP-16871 end
+                
                 if (opp.Drive_Date__c >= today && opp.DriveStatus__c != BSF_Constants.driveStatusComplete) {
                     futureDrive = opp;
                 }
@@ -95,7 +102,7 @@ public inherited sharing class AccountStatusUpdateHelper {
             }
 			
 
-            if (futureDrive != null && acc.Account_Status__c != 'Active') {
+            if (futureConfirmedDrive != null && acc.Account_Status__c != 'Active') { // EK-HRP-16871 using futureConfirmedDrive instead of futureDrive
                 acc.Account_Status__c = 'Active';
                 accountsToUpdate.add(acc);
             }else if (futureDrive != null && 
@@ -104,7 +111,7 @@ public inherited sharing class AccountStatusUpdateHelper {
                 (acc.Account_Status__c == 'Lost' || acc.Account_Status__c == 'Defunct')) {
                 acc.Account_Status__c = 'Reactivate';
                 accountsToUpdate.add(acc);
-            }else if (futureDrive == null && latestCompletedDrive != null) {		//HRP-16472
+            }else if (futureConfirmedDrive == null && futureDrive == null && latestCompletedDrive != null) {		//HRP-16472 EK-HRP-16871 added futureConfirmedDrive condition
                 Integer monthsSinceLastDrive = latestCompletedDrive.Drive_Date__c.monthsBetween(today);
 
                 if (monthsSinceLastDrive <= 12) {

@@ -81,6 +81,7 @@ public class BSF_Constants {
     public static final String driveStatusDraft='Draft';
     public static final String driveStatusCancel='Cancel';
     public static final String driveStatusComplete='Complete';
+    public static final String driveStatusConfirmed='Confirmed'; // EK-HRP-16871
 
     // Portfolio types
     public static final String REGION_PORTFOLIO_TYPE = 'RDSE';
