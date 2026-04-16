@@ -3018,7 +3018,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('Anticipated_Registered_Donors__c') == true){ //HRP-10312 begin
                         arcupdated = true;//HRP-10312 
                         if(oppRec.Anticipated_Registered_Donors__c != null){
-                            oppField.Anticipated_Registered_Donors = Integer.valueOf(oppRec.Anticipated_Registered_Donors__c);
+                            oppField.Anticipated_Registered_Donors = oppRec.Anticipated_Registered_Donors__c;
                         }
                         //HRP-10312 Begin
                         else{
@@ -3032,7 +3032,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         wbcUpdated = true;
                         //HRP-10312 end
                         if(oppRec.WB_Projected_Procedures__c != null){
-                            oppField.WB_Projected_Procedures = Integer.valueOf(oppRec.WB_Projected_Procedures__c);
+                            oppField.WB_Projected_Procedures = oppRec.WB_Projected_Procedures__c;
                         }//HRP-10312 begin
                         else{
                             oppField.WB_Projected_Procedures = null;
@@ -3043,7 +3043,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('X2RBC_Projected_Procedures__c') == true){
                         doubleRbcUpdated = true; //HRP-10312 end
                         if(oppRec.X2RBC_Projected_Procedures__c != null){
-                            oppField.X2RBC_Projected_Procedures = Integer.valueOf(oppRec.X2RBC_Projected_Procedures__c);
+                            oppField.X2RBC_Projected_Procedures = oppRec.X2RBC_Projected_Procedures__c;
                         } //HRP-10312 begin
                         else{
                             oppField.X2RBC_Projected_Procedures = null;
