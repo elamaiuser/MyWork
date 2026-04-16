@@ -1,25 +1,35 @@
-//@Description: This Batch class is used for updating any exceptions for drives that are not current date or future date is to be closed.
+//@Description: This Batch class is used for updating any exceptions for drives that are not current date or future date is to be closed and those whose related job allocations are marked deleted.
 /*
 * Modification Log
 * Date                       Developer Name              Comments
 * ********************************************************************************************************************************************************************************************
 * 07/14/2025                 Satyendra K V              This Batch class is used for updating any exceptions for drives that are not current date or future date is to be closed. (HRP-12117)
+* 02/18/2026                 Krapy Tuli                 Updated Batch class now used for updating any exceptions for drives that are not current date or future date is to be closed as well 
+                                                        as those whose related job allocations are marked deleted. (HRP-16455)
 **********************************************************************************************************************************************************************************************
 */
 global class BSF_ClosePastDriveExceptionsBatch implements Database.Batchable<SObject>, Schedulable, Database.Stateful {
     public BSF_ClosePastDriveExceptionsBatch() {
 
     }
-    // Query all Sked exceptions for past drives that are not yet closed
+    // Query all Sked exceptions for past drives that are not yet closed or those whose related job allocations are marked deleted
     global Database.QueryLocator start(Database.BatchableContext bc) {
-        
-        String query = 'SELECT Id, skedHC__Status__c, sked_Drive__r.sked_Drive_Date__c ' +
-                       'FROM skedHC__Exception__c ' +
-                       'WHERE sked_Drive__r.sked_Drive_Date__c < TODAY ' +
-                       'AND skedHC__Status__c != \''+skedConstants.EXCEPTION_LOG_STATUS_CLOSED+'\'  '; 
-
-        System.debug('HRP-12117 query :'+query);
-        return Database.getQueryLocator(query);
+        return Database.getQueryLocator([
+            SELECT Id,
+                   skedHC__Status__c,
+                   sked_Drive__r.sked_Drive_Date__c,
+                   skedHC__Job_Allocation__r.sked__Status__c,
+                   sked_Conflicted_Job_Allocation__r.sked__Status__c
+            FROM skedHC__Exception__c
+            WHERE skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED
+            AND (
+                    sked_Drive__r.sked_Drive_Date__c < TODAY
+                    OR
+                    skedHC__Job_Allocation__r.sked__Status__c = :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                    OR
+                    sked_Conflicted_Job_Allocation__r.sked__Status__c = :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                )
+        ]);
     }
 
     // Entry point for scheduler
