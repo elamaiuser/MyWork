@@ -437,7 +437,7 @@ public class skedWorkdayUtils implements Callable {
         }
         
         return debugLog;
-}
+    }
 
    private static String extractTimeOffEntryId(String xml) {
     sked__Debug_Log__c log = new sked__Debug_Log__c();
