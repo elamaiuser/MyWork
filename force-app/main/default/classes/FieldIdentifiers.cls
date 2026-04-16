@@ -22,13 +22,13 @@ global class FieldIdentifiers {
     global String Drive_Site;
     
     @AuraEnabled
-    global Integer Anticipated_Registered_Donors;
+    global Decimal Anticipated_Registered_Donors;
     
     @AuraEnabled
-    global Integer WB_Projected_Procedures;
+    global Decimal WB_Projected_Procedures;
     
     @AuraEnabled
-    global Integer X2RBC_Projected_Procedures;
+    global Decimal X2RBC_Projected_Procedures;
     
     @AuraEnabled
     global String AnticipatedRegisterDonorChangeReason;
