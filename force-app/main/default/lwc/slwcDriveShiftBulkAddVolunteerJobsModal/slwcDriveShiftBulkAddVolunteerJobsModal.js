@@ -204,9 +204,8 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
         this.model.daysWithDrives = [...this.model.recurrenceDates]
             .filter(d => d >= today)
             .sort()
-            .map(dateIso => ({
-                dateIso,
-                drives: (mapDrivesByDate[dateIso] || []).map(drive => {
+            .map(dateIso => {
+                const drivesForDate = (mapDrivesByDate[dateIso] || []).map(drive => {
                     const driveJobs = mapJobsByDriveId[drive.id] || [];
                     const hasRoleExist = driveJobs.some(job => job.volunteerRole === this.model.volunteerRole);
 
@@ -215,8 +214,24 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
                         driveRecordUrl: '/' + drive.id,
                         errorMessages: hasRoleExist ? ['Role already exists'] : []
                     };
-                })
-            }));
+                });
+
+                // The current drive is excluded from the query to prevent duplicate insertion,
+                // but it will receive a new job via saveBulkAddVolunteerJob. Show it in the
+                // review table so the user can see all affected drives.
+                if (dateIso === this.drive?.driveDate) {
+                    drivesForDate.unshift({
+                        id:             this.drive.id,
+                        name:           this.drive.name,
+                        status:         this.drive.status,
+                        driveRecordUrl: '/' + this.drive.id,
+                        isCurrentDrive: true,
+                        errorMessages:  []
+                    });
+                }
+
+                return { dateIso, drives: drivesForDate };
+            });
     }
 
     initStep2() {
@@ -281,7 +296,7 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
         const quantity = redcrossVolunteerQuantity + sponsorVolunteerQuantity;
         const bulkAddVolunteerJobsSelectedDrives = (this.model.daysWithDrives || []).reduce((acc, day) => {
             acc.push(...day.drives
-                .filter(drive => !drive.errorMessages.length)
+                .filter(drive => !drive.errorMessages.length && !drive.isCurrentDrive)
                 .map(drive => ({
                     driveId:          drive.id,
                     driveShiftId:     drive.driveShifts?.[0]?.id,

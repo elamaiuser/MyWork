@@ -12,11 +12,11 @@
 //   7.  Employee with null return date — treated as Active,
 //       staging created (if resource exists), resource return date cleared
 //   8.  Workday employee with no matching Resource — silently skipped
-//   9.  Mid-leave employee (First_Day_of_Leave past, returnDate future) — resource set to Leave
+//   9.  Mid-leave employee (First_Day_of_Leave past, returnDate future) — return date set on resource, status unchanged
 //   10. Employee not yet on leave (First_Day_of_Leave future) — resource status stays Active
-//   11. finish() reactivation — Leave resource with past/today return date set to Active
+//   11. finish() return date cleared — resource with return date <= today has date cleared; status unchanged
 //   12. finish() no reactivation — Leave resource with future return date not touched
-//   13. finish() only targets Leave status — Active resource with past date not changed
+//   13. finish() clears return date regardless of status — Active resource with past date gets return date cleared
 //   14. Workday API failure — Last_Successful_Run_Date__c not updated
 //   15. Successful run — Last_Successful_Run_Date__c updated to today
 //   16. Empty Workday response — no DML, run date still stamped
@@ -333,8 +333,8 @@ private class BSF_LeaveReturnBatch_Test {
         ];
         System.assertEquals(expectedReturn, updated.sked_Anticipated_Leave_Return_Date__c,
             'Resource return date should be Estimated_Last_Day_of_Leave + 1 day');
-        System.assertEquals('Leave', updated.sked_Employment_Status__c,
-            'Resource status should be Leave for a mid-leave employee');
+        System.assertEquals('Active', updated.sked_Employment_Status__c,
+            'Employment status is not updated by the batch — status remains Active');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -579,9 +579,9 @@ private class BSF_LeaveReturnBatch_Test {
             WHERE  Id = :resource.Id
         ];
         System.assertEquals(null, updated.sked_Anticipated_Leave_Return_Date__c,
-            'Return date should be cleared to null when employee is reactivated by the batch');
-        System.assertEquals('Active', updated.sked_Employment_Status__c,
-            'Resource status should be set to Active when return date has passed');
+            'Return date should be cleared to null when the batch resolves employee status to Active');
+        System.assertEquals('Leave', updated.sked_Employment_Status__c,
+            'Employment status is not updated by the batch — status remains Leave');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -629,9 +629,9 @@ private class BSF_LeaveReturnBatch_Test {
             WHERE  Id = :resource.Id
         ];
         System.assertEquals(null, updated.sked_Anticipated_Leave_Return_Date__c,
-            'Return date should be cleared to null when status resolves to Active');
-        System.assertEquals('Active', updated.sked_Employment_Status__c,
-            'Resource status should be Active when return date is null');
+            'Return date should be cleared to null when the batch resolves employee status to Active');
+        System.assertEquals('Leave', updated.sked_Employment_Status__c,
+            'Employment status is not updated by the batch — status remains Leave');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -665,11 +665,13 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 9 — Mid-leave employee: resource status set to Leave
+    // TEST 9 — Mid-leave employee: return date set on resource, status unchanged
     // firstDayOfLeave <= today AND returnDate > today
+    // Employment status updates are disabled in the batch — only the return
+    // date field is written.
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
-    static void testMidLeaveEmployee_ResourceStatusSetToLeave() {
+    static void testMidLeaveEmployee_ReturnDateSet_StatusUnchanged() {
         Date lastDayOfLeave = System.today().addDays(29); // returnDate = today + 30
         Date firstDay       = System.today().addDays(-5);
 
@@ -693,12 +695,14 @@ private class BSF_LeaveReturnBatch_Test {
         Test.stopTest();
 
         sked__Resource__c updated = [
-            SELECT sked_Employment_Status__c
+            SELECT sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
             WHERE  sked_Employee_ID__c = '12345'
         ];
-        System.assertEquals('Leave', updated.sked_Employment_Status__c,
-            'Resource status should be set to Leave when employee is currently mid-leave');
+        System.assertEquals(lastDayOfLeave.addDays(1), updated.sked_Anticipated_Leave_Return_Date__c,
+            'Return date should be set to Estimated_Last_Day_of_Leave + 1 when employee is mid-leave');
+        System.assertEquals('Active', updated.sked_Employment_Status__c,
+            'Employment status is not updated by the batch — status remains Active');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -735,11 +739,13 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 11 — finish() reactivation: Leave resource with return date <= today
-    //           is set to Active and return date cleared
+    // TEST 11 — finish() return date cleared: resource with return date <= today
+    //           has its return date cleared to null; employment status unchanged.
+    //           The AND sked_Employment_Status__c = 'Leave' filter is disabled,
+    //           so all resources with a past/today return date are processed.
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
-    static void testFinish_ReactivatesLeaveResourceWithPastOrTodayReturnDate() {
+    static void testFinish_ClearsReturnDateForResourceWithPastOrTodayReturnDate() {
         sked__Resource__c resource = getBaseResource();
 
         skedHubBase.BypassUpdateTriggers = true;
@@ -762,10 +768,10 @@ private class BSF_LeaveReturnBatch_Test {
             FROM   sked__Resource__c
             WHERE  Id = :resource.Id
         ];
-        System.assertEquals('Active', reactivated.sked_Employment_Status__c,
-            'Resource with return date <= today and Leave status should be reactivated');
+        System.assertEquals('Leave', reactivated.sked_Employment_Status__c,
+            'Employment status is not updated in finish() — status remains Leave');
         System.assertEquals(null, reactivated.sked_Anticipated_Leave_Return_Date__c,
-            'Return date should be cleared to null after reactivation in finish()');
+            'Return date should be cleared to null when it has passed in finish()');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -798,11 +804,13 @@ private class BSF_LeaveReturnBatch_Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 13 — finish() only targets Leave status: Active resource with a past
-    //           return date is NOT changed
+    // TEST 13 — finish() clears return date regardless of status: Active resource
+    //           with a past return date has its return date cleared to null.
+    //           Employment status is not changed.
+    //           (The AND sked_Employment_Status__c = 'Leave' filter is disabled.)
     // ─────────────────────────────────────────────────────────────────────────
     @isTest
-    static void testFinish_DoesNotChangeActiveResourceWithPastReturnDate() {
+    static void testFinish_ClearsReturnDateOnActiveResourceWithPastDate() {
         sked__Resource__c resource = getBaseResource();
 
         skedHubBase.BypassUpdateTriggers = true;
@@ -818,12 +826,14 @@ private class BSF_LeaveReturnBatch_Test {
         Test.stopTest();
 
         sked__Resource__c unchanged = [
-            SELECT sked_Employment_Status__c
+            SELECT sked_Employment_Status__c, sked_Anticipated_Leave_Return_Date__c
             FROM   sked__Resource__c
             WHERE  Id = :resource.Id
         ];
         System.assertEquals('Active', unchanged.sked_Employment_Status__c,
-            'finish() should only reactivate Leave resources — Active resources must not be touched');
+            'Employment status is not updated by finish() — Active status preserved');
+        System.assertEquals(null, unchanged.sked_Anticipated_Leave_Return_Date__c,
+            'Return date is cleared even for Active resources when return date has passed (status filter is disabled)');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -1006,10 +1016,10 @@ private class BSF_LeaveReturnBatch_Test {
             FROM   sked__Resource__c
             WHERE  sked_Employee_ID__c = 'EMP_PAST'
         ];
-        System.assertEquals('Active', pastUpdated.sked_Employment_Status__c,
-            'Past-dated employee resource should be set to Active');
+        System.assertEquals('Leave', pastUpdated.sked_Employment_Status__c,
+            'Employment status is not updated by the batch — status remains Leave');
         System.assertEquals(null, pastUpdated.sked_Anticipated_Leave_Return_Date__c,
-            'Return date should be cleared to null when reactivating');
+            'Return date should be cleared to null when the batch resolves employee status to Active');
 
         // Orphan — silently skipped
         Integer orphanCount = [SELECT COUNT() FROM BSF_Workday_Staging__c WHERE Employee_ID__c = 'EMPNORES'];

@@ -19,12 +19,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th>Total Staff</th>
-                    <td>{model.grandTotalAvailable}</td>
-                    <td>{model.grandTotalNeeded}</td>
-                    <td class={model.varianceClass}>{model.variance}</td>
-                </tr>
+                <template for:each={model.colOpGrandTotalModels} for:item="colOpModel">
+                    <tr key={colOpModel.id}>
+                        <th>{colOpModel.typeOfStaff}</th>
+                        <td>{colOpModel.grandTotalAvailable}</td>
+                        <td>{colOpModel.grandTotalNeeded}</td>
+                        <td class={colOpModel.varianceClass}>{colOpModel.variance}</td>
+                    </tr>
+                </template>
             </tbody>
         </table>
     </div>
@@ -38,19 +40,19 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="ap-blank-cell"></th>
+                        <th></th>
                         <th>Total Actual Resources (AP)</th>
-                        <th>Total Target(AP)</th>
+                        <th>Total Target (AP)</th>
                         <th>Variance</th>
                     </tr>
-
-                    <tr>
-                        <th class="ap-blank-cell"></th>
-                        <td>{colOpAvailability.totalActualResources}</td>
-                        <td>{colOpAvailability.totalTargetResources}</td>
-                        <td class={colOpAvailability.totalVarianceClass}>{colOpAvailability.totalVariance}</td>
-                    </tr>
-
+                    <template for:each={colOpAvailability.totalApModels} for:item="coApModel">
+                        <tr key={colOpAvailability.id}>
+                            <td>{coApModel.typeOfStaff}</td>
+                            <td>{coApModel.totalActualResources}</td>
+                            <td>{coApModel.totalTargetResources}</td>
+                            <td class={coApModel.totalVarianceClass}>{coApModel.totalVariance}</td>
+                        </tr>
+                    </template>
                     <tr class="ap-divider-row">
                         <td colspan="4"></td>
                     </tr>
