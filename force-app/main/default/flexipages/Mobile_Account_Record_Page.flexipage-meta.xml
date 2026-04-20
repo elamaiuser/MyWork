@@ -432,6 +432,19 @@
                 </componentInstanceProperties>
                 <componentName>genericRelatedListLWC</componentName>
                 <identifier>c_genericRelatedListLWC</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$Client.formFactor}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Small</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>
