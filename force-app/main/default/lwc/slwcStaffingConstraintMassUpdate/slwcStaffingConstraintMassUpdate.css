@@ -68,3 +68,7 @@
   border: 1px solid #d8dde6;
   border-right: 0;
 }
+
+.slds-staffing-constrain-mass-update__container .slds-staffing-constrain-mass-update__grid table td.slds-staffing-constrain-mass-update__cell--auto-synced {
+  background-color: #fef7dc;
+}
