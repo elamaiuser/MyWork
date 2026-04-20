@@ -360,14 +360,39 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     }
   }
 
-  handleCancel = () => {
+  handleCancel = (autoSyncedCoDateKeys = null) => {
     const closeEvent = new CustomEvent('close', {
       detail: {
-        result: !!this.dataSaved
+        result: !!this.dataSaved,
+        ...(autoSyncedCoDateKeys && { autoSyncedCoDateKeys })
       }
     });
     this.dispatchEvent(closeEvent);
     this.isOpen = false;
+  }
+
+  buildCoSyncModels() {
+    const tbRecords = this.model.STEP2.records.filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE);
+    if (!tbRecords.length) return [];
+
+    const totals = new Map();
+    tbRecords.forEach(r => {
+      totals.set(r.dateOfConstraint, (totals.get(r.dateOfConstraint) || 0) + (r.totalStaffConstraints || 0));
+    });
+
+    const coModels = [];
+    const autoSyncedKeys = [];
+    totals.forEach((total, date) => {
+      const coRecord = this.model.STEP2.originalRecords.find(
+        r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date
+      );
+      if (!coRecord) return;
+      coModels.push({ id: coRecord.id, totalStaffConstraints: total });
+      autoSyncedKeys.push(`${coRecord.collectionOperationId}__${date}`);
+    });
+
+    this._autoSyncedCoDateKeys = autoSyncedKeys;
+    return coModels;
   }
 
   handleSave = () => {
@@ -383,19 +408,22 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
       return deleted;
     });
 
-    let modelsToSave = validRecords.map(item => {
-      return {
-        id: item.id,
-        totalStaffConstraints: item.totalStaffConstraints
-      }
-    })
+    const coModels = this.buildCoSyncModels();
+    const coIds = new Set(coModels.map(m => m.id));
+
+    let modelsToSave = [
+      ...validRecords
+        .filter(item => !coIds.has(item.id))
+        .map(item => ({ id: item.id, totalStaffConstraints: item.totalStaffConstraints })),
+      ...coModels
+    ];
 
     this.showLoading();
     let service = new staffingConstraintService();
     service.deleteList(modelsToDelete)
       .then((result) => {
         if (!result?.success) {throw result;}
-        
+
         return service.saveList(modelsToSave);
       })
       .then((result) => {
@@ -410,7 +438,7 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
           this.dataSaved = true;
 
-          this.handleCancel();
+          this.handleCancel(this._autoSyncedCoDateKeys?.length ? this._autoSyncedCoDateKeys : null);
         }
       })
       .catch(error => this.exceptionHandler(error))

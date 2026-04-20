@@ -678,11 +678,13 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   closeEditRecurrenceStaffingConstraintModal = (event) => {
-    const saved = event.detail.result;
-    if (saved) {
+    const { result, autoSyncedCoDateKeys } = event.detail;
+    this.editRecurrenceStaffingConstraintModalData = {};
+    if (result) {
+      if (autoSyncedCoDateKeys?.length) {
+        this.pendingAutoSyncedKeys = new Set(autoSyncedCoDateKeys);
+      }
       this.fetchStafingConstrainData();
     }
-
-    this.editRecurrenceStaffingConstraintModalData = {};
   };
 }
