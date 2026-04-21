@@ -225,19 +225,28 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
+                    <name>additionalFilter</name>
+                    <value>Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
+                    <name>childObjectName</name>
+                    <value>opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columnName</name>
+                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>fieldwithOrderBy</name>
+                    <name>fieldsApiNames</name>
+                    <value>Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>AccountId</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -255,8 +264,8 @@
                     <name>recordButton</name>
                     <value>Edit,Delete</value>
                 </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>GenericRelatedList</identifier>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC2</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -349,19 +358,32 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
+                    <name>additionalFilter</name>
+                    <value>StageName = &apos;Cancelled&apos;</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <name>childObjectName</name>
+                    <value>opportunity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columnName</name>
+                    <value>Blood Drive Opportunity Name, Drive Date,Close Date,Stage Name, Drive Status, Drive Name,Total Projections</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>fieldwithOrderBy</name>
+                    <value>Drive_Date__c ASC</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>AccountId</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -369,18 +391,21 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>hyperLinkColumn</name>
-                    <value>Blood Drive Opportunity Name</value>
+                    <value>Drive Name</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>iconName</name>
                     <value>standard:opportunity</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>recordButton</name>
-                    <value>Edit</value>
+                    <name>objectApiName</name>
                 </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>GenericRelatedList2</identifier>
+                <componentInstanceProperties>
+                    <name>recordButton</name>
+                    <value>Edit,Delete</value>
+                </componentInstanceProperties>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-1451e1df-eedf-4426-91c5-4aed3eab7972</name>
@@ -527,16 +552,30 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Account,Team Member,Role,Start Date,End Date,Is Covering Recruiter,Coverage Reason</value>
+                    <name>additionalFilter</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>SELECT Account_Name__c,User_Name__c,Role__c,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,Coverage_Reason__c FROM Team_Member_History__c WHERE Account__c IN:</value>
+                    <name>childObjectName</name>
+                    <value>Team_Member_History__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columnName</name>
+                    <value>Account,Team Member,Role,Start Date,End Date,Is Covering Recruiter,Coverage Reason</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Account_Name__c,User_Name__c,Role__c,Start_Date__c,End_Date__c,Is_Covering_Recruiter__c,Coverage_Reason__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldwithOrderBy</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>Account__c</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -551,10 +590,13 @@
                     <value>standard:account</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>objectApiName</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>recordButton</name>
                 </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>c_GenericRelatedList</identifier>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC3</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -791,6 +833,10 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</value>
                 </componentInstanceProperties>
@@ -874,6 +920,10 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-443a0591-7194-491b-afcc-a637a20ecebe</value>
