@@ -218,6 +218,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
                       existingStaffingConstraint?.totalStaffConstraints,
                   "slds-staffing-constrain-mass-update__cell--auto-synced":
                     !timeBlockId &&
+                    driveType === DRIVE_TYPE.MOBILE &&
                     this.autoSyncedCoDateKeys?.has(`${collectionOperationId}${KEY_SEPERATOR}${dateIso}`)
                 }
               )
