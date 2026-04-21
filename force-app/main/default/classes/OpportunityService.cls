@@ -4125,10 +4125,10 @@ opp.StageName = 'Closed';
         {
             return accountManager;
         } else if (accountSpecialist != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333 reordered specialist before DM
-        {
+        { 
             return accountSpecialist;
         }else if (districtManager != null) 
-        {
+        { 
             return districtManager;
         }  else 
         {
@@ -5303,26 +5303,21 @@ opp.StageName = 'Closed';
             }
         }
 
+        Boolean isAutomatedProcessUser = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String userModeClause = isAutomatedProcessUser ? '' : ' WITH USER_MODE';
+        String accountBaseQuery = accountIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds' + userModeClause;
+        String templateBaseQuery = templateIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds' + userModeClause;
+
         // 2. Query Parent Account Settings
         Map<Id, Account> accountMap = new Map<Id, Account>();
-        if(!accountIds.isEmpty()) {
-            accountMap = new Map<Id, Account>([
-                SELECT Id, Planning_Path__c 
-                FROM Account 
-                WHERE Id IN :accountIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(accountBaseQuery)) {
+            accountMap = new Map<Id, Account>((List<Account>)Database.query(accountBaseQuery));
         }
 
         // 3. Query Parent Template Settings
         Map<Id, Opportunity> templateMap = new Map<Id, Opportunity>();
-        if(!templateIds.isEmpty()) {
-            templateMap = new Map<Id, Opportunity>([
-                SELECT Id, Planning_Path__c 
-                FROM Opportunity 
-                WHERE Id IN :templateIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(templateBaseQuery)) {
+            templateMap = new Map<Id, Opportunity>((List<Opportunity>)Database.query(templateBaseQuery));
         }
 
         // 4. Assign Values based on Hierarchy
