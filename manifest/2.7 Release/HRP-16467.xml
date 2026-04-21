@@ -9,6 +9,7 @@
 		<name>GlobalValueSet</name>
 	</types>
 	<types>
+		<members>slwcAvailator</members>
 		<members>slwcConstants</members>
 		<members>slwcDriveGenerator</members>
 		<members>slwcResolveDriveContentions</members>

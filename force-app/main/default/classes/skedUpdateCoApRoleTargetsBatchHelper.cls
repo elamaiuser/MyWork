@@ -101,6 +101,8 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         ];
 
         for(sked__Resource__c resource : resourceList) {
+            if(resource.sked__Availability_Pattern_Resources__r == null || resource.sked__Availability_Pattern_Resources__r.isEmpty()) continue;
+            
             String driveType = fccCodesFixedSite.contains(resource.sked_FCC_Code__c) ? 'Fixed Site' : 'Mobile';
 
             if(!map_coIdKey_driveTypeVsNoOfResourcesMap.containsKey(resource.sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c)) {

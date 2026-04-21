@@ -452,6 +452,15 @@ class SlwcAvailator {
   }
 
   fetchJobs() {
+    if(this.drive) {
+      this.timezoneSidId = this.drive.driveSite && this.drive.driveSite.timezoneSidId;
+      this.collectionOperationIds = [this.drive.collectionOperationId];
+      this.drive.driveShifts.forEach(item => {
+        this.jobs = this.jobs.concat(this.doTransformJobs(item.jobs));
+      });
+      return Promise.resolve();
+    }
+
     let service = new driveService();
     return service.getDriveById(this.driveId)
     .then((result) => {
@@ -2166,6 +2175,10 @@ fetchJobTags(driveId){
               let isPendingTermination = false;
               if (resource.resourceType === RESOURCE_TYPE.ASSET) {
                 isActive = resource.isActive;
+                if (isActive && resource.assetType === ASSET_TYPE.VEHICLE
+                  && resource.futureInactiveDate && resource.futureInactiveDate <= job.driveDate) {
+                  isActive = false;
+                }
               }
               else {
                 if (resource.terminationDate && resource.terminationDate <= job.driveDate) {

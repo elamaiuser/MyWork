@@ -121,13 +121,14 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
                 taskVsOppMap.containsKey(taskChecklist.TaskLookup__c)) {
                     
                     String taskSubject = taskVsSubjectMap.get(taskChecklist.TaskLookup__c);
+                    String fieldMappingObj = fieldVsObjectMap.get(taskChecklist.Unique_Name__c);
+                    String inputFieldName = metadataMap.get(taskSubject).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
                     
                     if(!metadataMap.containsKey(taskSubject)) continue;
                     
                     if(!metadataMap.get(taskSubject).containsKey(taskChecklist.Unique_Name__c)) continue;
 
-                    String fieldMappingObj = fieldVsObjectMap.get(taskChecklist.Unique_Name__c);
-                    String inputFieldName = metadataMap.get(taskSubject).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                    if(fieldMappingObj == null) continue; //Unique names not ending with __c
 
                     if(fieldMappingObj.equals('Account') && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c)) {
                         Object value = taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
