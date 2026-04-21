@@ -192,6 +192,27 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     record[event.currentTarget.name] = value;
 
     this.handleStep2ValidateRecord(record);
+
+    if (
+      event.currentTarget.name === 'totalStaffConstraints' &&
+      record.timeBlockId &&
+      record.driveType === DRIVE_TYPE.MOBILE
+    ) {
+      this.syncCoRecordForDate(record.dateOfConstraint);
+    }
+  }
+
+  syncCoRecordForDate = (date) => {
+    const tbTotal = this.model.STEP2.records
+      .filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date)
+      .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+
+    const coRecord = this.model.STEP2.records.find(
+      r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date
+    );
+    if (coRecord) {
+      coRecord.totalStaffConstraints = tbTotal;
+    }
   }
 
   handleStep2DeleteRecord = (event) => {
