@@ -222,6 +222,26 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
     record[event.currentTarget.name] = value;
 
     this.handleStep3ValidateRecord(record);
+
+    if (event.currentTarget.name === 'totalStaffConstraints') {
+      this.autoSyncTotalCoStaffConstraints(record);
+    }
+  }
+
+  autoSyncTotalCoStaffConstraints = (record) => {
+    if (record.timeBlock && record.driveType === DRIVE_TYPE.MOBILE) {
+      const tbTotal = this.model.STEP3.records
+        .filter(r => r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint)
+        .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+      const coRecord = this.model.STEP3.records.find(
+        r => !r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint
+      );
+
+      if (coRecord) {
+        coRecord.totalStaffConstraints = tbTotal;
+        coRecord.rowClass = 'row--auto-synced';
+      }
+    }
   }
 
   handleStep3DeleteRecord = (event) => {
@@ -570,7 +590,8 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
           timeBlockName: '',
           dateOfConstraint: dateIso,
           weekdayLong: weekdayLong,
-          validations: {}
+          validations: {},
+          rowClass: ''
         }
         this.model.STEP3.records.push(newRecord);
 
@@ -586,7 +607,8 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
                   timeBlock: coTb.timeBlock,
                   dateOfConstraint: dateIso,
                   weekdayLong: weekdayLong,
-                  validations: {}
+                  validations: {},
+                  rowClass: ''
                 }
                 this.model.STEP3.records.push(newRecord);
               }

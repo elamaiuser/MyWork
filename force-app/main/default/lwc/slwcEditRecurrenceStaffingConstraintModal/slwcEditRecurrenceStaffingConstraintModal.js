@@ -193,25 +193,24 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
     this.handleStep2ValidateRecord(record);
 
-    if (
-      event.currentTarget.name === 'totalStaffConstraints' &&
-      record.timeBlockId &&
-      record.driveType === DRIVE_TYPE.MOBILE
-    ) {
-      this.syncCoRecordForDate(record.dateOfConstraint);
+    if( event.currentTarget.name === 'totalStaffConstraints') {
+      this.autoSyncTotalCoStaffConstraints(record);
     }
   }
 
-  syncCoRecordForDate = (date) => {
-    const tbTotal = this.model.STEP2.records
-      .filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date)
-      .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+  autoSyncTotalCoStaffConstraints = (record) => {
+    if (record.timeBlockId && record.driveType === DRIVE_TYPE.MOBILE) {
+      const tbTotal = this.model.STEP2.records
+        .filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint)
+        .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+      const coRecord = this.model.STEP2.records.find(
+        r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint
+      );
 
-    const coRecord = this.model.STEP2.records.find(
-      r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date
-    );
-    if (coRecord) {
-      coRecord.totalStaffConstraints = tbTotal;
+      if (coRecord) {
+        coRecord.totalStaffConstraints = tbTotal;
+        coRecord.rowClass = 'row--auto-synced';
+      }
     }
   }
 
@@ -490,6 +489,16 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
       .filter(record => {
         if(!showOnlyErrorRecords) return true;
         return record.validations?.requestedStaffExceeded;
+      })
+      .sort((a, b) => {
+        if (a.dateOfConstraint < b.dateOfConstraint) return -1;
+        if (a.dateOfConstraint > b.dateOfConstraint) return 1;
+        const order = (r) => {
+          if (r.driveType !== DRIVE_TYPE.MOBILE) return 0;
+          if (!r.timeBlockId) return 1;
+          return 2;
+        };
+        return order(a) - order(b);
       });
   }
 
@@ -533,7 +542,8 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
               ...item,
               timeBlockName: item.timeBlock?.name,
               weekdayLong: this.dateUtils.dateIso2WeeekDay(item.dateOfConstraint).weekdayLong,
-              validations: {}
+              validations: {},
+              rowClass: ''
             }
           });
         });
