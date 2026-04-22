@@ -229,18 +229,28 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
   }
 
   autoSyncTotalCoStaffConstraints = (record) => {
-    if (record.timeBlock && record.driveType === DRIVE_TYPE.MOBILE) {
-      const tbTotal = this.model.STEP3.records
-        .filter(r => r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint)
-        .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
-      const coRecord = this.model.STEP3.records.find(
-        r => !r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint
-      );
+    if (!record.timeBlock || record.driveType !== DRIVE_TYPE.MOBILE) return;
 
-      if (coRecord) {
-        coRecord.totalStaffConstraints = tbTotal;
-        coRecord.rowClass = 'row--auto-synced';
-      }
+    const { dateOfConstraint } = record;
+    const coId = record.collectionOperation.id;
+
+    const wizardTbRecords = this.model.STEP3.records.filter(
+      r => r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === dateOfConstraint && !r.validations?.staffingConstraintExisted
+    );
+    const wizardTbTotal = wizardTbRecords.reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+    const wizardTbIds = new Set(wizardTbRecords.map(r => r.timeBlock.id));
+
+    const existingTbTotal = Object.values(this.mappedStaffingConstraint || {}).reduce((sum, sc) => {
+      const isSameMobileTb = sc.timeBlockId && sc.driveType === DRIVE_TYPE.MOBILE && sc.collectionOperationId === coId && sc.dateOfConstraint === dateOfConstraint;
+      return (isSameMobileTb && !wizardTbIds.has(sc.timeBlockId)) ? sum + (sc.totalStaffConstraints || 0) : sum;
+    }, 0);
+
+    const coRecord = this.model.STEP3.records.find(
+      r => !r.timeBlock && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === dateOfConstraint
+    );
+    if (coRecord) {
+      coRecord.totalStaffConstraints = wizardTbTotal + existingTbTotal;
+      coRecord.rowClass = 'row--auto-synced';
     }
   }
 
@@ -333,10 +343,7 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
         ]);
       })
       .then(([staffingConstraintResult, driveResult, activityResult]) => {
-        const { timeBlocks: selectedTimeBlockIds } = this.model.STEP1;
-        const validStaffingConstraints = staffingConstraintResult.filter(item => !item.timeBlockId || selectedTimeBlockIds?.includes(item.timeBlockId));
-
-        this.mappedStaffingConstraint = keyBy(validStaffingConstraints, 
+        this.mappedStaffingConstraint = keyBy(staffingConstraintResult,
           (item) => `${item.collectionOperationId}${item.timeBlockId ? '-'+item.timeBlockId : '' }-${item.driveType}-${item.dateOfConstraint}`
         );
         this.mappedDriveData = groupBy([...driveResult], (item) => `${item.collectionOperationId}-${item.typeOfDrive}-${item.driveDate}`);
@@ -502,18 +509,21 @@ export default class SlwcAddRecurrenceStaffingConstraintModal extends LightningE
       return true;
     })
 
-    const tbModels = validRecords.map(item => {
-      return {
-        collectionOperationId: item.collectionOperation.id,
-        timeBlockId: item.timeBlock?.id,
-        dateOfConstraint: item.dateOfConstraint,
-        driveType: item.driveType,
-        totalStaffConstraints: item.totalStaffConstraints
-      }
-    });
+    const allModels = validRecords.map(item => ({
+      collectionOperationId: item.collectionOperation.id,
+      timeBlockId: item.timeBlock?.id,
+      dateOfConstraint: item.dateOfConstraint,
+      driveType: item.driveType,
+      totalStaffConstraints: item.totalStaffConstraints
+    }));
 
-    const coModels = this.buildCoSyncModels(tbModels);
-    const modelsToSave = [...tbModels, ...coModels];
+    const coModels = this.buildCoSyncModels(allModels);
+    const coSyncedKeys = new Set(coModels.map(m => `${m.collectionOperationId}__${m.dateOfConstraint}`));
+
+    const modelsToSave = [
+      ...allModels.filter(m => !(m.driveType === DRIVE_TYPE.MOBILE && !m.timeBlockId && coSyncedKeys.has(`${m.collectionOperationId}__${m.dateOfConstraint}`))),
+      ...coModels
+    ];
 
     this.showLoading();
     let service = new staffingConstraintService();
