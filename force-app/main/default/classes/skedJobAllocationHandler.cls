@@ -543,7 +543,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             jobAllocationIds.add(newRecord.Id);
         }
         if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
-            skedFutureCallEventHandler.publishFutureCallEvent(
+            skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
                 skedJobAllocationHandler.class.getName(),
                 'performDriveVehicleTypeSync',
                 jobAllocationIds
@@ -564,7 +564,7 @@ public class skedJobAllocationHandler extends skedTriggerHub implements Callable
             }
         }
         if (!System.isBatch() && !jobAllocationIds.isEmpty()) {
-            skedFutureCallEventHandler.publishFutureCallEvent(
+            skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
                 skedJobAllocationHandler.class.getName(),
                 'performDriveVehicleTypeSync',
                 jobAllocationIds
