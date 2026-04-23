@@ -631,10 +631,6 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
             .then((result) => {
               if (!result.success) throw result;
               this.closeConfirmModal();
-              return this.syncCoConstraints(null, staffingConstraint);
-            })
-            .then((syncedKeys) => {
-              this.pendingAutoSyncedKeys = syncedKeys || new Set();
               this.fetchStafingConstrainData();
             })
             .catch((error) => {
