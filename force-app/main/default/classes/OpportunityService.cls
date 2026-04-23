@@ -3307,22 +3307,31 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                 updateEventList.add(event);
                 
                 System.debug('\n #### Inside syncOppsWithDrives JSON =>' + objectDataJSON);
+                List<BSF_Error_Log__c> insertErrorLog = new List<BSF_Error_Log__c>();
                 
                 //Publish Event
                 if(!updateEventList.isEmpty()) {
                     List<Database.SaveResult> eventPubResultList = EventBus.publish(updateEventList);
-                    
-                    for(Database.SaveResult eventPubResult : eventPubResultList) {
+
+                   
+                     for(Database.SaveResult eventPubResult : eventPubResultList) {
                         if(eventPubResult.isSuccess()) {
                             System.debug('\n #### Inside syncOppsWithDrives Events published successfully  => ' + eventPubResult);
                         }
                         else {
                             for(Database.Error pubError : eventPubResult.getErrors()) {
+                               
+                                //HRP-16932
+                                BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog('Syncing Opporunity values with drives','Opportunity Service','syncOppsWithDrives', 'Error',  pubError.getMessage(), 'Sync Request platform event publish failed');
+                                insertErrorLog.add(errorLog);  
                                 System.debug('\n #### Inside syncOppsWithDrives Event publishing failed => ' + pubError.getStatusCode() + ' => ' + pubError.getMessage());
                             }
                         }
                     }
-                }            
+                    if (!insertErrorLog.isEmpty()) {
+                        Database.insert(insertErrorLog, false);
+                    }
+            }            
             } 
         }catch(Exception ex){
             System.debug('#### Inside ex  => ' + ex);
