@@ -4112,6 +4112,7 @@ opp.StageName = 'Closed';
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }
@@ -5303,26 +5304,21 @@ opp.StageName = 'Closed';
             }
         }
 
+        Boolean isAutomatedProcessUser = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String userModeClause = isAutomatedProcessUser ? '' : ' WITH USER_MODE';
+        String accountBaseQuery = accountIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds' + userModeClause;
+        String templateBaseQuery = templateIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds' + userModeClause;
+
         // 2. Query Parent Account Settings
         Map<Id, Account> accountMap = new Map<Id, Account>();
-        if(!accountIds.isEmpty()) {
-            accountMap = new Map<Id, Account>([
-                SELECT Id, Planning_Path__c 
-                FROM Account 
-                WHERE Id IN :accountIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(accountBaseQuery)) {
+            accountMap = new Map<Id, Account>((List<Account>)Database.query(accountBaseQuery));
         }
 
         // 3. Query Parent Template Settings
         Map<Id, Opportunity> templateMap = new Map<Id, Opportunity>();
-        if(!templateIds.isEmpty()) {
-            templateMap = new Map<Id, Opportunity>([
-                SELECT Id, Planning_Path__c 
-                FROM Opportunity 
-                WHERE Id IN :templateIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(templateBaseQuery)) {
+            templateMap = new Map<Id, Opportunity>((List<Opportunity>)Database.query(templateBaseQuery));
         }
 
         // 4. Assign Values based on Hierarchy
