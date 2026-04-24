@@ -95,6 +95,18 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     return this.collectionOperations[0].workWeekFirstDay;
   }
 
+  get hasActiveTimeBlocks() {
+    if (!this.collectionOperations?.length) return false;
+    const today = DateTime.local().toISODate();
+
+    return this.collectionOperations.some(co =>
+      co.collectionOperationTimeBlocks?.some(coTb =>
+        coTb.effectiveStartDate <= today &&
+        (coTb.effectiveEndDate == null || coTb.effectiveEndDate >= today)
+      )
+    );
+  }
+
   get dateUtils() {
     return slwcDateUtils.getInstance({
       timezone: TIME_ZONE
