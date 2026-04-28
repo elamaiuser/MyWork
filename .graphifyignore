@@ -1,0 +1,18 @@
+# .graphifyignore
+CLAUDE.md
+.sf/
+.sfdx/
+.vscode/
+apex-documentation/
+manifest/
+node_modules/
+.forceignore
+.gitignore
+azure-pipelines.yml
+package.json
+README.md
+sfdx-project.json
+show
+force-app/main/default/staticresources/
+force-app/main/default/lwc/lodash/
+force-app/main/default/lwc/luxon/
