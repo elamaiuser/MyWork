@@ -3,7 +3,9 @@
 	<types>
 		<members>DriveResourceAllocationBatch</members>
 		<members>DriveResourceAllocationBatchTest</members>
-		<members>slwcAllocationService</members>		
+		<members>slwcAllocationService</members>
+		<members>skedJobAllocationHandler</members>	
+		<members>skedJobAllocationTrigger_Test</members>		
 		<members>skedResourceHandler</members>
 		<members>skedMappingConfigContainer</members>
         <members>skedModels</members>
