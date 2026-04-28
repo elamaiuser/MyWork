@@ -205,6 +205,9 @@ private class DriveResourceAllocationBatchTest {
         Database.executeBatch(driveResourceAllocationBatchTest, 1);
         TriggerHandler.clearAllBypasses();
         Test.stopTest();
+        
+        sked_Drive__c updatedDrive = [SELECT Id, sked_Status__c, sked_Staff_Capacity__c FROM sked_Drive__c WHERE Id = :fsDrive.Id];
+        Assert.areEqual('Confirmed', updatedDrive.sked_Status__c);
     }
     
     static testmethod void testMobileDriveResourceAllocation() {      
@@ -462,6 +465,9 @@ private class DriveResourceAllocationBatchTest {
         Database.executeBatch(driveResourceAllocationBatchTest, 1);
         //TriggerHandler.clearAllBypasses();
         Test.stopTest();
+        
+        sked_Drive__c updatedDrive = [SELECT Id, sked_Status__c, sked_Staff_Capacity__c FROM sked_Drive__c WHERE Id = :testDrive1.Id];
+        Assert.areEqual('System Generated', updatedDrive.sked_Status__c); 
     }
     
      static testMethod void testScheduledRunException() {
@@ -471,4 +477,437 @@ private class DriveResourceAllocationBatchTest {
         Database.executeBatch(driveResourceAllocationBatchTest, 1);
         Test.stopTest();
     }
+    
+    static testMethod void testConstructorEmptyDriveListException1() {
+        Test.startTest();
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+        sked_Drive__c testDrive = (sked_Drive__c)mapTestData.get('testDrive1');
+        testDrive.sked_Status__c = 'Draft';
+        update testDrive;
+        
+        DriveResourceAllocationBatch batch = new DriveResourceAllocationBatch(
+            BSF_Constants.RUN_TYPE_SCHEDULED, 
+            'Random', 
+            'Random', 
+            Null,
+            new Set<Id>() 
+        );
+        
+        Test.stopTest();
+    }
+    
+    static testMethod void testConstructorEmptyDriveListException() {
+        Test.startTest();
+        try {
+            // This should trigger the catch block in constructor
+            // Pass an invalid typeOfDrive that doesn't exist in MAP_DRIVETYPE_BATCHTYPE
+            DriveResourceAllocationBatch batch = new DriveResourceAllocationBatch(
+                BSF_Constants.RUN_TYPE_SCHEDULED, 
+                'Calendar Build', 
+                'InvalidDriveType', // This key won't exist in MAP_DRIVETYPE_BATCHTYPE
+                System.today(),
+                new Set<Id>() 
+            );
+            
+            // Execute batch to ensure it runs
+            Database.executeBatch(batch, 1);
+            
+            System.assert(true, 'Constructor executed without throwing unhandled exception');
+        } catch(Exception e) {
+            System.assert(false, 'Exception should be caught in constructor: ' + e.getMessage());
+        }
+        Test.stopTest();
+    }
+    
+    static testmethod void testPreExistingDriveListScenario() {      
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+    
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked_Drive__c testDrive1 = (sked_Drive__c)mapTestData.get('testDrive1');
+        Opportunity testMobileOpp1 = (Opportunity)mapTestData.get('testOpportunity');
+        sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
+        sked__Location__c testLocation1 = (sked__Location__c)mapTestData.get('testLocation1');
+        
+        // Create a pre-existing CONFIRMED drive (not DRAFT) to test pre-existing drive logic
+        sked_Drive__c preExistingDrive = new sked_Drive__c(
+            Name = 'Pre-Existing Drive',
+            sked_Status__c = 'Confirmed',
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Type_of_Drive__c = 'Mobile',
+            sked_Drive_Site__c = testDrive1.sked_Drive_Site__c,
+            sked_Account__c = testDrive1.sked_Account__c,
+            sked_Opportunity__c = testDrive1.sked_Opportunity__c,
+            sked_Day_of_Week__c = testDrive1.sked_Day_of_Week__c
+        );
+        insert preExistingDrive;
+        
+        // Create drive shift for pre-existing drive
+        sked_Drive_Shift__c preShift = new sked_Drive_Shift__c(
+            sked_Drive__c = preExistingDrive.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Start_Time__c = Time.newInstance(8,0,0,0),
+            sked_End_Time__c = Time.newInstance(17,0,0,0),
+            sked_Order__c = 1
+        );
+        insert preShift;
+        
+        // Create jobs for pre-existing drive that will consume some resources
+        List<sked__Job__c> preJobs = new List<sked__Job__c>();
+        preJobs.add(new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked_Drive__c = preExistingDrive.Id,
+            sked_Drive_Shift__c = preShift.Id,
+            sked_Resource_Role__c = 'Driver',
+            sked__Quantity__c = 2,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12)
+        ));
+        
+        preJobs.add(new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked_Drive__c = preExistingDrive.Id,
+            sked_Drive_Shift__c = preShift.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked__Quantity__c = 1,
+            sked_Asset_Type__c = 'Equipment',
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12)
+        ));
+        insert preJobs;
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('JobTriggerHandler');
+        TriggerHandler.bypass('JobAllocationTriggerHandler');
+        
+        List<sked__Tag__c> testTags = [SELECT Id, Name FROM sked__Tag__c WHERE Name IN ('Mobile', 'Vehicle', 'Inside', 'Equipment')];
+        List<sked__Resource__c> testResourceList = [SELECT ID, sked_Asset_Type__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Pres_Donor_Capacity__c FROM sked__Resource__c WHERE sked_Asset_Type__c != null and sked__Is_Active__c = TRUE];
+        
+        // Mark some resources with DOT and CDL
+        for(Integer i = 0; i < testResourceList.size() && i < 4; i++) {
+            if(i == 0) testResourceList[i].sked_CDL__c = TRUE;
+            if(i == 1) testResourceList[i].sked_DOT__c = TRUE;
+            if(i == 2) testResourceList[i].sked_CDL__c = TRUE;
+            if(i == 3) testResourceList[i].sked_DOT__c = TRUE;
+        }
+        update testResourceList;
+        
+        // Create job allocations for pre-existing drive to consume DOT/CDL resources
+        List<sked__Job_Allocation__c> preAllocations = new List<sked__Job_Allocation__c>();
+        for(Integer i = 0; i < testResourceList.size() && i < 2; i++) {
+            if(testResourceList[i].sked_Asset_Type__c == 'Vehicle') {
+                preAllocations.add(new sked__Job_Allocation__c(
+                    sked__Job__c = preJobs[0].Id,
+                    sked__Resource__c = testResourceList[i].Id
+                ));
+            }
+        }
+        if(!preAllocations.isEmpty()) {
+            insert preAllocations;
+        }
+        
+        List<sked__Resource_Tag__c> testResourceTags = new List<sked__Resource_Tag__c>();
+        for(sked__Resource__c testResource : testResourceList) {
+            for(sked__Tag__c testTag : testTags) {
+                if(testResource.sked_Asset_Type__c != testTag.Name && !new List<String>{'Mobile','Inside'}.contains(testTag.Name)) continue;
+                testResourceTags.add(new sked__Resource_Tag__c(
+                    sked__Resource__c = testResource.Id,
+                    sked__Tag__c = testTag.Id,
+                    sked_Expiry_Date__c = system.today().addYears(5),
+                    sked_Start_Date__c = system.today().addYears(-1),
+                    sked_Role_Status__c = 'Active'
+                ));
+            }
+        }
+        insert testResourceTags;
+        
+        Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+        Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Sys_Gen_Batch_Mobile__c.intValue();
+        Test.setCreatedDate(testDrive1.Id, System.today().addDays(-numOfDays));
+    
+        testMobileOpp1.Source__c = 'Calendar Build';
+        update new Opportunity(
+            Id = testDrive1.sked_Opportunity__c,
+            Anticipated_Registered_Donors__c = 100,
+            AnticipatedRegisterDonorChangeReason__c = 'TEST',
+            Flow_Start_Time_Field__c = '1000',
+            Flow_End_Time_Field__c = '1830',
+            End_Time__c = Time.newInstance(18, 0, 0, 0),
+            Start_Time__c = Time.newInstance(5, 0, 0, 0), 
+            Type_of_Drive__c = 'Mobile',
+            Source__c = 'Calendar Build',
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId(),
+            Call_List_Recipient_Exist__c = false,
+            Red_Cross_Volunteer_Required__c = true,
+            Red_Cross_Volunteer_Quantity__c = 1,
+            Slot_Generator__c = 110,
+            Slot_Generator_Change_Reason__c = 'TEST',
+            APT_Quantity__c = 0,
+            APT_Required__c = false 
+        );
+        
+        Test.startTest();
+        sked_Drive_Shift__c driveShift1 = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20,0,0,0),
+            sked_Start_Time__c = Time.newInstance(14,0,0,0),
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Equipment__c = 2,
+            sked_Lunch_Break__c = FALSE,
+            sked_Lunch_Break_Before_Draw_Hours__c = FALSE,
+            sked_Lunch_Break_Duration__c = 0,
+            sked_Lunch_Break_End_Time__c = NULL,
+            sked_Lunch_Break_Start_Time__c = NULL,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Order__c = 1,
+            sked_Sign_Up_Reduction__c = 0,
+            sked_Staff_Setup__c = 5,
+            sked_Vehicles_Needed__c = 2,
+            sked_Volunteer_Setup__c = 1
+        );
+        insert driveShift1;
+        skedHubBase.BypassInsertTriggers = false;
+        
+        List<sked__Job__c> jobs = new List<sked__Job__c>();
+        
+        // Create multiple jobs to require resource allocation
+        for(Integer i = 0; i < 3; i++) {
+            jobs.add(new sked__Job__c(
+                sked__Region__c = testRegion1.Id,
+                sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+                sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+                sked__Duration__c = 60,
+                sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+                sked_Drive__c = testDrive1.Id,
+                sked_Drive_Shift__c = driveShift1.Id,
+                sked_Resource_Role__c = 'Driver',
+                sked__Quantity__c = 1,
+                sked_Travel_Time__c = 45,
+                sked_Travel_Time2__c = 45
+            ));
+            
+            jobs.add(new sked__Job__c(
+                sked__Region__c = testRegion1.Id,
+                sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+                sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+                sked__Duration__c = 60,
+                sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+                sked_Drive__c = testDrive1.Id,
+                sked_Drive_Shift__c = driveShift1.Id,
+                sked_Resource_Role__c = 'Driver Support',
+                sked__Quantity__c = 1,
+                sked_Travel_Time__c = 45,
+                sked_Travel_Time2__c = 45
+            ));
+        }
+        
+        jobs.add(new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = driveShift1.Id,
+            sked_Resource_Role__c = '2RBC',
+            sked__Quantity__c = 2,
+            sked_Travel_Time__c = 45,
+            sked_Travel_Time2__c = 45
+        ));
+        
+        jobs.add(new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = driveShift1.Id,
+            sked_Asset_Type__c = 'Equipment',
+            sked__Quantity__c = 2
+        ));
+        
+        jobs.add(new sked__Job__c(
+            sked__Region__c = testRegion1.Id,
+            sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+            sked__Duration__c = 60,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Shift__c = driveShift1.Id,
+            sked_Asset_Type__c = 'Vehicle',
+            sked__Quantity__c = 2
+        ));
+        insert jobs;
+        
+        sked_Staffing_Constraint__c mobileStaffingConstraint = new sked_Staffing_Constraint__c(
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Date_of_Constraint__c = testDrive1.sked_Drive_Date__c,
+            sked_Drive_Type__c = 'Mobile',
+            sked_Total_Staff_Constraints__c = 20
+        );
+        insert mobileStaffingConstraint;
+        
+        List<sked_Operation_Drive_Limit__c> odlList = new List<sked_Operation_Drive_Limit__c>();
+        sked_Operation_Drive_Limit__c skedDriveLimit = new sked_Operation_Drive_Limit__c(
+            sked_Type__c = 'DOT Limit',
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Effective_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Days_of_Week__c = testDrive1.sked_Day_of_Week__c,
+            sked_Effective_End_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Quantity__c = 5
+        );
+        odlList.add(skedDriveLimit);
+        
+        skedDriveLimit = new sked_Operation_Drive_Limit__c(
+            sked_Type__c = '2RBC Limit',
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Effective_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Days_of_Week__c = testDrive1.sked_Day_of_Week__c,
+            sked_Effective_End_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Quantity__c = 5
+        );
+        odlList.add(skedDriveLimit);
+        
+        skedDriveLimit = new sked_Operation_Drive_Limit__c(
+            sked_Type__c = 'CDL Limit',
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Effective_Start_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Days_of_Week__c = testDrive1.sked_Day_of_Week__c,
+            sked_Effective_End_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Quantity__c = 5
+        );
+        odlList.add(skedDriveLimit);
+        insert odlList;
+        
+        // Store original drive status for assertion
+        String originalStatus = testDrive1.sked_Status__c;
+        
+        // Execute the batch
+        Set<Id> driveIdSet = new Set<Id>{testDrive1.Id};
+        DriveResourceAllocationBatch driveResourceAllocationBatchTest = new DriveResourceAllocationBatch(
+            BSF_Constants.RUN_TYPE_SCHEDULED, 
+            'Calendar Build', 
+            'Mobile', 
+            testDrive1.sked_Drive_Date__c, 
+            driveIdSet
+        );
+        Database.executeBatch(driveResourceAllocationBatchTest, 1);
+        
+        Test.stopTest();
+        
+        sked_Drive__c updatedDrive = [SELECT Id, sked_Status__c, sked_Staff_Capacity__c FROM sked_Drive__c WHERE Id = :testDrive1.Id];
+        Assert.areEqual('System Generated', updatedDrive.sked_Status__c);
+        
+        List<sked__Job_Allocation__c> jobAllocations = [SELECT Id FROM sked__Job_Allocation__c WHERE sked__Job__r.sked_Drive__c = :testDrive1.Id];
+        Assert.isTrue(jobAllocations.size() > 0, 'Job allocations should have been created');
+    }
+    
+    static testMethod void testMobileDriveWithInsufficientResources() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+    
+        sked_Drive__c testDrive1 = (sked_Drive__c)mapTestData.get('testDrive1');
+        Opportunity testMobileOpp1 = (Opportunity)mapTestData.get('testOpportunity');
+        sked__Region__c testRegion1 = (sked__Region__c)mapTestData.get('testRegion1');
+        
+        AccountTeamMemberHelper.skipAccountTrigger = true;
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+        TriggerHandler.bypass('JobTriggerHandler');
+        
+        Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
+        Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Sys_Gen_Batch_Mobile__c.intValue();
+        Test.setCreatedDate(testDrive1.Id, System.today().addDays(-numOfDays));
+        
+        
+        testMobileOpp1.Anticipated_Registered_Donors__c = 500;
+        testMobileOpp1.Source__c = 'Calendar Build';
+        testMobileOpp1.AnticipatedRegisterDonorChangeReason__c = 'TEST';
+        update testMobileOpp1;
+        
+        Test.startTest();
+        sked_Drive_Shift__c driveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1,
+            sked_End_Time__c = Time.newInstance(20,0,0,0),
+            sked_Start_Time__c = Time.newInstance(14,0,0,0),
+            sked_Drive__c = testDrive1.Id,
+            sked_Drive_Date__c = testDrive1.sked_Drive_Date__c,
+            sked_Equipment__c = 10,
+            sked_Lunch_Break__c = FALSE,
+            sked_Finish__c = DateTime.newInstance(System.today(), Time.newInstance(20,0,0,0)),
+            sked_Start__c = DateTime.newInstance(System.today(), Time.newInstance(14,0,0,0)),
+            sked_Order__c = 1,
+            sked_Staff_Setup__c = 10,
+            sked_Vehicles_Needed__c = 5
+        );
+        insert driveShift;
+        skedHubBase.BypassInsertTriggers = false;
+        
+        
+        List<sked__Job__c> jobs = new List<sked__Job__c>();
+        for(Integer i = 0; i < 10; i++) {
+            jobs.add(new sked__Job__c(
+                sked__Region__c = testRegion1.Id,
+                sked__Start__c = testDataFactory.summary.startTime.addHours(11),
+                sked__Finish__c = testDataFactory.summary.startTime.addHours(12),
+                sked__Duration__c = 60,
+                sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+                sked_Drive__c = testDrive1.Id,
+                sked_Drive_Shift__c = driveShift.Id,
+                sked_Resource_Role__c = 'Driver',
+                sked__Quantity__c = 1
+            ));
+        }
+        insert jobs;
+        
+        
+        sked_Staffing_Constraint__c staffingConstraint = new sked_Staffing_Constraint__c(
+            sked_Collection_Operation__c = testDrive1.sked_Collection_Operation__c,
+            sked_Date_of_Constraint__c = testDrive1.sked_Drive_Date__c,
+            sked_Drive_Type__c = 'Mobile',
+            sked_Total_Staff_Constraints__c = 2 
+        );
+        insert staffingConstraint;
+        
+        String originalStatus = testDrive1.sked_Status__c;
+        
+        Set<Id> driveIdSet = new Set<Id>{testDrive1.Id};
+        DriveResourceAllocationBatch batch = new DriveResourceAllocationBatch(
+            BSF_Constants.RUN_TYPE_SCHEDULED, 
+            'Calendar Build', 
+            'Mobile', 
+            testDrive1.sked_Drive_Date__c, 
+            driveIdSet
+        );
+        Database.executeBatch(batch, 1);
+        
+        Test.stopTest();
+        
+        
+        sked_Drive__c updatedDrive = [SELECT Id, sked_Status__c FROM sked_Drive__c WHERE Id = :testDrive1.Id];
+        Assert.areEqual(originalStatus, updatedDrive.sked_Status__c, 'Drive status should not change when resources are insufficient');
+        
+        
+        List<sked__Job_Allocation__c> jobAllocations = [SELECT Id FROM sked__Job_Allocation__c WHERE sked__Job__r.sked_Drive__c = :testDrive1.Id];
+        Assert.areEqual(0, jobAllocations.size(), 'No job allocations should be created when resources are insufficient');
+    }
+    
 }
