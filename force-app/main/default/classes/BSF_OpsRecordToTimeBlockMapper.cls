@@ -10,7 +10,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
     public static final String TIME_ENTRY_DRIVER = 'Driver';
     public static final String TIME_ENTRY_OJI = 'Instructor';
     public static final String TIME_ENTRY_LATE_END = 'Drive End Time';
-    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'CA Missed/Short Rest Break';
+    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'TIME_ENTRY_CODE-3-112';
     public static final Decimal QUANTITY_PREMIUM = 1;
     
 
