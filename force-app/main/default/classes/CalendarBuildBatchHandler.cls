@@ -251,8 +251,9 @@
 
         List<Opportunity> lstOppsWithParentCB = new List<Opportunity>([SELECT Id, Calendar_Build_Parent_Opportunity__c 
                                                                         FROM Opportunity 
-                                                                        WHERE Calendar_Build_Parent_Opportunity__c IN :map_eligibleOppsId_oppDetails.keySet()]);
-        if(lstOppsWithParentCB != null && lstOppsWithParentCB.size() > 0) {
+                                                                        WHERE Calendar_Build_Parent_Opportunity__c IN :map_eligibleOppsId_oppDetails.keySet()
+                                                                        AND StageName NOT IN (:BSF_Constants.STAGE_CANCELLED)]);
+        if(lstOppsWithParentCB != null && lstOppsWithParentCB.size() > 0) { 
             for(Opportunity oppWithParentCB : lstOppsWithParentCB) {
                 parentCbIds.add(oppWithParentCB.Calendar_Build_Parent_Opportunity__c);
             }
