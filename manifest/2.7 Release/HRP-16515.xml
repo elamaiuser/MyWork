@@ -18,7 +18,8 @@
         <members>skedWorkdayImportTimeBlockResponse</members>
         <members>BSF_OpsRecordToTimeBlockMapper_Test</members>
         <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
-        <members>BSF_WorkdayOpsRecordDirectService_Test</members>        
+        <members>BSF_WorkdayOpsRecordDirectService_Test</members> 
+        <members>skedOpsRecordApiData</members>       
         <name>ApexClass</name>
     </types>
     <!-- Custom Metadata Type definition and records -->

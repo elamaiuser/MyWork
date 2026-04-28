@@ -10,6 +10,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
     public static final String TIME_ENTRY_DRIVER = 'Driver';
     public static final String TIME_ENTRY_OJI = 'Instructor';
     public static final String TIME_ENTRY_LATE_END = 'Drive End Time';
+    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'CA Missed/Short Rest Break';
     public static final Decimal QUANTITY_PREMIUM = 1;
     
 
@@ -123,6 +124,15 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
             if (sd.premiumLateEnd) {
                 blocks.add(buildPremiumBlock(empId, driveDate, TIME_ENTRY_LATE_END, comment));
             }
+            if (sd.restBreaksNotTaken != null && sd.restBreaksNotTaken > 0) {
+                blocks.add(buildPremiumBlock(
+                    empId,
+                    driveDate,
+                    TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
+                    'BSF:  Approved by ' + approverEmail,
+                    sd.restBreaksNotTaken
+                ));
+            }
         }
         return blocks;
     }
@@ -156,11 +166,21 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
         String timeEntryCode,
         String comment
     ) {
+        return buildPremiumBlock(employeeId, driveDate, timeEntryCode, comment, QUANTITY_PREMIUM);
+    }
+
+    private static skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType buildPremiumBlock(
+        String employeeId,
+        Date driveDate,
+        String timeEntryCode,
+        String comment,
+        Decimal quantity
+    ) {
         skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType block = new skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType();
         block.Worker_Reference = buildWorkerReference(employeeId);
         block.Date_x = driveDate;
         block.Time_Entry_Code_Reference = buildTimeEntryReference(timeEntryCode);
-        block.Quantity = QUANTITY_PREMIUM;
+        block.Quantity = quantity;
         block.Comment = comment;
         block.Delete_Time_Block = false;
         return block;
