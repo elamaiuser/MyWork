@@ -77,7 +77,7 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
             if (timeCode == BSF_OpsRecordToTimeBlockMapper.TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK) {
                 hasRestBreakBlock = true;
                 System.assertEquals(2, b.Quantity, 'Rest break block quantity should match breaks not taken');
-                System.assertEquals('BSF:  Approved by approver2@example.org', b.Comment);
+                System.assertEquals('BSF: Approved by approver2@example.org | BSF GUID: staff-guid-2', b.Comment);
             } else {
                 System.assertEquals(BSF_OpsRecordToTimeBlockMapper.QUANTITY_PREMIUM, b.Quantity);
             }
