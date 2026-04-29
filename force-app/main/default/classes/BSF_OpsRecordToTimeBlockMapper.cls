@@ -129,7 +129,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
                     empId,
                     driveDate,
                     TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
-                    'BSF:  Approved by ' + approverEmail,
+                    comment,
                     sd.restBreaksNotTaken
                 ));
             }
