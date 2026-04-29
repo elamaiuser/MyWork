@@ -1,0 +1,518 @@
+<template>
+    <template if:true={getObjectApiName}>
+<!-- Header Card -->
+        <lightning-card title={header} icon-name={headerIcon}>
+        </lightning-card>
+
+        <article class="slds-card">
+            <template if:true={isLoading}> <lightning-spinner alternative-text="Loading"
+                    size="medium"></lightning-spinner>
+            </template>
+
+<!-- Constituent Data description -->
+            <div class="slds-p-horizontal_small slds-m-top_xx-small">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-text-body_medium slds-text-color_default"><b>Constituent Data</b></div>
+                </div>
+                <div class="slds-m-top_xx-small">
+                    <span class="slds-text-body_medium slds-text-color_default">This data displays a unified view across
+                        other Salesforce systems and differing matching logic may impact returned results.Data may not
+                        be exact but is generally accurate.Exact counts may need to be verified.</span>
+                </div>
+            </div>
+
+<!-- Identity Match & Account Owner header -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
+                        <b>Identity Match</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='Indicates the Line of Service Account owner in Salesforce for  Biomed,  Training Services and Hospital Sales.'></lightning-helptext>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
+                        <b>Account Owner</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+            
+<!-- Identity match account mapping -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <template for:each={accAmArray} for:item="rec">
+                    <div key={rec.orgName}>
+                        <lightning-layout horizontal-align="spread" multiple-rows>
+
+                            <!-- Organization name and match status -->
+                            <lightning-layout-item size="6" class="slds-align-top">
+                                <div class="slds-p-left_small slds-p-bottom_xx-small">
+                                    <img src={rec.statusIcon} alt="Status" class="slds-m-right_x-small"
+                                        style="max-height:10px;" />
+
+                                    <span class="slds-text-body_regular">{rec.orgName}</span>
+                                </div>
+                            </lightning-layout-item>
+
+                            <!-- Account owners list -->
+                            <lightning-layout-item size="6" class="slds-align-top">
+                                <template if:true={rec.accounts.length}>
+                                    <template for:each={rec.accounts} for:item="item">
+                                        <div key={item.email} class="slds-p-horizontal_small slds-p-bottom_xx-small">
+                                            <span style="white-space: normal; word-wrap: break-word;">
+                                                <a href={item.mailto} title={item.email}>
+                                                    {item.name}
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!-- No account owners -->
+                                <template if:false={rec.accounts.length}>
+                                    <div class="slds-p-left_small slds-text-color_weak">
+                                        Not Available
+                                    </div>
+                                </template>
+
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+                    </div>
+                </template>
+
+            </div>
+
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Blood Drives section -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small ">
+                        <b>Blood Drives:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='The number of cumulative sponsored blood drives from Salesforce Biomed. This is experimental reference data. May not be exact but is generally accurate.'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+<!-- Drive counts -->
+            <div class="slds-text-align_left slds-m-bottom_small ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small ">
+                        Completed : <a href='#' title="See Drive Details" onclick={handleModalClickDriveDetails}
+                            data-type="Completed">{recordsCompleted}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Planned : <a href='#' title="See Drive Details" onclick={handleModalClickDriveDetails}
+                            data-type="Confirmed">{plannedDrives}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+            <!-- <div class="slds-text-align_left slds-p-bottom_small">
+                                <lightning-layout size="12" class="slds-p-top_small">
+                                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                                    Units Collected : {unitsCollected}
+                                </lightning-layout-item>
+                                </lightning-layout>
+            </div> -->
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Hospital Sales section -->            
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Hospital Sales:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='help text for Hospital Sales'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+<!-- Hospital Sales activity counts -->
+            <lightning-layout size="12">
+                <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                    Open Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        onclick={handleModalClickActivity}>{openActivityHS}</a>
+                </lightning-layout-item>
+                <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                    Total Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        onclick={handleModalClickActivity}>{totalActivityHS}</a>
+                </lightning-layout-item>
+            </lightning-layout>
+
+<!-- Hospital Sales financial data -->
+            <template lwc:if={hsData.length}>
+                <div class="slds-text-align_left slds-m-bottom_small">
+                    <template if:true={showFinancialData}>
+                        <!-- Contract metrics -->
+                        <lightning-layout size="12">
+                            <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                                Contract Count: <a href='#' title="See Contract Details"
+                                    data-accid={hsAccId} onclick={handleModalClickContractDetails}>{lifetimeContractCount}</a>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" title="See Contract Details"
+                                class="slds-p-horizontal_small">
+                                Contract Amount: <a href='#' data-accid={hsAccId} onclick={handleModalClickContractDetails}>{lifetimeContractAmount}</a>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template>
+                </div>
+
+                <div class="slds-m-horizontal_small slds-border_top"></div>
+                <template if:true={showFinancialData}>
+                    <!-- Revenue datatable -->
+                    <div class="slds-text-align_left slds-p-horizontal_small slds-m-bottom_small">
+                        <lightning-datatable key-field="products" data={hsData} columns={hsColumns}
+                            hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </div>
+                </template>
+            </template>
+            <template if:false={hsData.length}>
+                <p class="slds-p-horizontal_small slds-m-bottom_small">No data available.</p>
+            </template>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Cell & Gene Therapy section -->
+            <div class="slds-text-align_left ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Cell Gene Therapy:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='help text for CellGeneTherapy'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+<!-- CGTS activity counts -->
+            <lightning-layout size="12">
+                <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                    Open Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        onclick={handleModalClickActivity}>{openActivityHS}</a>
+                </lightning-layout-item>
+                <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                    Total Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        onclick={handleModalClickActivity}>{totalActivityHS}</a>
+                </lightning-layout-item>
+            </lightning-layout>
+           
+            <!-- CGTS revenue table -->
+            <template lwc:if={CGTSRevenue.length}>
+                <template if:true={showFinancialData}>
+                    <div class="slds-text-align_left slds-p-horizontal_small slds-m-bottom_small">
+                        <lightning-datatable key-field="stage" data={CGTSRevenue} columns={cgtsColumns}
+                            hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </div>
+                </template>
+            </template>
+            <template if:false={CGTSRevenue.length}>
+                <p class="slds-p-horizontal_small slds-m-bottom_small">No data available.</p>
+            </template>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Fundraising section -->
+            <div class="slds-text-align_left ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Fundraising:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='help text for Fundraising'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+ <!-- Fundraising activities -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId}
+                            onclick={handleModalClickActivity}>{openActivityFR}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId}
+                            onclick={handleModalClickActivity}>{totalActivityFR}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+<!-- Gift metrics -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Gift Count : <a href='#' title="See Gift Details" onclick={handleModalClickGiftDetails}
+                            data-type="giftCount">{frGiftCount}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Amount : <a href='#' title="See Gift Details" onclick={handleModalClickGiftDetails}
+                            data-type="totalGiftAmount">{frTotalGiftAmount}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Training Courses section -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Training Courses:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='The number of cumulative training classes from Salesforce Training Services. This is experimental reference data. May not be exact but is generally accurate.'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+<!-- Training Services activities -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId}
+                        onclick={handleModalClickActivity}>{openActivityTS}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId}
+                        onclick={handleModalClickActivity}>{totalActivityTS}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+            
+<!-- Course metrics -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Completed : <a href='#' title="See Course Details" onclick={handleModalClickCourseDetails}
+                            data-type="Completed">{coursesCompleted}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Planned : <a href='#' title="See Course Details" onclick={handleModalClickCourseDetails}
+                            data-type="Planned">{plannedCourses}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+<!-- Related Accounts section -->
+            <div class="slds-text-align_left ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Related Accounts:</b>
+                        <lightning-helptext class="slds-m-left_xx-small"
+                            content='Indicates accounts used to compile totals. Matching logic is system driven, it cannot be modified.  Salesforce Training Services accounts produce Training Courses total.  Salesforce Biomed accounts produce Blood Drive totals.'></lightning-helptext>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+ <!-- Related account count -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Number of Accounts : <a href='#' title="See Account Details"
+                            onclick={handleModalClickAccountDetails}>{numberOfAccounts}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <c-sfc360-generic-detail-modal open={isModalOpen} loading={isModalLoading} title={modalTitle}
+                onclosemodal={closeModal}>
+
+                  <!-- Account modal -->
+                <template if:true={isAccountModal}>
+                    <template if:true={hasAccountDetails}>
+                        <c-sfc360-generic-data-table data={accountDetailsData} columns={accDetailsDataColumns}
+                            key-field="accRecId">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={hasAccountDetails}>
+                        <p>No data available.</p>
+                    </template>
+                </template>
+
+                <!-- Gift modal -->
+                <template if:true={isGiftModal}>
+                    <template if:true={hasGiftDetails}>
+                        <c-sfc360-generic-data-table data={giftDetailsData} columns={giftDetailsDataColumns}
+                            key-field="accRecId">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={hasGiftDetails}>
+                        <p>No data available.</p>
+                    </template>
+                </template>
+
+                <!-- Drive modal -->
+                <template if:true={isDriveModal}>
+                    <template if:true={hasDriveDetails}>
+                        <c-sfc360-generic-data-table data={driveDetailsData} columns={driveDetailsDataColumns}
+                            key-field="driveRecId">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={hasDriveDetails}>
+                        <p>No data available.</p>
+                    </template>
+                </template>
+
+                <!-- Course modal -->
+                <template if:true={isCourseModal}>
+                    <template if:true={courseDetailsData.length}>
+                        <c-sfc360-generic-data-table data={courseDetailsData} columns={courseDetailsDataColumns}
+                            key-field="courseId">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={courseDetailsData.length}>
+                        <p>No data available.</p>
+                    </template>
+                </template>
+
+                <!-- Activity modal (accordion timeline) -->
+                <template if:true={isActivityModal}>
+                    <template if:true={fetchGroupedActivities.length}>
+                        <div class="slds-modal__content slds-p-around_small">
+                            <lightning-accordion allow-multiple-sections-open class="slds-theme_default slds-box_shadow"
+                                active-section-name="Upcoming &amp; Overdue">
+                                <template for:each={fetchGroupedActivities} for:item="group">
+                                    <lightning-accordion-section name={group.key} label={group.key}
+                                        class="slds-text-body_medium" key={group.key}>
+                                        <span slot="label"
+                                            class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                            <template if:true={group.isUpcomingGroup}>
+                                                <lightning-icon icon-name="utility:event" size="small"
+                                                    class="slds-m-right_x-small"
+                                                    alternative-text="Upcoming and Overdue"></lightning-icon>
+                                                <span
+                                                    class="slds-text-title_caps slds-text-color_inverse slds-text-body_medium">{group.key}</span>
+                                            </template>
+                                            <template if:false={group.isUpcomingGroup}>
+                                                {group.key}
+                                            </template>
+                                        </span>
+                                        <template if:true={group.values.length}>
+                                            <template for:each={group.values} for:item="activity">
+                                                <div key={activity.TaskId} class={activity.timelineItemClass}>
+                                                    <span class="slds-assistive-text">task</span>
+                                                    <div class="slds-media">
+                                                        <div class="slds-media__figure">
+                                                            <button class="slds-button slds-button_icon"
+                                                                title="Toggle details" data-taskid={activity.TaskId}
+                                                                onclick={toggleButton}>
+                                                                <lightning-icon icon-name={activity.toggleIcon}
+                                                                    alternative-text="Toggle details" size="x-small"
+                                                                    title="Toggle details">
+                                                                </lightning-icon>
+                                                            </button>
+                                                            <div class="slds-icon_container slds-timeline__icon"
+                                                                title="task">
+                                                                <lightning-icon icon-name={activity.typeIcon}
+                                                                    alternative-text="Activity Type" size="x-small">
+                                                                </lightning-icon>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="slds-media__body">
+                                                            <div
+                                                                class="slds-grid slds-grid_align-spread slds-timeline__trigger">
+                                                                <div
+                                                                    class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                                                                    <h4 class="slds-truncate" title={activity.Subject}>
+                                                                        <strong>{activity.Subject}</strong>
+                                                                    </h4>
+                                                                </div>
+                                                                <div
+                                                                    class="slds-timeline__actions slds-timeline__actions_inline">
+                                                                    <p class="slds-timeline__date">
+                                                                        {activity.CompleteDate}</p>
+                                                                </div>
+                                                            </div>
+                                                            <template if:true={activity.OwnerName}>
+                                                                <div>
+                                                                    <p class="slds-text-body_small">
+                                                                        <template if:true={activity.isTask}>
+                                                                            {activity.OwnerName}&nbsp;
+                                                                            <template if:true={activity.isClosed}>
+                                                                                had </template>
+                                                                            <template if:false={activity.isClosed}>
+                                                                                has </template>
+                                                                            a task
+                                                                        </template>
+                                                                        <template if:true={activity.isEmail}>
+                                                                            {activity.OwnerName} sent an email
+                                                                        </template>
+                                                                        <template if:true={activity.isCall}>
+                                                                            {activity.OwnerName} logged a call
+                                                                        </template>
+                                                                    </p>
+                                                                </div>
+                                                            </template>
+                                                            <template if:true={activity.isOpen}>
+                                                                <article
+                                                                    class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium">
+                                                                    <ul class="slds-list_horizontal slds-wrap">
+                                                                        <li
+                                                                            class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                            <span
+                                                                                class="slds-text-title slds-p-bottom_x-small">Status</span>
+                                                                            <span
+                                                                                class="slds-text-body_medium slds-truncate"
+                                                                                title={activity.Status}>
+                                                                                {activity.Status}
+                                                                            </span>
+                                                                        </li>
+                                                                        <li
+                                                                            class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                            <span
+                                                                                class="slds-text-title slds-p-bottom_x-small">Priority</span>
+                                                                            <span
+                                                                                class="slds-text-body_medium slds-truncate"
+                                                                                title={activity.Priority}>
+                                                                                {activity.Priority}
+                                                                            </span>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div>
+                                                                        <span class="slds-text-title">Subject</span>
+                                                                        <p class="slds-p-top_x-small">
+                                                                            {activity.Subject}</p>
+                                                                    </div>
+                                                                </article>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                        <template if:false={group.values.length}>
+                                            <div class="slds-p-around_medium slds-text-align_center">
+                                                <p class="slds-text-body_regular slds-text-color_weak">No
+                                                    activities to show.</p>
+                                            </div>
+                                        </template>
+                                    </lightning-accordion-section>
+                                </template>
+                            </lightning-accordion>
+                        </div>
+                    </template>
+                    <template if:false={fetchGroupedActivities.length}>
+                        <p>No activity data available.</p>
+                    </template>
+                </template>
+
+                <!-- Contract modal -->
+                <template if:true={isContractModal}>
+                    <template if:true={hasContractDetails}>
+                        <c-sfc360-generic-data-table data={contractData} columns={contractDataColumns}
+                            key-field="ContractNumber">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={hasContractDetails}>
+                        <p>No contract data available.</p>
+                    </template>
+                </template>
+
+
+            </c-sfc360-generic-detail-modal>
+
+        </article>
+    </template>
+</template>

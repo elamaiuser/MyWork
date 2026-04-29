@@ -723,6 +723,14 @@ Withdrawn/Excluded-&gt; Cancelled, Closed</value>
         <value>Second Review Pending</value>
     </labels>
     <labels>
+        <fullName>Show_HS_Financial_Data</fullName>
+        <categories>true , false</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Show HS Financial Data</shortDescription>
+        <value>false</value>
+    </labels>
+    <labels>
         <fullName>Split_Credit</fullName>
         <categories>Opportunity Split</categories>
         <language>en_US</language>

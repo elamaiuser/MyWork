@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>SFC360_Lead360ViewController</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>sfC360_Lead360ViewCard</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <types>
+		<members>Show_HS_Financial_Data</members>
+		<name>CustomLabel</name>
+	</types>
+    <types>
+		<members>grayIcon</members>
+        <members>greenIcon</members>
+		<name>StaticResource</name>
+	</types>
+	<version>63.0</version>
+</Package>
