@@ -421,15 +421,14 @@ public class skedResourceHandler extends skedTriggerHub {
     }
     
     private void captureResourceIsInactiveExceptionLog(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
-        Date currentDate = system.today();
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
         for (sked__Resource__c newRecord : newRecords) {
             if (newRecord.sked_Timezone__c != null) {
                 sked__Resource__c oldData = oldMap.get(newRecord.Id);
-                
-                boolean isOnLeaveChanged = isResourceOnLeaveChanged(newRecord, oldData);
-                boolean isTerminationChanged = isResourceTerminationChanged(newRecord, oldData);
-                boolean isInactiveChanged = newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c;
+
+                Boolean isOnLeaveChanged = isResourceOnLeaveChanged(newRecord, oldData);
+                Boolean isTerminationChanged = isResourceTerminationChanged(newRecord, oldData);
+                Boolean isInactiveChanged = newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c;
                 if (isInactiveChanged) {
                     unavailabilityList.add(getInactiveUnavailability(newRecord));
                 }
@@ -438,6 +437,12 @@ public class skedResourceHandler extends skedTriggerHub {
                 }
                 if (isTerminationChanged) {
                     unavailabilityList.add(getTerminationUnavailability(newRecord));
+                }
+
+                if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET
+                    && newRecord.sked_Asset_Type__c == skedConstants.ASSET_TYPE_VEHICLE
+                    && newRecord.sked_Future_Inactive_Date__c != oldData.sked_Future_Inactive_Date__c) {
+                    unavailabilityList.add(getFutureInactiveUnavailability(newRecord));
                 }
             }
         }
@@ -477,6 +482,20 @@ public class skedResourceHandler extends skedTriggerHub {
         unavailability.startTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.getStartOfDate(terminationDate, resource.sked_Timezone__c);
         unavailability.endTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.MAX_DATETIME;
         unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_PENDING_TERMINATION;
+        return unavailability;
+    }
+
+    private skedExceptionLogService.resourceUnavailabilityModel getFutureInactiveUnavailability(sked__Resource__c resource) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resource.Id;
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE;
+        if (resource.sked_Future_Inactive_Date__c == null) {
+            unavailability.startTime = skedDateTimeUtils.MIN_DATETIME;
+            unavailability.endTime = skedDateTimeUtils.MIN_DATETIME;
+        } else {
+            unavailability.startTime = skedDateTimeUtils.getStartOfDate(resource.sked_Future_Inactive_Date__c, resource.sked_Timezone__c);
+            unavailability.endTime = skedDateTimeUtils.MAX_DATETIME;
+        }
         return unavailability;
     }
 

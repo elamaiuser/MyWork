@@ -2175,6 +2175,10 @@ fetchJobTags(driveId){
               let isPendingTermination = false;
               if (resource.resourceType === RESOURCE_TYPE.ASSET) {
                 isActive = resource.isActive;
+                if (isActive && resource.assetType === ASSET_TYPE.VEHICLE
+                  && resource.futureInactiveDate && resource.futureInactiveDate <= job.driveDate) {
+                  isActive = false;
+                }
               }
               else {
                 if (resource.terminationDate && resource.terminationDate <= job.driveDate) {
