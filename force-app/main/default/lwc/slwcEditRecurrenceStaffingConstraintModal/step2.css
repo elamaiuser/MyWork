@@ -137,3 +137,7 @@
   .staffing-constraints__warning-message {
     --slds-g-color-neutral-base-10: #f1872d;
   }
+
+  .row--auto-synced {
+    background-color: #fef7dc;
+  }
