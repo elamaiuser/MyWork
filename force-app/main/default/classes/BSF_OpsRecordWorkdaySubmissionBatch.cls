@@ -90,6 +90,12 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         if (toProcess.isEmpty()) {
             return;
         }
+        // Build all Ops Record requests in one shot to avoid repeated SOQL for  each record.
+        Map<Id, skedOpsRecordApiData.opsRecordRequest> opRecordRequestById = new Map<Id, skedOpsRecordApiData.opsRecordRequest>();
+        List<skedOpsRecordApiData.opsRecordRequest> batchedRequests = skedOperationRecordUtils.getOpsRecordRequests(toProcess);
+        for (Integer i = 0; i < toProcess.size() && i < batchedRequests.size(); i++) {
+            opRecordRequestById.put(toProcess[i].Id, batchedRequests[i]);
+        }
         Map<Date, List<OpRecordContext>> byDriveDate = groupByDriveDate(toProcess);
         List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> allBlocks = new List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType>();
         List<Map<String, String>> allDateTimeFormats = new List<Map<String, String>>();
@@ -109,7 +115,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             String approverEmail = '';
             for (OpRecordContext ctx : contexts) {
                 approverEmail = ctx.approverEmail;
-                skedOpsRecordApiData.opsRecordRequest req = skedOperationRecordUtils.getOpsRecordRequest(ctx.opRecord);
+                skedOpsRecordApiData.opsRecordRequest req = opRecordRequestById.get(ctx.opRecord.Id);
                 if (req == null || req.StaffDetails == null) {
                     continue;
                 }
@@ -213,6 +219,28 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
     }
 
     public void finish(Database.BatchableContext bc) {
+        // CaptureAny unexpected errors (e.g., governor-limit crashes) that bypass execute() error paths.
+        try {
+            AsyncApexJob thisJob = [
+                SELECT Id, Status, NumberOfErrors, JobItemsProcessed, TotalJobItems, ExtendedStatus
+                FROM AsyncApexJob
+                WHERE Id = :bc.getJobId()
+                LIMIT 1
+            ];
+            if (thisJob.NumberOfErrors != null && thisJob.NumberOfErrors > 0) {
+                errorsForTechEmail.add(
+                    'Batch job had unhandled chunk errors. ' +
+                    'Status=' + thisJob.Status +
+                    ', NumberOfErrors=' + String.valueOf(thisJob.NumberOfErrors) +
+                    ', JobItemsProcessed=' + String.valueOf(thisJob.JobItemsProcessed) +
+                    ', TotalJobItems=' + String.valueOf(thisJob.TotalJobItems) +
+                    (String.isNotBlank(thisJob.ExtendedStatus) ? ', ExtendedStatus=' + thisJob.ExtendedStatus : '')
+                );
+            }
+        } catch (Exception e) {
+            // no need to do anything here, as errorsForTechEmail is already populated with the error message and will send email to tech team
+        }
+
         Boolean hadErrors = !errorsForTechEmail.isEmpty();
         if (hadErrors) {
             if (String.isNotBlank(technicalTeamDistributionList)) {
@@ -236,7 +264,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         }
     }
 
-    private void scheduleReschedule(Integer delayMinutes) {
+    private void   scheduleReschedule(Integer delayMinutes) {
         try {
             DateTime nextRun = DateTime.now().addMinutes(delayMinutes);
             String cronExp = '' + nextRun.second() + ' ' + nextRun.minute() + ' ' + nextRun.hour() + ' ' + nextRun.day() + ' ' + nextRun.month() + ' ? ' + nextRun.year();
