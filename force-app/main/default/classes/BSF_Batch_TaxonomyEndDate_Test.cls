@@ -92,7 +92,7 @@ public class BSF_Batch_TaxonomyEndDate_Test
             Taxo_Record_Type__c = rt.Name
         );
         insert taxoRun;
-        
+         
         Test.startTest();
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(taxoRun.Future_Version_Number__c,taxoRun.Taxo_Record_Type__c,true,null,null,true);
         database.executeBatch(batch,25);
@@ -149,10 +149,53 @@ public class BSF_Batch_TaxonomyEndDate_Test
             Taxo_Record_Type__c = rt.Name
         );
         insert taxoRun;
+            
+  //map<String,taxonomy__c> taxIdExternalKeysMap = getexternalKeyTaxonomyMap (oldVerTax);
+        //system.debug('taxIdExternalKeysMap '+taxIdExternalKeysMap);
+        List<Taxonomy__c> oldTaxList = new List<Taxonomy__c>();
+      Date startDate = Date.newInstance(2025, 10, 1);
+        Date endDate   = Date.newInstance(2025, 12, 31);
+        Taxonomy__c oldTax = new Taxonomy__c(
+            Version_Key__c = 0.9,
+            RecordTypeId = rt.Id,
+            DS_Region_Code__c = 'R1Testing',
+            Division_Code__c = 'D1Testing',
+            District_Code__c = 'DIST1Testing',
+            Zip_Code__c='1234',
+            Collection_Operation_Code__c='BSF_CO_0088',
+            Start_Date__c = startDate,
+            End_Date__c  = endDate
+        );
+        insert oldTax;
+        System.debug('oldTaxexternalKey'+oldTax);
+        oldTaxList.add(oldTax);
+        map<String,taxonomy__c> taxIdExternalKeysMap = BSF_Batch_TaxonomyEndDateHelper.getexternalKeyTaxonomyMap(oldTaxList);
+         set<string> externalKeySetNew = new set<string>();
+        externalKeySetNew.addAll(taxIdExternalKeysMap.keyset());
+         Bsf_portfolio__c bsf = new Bsf_Portfolio__c();
+        bsf.Account_Based_Portfolio__c=true;
+        bsf.Portfolio_Type__c='Account Manager';
+        bsf.Taxonomy_Type__c='Bio Recruitment CD';
+        bsf.Start_Date__c = system.today()-1;
+        bsf.End_Date__c = system.today()+3;
+     bsf.External_Key_BackEnd__c = 'Bio Recruitment CD_'+oldTax.Division_Code__c+'_'+oldTax.District_Code__c+'_'+oldTax.DS_Region_Code__c;
+        
+        insert bsf;
+        
+        sked_Territory__c territory = new sked_Territory__c();
+        territory.Start_Date__c = System.today();
+        territory.End_Date__c = System.today().addDays(1);
+        
+        territory.External_Id_BackEnd__c = 'Bio Recruitment CD_BD33_'+oldTax.Division_Code__c+oldTax.District_Code__c+oldTax.DS_Region_Code__c;
+              //'Bio_Collection_BSF_District_'+oldTax.Division_Code__c+oldTax.District_Code__c+oldTax.DS_Region_Code__c;
+        insert territory;
+        
+        
         
         Test.startTest();
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(taxoRun.Future_Version_Number__c,taxoRun.Taxo_Record_Type__c,true,null,null,true);
         database.executeBatch(batch,25);
+        
         Test.StopTest();
     }
    
@@ -204,8 +247,13 @@ public class BSF_Batch_TaxonomyEndDate_Test
                                    AND Name = 'Bio Collection BSF' LIMIT 1];
 
         // Insert older version (for oldVersionTaxRecords match)
+           Date startDate = Date.newInstance(2025, 10, 1);
+        Date endDate   = system.today().addDays(30);
+    
         Taxonomy__c oldTax = new Taxonomy__c(
             Version_Key__c = 0.9,
+            Start_Date__c = startDate,
+            End_Date__c  = endDate,
             RecordTypeId = collectionRT.Id,
             DS_Region_Code__c = 'R1',
             Division_Code__c = 'D1',
@@ -222,13 +270,26 @@ public class BSF_Batch_TaxonomyEndDate_Test
             District_Code__c = 'DIST1'
         );
         insert newTax;
-
+  
+         Id recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('District').getRecordTypeId();
+        sked_Territory__c territory = new sked_Territory__c();
+        territory.External_Id__c='Bio_Collection_BSF_'+'District_'+oldTax.Division_Code__c+'_'+oldTax.District_Code__c+'_'+oldTax.DS_Region_Code__c;
+        territory.External_Id_BackEnd__c ='Bio_Collection_BSF_'+'District'+'_'+oldTax.Division_Code__c+'_'+oldTax.District_Code__c+'_'+oldTax.DS_Region_Code__c;
+        territory.Name = 'name';
+        territory.RecordTypeId  = recordTypeId;
+        territory.Start_Date__c = system.today();
+        territory.End_Date__c = system.today().addDays(100);
+        
+        
+        insert territory;
         Test.startTest();
         // Instantiate the batch class
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(1.0, 'Bio Collection BSF', false, null, null, true);
 
         // Call execute directly with only Bio Collection records
         batch.execute(null, new List<Taxonomy__c>{ oldTax, newTax });
+        
+        
         Test.stopTest();
     }
 
@@ -246,9 +307,11 @@ public class BSF_Batch_TaxonomyEndDate_Test
             Division_Code__c = 'DIV'
         );
         insert tax;
+        
 
         Test.startTest();
 
+        
        // BSF_Batch_TaxonomyEndDateHandler.isTestOverride = true; // Force block to run
 
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(1.0, 'Bio Collection BSF', false, null, null, true);
@@ -304,8 +367,7 @@ public class BSF_Batch_TaxonomyEndDate_Test
             Run_Date__c = System.today(),
             Taxo_Record_Type__c = rt.Name
         );
-        insert taxoRun;
-
+  
         Test.startTest();
 
        // BSF_Batch_TaxonomyEndDateHandler.isTestOverride = true; // Force block to run
@@ -359,11 +421,157 @@ public class BSF_Batch_TaxonomyEndDate_Test
         BSFPortfolioHelper portfolioHelper = new BSFPortfolioHelper();
         portfolioHelper.createOrUpdatePortfolio(taxoList);
         Test.startTest();
+          Id recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('District').getRecordTypeId();
+        sked_Territory__c territory = new sked_Territory__c();
+        territory.External_Id__c='Bio_Collection_BSF_'+'District_'+oldTax.Division_Code__c+'_'+oldTax.District_Code__c+'_'+oldTax.DS_Region_Code__c;
+        territory.External_Id_BackEnd__c ='Bio_Collection_BSF_'+'District'+'_'+oldTax.Division_Code__c+'_'+oldTax.District_Code__c+'_'+oldTax.DS_Region_Code__c;
+        territory.Name = 'name';
+        territory.RecordTypeId  = recordTypeId;
+        territory.Start_Date__c = system.today();
+        territory.End_Date__c = system.today().addDays(100);
+        
+        
+        insert territory;
         // Instantiate the batch class
         BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(1.0, 'Bio Collection BSF', false, null, null, true);
 
         // Call execute directly with only Bio Collection records
         batch.execute(null, new List<Taxonomy__c>{ oldTax, newTax });
         Test.stopTest();
-    }         
+    }    
+    //to cover the helper class
+    //
+    //
+    //
+
+ @isTest
+    static void testMethodEndDateHelper() {
+        Map<String, Taxonomy__c> oldKeyToTaxMap = new  Map<String, Taxonomy__c>();
+        Set<Id> terrIdSet = new Set<Id>();
+        Set<String> allNewTaxoVerTcoKeySet = new Set<String>();
+        List<Taxonomy__c> oldTaxList = new List<Taxonomy__c>();
+         Set<id> territoryIdSetToBeUsedInTCOsEnding = new Set<id>();
+          set<string> externalKeySet = new set<string>();
+      //  set<string> externalKeySetNew = new set<string>();
+        // Get the record type
+        RecordType collectionRT = [SELECT Id, Name FROM RecordType 
+                                   WHERE SObjectType = 'Taxonomy__c' 
+                                   AND Name = 'Bio Collection BSF' LIMIT 1];
+        System.debug('HRP-Test collectionRT:'+collectionRT);
+        // Insert older version (for oldVersionTaxRecords match)
+        Date startDate = system.today().addDays(5);
+        Date endDate   = system.today().addDays(30);
+        Taxonomy__c oldTax = new Taxonomy__c(
+            Version_Key__c = 0.9,
+            RecordTypeId = collectionRT.Id,
+            DS_Region_Code__c = 'R1Test',
+            Division_Code__c = 'D1Test',
+            District_Code__c = 'DIST1Test',
+            Zip_Code__c='1234',
+            Collection_Operation_Code__c='BSF_CO_0085',
+            Start_Date__c = startDate,
+            End_Date__c  = endDate
+        );
+        insert oldTax;
+        oldTaxList.add(oldTax);
+        map<String,taxonomy__c> taxIdExternalKeysMap = BSF_Batch_TaxonomyEndDateHelper.getexternalKeyTaxonomyMap(oldTaxList);
+      
+        // Insert matching current version record (part of batch input)
+        Taxonomy__c newTax = new Taxonomy__c(
+            Version_Key__c = 1.0,
+            RecordTypeId = collectionRT.Id,
+            DS_Region_Code__c = 'R2',
+            Division_Code__c = 'D2',
+            District_Code__c = 'DIST2',
+            Zip_Code__c='1234',
+            Collection_Operation_Code__c='BSF_CO_0085X',
+            Start_Date__c = Date.newInstance(2026, 1, 1),
+            End_Date__c  = Date.newInstance(4000, 12, 31)
+        );
+        insert newTax;
+        Bsf_portfolio__c bsf = new Bsf_Portfolio__c();
+        bsf.Account_Based_Portfolio__c=true;
+        bsf.Portfolio_Type__c='Account Manager';
+        bsf.Taxonomy_Type__c='Bio Recruitment CD';
+        bsf.Start_Date__c = system.today()-1;
+        bsf.End_Date__c = system.today()+3;
+        bsf.External_Key_BackEnd__c =  'Bio_Collection_BSF_District_D1Test_R1Test_DIST1Test';
+        
+        insert bsf;
+        
+        Id recordTypeId = Schema.SObjectType.sked_Territory__c.getRecordTypeInfosByName().get('District').getRecordTypeId();
+        sked_Territory__c territory = new sked_Territory__c();
+        territory.External_Id__c='Bio_Collection_BSF_District_D1Test_R1Test_DIST1Test';
+        territory.External_Id_BackEnd__c ='Bio_Collection_BSF_District_D1Test_R1Test_DIST1Test';
+        territory.Name = 'name';
+        territory.RecordTypeId  = recordTypeId;
+        territory.Start_Date__c = system.today();
+        territory.End_Date__c = system.today().addDays(100);
+        
+        
+        insert territory;
+        sked_Territory__c updatedTerr = [
+            SELECT End_Date__c,Start_Date__c
+            FROM sked_Territory__c
+            WHERE Id = :territory.Id
+        ];
+        
+        System.assert(
+            oldTax.End_Date__c > updatedTerr.Start_Date__c,
+            'Expected oldTax End Date to be greater than updatedTerr Start Date'
+        );
+        system.debug('yes insert'+updatedTerr);
+        /* sked_Territory__c territory = new sked_Territory__c();
+        territory.Start_Date__c = System.today();
+          territory.End_Date__c = System.today().addDays(1);
+        
+          territory.External_Id_BackEnd__c = 'Bio_Collection_BSF_District_'+oldTax.Division_Code__c+oldTax.District_Code__c+oldTax.DS_Region_Code__c;
+        insert territory;*/
+        
+           Biomed_Collection_Op_Center__c co = new Biomed_Collection_Op_Center__c();
+        co.Biomed_Collection_Op_Code_Center_ID__c ='C-OP3';
+        //co.Collection_Operation_ID__c='CoKey';
+        co.Name='Collection_Operation_Name__c';
+        co.External_Id__c = 'Bio_Collection_BSF_' + 'Collection_Operation_Code__c';
+        co.sked_Territory__c=territory.id;
+        co.sked_Lunch_Break_Duration_Fixed_Site__c='30';
+        co.sked_Lunch_Break_Duration_Mobile__c='30';
+        insert co;
+        territoryIdSetToBeUsedInTCOsEnding.add(territory.Id);
+        sked_Territory_Collection_Operation__c tco = new sked_Territory_Collection_Operation__c();
+        tco.sked_Territory__c = territory.Id;
+        tco.sked_Start_Date__c = System.today();
+        tco.sked_End_Date__c = System.today().addDays(2);
+        tco.sked_Collection_Operation__c = CO.Id; 
+        tco.sked_External_ID__c = tco.sked_Territory__r.External_Id_BackEnd__c+'_' + tco.sked_Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c ;
+        insert tco;
+        
+        
+                
+        System.debug('HRP-Test ------ oldTax:'+oldTax);
+        System.debug('HRP-Test ------ newTax:'+newTax);
+        List<Taxonomy__c> taxoList = new List<Taxonomy__c>();
+        //taxoList.add(oldTax);
+        taxoList.add(newTax);
+           BSF_Batch_TaxonomyEndDateHelper taxonomyHelper = new BSF_Batch_TaxonomyEndDateHelper();
+        
+         map<String,taxonomy__c> newTaxIdExternalKeysMap = BSF_Batch_TaxonomyEndDateHelper.getexternalKeyTaxonomyMap(taxoList);
+        set<string> externalKeySetNew = new set<string>();
+        externalKeySetNew.addAll(newTaxIdExternalKeysMap.keyset());
+
+      
+       // BSF_Batch_TaxonomyEndDateHelper.endDateTCOsBatchSafe(taxIdExternalKeysMap,territoryIdSetToBeUsedInTCOsEnding,externalKeySetNew);
+        Test.startTest();
+        // Instantiate the batch class
+        BSF_Batch_TaxonomyEndDateHandler batch = new BSF_Batch_TaxonomyEndDateHandler(1.0, 'Bio Collection BSF', false, null, null, true);
+      // database.executeBatch(batch,25);
+        
+        // Call execute directly with only Bio Collection records
+        batch.execute(null, new List<Taxonomy__c>{ oldTax, newTax });
+        Test.stopTest();
+    }    
+
+
+
+    
 }
