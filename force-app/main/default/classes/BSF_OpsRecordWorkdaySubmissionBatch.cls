@@ -110,11 +110,8 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             List<OpRecordContext> contexts = byDriveDate.get(driveDate);
             Set<String> allEmployeeIds = new Set<String>();
             List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes> staffWithTimesList = new List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes>();
-            List<skedOpsRecordApiData.opsRecordStaffDetail> allStaffDetails = new List<skedOpsRecordApiData.opsRecordStaffDetail>();
-            Map<String, String> staffIdToGuid = new Map<String, String>();
-            String approverEmail = '';
+            List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext> premiumStaffContexts = new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>();
             for (OpRecordContext ctx : contexts) {
-                approverEmail = ctx.approverEmail;
                 skedOpsRecordApiData.opsRecordRequest req = opRecordRequestById.get(ctx.opRecord.Id);
                 if (req == null || req.StaffDetails == null) {
                     continue;
@@ -142,9 +139,14 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
                     st.shiftStartGmt = staffRec.sked_Actual_Shift_Start__c;
                     st.shiftEndGmt = staffRec.sked_Actual_Shift_End__c;
                     st.staffRecordId = staffRec.Id;
+                    st.approverEmail = ctx.approverEmail;
                     staffWithTimesList.add(st);
-                    allStaffDetails.add(sd);
-                    staffIdToGuid.put(empId, staffRec.Id);
+
+                    BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
+                    premiumCtx.detail = sd;
+                    premiumCtx.staffRecordId = staffRec.Id;
+                    premiumCtx.approverEmail = ctx.approverEmail;
+                    premiumStaffContexts.add(premiumCtx);
                 }
             }
             if (allEmployeeIds.isEmpty()) {
@@ -173,11 +175,11 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
                 employeesWithoutTimeByDrive.add(String.valueOf(driveDate) + '_' + eid);
             }
             BSF_OpsRecordToTimeBlockMapper.BaseTimeBlockResult baseResult = BSF_OpsRecordToTimeBlockMapper.buildBaseTimeBlocks(
-                staffWithTimesList, needBase, employeeIdToTimezone, approverEmail, driveDate
+                staffWithTimesList, needBase, employeeIdToTimezone, driveDate
             );
             // Premium blocks per drive: one staff detail per op record, so e.g. Charge on one shift and Translator on another = 2 blocks.
             List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> premiumBlocks = BSF_OpsRecordToTimeBlockMapper.buildPremiumTimeBlocks(
-                allStaffDetails, driveDate, approverEmail, staffIdToGuid
+                premiumStaffContexts, driveDate
             );
             allBlocks.addAll(baseResult.blocks);
             allBlocks.addAll(premiumBlocks);
