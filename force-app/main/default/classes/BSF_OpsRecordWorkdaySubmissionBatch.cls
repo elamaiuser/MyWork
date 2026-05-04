@@ -19,7 +19,6 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
     /** True if any execute() hit Import failure (markOpRecordsFailed). Used in finish() to reschedule only when staff attempts were incremented, so reschedules will stop when all staff reach max attempts for the day. */
     private Boolean hadImportFailure = false;
     // Cache Employee Report "employees without time" per drive date across execute() calls.
-    // IMPORTANT: cache coverage is tracked by employee IDs to avoid false assumptions when later chunks include new employees.
     private Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult> employeeReportCache = new Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult>();
     private Map<Date, Set<String>> employeeReportEmployeeIdsByDriveDate = new Map<Date, Set<String>>();
 
@@ -188,7 +187,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
 
                 BSF_WorkdayOpsRecordDirectService.EmployeeReportResult mergedCache = employeeReportCache.containsKey(driveDate)
                     ? employeeReportCache.get(driveDate)
-                    : new BSF_WorkdayOpsRecordDirectService.EmployeeReportResult();
+                    : new BSF_WorkdayOpsRecordDirectService.EmployeeReportResult(new Map<String, String>(), null, null, 200);
                 mergedCache.statusCode = empResult.statusCode;
                 mergedCache.employeeIdToTimezone = employeeIdToTimezone;
                 employeeReportCache.put(driveDate, mergedCache);
