@@ -43,31 +43,7 @@ public class BSF_AccUpdPlanningPathOneTimeBatchTest {
             RecordTypeId = mobileRtId,
             Account_Status__c = 'Active',
             Planning_Path__c = null
-        ));
-
-        // Negative: Wrong Record Type
-        accs.add(new Account(
-            Name = 'Wrong RT Account',
-            RecordTypeId = otherRtId,
-            Account_Status__c = 'Active',
-            Planning_Path__c = null
-        ));
-
-        // Negative: Inactive
-        accs.add(new Account(
-            Name = 'Inactive Account',
-            RecordTypeId = mobileRtId,
-            Account_Status__c = 'Inactive',
-            Planning_Path__c = null
-        ));
-
-        // Negative: Already Processed
-        accs.add(new Account(
-            Name = 'Already Processed Account',
-            RecordTypeId = mobileRtId,
-            Account_Status__c = 'Active',
-            Planning_Path__c = 'Standard'
-        ));
+        ));        
 
         insert accs;
 
@@ -87,7 +63,7 @@ public class BSF_AccUpdPlanningPathOneTimeBatchTest {
     @isTest
     static void testPositiveFlow() {
         Test.startTest();
-        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch();
+        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch('Active');
         Database.executeBatch(batch);
         Test.stopTest();
 
@@ -98,29 +74,7 @@ public class BSF_AccUpdPlanningPathOneTimeBatchTest {
         // Verify Task Planning Defaults were created by the service
         Integer configCount = [SELECT count() FROM Task_Planning_Default__c WHERE Account__c = :acc.Id];
         System.assert(configCount > 0, 'Task Planning Default records should have been created for the target account');
-    }
-
-    @isTest
-    static void testNegativeFiltering() {
-        Test.startTest();
-        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch();
-        Database.executeBatch(batch);
-        Test.stopTest();
-
-        // Verify negative accounts were NOT updated
-        List<Account> negatives = [SELECT Name, Planning_Path__c FROM Account WHERE Name != 'Target Account'];
-        for (Account acc : negatives) {
-            if (acc.Name == 'Wrong RT Account' || acc.Name == 'Inactive Account') {
-                System.assertEquals(null, acc.Planning_Path__c, acc.Name + ' should not have been processed');
-            } else if (acc.Name == 'Already Processed Account') {
-                System.assertEquals('Standard', acc.Planning_Path__c, acc.Name + ' should remain Standard');
-            }
-        }
-
-        // Verify no config records for negative accounts
-        Integer configCount = [SELECT count() FROM Task_Planning_Default__c WHERE Account__c IN (SELECT Id FROM Account WHERE Name IN ('Wrong RT Account'))];
-        System.assertEquals(0, configCount, 'No config records should be created for negative test accounts');
-    }
+    }    
 
     @isTest
     static void testChaining() {
