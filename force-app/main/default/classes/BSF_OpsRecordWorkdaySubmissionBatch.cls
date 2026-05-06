@@ -18,8 +18,9 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
     private Integer totalDrivesProcessedSuccessfully = 0;
     /** True if any execute() hit Import failure (markOpRecordsFailed). Used in finish() to reschedule only when staff attempts were incremented, so reschedules will stop when all staff reach max attempts for the day. */
     private Boolean hadImportFailure = false;
-    // Cache Employee Report results per drive date across execute() calls to avoid duplicate callouts for employees with time in Workday.
+    // Cache Employee Report "employees without time" per drive date across execute() calls.
     private Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult> employeeReportCache = new Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult>();
+    private Map<Date, Set<String>> employeeReportEmployeeIdsByDriveDate = new Map<Date, Set<String>>();
 
     public BSF_OpsRecordWorkdaySubmissionBatch() {
         BSF_Workday_Direct_Submission_Config__mdt config = BSF_WorkdayDirectSubmissionConfig.getConfig();
@@ -110,11 +111,8 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             List<OpRecordContext> contexts = byDriveDate.get(driveDate);
             Set<String> allEmployeeIds = new Set<String>();
             List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes> staffWithTimesList = new List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes>();
-            List<skedOpsRecordApiData.opsRecordStaffDetail> allStaffDetails = new List<skedOpsRecordApiData.opsRecordStaffDetail>();
-            Map<String, String> staffIdToGuid = new Map<String, String>();
-            String approverEmail = '';
+            List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext> premiumStaffContexts = new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>();
             for (OpRecordContext ctx : contexts) {
-                approverEmail = ctx.approverEmail;
                 skedOpsRecordApiData.opsRecordRequest req = opRecordRequestById.get(ctx.opRecord.Id);
                 if (req == null || req.StaffDetails == null) {
                     continue;
@@ -142,42 +140,69 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
                     st.shiftStartGmt = staffRec.sked_Actual_Shift_Start__c;
                     st.shiftEndGmt = staffRec.sked_Actual_Shift_End__c;
                     st.staffRecordId = staffRec.Id;
+                    st.approverEmail = ctx.approverEmail;
                     staffWithTimesList.add(st);
-                    allStaffDetails.add(sd);
-                    staffIdToGuid.put(empId, staffRec.Id);
+
+                    BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
+                    premiumCtx.detail = sd;
+                    premiumCtx.staffRecordId = staffRec.Id;
+                    premiumCtx.approverEmail = ctx.approverEmail;
+                    premiumStaffContexts.add(premiumCtx);
                 }
             }
             if (allEmployeeIds.isEmpty()) {
                 continue;
             }
-            // Call Employee Report once per drive date per batch run; reuse cached result across execute() calls.
-            BSF_WorkdayOpsRecordDirectService.EmployeeReportResult empResult;
-            if (employeeReportCache.containsKey(driveDate)) {
-                empResult = employeeReportCache.get(driveDate);
-            } else {
-                empResult = BSF_WorkdayOpsRecordDirectService.getEmployeesWithoutTimeInWorkdayWithLog(
-                    employeeReportUrl, driveStartDateParamName, driveEndDateParamName, employeeIdsParamName, new List<String>(allEmployeeIds), driveDate
+            // Reuse cached Employee Report data per drive date, but call out for any employee IDs not covered yet.
+            Map<String, String> employeeIdToTimezone = new Map<String, String>();
+            Set<String> cachedEmployeeIds = employeeReportEmployeeIdsByDriveDate.containsKey(driveDate)
+                ? employeeReportEmployeeIdsByDriveDate.get(driveDate)
+                : new Set<String>();
+            if (employeeReportCache.containsKey(driveDate) && employeeReportCache.get(driveDate) != null && employeeReportCache.get(driveDate).employeeIdToTimezone != null) {
+                employeeIdToTimezone.putAll(employeeReportCache.get(driveDate).employeeIdToTimezone);
+            }
+
+            Set<String> missingEmployeeIds = new Set<String>(allEmployeeIds);
+            missingEmployeeIds.removeAll(cachedEmployeeIds);
+            if (!missingEmployeeIds.isEmpty()) {
+                BSF_WorkdayOpsRecordDirectService.EmployeeReportResult empResult = BSF_WorkdayOpsRecordDirectService.getEmployeesWithoutTimeInWorkdayWithLog(
+                    employeeReportUrl,
+                    driveStartDateParamName,
+                    driveEndDateParamName,
+                    employeeIdsParamName,
+                    new List<String>(missingEmployeeIds),
+                    driveDate
                 );
-                employeeReportCache.put(driveDate, empResult);
                 employeeReportLogs.add(empResult);
+                if (empResult == null || empResult.statusCode != 200) {
+                    employeeReportError = true;
+                    employeeReportErrorSummary = 'Employee Report call failed for driveDate=' + driveDate + '; StatusCode=' + (empResult != null ? String.valueOf(empResult.statusCode) : 'null');
+                    break;
+                }
+                if (empResult.employeeIdToTimezone != null) {
+                    employeeIdToTimezone.putAll(empResult.employeeIdToTimezone);
+                }
+                cachedEmployeeIds.addAll(missingEmployeeIds);
+                employeeReportEmployeeIdsByDriveDate.put(driveDate, cachedEmployeeIds);
+
+                BSF_WorkdayOpsRecordDirectService.EmployeeReportResult mergedCache = employeeReportCache.containsKey(driveDate)
+                    ? employeeReportCache.get(driveDate)
+                    : new BSF_WorkdayOpsRecordDirectService.EmployeeReportResult(new Map<String, String>(), null, null, 200);
+                mergedCache.statusCode = empResult.statusCode;
+                mergedCache.employeeIdToTimezone = employeeIdToTimezone;
+                employeeReportCache.put(driveDate, mergedCache);
             }
-            if (empResult == null || empResult.statusCode != 200) {
-                employeeReportError = true;
-                employeeReportErrorSummary = 'Employee Report call failed for driveDate=' + driveDate + '; StatusCode=' + (empResult != null ? String.valueOf(empResult.statusCode) : 'null');
-                break;
-            }
-            Map<String, String> employeeIdToTimezone = empResult.employeeIdToTimezone;
             Set<String> needBase = new Set<String>(employeeIdToTimezone.keySet());
             // Remember which employees had no time in Workday for this drive date
             for (String eid : needBase) {
                 employeesWithoutTimeByDrive.add(String.valueOf(driveDate) + '_' + eid);
             }
             BSF_OpsRecordToTimeBlockMapper.BaseTimeBlockResult baseResult = BSF_OpsRecordToTimeBlockMapper.buildBaseTimeBlocks(
-                staffWithTimesList, needBase, employeeIdToTimezone, approverEmail, driveDate
+                staffWithTimesList, needBase, employeeIdToTimezone, driveDate
             );
             // Premium blocks per drive: one staff detail per op record, so e.g. Charge on one shift and Translator on another = 2 blocks.
             List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> premiumBlocks = BSF_OpsRecordToTimeBlockMapper.buildPremiumTimeBlocks(
-                allStaffDetails, driveDate, approverEmail, staffIdToGuid
+                premiumStaffContexts, driveDate
             );
             allBlocks.addAll(baseResult.blocks);
             allBlocks.addAll(premiumBlocks);
