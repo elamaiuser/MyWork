@@ -124,7 +124,8 @@
                             <tr
                                 for:each={model.STEP2.filteredRecords} 
                                 for:item="item"
-                                key={item.key}>
+                                key={item.key}
+                                class={item.rowClass}>
                                 <td class="slds-cell-wrap event-type__col">
                                     <lightning-formatted-date-time value={item.dateOfConstraint} year="numeric" month="numeric" day="numeric" time-zone="GMT"></lightning-formatted-date-time>
                                 </td>

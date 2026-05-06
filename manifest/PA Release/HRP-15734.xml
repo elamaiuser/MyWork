@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>BSFStagingSheetLinks</members>
 		<name>ApexPage</name>
 	</types>
     <types>
-        <members>Staging_Sheet_Config.Show_MOE_Sheet_Links</members>
-        <members>Staging_Sheet_Config.Show_Non_MOE_Sheet_Links</members>
+        <members>Staging_Sheet_Config.Show_MOE_Sheet_Link</members>
+        <members>Staging_Sheet_Config.Show_Non_MOE_Sheet_Link</members>
         <name>CustomMetadata</name>
     </types>
 	<version>63.0</version>

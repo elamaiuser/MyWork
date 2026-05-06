@@ -44,6 +44,14 @@ public class skedUtils {
     public static object getFieldValue(string input, string fieldType) {
         object result;
         if (fieldType == 'date') {
+            if (input != null) {
+                if (input.contains(' ')) {
+                    input = input.split(' ')[0];
+                } else if (input.contains('T')) {
+                    input = input.split('T')[0];
+                }
+            }
+
             result = Json.deserialize('"' + input + '"', Date.class);
         }
         else if (fieldType == 'datetime') {

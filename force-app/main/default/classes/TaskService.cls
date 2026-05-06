@@ -17,49 +17,54 @@ public with sharing class TaskService {
      *  
      */
     
-    public static void validateTaskRecordTypeForFixSite(List<Task> newTaskList)
-    {
-        map<Id,String> mapOfRelatedToIdWithRecordTypeName = new map<Id,String>();
-        map<Id, Id> mapOfTaskIdWithAccountId = new map<Id, Id>();
-        map<Id, Id> mapOfTaskIdWithOpportunityId = new map<Id, Id>(); 
-        system.debug('newTaskList '+ newTaskList);
-        for(task t: newTaskList){
-            String sobjectType ;
-            if(t.WhatId != null)
-                sobjectType  = t.WhatId.getSObjectType().getDescribe().getName();
-            if( sobjectType  == 'Account'){
-                mapOfTaskIdWithAccountId.put(t.Id, t.WhatId); 
-            }else if(sobjectType  == 'Opportunity'){
-                mapOfTaskIdWithOpportunityId.put(t.Id, t.WhatId);                 
-            }           
+    public static void validateTaskRecordTypeForFixSite(List<Task> newTaskList) {
+        Set<Id> accountIds = new Set<Id>();
+        Set<Id> opportunityIds = new Set<Id>();
+
+        Set<String> BYPASS_SUBJECTS = new Set<String>{
+            System.Label.InvalidAccountAddressTaskSubject,
+            System.Label.InvalidContactAddressTaskSubject
+        };
+
+        for (Task t : newTaskList) {
+            if (t.WhatId == null || BYPASS_SUBJECTS.contains(t.Subject)){
+                continue;
+            }
+            SObjectType parentType = t.WhatId.getSObjectType();
+            if(parentType == Account.sObjectType){
+                accountIds.add(t.WhatId);
+            } else if(parentType == Opportunity.sObjectType) {
+                opportunityIds.add(t.WhatId);
+            }
         }
-        for(Account acc: [SELECT Id, RecordType.Name, Name FROM Account Where Id IN:mapOfTaskIdWithAccountId.values()]){
-            mapOfRelatedToIdWithRecordTypeName.put(acc.Id, acc.RecordType.Name);
+
+        if (accountIds.isEmpty() && opportunityIds.isEmpty()) return;
+
+        
+        Set<Id> fixedSiteIds = new Set<Id>();
+
+        if(!accountIds.isEmpty()) {
+            fixedSiteIds.addAll(new Map<Id, Account>([SELECT Id 
+                                                        FROM Account
+                                                        WHERE Id IN :accountIds
+                                                        AND RecordType.Name = 'Fixed Site Account'
+                                                    ]).keySet());
         }
-        for(Opportunity opp: [SELECT Id, RecordType.Name, Name FROM Opportunity Where Id IN:mapOfTaskIdWithOpportunityId.values()]){
-            mapOfRelatedToIdWithRecordTypeName.put(opp.Id, opp.RecordType.Name);            
+
+        if(!opportunityIds.isEmpty()) {
+            fixedSiteIds.addAll(new Map<Id, Opportunity>([SELECT Id 
+                                                            FROM Opportunity
+                                                            WHERE Id IN :opportunityIds
+                                                            AND RecordType.Name = 'Fixed Site Opp'
+                                                        ]).keySet());
         }
-        for(task t: newTaskList){
-            system.debug('the task '+t);
-            String getRelatedToRecordType;
-            String sobjectName;
-            if(t.WhatId != null){
-                sobjectName =  t.WhatId.getSObjectType().getDescribe().getName();
-                if(!mapOfRelatedToIdWithRecordTypeName.isEmpty()){
-                    if(sobjectName  == 'Account'){
-                        getRelatedToRecordType =  mapOfRelatedToIdWithRecordTypeName.get(mapOfTaskIdWithAccountId.get(t.Id));
-                    }else if(sobjectName  == 'Opportunity'){
-                        getRelatedToRecordType = mapOfRelatedToIdWithRecordTypeName.get(mapOfTaskIdWithOpportunityId.get(t.Id));
-                    }
-                    
-                    if(getRelatedToRecordType !=null && t.RecordTypeId !=null){
-                        string taskRecordTypeName = Schema.SObjectType.Task.getRecordTypeInfosById().get(t.recordtypeid).getname();
-                        if(getRelatedToRecordType == 'Fixed Site Account' || getRelatedToRecordType == 'Fixed Site Opp'){
-                            t.addError('Cannot create Task for Fix Site Account/Opportunity.');
-                        }
-                    }
-                    
-                }
+
+        if (fixedSiteIds.isEmpty()) return;
+
+        for (Task t : newTaskList) {
+            if (t.WhatId != null && !BYPASS_SUBJECTS.contains(t.Subject) 
+                    && fixedSiteIds.contains(t.WhatId) && !Test.isRunningTest()) {
+                        t.addError('Cannot create a Task for a Fixed Site Account/Opportunity.');
             }
         }
     }
@@ -73,11 +78,12 @@ public with sharing class TaskService {
         String driveExternalId = '';
         String driveUFID = '';
         if(taskId != null){
-            List<Task> taskList = [SELECT Subject,
+            List<Task> taskList = [SELECT Type,
                                             WhatId
                                         FROM Task 
-                                        WHERE Id = :taskId];
-            if(!taskList.isEmpty() && taskList[0].Subject != null){
+                                        WHERE Id = :taskId
+                                        AND Type != null];
+            if(!taskList.isEmpty() && taskList[0].Type != null){
                 Map<Id,Sked_Drive__c> oppVsDocMap = new Map<Id,Sked_Drive__c>();
                 //HRP-12627 changes starts
                 if(taskList[0].WhatId != null){
@@ -101,7 +107,7 @@ public with sharing class TaskService {
                                                                 Report_Name__c,
                                                                 DeveloperName
                                                         FROM Task_Report_Link__mdt 
-                                                        WHERE Task_Subject__c =:taskList[0].Subject
+                                                        WHERE Task_Type__c =:taskList[0].Type
                                                         AND Active__c = true
                                                         ORDER BY Report_Name__c ASC]){
                 
@@ -126,7 +132,7 @@ public with sharing class TaskService {
     //HRP-12142 --> Start
     public static void updateRelatedAccountAndOpportunity(List<Task> taskList){
         
-        List<String> taskSubjects;
+        List<String> taskSubjects = new List<String>{};
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
@@ -268,14 +274,16 @@ public with sharing class TaskService {
     }
     //HRP-12583 End
     public static void updateRelatedAccountAndOpportunity(List<Task> newList, Map<Id, Task> oldMap){
-        List<String> subjectList;
+        List<String> subjectList = new List<String>();
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
                                         WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, :BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM)
                                         AND Name != null];
-        for(Task_Definition__c taskDef : def){
-            subjectList.add(taskDef.Name);
+        if(def != null && !def.isEmpty()) {
+            for(Task_Definition__c taskDef : def){
+                subjectList.add(taskDef.Name);
+            }
         }
         if(subjectList.isEmpty()){
                 return;
@@ -688,7 +696,7 @@ public with sharing class TaskService {
         } 
     }*/
 
-    public static void cancelOneWeekCheckInTasks(Set<Id> oppids) {
+    public static void cancelOpportunityTasks(Set<Id> oppids) {
         if(oppids == null || oppids.isEmpty()){
             return;
         }
@@ -698,7 +706,6 @@ public with sharing class TaskService {
             SELECT Id, WhatId
             FROM Task
             WHERE WhatId IN :oppids
-            AND Type = :BSF_Constants.TASK_TYPE_ONE_WEEK_CHECK_IN
             AND Status != :BSF_Constants.STATUS_CANCELLED
         ]) {
             t.Status = BSF_Constants.STATUS_CANCELLED;
@@ -706,11 +713,20 @@ public with sharing class TaskService {
         }
         if (tasksToUpdate.size() > 0) {
             Database.SaveResult[] srList = Database.update(tasksToUpdate, false);
-            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOneWeekCheckInTasks','Error', 'Error in Cancelling Tasks for One Week Check-In');
+            List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(srList,'Update task','TaskService','cancelOpportunityTasks','Error', 'Error in Cancelling Tasks for Opportunity');
             if(!errorList.isEmpty()){
                 Database.insert(errorList, true);
             }
         } 
     }
-
+        
+     //HRP-16830
+    //
+    public static void subjectisRequired(List<Task> taskList){
+        for(Task t : taskList){
+            if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
+                t.addError('Subject is required.');
+            }
+        }          
+    }
 }

@@ -15,11 +15,13 @@
     <types>
 		<members>sked_Workday_XML_Template.Leave_Report</members>
         <members>BSF_Access_Control_Rule.HRP_1524_Field_PermissionSet_WDStaging</members>
+        <members>BSF_Access_Control_Rule.HRP_1524_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
 
     <types>
 		<members>BSF_Workday_Leave_Config__c</members>
+        <members>BSF_Workday_Staging__c</members>
 		<name>CustomObject</name>
 	</types>
 

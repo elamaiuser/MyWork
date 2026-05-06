@@ -100,7 +100,8 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'driveName' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 200
             },
             new Map<String, Object>{
                 'label' => 'Collection Operation',
@@ -110,7 +111,8 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'co' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 180
             },
             new Map<String, Object>{
                 'label' => 'Division',
@@ -120,7 +122,8 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'division' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 140
             },
             new Map<String, Object>{
                 'label' => 'Region',
@@ -130,7 +133,8 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'region' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 140
             },
             new Map<String, Object>{
                 'label' => 'District',
@@ -140,12 +144,37 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'district' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 160
             },
-            new Map<String, Object>{ 'label' => 'Drive Status', 'fieldName' => 'status', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Drive Date', 'fieldName' => 'driveDate', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Start Time', 'fieldName' => 'shiftStartTime', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'End Time', 'fieldName' => 'shiftEndTime', 'type' => 'text', 'sortable' => true },
+            new Map<String, Object>{
+                'label' => 'Drive Status',
+                'fieldName' => 'status',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 130
+            },
+            new Map<String, Object>{
+                'label' => 'Drive Date',
+                'fieldName' => 'driveDate',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 120
+            },
+            new Map<String, Object>{
+                'label' => 'Start Time',
+                'fieldName' => 'shiftStartTime',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 110
+            },
+            new Map<String, Object>{
+                'label' => 'End Time',
+                'fieldName' => 'shiftEndTime',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 110
+            },
             new Map<String, Object>{
                 'label' => 'Time Block Name',
                 'fieldName' => 'tbLink',
@@ -154,12 +183,37 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'tbName' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 200
             },
-            new Map<String, Object>{ 'label' => 'Time Block Start', 'fieldName' => 'tbStartTime', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Time Block End', 'fieldName' => 'tbEndTime', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'TB Effective Start', 'fieldName' => 'tbEffStart', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'TB Effective End', 'fieldName' => 'tbEffEnd', 'type' => 'text', 'sortable' => true },
+            new Map<String, Object>{
+                'label' => 'Time Block Start',
+                'fieldName' => 'tbStartTime',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 140
+            },
+            new Map<String, Object>{
+                'label' => 'Time Block End',
+                'fieldName' => 'tbEndTime',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 140
+            },
+            new Map<String, Object>{
+                'label' => 'TB Effective Start',
+                'fieldName' => 'tbEffStart',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 150
+            },
+            new Map<String, Object>{
+                'label' => 'TB Effective End',
+                'fieldName' => 'tbEffEnd',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 150
+            },
             new Map<String, Object>{
                 'label' => 'Account Manager',
                 'fieldName' => 'accountManagerLink',
@@ -168,9 +222,16 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'accountManager' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 180
             },
-            new Map<String, Object>{ 'label' => 'Staff Requested', 'fieldName' => 'staffRequested', 'type' => 'text', 'sortable' => true },
+            new Map<String, Object>{
+                'label' => 'Staff Requested',
+                'fieldName' => 'staffRequested',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 140
+            },
             new Map<String, Object>{
                 'label' => 'Site Name',
                 'fieldName' => 'siteLink',
@@ -179,14 +240,46 @@ public with sharing class TimeBlockComplianceReportController {
                     'label' => new Map<String, Object>{ 'fieldName' => 'siteName' },
                     'target' => '_blank'
                 },
-                'sortable' => true
+                'sortable' => true,
+                'initialWidth' => 200
             },
-            new Map<String, Object>{ 'label' => 'Site Address', 'fieldName' => 'siteAddress', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Site Zip', 'fieldName' => 'siteZip', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Type', 'fieldName' => 'type', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Violation', 'fieldName' => 'violation', 'type' => 'text', 'sortable' => true },
-            new Map<String, Object>{ 'label' => 'Reason', 'fieldName' => 'contentionResolution', 'type' => 'text', 'sortable' => true }
+            new Map<String, Object>{
+                'label' => 'Site Address',
+                'fieldName' => 'siteAddress',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 240
+            },
+            new Map<String, Object>{
+                'label' => 'Site Zip',
+                'fieldName' => 'siteZip',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 120
+            },
+            new Map<String, Object>{
+                'label' => 'Type',
+                'fieldName' => 'type',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 110
+            },
+            new Map<String, Object>{
+                'label' => 'Violation',
+                'fieldName' => 'violation',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 110
+            },
+            new Map<String, Object>{
+                'label' => 'Reason',
+                'fieldName' => 'contentionResolution',
+                'type' => 'text',
+                'sortable' => true,
+                'initialWidth' => 220
+            }
         };
+
 
         if (String.isNotBlank(accountManagerName)) {
             accountManagerName = '%' + String.escapeSingleQuotes(accountManagerName) + '%';

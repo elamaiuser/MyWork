@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Workday_Import_Process_Id__c</fullName>
+    <label>Workday Import Process Id</label>
+    <type>Text</type>
+    <length>80</length>
+    <required>false</required>
+</CustomField>
+

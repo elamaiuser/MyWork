@@ -10,11 +10,11 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
         prepopulateValues((List<BSF_Task_Checklist__c>)Trigger.new);
     }
     public static void prepopulateValues(List<BSF_Task_Checklist__c> newList) {
-        List<String> subjectList;
+        List<String> subjectList = new List<String>{};
         List<Task_Definition__c> def = [SELECT Name, 
                                             Task_Type__c 
                                         FROM Task_Definition__c
-                                        WHERE Task_Type__c IN ('Post Drive Analysis SBPM','Post Drive Analysis AM','Recruitment Strategy Meeting')
+                                        WHERE Task_Type__c IN (:BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, :BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM,:BSF_Constants.TASK_TYPE_RECRUITMENT_STRATEGY_MEETING)
                                         AND Name != null];
         for(Task_Definition__c taskDef : def){
             subjectList.add(taskDef.Name);
@@ -115,23 +115,32 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
             }
         }
         if(newList != null && !newList.isEmpty()){
-            for(BSF_Task_Checklist__c taskChecklist: newList){
-                if(String.isNotBlank(taskChecklist.TaskLookup__c) && String.isNotBlank(taskChecklist.Unique_Name__c) 
-                        && fieldVsObjectMap.containsKey(taskChecklist.Unique_Name__c) && !taskVsOppMap.isEmpty()
-                        && taskVsOppMap.containsKey(taskChecklist.TaskLookup__c)){
-                            if(fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Account') && !taskVsAccountMap.isEmpty()
-                                    && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c) 
-                                    && taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c) != null){
-                                        Object value = taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
-                                        String fieldName = metadataMap.get(taskVsSubjectMap.get(taskChecklist.TaskLookup__c)).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
-                                        taskChecklist.put(fieldName,UpdateTaskChecklistEventHandler.getFieldValue(fieldName,String.valueOf(value)));
-                            }else if(fieldVsObjectMap.get(taskChecklist.Unique_Name__c).equals('Opportunity') && !taskVsOpportunityMap.isEmpty()
-                                    && taskVsOpportunityMap.containsKey(taskChecklist.TaskLookup__c) 
-                                    && taskVsOpportunityMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c) != null){
-                                        Object value = taskVsOpportunityMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
-                                        String fieldName = metadataMap.get(taskVsSubjectMap.get(taskChecklist.TaskLookup__c)).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
-                                        taskChecklist.put(fieldName,UpdateTaskChecklistEventHandler.getFieldValue(fieldName,String.valueOf(value)));
-                            }
+            for(BSF_Task_Checklist__c taskChecklist : newList) {
+                if(String.isNotBlank(taskChecklist.TaskLookup__c) && 
+                String.isNotBlank(taskChecklist.Unique_Name__c) && 
+                taskVsOppMap.containsKey(taskChecklist.TaskLookup__c)) {
+                    
+                    String taskSubject = taskVsSubjectMap.get(taskChecklist.TaskLookup__c);
+                    String fieldMappingObj = fieldVsObjectMap.get(taskChecklist.Unique_Name__c);
+                    String inputFieldName = metadataMap.get(taskSubject).get(taskChecklist.Unique_Name__c).Input_API_Name__c;
+                    
+                    if(!metadataMap.containsKey(taskSubject)) continue;
+                    
+                    if(!metadataMap.get(taskSubject).containsKey(taskChecklist.Unique_Name__c)) continue;
+
+                    if(fieldMappingObj == null) continue; //Unique names not ending with __c
+
+                    if(fieldMappingObj.equals('Account') && taskVsAccountMap.containsKey(taskChecklist.TaskLookup__c)) {
+                        Object value = taskVsAccountMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
+                        if(value != null) {
+                            taskChecklist.put(inputFieldName, UpdateTaskChecklistEventHandler.getFieldValue(inputFieldName, String.valueOf(value)));
+                        }
+                    } else if(fieldMappingObj.equals('Opportunity') && taskVsOpportunityMap.containsKey(taskChecklist.TaskLookup__c)) {
+                        Object value = taskVsOpportunityMap.get(taskChecklist.TaskLookup__c).get(taskChecklist.Unique_Name__c);
+                        if(value != null) {
+                            taskChecklist.put(inputFieldName, UpdateTaskChecklistEventHandler.getFieldValue(inputFieldName, String.valueOf(value)));
+                        }
+                    }
                 }
             }
         }
@@ -245,17 +254,18 @@ public without sharing class BSFTaskChecklistTriggerHandler extends TriggerHandl
     }*/
     public static Map<String, Map<String, Task_Checklist_Setting__mdt>> getMetaDataMap() {
         Map<String, Map<String, Task_Checklist_Setting__mdt>> metadataMap = new Map<String, Map<String, Task_Checklist_Setting__mdt>>();
-        Map<String, Task_Checklist_Setting__mdt> checklistSettings = Task_Checklist_Setting__mdt.getAll();
-        for(String key: checklistSettings.keySet()){
-            if(String.isNotBlank(checklistSettings.get(key).Subject__c) && String.isNotBlank(checklistSettings.get(key).Unique_Name__c)){
-                if(!metadataMap.containsKey(checklistSettings.get(key).Subject__c)){
-                    metadataMap.put(checklistSettings.get(key).Subject__c,new Map<String, Task_Checklist_Setting__mdt>());
+        for (Task_Checklist_Setting__mdt setting : Task_Checklist_Setting__mdt.getAll().values()) {
+            Boolean isValid = String.isNotBlank(setting.Subject__c) 
+                        && String.isNotBlank(setting.Unique_Name__c) 
+                        && String.isNotBlank(setting.Input_API_Name__c);
+            if (isValid) {
+                if (!metadataMap.containsKey(setting.Subject__c)) {
+                    metadataMap.put(setting.Subject__c, new Map<String, Task_Checklist_Setting__mdt>());
                 }
-                if(!metadataMap.get(checklistSettings.get(key).Subject__c).containsKey(checklistSettings.get(key).Unique_Name__c)){
-                    metadataMap.get(checklistSettings.get(key).Subject__c).put(checklistSettings.get(key).Unique_Name__c,checklistSettings.get(key));
-                }
+                metadataMap.get(setting.Subject__c).put(setting.Unique_Name__c, setting);
             }
         }
+        
         return metadataMap;
     }
     public static Map<String, Map<String,String>> getFieldVsObjectMap(Map<String, Map<String, Task_Checklist_Setting__mdt>> metaDataMap) {

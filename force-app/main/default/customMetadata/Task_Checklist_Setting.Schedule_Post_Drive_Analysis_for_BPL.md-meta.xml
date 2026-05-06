@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">AM needs to contact the sponsor to thank them and provide blood drive results 1-3 days following the blood drive.
 
@@ -46,7 +50,7 @@ During the post-drive review, AM should gather feedback, re-confirm future dates
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">72 Hour Check-In</value>
+        <value xsi:type="xsd:string">72-Hour Check-in</value>
     </values>
     <values>
         <field>Subtype__c</field>
