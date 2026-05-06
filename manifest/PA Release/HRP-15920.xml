@@ -4,7 +4,7 @@
 
 		<members>BSF_Batch_EndCollectionZipOneTime</members>
 		<members>BSF_Batch_EndCollectionZipOneTimeTest</members>
-    <members>BSF_Batch_EndSCOOneTime</members>
+        <members>BSF_Batch_EndSCOOneTime</members>
 		<members>BSF_Batch_EndSCOOneTimeTest</members>
 		<name>ApexClass</name>
 	</types>

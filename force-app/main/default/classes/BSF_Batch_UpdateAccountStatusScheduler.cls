@@ -1,6 +1,7 @@
 global with sharing class BSF_Batch_UpdateAccountStatusScheduler implements schedulable 
 {
- global integer batchSize = 200;
+ // HRP-16781 fix: Reduced batch size to 200 to 50 to prevent the Too many quey rows: 50001 error.   
+ global integer batchSize = 50;
     public BSF_Batch_UpdateAccountStatusScheduler(integer batchSize)
     {
         if(batchSize!=null)
