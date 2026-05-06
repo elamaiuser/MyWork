@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HRP-16515 — Package manifest: Ops Record direct Workday submission.
+  File: manifest/2.7 Release/HRP-16515.xml
+  Includes all components created or modified for direct Workday submission.
+  Update this file as new components are added during implementation.
+-->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Apex: new and modified classes -->
+    <types>
+        <members>BSF_OpsRecordWorkdaySubmissionBatch</members>
+        <members>BSF_WorkdayDirectSubmissionConfig</members>
+        <members>BSF_WorkdayOpsRecordDirectService</members>
+        <members>BSF_OpsRecordToTimeBlockMapper</members>
+        <members>skedOperationRecordUtils</members>
+        <members>slwcOperationRecordService</members>
+        <members>skedWorkdayTimeTrackingBsvc</members>
+        <members>skedWorkdayImportTimeBlockResponse</members>
+        <members>BSF_OpsRecordToTimeBlockMapper_Test</members>
+        <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
+        <members>BSF_WorkdayOpsRecordDirectService_Test</members> 
+        <members>skedOpsRecordApiData</members>       
+        <name>ApexClass</name>
+    </types>
+    <!-- Custom Metadata Type definition and records -->
+    <types>
+       <!-- <members>BSF_Access_Control_Rule.Debug_Log_Workday_Op_Submit_Field_2_7</members> -->
+        <members>BSF_Access_Control_Rule.OpRecord_Staff_Workday_Direct_Field_2_7</members>
+        <members>BSF_Access_Control_Rule.OpRecord_Workday_Direct_Apex_2_7</members>
+        <members>BSF_Access_Control_Rule.OpRecord_Workday_Direct_Field_2_7</members>
+        <members>BSF_Access_Control_Rule.WD_Direct_Sub_Config_Field_27</members>
+        <members>BSF_Workday_Direct_Submission_Config.*</members>
+        <members>BSF_Workday_Direct_Submission_Config.Default_Config</members>
+        <name>CustomMetadata</name>
+    </types>
+    <!-- Objects with new/modified fields + Custom Metadata Type definition -->
+    <types>
+        <members>BSF_Access_Control_Rule__mdt</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt</members>
+        <members>sked_Operation_Record__c</members>
+        <members>sked_Operation_Record_Staff__c</members>
+        <name>CustomObject</name>
+    </types>
+    <!-- Layouts (include Workday Direct Submission Config layout) -->
+    <types>
+        <members>BSF_Workday_Direct_Submission_Config__mdt-Workday Direct Submission Config Layout</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt-*</members>
+        <name>Layout</name>
+    </types>
+    <!-- New custom fields for Direct Workday submission -->
+    <types>
+        <members>sked_Operation_Record__c.sked_Workday_Submission_Status__c</members>
+        <members>sked_Operation_Record__c.sked_Workday_Import_Process_Id__c</members>
+        <members>sked_Operation_Record__c.sked_Workday_Submission_Attempt__c</members>
+        <members>sked_Operation_Record__c.sked_WD_Last_Submission_Date__c</members>
+        <members>sked_Operation_Record_Staff__c.sked_Time_Already_Existed_In_Workday__c</members>
+        <members>sked_Operation_Record_Staff__c.sked_Workday_Submission_Status__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Emp_Rpt_URL__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Start_Date_Param__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_End_Date_Param__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Worker_Param__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Import_Blocks_URL__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Notification_From_Email__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Business_Distribution_List__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Technical_Team_Distribution_List__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Reschedule_Delay_Minutes__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Ops_Record_Batch_Scope_Size__c</members>
+        <members>sked__Debug_Log__c.sked__Type__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>64.0</version>
+</Package>

@@ -18,7 +18,7 @@
             </value>
             <value>
                 <fullName>Standard</fullName>
-                <default>false</default>
+                <default>true</default>
                 <label>Standard</label>
             </value>
         </valueSetDefinition>

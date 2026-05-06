@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Determine if there are appointments in the wrong procedure type, consider pre-recruiting donors to Power Red time slots.
 
@@ -46,7 +50,7 @@ Ensure the first Power Red appointment spot is filled with an eligible donor. If
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">72 Hour Check-In</value>
+        <value xsi:type="xsd:string">72-Hour Check-in</value>
     </values>
     <values>
         <field>Subtype__c</field>

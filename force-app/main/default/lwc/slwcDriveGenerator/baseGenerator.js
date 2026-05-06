@@ -1163,6 +1163,39 @@ class BaseGenerator {
     return this.notifyDriveChanged();
   }
 
+  saveBulkAddVolunteerJob(shiftKey, job) {
+    if (!shiftKey || !job) return;
+
+    let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
+    let newList = this.helper.getDriveShiftJobs(shift);
+
+    // Insert a new job (no id) for the current drive — do NOT update the existing job.
+    // The existing role must remain; the user is adding a new role on top of it.
+    const newJob = {
+      key:                            generateUUID(),  // LWC in-memory identifier — not persisted to Salesforce
+      driveId:                        this.drive.id,
+      driveShiftId:                   shift.id,
+      driveSiteId:                    this.drive.driveSiteId,
+      start:                          shift.start,
+      finish:                         shift.finish,
+      volunteerRole:                  job.volunteerRole,
+      redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
+      quantity:                       job.quantity,
+      isLocked:                       !!job.isLocked,
+      volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
+      otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
+      isManuallyCreated:              true,
+      manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+      jobAllocationTimeSource:        false,
+      jobTags:                        [],
+      bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives,
+    };
+
+    newList.push(newJob);
+    shift.jobs = newList;
+    return this.notifyDriveChanged();
+  }
+
   deleteJob(shiftKey, job) {
     if (!shiftKey || !job) return;
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
@@ -1530,6 +1563,56 @@ class BaseGenerator {
         console.log('>>> calculateRecurrenceVolunteerJobs', error);
         return [];
       })
+  }
+
+  calculateRecurrenceNewVolunteerJobs(drive) {
+    const today = DateTime.fromObject({
+      zone: this.masterData.timezoneSidId
+    }).toISODate();
+
+    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - today (org timezone):', today);
+
+    const newJobs = [];
+
+    drive.driveShifts?.forEach(driveShift => {
+      driveShift.jobs?.forEach(job => {
+        if (!job.bulkAddVolunteerJobsSelectedDrives?.length) return;
+
+        const allTargets = job.bulkAddVolunteerJobsSelectedDrives;
+        const filteredTargets = allTargets.filter(target => target.driveDate >= today);
+        const skippedTargets = allTargets.filter(target => target.driveDate < today);
+
+        console.log('[Bulk Add Volunteer Job] job:', job.volunteerRole, '| all targets:', allTargets.length,
+          '| skipped (past):', skippedTargets.map(t => t.driveDate),
+          '| will save:', filteredTargets.map(t => t.driveDate));
+
+        filteredTargets.forEach(target => {
+            newJobs.push({
+              driveId:                        target.driveId,
+              driveShiftId:                   target.driveShiftId,
+              driveSiteId:                    target.driveSiteId,
+              start:                          target.driveShiftStart,
+              finish:                         target.driveShiftFinish,
+              volunteerRole:                  job.volunteerRole,
+              redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
+              quantity:                       job.quantity,
+              isLocked:                       !!job.isLocked,
+              volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
+              otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
+              isManuallyCreated:              true,
+              manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+              jobAllocationTimeSource:        false,
+              jobTags:                        []
+            });
+          });
+      });
+    });
+
+    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - total new jobs to save:', newJobs.length,
+      newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
+    );
+
+    return Promise.resolve(newJobs);
   }
 
   calculateRecurrenceSlots(drive) {

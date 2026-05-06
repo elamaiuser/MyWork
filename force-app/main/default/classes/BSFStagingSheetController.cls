@@ -256,6 +256,7 @@ public without sharing class BSFStagingSheetController {
                                 (SELECT Id,
                                         sked_Type__c,
                                         (SELECT Id, 
+                                                sked_Quantity__c,												//Added for HRP-16909
                                                 sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
@@ -311,6 +312,7 @@ public without sharing class BSFStagingSheetController {
                                 (SELECT Id,
                                         sked_Type__c,
                                         (SELECT Id, 
+                                                sked_Quantity__c,												//Added for HRP-16909
                                                 sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
@@ -357,6 +359,7 @@ public without sharing class BSFStagingSheetController {
                                 (SELECT Id,
                                         sked_Type__c,
                                         (SELECT Id, 
+                                                sked_Quantity__c,												//Added for HRP-16909
                                                 sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
@@ -571,6 +574,7 @@ public without sharing class BSFStagingSheetController {
 
                 Integer shutCount = 0;
                 List<String> bagtypes = new List<String>();
+                String bagtypewithQty = '';																		//Added for HRP-16909
                 if(drive.sked_Drive_Delivery_Jobs__r != null){
                     for(sked_Drive_Delivery_Job__c deljob : drive.sked_Drive_Delivery_Jobs__r){
                         if(String.isNotBlank(deljob.sked_Type__c) && (deljob.sked_Type__c.equals('Pick Up') || deljob.sked_Type__c.equals('VOL Pick Up'))){
@@ -578,7 +582,14 @@ public without sharing class BSFStagingSheetController {
                         }else if(String.isNotBlank(deljob.sked_Type__c) && deljob.sked_Type__c.equals('Bag') && deljob.sked_Drive_Bags__r != null){
                             for(sked_Drive_Bag__c drvbag : deljob.sked_Drive_Bags__r){
                                 if(String.isNotBlank(drvbag.sked_Bag_Type__c) ){//&& (bagtypes.isEmpty() || !bagtypes.contains(drvbag.sked_Bag_Type__c))){
-                                    bagtypes.add(drvbag.sked_Bag_Type__c);
+                                    //Start: Added for HRP-16909
+									if(drvbag.sked_Quantity__c != null) {
+										bagtypewithQty = drvbag.sked_Bag_Type__c + ' (' + String.valueOf(Math.round(drvbag.sked_Quantity__c)) + ')';
+									} else {
+										bagtypewithQty = drvbag.sked_Bag_Type__c;
+									}									
+                                    bagtypes.add(bagtypewithQty);
+                                    //End: Added for HRP-16909
                                 }
                             }
                         }

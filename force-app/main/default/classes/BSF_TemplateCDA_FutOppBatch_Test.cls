@@ -7,6 +7,10 @@ global class BSF_TemplateCDA_FutOppBatch_Test {
         // Create base test data
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<String, sObject> mapTestData = testDataSetup.createAndInsertCommonObjects();
+        
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+		TriggerHandler.bypass('OpportunityTriggerHandler');
 
         // Mobile Account
         Account testMobileAccount = (Account) mapTestData.get('MOBILE_ACCOUNT');
@@ -37,17 +41,16 @@ global class BSF_TemplateCDA_FutOppBatch_Test {
         mobileOpp.Parent_Template_Id__c = templateOpp.Id;
         mobileOpp.Type_of_Drive__c = 'Mobile';
         mobileOpp.Drive_Date__c = Date.today().addDays(10);
-
         mobileOpp.Anticipated_Registered_Donors_Template__c = 1;
         mobileOpp.WholeBloodProceduresProjectedTemplate__c = 1;
         mobileOpp.Double_Red_Procedures_Projected_Template__c = 1;
-
         insert mobileOpp;
+        TriggerHandler.clearAllBypasses();
     }
 
     @IsTest
     static void testBatchWithChangedTodayFilter() {
-
+		Test.startTest();
         Opportunity templateOpp = [
             SELECT Id,
                    WB_Projected_Procedures__c,
@@ -72,7 +75,7 @@ global class BSF_TemplateCDA_FutOppBatch_Test {
         TriggerHandler.bypass('OpportunityTriggerHandler');
         update templateOpp;
 
-        Test.startTest();
+        
         Database.executeBatch(
             new BSF_TemplateCDA_FutureOpportunity_Batch(true),
             50

@@ -1287,20 +1287,29 @@ Insert errorLogList;
 
 public static void handleTaskPlanningPathChange(List<Account> newAccounts, Map<Id, Account> oldAccountMap) {
   Set<Id> changedAccountIds = new Set<Id>();
+  List<Account> changedAccounts = new List<Account>();
+  Id fixedSiteAccRecTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Fixed Site Account').getRecordTypeId();
 
   for (Account acc : newAccounts) {
-    if(acc.RecordTypeId == Schema.SObjectType.Account.getRecordTypeInfosByName().get('Fixed Site Account').getRecordTypeId()) continue;
+    if(acc.RecordTypeId == fixedSiteAccRecTypeId) continue;
     
     Account oldAcc = oldAccountMap.get(acc.Id);
     
     // Detect if the Planning Path value has changed
     if (acc.Planning_Path__c != oldAcc.Planning_Path__c) {
         changedAccountIds.add(acc.Id);
+        if(acc.Planning_Path__c == BSF_Constants.PATH_STANDARD && oldAcc.Planning_Path__c == null) {
+            changedAccounts.add(acc);
+        }
     }
 }
 
-  // Fire the Cascade Batch if changes were detected
-if (!changedAccountIds.isEmpty()) {
+  // Fire the Account Task Config if initial path is Standard
+if (!changedAccounts.isEmpty()) {
+    BSF_TaskPlanningService.initializeAccountTaskConfigs(changedAccounts);
+}
+// Fire the Cascade Batch if changes were detected
+if (!changedAccountIds.isEmpty()) {    
     Database.executeBatch(new BSF_AccountTaskPlanningCascadeBatch(changedAccountIds), 50);
 }
 }
