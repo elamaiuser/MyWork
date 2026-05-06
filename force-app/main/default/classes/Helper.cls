@@ -10,6 +10,9 @@
  * 									the only way the "From" address can be configured for programatically generated emails
  * 									is via org wide email addresses.
  * 08/05/24    Priti Jana           Added new method to get same day porevious year for HRP-12706
+ * 04/02/2026   Souvik Mukherjee    Changed Logic for HRP-17095 to Correct getSameDayOfNextYear method so that Cslculatation of Calender Build Roll Over Drive date is corrected.
+ *                                  such that after adding 1 year to the drive that of the drive being rolled if the day of week is same as that of the source drive
+ *                                  date, then the logic to decrement the next year drive date to find the date on the same day of week is skipped.
  ***********************************************************************************************************************/
 
 public with sharing class Helper {
@@ -652,7 +655,7 @@ public with sharing class Helper {
         Integer offset = 0;
 
         Date newDate = startDate - calendarDaysToGoBack;
-        Datetime dt = DateTime.newInstance(newDate, Time.newInstance(0, 0, 0, 0));
+        Datetime dt = DateTime.newInstance(newDate, Time.newInstance(12, 0, 0, 0));             //Modified for HRP-17095
         String dayOfWeek = dt.format('E');
 
         if(dayOfWeek == 'Sat')
@@ -674,20 +677,24 @@ public with sharing class Helper {
     Public static DateTime getSameDayOfNextYear(Date incomingDate){
         
         Datetime dateNextYear;
-        DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
+        DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(12, 0, 0, 0));        //Modified for HRP-17095
 
         String dayOfWeek = dt.format('EEEE');
         DateTime newDate = dt.addYears(1);
-        String nextYearDayOfWeek = newDate.format('u');
+        String nextYearDayOfWeek = newDate.format('EEEE');                                      //Modified for HRP-17095
        
-        for(Integer i=1; i<=7; i++){
-            DateTime newDates = newDate.addDays(-i);
-            String newDayOfWeek = newDates.format('EEEE');
-            if(dayOfWeek == newDayOfWeek){
-                dateNextYear = newDates;
-                break;
-            }   
-        }
+        If(dayOfWeek != nextYearDayOfWeek){                                                     //Added for HRP-17095
+            for(Integer i=1; i<=7; i++){
+                DateTime newDates = newDate.addDays(-i);
+                String newDayOfWeek = newDates.format('EEEE');
+                if(dayOfWeek == newDayOfWeek){
+                    dateNextYear = newDates;
+                    break;
+                }   
+            }
+        } else {                                                                                //Start: Added for HRP-17095
+            dateNextYear = newDate;
+        }                                                                                       //End: Added for HRP-17095
         return dateNextYear;
     }
 
@@ -701,20 +708,24 @@ public with sharing class Helper {
      public static DateTime getSameDayOfPrevYear(Date incomingDate) {
         
         Datetime datePrevYear;
-        DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(0, 0, 0, 0));
+        DateTime dt = DateTime.newInstance(incomingDate, Time.newInstance(12, 0, 0, 0));        //Modified for HRP-17095
 
         String dayOfWeek = dt.format('EEEE');
         DateTime newDate = dt.addYears(-1);
-        String prevYearDayOfWeek = newDate.format('u');
+        String prevYearDayOfWeek = newDate.format('EEEE');                                      //Modified for HRP-17095
        
-        for(Integer i=1; i<=7; i++) {
-            DateTime newDates = newDate.addDays(i);
-            String newDayOfWeek = newDates.format('EEEE');
-            if(dayOfWeek == newDayOfWeek) {
-                datePrevYear = newDates;
-                break;
-            }   
-        }
+        If(dayOfWeek != prevYearDayOfWeek){                                                     //Added for HRP-17095
+            for(Integer i=1; i<=7; i++) {
+                DateTime newDates = newDate.addDays(i);
+                String newDayOfWeek = newDates.format('EEEE');
+                if(dayOfWeek == newDayOfWeek) {
+                    datePrevYear = newDates;
+                    break;
+                }   
+            }
+        } else {                                                                                //Start: Added for HRP-17095
+            datePrevYear = newDate;
+        }                                                                                       //End: Added for HRP-17095
         return datePrevYear;
     }
     

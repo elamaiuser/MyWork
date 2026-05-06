@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Time_Already_Existed_In_Workday__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>True when Employee Report API indicated the employee already had time in Workday for this drive date (base time was not submitted).</description>
+    <label>Time Already Existed In Workday</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

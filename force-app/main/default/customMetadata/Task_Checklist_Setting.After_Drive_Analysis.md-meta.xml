@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Review all critical fields within After Drive Analysis PBI Report
 
@@ -14,7 +18,7 @@ Include system drive results and flow, input from collections support partners, 
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -34,11 +38,11 @@ Include system drive results and flow, input from collections support partners, 
     </values>
     <values>
         <field>Parent__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Picklist_Input_1__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Section_Header__c</field>
@@ -50,11 +54,11 @@ Include system drive results and flow, input from collections support partners, 
     </values>
     <values>
         <field>Subtype__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Review all data reflected in the After Drive Analysis Power BI report as well as other data regarding/affecting the blood drive&#39;s performance.</value>
+        <value xsi:type="xsd:string">Review all data reflected in the After Drive Analysis Power BI report as well as other data regarding/affecting the blood drive&apos;s performance.</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

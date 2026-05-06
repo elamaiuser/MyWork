@@ -46,7 +46,7 @@ public class skedWorkdayApiManager {
         request.setHeader('Referrer-Policy', 'strict-origin');
         request.setHeader('Set-Cookie', 'secure; HttpOnly; Samesite=lax');
         request.setHeader('Access-Control-Allow-Methods', 'GET, POST HEAD');
-        request.setTimeout(20000);
+        request.setTimeout(120000);
         request.setEndpoint(endpoint);
         request.setMethod(method);
 
@@ -202,7 +202,7 @@ public class skedWorkdayApiManager {
 
         HttpRequest req = getHttpRequest(endpoint, HTTP_METHOD_GET);
         String logCategory;
-        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint(), ptoPlanBalanceRequest.isCallOut);
+        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint());
         try {
             Http h = new Http();
             HttpResponse res = h.send(req);

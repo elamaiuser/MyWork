@@ -22,5 +22,10 @@
         <operation>equals</operation>
         <value>Affiliation_Staging_Record__c.Qualified_Affiliation</value>
     </filters>
+    <filters>
+        <field>Account_UFID__c</field>
+        <operation>equals</operation>
+        <value>A0099R</value>
+    </filters>
     <label>Qualified Affiliations</label>
 </ListView>
