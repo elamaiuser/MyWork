@@ -95,7 +95,7 @@ public class BSF_RemoveAccountTeamMemberBatchTest {
         Test.startTest();
         
         	Database.executeBatch(new BSF_RemoveAccountTeamMemberBatch(), 200);
-        	System.schedule('BSF_RemoveAccountTeamMemberBatch', '0 0 13 * * ?', new BSF_RemoveAccountTeamMemberBatch());
+        	System.schedule('Test BSF_RemoveAccountTeamMemberBatch', '0 0 13 * * ?', new BSF_RemoveAccountTeamMemberBatch());
         Test.stopTest();
     }
     public static List<User> populateUserFields(String firstName,String lastName,Id profileId,Integer count){

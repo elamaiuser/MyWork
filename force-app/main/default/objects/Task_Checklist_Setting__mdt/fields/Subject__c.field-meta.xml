@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Subject__c</fullName>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Subject</label>
     <required>false</required>
@@ -11,9 +10,9 @@
         <valueSetDefinition>
             <sorted>true</sorted>
             <value>
-                <fullName>72 Hour Check-In</fullName>
+                <fullName>72-Hour Check-in</fullName>
                 <default>false</default>
-                <label>72 Hour Check-In</label>
+                <label>72-Hour Check-in</label>
             </value>
             <value>
                 <fullName>Post Drive Analysis</fullName>
@@ -21,14 +20,14 @@
                 <label>Post Drive Analysis</label>
             </value>
             <value>
-                <fullName>Post Drive Analysis AM</fullName>
+                <fullName>Post-Drive Analysis/Future Drive Planning - SBPM</fullName>
                 <default>false</default>
-                <label>Post Drive Analysis AM</label>
+                <label>Post-Drive Analysis/Future Drive Planning - SBPM</label>
             </value>
             <value>
-                <fullName>Post Drive Analysis SBPM</fullName>
+                <fullName>Post-Drive Analysis - AM</fullName>
                 <default>false</default>
-                <label>Post Drive Analysis SBPM</label>
+                <label>Post-Drive Analysis - AM</label>
             </value>
             <value>
                 <fullName>Post Drive FollowUp</fullName>
@@ -36,9 +35,9 @@
                 <label>Post Drive FollowUp</label>
             </value>
             <value>
-                <fullName>Recruitment Planning Meeting</fullName>
+                <fullName>Recruitment Strategy Meeting</fullName>
                 <default>false</default>
-                <label>Recruitment Planning Meeting</label>
+                <label>Recruitment Strategy Meeting</label>
             </value>
             <value>
                 <fullName>Sponsor Planning Meeting</fullName>

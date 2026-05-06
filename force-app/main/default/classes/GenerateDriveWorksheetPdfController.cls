@@ -450,6 +450,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Primary_Contact__r.Name,
                                                                                 sked_Primary_Contact__r.Primary_Phone__c,
                                                                                 sked_Primary_Contact__r.MobilePhone,
+                                                                                sked_Primary_Contact__r.OtherPhone,
+                                                                                sked_Primary_Contact__r.HomePhone,
                                                                                 sked_Security_Escort_Name__c,
                                                                                 sked_Opportunity__r.Account_Manager__c,// added for HRP-11777
                                                                                 sked_Opportunity__r.Account_Manager__r.Name,// added for HRP-11777
@@ -548,7 +550,18 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     rw.siteInfo.siteContact = (drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.sked_Site_Contact__c != null)? drive.sked_Drive_Site__r.sked_Site_Contact__r.Name : '';
                     rw.siteInfo.priChair = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.Name : '';
                     rw.siteInfo.phone = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.Primary_Phone__c : '';
-                    rw.siteInfo.mobile = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.MobilePhone : '';
+                    if(drive.sked_Primary_Contact__c != null) {
+                        String primaryPhone = drive.sked_Primary_Contact__r.Primary_Phone__c;
+                        if(primaryPhone == 'Work Phone') {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.OtherPhone != null ? drive.sked_Primary_Contact__r.OtherPhone : '';
+                        } else if(primaryPhone == 'Home Phone') {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.HomePhone != null ? drive.sked_Primary_Contact__r.HomePhone : '';
+                        } else {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.MobilePhone != null ? drive.sked_Primary_Contact__r.MobilePhone : '';
+                        }
+                    } else {
+                        rw.siteInfo.mobile = '';
+                    }
                     rw.siteInfo.insideStairs = drive.sked_Drive_Site__c != null ? String.valueOf(drive.sked_Drive_Site__r.sked_Inside_stairs__c) : '';
                     rw.siteInfo.outsideStairs = drive.sked_Drive_Site__c != null ? String.valueOf(drive.sked_Drive_Site__r.sked_Outside_stairs__c) : '';
                     if(drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.sked_Escort_Required__c != null){

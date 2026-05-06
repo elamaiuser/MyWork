@@ -1,87 +1,58 @@
 @IsTest
 private class BSF_AccessControlManagerTest {
-    // Test constants provided by user
+    
+    // Test constants matching the user's setup
     private static final String PS_NAME = 'sked_Global_Admin';
     private static final String RELEASE_TAG_NO_RULES = 'REL_NO_RULES';
-    private static final String RELEASE_TAG_OBJECT_FIELD = '2.5 Release';//'REL_OBJ_FLD';
-    private static final String RELEASE_TAG_APEXCLASS = '2.4 Release';//'REL_APEX';
+    private static final String RELEASE_TAG_OBJECT_FIELD = '2.5 Release';
+    private static final String RELEASE_TAG_APEXCLASS = '2.4 Release';
     private static final String RELEASE_TAG_VFPAGE = 'REL_VF';
-    private static final String RELEASE_TAG_DMLERROR = 'REL_DML_ERR';
 
-    // Utility: assert helper
-    private static void assertTrue(Boolean expr, String msg) {
-        System.assert(expr, msg);
-    }
-    private static void assertEq(Object exp, Object act, String msg) {
-        System.assertEquals(exp, act, msg);
-    }
-
-    // Utility: create a dummy Apex class to reference by Name in SetupEntityAccess tests.
-    // We will create a throwaway class unique name at runtime via Tooling API isn't available in tests.
-    // Instead, use the name of this test class, which exists as an ApexClass SObject and can be referenced.
-    private static String getExistingApexClassName() {
-        List<ApexClass> acs = [SELECT Name FROM ApexClass WHERE Name = 'BSF_AccessControlManagerTest' LIMIT 1];
-        if (!acs.isEmpty()) {
-            return acs[0].Name;
-        }
-        // Fallback: pick any available class (there is at least this one)
-        ApexClass anyC = [SELECT Name FROM ApexClass LIMIT 1];
-        return anyC.Name;
-    }
-
-    // Insert Custom Metadata records for rules. As of newer platform behavior, __mdt insert is allowed in tests.
-    // If your org prevents this, these inserts will fail compilation; in that case, comment out and rely on "no rules" coverage.
     @TestSetup
     static void setupData() {
-        // Guard: ensure the Permission Set exists by Name; tests cannot create PermissionSet via DML.
-        // If it doesn't exist, some branches (missingPS count) will still be covered.
-        // Query to cache and assert presence informally but do not fail tests hard if missing.
-        try {
-            PermissionSet ps = [SELECT Id, Name FROM PermissionSet WHERE Name = :PS_NAME LIMIT 1];
-            System.debug('Found Permission Set for tests: ' + ps.Name);
-        } catch (QueryException qe) {
-            System.debug(LoggingLevel.WARN, 'Permission Set ' + PS_NAME + ' not found. Some positive-branch assertions will be skipped.');
+        // Ensure the target Permission Set exists in the test context so that 
+        // real metadata DML operations succeed during standard runs.
+        List<PermissionSet> psList = [SELECT Id FROM PermissionSet WHERE Name = :PS_NAME];
+        if (psList.isEmpty()) {
+            insert new PermissionSet(Name = PS_NAME, Label = 'sked Global Admin Test');
         }
-
-        // 1) No rules release tag - nothing to insert.
     }   
 
     @IsTest
     static void testNoRulesBranch_EnqueuesLog() {
         Test.startTest();
+        // This tag is highly unlikely to have metadata, forcing the early return & enqueue path
         BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_NO_RULES);
-        // A Queueable should be enqueued; we can't assert the queue directly, but no exception means coverage hits early-return path.
-        Test.stopTest(); // executes queueable
-        // If BSF_Error_Log__c exists, one row should be attempted. We won't assert presence to avoid dependency on org object.
-        assertTrue(true, 'No rules processed; method executed without error.');
+        Test.stopTest(); 
+        
+        // As long as it executed without an unhandled exception, the queueable successfully caught the early return
+        System.assert(true, 'No rules processed; method executed and enqueued gracefully.');
     }
 
     @IsTest
     static void testObjectAndFieldPermissions_InsertAndUpdate_Paths() {
-        // Ensure Permission Set exists to hit positive branches when possible
-        Boolean psExists = false;
-        try {
-            PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = :PS_NAME LIMIT 1];
-            psExists = true;
-        } catch (Exception e) {
-            psExists = false;
-        }
-
         Test.startTest();
-        // First run: should INSERT ObjectPermissions and FieldPermissions where applicable
+        // First run: Should INSERT ObjectPermissions and FieldPermissions (if metadata matches)
+        BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_OBJECT_FIELD);
+        
+        // Second run: Should hit UPDATE or unchanged existing logic
         BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_OBJECT_FIELD);
         Test.stopTest();    
 
-        assertTrue(true, 'Object/Field permission processing runs completed.');
+        System.assert(true, 'Object/Field permission processing runs completed.');
     }
 
     @IsTest
     static void testApexClassAccess_SetupEntityAccess_Insert_NoDuplicate() {
         Test.startTest();
+        // First run: Inserts SetupEntityAccess records (if metadata matches)
+        BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_APEXCLASS);
+        
+        // Second run: Hits existing record checks to prevent duplicate DML
         BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_APEXCLASS);
         Test.stopTest();      
 
-        assertTrue(true, 'ApexClass access rule processed twice to cover insert and existing branches.');
+        System.assert(true, 'ApexClass access rules processed.');
     }
 
     @IsTest
@@ -90,32 +61,80 @@ private class BSF_AccessControlManagerTest {
         BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_VFPAGE);
         Test.stopTest();
 
-        assertTrue(true, 'Visualforce page access rule processed; missing component counter path covered.');
+        System.assert(true, 'Visualforce page access rule processed.');
     }
 
-    @IsTest
-    static void testCleanSplitUtility() {
-        // Indirect coverage via main flows already; add direct quick checks
-        // Using reflection is not possible; instead, create a small local splitter mimic to validate expected behavior.
-        // Here we just ensure split behavior assumptions used in rules are sane.
-        String sample = ' a , ,b, c ';
-        List<String> expected = new List<String>{'a','b','c'};
-        List<String> actual = new List<String>();
-        for (String item : sample.split(',')) {
-            String t = item.trim();
-            if (String.isNotBlank(t)) actual.add(t);
-        }
-        assertEq(expected, actual, 'cleanSplit-equivalent behavior validated.');
-    }
+    // ==============================================================================
+    // QUEUEABLE / LOGGING SPECIFIC TESTS (Using JSON Deserialization bypass trick)
+    // ==============================================================================
 
     @IsTest
-    static void testQueueableLoggingExecutes() {
-        // Exercise Queueable execute branch with populated summary lists
-        // We cannot instantiate inner private class RunSummary; simulate by invoking the public Queueable with nulls? Not possible.
-        // Instead, invoke processRulesByReleaseTag which enqueues the Queueable with built summary.
+    static void testQueueableLogging_GeneratesCSV() {
+        // Use JSON deserialization trick to construct the queueable with internal private state!
+        // This completely isolates the CSV generation logic and tests it at 100% without relying on org Metadata.
+        String jsonPayload = '{"releaseTag":"TEST_CSV_TAG","summary":{"objInserted":1,"objUpdated":0,"fldInserted":0,"fldUpdated":0,"apexInserted":0,"pageInserted":0,"missingPS":0,"missingComp":0,"missingFields":0,"undescribableObjects":0,"dmlFailures":0,"missingFieldList":[],"undescribedObjectList":[],"dmlErrors":[],"detailedLogs":[{"operation":"Insert","componentType":"Object","targetName":"Account","permSetName":"TestPS","accessLevel":"R:true"}]}}';
+        
+        BSF_AccessControlManager.AccessControlLogQueueable queueableJob = 
+            (BSF_AccessControlManager.AccessControlLogQueueable) JSON.deserialize(jsonPayload, BSF_AccessControlManager.AccessControlLogQueueable.class);
+        
         Test.startTest();
-        BSF_AccessControlManager.processRulesByReleaseTag(RELEASE_TAG_OBJECT_FIELD);
+        queueableJob.execute(null); // Execute Queueable manually
         Test.stopTest();
-        assertTrue(true, 'Queueable executed as part of stopTest.');
+        
+        // 1. Assert Error Log was created
+        List<BSF_Error_Log__c> logs = [SELECT Id, Error_Description_Long__c FROM BSF_Error_Log__c WHERE ApexClass__c = 'BSF_AccessControlManager'];
+        System.assertEquals(1, logs.size(), 'A summary error log should be created');
+        // Verify the long text using Apex instead of SOQL
+        System.assert(logs[0].Error_Description_Long__c.contains('TEST_CSV_TAG'), 'Log description should contain the release tag');
+        
+        // 2. Assert CSV File was created and attached via ContentDocumentLink
+        List<ContentDocumentLink> cdls = [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :logs[0].Id];
+        System.assertEquals(1, cdls.size(), 'A CSV file should be attached to the error log');
+        
+        // 3. Assert File content matches exactly what was passed in our detailed log payload
+        List<ContentVersion> cvs = [SELECT Title, VersionData FROM ContentVersion WHERE ContentDocumentId = :cdls[0].ContentDocumentId];
+        System.assertEquals(1, cvs.size(), 'ContentVersion should exist');
+        System.assert(cvs[0].Title.contains('TEST_CSV_TAG'), 'CSV Title should contain the release tag');
+        System.assert(cvs[0].VersionData.toString().contains('TestPS'), 'CSV Data should contain the detailed log entry');
+    }
+
+    @IsTest
+    static void testQueueableLogging_WithErrors() {
+        // JSON to simulate missing components and DML errors, triggering alternative log string concatenations
+        String jsonPayload = '{"releaseTag":"ERR_TAG","summary":{"objInserted":0,"objUpdated":0,"fldInserted":0,"fldUpdated":0,"apexInserted":0,"pageInserted":0,"missingPS":1,"missingComp":1,"missingFields":1,"undescribableObjects":1,"dmlFailures":1,"missingFieldList":["Obj.BadField"],"undescribedObjectList":["BadObj"],"dmlErrors":["DML Exception Caught"],"detailedLogs":[]}}';
+        
+        BSF_AccessControlManager.AccessControlLogQueueable queueableJob = 
+            (BSF_AccessControlManager.AccessControlLogQueueable) JSON.deserialize(jsonPayload, BSF_AccessControlManager.AccessControlLogQueueable.class);
+        
+        Test.startTest();
+        queueableJob.execute(null);
+        Test.stopTest();
+        
+        // Verify all Error concatenation and String manipulations work as expected
+        List<BSF_Error_Log__c> logs = [SELECT Id, Type__c, Error_Description_Long__c FROM BSF_Error_Log__c WHERE ApexClass__c = 'BSF_AccessControlManager'];
+        System.assertEquals(1, logs.size(), 'Error log should be created');
+        System.assertEquals('Error', logs[0].Type__c, 'Log Type should be set to "Error" when DML failures occur');
+        System.assert(logs[0].Error_Description_Long__c.contains('ERR_TAG'), 'Should contain the release tag');
+        System.assert(logs[0].Error_Description_Long__c.contains('DML Exception Caught'), 'Should successfully parse & include DML error sample');
+        System.assert(logs[0].Error_Description_Long__c.contains('Obj.BadField'), 'Should successfully parse & include missing field sample');
+        System.assert(logs[0].Error_Description_Long__c.contains('BadObj'), 'Should successfully parse & include undescribed object sample');
+    }
+
+    @IsTest
+    static void testQueueableLogging_ExceptionHandling() {
+        // Passing JSON without the summary makes the inner summary class null, which will 
+        // force a NullPointerException in execute() -> guaranteeing coverage of the "catch (Exception e)" block.
+        String jsonPayload = '{"releaseTag":"CRASH_TAG"}'; 
+        
+        BSF_AccessControlManager.AccessControlLogQueueable queueableJob = 
+            (BSF_AccessControlManager.AccessControlLogQueueable) JSON.deserialize(jsonPayload, BSF_AccessControlManager.AccessControlLogQueueable.class);
+        
+        Test.startTest();
+        queueableJob.execute(null);
+        Test.stopTest();
+        
+        // Assert no log was inserted because the intentional internal exception was caught
+        List<BSF_Error_Log__c> logs = [SELECT Id FROM BSF_Error_Log__c WHERE ApexClass__c = 'BSF_AccessControlManager'];
+        System.assertEquals(0, logs.size(), 'Log should not insert because an internal exception was properly caught in the try-catch block');
     }
 }

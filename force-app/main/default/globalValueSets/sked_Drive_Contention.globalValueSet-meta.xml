@@ -86,6 +86,11 @@
         <label>Assets are not shared with new Collection Operation</label>
     </customValue>
     <customValue>
+        <fullName>Locked Resource Unavailable</fullName>
+        <default>false</default>
+        <label>Locked Resource Unavailable</label>
+    </customValue>
+    <customValue>
         <fullName>Excess Staff Capacity</fullName>
         <default>false</default>
         <label>Excess Staff Capacity</label>
