@@ -268,7 +268,7 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_Workday
                 if (resourceRecord.sked_REAL_ID_Compliant_indicator__c != isCompliant ||
                     resourceRecord.sked_Real_ID_Expiration_Date__c != expirationDate) {
                     resourceRecord.sked_REAL_ID_Compliant_indicator__c = isCompliant;
-                    resourceRecord.sked_Real_ID_Expiration_Date__c     = expirationDate;
+                    resourceRecord.sked_Real_ID_Expiration_Date__c     = isCompliant ? expirationDate : null;
                     resourcesToUpdate.add(resourceRecord);
                 }
             }
@@ -316,10 +316,11 @@ public class BSF_RealIdComplianceBatch implements Database.Batchable<BSF_Workday
             AND    RecordType.DeveloperName = :STAGING_RT_DEVELOPER_NAME
         ];
 
+        Date today = System.today();
         List<sked__Resource__c> resourcesToUncheck = [
             SELECT Id, sked_REAL_ID_Compliant_indicator__c, sked_Real_ID_Expiration_Date__c
             FROM   sked__Resource__c
-            WHERE  sked_Employee_ID__c NOT IN :workdayEmployeeIds
+            WHERE  (sked_Employee_ID__c NOT IN :workdayEmployeeIds OR sked_Real_ID_Expiration_Date__c < :today)
             AND   (sked_REAL_ID_Compliant_indicator__c = true OR sked_Real_ID_Expiration_Date__c != null)
         ];
 

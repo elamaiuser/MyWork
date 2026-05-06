@@ -4,6 +4,8 @@
 		<members>TaskService</members>
 		<members>TaskForMigratedDrivesBatch</members>
 		<members>TaskForMigratedDrivesBatchTest</members>
+		<members>TaskChecklistController</members>
+		<members>TaskChecklistController_Test</members>
 		<name>ApexClass</name>
     </types>
 	<version>66.0</version>

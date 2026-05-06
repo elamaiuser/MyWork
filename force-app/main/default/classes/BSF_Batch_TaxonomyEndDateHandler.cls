@@ -56,9 +56,10 @@ global class BSF_Batch_TaxonomyEndDateHandler  implements Database.Batchable<sOb
             
             if(recordType=='Bio Collection BSF')
             {
+                
                 query = 'select Id,Division_Code__c,District_Code__c,DS_Region_Code__c,Collection_Operation_Code__c,skedulo_region_cd__c,End_Date__c,Start_Date__c,Time_Zone__c,'+
                     'RecordTypeId,Supervisor_Code__c,Version_Key__c,Zip_Code__c,RecordType.Name from Taxonomy__c where RecordType.Name =:recordType AND Version_Key__c != :taxVer order by Version_Key__c,District_Code__c desc';
-            }
+              }
             system.debug(query);  
             //HRP-14298
             //Capture start method entry in Error Log

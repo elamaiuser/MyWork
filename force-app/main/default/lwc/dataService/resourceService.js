@@ -52,6 +52,7 @@ class resourceService extends dataService {
   getPatternResources = (params) => auraProxy.getInstance().getPatternResources(params);
   getResourceTemplates = (params) => auraProxy.getInstance().getResourceTemplates(params);
   saveCallOut = (params) => auraProxy.getInstance().saveCallOut(params);
+  getVehiclesForCOs = (params) => auraProxy.getInstance().getVehiclesForCOs(params);
 }
 class resourceQueryModel extends queryModelBase {
   collectionOpId;

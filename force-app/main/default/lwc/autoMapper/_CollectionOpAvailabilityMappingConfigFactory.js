@@ -15,9 +15,10 @@ export class CollectionOpAvailabilityMappingConfigFactory {
       mappingConfig.addFieldConfig('Effective_Start_Date__c', 'startDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Effective_End_Date__c', 'endDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('Availability_Pattern__r.Name', 'availabilityPatternName', MAPPING_TYPE.direct);
-      
-      mappingConfig.addFieldConfig('Total_Actual_Resources__c', 'totalActualResources', MAPPING_TYPE.direct);
-      mappingConfig.addFieldConfig('Total_Target__c', 'totalTargetResources', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Total_Actual_Resources_Fixed_Site__c', 'totalActualResourcesFixedSite', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Total_Actual_Resources_Mobile__c', 'totalActualResourcesMobile', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Total_Target_Fixed_Site__c', 'totalTargetFixedSite', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('Total_Target_Mobile__c', 'totalTargetMobile', MAPPING_TYPE.direct);
       
       mappingConfig.addFieldConfigWithRelatedList('Availability_Pattern_Roles__r', 'availabilityPatternRoles', 'Availability_Pattern_Role__c', 'Collection_Operation_Availability__c');
       return mappingConfig;
