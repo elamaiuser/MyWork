@@ -2,6 +2,7 @@
 private class skedResourceHandler_Test {
     
     static testmethod void testDataPopulation() {
+        skedHubBase.BypassInsertTriggers = true;
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
 
         sked_Admin_Setting__c skedAdminSetting = sked_Admin_Setting__c.getOrgDefaults();
@@ -106,6 +107,7 @@ private class skedResourceHandler_Test {
             sked_Biomed_Collection_Op_Center__c = testCollectionOperation1.Id
         );
         insert testRegion1;
+        skedHubBase.BypassInsertTriggers = false;
         
         Test.startTest();
         
@@ -154,17 +156,34 @@ private class skedResourceHandler_Test {
         insert testResources;
         
         Set<Id> affectedRegions = skedResourceHandler.getAffectedArcRegions(testResources);
+
+        Test.stopTest();
+    }
+    
+    static testMethod void testDataPopulation_coveingAfterUpdateScenarios() {
+        Test.startTest();
+        
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData(); 
+        
+        sked__Resource__c testResource = (sked__Resource__c) mapTestData.get('testResource1');
+        sked__Resource__c testEquipment = (sked__Resource__c) mapTestData.get('testEquipment1');
         
         TriggerHandler.bypass('ResourceTriggerHandler');
-        testResource.sked_FCC_Code__c = '83140';
+        testResource.sked_FCC_Code__c = '83347';
         testResource.sked_Mobile_Type__c = 'Outside';
         testResource.sked_Primary_Phone_Type__c = 'Work Phone';
-        update testResource;
         
         testEquipment.sked_Site_Type__c = 'Mobile';
-        update testEquipment;
+        update new List<sked__Resource__c>{testResource, testEquipment};
         TriggerHandler.clearBypass('ResourceTriggerHandler');
         
+        List<sked__Resource_Tag__c> resourceTagsForStaffResource = [SELECT sked__Tag__r.Name
+                                                                    FROM sked__Resource_Tag__c 
+                                                                    WHERE sked__Resource__c = :testResource.Id
+                                                                    AND sked__Tag__r.sked__Type__c = 'Drive Type'
+                                                                    AND sked__Tag__r.Name = 'Mobile'];
+        Assert.isTrue(resourceTagsForStaffResource.isEmpty());
         Test.stopTest();
     }
     

@@ -4,7 +4,7 @@
  */
 trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
     List<Task> taskList = new List<Task>();
-    List<Planned_Task__c> ptsToUpdate = new List<Planned_Task__c>();
+    Map<Id, Planned_Task__c> ptsToUpdateMap = new Map<Id, Planned_Task__c>();
     Map<String, String> peMapping = BSF_TaskPlanningService.getDynamicPlatformEventFieldMapping();
 
     for (Task_Platform_Event__e tp : Trigger.new) {
@@ -20,18 +20,21 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
             
             if (srList[i].isSuccess()) {
                 if (String.isNotBlank(originalEvent.Planned_Task_Id__c)) {
-                    ptsToUpdate.add(new Planned_Task__c(
-                        Id = originalEvent.Planned_Task_Id__c,
-                        Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED
-                    ));
+                    ptsToUpdateMap.put(
+                        originalEvent.Planned_Task_Id__c, 
+                        new Planned_Task__c(
+                            Id = originalEvent.Planned_Task_Id__c,
+                            Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED
+                        )
+                    );
                 }
             } else {
                 System.debug(LoggingLevel.ERROR, 'Task Insert Failed for ' + originalEvent.WhatId__c + ': ' + srList[i].getErrors()[0].getMessage());
             }
         }
     }
-    System.debug(LoggingLevel.INFO, 'Total Tasks Processed: ' + taskList.size() + ', Planned Tasks to Update: ' + ptsToUpdate.size());
-    if (!ptsToUpdate.isEmpty()) {
-        BSF_TaskPlanningService.handleDatabaseResults(Database.update(ptsToUpdate, false), 'Planned Task Update from Platform Event');
+    System.debug(LoggingLevel.INFO, 'Total Tasks Processed: ' + taskList.size() + ', Planned Tasks to Update: ' + ptsToUpdateMap.size());
+    if (!ptsToUpdateMap.isEmpty()) {
+        BSF_TaskPlanningService.handleDatabaseResults(Database.update(ptsToUpdateMap.values(), false), 'Planned Task Update from Platform Event');
     }
 }

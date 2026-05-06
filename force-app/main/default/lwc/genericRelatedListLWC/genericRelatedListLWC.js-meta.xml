@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage,lightning__AppPage,lightning__HomePage">
+            <property name="headerName"         type="String" label="Title"/>
+            <property name="objectApiName"       type="String" label="Object API Name (auto-filled by page - do not use)"/>
+            <property name="childObjectName"     type="String" label="Child Object API Name"/>
+            <property name="fieldsApiNames"     type="String" label="Field API Names"/>
+            <property name="filterFieldApiName" type="String" label="Filter Field API Name"/>
+            <property name="columnName"         type="String" label="Column Name"/>
+            <property name="iconName"           type="String" label="Icon Name"/>
+            <property name="recordButton"       type="String" label="Record Action Button" default="Edit,Delete"/>
+            <property name="hyperLinkColumn"    type="String" label="Column with Hyperlink"/>
+            <property name="fieldwithOrderBy"   type="String" label="Field with Order By"/>
+            <property name="additionalFilter"    type="String"  label="Additional Filters (e.g. Status__c=Active OR (Stage__c=Open AND IsTemplate__c=false))"/>
+            <property name="dateFormatType"      type="String"  label="Date Format Type"
+                      datasource="Custom Date Format,SF OOTB Date Format,Jan-1-2020"/>
+            </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

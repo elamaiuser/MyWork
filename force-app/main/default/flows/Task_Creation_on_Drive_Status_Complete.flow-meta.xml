@@ -507,7 +507,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>SubjectTask1</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

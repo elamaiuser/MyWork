@@ -227,9 +227,14 @@ export default class SlwcPlanDrive extends LightningElement {
       return;
     };
 
+    const { startDate } = this.planDriveHelper.getDateRange(this.filter.selectedMonth);
+    const { endDate } = this.planDriveHelper.getDateRange(this.next2Month);
+
     let service = new collectionOperationTimeBlockService();
     let queryModel = new collectionOperationTimeBlockQueryModel();
     queryModel.collectionOperationIds = collectionOperations.map(item => item.id);
+    queryModel.effectiveStartDate = startDate;
+    queryModel.effectiveEndDate = endDate;
     this.showLoading();
     return service.query(queryModel)
       .then((result = []) => {

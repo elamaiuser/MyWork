@@ -1,0 +1,137 @@
+<template>
+  <div class="slds-box slds-p-around_none">
+    <!-- Tab Filter Bar -->
+    <div class="slds-grid slds-border_bottom">
+      <template for:each={statusGroups} for:item="group">
+        <div key={group.status} class={group.tabClass} data-value={group.status} onclick={handleFilterTab}>
+          <div>{group.label}</div>
+          <div class={group.countClass}>{group.count}</div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Bulk Selection Links -->
+    <template if:true={replacementVehicle}>
+      <div class="slds-p-horizontal_small slds-p-vertical_xx-small">
+        <a class="slds-text-body_small slds-m-right_medium" href="javascript:void(0);" onclick={handleSelectAllTab}>Select all</a>
+        <a class="slds-text-body_small" href="javascript:void(0);" onclick={handleDeselectAllTab}>Deselect all</a>
+      </div>
+    </template>
+
+    <!-- Drive Table -->
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" role="grid">
+      <thead>
+        <tr class="slds-line-height_reset">
+          <template if:true={replacementVehicle}>
+            <th scope="col" style="width:3rem;">
+              <lightning-input
+                type="checkbox"
+                label=""
+                checked={allSelected}
+                onchange={handleSelectAll}>
+              </lightning-input>
+            </th>
+          </template>
+          <th scope="col"><div class="slds-truncate" title="Drive Name">Drive Name</div></th>
+          <th scope="col"><div class="slds-truncate" title="Date">Date</div></th>
+          <th scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+          <th scope="col"><div class="slds-truncate" title="Drive Capacity">Drive Capacity</div></th>
+          <th scope="col"><div class="slds-truncate" title="Projected Donors">Projected Donors</div></th>
+          <th scope="col"><div class="slds-truncate" title="Vehicle Capacity">Vehicle Capacity</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <template for:each={displayedDrives} for:item="drive">
+          <tr key={drive.id} class={drive.rowClass}>
+            <template if:true={replacementVehicle}>
+              <td>
+                <lightning-input
+                  type="checkbox"
+                  label=""
+                  checked={drive.isSelected}
+                  disabled={drive.isCheckboxDisabled}
+                  onchange={handleRowCheckbox}
+                  data-drive-id={drive.id}>
+                </lightning-input>
+              </td>
+            </template>
+            <td>
+              <div class="slds-truncate" title={drive.name}>
+                <a href={drive.recordPageUrl} target="_blank">{drive.name}</a>
+              </div>
+            </td>
+            <td>
+              <div class="slds-truncate" title={drive.driveDateDisplay}>{drive.driveDateDisplay}</div>
+            </td>
+            <td>
+              <span class={drive.statusBadgeClass}>{drive.status}</span>
+            </td>
+            <td>
+              <div class="slds-truncate">{drive.driveCapDisplay}</div>
+            </td>
+            <td>
+              <div class="slds-truncate">{drive.projDonorsDisplay}</div>
+            </td>
+            <td>
+              <div class="slds-truncate">{drive.vehCapDisplay}</div>
+            </td>
+          </tr>
+          <template for:each={drive.exceptions} for:item="exc">
+            <tr key={exc.key} class={exc.bandClass}>
+              <td colspan="7" class="slds-p-horizontal_medium slds-p-vertical_x-small" style={exc.bandStyle}>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                  <span class="slds-text-body_small">{exc.message}</span>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <template for:each={drive.contentions} for:item="con">
+            <tr key={con.key} class="exception-band exception-band_warning">
+              <td colspan="7" class="slds-p-horizontal_medium slds-p-vertical_x-small" style="background:#fffbe6;border-left:4px solid #f8c900;">
+                <span class="slds-text-body_small">{con.message}</span>
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-top_xx-small">
+                  <template for:each={con.options} for:item="opt">
+                    <label key={opt.value} class="contention-checkbox slds-m-right_large">
+                      <input
+                        type="checkbox"
+                        value={opt.value}
+                        checked={opt.isChecked}
+                        onchange={handleContentionResolution}
+                        data-con-key={con.key}>
+                      <span class="slds-m-left_xx-small slds-text-body_small">{opt.value}</span>
+                    </label>
+                  </template>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </template>
+        <template if:true={noDrives}>
+          <tr>
+            <td colspan="7" class="slds-text-align_center slds-p-around_medium">
+              <span class="slds-text-color_weak">No drives found</span>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+
+    <!-- Pagination Footer -->
+    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_small slds-border_top">
+      <span class="slds-text-body_small slds-text-color_weak">{pageLabel}</span>
+      <div>
+        <lightning-button
+          label="Previous"
+          disabled={isPrevDisabled}
+          onclick={handlePrev}
+          class="slds-m-right_x-small">
+        </lightning-button>
+        <lightning-button
+          label="Next"
+          disabled={isNextDisabled}
+          onclick={handleNext}>
+        </lightning-button>
+      </div>
+    </div>
+  </div>
+</template>

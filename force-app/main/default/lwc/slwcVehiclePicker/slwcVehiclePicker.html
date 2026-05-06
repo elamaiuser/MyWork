@@ -1,0 +1,73 @@
+<template>
+  <div class="slds-form-element">
+    <label class="slds-form-element__label">{label}</label>
+    <div class="slds-form-element__control">
+
+      <div class="slds-grid slds-grid_vertical-align-center">
+        <div class="slds-combobox_container slds-grow slds-m-right_x-small">
+          <div class={comboboxClass}
+               aria-expanded={isDropdownOpen}
+               aria-haspopup="listbox"
+               role="combobox">
+            <div class={formElementClass} role="none">
+              <lightning-icon icon-name={iconName} size="small" class={selectIconClass}></lightning-icon>
+              <input
+                type="text"
+                class={inputClass}
+                value={inputValue}
+                placeholder="Search..."
+                readonly={isInputReadonly}
+                disabled={disabled}
+                oninput={handleSearchInput}
+                onfocus={handleSearchFocus}
+                onblur={handleSearchBlur} />
+              <template if:true={selectedVehicle}>
+                <button
+                  type="button"
+                  title="Remove selected option"
+                  onclick={handleClear}
+                  class="slds-button slds-button_icon slds-input__icon slds-input__icon_right slds-icon-text-default">
+                  <lightning-icon icon-name="utility:close" size="x-small" alternative-text="Remove selected option" class="slds-button__icon"></lightning-icon>
+                </button>
+              </template>
+              <template if:false={selectedVehicle}>
+                <lightning-icon
+                  icon-name="utility:search"
+                  size="x-small"
+                  alternative-text="Search"
+                  class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default">
+                </lightning-icon>
+              </template>
+            </div>
+            <div role="listbox">
+              <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="presentation">
+                <template for:each={filteredVehicles} for:item="v">
+                  <li key={v.id} role="presentation" class="slds-listbox__item">
+                    <span
+                      class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                      role="option"
+                      data-id={v.id}
+                      onmousedown={handleSelectFromDropdown}>
+                      <span class="slds-media__figure">
+                        <lightning-icon icon-name={iconName} size="small"></lightning-icon>
+                      </span>
+                      <span class="slds-media__body" style="padding-top: 9px;">
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{v.name}</span>
+                      </span>
+                    </span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <lightning-button-icon
+          icon-name="utility:threedots_vertical"
+          title="Browse all vehicles"
+          disabled={disabled}
+          onclick={handleOpenModal}>
+        </lightning-button-icon>
+      </div>
+    </div>
+  </div>
+</template>
