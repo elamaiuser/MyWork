@@ -503,7 +503,7 @@ if(ds.isCreateable()){}*/
     }
     
     //SYSTEM Generating Recruitment Meeting task during Closed Stage - HRP -2072
-    public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         System.debug('Entered method createRecruitmentTask with opp items->' + newItems);
         if (newItems == null || newItems.size() < 1)
             return;
@@ -560,7 +560,7 @@ if(ds.isCreateable()){}*/
                 }else if(taskDueDayString.equalsIgnoreCase('Sun')){
                     taskDueDate = taskDueDate.addDays(-2);
                 }*/
-                recruitmentTask.ActivityDate = taskDueDate;
+                /*recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
                 recruitmentTask.subject = taskSubject;
                 recruitmentTask.Type = taskType;
@@ -613,10 +613,10 @@ if(ds.isCreateable()){}*/
             }
             //HRP-10788
         }   
-    }
+    }*/
     
     //Generate Sponsor Planning Meeting task when Opportunity stage is set to committed or closed
-    public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         if (newItems == null || newItems.size() < 1)
             return;
         set<id> oppIds = new set<id>();
@@ -694,7 +694,7 @@ if(ds.isCreateable()){}*/
                 }
             }
         }   
-    } 
+    } */
     
     public static void setCallListRecipientFlag(set<id> accIDs) {
         Map<id, opportunity> oppMap = new Map<id, opportunity>([select id,Accountid from opportunity where Accountid = :accIDs]);
@@ -3024,7 +3024,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('Anticipated_Registered_Donors__c') == true){ //HRP-10312 begin
                         arcupdated = true;//HRP-10312 
                         if(oppRec.Anticipated_Registered_Donors__c != null){
-                            oppField.Anticipated_Registered_Donors = Integer.valueOf(oppRec.Anticipated_Registered_Donors__c);
+                            oppField.Anticipated_Registered_Donors = oppRec.Anticipated_Registered_Donors__c;
                         }
                         //HRP-10312 Begin
                         else{
@@ -3038,7 +3038,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         wbcUpdated = true;
                         //HRP-10312 end
                         if(oppRec.WB_Projected_Procedures__c != null){
-                            oppField.WB_Projected_Procedures = Integer.valueOf(oppRec.WB_Projected_Procedures__c);
+                            oppField.WB_Projected_Procedures = oppRec.WB_Projected_Procedures__c;
                         }//HRP-10312 begin
                         else{
                             oppField.WB_Projected_Procedures = null;
@@ -3049,7 +3049,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('X2RBC_Projected_Procedures__c') == true){
                         doubleRbcUpdated = true; //HRP-10312 end
                         if(oppRec.X2RBC_Projected_Procedures__c != null){
-                            oppField.X2RBC_Projected_Procedures = Integer.valueOf(oppRec.X2RBC_Projected_Procedures__c);
+                            oppField.X2RBC_Projected_Procedures = oppRec.X2RBC_Projected_Procedures__c;
                         } //HRP-10312 begin
                         else{
                             oppField.X2RBC_Projected_Procedures = null;
@@ -3313,22 +3313,31 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                 updateEventList.add(event);
                 
                 System.debug('\n #### Inside syncOppsWithDrives JSON =>' + objectDataJSON);
+                List<BSF_Error_Log__c> insertErrorLog = new List<BSF_Error_Log__c>();
                 
                 //Publish Event
                 if(!updateEventList.isEmpty()) {
                     List<Database.SaveResult> eventPubResultList = EventBus.publish(updateEventList);
-                    
-                    for(Database.SaveResult eventPubResult : eventPubResultList) {
+
+                   
+                     for(Database.SaveResult eventPubResult : eventPubResultList) {
                         if(eventPubResult.isSuccess()) {
                             System.debug('\n #### Inside syncOppsWithDrives Events published successfully  => ' + eventPubResult);
                         }
                         else {
                             for(Database.Error pubError : eventPubResult.getErrors()) {
+                               
+                                //HRP-16932
+                                BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog('Syncing Opporunity values with drives','Opportunity Service','syncOppsWithDrives', 'Error',  pubError.getMessage(), 'Sync Request platform event publish failed');
+                                insertErrorLog.add(errorLog);  
                                 System.debug('\n #### Inside syncOppsWithDrives Event publishing failed => ' + pubError.getStatusCode() + ' => ' + pubError.getMessage());
                             }
                         }
                     }
-                }            
+                    if (!insertErrorLog.isEmpty()) {
+                        Database.insert(insertErrorLog, false);
+                    }
+            }            
             } 
         }catch(Exception ex){
             System.debug('#### Inside ex  => ' + ex);
@@ -3550,7 +3559,7 @@ opp.StageName = 'Closed';
         }
     }
     
-    Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
+    /*Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
     {
         
         set<id> oppIds = new set<id>();
@@ -3631,7 +3640,7 @@ opp.StageName = 'Closed';
                 }
             }
         }   
-    }
+    }*/
     
     public static void updateDoubleRedProcedures(List<Opportunity> listOfnewOppties, Map<Id, Opportunity> mapOfOfOldOppties) { 
         Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId();
@@ -4109,7 +4118,6 @@ opp.StageName = 'Closed';
         Id districtManager;
         Id accountSpecialist;
         Id owner=opp.OwnerId;
-        
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
@@ -4121,14 +4129,15 @@ opp.StageName = 'Closed';
                 }
             }
         }
+
         if (accountManager != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333
         {
             return accountManager;
         } else if (accountSpecialist != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333 reordered specialist before DM
-        {
+        { 
             return accountSpecialist;
         }else if (districtManager != null) 
-        {
+        { 
             return districtManager;
         }  else 
         {
@@ -5303,26 +5312,21 @@ opp.StageName = 'Closed';
             }
         }
 
+        Boolean isAutomatedProcessUser = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String userModeClause = isAutomatedProcessUser ? '' : ' WITH USER_MODE';
+        String accountBaseQuery = accountIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds' + userModeClause;
+        String templateBaseQuery = templateIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds' + userModeClause;
+
         // 2. Query Parent Account Settings
         Map<Id, Account> accountMap = new Map<Id, Account>();
-        if(!accountIds.isEmpty()) {
-            accountMap = new Map<Id, Account>([
-                SELECT Id, Planning_Path__c 
-                FROM Account 
-                WHERE Id IN :accountIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(accountBaseQuery)) {
+            accountMap = new Map<Id, Account>((List<Account>)Database.query(accountBaseQuery));
         }
 
         // 3. Query Parent Template Settings
         Map<Id, Opportunity> templateMap = new Map<Id, Opportunity>();
-        if(!templateIds.isEmpty()) {
-            templateMap = new Map<Id, Opportunity>([
-                SELECT Id, Planning_Path__c 
-                FROM Opportunity 
-                WHERE Id IN :templateIds
-                WITH USER_MODE
-            ]);
+        if(String.isNotBlank(templateBaseQuery)) {
+            templateMap = new Map<Id, Opportunity>((List<Opportunity>)Database.query(templateBaseQuery));
         }
 
         // 4. Assign Values based on Hierarchy

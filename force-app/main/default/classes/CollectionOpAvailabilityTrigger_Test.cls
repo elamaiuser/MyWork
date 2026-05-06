@@ -14,7 +14,7 @@ private class CollectionOpAvailabilityTrigger_Test {
         sked__Availability_Pattern_Resource__c testPatternResource = new sked__Availability_Pattern_Resource__c(
             sked__Availability_Pattern__c = testWeeklyPattern1.Id,
             sked__Resource__c = testResource1.Id, 
-            sked__Start__c = testDataFactory.summary.startTime.addDays(1)
+            sked__Start__c = DateTime.now()
         );
         insert testPatternResource;
         
@@ -24,8 +24,7 @@ private class CollectionOpAvailabilityTrigger_Test {
         	Availability_Pattern__c = testWeeklyPattern1.Id,
         	Effective_Start_Date__c = system.today(),
         	Effective_End_Date__c = Date.newInstance(4000, 12, 30),
-        	Total_Target__c = 5,
-        	Min_Nbr_of_Staff__c = 3
+        	Total_Target__c = 5
         );
         insert testCoAp;
         
@@ -40,8 +39,8 @@ private class CollectionOpAvailabilityTrigger_Test {
     static testMethod void testUpdateResource() {
         Test.startTest();
         
-        Collection_Operation_Availability__c testCoAp = [SELECT Id, Min_Nbr_of_Staff__c FROM Collection_Operation_Availability__c LIMIT 1];
-        testCoAp.Min_Nbr_of_Staff__c = 2;
+        Collection_Operation_Availability__c testCoAp = [SELECT Id, Total_Target__c FROM Collection_Operation_Availability__c LIMIT 1];
+        testCoAp.Total_Target__c = 2;
         update testCoAp;
         
         Test.stopTest();

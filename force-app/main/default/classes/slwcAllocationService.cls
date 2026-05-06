@@ -95,7 +95,11 @@ global class slwcAllocationService {
         
         List<sked__Resource__c> resources;
         if (request.getAssetsOnly == TRUE) {
-            resources = getAssets(request);
+            if (request.recordIds != NULL && !request.recordIds.isEmpty()) {
+                resources = getAssetsByIds(request);
+            } else {
+                resources = getAssets(request);
+            }
         }
         else if (request.recordIds == NULL || request.recordIds.isEmpty()) {
             resources = getResources(request);
@@ -252,23 +256,24 @@ global class slwcAllocationService {
                                              sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
-                                             
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
+
                                              (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate),
-                                             
+
                                              (SELECT Id, sked_Resource__c, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked_Resource_Biomed_Collection_Ops__r
-                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate) 
+                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate)
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :request.minDate))
-                                             
+
                                              FROM sked__Resource__c
-                                             WHERE (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds 
+                                             WHERE (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds
                                                     OR Id IN :request.additionalResourceIds)
                                              AND sked_Asset_Type__c != NULL
                                              AND sked__Is_Active__c = TRUE
                                              AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                             AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                              ORDER BY Name
                                              LIMIT :request.pageSize
                                              OFFSET :request.offset];
@@ -321,8 +326,8 @@ global class slwcAllocationService {
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
                                              sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
-                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c,
+                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
                                              sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              
@@ -441,8 +446,8 @@ global class slwcAllocationService {
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.sked_Work_Week_First_Day__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s, sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s,
                                              sked_Biomed_Collection_Op_Center_Name__c, sked_Daily_Time_Off_Hours__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c, 
-                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Termination_Date__c, sked_Planned_Termination_Date__c,
+                                             sked_Anticipated_Leave_Return_Date__c, sked__Is_Active__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c,
                                              sked_Max_Travel_Time__c, sked_Employment_Status__c,
                                              sked_Address_Referenced_for_Scheduling__c, Use_CO_Address_for_Scheduling__c, sked_Max_Working_Days_Per_Week__c,
                                              
@@ -532,17 +537,17 @@ global class slwcAllocationService {
                                              sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
                                              sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
                                              sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
-                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Max_Travel_Time__c,
-                                             
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
+
                                              (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Account_Resource_Scores__r
                                               WHERE sked__Account__c IN :request.accountIds),
-                                             
+
                                              (SELECT Id, sked__Location__c, sked__Blacklisted__c, sked__Whitelisted__c
                                               FROM sked__Location_Resource_Scores__r
                                               WHERE sked__Location__c IN :request.locationIds),
-                                             
-                                             (SELECT Id, sked__Description__c, sked__End__c, sked_End_Date__c, sked__GeoLocation__c, sked__GeoLocation__Longitude__s, 
+
+                                             (SELECT Id, sked__Description__c, sked__End__c, sked_End_Date__c, sked__GeoLocation__c, sked__GeoLocation__Longitude__s,
                                               sked__GeoLocation__Latitude__s, sked__Home_Address__c, sked__Resource__c, sked__Start__c, sked_Start_Date__c,
                                               sked_Is_Travel_Required__c
                                               FROM sked__Resource_Overrides__r
@@ -606,17 +611,105 @@ global class slwcAllocationService {
                                              AND (
                                                  Id IN :request.allocatedResourceIds
                                                  OR (
-                                                     (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds 
+                                                     (sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c IN :request.collectionOperationIds
                                                       OR Id IN :request.additionalResourceIds)
                                                      AND (
                                                          sked__Is_Active__c = TRUE
                                                          AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                                         AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                                      )
                                                  )
                                              )
                                              ORDER BY Name
                                              LIMIT :request.pageSize
                                              OFFSET :request.offset];
+        return resources;
+    }
+
+    private static List<sked__Resource__c> getAssetsByIds(getResourceDataRequestModel request) {
+        List<string> excludedActivityTypes = new List<string>();
+        excludedActivityTypes.add(skedConstants.ACTIVITY_TYPE_AFTER_HOURS_CALL_OUT_MANAGEMENT);
+        excludedActivityTypes.add(skedConstants.ACTIVITY_TYPE_ON_CALL);
+
+        List<sked__Resource__c> resources = [SELECT Id, Name, sked__Email__c, sked__User__c, sked__Resource_Type__c, sked_Asset_Type__c, sked_Mobile_Type__c,
+                                             sked_Equipment_Subtype__c, sked__Is_Active__c,
+                                             sked__Primary_Region__c, sked__Home_Address__c, sked__GeoLocation__Longitude__s, sked__GeoLocation__Latitude__s,
+                                             sked__Category__c, sked__User__r.SmallPhotoUrl, sked_Pres_Donor_Capacity__c,
+                                             sked_Maximum_Travel_Radius__c, sked_Turnaround_Time__c, sked_Max_Hours_Per_Week__c,
+                                             sked__Primary_Phone__c, sked__Primary_Region__r.sked__Timezone__c, sked_Dedicated_to_Site__c,
+                                             sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Biomed_Collection_Op_Center_Name__c,
+                                             sked_CDL__c, sked_DOT__c, sked_Effective_Date__c, sked_Future_Inactive_Date__c, sked_Max_Travel_Time__c,
+
+                                             (SELECT Id, sked__Account__c, sked__Blacklisted__c, sked__Whitelisted__c
+                                              FROM sked__Account_Resource_Scores__r
+                                              WHERE sked__Account__c IN :request.accountIds),
+
+                                             (SELECT Id, sked__Location__c, sked__Blacklisted__c, sked__Whitelisted__c
+                                              FROM sked__Location_Resource_Scores__r
+                                              WHERE sked__Location__c IN :request.locationIds),
+
+                                             (SELECT Id, sked__Description__c, sked__End__c, sked_End_Date__c, sked__GeoLocation__c, sked__GeoLocation__Longitude__s,
+                                              sked__GeoLocation__Latitude__s, sked__Home_Address__c, sked__Resource__c, sked__Start__c, sked_Start_Date__c,
+                                              sked_Is_Travel_Required__c
+                                              FROM sked__Resource_Overrides__r
+                                              WHERE sked_Start_Date__c <= :request.maxDate AND sked_End_Date__c >= :request.minDate),
+
+                                             (SELECT Id, sked__Tag__c, sked__Tag__r.Name, sked_Start_Date__c, sked__Tag__r.sked__Type__c, sked_Restriction_Start_Date__c, sked_Restriction_End_Date__c
+                                              FROM sked__ResourceTags__r
+                                              WHERE sked_Start_Date__c <= :request.maxDate),
+
+                                             (SELECT Id, Name, sked__Job__c, sked__Job__r.Name,
+                                              sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s,
+                                              sked__Job__r.sked__Type__c, sked__Status__c,
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              FROM sked__Job_Allocations__r
+                                              WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+                                              AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+                                              AND sked__Start__c <= :request.maxTurnAroundDateTime
+                                              AND sked__Set_End__c >= :request.minTurnAroundDateTime
+                                              AND sked__Job__c NOT IN :request.jobIds
+                                              AND sked__Job__r.sked_Drive__c NOT IN :request.excludedDriveIds
+                                              ORDER BY sked__Start__c ASC),
+
+                                             (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
+                                              sked__Type__c
+                                              FROM sked__Activities__r
+                                              WHERE sked_Start_Date__c IN :request.allDates
+                                              AND sked__Type__c NOT IN :excludedActivityTypes
+                                              AND Id NOT IN :request.excludedActivityIds
+                                              ORDER BY sked__Start__c ASC),
+
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
+                                              FROM sked__Availabilities1__r
+                                              WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+                                              AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
+                                              ORDER BY sked__Start__c ASC),
+
+                                             (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked_Is_Available__c
+                                              FROM sked_Custom_Availabilities__r
+                                              WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
+                                              ORDER BY sked_Start__c ASC),
+
+                                             (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c, sked__Availability_Pattern__r.Name, sked_Start_Time__c, sked_End_Time__c
+                                              FROM sked__Availability_Pattern_Resources__r
+                                              WHERE sked_Start_Date__c <= :request.maxDate
+                                              AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
+
+                                             (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c, sked_Start_Date__c, sked_End_Date__c
+                                              FROM sked__Activity_Resources__r
+                                              WHERE sked__Activity__r.sked_Start_Date__c <= :request.maxDate
+                                              AND sked__Activity__r.sked_End_Date__c >= :request.minDate
+                                              AND sked__Activity__r.sked__Type__c NOT IN :excludedActivityTypes
+                                              AND sked__Activity__c NOT IN :request.excludedActivityIds),
+
+                                             (SELECT Id, sked_Resource__c, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
+                                              FROM sked_Resource_Biomed_Collection_Ops__r
+                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate)
+                                              AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate))
+
+                                             FROM sked__Resource__c
+                                             WHERE sked_Asset_Type__c != NULL
+                                             AND Id IN :request.recordIds];
         return resources;
     }
     
@@ -661,6 +754,7 @@ global class slwcAllocationService {
                                              AND (
                                                  sked__Is_Active__c = TRUE
                                                  AND (sked_Effective_Date__c = NULL OR sked_Effective_Date__c <= :request.maxDate)
+                                                 AND (sked_Future_Inactive_Date__c = NULL OR sked_Future_Inactive_Date__c > :request.minDate)
                                              )
                                          )
                                      )];

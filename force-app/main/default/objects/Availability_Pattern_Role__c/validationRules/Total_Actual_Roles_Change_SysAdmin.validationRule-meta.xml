@@ -6,7 +6,14 @@
     <errorConditionFormula>AND(
 NOT($User.FirstName &amp; &apos; &apos; &amp; $User.LastName = &apos;Automated Process&apos;),
 NOT($Profile.Name = &apos;System Administrator&apos;),
-NOT(ISBLANK( Actual_Count_of_Role__c )))</errorConditionFormula>
+OR(
+AND(
+ISNEW(),
+NOT(ISBLANK( Actual_Count_of_Role__c ))
+),
+ISCHANGED( Actual_Count_of_Role__c )
+)
+)</errorConditionFormula>
     <errorDisplayField>Actual_Count_of_Role__c</errorDisplayField>
     <errorMessage>Only System Admins are allowed to modify this field</errorMessage>
 </ValidationRule>

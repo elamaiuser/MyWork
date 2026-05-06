@@ -65,6 +65,11 @@
                 <default>false</default>
                 <label>Optimizer</label>
             </value>
+            <value>
+                <fullName>Operation Record - Employee Report</fullName>
+                <default>false</default>
+                <label>Operation Record - Employee Report</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

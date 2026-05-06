@@ -603,6 +603,16 @@
                 <identifier>Recordsked_GeoLocation_cField2</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.sked_Next_Travel_Time_Refresh_Date__c</fieldItem>
+                <identifier>Recordsked_Next_Travel_Time_Refresh_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-32406a0d-7a4a-4954-af9e-c58e7a153e26</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -2393,11 +2403,27 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>SELECT Title, Description,Expiry_Date__c  FROM ContentVersion</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>additionalFilter</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>childObjectName</name>
+                    <value>ContentVersion</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Title, Description,Expiry_Date__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldwithOrderBy</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
