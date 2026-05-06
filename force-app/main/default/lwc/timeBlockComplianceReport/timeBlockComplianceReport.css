@@ -2,7 +2,12 @@
     overflow-x: auto;
     max-height: 500px;
 }
+.datatable-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 
-.scroll-inner {
-    min-width: 1500px; /* or wider if needed */
+.datatable-container lightning-datatable {
+    min-width: 2200px;
 }

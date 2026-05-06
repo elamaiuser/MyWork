@@ -104,6 +104,22 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>sked_Low_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_High_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Medium_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Role_Priorities_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>sked_Available_Day_Trade_Window__c</field>
             </layoutItems>
         </layoutColumns>
@@ -357,7 +373,12 @@
                 <field>sked_Maximum_Travel_Time_Slots__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>sked_Next_Travel_Time_Refresh_Date__c</field>
+            </layoutItems>
+        </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -367,14 +388,22 @@
         <label>Grand Totals (AP)</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Grand_Total_Available_AP__c</field>
+                <behavior>Edit</behavior>
+                <field>Grand_Total_Needed_Fixed_Site__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Grand_Total_Needed_Mobile__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Grand_Total_Needed_AP__c</field>
+                <behavior>Readonly</behavior>
+                <field>Grand_Total_Available_Fixed_Site__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Grand_Total_Available_Mobile__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -439,7 +468,9 @@
         <fields>NAME</fields>
         <fields>sked_Type__c</fields>
         <fields>sked_Resource_Role_Group__c</fields>
+        <fields>sked_Days_of_Week__c</fields>
         <fields>sked_Drive_Type__c</fields>
+        <fields>sked_Mobile_Type__c</fields>
         <fields>sked_Effective_Start_Date__c</fields>
         <fields>sked_Effective_End_Date__c</fields>
         <fields>sked_Fixed_Site_Operation_Type__c</fields>

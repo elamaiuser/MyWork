@@ -154,11 +154,27 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>SELECT Title, Description FROM ContentVersion</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>additionalFilter</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>childObjectName</name>
+                    <value>ContentVersion</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Title, Description</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldwithOrderBy</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -181,7 +197,7 @@
                     <value>Edit</value>
                 </componentInstanceProperties>
                 <componentName>GenericRelatedListContainer</componentName>
-                <identifier>c_GenericRelatedListContainer</identifier>
+                <identifier>GenericRelatedListContainer</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-6531f0d3-ff72-4a82-ba36-6709400635ac</name>

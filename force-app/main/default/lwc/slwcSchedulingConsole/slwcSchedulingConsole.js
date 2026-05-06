@@ -17,7 +17,8 @@ const TABS = {
   DRIVE_OPTIMIZER: 'driveOptimizer',
   EXCEPTION_CONSOLE: 'exceptionConsole',
   APPROVAL_CONSOLE: 'approvalConsole',
-  CALL_OUTS: 'callOuts'
+  CALL_OUTS: 'callOuts',
+  VEHICLE_REPLACEMENT: 'vehicleReplacement'
 }
 export default class SlwcSchedulingConsole extends LightningElement {
   @track currentUser = {};
@@ -77,6 +78,12 @@ export default class SlwcSchedulingConsole extends LightningElement {
   }
   get showCallOutsTab() {
     return this.currentTab === TABS.CALL_OUTS;
+  }
+  get vehicleReplacementTabEnabled() {
+    return (this.tabList || []).indexOf(TABS.VEHICLE_REPLACEMENT) > -1;
+  }
+  get showVehicleReplacementTab() {
+    return this.currentTab === TABS.VEHICLE_REPLACEMENT;
   }
   get driveCalendarReadonly() {
     const driveHelper = new DriveHelper();
@@ -141,7 +148,8 @@ export default class SlwcSchedulingConsole extends LightningElement {
       TABS.DRIVE_OPTIMIZER,
       TABS.EXCEPTION_CONSOLE,
       TABS.APPROVAL_CONSOLE,
-      TABS.CALL_OUTS
+      TABS.CALL_OUTS,
+      TABS.VEHICLE_REPLACEMENT
     ];
 
     let limitedProfile = ['DRD Profile', 'DRD Manager', 'Biomed Read Only', 'Recruitment Admin'];

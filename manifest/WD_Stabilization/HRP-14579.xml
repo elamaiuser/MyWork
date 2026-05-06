@@ -37,12 +37,18 @@
 		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_Resource</members>
 		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_WDStaging</members>
 		<members>BSF_Access_Control_Rule.HRP_14579_Object_PermissionSet_WDStaging</members>
+        <members>BSF_Access_Control_Rule.HRP_14579_Class_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
 
     <types>
 		<members>BSF_Workday_Staging__c.Real_ID_Compliance</members>
 		<name>RecordType</name>
+	</types>
+
+    <types>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
 	</types>
 
     <version>65.0</version>

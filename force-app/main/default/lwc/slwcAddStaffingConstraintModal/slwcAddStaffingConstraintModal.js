@@ -231,10 +231,11 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
     }
   }
 
-  handleCancel = () => {
+  handleCancel = (savedModels = null) => {
     const closeEvent = new CustomEvent("close", {
       detail: {
-        result: !!this.dataSaved
+        result: !!this.dataSaved,
+        ...(savedModels && { savedModels })
       }
     });
     this.dispatchEvent(closeEvent);
@@ -463,7 +464,7 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
 
           this.dataSaved = true;
 
-          this.handleCancel();
+          this.handleCancel(modelsToSave);
         }
       })
       .catch((error) => this.exceptionHandler(error))

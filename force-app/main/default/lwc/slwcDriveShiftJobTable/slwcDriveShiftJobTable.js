@@ -82,6 +82,7 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                         this.driveHelper.isTelerecuiterUser(this.masterData.loginUser)
                     ) {
                         rowActions.push({ label: 'Bulk Edit', name: 'bulk-edit-volunteer-jobs'});
+                        rowActions.push({ label: 'Bulk Add', name: 'bulk-add-volunteer-jobs'});
                     }
                 }
             }
@@ -113,8 +114,13 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
     }
     
     bulkEditVolunteerJobs(job) {
-        let eventValues = {action: "bulk-edit-volunteer-jobs", drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
+        let eventValues = {drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job};
         fireEvent(this.pageRef, 'showBulkEditVolunteerJobsModal', eventValues);
+    }
+
+    bulkAddVolunteerJobs(job) {
+        let eventValues = {drive: this.drive, driveShift: this.shift, resourceType: this.resourceType, job: job, masterData: this.masterData};
+        fireEvent(this.pageRef, 'showBulkAddVolunteerJobsModal', eventValues);
     }
 
     deleteJob(job) {
@@ -133,6 +139,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
             case 'bulk-edit-volunteer-jobs':
                 this.bulkEditVolunteerJobs(row);
                 break;
+            case 'bulk-add-volunteer-jobs':
+                this.bulkAddVolunteerJobs(row);
+                break;
             case 'delete':
                 this.deleteJob(row);
                 break;
@@ -149,6 +158,9 @@ export default class SlwcDriveShiftJobTable extends LightningElement {
                 break;
             case 'bulk-edit-volunteer-jobs':
                 this.bulkEditVolunteerJobs(row);
+                break;
+            case 'bulk-add-volunteer-jobs':
+                this.bulkAddVolunteerJobs(row);
                 break;
             case 'delete':
                 this.deleteJob(row);
