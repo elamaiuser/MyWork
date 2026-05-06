@@ -46,6 +46,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         Date today = Date.today();
         DateTime todayStart = DateTime.newInstance(today.year(), today.month(), today.day(), 0, 0, 0);
 
+        // Semi-join: only ops with at least one staff row
         return Database.getQueryLocator([
             SELECT Id, CreatedDate, sked_Workday_Submission_Status__c, sked_Drive__c,
                 sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Type_of_Drive__c,
@@ -55,6 +56,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             AND sked_Drive__c != null
             AND sked_Locked__c = true
             AND CreatedDate < :todayStart
+            AND Id IN (SELECT sked_Operation_Record__c FROM sked_Operation_Record_Staff__c)
         ]);
     }
 
@@ -91,11 +93,20 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         if (toProcess.isEmpty()) {
             return;
         }
+        List<sked_Operation_Record__c> opsWithStaff = new List<sked_Operation_Record__c>();
+        for (sked_Operation_Record__c op : toProcess) {
+            if (op.sked_Operation_Record_Staff__r != null && !op.sked_Operation_Record_Staff__r.isEmpty()) {
+                opsWithStaff.add(op);
+            }
+        }
+        if (opsWithStaff.isEmpty()) {
+            return;
+        }
         // Build all Ops Record requests in one shot to avoid repeated SOQL for  each record.
         Map<Id, skedOpsRecordApiData.opsRecordRequest> opRecordRequestById = new Map<Id, skedOpsRecordApiData.opsRecordRequest>();
-        List<skedOpsRecordApiData.opsRecordRequest> batchedRequests = skedOperationRecordUtils.getOpsRecordRequests(toProcess);
-        for (Integer i = 0; i < toProcess.size() && i < batchedRequests.size(); i++) {
-            opRecordRequestById.put(toProcess[i].Id, batchedRequests[i]);
+        List<skedOpsRecordApiData.opsRecordRequest> batchedRequests = skedOperationRecordUtils.getOpsRecordRequests(opsWithStaff);
+        for (Integer i = 0; i < opsWithStaff.size(); i++) {
+            opRecordRequestById.put(opsWithStaff[i].Id, batchedRequests[i]);
         }
         Map<Date, List<OpRecordContext>> byDriveDate = groupByDriveDate(toProcess);
         List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> allBlocks = new List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType>();
