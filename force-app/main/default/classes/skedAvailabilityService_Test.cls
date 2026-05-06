@@ -187,6 +187,51 @@ private class skedAvailabilityService_Test {
         Test.stopTest();
     }
     
+    //----------//HRP-16778-----------start
+    @isTest
+    static void getQueryConditions_Test2() {
+        sked__Resource__c testResource = [SELECT Id FROM sked__Resource__c LIMIT 1][0];
+        Biomed_Collection_Op_Center__c testCollectionOperation = [SELECT Id FROM Biomed_Collection_Op_Center__c LIMIT 1][0];
+        sked__Region__c testRegion = [SELECT Id FROM sked__Region__c LIMIT 1][0];
+
+        sked_Staffing_Budget__c testStaffingBudget = new sked_Staffing_Budget__c(
+            sked_Bidding_End_Date__c = System.today(),
+            sked_Bidding_Start_Date__c = System.today().addYears(1),
+            sked_Biomed_Collection_Op_Center__c = testCollectionOperation.id,
+            sked_Request_Type__c = skedConstants.STAFFING_BUDGET_REQUEST_TYPE_OPEN_ENROLLMENT,
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = System.today(),
+            sked_Total_Slots__c = 100
+        );
+        insert testStaffingBudget;
+
+        sked_Staffing_Budget_Collection_Op__c testStaffingBudgetCo1 = new sked_Staffing_Budget_Collection_Op__c(
+            sked_Staffing_Budget__c = testStaffingBudget.Id,
+            sked_Biomed_Collection_Operation__c = testCollectionOperation.Id
+        );
+        insert testStaffingBudgetCo1;
+
+        skedAvailabilityService.queryModel model = new skedAvailabilityService.queryModel();
+        model.availabilityStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+        model.biomedCollectionOpIds = new List<String>{testCollectionOperation.Id};
+        model.isAvailable = true;
+        model.isCalloutRelated = true;
+        model.regionIds = new List<String>{testRegion.Id};
+        model.resourceCategories = new List<String>{skedConstants.RESOURCE_TYPE_PERSON};
+        model.roles = new List<String>{'2RBC'};
+        model.statuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};
+
+        Test.startTest();
+            skedAvailabilityService service = new skedAvailabilityService();
+            service.query(model);
+        	model.isException = false;
+        	model.isCalloutRelated = null;
+        	service.query(model);
+        Test.stopTest();
+    }
+    //----------//HRP-16778-----------end
+    
     @TestSetup
     static void makeData() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);

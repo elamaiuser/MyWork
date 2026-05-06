@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Taxonomy_Running__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates whether a Taxonomy automation process is currently in progress.
+This flag is set to TRUE at the beginning of the BSF_Batch_BSFPortfolio execution and remains true until all chained Taxonomy batches have completed.
+Used by downstream processes—such as the Platform Event trigger (Add_Update_OpptyTeamMembers)—to prevent unintended BSF_Batch_OpportunityTeamSync batch executions during Taxonomy processing.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Indicates whether a Taxonomy automation process is currently in progress.
+This flag is set to TRUE at the beginning of the BSF_Batch_BSFPortfolio execution and remains true until all chained Taxonomy batches have completed.
+Used by downstream processes—such as the Platform Event trigger (Add_Update_OpptyTeamMembers)—to prevent unintended BSF_Batch_OpportunityTeamSync batch executions during Taxonomy processing.</inlineHelpText>
+    <label>Is Taxonomy Running</label>
+    <type>Checkbox</type>
+</CustomField>

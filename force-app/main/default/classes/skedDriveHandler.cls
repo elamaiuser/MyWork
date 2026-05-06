@@ -375,7 +375,7 @@ public class skedDriveHandler extends skedTriggerHub {
                     sked_Drive__c newRecordDrive = newRecordsById.get(driveShift.sked_Drive__c);                    
                     newRecordDrive.addError(errorMessage);
                 }
-           }
+            }
         }
     }
     }

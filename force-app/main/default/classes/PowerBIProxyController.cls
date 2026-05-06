@@ -21,7 +21,7 @@ public class PowerBIProxyController
         reference.setRedirect(true);
         return reference;
     }
-    
+
     public string generateUrl()
     {
         String pageName = ApexPages.currentPage().getUrl().substringAfter('apex/').split('\\?')[0];

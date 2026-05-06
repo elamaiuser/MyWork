@@ -175,5 +175,58 @@ private class slwcResourceService_Test {
         
         Test.stopTest();
     }
-    
+
+    static testmethod void getVehiclesForCOs_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        Biomed_Collection_Op_Center__c testCo = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
+        sked__Resource__c testVehicle1 = (sked__Resource__c) mapTestData.get('testVehicle1');
+        sked__Resource__c testVehicle2 = (sked__Resource__c) mapTestData.get('testVehicle2');
+
+        Test.startTest();
+
+        slwcResourceService.getVehiclesForCOsRequestModel model = new slwcResourceService.getVehiclesForCOsRequestModel();
+        model.collectionOperationIds = new List<Id>{testCo.Id};
+        model.startDate = String.valueOf(Date.today());
+        model.endDate = String.valueOf(Date.today().addDays(30));
+        slwcAuraResult result = slwcResourceService.getVehiclesForCOs(model);
+
+        Test.stopTest();
+
+        System.assertNotEquals(null, result.returnedData, 'Result should have returned data');
+        slwcResourceService.vehicleListDataModel data = (slwcResourceService.vehicleListDataModel) result.returnedData;
+        System.assertNotEquals(null, data.vehicles, 'Vehicles list should not be null');
+        System.assert(data.vehicles.size() >= 2, 'Should return at least 2 vehicles for the CO');
+
+        Set<Id> returnedVehicleIds = new Set<Id>();
+        for (sked__Resource__c v : data.vehicles) {
+            returnedVehicleIds.add(v.Id);
+        }
+        System.assert(returnedVehicleIds.contains(testVehicle1.Id), 'Should contain testVehicle1');
+        System.assert(returnedVehicleIds.contains(testVehicle2.Id), 'Should contain testVehicle2');
+        System.assertNotEquals(null, data.relocatedIds, 'Relocated IDs list should not be null');
+    }
+
+    static testmethod void getVehiclesForCOs_NoDates_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        Biomed_Collection_Op_Center__c testCo = (Biomed_Collection_Op_Center__c) mapTestData.get('testCollectionOperation1');
+
+        Test.startTest();
+
+        slwcResourceService.getVehiclesForCOsRequestModel model = new slwcResourceService.getVehiclesForCOsRequestModel();
+        model.collectionOperationIds = new List<Id>{testCo.Id};
+        slwcAuraResult result = slwcResourceService.getVehiclesForCOs(model);
+
+        Test.stopTest();
+
+        System.assertNotEquals(null, result.returnedData, 'Result should have returned data');
+        slwcResourceService.vehicleListDataModel data = (slwcResourceService.vehicleListDataModel) result.returnedData;
+        System.assertNotEquals(null, data.vehicles, 'Vehicles list should not be null');
+        System.assert(data.vehicles.size() >= 2, 'Should return vehicles when dates default to today/today+1year');
+    }
 }

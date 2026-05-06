@@ -340,8 +340,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 
                 Date oldTaxEndDate =  (oldKeyToTaxMap != null) ? (oldKeyToTaxMap.containsKey(terrKey)) ? oldKeyToTaxMap.get(terrKey).End_Date__c : null : null;
                 if(terrKey != null &&  oldTaxEndDate !=null){
-                    if ( (tco.sked_Start_Date__c < oldKeyToTaxMap.get(terrKey).End_Date__c) && 
-                        (tco.sked_End_Date__c != oldKeyToTaxMap.get(terrKey).End_Date__c) ) {
+                    if ( (tco.sked_Start_Date__c < oldKeyToTaxMap.get(terrKey).End_Date__c) && (tco.sked_End_Date__c != oldKeyToTaxMap.get(terrKey).End_Date__c) ) {
                     
                         tco.sked_End_Date__c = oldKeyToTaxMap.get(terrKey).End_Date__c;
                         tcosToEndDateList.add(tco);  
