@@ -108,8 +108,7 @@
                 </div>
             </div>
 
-            <div class="scroll-wrapper">
-                <div class="scroll-inner">
+            <div class="datatable-container">
                     <lightning-datatable
                         style="min-width: 2000px;"
                         key-field="rowId"
@@ -119,9 +118,10 @@
                         sorted-direction={sortDirection}
                         onsort={handleSort}
                         hide-checkbox-column
-                        wrap-text-max-lines="5">
+                        wrap-text-max-lines="3"
+                        column-widths-mode="fixed"
+                        min-column-width="120">
                     </lightning-datatable>
-                </div>
             </div>
         </template>
 

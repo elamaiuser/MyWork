@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Enable_Direct_Workday_Submission__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>When true, UI saves as Draft and batch submits to Workday; when false, existing Azure path is used.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Enable Direct Workday Submission</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -197,9 +197,11 @@ global class skedDriveCOChangedBatch implements Database.Batchable<sObject>, Dat
         
         List<sked_Drive_Change_Request_Item__c> driveChangeRequestItemsToDelete = new List<sked_Drive_Change_Request_Item__c>();
         if (!dcrsToUpsert.isEmpty()) {
-            List<Database.UpsertResult> upsertResult = Database.upsert(dcrsToUpsert, false);   //HRP-14438
-            BSF_Utilities.createErrorLog(upsertResult,'Taxonomy Run','skedDriveCOChangedBatch','Constructor','Error','Error occured while upserting the record');
-                                   
+        List<Database.UpsertResult> upsertResult = Database.upsert(dcrsToUpsert, false);   //HRP-14438
+        List<BSF_Error_Log__c> errorList = BSF_Utilities.createErrorLog(upsertResult,'Taxonomy Run','skedDriveCOChangedBatch','Constructor','Error','Error occured while upserting the record');
+        if(!errorList.isEmpty()){
+            Database.insert(errorList, false);
+        }                        
             
             
             //  upsert dcrsToUpsert;
