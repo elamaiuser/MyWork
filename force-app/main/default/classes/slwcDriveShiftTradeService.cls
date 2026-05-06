@@ -1442,6 +1442,20 @@ global class slwcDriveShiftTradeService implements Callable {
             }
         } catch (skedException ex) {
             result.addError(ex);
+        } catch (Exception ex) {
+            BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogForExceptions(
+                ex,
+                'slwcDriveShiftTradeService',
+                'call.' + methodName,
+                ex.getMessage(),
+                ex.getMessage(),
+                'sked_Drive_Shift_Trade__c',
+                (String) params.get('param1')
+            );
+            if (errorLog != null) {
+                Database.insert(new List<BSF_Error_Log__c>{ errorLog }, false);
+            }
+            result.addError(ex);
         }
 
         return result;
