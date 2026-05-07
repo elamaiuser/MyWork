@@ -109,6 +109,13 @@
         <div
           class="slds-m-top_x-large slds-staffing-constrain-mass-update__grid"
         >
+
+          <template if:true={hasActiveTimeBlocks}>
+            <p class="slds-staffing-constrain-mass-update__banner--active-time-blocks slds-m-bottom_small">
+              Time Blocks are active for the selected Collection Operation(s) - all constraints must be added/edited at the Time Block level
+            </p>
+          </template>
+
           <div class="slds-scrollable_x">
             <table if:true={isTableVisible}>
               <thead>

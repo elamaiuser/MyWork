@@ -52,7 +52,6 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
         const selectedResolution = resolutions[key] || null;
         const options = (c.resolutionOptions || []).map(opt => ({
           ...opt,
-          name: key,
           isChecked: selectedResolution === opt.value
         }));
         return { ...c, key, selectedResolution, options };
@@ -142,7 +141,7 @@ export default class SlwcVehicleReplacementDriveList extends LightningElement {
 
   handleContentionResolution(event) {
     const conKey = event.target.dataset.conKey;
-    const resolution = event.target.value;
+    const resolution = event.target.checked ? event.target.value : null;
     this.dispatchEvent(new CustomEvent('contentionresolution', {
       detail: { conKey, resolution }
     }));

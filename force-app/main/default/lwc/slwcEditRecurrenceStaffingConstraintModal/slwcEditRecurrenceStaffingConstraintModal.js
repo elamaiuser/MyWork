@@ -192,6 +192,26 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     record[event.currentTarget.name] = value;
 
     this.handleStep2ValidateRecord(record);
+
+    if( event.currentTarget.name === 'totalStaffConstraints') {
+      this.autoSyncTotalCoStaffConstraints(record);
+    }
+  }
+
+  autoSyncTotalCoStaffConstraints = (record) => {
+    if (record.timeBlockId && record.driveType === DRIVE_TYPE.MOBILE) {
+      const tbTotal = this.model.STEP2.records
+        .filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint)
+        .reduce((sum, r) => sum + (Number(r.totalStaffConstraints) || 0), 0);
+      const coRecord = this.model.STEP2.records.find(
+        r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === record.dateOfConstraint
+      );
+
+      if (coRecord) {
+        coRecord.totalStaffConstraints = tbTotal;
+        coRecord.rowClass = 'row--auto-synced';
+      }
+    }
   }
 
   handleStep2DeleteRecord = (event) => {
@@ -360,14 +380,39 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
     }
   }
 
-  handleCancel = () => {
+  handleCancel = (autoSyncedCoDateKeys = null) => {
     const closeEvent = new CustomEvent('close', {
       detail: {
-        result: !!this.dataSaved
+        result: !!this.dataSaved,
+        ...(autoSyncedCoDateKeys && { autoSyncedCoDateKeys })
       }
     });
     this.dispatchEvent(closeEvent);
     this.isOpen = false;
+  }
+
+  buildCoSyncModels() {
+    const tbRecords = this.model.STEP2.records.filter(r => r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE);
+    if (!tbRecords.length) return [];
+
+    const totals = new Map();
+    tbRecords.forEach(r => {
+      totals.set(r.dateOfConstraint, (totals.get(r.dateOfConstraint) || 0) + (r.totalStaffConstraints || 0));
+    });
+
+    const coModels = [];
+    const autoSyncedKeys = [];
+    totals.forEach((total, date) => {
+      const coRecord = this.model.STEP2.originalRecords.find(
+        r => !r.timeBlockId && r.driveType === DRIVE_TYPE.MOBILE && r.dateOfConstraint === date
+      );
+      if (!coRecord) return;
+      coModels.push({ id: coRecord.id, totalStaffConstraints: total });
+      autoSyncedKeys.push(`${coRecord.collectionOperationId}__${date}`);
+    });
+
+    this._autoSyncedCoDateKeys = autoSyncedKeys;
+    return coModels;
   }
 
   handleSave = () => {
@@ -383,19 +428,22 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
       return deleted;
     });
 
-    let modelsToSave = validRecords.map(item => {
-      return {
-        id: item.id,
-        totalStaffConstraints: item.totalStaffConstraints
-      }
-    })
+    const coModels = this.buildCoSyncModels();
+    const coIds = new Set(coModels.map(m => m.id));
+
+    let modelsToSave = [
+      ...validRecords
+        .filter(item => !coIds.has(item.id))
+        .map(item => ({ id: item.id, totalStaffConstraints: item.totalStaffConstraints })),
+      ...coModels
+    ];
 
     this.showLoading();
     let service = new staffingConstraintService();
     service.deleteList(modelsToDelete)
       .then((result) => {
         if (!result?.success) {throw result;}
-        
+
         return service.saveList(modelsToSave);
       })
       .then((result) => {
@@ -410,7 +458,7 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
 
           this.dataSaved = true;
 
-          this.handleCancel();
+          this.handleCancel(this._autoSyncedCoDateKeys?.length ? this._autoSyncedCoDateKeys : null);
         }
       })
       .catch(error => this.exceptionHandler(error))
@@ -441,6 +489,16 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
       .filter(record => {
         if(!showOnlyErrorRecords) return true;
         return record.validations?.requestedStaffExceeded;
+      })
+      .sort((a, b) => {
+        if (a.dateOfConstraint < b.dateOfConstraint) return -1;
+        if (a.dateOfConstraint > b.dateOfConstraint) return 1;
+        const order = (r) => {
+          if (r.driveType !== DRIVE_TYPE.MOBILE) return 0;
+          if (!r.timeBlockId) return 1;
+          return 2;
+        };
+        return order(a) - order(b);
       });
   }
 
@@ -484,7 +542,8 @@ export default class SlwcEditRecurrenceStaffingConstraintModal extends Lightning
               ...item,
               timeBlockName: item.timeBlock?.name,
               weekdayLong: this.dateUtils.dateIso2WeeekDay(item.dateOfConstraint).weekdayLong,
-              validations: {}
+              validations: {},
+              rowClass: ''
             }
           });
         });

@@ -10,6 +10,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
     public static final String TIME_ENTRY_DRIVER = 'Driver';
     public static final String TIME_ENTRY_OJI = 'Instructor';
     public static final String TIME_ENTRY_LATE_END = 'Drive End Time';
+    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'TIME_ENTRY_CODE-3-112';
     public static final Decimal QUANTITY_PREMIUM = 1;
     
 
@@ -21,6 +22,16 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
         public DateTime shiftStartGmt;
         public DateTime shiftEndGmt;
         public String staffRecordId; // BSF GUID for comment (e.g. sked_Operation_Record_Staff__c Id)
+        public String approverEmail;
+    }
+
+    /**
+     * Wrapper for premium block creation so comment metadata remains per staff row.
+     */
+    public class PremiumStaffContext {
+        public skedOpsRecordApiData.opsRecordStaffDetail detail;
+        public String staffRecordId;
+        public String approverEmail;
     }
 
     /**
@@ -32,7 +43,6 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
         List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes> staffList,
         Set<String> employeeIdsNeedingBase,
         Map<String, String> employeeIdToIanaTimezone,
-        String approverEmail,
         Date driveDate
     ) {
         BaseTimeBlockResult result = new BaseTimeBlockResult();
@@ -61,6 +71,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
             block.Worker_Reference = buildWorkerReference(empId);
             block.Date_x = driveDate;
             block.Time_Entry_Code_Reference = buildTimeEntryReference(TIME_ENTRY_BASE);
+            String approverEmail = String.isNotBlank(st.approverEmail) ? st.approverEmail : '';
             block.Comment = 'BSF: Approved by ' + approverEmail + ' | BSF GUID: ' + (String.isNotBlank(st.staffRecordId) ? st.staffRecordId : '');
             block.Delete_Time_Block = false;
             // If No Meal is selected on the staff record, add the custom worktag so Workday removes the lunch deduction.
@@ -91,18 +102,21 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
      * No In/Out time or timezone needed.
      */
     public static List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> buildPremiumTimeBlocks(
-        List<skedOpsRecordApiData.opsRecordStaffDetail> staffDetails,
-        Date driveDate,
-        String approverEmail,
-        Map<String, String> staffIdToGuid
+        List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext> staffContexts,
+        Date driveDate
     ) {
         List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> blocks = new List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType>();
-        for (skedOpsRecordApiData.opsRecordStaffDetail sd : staffDetails) {
+        for (BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext staffCtx : staffContexts) {
+            if (staffCtx == null || staffCtx.detail == null) {
+                continue;
+            }
+            skedOpsRecordApiData.opsRecordStaffDetail sd = staffCtx.detail;
             String empId = String.valueOf(sd.personID);
             if (empId == null || empId == '0') {
                 continue;
             }
-            String guid = staffIdToGuid != null ? staffIdToGuid.get(empId) : '';
+            String guid = staffCtx.staffRecordId;
+            String approverEmail = String.isNotBlank(staffCtx.approverEmail) ? staffCtx.approverEmail : '';
             String comment = 'BSF: Approved by ' + approverEmail + (String.isNotBlank(guid) ? ' | BSF GUID: ' + guid : '');
 
             if (sd.premiumCharge) {
@@ -122,6 +136,15 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
             }
             if (sd.premiumLateEnd) {
                 blocks.add(buildPremiumBlock(empId, driveDate, TIME_ENTRY_LATE_END, comment));
+            }
+            if (sd.restBreaksNotTaken != null && sd.restBreaksNotTaken > 0) {
+                blocks.add(buildPremiumBlock(
+                    empId,
+                    driveDate,
+                    TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
+                    comment,
+                    sd.restBreaksNotTaken
+                ));
             }
         }
         return blocks;
@@ -156,11 +179,21 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
         String timeEntryCode,
         String comment
     ) {
+        return buildPremiumBlock(employeeId, driveDate, timeEntryCode, comment, QUANTITY_PREMIUM);
+    }
+
+    private static skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType buildPremiumBlock(
+        String employeeId,
+        Date driveDate,
+        String timeEntryCode,
+        String comment,
+        Decimal quantity
+    ) {
         skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType block = new skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType();
         block.Worker_Reference = buildWorkerReference(employeeId);
         block.Date_x = driveDate;
         block.Time_Entry_Code_Reference = buildTimeEntryReference(timeEntryCode);
-        block.Quantity = QUANTITY_PREMIUM;
+        block.Quantity = quantity;
         block.Comment = comment;
         block.Delete_Time_Block = false;
         return block;

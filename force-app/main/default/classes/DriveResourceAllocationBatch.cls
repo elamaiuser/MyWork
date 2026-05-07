@@ -413,7 +413,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             Decimal totalNoOfStaffRequired = 0;
 
             for(sked__Job__c job : driveShift.sked_Jobs__r) {	
-                if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {	
+                if(job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && !drive.sked_Do_Not_Use_Vehicle__c) {	
                     vehicleTypeJob.add(job);
                     driveJobIds.add(job.Id);
                 } else if(job.sked_Asset_Type__c == Constants.JOB_TYPE_EQUIPMENT) {	     
@@ -582,7 +582,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     
     private static String getResourcesToAllocate (sked_Drive__c drive) {	
         String queryString = 'SELECT Id,sked_DOT__c, sked_CDL__c,sked_Dedicated_to_Site__c,sked_Equipment_Subtype__c,sked_Asset_Type__c,sked_Pres_Donor_Capacity__c,sked__Is_Active__c,sked__Primary_Region__c,	'+
-            ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c,(SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c '+
+            ' sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c, sked_Future_Inactive_Date__c, (SELECT sked_Biomed_Collection_Op_Center__c,sked_Start_Date__c,sked_End_Date__c,sked_Resource__c '+
             ' FROM sked_Resource_Biomed_Collection_Ops__r),(SELECT sked__Blacklisted__c,sked__Account__c FROM sked__Account_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Account__c = :driveAccount), '+
             ' (SELECT sked_Collection_Operation__r.Name,sked_Collection_Operation__c,sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Resource_Overrides__r Where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), '+
             ' (SELECT sked__Blacklisted__c,sked__Location__c FROM sked__Location_Resource_Scores__r where sked__Blacklisted__c = true AND sked__Location__c = :driveSite), '+
@@ -591,10 +591,11 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             ' (SELECT sked__Resource__c,sked_Start_Date__c,sked_End_Date__c,sked_Start_Time__c, sked_End_Time__c, sked__Start__c, sked__End__c FROM sked__Activities__r where sked_Start_Date__c <=: driveDate AND sked_End_Date__c >=: driveDate), '+
             ' (SELECT Id, Name,sked__Activity__r.sked_Start_Date__c, sked__Activity__r.sked_End_Date__c,  sked__Resource__c,sked_Start_Time__c, sked_End_Time__c, sked_Start1__c, sked_End__c FROM sked__Activity_Resources__r Where sked__Activity__r.sked_Start_Date__c <= :driveDate AND sked__Activity__r.sked_End_Date__c>= :driveDate), '+
             ' (SELECT sked__Resource__c ,sked_Start_Date__c,sked_Expiry_Date__c, sked__Tag__c,sked_Tag_Type__c FROM sked__ResourceTags__r WHERE sked_Start_Date__c <= :driveDate AND (sked_Expiry_Date__c = NULL OR sked_Expiry_Date__c >= :driveDate)) '+
-            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite)' ; // HRP-11001
+            ' FROM sked__Resource__c WHERE sked__Is_Active__c = true AND (sked_Dedicated_to_Site__c = null OR sked_Dedicated_to_Site__c = :driveSite) '+
+            ' AND (sked_Future_Inactive_Date__c = null OR sked_Future_Inactive_Date__c > :driveDate)' ;
 
         // HRP-11908 --> Starts Here
-        if(isFixedSiteDrive(drive)) {
+        if(isFixedSiteDrive(drive) || drive.sked_Do_Not_Use_Vehicle__c) {
             queryString += ' AND (sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')';
         } else {
             queryString += ' AND (sked_Asset_Type__c = \'Vehicle\' OR sked_Asset_Type__c = \'Equipment\' OR sked_Asset_Type__c = \'2RBC\')' +
@@ -605,7 +606,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     }
 
     private String createDriveQuery () {
-        String queryString = 'SELECT Id, sked_Staff_Capacity__c, Excess_Staff_Capacity__c, Average_Staff_Capacity__c, Name,sked_Status__c, sked_Drive_Shift_Count__c, sked_Day_of_Week__c, sked_2RBC_Projected_Procedures__c, sked_Operation_Type__c,' +
+        String queryString = 'SELECT Id, sked_Do_Not_Use_Vehicle__c, sked_Staff_Capacity__c, Excess_Staff_Capacity__c, Average_Staff_Capacity__c, Name,sked_Status__c, sked_Drive_Shift_Count__c, sked_Day_of_Week__c, sked_2RBC_Projected_Procedures__c, sked_Operation_Type__c,' +
                             ' sked_Total_Products_Projected__c, sked_Maximum_Lunch_Break_Duration__c ,sked_Drive_Site__c,sked_Collection_Operation__c, sked_Total_Equipment_Requested__c, sked_Total_Vehicle_Requested__c,'+
                             ' sked_End_Time__c, sked_Account__c,sked_Collection_Operation__r.sked_Lunch_Break_Before_Draw_Hours__c,sked_Timezone__c,sked_Start_Time__c, sked_Projected_Registered_Donors__c,sked_Drive_Date__c,'+
                             ' sked_Opportunity__c, sked_Opportunity__r.Source__c, sked_Opportunity__r.Calendar_Build_Parent_Opportunity__r.Drive_Date__c, sked_Type_of_Drive__c ,sked_Drive_Site__r.sked_Physical_Location_Type__c,sked_Pending_Action_Reason_Code__c, (SELECT Id,sked_Equipment_Subtype__c,'+

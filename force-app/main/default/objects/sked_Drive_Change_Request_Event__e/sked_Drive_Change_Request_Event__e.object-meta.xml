@@ -4,5 +4,5 @@
     <eventType>HighVolume</eventType>
     <label>Drive Change Request Event</label>
     <pluralLabel>Drive Change Request Events</pluralLabel>
-    <publishBehavior>PublishImmediately</publishBehavior>
+    <publishBehavior>PublishAfterCommit</publishBehavior>
 </CustomObject>

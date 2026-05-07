@@ -20,6 +20,6 @@
     </values>
     <values>
         <field>Task_Type__c</field>
-        <value xsi:nil="true" />
+        <value xsi:type="xsd:string">72 Hour Check-In</value>
     </values>
 </CustomMetadata>

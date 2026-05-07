@@ -1,5 +1,6 @@
 @IsTest
 private class BSF_WorkdayOpsRecordDirectService_Test {
+    private static String lastRequestBody;
 
     /**
      * Simple HttpCalloutMock that can serve both the Employee Report (GET) and
@@ -269,6 +270,129 @@ private class BSF_WorkdayOpsRecordDirectService_Test {
             res.setBody('Server Error');
             return res;
         }
+    }
+
+    private class CaptureImportRequestMock implements HttpCalloutMock {
+        public HTTPResponse respond(HTTPRequest req) {
+            HttpResponse res = new HttpResponse();
+            if (req.getMethod() == 'POST') {
+                lastRequestBody = req.getBody();
+                res.setStatusCode(200);
+                res.setStatus('OK');
+                res.setBody(
+                    '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bsvc="urn:com.workday/bsvc">' +
+                        '<soapenv:Body>' +
+                            '<bsvc:Put_Import_Process_Response>' +
+                                '<bsvc:Import_Process_Reference>' +
+                                    '<bsvc:ID>WID-456</bsvc:ID>' +
+                                '</bsvc:Import_Process_Reference>' +
+                            '</bsvc:Put_Import_Process_Response>' +
+                        '</soapenv:Body>' +
+                    '</soapenv:Envelope>'
+                );
+                return res;
+            }
+            res.setStatusCode(400);
+            res.setStatus('Bad Request');
+            res.setBody('Unexpected method: ' + req.getMethod());
+            return res;
+        }
+    }
+
+    @IsTest
+    static void submitTimeBlocksToWorkday_appliesFormatsOnlyToTimeWorkedBlocks() {
+        lastRequestBody = null;
+        Test.setMock(HttpCalloutMock.class, new CaptureImportRequestMock());
+
+        skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType base1 =
+            new skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType();
+        base1.Worker_Reference = new skedWorkdayTimeTrackingBsvc.WorkerObjectType();
+        base1.Worker_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.WorkerObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.WorkerObjectIDType base1WorkerId =
+            new skedWorkdayTimeTrackingBsvc.WorkerObjectIDType();
+        base1WorkerId.type_x = 'Employee_ID';
+        base1WorkerId.input = '1001';
+        base1.Worker_Reference.ID.add(base1WorkerId);
+        base1.Date_x = Date.newInstance(2026, 4, 10);
+        base1.Time_Entry_Code_Reference = new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectType();
+        base1.Time_Entry_Code_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType base1Code =
+            new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType();
+        base1Code.type_x = 'Time_Code_Reference_ID';
+        base1Code.input = 'Time Worked';
+        base1.Time_Entry_Code_Reference.ID.add(base1Code);
+        base1.In_Date_Time = DateTime.newInstanceGmt(2026, 4, 10, 11, 24, 0);
+        base1.Out_Date_Time = DateTime.newInstanceGmt(2026, 4, 10, 18, 52, 0);
+
+        skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType premium =
+            new skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType();
+        premium.Worker_Reference = new skedWorkdayTimeTrackingBsvc.WorkerObjectType();
+        premium.Worker_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.WorkerObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.WorkerObjectIDType premiumWorkerId =
+            new skedWorkdayTimeTrackingBsvc.WorkerObjectIDType();
+        premiumWorkerId.type_x = 'Employee_ID';
+        premiumWorkerId.input = '1002';
+        premium.Worker_Reference.ID.add(premiumWorkerId);
+        premium.Date_x = Date.newInstance(2026, 4, 10);
+        premium.Time_Entry_Code_Reference = new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectType();
+        premium.Time_Entry_Code_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType premiumCode =
+            new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType();
+        premiumCode.type_x = 'Time_Code_Reference_ID';
+        premiumCode.input = 'Charge';
+        premium.Time_Entry_Code_Reference.ID.add(premiumCode);
+        premium.Quantity = 1;
+
+        skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType base2 =
+            new skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType();
+        base2.Worker_Reference = new skedWorkdayTimeTrackingBsvc.WorkerObjectType();
+        base2.Worker_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.WorkerObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.WorkerObjectIDType base2WorkerId =
+            new skedWorkdayTimeTrackingBsvc.WorkerObjectIDType();
+        base2WorkerId.type_x = 'Employee_ID';
+        base2WorkerId.input = '1003';
+        base2.Worker_Reference.ID.add(base2WorkerId);
+        base2.Date_x = Date.newInstance(2026, 4, 10);
+        base2.Time_Entry_Code_Reference = new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectType();
+        base2.Time_Entry_Code_Reference.ID = new List<skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType>();
+        skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType base2Code =
+            new skedWorkdayTimeTrackingBsvc.Time_Entry_CodeObjectIDType();
+        base2Code.type_x = 'Time_Code_Reference_ID';
+        base2Code.input = 'Time Worked';
+        base2.Time_Entry_Code_Reference.ID.add(base2Code);
+        base2.In_Date_Time = DateTime.newInstanceGmt(2026, 4, 11, 12, 0, 0);
+        base2.Out_Date_Time = DateTime.newInstanceGmt(2026, 4, 11, 20, 0, 0);
+
+        List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> blocks =
+            new List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType>{ base1, premium, base2 };
+        List<Map<String, String>> formats = new List<Map<String, String>>{
+            new Map<String, String>{
+                'In_Date_Time' => '2026-04-10T06:24:00-05:00',
+                'Out_Date_Time' => '2026-04-10T13:52:00-05:00'
+            },
+            new Map<String, String>{
+                'In_Date_Time' => '2026-04-11T07:00:00-05:00',
+                'Out_Date_Time' => '2026-04-11T15:00:00-05:00'
+            }
+        };
+
+        Test.startTest();
+        skedWorkdayImportTimeBlockResponse resp =
+            BSF_WorkdayOpsRecordDirectService.submitTimeBlocksToWorkday(blocks, formats);
+        Test.stopTest();
+
+        System.assertEquals(true, resp.isSuccess, 'Expected Import to succeed in mock');
+        System.assertNotEquals(null, lastRequestBody, 'Request body should be captured');
+        System.assert(lastRequestBody.contains('<ID bsvc:type="Time_Code_Reference_ID">Charge</ID>'),
+            'Premium block should remain in the payload');
+        System.assert(lastRequestBody.contains('<In_Date_Time>2026-04-10T06:24:00-05:00</In_Date_Time>'),
+            'First Time Worked block should get first override');
+        System.assert(lastRequestBody.contains('<Out_Date_Time>2026-04-10T13:52:00-05:00</Out_Date_Time>'),
+            'First Time Worked block should get first out override');
+        System.assert(lastRequestBody.contains('<In_Date_Time>2026-04-11T07:00:00-05:00</In_Date_Time>'),
+            'Second Time Worked block should get second override even after premium block');
+        System.assert(lastRequestBody.contains('<Out_Date_Time>2026-04-11T15:00:00-05:00</Out_Date_Time>'),
+            'Second Time Worked block should get second out override even after premium block');
     }
 }
 
