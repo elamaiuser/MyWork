@@ -15,5 +15,10 @@
     <columns>UFID__c</columns>
     <columns>UPDATEDBY_USER</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>NAME</field>
+        <operation>contains</operation>
+        <value>current</value>
+    </filters>
     <label>All</label>
 </ListView>
