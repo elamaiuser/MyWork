@@ -913,6 +913,7 @@ class MobileGenerator extends BaseGenerator {
 
   /** Process data */
   initDriveShiftsMetadata() {
+    console.log('initDriveShiftsMetadata==>');
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
@@ -1027,6 +1028,7 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateTotalProceduresProjected(record) {
+    console.log('calculateTotalProceduresProjected==>');
     if (!record && !this.drive) return;
     if (!record) {
       record = this.drive;
@@ -1064,6 +1066,7 @@ class MobileGenerator extends BaseGenerator {
 
   /** Drive Shifts metadata */
   calculateDriveShiftsMetadata() {
+    console.log('calculateDriveShiftsMetadata...');
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
@@ -1075,6 +1078,7 @@ class MobileGenerator extends BaseGenerator {
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
     };
     this.drive.driveShiftsMetadata = driveShiftsMetadata;
+    console.log('x2rbcProjectedProcedures=>  ', driveShiftsMetadata.x2rbcProjectedProcedures);
 
     if (this.drive.driveDate && this.drive.startTime && this.drive.endTime) {
       const driveStart = this.helper.newDateTime(this.drive.driveDate, this.drive.startTime, this.masterData.timezoneSidId);
@@ -2731,8 +2735,6 @@ class MobileGenerator extends BaseGenerator {
       return job.volunteerRole === volunteerRole;
     }
 
-    this.initResourceQuantityMap();
-    
     if(!isEmpty(job))  {
       if (!isSpecificVolunteerJob(job, VOLUNTEER_TYPE.DONOR_AMBASSADOR)) return;
       this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, job.isDeleted ? 0 : job.redcrossVolunteerQuantity || 0);
@@ -2767,16 +2769,37 @@ class MobileGenerator extends BaseGenerator {
           };
           driveShiftJobs[originalJobIndex] = originalJob;
         }
-      } else {
-        this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
-        driveShiftJobs = [...(driveShiftJobs || []).filter(item => !item.isManuallyCreated), ...driveShift.jobs];
+      } else if (redcrossVolunteerQuantity > 0) {
+        driveShiftJobs.push(this.buildDonorAmbassadorJob(redcrossVolunteerQuantity));
       }
       driveShift.jobs = driveShiftJobs;
       let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);
       if(!isEmpty(volunteerJob)) this.correctJobTime(volunteerJob, driveShift);
       this.updateShiftMobileSetup(driveShift);
     });
-    
+  }
+
+  buildDonorAmbassadorJob(quantity) {
+    const jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
+    const job = {
+      key: generateUUID(),
+      driveSiteId: this.drive.driveSiteId,
+      collectionOperationId: this.drive.collectionOperationId,
+      address: this.drive.driveSite?.address,
+      latitude: this.drive.driveSite?.geoLocationLatitude,
+      longitude: this.drive.driveSite?.geoLocationLongitude,
+      jobAllocationTimeSource: false,
+      isManuallyCreated: false,
+      manuallyCreatedFrom: '',
+      jobTags: cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]),
+      volunteerRole: VOLUNTEER_TYPE.DONOR_AMBASSADOR,
+      redcrossVolunteerQuantity: quantity,
+      sponsorVolunteerQuantity: 0,
+      quantity,
+      systemQuantity: quantity
+    };
+    job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
+    return job;
   }
 
   onJobChanged(driveShift, job, originalJob) {
