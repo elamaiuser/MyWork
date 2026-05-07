@@ -913,7 +913,6 @@ class MobileGenerator extends BaseGenerator {
 
   /** Process data */
   initDriveShiftsMetadata() {
-    console.log('initDriveShiftsMetadata==>');
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
@@ -1028,7 +1027,6 @@ class MobileGenerator extends BaseGenerator {
   }
 
   calculateTotalProceduresProjected(record) {
-    console.log('calculateTotalProceduresProjected==>');
     if (!record && !this.drive) return;
     if (!record) {
       record = this.drive;
@@ -1066,7 +1064,6 @@ class MobileGenerator extends BaseGenerator {
 
   /** Drive Shifts metadata */
   calculateDriveShiftsMetadata() {
-    console.log('calculateDriveShiftsMetadata...');
     //reset values
     let driveShiftsMetadata = {
       projectedRegisteredDonors: this.drive.projectedRegisteredDonors || 0,
@@ -1078,7 +1075,6 @@ class MobileGenerator extends BaseGenerator {
       resourceRoleGroupRoleTimeDataMap: this.helper.calculateDriveRoleTimeData(this.drive, this.masterData)
     };
     this.drive.driveShiftsMetadata = driveShiftsMetadata;
-    console.log('x2rbcProjectedProcedures=>  ', driveShiftsMetadata.x2rbcProjectedProcedures);
 
     if (this.drive.driveDate && this.drive.startTime && this.drive.endTime) {
       const driveStart = this.helper.newDateTime(this.drive.driveDate, this.drive.startTime, this.masterData.timezoneSidId);
