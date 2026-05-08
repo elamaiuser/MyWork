@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Collection_Operation__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <externalId>false</externalId>
     <label>Collection Operation</label>
     <referenceTo>Biomed_Collection_Op_Center__c</referenceTo>
     <relationshipName>sked_Operations</relationshipName>

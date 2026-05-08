@@ -3,10 +3,10 @@
     <fullName>RequiresEarlyDepartureLateArrivalReasons</fullName>
     <active>false</active>
     <errorConditionFormula>OR(
-AND(ISPICKVAL(sked_Early_Departure_Reasons__c , &#39;&#39;) , 
+AND(ISPICKVAL(sked_Early_Departure_Reasons__c , &apos;&apos;) , 
     (sked_Actual_Shift_End__c &lt; sked_Scheduled_Shift_End__c)
 ),
-AND(ISPICKVAL(sked_Late_Arrival_Reasons__c , &#39;&#39;) , 
+AND(ISPICKVAL(sked_Late_Arrival_Reasons__c , &apos;&apos;) , 
     (sked_Actual_Shift_Start__c &gt;  sked_Scheduled_Shift_Start__c)
 )
 )</errorConditionFormula>

@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Limited_Access_to_Unload__c</fullName>
     <defaultValue>false</defaultValue>
-    <externalId>false</externalId>
     <label>Limited Access to Unload</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
