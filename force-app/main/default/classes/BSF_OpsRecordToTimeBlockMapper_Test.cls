@@ -85,4 +85,3 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
         System.assertEquals(true, hasRestBreakBlock, 'Expected CA Missed/Short Rest Break block');
     }
 }
-

@@ -3,7 +3,7 @@
     <fullName>RequiresEarlyDepartureReasons</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-ISPICKVAL(sked_Early_Departure_Reasons__c , &#39;&#39;) ,
+ISPICKVAL(sked_Early_Departure_Reasons__c , &apos;&apos;) ,
 (sked_Actual_Shift_End__c &lt; Scheduled_Shift_End__c)
 )</errorConditionFormula>
     <errorMessage>Early Departure Reason is required.</errorMessage>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Operation_Record__c</fullName>
-    <externalId>false</externalId>
     <label>Operation Record</label>
     <referenceTo>sked_Operation_Record__c</referenceTo>
     <relationshipLabel>Operation Record Staff</relationshipLabel>

@@ -3,7 +3,7 @@
     <fullName>RequiresLateArrivalReasons</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-ISPICKVAL(sked_Late_Arrival_Reasons__c , &#39;&#39;) ,
+ISPICKVAL(sked_Late_Arrival_Reasons__c , &apos;&apos;) ,
 (sked_Actual_Shift_Start__c &gt; Scheduled_Shift_Start__c)
 )</errorConditionFormula>
     <errorMessage>Late Arrival Reason is required.</errorMessage>

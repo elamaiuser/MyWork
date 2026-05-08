@@ -10,5 +10,15 @@
     <columns>sked_Status__c</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Status__c</field>
+        <operation>equals</operation>
+        <value>Submitted</value>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>equals</operation>
+        <value>OR-563455</value>
+    </filters>
     <label>All</label>
 </ListView>
