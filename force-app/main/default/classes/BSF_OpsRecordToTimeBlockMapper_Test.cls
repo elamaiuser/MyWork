@@ -15,6 +15,7 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
         s.shiftStartGmt = DateTime.newInstance(2026, 1, 1, 8, 0, 0);
         s.shiftEndGmt = DateTime.newInstance(2026, 1, 1, 16, 0, 0);
         s.staffRecordId = 'staff-guid-1';
+        s.approverEmail = 'approver@example.org';
 
         List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes> staffList =
             new List<BSF_OpsRecordToTimeBlockMapper.StaffWithTimes>{ s };
@@ -27,7 +28,6 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
                 staffList,
                 needBase,
                 tzMap,
-                'approver@example.org',
                 Date.newInstance(2026, 1, 1)
             );
 
@@ -54,17 +54,17 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
         sd.premiumDriver = true;
         sd.restBreaksNotTaken = 2;
 
-        List<skedOpsRecordApiData.opsRecordStaffDetail> staffDetails =
-            new List<skedOpsRecordApiData.opsRecordStaffDetail>{ sd };
-
-        Map<String, String> staffIdToGuid = new Map<String, String>{ '456' => 'staff-guid-2' };
+        BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
+        premiumCtx.detail = sd;
+        premiumCtx.staffRecordId = 'staff-guid-2';
+        premiumCtx.approverEmail = 'approver2@example.org';
+        List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext> staffContexts =
+            new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>{ premiumCtx };
 
         List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> blocks =
             BSF_OpsRecordToTimeBlockMapper.buildPremiumTimeBlocks(
-                staffDetails,
-                Date.newInstance(2026, 1, 2),
-                'approver2@example.org',
-                staffIdToGuid
+                staffContexts,
+                Date.newInstance(2026, 1, 2)
             );
 
         // We set three standard premiums + CA missed/short rest break.
@@ -85,4 +85,3 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
         System.assertEquals(true, hasRestBreakBlock, 'Expected CA Missed/Short Rest Break block');
     }
 }
-
