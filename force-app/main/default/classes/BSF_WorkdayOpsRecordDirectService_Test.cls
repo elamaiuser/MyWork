@@ -110,6 +110,11 @@ private class BSF_WorkdayOpsRecordDirectService_Test {
         System.assertEquals(200, resp.statusCode);
         System.assertEquals('WID-123', resp.importProcessId, 'Should parse Import_Process_Reference WID');
         System.assertNotEquals(null, resp.request, 'SOAP request should be captured on the response object');
+        System.assertNotEquals(null, resp.fullSoapRequestXml, 'Full SOAP XML should be available for file logging');
+        System.assert(
+            resp.fullSoapRequestXml.contains('Import_Reported_Time_Blocks'),
+            'Full SOAP should contain Import_Reported_Time_Blocks'
+        );
     }
 
     @IsTest
@@ -395,4 +400,3 @@ private class BSF_WorkdayOpsRecordDirectService_Test {
             'Second Time Worked block should get second out override even after premium block');
     }
 }
-
