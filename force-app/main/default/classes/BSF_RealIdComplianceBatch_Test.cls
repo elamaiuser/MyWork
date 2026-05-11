@@ -247,7 +247,14 @@ private class BSF_RealIdComplianceBatch_Test {
         Date     expiration,
         DateTime lastUpdated
     ) {
+        Id stagingRtId = [
+        SELECT Id FROM RecordType
+        WHERE SObjectType = 'BSF_Workday_Staging__c'
+        AND DeveloperName = 'Real_ID_Compliance'
+        ].Id;
+        
         BSF_Workday_Staging__c s               = new BSF_Workday_Staging__c();
+        s.RecordTypeId                         = stagingRtId;
         s.Employee_ID__c                       = empId;
         s.Resource__c                          = resourceId;
         s.Real_ID_Compliant__c                 = compliant;
