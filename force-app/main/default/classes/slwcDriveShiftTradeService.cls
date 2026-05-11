@@ -263,7 +263,9 @@ global class slwcDriveShiftTradeService implements Callable {
                     sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
                     sked_Additional_Roles__c = tradingStaffJobAllocation.sked_Additional_Roles__c,
                     sked_Drive_Shift_Trade__c = record.Id,
-                    sked_Locked__c = TRUE
+                    sked_Locked__c = TRUE,
+                    sked_DOT__c = tradingStaffJobAllocation.sked_DOT__c,
+                    sked_CDL__c = tradingStaffJobAllocation.sked_CDL__c
                 );
                 jobAllocationInsertList.add(newRequestingStaffJobAllocation);
                 
