@@ -125,6 +125,7 @@
                                 <tr>
                                     <th>Bag</th>
                                     <th>Quantity</th>
+                                    <th>LTOWB Proj</th>
                                     <th></th>
                                 </tr>
                            </thead>
@@ -132,6 +133,7 @@
                                 <tr if:true={driveDeliveryJobs.driveBags} for:each={driveDeliveryJobs.driveBags} for:item="cell" key={cell.key}>
                                     <td>{cell.bagType}</td>
                                     <td>{cell.quantity}</td>
+                                    <td>{cell.ltowbProjection}</td>
                                     <td>
                                         <lightning-button variant="base" data-key={cell.key} label="Delete" onclick={handleDeleteBag} icon-name="utility:delete" class="slds-m-left_x-small">
                                         </lightning-button>
@@ -145,7 +147,7 @@
                                             label=" "
                                             variant="label-hidden"
                                             object-api-name="sked_Drive_Bag__c"
-                                            selected-value={bagType}  
+                                            selected-value={bagType}
                                             pick-listfield-api-name="sked_Bag_Type__c"
                                             oncustompicklistchange={handleOnChangeBag}>
                                         </c-slwc-custom-picklist>
@@ -154,12 +156,25 @@
                                         <lightning-input variant="label-hidden" type="number" name="quantity" label=" " value={quantity} onchange={handleOnChangeBag} max-length="80">
                                         </lightning-input>
                                     </td>
+                                    <td>
+                                        <lightning-input
+                                            if:true={showLtowbProj}
+                                            variant="label-hidden"
+                                            type="number"
+                                            name="ltowbProjection"
+                                            label=" "
+                                            value={ltowbProjection}
+                                            min="0"
+                                            step="1"
+                                            onchange={handleOnChangeBag}>
+                                        </lightning-input>
+                                    </td>
                                     <td class="slds-align-bottom">
                                         <lightning-button variant="base" if:true={showButtonAdd} label="Add" onclick={handleAdd} icon-name="utility:add" class="slds-m-left_x-small"></lightning-button>
                                         <lightning-button variant="base" if:false={showButtonAdd} label="Add" disabled icon-name="utility:add" class="slds-m-left_x-small"></lightning-button>
                                     </td>
-                                </tr>  
-                            </tbody>             
+                                </tr>
+                            </tbody>
                        </table>
                        <div for:each={messages} for:item="item" key={item} class="slds-text-color_error slds-m-vertical--small">{item}</div>
                     </div>
