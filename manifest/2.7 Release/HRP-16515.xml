@@ -18,7 +18,8 @@
         <members>skedWorkdayImportTimeBlockResponse</members>
         <members>BSF_OpsRecordToTimeBlockMapper_Test</members>
         <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
-        <members>BSF_WorkdayOpsRecordDirectService_Test</members>        
+        <members>BSF_WorkdayOpsRecordDirectService_Test</members> 
+        <members>skedOpsRecordApiData</members>       
         <name>ApexClass</name>
     </types>
     <!-- Custom Metadata Type definition and records -->
@@ -54,6 +55,7 @@
         <members>sked_Operation_Record__c.sked_WD_Last_Submission_Date__c</members>
         <members>sked_Operation_Record_Staff__c.sked_Time_Already_Existed_In_Workday__c</members>
         <members>sked_Operation_Record_Staff__c.sked_Workday_Submission_Status__c</members>
+        <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Attach_Workday_XML_Log__c</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Emp_Rpt_URL__c</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Start_Date_Param__c</members>
         <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_End_Date_Param__c</members>

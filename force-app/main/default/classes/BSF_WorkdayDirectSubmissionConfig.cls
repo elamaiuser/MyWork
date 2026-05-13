@@ -23,6 +23,7 @@ public with sharing class BSF_WorkdayDirectSubmissionConfig {
         List<BSF_Workday_Direct_Submission_Config__mdt> configs = [
             SELECT Id, DeveloperName,
                 sked_Enable_Direct_Workday_Submission__c,
+                sked_Attach_Workday_XML_Log__c,
                 sked_WD_Emp_Rpt_URL__c,
                 sked_WD_Start_Date_Param__c,
                 sked_WD_End_Date_Param__c,
@@ -44,6 +45,15 @@ public with sharing class BSF_WorkdayDirectSubmissionConfig {
     public static Boolean isDirectWorkdayEnabled() {
         BSF_Workday_Direct_Submission_Config__mdt config = getConfig();
         return config != null && config.sked_Enable_Direct_Workday_Submission__c == true;
+    }
+
+    /**
+     * When true, Operation Record submission logging attaches full payloads as Files on sked__Debug_Log__c:
+     * Workday Import SOAP XML (Operation Record Submission) and Employee Report JSON (Operation Record - Employee Report).
+     */
+    public static Boolean attachFullWorkdayXmlToDebugLog() {
+        BSF_Workday_Direct_Submission_Config__mdt config = getConfig();
+        return config != null && config.sked_Attach_Workday_XML_Log__c == true;
     }
 
     /** Max retry attempts per staff (default 3). */
