@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSFStagingSheetController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>slwcConstants</members>
+		<members>slwcDriveDeliveryJobModal</members>
+		<members>slwcDriveDeliveryJobTable</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked_Drive_Bag__c.LTOWB_Proj__c</members>
+		<name>CustomField</name>
+	</types>
+	<version>66.0</version>
+</Package>
