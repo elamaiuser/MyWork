@@ -27,6 +27,7 @@ public class skedOperationRecordUtils {
                  sked_Resource__r.sked_First_Name__c, sked_Resource__r.sked_eBDR_ID__c,
                  sked_Added_Staff__c, sked_Role__c, sked_Actual_Shift_Start__c,
                  sked_Actual_Shift_End__c, sked_No_Meal__c, sked_Premiums_Op_Pay__c, sked_Actual_Roles__c,
+                 sked_Rest_Breaks_Not_Taken__c,
                  sked_Absent__c, sked_Timezone__c, sked_Workday_Submission_Status__c,
                  sked_Time_Already_Existed_In_Workday__c
                  FROM sked_Operation_Record_Staff__r)
@@ -170,6 +171,7 @@ public class skedOperationRecordUtils {
                             opDetail.premiumPool = recordStaff.sked_Premiums_Op_Pay__c.contains('Pool'); 
                             opDetail.premiumLateEnd = recordStaff.sked_Premiums_Op_Pay__c.contains('Late End'); 
                         }
+                        opDetail.restBreaksNotTaken = recordStaff.sked_Rest_Breaks_Not_Taken__c;
                         
                         opDetail.personID = recordStaff.sked_Resource__r.sked_Employee_ID__c != null ? integer.valueOf(recordStaff.sked_Resource__r.sked_Employee_ID__c) : 0; 
                         opDetail.notWorked = recordStaff.sked_Absent__c;
