@@ -257,8 +257,7 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c,
-                                                LTOWB_Proj__c
+                                                sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
@@ -314,8 +313,7 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c,
-                                                LTOWB_Proj__c
+                                                sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
@@ -362,8 +360,7 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c,
-                                                LTOWB_Proj__c
+                                                sked_Bag_Type__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
