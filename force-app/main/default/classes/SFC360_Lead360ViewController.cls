@@ -132,13 +132,11 @@ public with sharing class SFC360_Lead360ViewController {
 
         // Get Unified Account Id from Data Cloud
         String ufid = getUnifiedId(objectAPIName, recId);
-        System.debug('------ufid :' + ufid);
         if (String.isBlank(ufid)) {
             return result;
         }
         result.unifiedId = ufid;
-
-        // Populate different sections of 360 view        
+        
         populateAccountManagers(ufid, result);
         populateCGTSAccountManagers(ufid, result);       
         populateActivitySummary(ufid, result);
@@ -183,14 +181,6 @@ public with sharing class SFC360_Lead360ViewController {
             Activities act = new Activities();
             act.taskId = safeGetString(row, 'task_id__c');
             act.subject = safeGetString(row, 'subject__c');
-            String compDate = safeGetString(row, 'completed_datetime__c');
-            if (!String.isBlank(compDate)) {
-                // keep only date part if datetime
-                if (compDate.contains('T')) {
-                    compDate = compDate.split('T')[0];
-                }
-            }
-            act.completeDate = compDate;
             act.status = safeGetString(row, 'status__c');
             act.priority = safeGetString(row, 'priority__c');
             act.isClosed = safeGetString(row, 'is_closed__c');
@@ -198,11 +188,34 @@ public with sharing class SFC360_Lead360ViewController {
             act.ownerName = safeGetString(row, 'task_owner_name__c');
             act.isUpcoming = (act.status != null && !act.status.equalsIgnoreCase('Completed'));
 
+            String compDate = safeGetString(row, 'completed_datetime__c');
+            if (!String.isBlank(compDate)) {
+                try {
+                    Datetime cd = (Datetime)JSON.deserialize('"' + compDate + '"', Datetime.class);
+                    act.completeDate = cd.format('MM/dd/yyyy');
+                } catch (Exception e) {
+                    if (compDate.contains('T')) {
+                        compDate = compDate.split('T')[0];
+                    }
+                    if (compDate.contains('-')) {
+                        List<String> parts = compDate.split('-');
+                        if(parts.size() == 3) {
+                            act.completeDate = parts[1] + '/' + parts[2] + '/' + parts[0];
+                        } else {
+                            act.completeDate = compDate;
+                        }
+                    } else {
+                        act.completeDate = compDate;
+                    }
+                }
+            } else {
+                act.completeDate = '';
+            }
+
             String dt = safeGetString(row, 'activity_date__c');
             if (!String.isBlank(dt)) {
                 try {
-                    Date toDateTime = Date.valueOf(dt);
-                    DateTime activityDate = DateTime.newInstance(toDateTime.year(), toDateTime.month(), toDateTime.day());
+                    Datetime activityDate = (Datetime)JSON.deserialize('"' + dt + '"', Datetime.class);
                     String monthName = activityDate.format('MMMM');
                     String year = String.valueOf(activityDate.year());
                     String currentYear = String.valueOf(Date.today().year());
@@ -214,7 +227,6 @@ public with sharing class SFC360_Lead360ViewController {
                     }
                     tempMap.get(formattedDate).add(act);
                 } catch (Exception e) {
-                    // parsing failed -> treat as no date
                     noDateActivities.add(act);
                 }
             } else {
@@ -255,9 +267,7 @@ public with sharing class SFC360_Lead360ViewController {
         String sql = String.format(SQL_ACCOUNT_DETAILS, new List<String>{'\'' + unifiedAccId + '\''});
         ConnectApi.CdpQueryInput q = new ConnectApi.CdpQueryInput();
         q.sql = sql;
-        System.debug('------query  :' + sql);
         ConnectApi.CdpQueryOutput resp = safeQueryAnsiSql(q);
-        System.debug('------resp  :' + resp);
         if (resp == null || resp.rowCount == 0) {
             return result;
         }
@@ -280,7 +290,6 @@ public with sharing class SFC360_Lead360ViewController {
             accountDetailsList.add(accRelatedDetail);
         }
         result.accountData = accountDetailsList;
-        System.debug('------result of acc details  :' + JSON.serialize(result));
         return result;
     }
 
@@ -311,7 +320,6 @@ public with sharing class SFC360_Lead360ViewController {
                 'AND ssot__Account__dlm.KQ_Id__c = ssot__Lead__dlm.KQ_Id__c ' +
                 'WHERE ssot__Lead__dlm.ssot__Id__c = \'' + safeRecId + '\'';
         } else {
-            // other object types not supported
             return null;
         }
 
@@ -349,41 +357,31 @@ public with sharing class SFC360_Lead360ViewController {
         q.sql = sql;
         ConnectApi.CdpQueryOutput resp = safeQueryAnsiSql(q);
         if (resp == null || resp.rowCount == 0) {
-            result.accAmDetails = new Map<String, List<ConstituentDataWrapper.AMDetail>>();
+            result.accAmDetails = new Map<String, List<AMDetail>>();
             return;
         }
 
-        List<ConstituentDataWrapper.AMDetail> bioMed = new List<ConstituentDataWrapper.AMDetail>();
-        List<ConstituentDataWrapper.AMDetail> hs = new List<ConstituentDataWrapper.AMDetail>();
-        List<ConstituentDataWrapper.AMDetail> fr = new List<ConstituentDataWrapper.AMDetail>();
-        List<ConstituentDataWrapper.AMDetail> ts = new List<ConstituentDataWrapper.AMDetail>();
+        List<AMDetail> bioMed = new List<AMDetail>();
+        List<AMDetail> hs = new List<AMDetail>();
+        List<AMDetail> fr = new List<AMDetail>();
+        List<AMDetail> ts = new List<AMDetail>();
 
         for (Object record : resp.data) {
             Map<String, Object> row = deserializeData(record);
-            if (row == null) {
-                continue;
-            }
+            if (row == null) continue;
             String org = safeGetString(row, 'org_identifier__c');
             String name = safeGetString(row, 'account_manager_name__c');
             String email = safeGetString(row, 'account_manager_email__c');
-            if (String.isBlank(name) || String.isBlank(email) || String.isBlank(org)) {
-                continue;
-            }
+            if (String.isBlank(name) || String.isBlank(email) || String.isBlank(org)) continue;
 
-            ConstituentDataWrapper.AMDetail d = new ConstituentDataWrapper.AMDetail(name, email, org);
-            if (org.equalsIgnoreCase('BioMedSF')) {
-                bioMed.add(d);
-            } else if (org.equalsIgnoreCase('HospitalSales')) {
-                hs.add(d);
-            } else if (org.equalsIgnoreCase('FundRaising')) {
-                fr.add(d);
-            } else if (org.equalsIgnoreCase('TrainingServices')) {
-                ts.add(d);
-            }
+            AMDetail d = new AMDetail(name, email, org);
+            if (org.equalsIgnoreCase('BioMedSF')) bioMed.add(d); 
+            else if (org.equalsIgnoreCase('HospitalSales')) hs.add(d);
+            else if (org.equalsIgnoreCase('FundRaising')) fr.add(d);
+            else if (org.equalsIgnoreCase('TrainingServices')) ts.add(d);
         }
-        System.debug('bioMedAM ' + bioMed + '\n' + 'HSAM ' + hs + '\n' + 'FRAM ' + fr + '\n' + 'TSAM ' + ts);
 
-        result.accAmDetails = new Map<String, List<ConstituentDataWrapper.AMDetail>>();
+        result.accAmDetails = new Map<String, List<AMDetail>>();
         result.accAmDetails.put('TrainingServices', ts);
         result.accAmDetails.put('BioMedSF', bioMed);
         result.accAmDetails.put('HospitalSales', hs);
@@ -395,34 +393,27 @@ public with sharing class SFC360_Lead360ViewController {
      * by organization (HS).
      */
     private static void populateCGTSAccountManagers(String ufid, ConstituentDataWrapper result) {
-        if (String.isBlank(ufid) || result == null) {
-            return;
-        }
+        if (String.isBlank(ufid) || result == null) return;
         String sql = String.format(SQL_ACCOUNT_MANAGERS_CGTS, new List<String>{'\'' + ufid + '\''});
         ConnectApi.CdpQueryInput q = new ConnectApi.CdpQueryInput();
         q.sql = sql;
         ConnectApi.CdpQueryOutput resp = safeQueryAnsiSql(q);
-        List<ConstituentDataWrapper.AMDetail> cgts = new List<ConstituentDataWrapper.AMDetail>();
+        List<AMDetail> cgts = new List<AMDetail>();
         if (resp != null && resp.rowCount > 0) {
             for (Object record : resp.data) {
                 Map<String, Object> row = deserializeData(record);
-                if (row == null) {
-                    continue;
-                }
+                if (row == null) continue;
                 String org = safeGetString(row, 'org_identifier__c');
                 String name = safeGetString(row, 'account_manager_name__c');
                 String email = safeGetString(row, 'account_manager_email__c');
-                if (String.isBlank(name) || String.isBlank(email)) {
-                    continue;
-                }
+                if (String.isBlank(name) || String.isBlank(email)) continue;
                 if (org != null && org.equalsIgnoreCase('HospitalSales')) {
-                    cgts.add(new ConstituentDataWrapper.AMDetail(name, email, org));
+                    cgts.add(new AMDetail(name, email, org));
                 }
             }
         }
-        // ensure map exists
         if (result.accAmDetails == null) {
-            result.accAmDetails = new Map<String, List<ConstituentDataWrapper.AMDetail>>();
+            result.accAmDetails = new Map<String, List<AMDetail>>();
         }
         result.accAmDetails.put('Cell Gene Therapy', cgts);
     }
@@ -440,65 +431,43 @@ public with sharing class SFC360_Lead360ViewController {
      *  - Open activities
      */
     private static void populateActivitySummary(String ufid, ConstituentDataWrapper result) {
-        if (String.isBlank(ufid) || result == null) {
-            return;
-        }
+        if (String.isBlank(ufid) || result == null) return;
         String sql = String.format(SQL_ACTIVITY_SUMMARY, new List<String>{'\'' + ufid + '\''});
         ConnectApi.CdpQueryInput q = new ConnectApi.CdpQueryInput();
         q.sql = sql;
         ConnectApi.CdpQueryOutput resp = safeQueryAnsiSql(q);
-        if (resp == null || resp.rowCount == 0) {
-            return;
-        }
+        if (resp == null || resp.rowCount == 0) return;
 
-        Integer frfTotalCount = 0;
-        Integer hsTotalCount = 0;
-        Integer frfOpenCount = 0;
-        Integer hsOpenCount = 0;
-        Integer tsOpenCount = 0;
-        Integer tsTotalCount = 0;
+        Integer frfTotalCount = 0; Integer hsTotalCount = 0; Integer tsTotalCount = 0;
+        Integer frfOpenCount = 0; Integer hsOpenCount = 0; Integer tsOpenCount = 0;
 
         for (Object recObj : resp.data) {
             Map<String, Object> row = deserializeData(recObj);
-            if (row == null) {
-                continue;
-            }
+            if (row == null) continue;
             String org = safeGetString(row, 'source_system__c');
             String isClosed = safeGetString(row, 'is_closed__c');
             Integer activityCount = safeGetInteger(row, 'activity_count__c');
             String accountId = safeGetString(row, 'account_id__c');
 
-            if (activityCount == null) {
-                activityCount = 0;
-            }
+            if (activityCount == null) activityCount = 0;
 
             if (org.equalsIgnoreCase('FundRaising')) {
                 frfTotalCount += activityCount;
-                if ('false'.equalsIgnoreCase(isClosed)) {
-                    frfOpenCount += activityCount;
-                }
+                if ('false'.equalsIgnoreCase(isClosed)) frfOpenCount += activityCount;
                 result.frActivityAccId = accountId;
             } else if (org.equalsIgnoreCase('HospitalSales')) {
                 hsTotalCount += activityCount;
-                if ('false'.equalsIgnoreCase(isClosed)) {
-                    hsOpenCount += activityCount;
-                }
+                if ('false'.equalsIgnoreCase(isClosed)) hsOpenCount += activityCount;
                 result.hsActivityAccId = accountId;
             } else if (org.equalsIgnoreCase('TrainingServices')) {
                 tsTotalCount += activityCount;
-                if ('false'.equalsIgnoreCase(isClosed)) {
-                    tsOpenCount += activityCount;
-                }
+                if ('false'.equalsIgnoreCase(isClosed)) tsOpenCount += activityCount;
                 result.tsActivityAccId = accountId;
             }
         }
-
-        result.openActivityFR = frfOpenCount;
-        result.totalActivityFR = frfTotalCount;
-        result.openActivityHS = hsOpenCount;
-        result.totalActivityHS = hsTotalCount;
-        result.openActivityTS = tsOpenCount;
-        result.totalActivityTS = tsTotalCount;
+        result.openActivityFR = frfOpenCount; result.totalActivityFR = frfTotalCount;
+        result.openActivityHS = hsOpenCount; result.totalActivityHS = hsTotalCount;
+        result.openActivityTS = tsOpenCount; result.totalActivityTS = tsTotalCount;
     }
 
     /**
@@ -509,22 +478,16 @@ public with sharing class SFC360_Lead360ViewController {
      *  - Only Account records (Id starts with 001)
      */
     private static void populateRelatedAccountsCount(String ufid, ConstituentDataWrapper result) {
-        if (String.isBlank(ufid) || result == null) {
-            return;
-        }
+        if (String.isBlank(ufid) || result == null) return;
         String sql = String.format(SQL_RELATED_ACC, new List<String>{'\'' + ufid + '\''});
         ConnectApi.CdpQueryInput q = new ConnectApi.CdpQueryInput();
         q.sql = sql;
         ConnectApi.CdpQueryOutput resp = safeQueryAnsiSql(q);
-        if (resp == null || resp.rowCount == 0) {
-            return;
-        }
+        if (resp == null || resp.rowCount == 0) return;
 
         for (Object recObj : resp.data) {
             Map<String, Object> row = deserializeData(recObj);
-            if (row == null) {
-                continue;
-            }
+            if (row == null) continue;
             result.numberOfAccounts = safeGetInteger(row, 'account_count');
         }
     }
@@ -545,21 +508,13 @@ public with sharing class SFC360_Lead360ViewController {
      * @return Integer value or null if conversion fails
      */
     private static Integer safeConvertToInteger(Object v) {
-        if (v == null) {
-            return null;
-        }
+        if (v == null) return null;
         try {
-            if (v instanceof Integer) {
-                return (Integer) v;
-            }
+            if (v instanceof Integer) return (Integer) v;
             String s = String.valueOf(v);
-            if (String.isBlank(s)) {
-                return null;
-            }
-            return Integer.valueOf(s.split('\\.')[0]); // handle decimals
-        } catch (Exception e) {
-            return null;
-        }
+            if (String.isBlank(s)) return null;
+            return Integer.valueOf(s.split('\\.')[0]); 
+        } catch (Exception e) { return null; }
     }
     
     /**
@@ -570,11 +525,8 @@ public with sharing class SFC360_Lead360ViewController {
      * @return Integer value or null
      */
     private static Integer safeGetInteger(Map<String, Object> m, String key) {
-        if (m == null) {
-            return null;
-        }
-        Object v = m.get(key);
-        return safeConvertToInteger(v);
+        if (m == null) return null;
+        return safeConvertToInteger(m.get(key));
     }
 
     /**
@@ -585,14 +537,9 @@ public with sharing class SFC360_Lead360ViewController {
      * @return String value or null
      */
     public static String safeGetString(Map<String, Object> params, String key) {
-        if (params == null || String.isBlank(key)) {
-            return null;
-        }
+        if (params == null || String.isBlank(key)) return null;
         Object v = params.get(key);
-        if (v == null) {
-            return null;
-        }
-        return String.valueOf(v);
+        return v == null ? null : String.valueOf(v);
     }
 
     /**
@@ -604,13 +551,8 @@ public with sharing class SFC360_Lead360ViewController {
      */
     public static ConnectApi.CdpQueryOutput safeQueryAnsiSql(ConnectApi.CdpQueryInput q) {
         try {
-            ConnectApi.CdpQueryOutput responseData = ConnectApi.CdpQuery.queryAnsiSql(q);
-            System.debug('responseData ' + responseData);
-            return responseData;
-        } catch (Exception e) {
-            System.debug('CDP queryAnsiSql failed: ' + e.getMessage());
-            return null;
-        }
+            return ConnectApi.CdpQuery.queryAnsiSql(q);
+        } catch (Exception e) { return null; }
     }
 
     /**
@@ -621,22 +563,49 @@ public with sharing class SFC360_Lead360ViewController {
      * @return Deserialized map or null if deserialization fails
      */
     public static Map<String, Object> deserializeData(Object record) {
-        if (record == null) {
-            return null;
-        }
+        if (record == null) return null;
         try {
-            String serializedResp = JSON.serialize(record);
-            Map<String, Object> row = (Map<String, Object>) JSON.deserializeUntyped(serializedResp);
-            return row;
-        } catch (Exception e) {
-            System.debug('deserializeData failed: ' + e.getMessage());
-            return null;
+            return (Map<String, Object>) JSON.deserializeUntyped(JSON.serialize(record));
+        } catch (Exception e) { return null; }
+    }
+
+    public with sharing class ConstituentDataWrapper {
+        @AuraEnabled public String unifiedId {get;set;}
+        @AuraEnabled public Map<String, List<AMDetail>> accAmDetails {get;set;}
+        @AuraEnabled public String recordsCompleted {get;set;}
+        @AuraEnabled public String plannedDrives {get;set;}
+        @AuraEnabled public Decimal plannedCourses {get;set;}
+        @AuraEnabled public String coursesCompleted {get;set;}
+        @AuraEnabled public Integer numberOfAccounts {get;set;}
+        @AuraEnabled public String giftCount {get;set;}
+        @AuraEnabled public String totalGiftAmount {get;set;}
+        @AuraEnabled public Map<String, List<Decimal>> HSRevenueData {get;set;}
+        @AuraEnabled public List<List<String>> CGTSRevenue {get;set;}
+        @AuraEnabled public String lifetimeContractCount {get;set;}
+        @AuraEnabled public String lifetimeContractAmount {get;set;}
+        @AuraEnabled public String hsAccId {get;set;}
+        @AuraEnabled public Integer openActivityFR {get;set;}
+        @AuraEnabled public Integer totalActivityFR {get;set;}
+        @AuraEnabled public Integer openActivityHS {get;set;}
+        @AuraEnabled public Integer totalActivityHS {get;set;}
+        @AuraEnabled public Integer openActivityTS {get;set;}
+        @AuraEnabled public Integer totalActivityTS {get;set;}
+        @AuraEnabled public String frActivityAccId {get;set;}
+        @AuraEnabled public String hsActivityAccId {get;set;}
+        @AuraEnabled public String tsActivityAccId {get;set;}
+
+        public ConstituentDataWrapper() {}
+    }
+
+    public with sharing class AMDetail {
+        @AuraEnabled public String name {get;set;}
+        @AuraEnabled public String email {get;set;}
+        @AuraEnabled public String org {get;set;}
+        public AMDetail(String name, String email, String org) {
+            this.name = name; this.email = email; this.org = org;
         }
     }
 
-    /**
-     * Wrapper for Related Account Details modal.
-     */
     public with sharing class AccountDetailsModalWrapper {
         @AuraEnabled public List<AccountDetails> accountData { get; set; }
     }
