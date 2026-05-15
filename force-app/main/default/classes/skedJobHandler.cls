@@ -241,6 +241,7 @@ public class skedJobHandler extends skedTriggerHub {
                 driveShiftIds.add(newRecord.sked_Drive_Shift__c);
             }
             newRecord.sked__Can_Be_Declined__c = false;
+            newRecord.sked__Job_Allocation_Time_Source__c = false;
             newRecord.sked__Type__c = newRecord.sked_Resource_Role__c != NULL ? newRecord.sked_Resource_Role__c 
                 : newRecord.sked_Asset_Type__c != NULL ? newRecord.sked_Asset_Type__c : newRecord.sked_Volunteer_Role__c;
         }
