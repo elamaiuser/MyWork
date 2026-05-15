@@ -11,5 +11,9 @@
 		<members>sked_Drive_Bag__c.LTOWB_Proj__c</members>
 		<name>CustomField</name>
 	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_16917_Field_Permission_Set</members>
+		<name>CustomMetadata</name>
+	</types>
 	<version>66.0</version>
 </Package>
