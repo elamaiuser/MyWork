@@ -286,7 +286,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     ];
   }
 
-  syncCoConstraints(savedModels, deletedModel = null) {
+  async syncCoConstraints(savedModels, deletedModel = null) {
     const tbChanges = (savedModels || []).filter(
       m => m.timeBlockId && m.driveType === DRIVE_TYPE.MOBILE
     );
@@ -308,7 +308,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       ? `${deletedModel.collectionOperationId}${KEY_SEPERATOR}${deletedModel.timeBlockId}${KEY_SEPERATOR}${deletedModel.driveType}${KEY_SEPERATOR}${deletedModel.dateOfConstraint}`
       : null;
 
-    const coModels = [];
+    const coModelsToSave = [];
+    const coModelsToDelete = [];
     const newAutoSyncedKeys = new Set();
 
     syncKeys.forEach(syncKey => {
@@ -343,22 +344,31 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
       const coKey = `${coId}${KEY_SEPERATOR}${DRIVE_TYPE.MOBILE}${KEY_SEPERATOR}${date}`;
       const existingCo = this.mappedStaffingConstraintData?.[coKey]?.[0];
 
-      coModels.push({
-        ...(existingCo?.id && { id: existingCo.id }),
-        collectionOperationId: coId,
-        dateOfConstraint: date,
-        driveType: DRIVE_TYPE.MOBILE,
-        totalStaffConstraints: total
-      });
+      if (total === 0 && existingCo?.id) {
+        coModelsToDelete.push(existingCo);
+      } else if (total > 0) {
+        coModelsToSave.push({
+          ...(existingCo?.id && { id: existingCo.id }),
+          collectionOperationId: coId,
+          dateOfConstraint: date,
+          driveType: DRIVE_TYPE.MOBILE,
+          totalStaffConstraints: total
+        });
+      }
+      // total === 0 and no existing CO → AC-5 no-op
       newAutoSyncedKeys.add(`${coId}${KEY_SEPERATOR}${date}`);
     });
 
-    if (!coModels.length) return Promise.resolve(new Set());
+    if (!coModelsToSave.length && !coModelsToDelete.length) return new Set();
 
     const service = new staffingConstraintService();
-    return service.saveList(coModels).then(result => {
-      return result?.success ? newAutoSyncedKeys : new Set();
-    });
+
+    const deleteOps = coModelsToDelete.length ? service.deleteList(coModelsToDelete) : Promise.resolve({ success: true });
+    const saveOps = coModelsToSave.length ? service.saveList(coModelsToSave) : Promise.resolve({ success: true });
+
+    const [delResult, saveResult] = await Promise.all([deleteOps, saveOps]);
+    const allOk = delResult?.success !== false && saveResult?.success !== false;
+    return allOk ? newAutoSyncedKeys : new Set();
   }
 
   fetchStafingConstrainData() {
@@ -643,6 +653,10 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
             .then((result) => {
               if (!result.success) throw result;
               this.closeConfirmModal();
+              return this.syncCoConstraints(null, staffingConstraint);
+            })
+            .then((syncedKeys) => {
+              this.pendingAutoSyncedKeys = syncedKeys || new Set();
               this.fetchStafingConstrainData();
             })
             .catch((error) => {
