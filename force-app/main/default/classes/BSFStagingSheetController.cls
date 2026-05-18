@@ -594,7 +594,8 @@ public without sharing class BSFStagingSheetController {
                                     bagtypes.add(bagtypewithQty);
                                     //End: Added for HRP-16909
                                     if(drvbag.sked_Bag_Type__c.equalsIgnoreCase('IM Terumo Imuflex WB') && drvbag.LTOWB_Proj__c != null){
-                                        data.ltowbproj = String.valueOf(drvbag.LTOWB_Proj__c);
+                                        String currentProj = String.valueOf(drvbag.LTOWB_Proj__c);
+                                        data.ltowbproj = String.isNotBlank(data.ltowbproj) ? data.ltowbproj + ', ' + currentProj : currentProj;
                                     }
                                 }
                             }
