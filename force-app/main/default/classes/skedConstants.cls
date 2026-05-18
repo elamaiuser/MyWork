@@ -496,7 +496,7 @@ public class skedConstants {
     public static final string TRADE_API_DATA_STATUS_NOT_APPLICABLE = 'Not Applicable';
 
     /* Time Entry Codes for WD Time Reporting */
-    public static final string WD_REST_BREAKS_NOT_TAKEN_CODE = 'TIME_ENTRY_CODE-3-112';
+    public static final string WD_REST_BREAKS_NOT_TAKEN_CODE = 'CA Missed/Short Rest Break';
 
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_PENDING = 'Pending';
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_COMPLETED = 'Completed';
