@@ -44,7 +44,7 @@
     </values>
     <values>
         <field>Target_API_Names__c</field>
-        <value xsi:type="xsd:string">sked_Manufacturing,sked_APS_Manager,sked_APS_Planner </value>
+        <value xsi:type="xsd:string">sked_Manufacturing,sked_APS_Manager,sked_APS_Planner</value>
     </values>
     <values>
         <field>Target_Type__c</field>
