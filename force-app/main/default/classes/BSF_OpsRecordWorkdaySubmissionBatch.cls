@@ -21,6 +21,8 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
     // Cache Employee Report "employees without time" per drive date across execute() calls.
     private Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult> employeeReportCache = new Map<Date, BSF_WorkdayOpsRecordDirectService.EmployeeReportResult>();
     private Map<Date, Set<String>> employeeReportEmployeeIdsByDriveDate = new Map<Date, Set<String>>();
+    /** Preview length for Workday SOAP XML in sked__Debug_Log__c when full XML is attached as a File. */
+    private static final Integer WORKDAY_XML_LOG_SNIPPET_LEN = 1000;
 
     public BSF_OpsRecordWorkdaySubmissionBatch() {
         BSF_Workday_Direct_Submission_Config__mdt config = BSF_WorkdayDirectSubmissionConfig.getConfig();
@@ -46,6 +48,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         Date today = Date.today();
         DateTime todayStart = DateTime.newInstance(today.year(), today.month(), today.day(), 0, 0, 0);
 
+        // Semi-join: only ops with at least one staff row
         return Database.getQueryLocator([
             SELECT Id, CreatedDate, sked_Workday_Submission_Status__c, sked_Drive__c,
                 sked_Drive__r.sked_Drive_Date__c, sked_Drive__r.sked_Type_of_Drive__c,
@@ -55,6 +58,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             AND sked_Drive__c != null
             AND sked_Locked__c = true
             AND CreatedDate < :todayStart
+            AND Id IN (SELECT sked_Operation_Record__c FROM sked_Operation_Record_Staff__c)
         ]);
     }
 
@@ -91,11 +95,20 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         if (toProcess.isEmpty()) {
             return;
         }
+        List<sked_Operation_Record__c> opsWithStaff = new List<sked_Operation_Record__c>();
+        for (sked_Operation_Record__c op : toProcess) {
+            if (op.sked_Operation_Record_Staff__r != null && !op.sked_Operation_Record_Staff__r.isEmpty()) {
+                opsWithStaff.add(op);
+            }
+        }
+        if (opsWithStaff.isEmpty()) {
+            return;
+        }
         // Build all Ops Record requests in one shot to avoid repeated SOQL for  each record.
         Map<Id, skedOpsRecordApiData.opsRecordRequest> opRecordRequestById = new Map<Id, skedOpsRecordApiData.opsRecordRequest>();
-        List<skedOpsRecordApiData.opsRecordRequest> batchedRequests = skedOperationRecordUtils.getOpsRecordRequests(toProcess);
-        for (Integer i = 0; i < toProcess.size() && i < batchedRequests.size(); i++) {
-            opRecordRequestById.put(toProcess[i].Id, batchedRequests[i]);
+        List<skedOpsRecordApiData.opsRecordRequest> batchedRequests = skedOperationRecordUtils.getOpsRecordRequests(opsWithStaff);
+        for (Integer i = 0; i < opsWithStaff.size(); i++) {
+            opRecordRequestById.put(opsWithStaff[i].Id, batchedRequests[i]);
         }
         Map<Date, List<OpRecordContext>> byDriveDate = groupByDriveDate(toProcess);
         List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> allBlocks = new List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType>();
@@ -424,17 +437,60 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             return;
         }
         String summary = 'Workday Direct Submit: ' + (result.isSuccess ? 'Success' : 'Failed') + '; StatusCode=' + result.statusCode + '; OpRecords=' + opRecords.size();
-        String messageBody = String.isNotBlank(result.request)
-            ? truncateForDebugLog(result.request, sked__Debug_Log__c.sked__Message__c)
-            : truncateForDebugLog(result.message, sked__Debug_Log__c.sked__Message__c);
+        Boolean attachFullXml = BSF_WorkdayDirectSubmissionConfig.attachFullWorkdayXmlToDebugLog();
+        String reqForLog = String.isNotBlank(result.fullSoapRequestXml) ? result.fullSoapRequestXml : result.request;
+
+        String messageBody;
+        if (attachFullXml && String.isNotBlank(reqForLog)) {
+            String snippet = reqForLog.length() > WORKDAY_XML_LOG_SNIPPET_LEN
+                ? reqForLog.substring(0, WORKDAY_XML_LOG_SNIPPET_LEN)
+                : reqForLog;
+            messageBody =
+                summary +
+                '\n\nRequest preview (first ' +
+                WORKDAY_XML_LOG_SNIPPET_LEN +
+                ' characters):\n' +
+                snippet +
+                (reqForLog.length() > WORKDAY_XML_LOG_SNIPPET_LEN ? '\n...' : '') +
+                '\n\nFull SOAP request is attached as a file on this debug log record.';
+        } else if (String.isNotBlank(reqForLog)) {
+            messageBody = truncateForDebugLog(summary + '\n\n' + reqForLog, sked__Debug_Log__c.sked__Message__c);
+        } else {
+            messageBody = truncateForDebugLog(
+                summary + '\n\n' + (result.message != null ? result.message : ''),
+                sked__Debug_Log__c.sked__Message__c
+            );
+        }
+
         sked__Debug_Log__c log = new sked__Debug_Log__c(
             sked__Type__c = 'Operation Record Submission',
             sked__Summary__c = summary,
             sked__Message__c = messageBody,
-            sked_Request__c = truncateForDebugLog(result.request, sked__Debug_Log__c.sked_Request__c),
+            sked_Request__c = null,
             sked_Response__c = truncateForDebugLog(result.response, sked__Debug_Log__c.sked_Response__c)
         );
         insert log;
+
+        if (attachFullXml && String.isNotBlank(result.fullSoapRequestXml)) {
+            attachWorkdayImportXmlToDebugLog(log.Id, result.fullSoapRequestXml);
+        }
+    }
+
+    private void attachWorkdayImportXmlToDebugLog(Id debugLogId, String xmlBody) {
+        if (debugLogId == null || String.isBlank(xmlBody)) {
+            return;
+        }
+        try {
+            String stamp = Datetime.now().formatGmt('yyyyMMdd\'T\'HHmmss\'Z\'');
+            ContentVersion cv = new ContentVersion();
+            cv.Title = 'Workday Import SOAP Request ' + stamp;
+            cv.PathOnClient = 'workday_import_request_' + stamp + '.xml';
+            cv.VersionData = Blob.valueOf(xmlBody);
+            cv.FirstPublishLocationId = debugLogId;
+            insert cv;
+        } catch (Exception e) {
+            errorsForTechEmail.add('Workday XML file attach failed for Debug Log ' + debugLogId + ': ' + e.getMessage());
+        }
     }
 
     /** Logs each Employee Report (employees without time) request/response to sked__Debug_Log__c when operation record logging is enabled. */
@@ -449,15 +505,36 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         } catch (Exception e) {
             return;
         }
+        Boolean attachFull = BSF_WorkdayDirectSubmissionConfig.attachFullWorkdayXmlToDebugLog();
         List<sked__Debug_Log__c> logs = new List<sked__Debug_Log__c>();
         for (Integer i = 0; i < employeeReportLogs.size(); i++) {
             BSF_WorkdayOpsRecordDirectService.EmployeeReportResult er = employeeReportLogs[i];
             String summary = 'Workday Employee Report (no time): StatusCode=' + er.statusCode + '; employeesWithoutTime=' + (er.employeeIdToTimezone != null ? er.employeeIdToTimezone.size() : 0) + (employeeReportLogs.size() > 1 ? '; call #' + (i + 1) : '');
-            String requestToLog = truncateForDebugLog(er.requestUrl, sked__Debug_Log__c.sked_Request__c);
-            String responseToLog = truncateForDebugLog(er.responseBody, sked__Debug_Log__c.sked_Response__c);
-            String messageBody = String.isNotBlank(er.responseBody)
-                ? truncateForDebugLog(er.responseBody, sked__Debug_Log__c.sked__Message__c)
-                : (er.statusCode != null ? String.valueOf(er.statusCode) : '');
+            String messageBody;
+            String requestToLog;
+            String responseToLog;
+            if (attachFull && String.isNotBlank(er.responseBody)) {
+                String snippet =
+                    er.responseBody.length() > WORKDAY_XML_LOG_SNIPPET_LEN
+                        ? er.responseBody.substring(0, WORKDAY_XML_LOG_SNIPPET_LEN)
+                        : er.responseBody;
+                messageBody =
+                    summary +
+                    '\n\nResponse preview (first ' +
+                    WORKDAY_XML_LOG_SNIPPET_LEN +
+                    ' characters):\n' +
+                    snippet +
+                    (er.responseBody.length() > WORKDAY_XML_LOG_SNIPPET_LEN ? '\n...' : '') +
+                    '\n\nFull JSON response is attached as a file on this debug log record.';
+                requestToLog = truncateForDebugLog(er.requestUrl, sked__Debug_Log__c.sked_Request__c);
+                responseToLog = null;
+            } else {
+                requestToLog = truncateForDebugLog(er.requestUrl, sked__Debug_Log__c.sked_Request__c);
+                responseToLog = truncateForDebugLog(er.responseBody, sked__Debug_Log__c.sked_Response__c);
+                messageBody = String.isNotBlank(er.responseBody)
+                    ? truncateForDebugLog(er.responseBody, sked__Debug_Log__c.sked__Message__c)
+                    : (er.statusCode != null ? String.valueOf(er.statusCode) : '');
+            }
             logs.add(new sked__Debug_Log__c(
                 sked__Type__c = 'Operation Record - Employee Report',
                 sked__Summary__c = summary,
@@ -468,7 +545,45 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         }
         if (!logs.isEmpty()) {
             insert logs;
+            if (attachFull) {
+                for (Integer i = 0; i < employeeReportLogs.size() && i < logs.size(); i++) {
+                    BSF_WorkdayOpsRecordDirectService.EmployeeReportResult er = employeeReportLogs[i];
+                    if (String.isNotBlank(er.responseBody)) {
+                        attachEmployeeReportResponseToDebugLog(logs[i].Id, er.responseBody, i);
+                    }
+                }
+            }
         }
+    }
+
+    private void attachEmployeeReportResponseToDebugLog(Id debugLogId, String jsonBody, Integer logIndex) {
+        if (debugLogId == null || String.isBlank(jsonBody)) {
+            return;
+        }
+        try {
+            String stamp =
+                Datetime.now().formatGmt('yyyyMMdd\'T\'HHmmss\'Z\'') +
+                '_' +
+                String.valueOf(logIndex);
+            ContentVersion cv = new ContentVersion();
+            cv.Title = 'Workday Employee Report Response ' + stamp;
+            cv.PathOnClient = 'workday_employee_report_response_' + stamp + '.json';
+            cv.VersionData = Blob.valueOf(jsonBody);
+            cv.FirstPublishLocationId = debugLogId;
+            insert cv;
+        } catch (Exception e) {
+            errorsForTechEmail.add(
+                'Workday Employee Report JSON file attach failed for Debug Log ' + debugLogId + ': ' + e.getMessage()
+            );
+        }
+    }
+
+    /**
+     * Execute Anonymous / manual smoke test: runs the same Employee Report sked__Debug_Log__c + optional JSON file attach as the batch.
+     * Does not call Workday Import or update operation records. Pass synthetic or real EmployeeReportResult rows from getEmployeesWithoutTimeInWorkdayWithLog.
+     */
+    public void logEmployeeReportResultsForDiagnostics(List<BSF_WorkdayOpsRecordDirectService.EmployeeReportResult> employeeReportLogs) {
+        logEmployeeReportCalls(employeeReportLogs);
     }
 
     /** Sends one success email to the business distribution list after all batches complete. */

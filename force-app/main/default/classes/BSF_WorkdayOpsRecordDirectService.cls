@@ -20,7 +20,8 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
         public EmployeeReportResult(Map<String, String> employeeIdToTimezone, String requestUrl, String responseBody, Integer statusCode) {
             this.employeeIdToTimezone = employeeIdToTimezone != null ? employeeIdToTimezone : new Map<String, String>();
             this.requestUrl = requestUrl;
-            this.responseBody = (responseBody != null && responseBody.length() > MAX_DEBUG_LOG_MESSAGE_LENGTH) ? responseBody.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH) : responseBody;
+            // Full body retained for ContentVersion attach on sked__Debug_Log__c (batch truncates long-text fields when not attaching).
+            this.responseBody = responseBody;
             this.statusCode = statusCode;
         }
     }
@@ -69,7 +70,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
             url += employeeIdsParamName + '=' + EncodingUtil.urlEncode(workerPromptValue, 'UTF-8') + '&';
         }
         url += 'format=json';
-        requestUrl = (url != null && url.length() > MAX_DEBUG_LOG_RESPONSE_LENGTH) ? url.substring(0, MAX_DEBUG_LOG_RESPONSE_LENGTH) : url;
+        requestUrl = url;
         try {
             HttpRequest req = skedWorkdayApiManager.getHttpRequest(url, 'GET');
             req.setTimeout(120000);
@@ -290,6 +291,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
                 requestForResult = requestForResult.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH);
             }
             skedWorkdayImportTimeBlockResponse result = new skedWorkdayImportTimeBlockResponse(requestForResult != null ? requestForResult : '');
+            result.fullSoapRequestXml = docBody;
             result.response = responseBody;
             result.statusCode = res.getStatusCode();
             result.isSuccess = (res.getStatusCode() == 200);
@@ -348,6 +350,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
                 requestForResult = requestForResult.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH);
             }
             skedWorkdayImportTimeBlockResponse result = new skedWorkdayImportTimeBlockResponse(requestForResult != null ? requestForResult : '');
+            result.fullSoapRequestXml = docBody;
             result.response = e.getMessage();
             result.statusCode = null;
             result.isSuccess = false;
