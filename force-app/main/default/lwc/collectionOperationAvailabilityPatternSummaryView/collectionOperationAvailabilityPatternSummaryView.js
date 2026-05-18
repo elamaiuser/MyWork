@@ -14,7 +14,6 @@ import { isNullOrEmpty } from 'c/slwcUtils';
 export default class CollectionOperationAvailabilityPatternSummaryView extends LightningElement {
     @api recordId;
     
-    @track records = [];
     @track model = {};
     @track showSpinner = false;
 
@@ -30,7 +29,6 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
         this.showLoading();
         let service = new collectionOperationService();
         let query = new collectionOperationQueryModel();
-        console.log(this.recordId);
         query.recordIds = [this.recordId];
         query.subQueryIndicator = sObjectType.COLLECTION_OPERATION_AVAILABILITY;
         return Promise.resolve()
@@ -38,21 +36,40 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
             return service.query(query)
         })
         .then((result) => {
-            console.log(result);
             if (result.length) {
                 this.model = result[0];
-                const grandTotalAvailable = this.model.grandTotalAvailable ?? 0;
-                const grandTotalNeeded = this.model.grandTotalNeeded ?? 0;
+                const grandTotalAvailable = (this.model.grandTotalAvailableFixedSite ?? 0) + (this.model.grandTotalAvailableMobile ?? 0);
+                const grandTotalNeeded = (this.model.grandTotalNeededFixedSite ?? 0) + (this.model.grandTotalNeededMobile ?? 0);
                 const variance = grandTotalAvailable - grandTotalNeeded;
+                const colOpGrandTotalModels = [
+                    {
+                        typeOfStaff: 'Total Staff',
+                        grandTotalAvailable: grandTotalAvailable,
+                        grandTotalNeeded: grandTotalNeeded,
+                        variance: grandTotalAvailable - grandTotalNeeded,
+                        varianceClass: this.getColorClass(variance)
+                    },
+                    {
+                        typeOfStaff: 'Fixed Site Staff',
+                        grandTotalAvailable: this.model.grandTotalAvailableFixedSite ?? 0,
+                        grandTotalNeeded: this.model.grandTotalNeededFixedSite ?? 0,
+                        variance: (this.model.grandTotalAvailableFixedSite ?? 0) - (this.model.grandTotalNeededFixedSite ?? 0),
+                        varianceClass: this.getColorClass((this.model.grandTotalAvailableFixedSite ?? 0) - (this.model.grandTotalNeededFixedSite ?? 0))
+                    },
+                    {
+                        typeOfStaff: 'Mobile Staff',
+                        grandTotalAvailable: this.model.grandTotalAvailableMobile ?? 0,
+                        grandTotalNeeded: this.model.grandTotalNeededMobile ?? 0,
+                        variance: (this.model.grandTotalAvailableMobile ?? 0) - (this.model.grandTotalNeededMobile ?? 0),
+                        varianceClass: this.getColorClass((this.model.grandTotalAvailableMobile ?? 0) - (this.model.grandTotalNeededMobile ?? 0))
+                    }
+                ];
 
                 this.model = {
                     ... this.model,
-                    grandTotalAvailable: grandTotalAvailable,
-                    grandTotalNeeded: grandTotalNeeded,
                     collectionOperationAvailabilities: (this.model.collectionOperationAvailabilities?.filter(coAp => isNullOrEmpty(coAp.endDate) || coAp.endDate >= this.todayIso) ?? []),
-                    variance: variance,
-                    varianceClass: this.getColorClass(variance)
-                }
+                    colOpGrandTotalModels: colOpGrandTotalModels
+                };
 
                 service = new availabilityPatternRoleService();
                 query = new availabilityPatternRoleQueryModel();
@@ -63,11 +80,32 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                         collectionOperationAvailabilities: this.model.collectionOperationAvailabilities.map(item => {
                             return { 
                                 ...item,
-                                totalTargetResources: (item.totalTargetResources ?? 0),
-                                totalVariance: (item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0),
-                                totalVarianceClass: this.getColorClass((item.totalActualResources ?? 0) - (item.totalTargetResources ?? 0)),
                                 showApTotals: (queryResult?.some(apRole => apRole.colOpAvailabilityId === item.id)) ?? false,
-                                
+                                totalApModels: [
+                                    {
+                                        typeOfStaff: 'Total',
+                                        totalActualResources: (item.totalActualResourcesFixedSite ?? 0) + (item.totalActualResourcesMobile ?? 0),
+                                        totalTargetResources: (item.totalTargetFixedSite ?? 0) + (item.totalTargetMobile ?? 0),
+                                        totalVariance: ((item.totalActualResourcesFixedSite ?? 0) + (item.totalActualResourcesMobile ?? 0)) 
+                                                        - ((item.totalTargetFixedSite ?? 0) + (item.totalTargetMobile ?? 0)),
+                                        totalVarianceClass: this.getColorClass(
+                                            ((item.totalActualResourcesFixedSite ?? 0) + (item.totalActualResourcesMobile ?? 0)) - ((item.totalTargetFixedSite ?? 0) + (item.totalTargetMobile ?? 0))),
+                                    },
+                                    {
+                                        typeOfStaff: 'Fixed Site',
+                                        totalActualResources: item.totalActualResourcesFixedSite ?? 0,
+                                        totalTargetResources: item.totalTargetFixedSite ?? 0,
+                                        totalVariance: (item.totalActualResourcesFixedSite ?? 0) - (item.totalTargetFixedSite ?? 0),
+                                        totalVarianceClass: this.getColorClass((item.totalActualResourcesFixedSite ?? 0) - (item.totalTargetFixedSite ?? 0)),
+                                    },
+                                    {
+                                        typeOfStaff: 'Mobile',
+                                        totalActualResources: item.totalActualResourcesMobile ?? 0,
+                                        totalTargetResources: item.totalTargetMobile ?? 0,
+                                        totalVariance: (item.totalActualResourcesMobile ?? 0) - (item.totalTargetMobile ?? 0),
+                                        totalVarianceClass: this.getColorClass((item.totalActualResourcesMobile ?? 0) - (item.totalTargetMobile ?? 0)),
+                                    }
+                                ],
                                 availabilityPatternRoles: (queryResult?.filter(apRole => apRole.colOpAvailabilityId === item.id) ?? []).map(apRoleItem => {
                                     return {
                                         ...apRoleItem,

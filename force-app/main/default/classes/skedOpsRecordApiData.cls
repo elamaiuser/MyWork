@@ -129,6 +129,7 @@ global class skedOpsRecordApiData {
         public boolean premiumLateEnd;//sked_Operation_Record_Staff__c->sked_Premiums_Op_Pay__c
         public boolean premiumPool;//sked_Operation_Record_Staff__c->sked_Premiums_Op_Pay__c
         public boolean premiumDriver;//sked_Operation_Record_Staff__c->sked_Premiums_Op_Pay__c
+        public decimal restBreaksNotTaken;//sked_Operation_Record_Staff__c->sked_Rest_Breaks_Not_Taken__c
         public boolean notWorked;//sked_Operation_Record_Staff__c->sked_Absent__c
         public boolean addedStaff;//
 

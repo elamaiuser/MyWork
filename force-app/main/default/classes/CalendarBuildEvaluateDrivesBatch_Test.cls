@@ -22,6 +22,11 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
         Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects();
         
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('ContactTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        
         // IMP Containers
         List<Account> accList = new List<Account>();
         List<sked__Location__c> siteList = new List<sked__Location__c>();
@@ -268,8 +273,13 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         
         Test.startTest();
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+        TriggerHandler.bypass('DriveAffiliationHandler');
+        skedHubBase.BypassUpdateTriggers = true;
+        
         Opportunity fsOpp = [select id, stageName, Drive_date__c, Related_Scheduled_Drive__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
-        system.debug('fsOpp '+fsOpp);
         fsOpp.bypass_validation_rule__c = TRUE;
         fsOpp.Drive_Date__c = System.today().addDays(-numOfDays);
         fsopp.Drive_Date_Change_Reason__c = 'TEST';
@@ -277,8 +287,9 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         fsOpp.Initiated_By__c = 'ARC Initiated-Fixed';
         fsOpp.sked_Cancellation_Reason__c = 'System Need';
         update fsOpp;
-        sked_Drive__C drive = [select sked_status__c from sked_Drive__C where sked_Opportunity__c = :fsOpp.Id];
-        system.debug('drive '+drive);
+        TriggerHandler.clearAllBypasses();
+        skedHubBase.BypassUpdateTriggers = false;
+        
         // Call the batch
         CalendarBuildEvaluateDrivesBatch cb = new CalendarBuildEvaluateDrivesBatch();
         SchedulableContext scon;

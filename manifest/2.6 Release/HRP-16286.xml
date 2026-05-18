@@ -18,5 +18,5 @@
     <members>BSF_Access_Control_Rule.HRP_16286_Page_Permission_Set</members>        
     <name>CustomMetadata</name>
   </types>
-    <version>64.0</version>
+  <version>64.0</version>
 </Package>

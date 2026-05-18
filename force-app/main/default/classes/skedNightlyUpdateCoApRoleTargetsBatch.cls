@@ -23,6 +23,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
             'FROM sked__Availability_Pattern_Resource__c '+
             'WHERE sked__Resource__r.sked__Resource_Type__c = \'' + skedConstants.RESOURCE_TYPE_PERSON + '\' '+
             'AND sked__Resource__r.sked__Is_Active__c = true '+
+            'AND sked__Resource__r.sked_FCC_Code__c != null '+
             'AND (sked__Resource__r.CO_AP_Status__c = null OR sked__Resource__r.CO_AP_Status__c IN :includedResourceCoApStatus) '+
             'AND sked__Resource__r.sked_Collection_Operation_Id__c != null '+
             'AND sked_Start_Date__c <= TODAY '+
@@ -39,11 +40,8 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
     global void execute(Database.BatchableContext bc, List<sked__Availability_Pattern_Resource__c> availabilityPatternResources) {
         Map<String, Set<String>> map_coIdName_uniqueApIdNames = new Map<String, Set<String>>();
         Map<String, Set<String>> map_coIdName_uniqueApIdNamesCopy = new Map<String, Set<String>>();
-        Set<Id> resourceIds = new Set<Id>();
 
         for(sked__Availability_Pattern_Resource__c apResource : availabilityPatternResources) {
-            resourceIds.add(apResource.sked__Resource__c);
-
             String mapKey = apResource.sked__Resource__r.sked_Collection_Operation_Id__c + ':' + apResource.sked__Resource__r.sked_Biomed_Collection_Op_Center_Name__c;
             if(!map_coIdName_uniqueApIdNames.containsKey(mapKey)) {
                 map_coIdName_uniqueApIdNames.put(mapKey, new Set<String>());
@@ -59,7 +57,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
         }
 		
         errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.autoAssignCollectionOpAvailabilityRecordsAndGetErrorLogs(map_coIdName_uniqueApIdNames));
-        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(resourceIds, map_coIdName_uniqueApIdNamesCopy, map_coIdapIdKey_roleVsNoOfResourcesMap));
+        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(map_coIdName_uniqueApIdNamesCopy, map_coIdapIdKey_roleVsNoOfResourcesMap));
     }
 
     global void finish(Database.BatchableContext bc) {
