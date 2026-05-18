@@ -93,8 +93,8 @@ public with sharing class SFC360_Lead360ViewController {
 
     // Fetches detailed activity records ordered by date
     private static final String SQL_ACTIVITY_MODAL =
-        'SELECT activity_date__c, completed_datetime__c, is_closed__c, priority__c, source_system__c, ' +
-        'status__c, subject__c, task_sub_type__c, task_owner_name__c, task_id__c ' +
+        'SELECT activity_date__c, is_closed__c, source_system__c, ' +
+        'task_sub_type__c, task_owner_name__c, task_id__c ' +
         'FROM SFC360_Account_Activity__cio ' +
         'WHERE account_id__c = {0} ' +
         'ORDER BY activity_date__c DESC';
@@ -179,16 +179,12 @@ public with sharing class SFC360_Lead360ViewController {
             }
 
             Activities act = new Activities();
-            act.taskId = safeGetString(row, 'task_id__c');
-            act.subject = safeGetString(row, 'subject__c');
-            act.status = safeGetString(row, 'status__c');
-            act.priority = safeGetString(row, 'priority__c');
+            act.taskId = safeGetString(row, 'task_id__c');            
             act.isClosed = safeGetString(row, 'is_closed__c');
             act.type = safeGetString(row, 'task_sub_type__c');
-            act.ownerName = safeGetString(row, 'task_owner_name__c');
-            act.isUpcoming = (act.status != null && !act.status.equalsIgnoreCase('Completed'));
+            act.ownerName = safeGetString(row, 'task_owner_name__c');            
 
-            String compDate = safeGetString(row, 'completed_datetime__c');
+            String compDate = safeGetString(row, 'activity_date__c');
             if (!String.isBlank(compDate)) {
                 try {
                     Datetime cd = (Datetime)JSON.deserialize('"' + compDate + '"', Datetime.class);

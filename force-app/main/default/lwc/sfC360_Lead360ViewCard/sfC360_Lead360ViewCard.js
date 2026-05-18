@@ -16,7 +16,7 @@ import queryRelatedAccountDetails from '@salesforce/apex/SFC360_Lead360ViewContr
 
 import GREEN from '@salesforce/resourceUrl/greenIcon';
 import GRAY from '@salesforce/resourceUrl/grayIcon';
-import SHOW_HS_DATA from '@salesforce/label/c.Show_HS_Financial_Data';
+//import SHOW_HS_DATA from '@salesforce/label/c.Show_HS_Financial_Data';
 
 const hsColumns = [
     { label: 'Products', fieldName: 'products', type: 'text', cellAttributes: { class: { fieldName: 'rowStyle' } } },
@@ -134,7 +134,7 @@ export default class SfC360_Lead360ViewCard extends LightningElement {
 
     greenIcon = GREEN;
     grayIcon = GRAY;
-    showHSData = SHOW_HS_DATA;
+    //showHSData = SHOW_HS_DATA;
 
     get isAccountModal() { return this.modalType === 'ACCOUNT'; }
     get isGiftModal() { return this.modalType === 'GIFT'; }
