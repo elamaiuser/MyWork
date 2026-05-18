@@ -22,11 +22,19 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Total_Target__c</field>
+                <field>Total_Target_Fixed_Site__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Target_Mobile__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>Total_Actual_Resources__c</field>
+                <field>Total_Actual_Resources_Fixed_Site__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Total_Actual_Resources_Mobile__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>

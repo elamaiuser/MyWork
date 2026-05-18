@@ -195,6 +195,62 @@ private class slwcAllocationService_Test {
     }
 
     @isTest
+    static void getResourceData_AssetsByIds_Test() {
+        List<String> dates = new List<String>();
+        Date startDate = System.today();
+        Date endDate = System.today().addDays(10);
+
+        while (startDate < endDate) {
+            dates.add('' + startDate.year() + '-' + startDate.month() + '-' + startDate.day());
+            startDate = startDate.addDays(1);
+        }
+        dates.add('' + endDate.year() + '-' + endDate.month() + '-' + endDate.day());
+
+        List<Id> accountIds = new List<Id>();
+        List<Account> testAccounts = [SELECT Id FROM Account];
+        for (Account account : testAccounts) { accountIds.add(account.Id); }
+
+        List<Id> collectionOpIds = new List<Id>();
+        List<Biomed_Collection_Op_Center__c> testCollectionOps = [SELECT Id FROM Biomed_Collection_Op_Center__c];
+        for (Biomed_Collection_Op_Center__c collectionOp : testCollectionOps) { collectionOpIds.add(collectionOp.Id); }
+
+        List<Id> jobIds = new List<Id>();
+        List<sked__Job__c> testJobs = [SELECT Id FROM sked__Job__c];
+        for (sked__Job__c job : testJobs) { jobIds.add(job.Id); }
+
+        List<Id> locationIds = new List<Id>();
+        List<sked__Location__c> testLocations = [SELECT Id FROM sked__Location__c];
+        for (sked__Location__c location : testLocations) { locationIds.add(location.Id); }
+
+        List<sked__Resource__c> vehicles = [SELECT Id FROM sked__Resource__c WHERE sked_Asset_Type__c != NULL LIMIT 2];
+        List<String> vehicleIds = new List<String>();
+        for (sked__Resource__c v : vehicles) { vehicleIds.add(v.Id); }
+
+        slwcAllocationService.getResourceDataRequestModel model = new slwcAllocationService.getResourceDataRequestModel();
+        model.accountIds = accountIds;
+        model.collectionOperationIds = collectionOpIds;
+        model.excludedActivityIds = new List<string>();
+        model.excludedDriveIds = new List<string>();
+        model.locationIds = locationIds;
+        model.inputDates = dates;
+        model.jobIds = jobIds;
+        model.pageSize = 50;
+        model.pageNo = 1;
+        model.timezoneSidId = UserInfo.getTimeZone().getID();
+        model.getAssetsOnly = true;
+        model.recordIds = vehicleIds;
+
+        Test.startTest();
+        slwcAuraResult result = slwcAllocationService.getResourceData(model);
+        Test.stopTest();
+
+        System.assertNotEquals(null, result.returnedData, 'Result should have returned data');
+        slwcAllocationService.resourceDataModel data = (slwcAllocationService.resourceDataModel) result.returnedData;
+        System.assertNotEquals(null, data.resources, 'Resources should not be null');
+        System.assertNotEquals(null, data.pendingTrades, 'Pending trades should not be null');
+    }
+
+    @isTest
     static void getLinkedDrivesResourceIds_Test() {
 
     }

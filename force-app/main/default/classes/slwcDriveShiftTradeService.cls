@@ -187,7 +187,7 @@ global class slwcDriveShiftTradeService implements Callable {
             }
         }
         
-        Map<Id, sked__Job_Allocation__c> mapAllocation = new Map<Id, sked__Job_Allocation__c>([SELECT Id, sked__Job__c, sked__Status__c,
+        Map<Id, sked__Job_Allocation__c> mapAllocation = new Map<Id, sked__Job_Allocation__c>([SELECT Id, sked__Job__c, sked__Status__c, sked_DOT__c, sked_CDL__c,
                                                                                                sked__Resource__c, sked__Resource__r.sked_Min_Hours_Per_Week__c ,
                                                                                                sked_Dual_Role__c, sked_Resource_Role__c, sked_Guarded__c,
                                                                                                sked_Additional_Roles__c, sked__Job__r.sked_Drive__c, sked__Job__r.sked_Drive__r.sked_Linked_Drives__c
@@ -222,7 +222,9 @@ global class slwcDriveShiftTradeService implements Callable {
                     sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
                     sked_Additional_Roles__c = requestingStaffJobAllocation.sked_Additional_Roles__c,
                     sked_Drive_Shift_Trade__c = record.Id,
-                    sked_Locked__c = TRUE
+                    sked_Locked__c = TRUE,
+                    sked_DOT__c = requestingStaffJobAllocation.sked_DOT__c,
+                    sked_CDL__c = requestingStaffJobAllocation.sked_CDL__c
                 );
                 jobAllocationInsertList.add(newTradingStaffJobAllocation);
                 
@@ -261,7 +263,9 @@ global class slwcDriveShiftTradeService implements Callable {
                     sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
                     sked_Additional_Roles__c = tradingStaffJobAllocation.sked_Additional_Roles__c,
                     sked_Drive_Shift_Trade__c = record.Id,
-                    sked_Locked__c = TRUE
+                    sked_Locked__c = TRUE,
+                    sked_DOT__c = tradingStaffJobAllocation.sked_DOT__c,
+                    sked_CDL__c = tradingStaffJobAllocation.sked_CDL__c
                 );
                 jobAllocationInsertList.add(newRequestingStaffJobAllocation);
                 
@@ -1441,6 +1445,20 @@ global class slwcDriveShiftTradeService implements Callable {
                 }
             }
         } catch (skedException ex) {
+            result.addError(ex);
+        } catch (Exception ex) {
+            BSF_Error_Log__c errorLog = BSF_Utilities.createBsfErrorLogForExceptions(
+                ex,
+                'slwcDriveShiftTradeService',
+                'call.' + methodName,
+                ex.getMessage(),
+                ex.getMessage(),
+                'sked_Drive_Shift_Trade__c',
+                (String) params.get('param1')
+            );
+            if (errorLog != null) {
+                Database.insert(new List<BSF_Error_Log__c>{ errorLog }, false);
+            }
             result.addError(ex);
         }
 

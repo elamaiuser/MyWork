@@ -425,6 +425,7 @@ global class skedModels {
         public decimal dailyTimeOffHours;
         public string districtName;
         public string effectiveDate;
+        public string futureInactiveDate;
         public string email;
         public string employmentStatus;
         public string employmentType;

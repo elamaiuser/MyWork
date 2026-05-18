@@ -619,17 +619,24 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
         return Promise.all([
           driveLimitSvc.query(driveLimitQuery),
-          staffingConstraintSvc.query(staffingConstraintQuery)
+          staffingConstraintSvc.query(staffingConstraintQuery),
+          this.helper.getAvailableAssets([], this.drive),
+          this.helper.getLockedStaffAvailability(this.drive)
         ]);
       })
-      .then(([driveLimitResult, staffingConstraintResult]) => {
+      .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo, staffPossibleAllocations]) => {
+        availableAssetsInfo.possibleAllocations = (availableAssetsInfo.possibleAllocations || []).concat(staffPossibleAllocations);
         let {
           passed,
           pendingActionReasonCodes
         } = this.helper.validateDrive(this.drive, {
           ...this.masterData,
           driveLimits: driveLimitResult,
-          staffingConstraints: staffingConstraintResult
+          staffingConstraints: staffingConstraintResult,
+          availableAssetsInfo,
+          availabilityData: {
+            possibleAllocations: availableAssetsInfo.possibleAllocations || []
+          }
         }, [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -644,6 +651,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
           DRIVE_CONTENTION.DUAL_ROLE_REMOVAL,
           DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
           DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
         ])
 

@@ -75,10 +75,26 @@
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab3</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND (2 OR 3 OR 4)</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.Type_of_Drive__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Mobile</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>Admin</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>DRD</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>APS Planner</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -306,7 +322,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&apos;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
+                    <value>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 2, 2);&quot;&gt;The Drive Date is less than 180 business days from Today or Targeted Ask Date isn&#39;t set, please enter a Targeted Ask Date .&lt;/span&gt;&lt;/p&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText2</identifier>
@@ -381,7 +397,7 @@
             </componentInstance>
         </itemInstances>
         <itemInstances>
-            <componentInstance>                
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-ed8b92db-1868-4b04-874b-0be68143478a</value>
@@ -1088,10 +1104,26 @@
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab4</identifier>
                 <visibilityRule>
+                    <booleanFilter>1 AND (2 OR 3 OR 4)</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.Type_of_Drive__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Mobile</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>Admin</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>DRD</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>APS Planner</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>

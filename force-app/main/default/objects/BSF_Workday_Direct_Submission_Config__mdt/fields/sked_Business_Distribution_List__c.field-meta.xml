@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Business_Distribution_List__c</fullName>
+    <description>Comma-separated email addresses for success notifications (Op Record Processing Complete).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Business Distribution List</label>
+    <length>32768</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

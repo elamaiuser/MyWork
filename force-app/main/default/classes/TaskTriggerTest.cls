@@ -74,41 +74,227 @@ private class TaskTriggerTest {
 
         
         List<Task_Definition__c> taskDefs = new List<Task_Definition__c>();
-        Task_Definition__c taskDef = new Task_Definition__c(Name = 'Post-Drive Analysis - AM', 
-                                                            Task_Type__c= 'Post Drive Analysis AM',
-                                                            Assigned_To__c = 'Account Manager');
-        taskDefs.add(taskDef);
-        Task_Definition__c taskDef2 = new Task_Definition__c(Name = 'Recruitment Planning Meeting', 
-                                                            Task_Type__c= 'Recruitment Strategy Meeting',
-                                                            Assigned_To__c = 'Strategic Business Planning Manager');
-        taskDefs.add(taskDef2);
 
-        Task_Definition__c taskDef3 = new Task_Definition__c(Name = 'Publicity Review Needed', 
-                                                            Task_Type__c= 'Publicity Review Needed',
-                                                            Assigned_To__c = 'Account Manager');
-        taskDefs.add(taskDef3);
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Room Rentals',
+            Task_Type__c = 'Room Rentals',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Parking Needs',
+            Task_Type__c = 'Parking Needs',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Send Local Media Outreach',
+            Task_Type__c = 'Send Local Media Outreach',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Drive Logistics Check',
+            Task_Type__c = 'Drive Logistics Check',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Submit DL & Background Checks',
+            Task_Type__c = 'Submit DL & Background Checks',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'MOI, COI, TLA',
+            Task_Type__c = 'MOI COI TLA',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Appointment Schedule Maintenance',
+            Task_Type__c = 'Appointment Schedule Maintenance',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Dedicated Drive Authorization Form',
+            Task_Type__c = 'Dedicated Drive Authorization Form',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Coordinate Publicity & Branding Needs',
+            Task_Type__c = 'Coordinate Publicity & Branding Needs',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Volunteer Assignments',
+            Task_Type__c = 'Volunteer Assignments',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Parental Consent Check',
+            Task_Type__c = 'Parental Consent Check',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Annual Meeting',
+            Task_Type__c = 'Annual Meeting',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Standing Date Confirmation',
+            Task_Type__c = 'Standing Date Confirmation',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Assessment',
+            Task_Type__c = 'Recruitment Assessment',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Continuous Engagement',
+            Task_Type__c = 'Continuous Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Day-of-Drive Collections Check',
+            Task_Type__c = 'Day of Drive Collections Check',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'External Leadership Engagement',
+            Task_Type__c = 'External Leadership Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Announcement Coordination',
+            Task_Type__c = 'Announcement Coordination',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Award Recognition Planning',
+            Task_Type__c = 'Award Recognition Planning',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Presentation/Tabling',
+            Task_Type__c = 'Recruitment Presentation Tabling',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Power Red Review',
+            Task_Type__c = 'Power Red Review',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'National Partnership SLA - SBPM',
+            Task_Type__c = 'National Partnership SLA SBPM',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Contingency Planning',
+            Task_Type__c = 'Contingency Planning',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Internal Partners Engagement',
+            Task_Type__c = 'Internal Partners Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Quarterly Meeting',
+            Task_Type__c = 'Quarterly Meeting',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'SBPM Sponsor Date Confirmation',
+            Task_Type__c = 'SBPM Sponsor Date Confirmation',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Mission Impact and Inclusion Planning',
+            Task_Type__c = 'Mission Impact and Inclusion Planning',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Marketing Program Review',
+            Task_Type__c = 'Marketing Program Review',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = '1-Week Check-in',
+            Task_Type__c = 'One Week Check-in',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Strategy Meeting',
+            Task_Type__c = 'Recruitment Strategy Meeting',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Publicity Order Not Created',
+            Task_Type__c = 'Publicity Order Not Created',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Publicity Review Needed',
+            Task_Type__c = 'Publicity Review Needed',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = '72-Hour Check-in',
+            Task_Type__c = '72 Hour Check-In',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Post-Drive Analysis/Future Drive Planning - SBPM',
+            Task_Type__c = 'Post Drive Analysis SBPM',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Post-Drive Analysis - AM',
+            Task_Type__c = 'Post Drive Analysis AM',
+            Category__c = 'Standard',
+            Assigned_To__c = 'Account Manager'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'National Partnership SLA - AM',
+            Task_Type__c = 'National Partnership SLA AM',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
 
-        Task_Definition__c taskDef4 = new Task_Definition__c(Name = 'Post-Drive Analysis/Future Drive Planning - SBPM', 
-                                                            Task_Type__c= 'Post Drive Analysis SBPM',
-                                                            Assigned_To__c = 'Account Manager');
-        taskDefs.add(taskDef4);
-        
-        Task_Definition__c taskDefPubNoOrder = new Task_Definition__c(Name = 'Publicity Order Not Created', Task_Type__c = 'Publicity Order Not Created',Assigned_To__c = 'Account Manager');
-        taskDefs.add(taskDefPubNoOrder);
-        Task_Definition__c taskDefPubReview1 = new Task_Definition__c(Name = '72-Hour Check-in', Task_Type__c = '72 Hour Check-In',Assigned_To__c = 'Account Manager');
-        taskDefs.add(taskDefPubReview1);
         insert taskDefs;
 
         Task_Package__c taskPackage = new Task_Package__c(Name = 'Standard Tasks', Package_Name__c = 'Standard Tasks', Sort_Order__c = 1);
         insert taskPackage;
 
         List<Task_Package_Item__c> taskPackageItems = new List<Task_Package_Item__c>();
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[0].Id));
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[1].Id));
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[2].Id));
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[3].Id));
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[4].Id));
-        taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDefs[5].Id));
+        for(Task_Definition__c taskDef : taskDefs){
+            taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDef.Id));
+        }
         insert taskPackageItems;
 
         
@@ -383,7 +569,9 @@ private class TaskTriggerTest {
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Account_Strategy_Notes__c', Input_Long_Text_Area__c = 'Test Notes', OpportunityLookup__c = mobileOpp.Id));
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Gray_Sky_Account__c', Input_Checkbox__c = true, OpportunityLookup__c = mobileOpp.Id));
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Rollover_Consideration__c', Picklist_Input_2__c = 'Yes', OpportunityLookup__c = mobileOpp.Id));
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         insert checklists;
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
 
         Test.startTest();
         
@@ -482,7 +670,7 @@ private class TaskTriggerTest {
         insert t;
 
         Test.startTest();
-        TaskService.cancelOneWeekCheckInTasks(new Set<Id>{mobileOpp.Id});
+        TaskService.cancelOpportunityTasks(new Set<Id>{mobileOpp.Id});
         Id drdUser = TaskService.getDRDSystemUser();
         Test.stopTest();
 
@@ -539,9 +727,11 @@ private class TaskTriggerTest {
                             Unique_Name__c = 'Gray_Sky_Account__c'
         );
         taskCheckListToInsert.add(taskCheckList);
-        
+
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         insert taskCheckListToInsert;
-        
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
+
         Map<Id, BSF_Task_Checklist__c> map_chklstId_taskCheckList = new Map<Id, BSF_Task_Checklist__c>(
             																		[SELECT Id, Unique_Name__c, TaskLookup__c,
                                                                                      Picklist_Input_2__c, Input_Long_Text_Area__c 
