@@ -33,7 +33,7 @@
                   onvehiclecleared={handleReplacementVehicleCleared}>
                 </c-slwc-vehicle-picker>
               </div>
-              <div class="slds-p-right_small" style="width: 300px;">
+              <div class="slds-p-right_small">
                 <c-slwc-new-collection-operation-multi-picklist
                   division-single-select
                   date-range={collectionOperationDateRange}
@@ -58,7 +58,7 @@
       <template if:true={isFilterIncomplete}>
         <div class="slds-align_absolute-center slds-p-around_small">
           <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-m-right_xx-small"></lightning-icon>
-          <span>Please select collection operations, a date range, and a current vehicle to load drives.</span>
+          <span>Please select a date range, collection operation, and current vehicle to load drives.</span>
         </div>
       </template>
 
