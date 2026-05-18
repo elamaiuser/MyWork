@@ -10,7 +10,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
     public static final String TIME_ENTRY_DRIVER = 'Driver';
     public static final String TIME_ENTRY_OJI = 'Instructor';
     public static final String TIME_ENTRY_LATE_END = 'Drive End Time';
-    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'TIME_ENTRY_CODE-3-112';
+    public static final String TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK = 'CA Missed/Short Rest Break';
     public static final Decimal QUANTITY_PREMIUM = 1;
     
 
@@ -137,15 +137,20 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
             if (sd.premiumLateEnd) {
                 blocks.add(buildPremiumBlock(empId, driveDate, TIME_ENTRY_LATE_END, comment));
             }
-            if (sd.restBreaksNotTaken != null && sd.restBreaksNotTaken > 0) {
-                blocks.add(buildPremiumBlock(
-                    empId,
-                    driveDate,
-                    TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
-                    comment,
-                    sd.restBreaksNotTaken
-                ));
-            }
+            /*
+             * Missed/short rest breaks are submitted via Trade API (createBreaksNotTakenAPIData /
+             * skedNightlyTradeProcessBatch), not the direct Workday ops-record submission path.
+             *
+             * if (sd.restBreaksNotTaken != null && sd.restBreaksNotTaken > 0) {
+             *     blocks.add(buildPremiumBlock(
+             *         empId,
+             *         driveDate,
+             *         TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
+             *         comment,
+             *         sd.restBreaksNotTaken
+             *     ));
+             * }
+             */
         }
         return blocks;
     }
