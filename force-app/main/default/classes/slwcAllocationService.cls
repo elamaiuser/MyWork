@@ -557,10 +557,11 @@ global class slwcAllocationService {
                                               FROM sked__ResourceTags__r
                                               WHERE sked_Start_Date__c <= :request.maxDate),
                                              
-                                             (SELECT Id, Name, sked__Job__c, sked__Job__r.Name, 
-                                              sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s, 
+                                             (SELECT Id, Name, sked__Job__c, sked__Job__r.Name,
+                                              sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s,
                                               sked__Job__r.sked__Type__c, sked__Status__c,
-                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c,
+                                              sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.Id
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -569,43 +570,43 @@ global class slwcAllocationService {
                                               AND sked__Job__c NOT IN :request.jobIds
                                               AND sked__Job__r.sked_Drive__c NOT IN :request.excludedDriveIds
                                               ORDER BY sked__Start__c ASC),
-                                             
+
                                              (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
-                                              sked__Type__c
+                                              sked_Activity_Title__c, sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
                                               AND sked__Type__c NOT IN :excludedActivityTypes
                                               AND Id NOT IN :request.excludedActivityIds
                                               ORDER BY sked__Start__c ASC),
-                                             
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
+
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c, sked_Call_Out_Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked__Start__c ASC),
-                                             
+
                                              (SELECT Id, Name, sked_Start__c, sked_Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked_Is_Available__c
                                               FROM sked_Custom_Availabilities__r
                                               WHERE sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
                                               ORDER BY sked_Start__c ASC),
-                                             
+
                                              (SELECT Id , sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__Availability_Pattern__r.sked__Pattern__c,sked__Availability_Pattern__r.Name,sked_Start_Time__c,sked_End_Time__c
                                               FROM sked__Availability_Pattern_Resources__r
                                               WHERE sked_Start_Date__c <= :request.maxDate
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c >= :request.minDate)),
-                                             
+
                                              (SELECT Id, sked__Activity__c, sked_Start1__c, sked_End__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked__Activity_Resources__r
                                               WHERE sked__Activity__r.sked_Start_Date__c <= :request.maxDate
                                               AND sked__Activity__r.sked_End_Date__c >= :request.minDate
                                               AND sked__Activity__r.sked__Type__c NOT IN :excludedActivityTypes
                                               AND sked__Activity__c NOT IN :request.excludedActivityIds),
-                                             
+
                                              (SELECT Id, sked_Resource__c, sked_Biomed_Collection_Op_Center__c, sked_Start_Date__c, sked_End_Date__c
                                               FROM sked_Resource_Biomed_Collection_Ops__r
-                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate) 
+                                              WHERE (sked_Start_Date__c = NULL OR sked_Start_Date__c <= :request.maxDate)
                                               AND (sked_End_Date__c = NULL OR sked_End_Date__c  >= :request.minDate))
-                                             
+
                                              FROM sked__Resource__c
                                              WHERE sked_Asset_Type__c != NULL
                                              AND (
@@ -661,7 +662,8 @@ global class slwcAllocationService {
                                              (SELECT Id, Name, sked__Job__c, sked__Job__r.Name,
                                               sked__Job__r.sked__GeoLocation__Latitude__s, sked__Job__r.sked__GeoLocation__Longitude__s,
                                               sked__Job__r.sked__Type__c, sked__Status__c,
-                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c
+                                              sked__Start__c, sked__Set_End__c, sked_Start_Date__c, sked_Set_End_Date__c, sked_Travel_Time_To__c, sked_Travel_Time_Back__c,
+                                              sked__Job__r.sked_Drive__r.Name, sked__Job__r.sked_Drive__r.Id
                                               FROM sked__Job_Allocations__r
                                               WHERE sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
                                               AND sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
@@ -672,14 +674,14 @@ global class slwcAllocationService {
                                               ORDER BY sked__Start__c ASC),
 
                                              (SELECT Id, Name, sked__Start__c, sked__End__c, sked_Start_Date__c, sked_End_Date__c, sked__GeoLocation__Latitude__s, sked__GeoLocation__Longitude__s,
-                                              sked__Type__c
+                                              sked_Activity_Title__c, sked__Type__c
                                               FROM sked__Activities__r
                                               WHERE sked_Start_Date__c IN :request.allDates
                                               AND sked__Type__c NOT IN :excludedActivityTypes
                                               AND Id NOT IN :request.excludedActivityIds
                                               ORDER BY sked__Start__c ASC),
 
-                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c
+                                             (SELECT Id, Name, sked__Start__c, sked__Finish__c, sked_Start_Date__c, sked_Finish_Date__c, sked__Is_Available__c, sked__Type__c, sked_Call_Out_Type__c
                                               FROM sked__Availabilities1__r
                                               WHERE sked__Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
                                               AND sked_Start_Date__c <= :request.maxDate AND sked_Finish_Date__c >= :request.minDate
