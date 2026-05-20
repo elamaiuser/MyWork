@@ -180,6 +180,9 @@
                                 </tr>
                             </tbody>
                        </table>
+                       <p if:true={ltowbProjHasError} class="slds-text-color_error slds-m-top_x-small slds-m-bottom_none ltowb-error-msg">
+                           LTOWB Proj must be 0 or a positive integer
+                       </p>
                        <div for:each={messages} for:item="item" key={item} class="slds-text-color_error slds-m-vertical--small">{item}</div>
                     </div>
             </div>

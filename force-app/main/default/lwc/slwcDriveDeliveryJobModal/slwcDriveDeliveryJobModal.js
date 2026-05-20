@@ -132,17 +132,15 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
         if (!rawValue || rawValue.trim() === '') {
             this.ltowbProjection = null;
             this.ltowbProjHasError = false;
-            inputEl.setCustomValidity('');
         } else if (/^\d+$/.test(rawValue.trim())) {
             this.ltowbProjection = parseInt(rawValue.trim(), 10);
             this.ltowbProjHasError = false;
-            inputEl.setCustomValidity('');
         } else {
             this.ltowbProjection = null;
             this.ltowbProjHasError = true;
-            inputEl.setCustomValidity('Positive integer only');
         }
 
+        inputEl.setCustomValidity(this.ltowbProjHasError ? ' ' : '');
         inputEl.reportValidity();
     }
 
