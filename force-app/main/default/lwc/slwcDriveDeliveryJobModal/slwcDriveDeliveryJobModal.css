@@ -45,3 +45,8 @@
   position: relative;
   top: 55px;
 }
+
+.ltowb-cell {
+  overflow: hidden;
+  word-break: break-word;
+}
