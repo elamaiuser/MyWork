@@ -635,7 +635,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                 for(sked_Drive_Bag__c dbag : driveJob.sked_Drive_Bags__r){
                                     if(String.isNotBlank(dbag.sked_Bag_Type__c)){
                                         bagList.add(dbag.sked_Bag_Type__c);
-                                        if(dbag.sked_Bag_Type__c.equalsIgnoreCase('IM Terumo Imuflex WB') && dbag.LTOWB_Proj__c != null){
+                                        if(dbag.sked_Bag_Type__c.equalsIgnoreCase('IM Terumo Imuflex WB') && dbag.LTOWB_Proj__c != null && dbag.LTOWB_Proj__c > 0){
                                             ltowbProjList.add(String.valueOf(dbag.LTOWB_Proj__c));
                                             rw.hasLtowbProj = true;
                                         }
