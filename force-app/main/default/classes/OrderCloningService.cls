@@ -24,6 +24,7 @@ public without sharing class OrderCloningService  implements Callable{
         cloneTemplateOrder(oppIds,true);
     }
     public static void cloneTemplateOrder(List<String> oppIds, Boolean isSyncRequest) {
+       
         Set<Id> templateIds = new Set<Id>();
         Map<Id,Order> templateOrderMap = new Map<Id,Order>();
         Map<Id,List<OrderItem>> templateProductMap = new Map<Id,List<OrderItem>>();
@@ -69,6 +70,7 @@ public without sharing class OrderCloningService  implements Callable{
                                                                 ListPrice, 
                                                                 Quantity, 
                                                                 UnitPrice, 
+                                                                Material_Recipient__c,
                                                                 PricebookEntryId 
                                                             FROM OrderItems
                                                         )
