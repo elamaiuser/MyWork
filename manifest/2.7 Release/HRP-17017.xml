@@ -10,5 +10,10 @@
 		<members>sfc360GenericDetailModal</members>
 		<name>LightningComponentBundle</name>
 	</types>
+	<types>
+		<members>grayIcon</members>
+		<members>greenIcon</members>
+		<name>StaticResource</name>
+	</types>
 	<version>66.0</version>
 </Package>

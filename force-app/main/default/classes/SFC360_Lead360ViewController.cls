@@ -92,12 +92,11 @@ public with sharing class SFC360_Lead360ViewController {
         'WHERE unified_account_id__c = {0}';
 
     // Fetches detailed activity records ordered by date
-    private static final String SQL_ACTIVITY_MODAL =
+    private static final String SQL_ACTIVITY_MODAL_BASE =
         'SELECT activity_date__c, is_closed__c, source_system__c, ' +
         'task_sub_type__c, task_owner_name__c, task_id__c ' +
         'FROM SFC360_Account_Activity__cio ' +
-        'WHERE account_id__c = {0} ' +
-        'ORDER BY activity_date__c DESC';
+        'WHERE account_id__c = {0} ';
 
     // Fetches count of related Account records (Account Id starts with 001)
     private static final String SQL_RELATED_ACC =
@@ -153,13 +152,19 @@ public with sharing class SFC360_Lead360ViewController {
      * @return ActivityModalWrapper containing grouped activity records
      */
     @AuraEnabled
-    public static ActivityModalWrapper queryActivityModal(String accId) {
+    public static ActivityModalWrapper queryActivityModal(String accId, String filterType) {
         ActivityModalWrapper result = new ActivityModalWrapper();
         if (String.isBlank(accId)) {
             return result;
         }
 
-        String sql = String.format(SQL_ACTIVITY_MODAL, new List<String>{'\'' + accId + '\''});
+        String sql = String.format(SQL_ACTIVITY_MODAL_BASE, new List<String>{'\'' + accId + '\''});
+
+        if (filterType != null && filterType.equalsIgnoreCase('Open')) {
+            sql += 'AND is_closed__c = \'false\' ';
+        }
+        sql += 'ORDER BY activity_date__c DESC';
+        
         ConnectApi.CdpQueryInput q = new ConnectApi.CdpQueryInput();
         q.sql = sql;
 

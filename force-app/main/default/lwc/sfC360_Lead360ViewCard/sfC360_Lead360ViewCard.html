@@ -92,11 +92,11 @@
             <div class="slds-text-align_left slds-m-bottom_small">
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Open Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId} data-filter="open"
                             onclick={handleModalClickActivity}>{openActivityHS}</a>
                     </lightning-layout-item>
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Total Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId}
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId} data-filter="all"
                             onclick={handleModalClickActivity}>{totalActivityHS}</a>
                     </lightning-layout-item>
                 </lightning-layout>
@@ -119,11 +119,11 @@
             <div class="slds-text-align_left slds-m-bottom_small">
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Open Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId}
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId} data-filter="open"
                             onclick={handleModalClickActivity}>{openActivityFR}</a>
                     </lightning-layout-item>
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Total Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId}
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId} data-filter="all"
                             onclick={handleModalClickActivity}>{totalActivityFR}</a>
                     </lightning-layout-item>
                 </lightning-layout>
@@ -146,12 +146,12 @@
             <div class="slds-text-align_left slds-m-bottom_small" >
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Open Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId}
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId} data-filter="open"
                         onclick={handleModalClickActivity}>{openActivityTS}</a>
                     </lightning-layout-item>
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Total Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId}
-                        onclick={handleModalClickActivity}>{totalActivityTS}</a>
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId} data-filter="all"
+                            onclick={handleModalClickActivity}>{totalActivityTS}</a>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>

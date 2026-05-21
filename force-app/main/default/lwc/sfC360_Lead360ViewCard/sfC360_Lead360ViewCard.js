@@ -253,9 +253,12 @@ export default class SfC360_Lead360ViewCard extends LightningElement {
     handleModalClickActivity(event) {
         event.preventDefault();
         const accId = event.currentTarget.dataset.accid;
+        const filterType = event.currentTarget.dataset.filter || 'all';
         if (!accId) return;
-        this.openModal('ACTIVITY', 'Activities');
-        this.fetchActivity(accId);
+
+        const modalTitle = filterType === 'open' ? 'Open Activities' : 'Activities';
+        this.openModal('ACTIVITY', modalTitle);
+        this.fetchActivity(accId, filterType);
     }
 
     handleModalClickAccountDetails(event) {
@@ -341,9 +344,9 @@ export default class SfC360_Lead360ViewCard extends LightningElement {
             });
     }
 
-    fetchActivity(recId) {
+    fetchActivity(recId, filterType) {
         this.groupedActivities = [];
-        queryActivityModal({ accId: recId })
+        queryActivityModal({ accId: recId, filterType: filterType })
             .then((data) => {
                 if (data && data.activityData) {
                     this.groupedActivities = data.activityData;
