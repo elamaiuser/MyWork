@@ -17,7 +17,7 @@ public with sharing class BSF_TaskPlanningService {
         String queryString = buildTaskGenerationBatchQuery(BSF_Constants.PLANNED_TASK_TRIGGER_FILTER);
         List<Planned_Task__c> tasksToProcess = Database.queryWithBinds(queryString, 
                                                                         bindParams, 
-                                                                        AccessLevel.USER_MODE
+                                                                        AccessLevel.SYSTEM_MODE
                                                                       );
         if (!tasksToProcess.isEmpty()) {
             processAndGenerateTasks(tasksToProcess, 
@@ -65,7 +65,7 @@ public with sharing class BSF_TaskPlanningService {
         List<Task> dependentTasksToUpdate = [
             SELECT Id, WhatId FROM Task 
             WHERE WhatId IN :opportunityIdsWithDateChange AND IsClosed = FALSE
-            WITH USER_MODE
+            WITH SYSTEM_MODE
         ];
 
         for (Task taskRecord : dependentTasksToUpdate) {
@@ -76,7 +76,7 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!dependentTasksToUpdate.isEmpty()) {
-            handleDatabaseResults(Database.update(dependentTasksToUpdate, false, AccessLevel.USER_MODE), 'Syncing Task Dates');
+            handleDatabaseResults(Database.update(dependentTasksToUpdate, false, AccessLevel.SYSTEM_MODE), 'Syncing Task Dates');
         }
     }
 
@@ -131,13 +131,13 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!clonedDefaultConfigs.isEmpty()) {
-            handleDatabaseResults(Database.insert(clonedDefaultConfigs, false, AccessLevel.USER_MODE), 'Cloning Default Configs');
+            handleDatabaseResults(Database.insert(clonedDefaultConfigs, false, AccessLevel.SYSTEM_MODE), 'Cloning Default Configs');
         }
         if (!newPlannedTasks.isEmpty()) {
-            handleDatabaseResults(Database.insert(newPlannedTasks, false, AccessLevel.USER_MODE), 'Creating Initial Planned Tasks');
+            handleDatabaseResults(Database.insert(newPlannedTasks, false, AccessLevel.SYSTEM_MODE), 'Creating Initial Planned Tasks');
         }
         if (!clonedSelectedBundles.isEmpty()) {
-            handleDatabaseResults(Database.insert(clonedSelectedBundles, false, AccessLevel.USER_MODE), 'Cloning Selected Bundles');
+            handleDatabaseResults(Database.insert(clonedSelectedBundles, false, AccessLevel.SYSTEM_MODE), 'Cloning Selected Bundles');
         }
     }
 
@@ -150,18 +150,18 @@ public with sharing class BSF_TaskPlanningService {
             accountIds.add(template.AccountId); 
         }
 
-        Map<Id, Account> accountsById = new Map<Id, Account>([SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds WITH USER_MODE]);
+        Map<Id, Account> accountsById = new Map<Id, Account>([SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds WITH SYSTEM_MODE]);
         Map<Id, List<Task_Planning_Default__c>> configsByAccountId = getParentConfigs(accountIds, 'Account__c');
         Map<Id, List<Task_Selected_Package__c>> bundlesByAccountId = getParentBundles(accountIds, 'Account__c');
 
         List<Task_Planning_Default__c> newConfigs = new List<Task_Planning_Default__c>();
         List<Task_Selected_Package__c> newBundles = new List<Task_Selected_Package__c>();
         
-        List<Task_Planning_Default__c> existingConfigs = [SELECT Id FROM Task_Planning_Default__c WHERE Template_Opportunity__c IN :templatesToSync WITH USER_MODE];
-        List<Task_Selected_Package__c> existingBundles = [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :templatesToSync WITH USER_MODE];
+        List<Task_Planning_Default__c> existingConfigs = [SELECT Id FROM Task_Planning_Default__c WHERE Template_Opportunity__c IN :templatesToSync WITH SYSTEM_MODE];
+        List<Task_Selected_Package__c> existingBundles = [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :templatesToSync WITH SYSTEM_MODE];
 
-        if (!existingConfigs.isEmpty()) { handleDatabaseResults(Database.delete(existingConfigs, false, AccessLevel.USER_MODE), 'Wiping Template Configs'); }
-        if (!existingBundles.isEmpty()) { handleDatabaseResults(Database.delete(existingBundles, false, AccessLevel.USER_MODE), 'Wiping Template Bundles'); }
+        if (!existingConfigs.isEmpty()) { handleDatabaseResults(Database.delete(existingConfigs, false, AccessLevel.SYSTEM_MODE), 'Wiping Template Configs'); }
+        if (!existingBundles.isEmpty()) { handleDatabaseResults(Database.delete(existingBundles, false, AccessLevel.SYSTEM_MODE), 'Wiping Template Bundles'); }
 
         for (Opportunity template : templatesToSync) {
             Account parentAccount = accountsById.get(template.AccountId);
@@ -179,9 +179,9 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        handleDatabaseResults(Database.update(templatesToSync, false, AccessLevel.USER_MODE), 'Updating Template Paths');
-        if (!newConfigs.isEmpty()) { handleDatabaseResults(Database.insert(newConfigs, false, AccessLevel.USER_MODE), 'Cascading Configs to Template'); }
-        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.USER_MODE), 'Cascading Bundles to Template'); }
+        handleDatabaseResults(Database.update(templatesToSync, false, AccessLevel.SYSTEM_MODE), 'Updating Template Paths');
+        if (!newConfigs.isEmpty()) { handleDatabaseResults(Database.insert(newConfigs, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Template'); }
+        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Template'); }
     }
 
     public static Set<Id> cascadeTemplateToDrives(List<Opportunity> drivesToSync) {
@@ -189,18 +189,18 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> confirmedDriveIdsToTrigger = new Set<Id>(); 
         for (Opportunity d : drivesToSync) { templateIds.add(d.Parent_Template_Id__c); }
 
-        Map<Id, Opportunity> templatesById = new Map<Id, Opportunity>([SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds WITH USER_MODE]);
+        Map<Id, Opportunity> templatesById = new Map<Id, Opportunity>([SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds WITH SYSTEM_MODE]);
         Map<Id, List<Task_Planning_Default__c>> configsByTemplateId = getParentConfigs(templateIds, 'Template_Opportunity__c');
         Map<Id, List<Task_Selected_Package__c>> bundlesByTemplateId = getParentBundles(templateIds, 'Opportunity__c');
 
         List<Planned_Task__c> newQueue = new List<Planned_Task__c>();
         List<Task_Selected_Package__c> newBundles = new List<Task_Selected_Package__c>();
 
-        List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c IN :drivesToSync WITH USER_MODE];
-        List<Task_Selected_Package__c> existingBundles = [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :drivesToSync WITH USER_MODE];
+        List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c IN :drivesToSync WITH SYSTEM_MODE];
+        List<Task_Selected_Package__c> existingBundles = [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :drivesToSync WITH SYSTEM_MODE];
 
-        if (!existingTasks.isEmpty()) { handleDatabaseResults(Database.delete(existingTasks, false, AccessLevel.USER_MODE), 'Wiping Drive Tasks'); }
-        if (!existingBundles.isEmpty()) { handleDatabaseResults(Database.delete(existingBundles, false, AccessLevel.USER_MODE), 'Wiping Drive Bundles'); }
+        if (!existingTasks.isEmpty()) { handleDatabaseResults(Database.delete(existingTasks, false, AccessLevel.SYSTEM_MODE), 'Wiping Drive Tasks'); }
+        if (!existingBundles.isEmpty()) { handleDatabaseResults(Database.delete(existingBundles, false, AccessLevel.SYSTEM_MODE), 'Wiping Drive Bundles'); }
 
         for (Opportunity drive : drivesToSync) {
             Opportunity parentTemplate = templatesById.get(drive.Parent_Template_Id__c);
@@ -222,9 +222,9 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        handleDatabaseResults(Database.update(drivesToSync, false, AccessLevel.USER_MODE), 'Updating Drive Paths');
-        if (!newQueue.isEmpty()) { handleDatabaseResults(Database.insert(newQueue, false, AccessLevel.USER_MODE), 'Cascading Configs to Drive'); }
-        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.USER_MODE), 'Cascading Bundles to Drive'); }
+        handleDatabaseResults(Database.update(drivesToSync, false, AccessLevel.SYSTEM_MODE), 'Updating Drive Paths');
+        if (!newQueue.isEmpty()) { handleDatabaseResults(Database.insert(newQueue, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Drive'); }
+        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Drive'); }
 
         return confirmedDriveIdsToTrigger;
     }
@@ -379,7 +379,7 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Map<Id, List<Task_Planning_Default__c>> getParentConfigs(Set<Id> parentIds, String lookupFieldApiName) {
         if (parentIds.isEmpty() || !BSF_Constants.ALLOWED_PLANNING_DEFAULT_LOOKUPS.contains(lookupFieldApiName)) { return new Map<Id, List<Task_Planning_Default__c>>(); }
-        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, Task_Package__c, Task_Definition__r.Name, Task_Definition__r.Creation_Date_Offset__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
+        String query = String.format('SELECT Task_Definition__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c, Task_Package__c, Task_Definition__r.Name, Task_Definition__r.Creation_Date_Offset__c, {0} FROM Task_Planning_Default__c WHERE {0} IN :parentIds WITH SYSTEM_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
         Map<Id, List<Task_Planning_Default__c>> resultsByParentId = new Map<Id, List<Task_Planning_Default__c>>();
         for (Task_Planning_Default__c config : Database.query(query)) {
             Id pId = (Id)config.get(lookupFieldApiName);
@@ -391,7 +391,7 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Map<Id, List<Task_Selected_Package__c>> getParentBundles(Set<Id> parentIds, String lookupFieldApiName) {
         if (parentIds.isEmpty() || !BSF_Constants.ALLOWED_SELECTED_PACKAGE_LOOKUPS.contains(lookupFieldApiName)) { return new Map<Id, List<Task_Selected_Package__c>>(); }
-        String query = String.format('SELECT Task_Package__c, {0} FROM Task_Selected_Package__c WHERE {0} IN :parentIds WITH USER_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
+        String query = String.format('SELECT Task_Package__c, {0} FROM Task_Selected_Package__c WHERE {0} IN :parentIds WITH SYSTEM_MODE', new List<String>{String.escapeSingleQuotes(lookupFieldApiName)});
         Map<Id, List<Task_Selected_Package__c>> resultsByParentId = new Map<Id, List<Task_Selected_Package__c>>();
         for (Task_Selected_Package__c bundle : Database.query(query)) {
             Id pId = (Id)bundle.get(lookupFieldApiName);
@@ -455,7 +455,7 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!errorLogs.isEmpty()) {
-            Database.SaveResult[] logResults = Database.insert(errorLogs, false, AccessLevel.USER_MODE);
+            Database.SaveResult[] logResults = Database.insert(errorLogs, false, AccessLevel.SYSTEM_MODE);
             for (Database.SaveResult sr : logResults) {
                 if (!sr.isSuccess()){
                     System.debug(LoggingLevel.ERROR, 'Failed to insert Error Log: ' + sr.getErrors()[0].getMessage());
@@ -938,7 +938,7 @@ public with sharing class BSF_TaskPlanningService {
                 ex.getMessage() + ' | Stack Trace: ' + ex.getStackTraceString()
             );
 
-            Database.insert(new List<BSF_Error_Log__c>{exLog}, false, AccessLevel.USER_MODE);
+            Database.insert(new List<BSF_Error_Log__c>{exLog}, false, AccessLevel.SYSTEM_MODE);
         }
     }
 
