@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>TaskService</members>
+        <members>TaskTriggerHandler</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+		<members>Activity.Task_Deduplication_Id__c</members>
+		<name>CustomField</name>
+	</types>
+    <types>
+		<members>BSF_Access_Control_Rule.HRP_17373_Field_Permission_Set_EDIT</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+		<members>FIXSITE_RESTRICTED_TASKS</members>
+		<name>CustomLabel</name>
+	</types>
+	<version>66.0</version>
+</Package>

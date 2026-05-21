@@ -21,13 +21,29 @@ public with sharing class TaskService {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> opportunityIds = new Set<Id>();
 
-        Set<String> BYPASS_SUBJECTS = new Set<String>{
-            System.Label.InvalidAccountAddressTaskSubject,
-            System.Label.InvalidContactAddressTaskSubject
-        };
+        List<String> RESTRICTED_TASKS_NAMES = new List<String>();
+
+        if(String.isNotBlank(System.Label.FIXSITE_RESTRICTED_TASKS)){
+
+            List<Task_Definition__c> def = [SELECT Name, 
+                                                Task_Type__c 
+                                            FROM Task_Definition__c
+                                            WHERE Task_Type__c IN :System.Label.FIXSITE_RESTRICTED_TASKS.split(',')
+                                            AND Name != null];
+            if(def != null && !def.isEmpty()) {
+                for(Task_Definition__c taskDef : def){
+                    RESTRICTED_TASKS_NAMES.add(taskDef.Name);
+                }
+            }
+        }
+
+        if(RESTRICTED_TASKS_NAMES.isEmpty()){
+            return;
+        }
+
 
         for (Task t : newTaskList) {
-            if (t.WhatId == null || BYPASS_SUBJECTS.contains(t.Subject)){
+            if (t.WhatId == null || !RESTRICTED_TASKS_NAMES.contains(t.Subject)){
                 continue;
             }
             SObjectType parentType = t.WhatId.getSObjectType();
@@ -62,9 +78,9 @@ public with sharing class TaskService {
         if (fixedSiteIds.isEmpty()) return;
 
         for (Task t : newTaskList) {
-            if (t.WhatId != null && !BYPASS_SUBJECTS.contains(t.Subject) 
+            if (t.WhatId != null && RESTRICTED_TASKS_NAMES.contains(t.Subject) 
                     && fixedSiteIds.contains(t.WhatId) && !Test.isRunningTest()) {
-                        t.addError('Cannot create a Task for a Fixed Site Account/Opportunity.');
+                        t.addError('Cannot create '+ String.join(RESTRICTED_TASKS_NAMES, '/')+' Tasks for Fix Site Account/Opportunity.');
             }
         }
     }
@@ -728,5 +744,31 @@ public with sharing class TaskService {
                 t.addError('Subject is required.');
             }
         }          
+    }
+    public static String calculateOpportunityTaskKey(Id oppId, String taskType) {
+        if (oppId == null || String.isBlank(taskType)) {
+            return null;
+        }
+        String strOppId = String.valueOf(oppId);
+        String sanitizedType = taskType.replaceAll('\\s+', '_');
+        sanitizedType = sanitizedType.length() > 236 ? sanitizedType.substring(0, 236) : sanitizedType;
+        return (sanitizedType + '_' + strOppId);
+    }
+    public static void clearKeyIfCancelled(List<Task> newTasks, Map<Id, Task> oldMap) {
+        for (Task t : newTasks) {
+            if (t.Id != null && String.isNotBlank(t.Status) && t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) 
+                    && oldMap != null && oldMap.containsKey(t.Id) && String.isNotBlank(oldMap.get(t.Id).Status) 
+                    && !oldMap.get(t.Id).Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED)) {
+                        t.Task_Deduplication_Id__c = null;
+            }
+        }
+    }
+    public static void populateTaskKey(List<Task> newTasks) {
+        for (Task t : newTasks) {
+            if (String.isNotBlank(t.Status) && !t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) && t.WhatId != null 
+                        && t.WhatId.getSObjectType() == Opportunity.SObjectType && String.isNotBlank(t.Type)) {
+                            t.Task_Deduplication_Id__c = calculateOpportunityTaskKey(t.WhatId, t.Type);
+            }
+        }
     }
 }
