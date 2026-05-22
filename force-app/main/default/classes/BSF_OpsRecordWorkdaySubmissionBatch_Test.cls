@@ -161,6 +161,7 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
 
         // Mock Employee Report failure.
         Test.setMock(HttpCalloutMock.class, new WorkdayFailEmployeeReportMock());
+        skedSetting.instance.Admin.enableOperationRecordLog = false;
 
         // Act
         Test.startTest();
@@ -254,6 +255,7 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
         insert staff;
 
         Test.setMock(HttpCalloutMock.class, new WorkdaySuccessMock());
+        skedSetting.instance.Admin.enableOperationRecordLog = true;
 
         Test.startTest();
         Database.executeBatch(new BSF_OpsRecordWorkdaySubmissionBatch(), 1);
@@ -268,6 +270,43 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
             opAfter.sked_Workday_Submission_Status__c,
             'Success path should mark as Processed'
         );
+
+        List<sked__Debug_Log__c> submissionLogs = [
+            SELECT Id
+            FROM sked__Debug_Log__c
+            WHERE sked__Type__c = 'Operation Record Submission'
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        System.assertEquals(1, submissionLogs.size(), 'Submission debug log should be inserted when logging is enabled');
+        if (BSF_WorkdayDirectSubmissionConfig.attachFullWorkdayXmlToDebugLog()) {
+            List<ContentVersion> xmlFiles = [
+                SELECT Id, Title
+                FROM ContentVersion
+                WHERE FirstPublishLocationId = :submissionLogs[0].Id
+            ];
+            System.assertEquals(1, xmlFiles.size(), 'Full Workday SOAP XML should be attached to the debug log');
+            System.assert(xmlFiles[0].Title.contains('Workday Import SOAP Request'));
+        }
+
+        List<sked__Debug_Log__c> employeeReportLogs = [
+            SELECT Id
+            FROM sked__Debug_Log__c
+            WHERE sked__Type__c = 'Operation Record - Employee Report'
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        System.assertEquals(1, employeeReportLogs.size(), 'Employee Report debug log should be inserted when logging is enabled');
+        if (BSF_WorkdayDirectSubmissionConfig.attachFullWorkdayXmlToDebugLog()) {
+            List<ContentVersion> erJsonFiles = [
+                SELECT Id, Title, PathOnClient
+                FROM ContentVersion
+                WHERE FirstPublishLocationId = :employeeReportLogs[0].Id
+            ];
+            System.assertEquals(1, erJsonFiles.size(), 'Full Employee Report JSON should be attached to the debug log');
+            System.assert(erJsonFiles[0].Title.contains('Workday Employee Report Response'));
+            System.assert(erJsonFiles[0].PathOnClient.endsWith('.json'));
+        }
     }
 
     @IsTest
@@ -321,6 +360,7 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
         insert staff;
 
         Test.setMock(HttpCalloutMock.class, new WorkdayEmptyReportMock());
+        skedSetting.instance.Admin.enableOperationRecordLog = false;
 
         Test.startTest();
         Database.executeBatch(new BSF_OpsRecordWorkdaySubmissionBatch(), 1);
@@ -332,6 +372,7 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
 
     @IsTest
     static void schedulableExecute_startsBatch() {
+        skedSetting.instance.Admin.enableOperationRecordLog = false;
         Test.startTest();
         BSF_OpsRecordWorkdaySubmissionBatch batch = new BSF_OpsRecordWorkdaySubmissionBatch();
         batch.execute(null);
@@ -339,4 +380,3 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
         System.assert(true, 'Schedulable execute should complete without error');
     }
 }
-

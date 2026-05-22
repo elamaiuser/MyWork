@@ -724,7 +724,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             })
             .then(() => {
                 if (!this.requiresAssetValidation() && !this.requireTimeBlockValidation()) {
-                    return this.handleSave();
+                    return this.handleSave().then(() => true); // sentinelastic to indicate that save is already done and no need to call handleValidate again
                 }
 
                 this.showLoading();
@@ -837,7 +837,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                         })
                     })
                 })
-                .then(() => {
+                .then((alreadySaved) => {
+                    if (alreadySaved) return;
                     return this.handleValidate();
                 })
                 .catch(error => {
@@ -891,7 +892,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.showPendingActionDriveConfirmModal();
             } else {
                 this.drive.status = [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status;
-                this.handleSave();
+                return this.handleSave();
             }
         })
         .catch(error => this.exceptionHandler(error))
@@ -899,6 +900,12 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleSave(saveAndApproveApprovalIfAny = true) {
+        if (this.isSavingDrive) { // concurrent save prevention, in case user clicks save multiple times quickly or there are multiple save calls from different actions (e.g. submit for approval will call save as well)
+            slwcUtils.printLog('[DriveManagement::handleSave] Concurrent save detected — skipping duplicate call');
+            return Promise.resolve();
+        }
+
+        this.isSavingDrive = true;
         this.showLoading();
         
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
@@ -918,6 +925,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             .then(result => {
                 let drive = result.returnedData[0];
                 newDriveId = drive.Id;
+                slwcUtils.printLog('[DriveManagement::handleSave] Current drive saved', '| id:', drive.Id, '| name:', drive.Name);
             })
             .then(() => {
                 //approve drive submission if needed
@@ -1015,7 +1023,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 return jobSvc.saveList(chunkJobs);
                             }
                         });
-                        return slwcUtils.serial(promises);
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Edit Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ id: j.id, volunteerRole: j.volunteerRole, quantity: j.quantity}))));
                     })
             })
             .then(() => {
@@ -1030,7 +1039,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 return jobSvc.saveList(chunkJobs);
                             }
                         });
-                        return slwcUtils.serial(promises);
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Add Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ driveId: j.driveId, volunteerRole: j.volunteerRole, quantity: j.quantity, driveDate: j.start?.substring(0, 10) }))));
                     })
             })
             .then(() => {
@@ -1047,7 +1057,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.handleNavigateToRecord();
             })
             .catch(error => this.exceptionHandler(error))
-            .finally(this.hideLoading);
+            .finally(() => {
+                this.isSavingDrive = false;
+                this.hideLoading();
+            });
     }
 
     handleHoldDrive() {

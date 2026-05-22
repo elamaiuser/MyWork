@@ -569,7 +569,9 @@ private class TaskTriggerTest {
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Account_Strategy_Notes__c', Input_Long_Text_Area__c = 'Test Notes', OpportunityLookup__c = mobileOpp.Id));
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Gray_Sky_Account__c', Input_Checkbox__c = true, OpportunityLookup__c = mobileOpp.Id));
         checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Rollover_Consideration__c', Picklist_Input_2__c = 'Yes', OpportunityLookup__c = mobileOpp.Id));
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         insert checklists;
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
 
         Test.startTest();
         
@@ -725,9 +727,11 @@ private class TaskTriggerTest {
                             Unique_Name__c = 'Gray_Sky_Account__c'
         );
         taskCheckListToInsert.add(taskCheckList);
-        
+
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         insert taskCheckListToInsert;
-        
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
+
         Map<Id, BSF_Task_Checklist__c> map_chklstId_taskCheckList = new Map<Id, BSF_Task_Checklist__c>(
             																		[SELECT Id, Unique_Name__c, TaskLookup__c,
                                                                                      Picklist_Input_2__c, Input_Long_Text_Area__c 

@@ -19,6 +19,7 @@ export default class SlwcCallOutModal extends LightningElement {
     @api hideHeader = false;
     @api showBackButton = false;
     @api saveBtnLabel = 'Save';
+    @api hideUseTimeOffOption = false;
     
     showSpinner = false;
 
@@ -40,7 +41,7 @@ export default class SlwcCallOutModal extends LightningElement {
                 if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                     this.model.hasTimeOffPlans = true;
 
-                     if (this.model.callOutType == 'Call Out') {
+                     if (this.model.callOutType == 'Call Out' && !this.hideUseTimeOffOption) {
                         this.model.usePtoForCallOut = true;
                     }
                 }
@@ -183,7 +184,7 @@ export default class SlwcCallOutModal extends LightningElement {
             if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                 this.model.hasTimeOffPlans = true;
 
-                if (this.model.callOutType == 'Call Out') {
+                if (this.model.callOutType == 'Call Out' && !this.hideUseTimeOffOption) {
                     this.model.usePtoForCallOut = true;
                 }
             }
@@ -201,12 +202,12 @@ export default class SlwcCallOutModal extends LightningElement {
     }
 
     get allowPtoForCallOut() {
-        return this.model.hasTimeOffPlans && this.model.callOutType == 'Call Out';
+        return !this.hideUseTimeOffOption && this.model.hasTimeOffPlans && this.model.callOutType == 'Call Out';
     }
 
     handleOnCallOutTypeChange(event) {
          let callOutType = getValueFromEvent(event);
-        if (callOutType == 'Call Out' && this.model.hasTimeOffPlans) {
+        if (callOutType == 'Call Out' && this.model.hasTimeOffPlans && !this.hideUseTimeOffOption) {
             this.model.usePtoForCallOut = true;
          } else {
              this.model.usePtoForCallOut = false;

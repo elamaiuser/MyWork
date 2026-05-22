@@ -1,4 +1,4 @@
-import { serial, generateUUID, parseJSON, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
+import { serial, generateUUID, printLog, isNullOrEmpty, cloneDeep as cloneDeepUtil } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
 import { cloneDeep, orderBy, extend, remove, max, compact, groupBy, uniq, omit, pick } from 'c/lodash';
 import { DriveHelper } from './helper';
@@ -1570,8 +1570,6 @@ class BaseGenerator {
       zone: this.masterData.timezoneSidId
     }).toISODate();
 
-    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - today (org timezone):', today);
-
     const newJobs = [];
 
     drive.driveShifts?.forEach(driveShift => {
@@ -1582,10 +1580,10 @@ class BaseGenerator {
         const filteredTargets = allTargets.filter(target => target.driveDate >= today);
         const skippedTargets = allTargets.filter(target => target.driveDate < today);
 
-        console.log('[Bulk Add Volunteer Job] job:', job.volunteerRole, '| all targets:', allTargets.length,
-          '| skipped (past):', skippedTargets.map(t => t.driveDate),
-          '| will save:', filteredTargets.map(t => t.driveDate));
-
+        printLog('calculateRecurrenceNewVolunteerJobs',
+          '| today (org timezone):', today,
+          '| all targets:', allTargets.length,
+          '| skipped (past):', skippedTargets.map(t => t.driveDate));
         filteredTargets.forEach(target => {
             newJobs.push({
               driveId:                        target.driveId,
@@ -1605,11 +1603,13 @@ class BaseGenerator {
               jobTags:                        []
             });
           });
+
+        job.bulkAddVolunteerJobsSelectedDrives = []; // reset selected drives after processing
       });
     });
 
-    console.log('[Bulk Add Volunteer Job] calculateRecurrenceNewVolunteerJobs - total new jobs to save:', newJobs.length,
-      newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
+    printLog('calculateRecurrenceNewVolunteerJobs',
+      '| new jobs to save:', newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
     );
 
     return Promise.resolve(newJobs);

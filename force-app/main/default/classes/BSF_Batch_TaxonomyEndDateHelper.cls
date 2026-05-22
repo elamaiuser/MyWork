@@ -26,6 +26,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
         map<String,taxonomy__c> newTaxIdExternalKeysMap = getexternalKeyTaxonomyMap (newVerTax);
         set<string> externalKeySetNew = new set<string>();
         externalKeySetNew.addAll(newTaxIdExternalKeysMap.keyset());
+      
         //related bsf portfolio of current/old taxonomies
         List<bsf_Portfolio__c> bsfPortfolioList = [SELECT Id, External_Key__c,External_Key_BackEnd__c , Portfolio_Type__c, Taxonomy_Type__c, Territory_Portfolio__c,
                                                    Parent_Portfolio__c, Start_Date__c, End_Date__c, Is_Expired__c, Portfolio_Code__c, Portfolio_Name__c FROM BSF_Portfolio__c
@@ -197,6 +198,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
             SELECT Id, Start_Date__c, End_Date__c,External_Id__c, External_Id_BackEnd__c
             FROM sked_Territory__c
             WHERE External_Id_BackEnd__c IN :currentChunkOfOldTaxoExternalKeySet
+            and End_Date__c >=:System.today()
             ORDER BY CreatedDate DESC
         ];
         
@@ -319,6 +321,7 @@ public class BSF_Batch_TaxonomyEndDateHelper
                 sked_Collection_Operation__r.Biomed_Collection_Op_Code_Center_ID__c
             FROM sked_Territory_Collection_Operation__c
             WHERE sked_Territory__c in :terrIdSet
+            and sked_End_Date__c >=:System.today()
         ];
         if (tcoList.isEmpty()) {
             return;

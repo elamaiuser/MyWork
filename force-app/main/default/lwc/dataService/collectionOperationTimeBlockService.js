@@ -13,8 +13,8 @@ class collectionOperationTimeBlockService extends dataService {
       queryBuilder.addCondition({ template: 'Collection_Operation__c IN {0}', value: query.collectionOperationIds, type: "array_string" });
     }
     if (query.effectiveStartDate && query.effectiveEndDate) {
-      queryBuilder.addCondition({ template: "Effective_Start_Date__c <= {0}", value: query.effectiveEndDate });
-      queryBuilder.addCondition({ template: "Effective_End_Date__c >= {0}", value: query.effectiveStartDate });
+      queryBuilder.addCondition({ template: "(Effective_Start_Date__c = NULL OR Effective_Start_Date__c <= {0})", value: query.effectiveEndDate });
+      queryBuilder.addCondition({ template: "(Effective_End_Date__c = NULL OR Effective_End_Date__c >= {0})", value: query.effectiveStartDate });
     }
   }
 }

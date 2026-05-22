@@ -301,12 +301,15 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                     for (sked_Drive_Change_Request_Item__c item : rejectedDCR.sked_Drive_Change_Request_Items__r) {
                         string oppDataField = item.sked_Field_API_Name__c;
                         object fieldVal = skedUtils.getFieldValue(item.sked_Old_Value__c, item.sked_Field_Type__c);
-                        object currentDocFieldVal = skedUtils.getFieldValue(String.valueOf(mapOfDoc.get(rejectedDCR.sked_Drive__c).get(genDriveFieldByOppFieldMap.get(item.sked_Field_API_Name__c))), item.sked_Field_Type__c);
                         Boolean isDifferentChangeReasonNeeded = false;
-
-                        if(fieldVal !== currentDocFieldVal) {
-                            fieldVal = currentDocFieldVal;
-                            isDifferentChangeReasonNeeded = true;
+                        
+                        if(genDriveFieldByOppFieldMap.containsKey(item.sked_Field_API_Name__c)) {
+                            object currentDocFieldVal = skedUtils.getFieldValue(String.valueOf(mapOfDoc.get(rejectedDCR.sked_Drive__c).get(genDriveFieldByOppFieldMap.get(item.sked_Field_API_Name__c))), item.sked_Field_Type__c);
+                            
+                            if(fieldVal !== currentDocFieldVal) {
+                                fieldVal = currentDocFieldVal;
+                                isDifferentChangeReasonNeeded = true;
+                            }
                         }
                         
 						oppRec.put(oppDataField, fieldVal);

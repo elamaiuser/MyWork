@@ -53,7 +53,8 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
                 if (newRecord.sked_Status__c == skedConstants.OPERATION_STATUS_SUBMITTED) {
                     driveIdsToComplete.add(newRecord.sked_Drive__c);
                     operationRecordIds.add(newRecord.Id);
-                    map_opRecordId_submittedById.put(newRecord.Id, newRecord.sked_Submitted_By__c);
+                    if (newRecord.sked_Submitted_By__c != null) 
+                        map_opRecordId_submittedById.put(newRecord.Id, newRecord.sked_Submitted_By__c);
                 }
             }
         }

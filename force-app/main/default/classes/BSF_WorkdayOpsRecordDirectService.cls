@@ -20,7 +20,8 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
         public EmployeeReportResult(Map<String, String> employeeIdToTimezone, String requestUrl, String responseBody, Integer statusCode) {
             this.employeeIdToTimezone = employeeIdToTimezone != null ? employeeIdToTimezone : new Map<String, String>();
             this.requestUrl = requestUrl;
-            this.responseBody = (responseBody != null && responseBody.length() > MAX_DEBUG_LOG_MESSAGE_LENGTH) ? responseBody.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH) : responseBody;
+            // Full body retained for ContentVersion attach on sked__Debug_Log__c (batch truncates long-text fields when not attaching).
+            this.responseBody = responseBody;
             this.statusCode = statusCode;
         }
     }
@@ -69,7 +70,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
             url += employeeIdsParamName + '=' + EncodingUtil.urlEncode(workerPromptValue, 'UTF-8') + '&';
         }
         url += 'format=json';
-        requestUrl = (url != null && url.length() > MAX_DEBUG_LOG_RESPONSE_LENGTH) ? url.substring(0, MAX_DEBUG_LOG_RESPONSE_LENGTH) : url;
+        requestUrl = url;
         try {
             HttpRequest req = skedWorkdayApiManager.getHttpRequest(url, 'GET');
             req.setTimeout(120000);
@@ -243,32 +244,39 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
             Integer timeBlockIndex = 0;
             Integer dateTimeFormatsSize = dateTimeFormatsForBaseBlocks != null ? dateTimeFormatsForBaseBlocks.size() : 0;
             for (Dom.XmlNode timeBlockNode : reportedTimeBlockNodes) {
-                if (timeBlockNode.getName() == 'Reported_Time_Block_Data' && timeBlockIndex < dateTimeFormatsSize) {
-                    Map<String, String> dateTimeFormat = dateTimeFormatsForBaseBlocks[timeBlockIndex];
-                    if (dateTimeFormat != null) {
-                        if (dateTimeFormat.containsKey('In_Date_Time')) {
-                            updateXmlNodeText(timeBlockNode, 'In_Date_Time', dateTimeFormat.get('In_Date_Time'));
+                if (timeBlockNode.getName() != 'Reported_Time_Block_Data') {
+                    continue;
+                }
+                if (!isTimeWorkedBlock(timeBlockNode)) {
+                    continue;
+                }
+                if (timeBlockIndex >= dateTimeFormatsSize) {
+                    break;
+                }
+                Map<String, String> dateTimeFormat = dateTimeFormatsForBaseBlocks[timeBlockIndex];
+                if (dateTimeFormat != null) {
+                    if (dateTimeFormat.containsKey('In_Date_Time')) {
+                        updateXmlNodeText(timeBlockNode, 'In_Date_Time', dateTimeFormat.get('In_Date_Time'));
+                    }
+                    if (dateTimeFormat.containsKey('Out_Date_Time')) {
+                        updateXmlNodeText(timeBlockNode, 'Out_Date_Time', dateTimeFormat.get('Out_Date_Time'));
+                        Boolean outReasonExists = false;
+                        for (Dom.XmlNode childNode : timeBlockNode.getChildElements()) {
+                            if (childNode.getName() == 'Out_Reason_Reference') {
+                                outReasonExists = true;
+                                break;
+                            }
                         }
-                        if (dateTimeFormat.containsKey('Out_Date_Time')) {
-                            updateXmlNodeText(timeBlockNode, 'Out_Date_Time', dateTimeFormat.get('Out_Date_Time'));
-                            Boolean outReasonExists = false;
-                            for (Dom.XmlNode childNode : timeBlockNode.getChildElements()) {
-                                if (childNode.getName() == 'Out_Reason_Reference') {
-                                    outReasonExists = true;
-                                    break;
-                                }
-                            }
-                            if (!outReasonExists) {
-                                Dom.XmlNode outReasonNode = timeBlockNode.addChildElement('Out_Reason_Reference', s_ns0, '');
-                                outReasonNode.setAttribute('bsvc:Descriptor', 'Clock Event Type');
-                                Dom.XmlNode idNode = outReasonNode.addChildElement('ID', s_ns0, '');
-                                idNode.setAttribute('bsvc:type', 'Clock_Event_Type');
-                                idNode.addTextNode('Out');
-                            }
+                        if (!outReasonExists) {
+                            Dom.XmlNode outReasonNode = timeBlockNode.addChildElement('Out_Reason_Reference', s_ns0, '');
+                            outReasonNode.setAttribute('bsvc:Descriptor', 'Clock Event Type');
+                            Dom.XmlNode idNode = outReasonNode.addChildElement('ID', s_ns0, '');
+                            idNode.setAttribute('bsvc:type', 'Clock_Event_Type');
+                            idNode.addTextNode('Out');
                         }
                     }
-                    timeBlockIndex++;
                 }
+                timeBlockIndex++;
             }
             docBody = doc.toXmlString();
             HttpRequest req = skedWorkdayApiManager.getHttpRequest(endpoint, 'POST');
@@ -283,6 +291,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
                 requestForResult = requestForResult.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH);
             }
             skedWorkdayImportTimeBlockResponse result = new skedWorkdayImportTimeBlockResponse(requestForResult != null ? requestForResult : '');
+            result.fullSoapRequestXml = docBody;
             result.response = responseBody;
             result.statusCode = res.getStatusCode();
             result.isSuccess = (res.getStatusCode() == 200);
@@ -341,6 +350,7 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
                 requestForResult = requestForResult.substring(0, MAX_DEBUG_LOG_MESSAGE_LENGTH);
             }
             skedWorkdayImportTimeBlockResponse result = new skedWorkdayImportTimeBlockResponse(requestForResult != null ? requestForResult : '');
+            result.fullSoapRequestXml = docBody;
             result.response = e.getMessage();
             result.statusCode = null;
             result.isSuccess = false;
@@ -363,5 +373,23 @@ public with sharing class BSF_WorkdayOpsRecordDirectService {
             Dom.XmlNode newNode = parentNode.addChildElement(nodeName, namespace, '');
             newNode.addTextNode(newTextValue);
         }
+    }
+
+    /**
+     * dateTimeFormatsForBaseBlocks only contains entries for base (Time Worked) records.
+     * Match by time entry code so premium blocks do not shift the format index.
+     */
+    private static Boolean isTimeWorkedBlock(Dom.XmlNode reportedTimeBlockNode) {
+        for (Dom.XmlNode childNode : reportedTimeBlockNode.getChildElements()) {
+            if (childNode.getName() != 'Time_Entry_Code_Reference') {
+                continue;
+            }
+            for (Dom.XmlNode idNode : childNode.getChildElements()) {
+                if (idNode.getName() == 'ID' && idNode.getText() == 'Time Worked') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -453,8 +453,13 @@ global class skedExceptionLogService extends skedDataService {
                 maxEnd = activityResource.finish;
             }
             
-            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.startDate));
-            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.endDate));
+            Date arStartDate = skedDateTimeUtils.getDateFromIsoString(activityResource.startDate);
+            Date arEndDate = skedDateTimeUtils.getDateFromIsoString(activityResource.endDate);
+            Date tempDate = arStartDate;
+            while (tempDate <= arEndDate) {
+              inputDates.add(tempDate);
+              tempDate = tempDate.addDays(1);
+            }
         }
         
         if (minStart != NULL && maxEnd != NULL) {

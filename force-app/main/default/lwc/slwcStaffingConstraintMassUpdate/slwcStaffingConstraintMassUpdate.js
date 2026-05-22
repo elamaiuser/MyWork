@@ -46,6 +46,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   @track editRecurrenceStaffingConstraintModalData = {};
 
   @track showSpinner = false;
+  @track autoSyncedCoDateKeys = new Set();
+  pendingAutoSyncedKeys = null;
   initialized = false;
 
   get pageName() {
@@ -91,6 +93,18 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   get collectionOperationFirstDay() {
     if (!this.collectionOperations || !this.collectionOperations.length) return;
     return this.collectionOperations[0].workWeekFirstDay;
+  }
+
+  get hasActiveTimeBlocks() {
+    if (!this.collectionOperations?.length) return false;
+    const today = DateTime.local().toISODate();
+
+    return this.collectionOperations.some(co =>
+      co.collectionOperationTimeBlocks?.some(coTb =>
+        coTb.effectiveStartDate <= today &&
+        (coTb.effectiveEndDate == null || coTb.effectiveEndDate >= today)
+      )
+    );
   }
 
   get dateUtils() {
@@ -213,7 +227,11 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
                   "slds-staffing-constrain-mass-update__cell--warning":
                     existingStaffingConstraint &&
                     requestedStaff >
-                      existingStaffingConstraint?.totalStaffConstraints
+                      existingStaffingConstraint?.totalStaffConstraints,
+                  "slds-staffing-constrain-mass-update__cell--auto-synced":
+                    !timeBlockId &&
+                    driveType === DRIVE_TYPE.MOBILE &&
+                    this.autoSyncedCoDateKeys?.has(`${collectionOperationId}${KEY_SEPERATOR}${dateIso}`)
                 }
               )
             };
@@ -268,6 +286,91 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     ];
   }
 
+  async syncCoConstraints(savedModels, deletedModel = null) {
+    const tbChanges = (savedModels || []).filter(
+      m => m.timeBlockId && m.driveType === DRIVE_TYPE.MOBILE
+    );
+    const isDeleteSync = !!(deletedModel?.timeBlockId && deletedModel.driveType === DRIVE_TYPE.MOBILE);
+
+    if (!tbChanges.length && !isDeleteSync) return Promise.resolve(new Set());
+
+    const syncKeys = new Set();
+    tbChanges.forEach(m => syncKeys.add(`${m.collectionOperationId}${KEY_SEPERATOR}${m.dateOfConstraint}`));
+    if (isDeleteSync) syncKeys.add(`${deletedModel.collectionOperationId}${KEY_SEPERATOR}${deletedModel.dateOfConstraint}`);
+
+    const valueOverrides = new Map();
+    tbChanges.forEach(m => {
+      const key = `${m.collectionOperationId}${KEY_SEPERATOR}${m.timeBlockId}${KEY_SEPERATOR}${m.driveType}${KEY_SEPERATOR}${m.dateOfConstraint}`;
+      valueOverrides.set(key, m.totalStaffConstraints || 0);
+    });
+
+    const excludedKey = isDeleteSync
+      ? `${deletedModel.collectionOperationId}${KEY_SEPERATOR}${deletedModel.timeBlockId}${KEY_SEPERATOR}${deletedModel.driveType}${KEY_SEPERATOR}${deletedModel.dateOfConstraint}`
+      : null;
+
+    const coModelsToSave = [];
+    const coModelsToDelete = [];
+    const newAutoSyncedKeys = new Set();
+
+    syncKeys.forEach(syncKey => {
+      const sepIdx = syncKey.indexOf(KEY_SEPERATOR);
+      const coId = syncKey.substring(0, sepIdx);
+      const date = syncKey.substring(sepIdx + KEY_SEPERATOR.length);
+
+      let total = 0;
+      const seenTbKeys = new Set();
+
+      Object.keys(this.mappedStaffingConstraintData || {}).forEach(mapKey => {
+        const item = this.mappedStaffingConstraintData[mapKey]?.[0];
+        if (!item || !item.timeBlockId || item.driveType !== DRIVE_TYPE.MOBILE) return;
+        if (item.collectionOperationId !== coId || item.dateOfConstraint !== date) return;
+
+        const itemKey = `${coId}${KEY_SEPERATOR}${item.timeBlockId}${KEY_SEPERATOR}${DRIVE_TYPE.MOBILE}${KEY_SEPERATOR}${date}`;
+        if (itemKey === excludedKey) return;
+        seenTbKeys.add(itemKey);
+
+        const effectiveTotal = valueOverrides.has(itemKey) ? valueOverrides.get(itemKey) : (item.totalStaffConstraints || 0);
+        total += effectiveTotal;
+      });
+
+      tbChanges.forEach(m => {
+        if (m.collectionOperationId !== coId || m.dateOfConstraint !== date) return;
+        const mKey = `${coId}${KEY_SEPERATOR}${m.timeBlockId}${KEY_SEPERATOR}${DRIVE_TYPE.MOBILE}${KEY_SEPERATOR}${date}`;
+        if (!seenTbKeys.has(mKey)) {
+          total += m.totalStaffConstraints || 0;
+        }
+      });
+
+      const coKey = `${coId}${KEY_SEPERATOR}${DRIVE_TYPE.MOBILE}${KEY_SEPERATOR}${date}`;
+      const existingCo = this.mappedStaffingConstraintData?.[coKey]?.[0];
+
+      if (total === 0 && existingCo?.id) {
+        coModelsToDelete.push(existingCo);
+      } else if (total > 0) {
+        coModelsToSave.push({
+          ...(existingCo?.id && { id: existingCo.id }),
+          collectionOperationId: coId,
+          dateOfConstraint: date,
+          driveType: DRIVE_TYPE.MOBILE,
+          totalStaffConstraints: total
+        });
+      }
+      // total === 0 and no existing CO → AC-5 no-op
+      newAutoSyncedKeys.add(`${coId}${KEY_SEPERATOR}${date}`);
+    });
+
+    if (!coModelsToSave.length && !coModelsToDelete.length) return new Set();
+
+    const service = new staffingConstraintService();
+
+    const deleteOps = coModelsToDelete.length ? service.deleteList(coModelsToDelete) : Promise.resolve({ success: true });
+    const saveOps = coModelsToSave.length ? service.saveList(coModelsToSave) : Promise.resolve({ success: true });
+
+    const [delResult, saveResult] = await Promise.all([deleteOps, saveOps]);
+    const allOk = delResult?.success !== false && saveResult?.success !== false;
+    return allOk ? newAutoSyncedKeys : new Set();
+  }
+
   fetchStafingConstrainData() {
     const territoryKeys = this.territoryKeys;
     const collectionOpIds = this.collectionOperations.map((item) => item.id);
@@ -278,6 +381,7 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     }
 
     this.showSpinner = true;
+    this.autoSyncedCoDateKeys = new Set();
 
     const isTimeBlockApplied = this.filters.collectionOperationValues.timeBlocks?.length;
 
@@ -345,6 +449,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
             `${item.collectionOperationId}${KEY_SEPERATOR}${item.startDate}`
         );
 
+        this.autoSyncedCoDateKeys = this.pendingAutoSyncedKeys || new Set();
+        this.pendingAutoSyncedKeys = null;
         this.buildGridData();
       })
       .catch((error) => {
@@ -508,7 +614,15 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     this.staffingConstraintModalData = {};
 
     if (event.detail.result) {
-      this.fetchStafingConstrainData();
+      const { savedModels } = event.detail;
+      this.syncCoConstraints(savedModels)
+        .then(syncedKeys => {
+          this.pendingAutoSyncedKeys = syncedKeys || new Set();
+          this.fetchStafingConstrainData();
+        })
+        .catch(() => {
+          this.fetchStafingConstrainData();
+        });
     }
   }
 
@@ -539,6 +653,10 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
             .then((result) => {
               if (!result.success) throw result;
               this.closeConfirmModal();
+              return this.syncCoConstraints(null, staffingConstraint);
+            })
+            .then((syncedKeys) => {
+              this.pendingAutoSyncedKeys = syncedKeys || new Set();
               this.fetchStafingConstrainData();
             })
             .catch((error) => {
@@ -564,12 +682,14 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   closeAddRecurrenceStaffingConstraintModal = (event) => {
-    const saved = event.detail.result;
-    if (saved) {
+    const { result, autoSyncedCoDateKeys } = event.detail;
+    this.addRecurrenceStaffingConstraintModalData = {};
+    if (result) {
+      if (autoSyncedCoDateKeys?.length) {
+        this.pendingAutoSyncedKeys = new Set(autoSyncedCoDateKeys);
+      }
       this.fetchStafingConstrainData();
     }
-
-    this.addRecurrenceStaffingConstraintModalData = {};
   };
 
   /* Edit Recurrence Staffing Constraints */
@@ -581,11 +701,13 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
   };
 
   closeEditRecurrenceStaffingConstraintModal = (event) => {
-    const saved = event.detail.result;
-    if (saved) {
+    const { result, autoSyncedCoDateKeys } = event.detail;
+    this.editRecurrenceStaffingConstraintModalData = {};
+    if (result) {
+      if (autoSyncedCoDateKeys?.length) {
+        this.pendingAutoSyncedKeys = new Set(autoSyncedCoDateKeys);
+      }
       this.fetchStafingConstrainData();
     }
-
-    this.editRecurrenceStaffingConstraintModalData = {};
   };
 }
