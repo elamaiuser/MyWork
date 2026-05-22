@@ -1609,7 +1609,7 @@ class BaseGenerator {
     });
 
     printLog('calculateRecurrenceNewVolunteerJobs',
-      '| new jobs to save:', newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
+      '| jobs to save:', newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
     );
 
     return Promise.resolve(newJobs);
