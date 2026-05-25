@@ -46,7 +46,7 @@ public class skedWorkdayApiManager {
         request.setHeader('Referrer-Policy', 'strict-origin');
         request.setHeader('Set-Cookie', 'secure; HttpOnly; Samesite=lax');
         request.setHeader('Access-Control-Allow-Methods', 'GET, POST HEAD');
-        request.setTimeout(20000);
+        request.setTimeout(120000);
         request.setEndpoint(endpoint);
         request.setMethod(method);
 

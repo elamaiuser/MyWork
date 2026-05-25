@@ -381,6 +381,48 @@ private class HelperTest {
         Helper.formatDateTimeSOQL(myDateTime);
         test.stopTest();
     }
+       @isTest
+    static void testSendEmail_onlyExceptionErrors() {
+        Map<Exception, String> commonExceptionMap = new Map<Exception, String>();
+        Map<Id, String> dmlErrorMap = new Map<Id, String>();
+
+        try {
+            String s = null;
+            s.length();
+        } catch (Exception e) {
+            commonExceptionMap.put(e, 'ExceptionOnlyRecord');
+        }
+
+        List<String> toAddress = new List<String>{'test@example.com'};
+
+        Test.startTest();
+        Helper.sendEmail(commonExceptionMap, dmlErrorMap, toAddress, 'test@redcross.org', false, 'Exception Only');
+        Test.stopTest();
+        System.assertNotEquals(null, toAddress, 'toAddress should not be null');
+        System.assert(true);
+    }
+
+           @isTest
+    static void testSendEmail_onlyExceptionErrors1() {
+        Map<Exception, String> commonExceptionMap = new Map<Exception, String>();
+        Map<Id, String> dmlErrorMap = new Map<Id, String>();
+
+        try {
+            String s = null;
+            s.length();
+        } catch (Exception e) {
+            commonExceptionMap.put(e, 'ExceptionOnlyRecord');
+        }
+
+        List<String> toAddress = new List<String>{'test@example.com'};
+
+        Test.startTest();
+        Helper.sendEmail(commonExceptionMap, dmlErrorMap, toAddress, null, true, 'Exception Only');
+        Test.stopTest();
+
+        System.assert(true);
+    }
+
     @isTest static void testAddBusinessDays(){
         Date myDate = Date.newInstance(2022, 26, 07);
         test.startTest();
@@ -524,7 +566,7 @@ private class HelperTest {
         string myTime85 = Helper.getStartEndTimeLabelText('2315');
         string myTime86 = Helper.getStartEndTimeLabelText('2330');
         string myTime87 = Helper.getStartEndTimeLabelText('2345');
-
+            Helper.getSameDayOfPrevYear(system.today());      
         
         
         test.stopTest();

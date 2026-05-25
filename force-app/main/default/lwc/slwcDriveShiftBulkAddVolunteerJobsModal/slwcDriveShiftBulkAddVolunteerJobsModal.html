@@ -109,12 +109,17 @@
                                                     </div>
                                                     <div class="col-drive-status">{drive.status}</div>
                                                     <div class="col-drive-issue">
-                                                        <template for:each={drive.errorMessages} for:item="errorMessage">
-                                                            <div
-                                                                key={errorMessage}
-                                                                class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
-                                                                {errorMessage}
-                                                            </div>
+                                                        <template if:true={drive.isCurrentDrive}>
+                                                            <span class="slds-badge">Current Drive</span>
+                                                        </template>
+                                                        <template if:false={drive.isCurrentDrive}>
+                                                            <template for:each={drive.errorMessages} for:item="errorMessage">
+                                                                <div
+                                                                    key={errorMessage}
+                                                                    class="slds-text-color_error slds-m-right_xx-small slds-m-bottom_xxx-small slds-m-top_xxx-small">
+                                                                    {errorMessage}
+                                                                </div>
+                                                            </template>
                                                         </template>
                                                     </div>
                                                 </div>
