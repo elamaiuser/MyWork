@@ -711,9 +711,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             .then(([driveChangeRequest]) => {
                 const isActiveDCR = !!driveChangeRequest?.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
 
-                if (isActiveDCR) {
+                if (isActiveDCR && !this.showDCRWarning && !this.showPendingUserChangeWarning) {
                     this.dispatchEvent(new ShowToastEvent({
-                        message: 'Please refresh the page and process the Pending [User Change] Drive Change Request prior to updating the Drive.',
+                        message: 'Please refresh the page and process the Active Drive Change Request prior to updating the Drive.',
                         variant: 'error',
                         mode: 'dismissable'
                     }));
