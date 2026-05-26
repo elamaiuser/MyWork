@@ -857,6 +857,7 @@ global class slwcDriveService {
 
     @AuraEnabled
     public static slwcAuraResult applyVehicleReplacement(applyVehicleReplacementRequestModel request) {
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
         slwcAuraResult result = new slwcAuraResult();
         Set<Id> driveIds = new Set<Id>(request.driveIds);
 
@@ -875,7 +876,6 @@ global class slwcDriveService {
             newAllocations.add(new sked__Job_Allocation__c(
                 sked__Job__c = ja.sked__Job__c,
                 sked__Resource__c = request.replacementVehicleId,
-                sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DISPATCHED,
                 sked_Replacement_For__c = ja.Id
             ));
         }

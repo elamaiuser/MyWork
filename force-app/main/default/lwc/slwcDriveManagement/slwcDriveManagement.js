@@ -18,7 +18,7 @@ import { approvalService, dataService, debugLogService, driveQueryModel, driveSe
 import { chunk } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
-import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
+import { DriveHelper, DriveFetch, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -701,20 +701,19 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         this.showErrors = true;
         if (this.isValid() === true) {
 
-            return Promise.resolve()
-            .then(() => {
-                return this.retrievePendingDriveChangeRequests({
-                    driveIds: [this.drive.id]
-                })
+            let fetch = new DriveFetch({
+                driveType: this.drive.typeOfDrive
             })
-            .then(driveChangeRequests => {
-                const hasPendingDCR = !!driveChangeRequests.find(item =>
-                    item.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE)
-                );
 
-                if (hasPendingDCR) {
+            return Promise.all([
+                fetch.retrieveActiveDriveChangeRequest(this.drive)
+            ])
+            .then(([driveChangeRequest]) => {
+                const isActiveDCR = !!driveChangeRequest?.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
+
+                if (isActiveDCR && !this.showDCRWarning && !this.showPendingUserChangeWarning) {
                     this.dispatchEvent(new ShowToastEvent({
-                        message: 'Please refresh the page and process the Pending [User Change] Drive Change Request prior to updating the Drive.',
+                        message: 'Please refresh the page and process the Active Drive Change Request prior to updating the Drive.',
                         variant: 'error',
                         mode: 'dismissable'
                     }));
@@ -1535,24 +1534,4 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             });
     }
 
-    retrievePendingDriveChangeRequests({
-        driveIds = []
-    }) {
-        return Promise.resolve()
-            .then(() => {
-                if (!driveIds.length) return [];
-
-                let dcrService = new driveChangeRequestService();
-                let dcrQueryModel = new driveChangeRequestQueryModel();
-                dcrQueryModel.driveIds = driveIds;
-                dcrQueryModel.statuses = [
-                    DRIVE_REQUEST_CHANGE_STATUS.PENDING
-                ];
-
-                return dcrService.query(dcrQueryModel)
-                    .then((result) => {
-                        return result;
-                    });
-            })
-    }
 }
