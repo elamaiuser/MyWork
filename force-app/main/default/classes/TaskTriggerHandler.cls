@@ -34,6 +34,14 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         	TaskService.check72hourCheckInTaskCompletion((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
         }
         //HRP-12627 end
+        //
+       //HRP-16830
+        if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
+            TaskService.subjectisRequired((List<Task>)Trigger.new);
+        }   
+        if(super.getTriggerMethodsToBypass().indexOf('clearKeyIfCancelled') == -1) { 
+            TaskService.clearKeyIfCancelled((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
+        }
     }
     
     public override void beforeInsert(){
@@ -54,12 +62,18 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         //HRP-12627 end
         if(super.getTriggerMethodsToBypass().indexOf('populateTaskTypeFromMetadata') == -1) { 
             TaskService.populateTaskTypeFromMetadata((List<Task>)Trigger.new);
-        }
+        } 
+        if(super.getTriggerMethodsToBypass().indexOf('populateTaskKey') == -1) { 
+            TaskService.populateTaskKey((List<Task>)Trigger.new);
+        }   
     }
-    
-    /*public override void afterInsert(){
+    //HRP-16830
+    public override void afterInsert(){
         
-    }*/
+        if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
+            TaskService.subjectisRequired((List<Task>)Trigger.new);
+        }        
+    }
     
     
     public override void afterUpdate(){

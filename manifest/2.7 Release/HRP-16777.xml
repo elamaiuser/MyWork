@@ -10,6 +10,10 @@
         <members>DriveTriggerHandler</members>
         <members>AccountTriggerHandler</members>
         <members>AccountService</members>
+        <members>TaskService</members>
+        <members>TaskTriggerHandler</members>
+        <members>BSF_TemplateTaskPlanningCascadeBatch</members>
+        <members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -22,6 +26,7 @@
         <members>Task_Platform_Event__e.Type__c</members>
         <members>Task_Platform_Event__e.RecordTypeId__c</members>
         <members>Account.Planning_Path__c</members>
+        <members>Activity.Task_Deduplication_Id__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -36,11 +41,13 @@
         <members>BSF_Task_Owner_Hierarchy_JSON</members>
         <members>BSF_PE_Field_Mapping_JSON</members>
         <members>BSF_Generate_Tasks_From_Events</members>
+        <members>FIXSITE_RESTRICTED_TASKS</members>
         <name>CustomLabel</name>
     </types>
     <types>
 		<members>BSF_Access_Control_Rule.HRP_16777_Planned_Task_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16777_Class_Permission_Set</members>
+        <members>BSF_Access_Control_Rule.HRP_17373_Field_Permission_Set_EDIT</members>
 		<name>CustomMetadata</name>
 	</types>
 	<version>66.0</version>
