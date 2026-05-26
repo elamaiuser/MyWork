@@ -3,6 +3,9 @@
 	<types>
 		<members>TaskService</members>
         <members>TaskTriggerHandler</members>
+        <members>BSF_TaskPlanningService</members>
+        <members>BSF_TemplateTaskPlanningCascadeBatch</members>
+        <members>OpportunityService</members>
 		<name>ApexClass</name>
 	</types>
     <types>

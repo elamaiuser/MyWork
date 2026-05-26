@@ -252,10 +252,10 @@ public with sharing class BSF_TaskPlanningService {
             if(opp.Is_Template__c && opp.Planning_Path__c != old.Planning_Path__c) {
                 templateChangedIds.add(opp.Id);
             }
-            if(opp.Is_Template__c && opp.Is_Path_Overridden__c == false && opp.AccountId != old.AccountId) {
+            if(opp.Is_Template__c && opp.AccountId != old.AccountId) {
                 templateChangedIds.add(opp.Id);
             }
-            if(!opp.Is_Template__c && opp.Is_Path_Overridden__c == false && opp.Parent_Template_Id__c != old.Parent_Template_Id__c && opp.Drive_Date__c >= Date.today()) {
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
                 opportunityChanged.add(opp);
             }
         }
