@@ -12,5 +12,9 @@
 		<members>User_Special_Permission__mdt</members>
 		<name>CustomObject</name>
 	</types>
+	<types>
+		<members>Lead_360_Visibility_Permission</members>
+		<name>CustomPermission</name>
+	</types>
 	<version>66.0</version>
 </Package>
