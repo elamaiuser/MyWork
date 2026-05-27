@@ -249,14 +249,8 @@ public with sharing class BSF_TaskPlanningService {
             }*/
             
             // 2. Detect Template Planning Path Change (Trigger Cascade Batch)
-            if(opp.Is_Template__c && opp.Planning_Path__c != old.Planning_Path__c) {
+            if(opp.Is_Template__c && (opp.Planning_Path__c != old.Planning_Path__c || opp.AccountId != old.AccountId)) {
                 templateChangedIds.add(opp.Id);
-            }
-            if(opp.Is_Template__c && opp.AccountId != old.AccountId) {
-                templateChangedIds.add(opp.Id);
-            }
-            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
-                opportunityChanged.add(opp);
             }
         }
 
@@ -269,8 +263,28 @@ public with sharing class BSF_TaskPlanningService {
         if(!templateChangedIds.isEmpty() && !System.isBatch() && !System.isFuture()) {
             Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
         }
-        if(!opportunityChanged.isEmpty() && !System.isBatch() && !System.isFuture()) {
-            cascadeTemplateToDrives(opportunityChanged);
+    }
+
+    public static void handleOpportunityTemplateChange(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
+        Set<Id> templateChangedIds = new Set<Id>();
+        for(Opportunity opp : newOpps) {
+            if(opp.RecordTypeId == fixedSiteRecTypeId || oldMap == null || !oldMap.containsKey(opp.Id)) continue;
+
+            Opportunity old = oldMap.get(opp.Id);
+            
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
+                templateChangedIds.add(opp.Parent_Template_Id__c);
+            }
+        }
+        if(!templateChangedIds.isEmpty()) {
+            Map<Id, Opportunity> templatesById = new Map<Id, Opportunity>([SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateChangedIds WITH SYSTEM_MODE]);
+            for (Opportunity opp : newOpps) {
+                if(opp.RecordTypeId == fixedSiteRecTypeId || opp.Is_Template__c || opp.Parent_Template_Id__c == null || !templatesById.containsKey(opp.Parent_Template_Id__c)) continue;
+
+                Opportunity parentTemplate = templatesById.get(opp.Parent_Template_Id__c);
+                opp.Planning_Path__c = parentTemplate.Planning_Path__c;
+            }
         }
     }
 
