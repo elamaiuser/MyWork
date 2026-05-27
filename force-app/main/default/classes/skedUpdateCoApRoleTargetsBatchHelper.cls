@@ -164,12 +164,17 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         }
 
         objectsToUpdate.addAll(getCalculateGrandTotalAvailableOnColOp(map_coIdKey_driveTypeVsNoOfResourcesMap));
-        objectsToUpdate.addAll(getUpdatedCoApStatusOnResources(resourceList, coApList));
         objectsToUpdate.sort();
 
         Database.SaveResult[] updateResults = Database.update(objectsToUpdate, false);
+        Database.SaveResult[] updateResultsForResources = Database.update(getUpdatedCoApStatusOnResources(resourceList, coApList), false);
+
+        List<Database.SaveResult> allResults = new List<Database.SaveResult>();
+        allResults.addAll(updateResults);
+        allResults.addAll(updateResultsForResources);
+
         List<BSF_Error_Log__c> errorLogToInsert = BSF_Utilities.createErrorLogWithObjectId(
-            updateResults,
+            allResults,
             'CO AP / CO / Resource Records update',
             'skedUpdateCoApRoleTargetsBatchHelper',
             'calculateTotalsAndUpdateCoApStatusOnResources',
