@@ -60,6 +60,7 @@
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Field_Permissions_Read</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Total_Field_Permissions</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions</members>
+		<members>BSF_Access_Control_Rule.HRP_1522_CO_AP_Object_Permissions_Create</members>
 		<members>BSF_Access_Control_Rule.HRP_1522_Resource_Field_Permissions</members>
 		<name>CustomMetadata</name>
 	</types>

@@ -39,9 +39,13 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('subjectisRequired') == -1) { 
             TaskService.subjectisRequired((List<Task>)Trigger.new);
         }   
+<<<<<<< HEAD
         if(super.getTriggerMethodsToBypass().indexOf('clearKeyIfCancelled') == -1) { 
             TaskService.clearKeyIfCancelled((List<Task>)Trigger.new,(Map<Id,Task>)Trigger.OldMap);
         }
+=======
+        
+>>>>>>> BSFReleaseQA
     }
     
     public override void beforeInsert(){
@@ -62,10 +66,14 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
         //HRP-12627 end
         if(super.getTriggerMethodsToBypass().indexOf('populateTaskTypeFromMetadata') == -1) { 
             TaskService.populateTaskTypeFromMetadata((List<Task>)Trigger.new);
+<<<<<<< HEAD
         } 
         if(super.getTriggerMethodsToBypass().indexOf('populateTaskKey') == -1) { 
             TaskService.populateTaskKey((List<Task>)Trigger.new);
         }   
+=======
+        }    
+>>>>>>> BSFReleaseQA
     }
     //HRP-16830
     public override void afterInsert(){

@@ -146,6 +146,7 @@
         </outputParameters>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>AddToCollection</name>
         <label>AddToCollection</label>
@@ -1656,12 +1657,12 @@
             <label>End Flow</label>
         </rules>
     </decisions>
-    <description>HRP-13190 Populating APT Requirements from Template</description>
+    <description>HRP-16977 - Disabling 180 day Validation for Recurring Pattern Start Date</description>
     <dynamicChoiceSets>
         <name>AcceptsAutomation</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
@@ -1724,32 +1725,32 @@
     <dynamicChoiceSets>
         <name>AccountAcceptAutomationSelection</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Accepts_Automation2__c</picklistField>
         <picklistObject>Account</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>DriveOrigination</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Drive_Origination__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowEndTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Flow_End_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>FlowStartTime</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Flow_Start_Time_Field__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -1867,48 +1868,48 @@
     <dynamicChoiceSets>
         <name>Online_Scheduling_Enabled_Picklist</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OnlineSchedulingEnabled</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Online_Scheduling_Enabled__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublic</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpenToPublicPickList</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Open_to_Public__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>OpportunityStage</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>StageName</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>selectedTemplateDriveTypePicklist</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -1963,16 +1964,16 @@
     <dynamicChoiceSets>
         <name>Type</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Type</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>TypeOfDrive</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Type_of_Drive__c</picklistField>
         <picklistObject>Opportunity</picklistObject>
     </dynamicChoiceSets>
@@ -1980,22 +1981,22 @@
     <formulas>
         <name>Account_Accept_Automation_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Accepts_Automation2__c})), &apos;--Select--&apos;, Text({!Get_Account.Accepts_Automation2__c}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Accepts_Automation2__c})), &#39;--Select--&#39;, Text({!Get_Account.Accepts_Automation2__c}))</expression>
     </formulas>
     <formulas>
         <name>Account_Type_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Type})), &apos;--Select--&apos;, Text({!Get_Account.Type}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Type})), &#39;--Select--&#39;, Text({!Get_Account.Type}))</expression>
     </formulas>
     <formulas>
         <name>allowedProfilesToEnterPastDriveDate</name>
         <dataType>Boolean</dataType>
-        <expression>CONTAINS({!Get_Profile_Info.Name}, &apos;APS Planner&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Management&apos;) || CONTAINS({!Get_Profile_Info.Name}, &apos;APS Scheduler&apos;)</expression>
+        <expression>CONTAINS({!Get_Profile_Info.Name}, &#39;APS Planner&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Management&#39;) || CONTAINS({!Get_Profile_Info.Name}, &#39;APS Scheduler&#39;)</expression>
     </formulas>
     <formulas>
         <name>Industry_Code_Default_Choice</name>
         <dataType>String</dataType>
-        <expression>If(IsBlank(Text({!Get_Account.Industry_Code__c})), &apos;--Select--&apos;, Text({!Get_Account.Industry_Code__c}))</expression>
+        <expression>If(IsBlank(Text({!Get_Account.Industry_Code__c})), &#39;--Select--&#39;, Text({!Get_Account.Industry_Code__c}))</expression>
     </formulas>
     <formulas>
         <name>NotNull</name>
@@ -2037,7 +2038,7 @@ TEXT({!TotalCountofRecurringDrives})+&quot; Opportunity records were&quot;)</exp
     <formulas>
         <name>selectedDriveNameDefault</name>
         <dataType>String</dataType>
-        <expression>BLANKVALUE({!varSelectedDriveName},&apos;&apos;)</expression>
+        <expression>BLANKVALUE({!varSelectedDriveName},&#39;&#39;)</expression>
     </formulas>
     <formulas>
         <name>varCloseDateAuto</name>
@@ -2783,6 +2784,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
             <name>Text_Error_Message</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(255, 0, 0);&quot;&gt;{!Account_Validation_Error_Message}&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -2802,6 +2811,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
             <name>Congrats</name>
             <fieldText>&lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;font-size: 18px; color: rgb(36, 73, 211); background-color: rgb(255, 255, 255);&quot;&gt;Congrats! This Account has been reactivated. Continue creating your new Drive.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>or</conditionLogic>
                 <conditions>
@@ -2830,21 +2847,53 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <name>Account_Name</name>
                     <fieldText>&lt;p&gt;&lt;b&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;Account Name&lt;/b&gt;: {!Get_Account.Name}&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Drive_Site</name>
                     <fieldText>&lt;p&gt;&lt;b&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;Drive Site&lt;/b&gt;: {!Sites_from_LocationAccounts}&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Accepts_Automation</name>
                     <fieldText>&lt;p&gt;&lt;b&gt;Accepts Automation&lt;/b&gt; :{!varAcceptsAutomation}&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Stage</name>
                     <fieldText>&lt;p&gt;&lt;b&gt;Stage&lt;/b&gt;: Discovery&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Drive_Date</name>
@@ -2856,8 +2905,16 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>InputField</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                     <validationRule>
-                        <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);&quot;&gt;Drives may not be scheduled for dates prior to today&apos;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
+                        <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);&quot;&gt;Drives may not be scheduled for dates prior to today&#39;s date and Drive date cannot be greater than site end date {!varSiteEndDate}&lt;/span&gt;&lt;/p&gt;</errorMessage>
                         <formulaExpression>({!allowedProfilesToEnterPastDriveDate} == true &amp;&amp; {!Drive_Date} &lt; TODAY()) || ({!Drive_Date} &gt;= TODAY() &amp;&amp;
 ({!Site_TBD}==true  || {!Drive_Date} &lt; {!varSiteEndDate}))</formulaExpression>
                     </validationRule>
@@ -2882,6 +2939,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>FlowEndTimePicklist</name>
@@ -2893,6 +2958,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Whole_Blood_Procedures1</name>
@@ -2905,6 +2978,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Double_Red_Procedures</name>
@@ -2917,6 +2998,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
                         <conditions>
@@ -2946,6 +3035,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <scale>0</scale>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <inputParameters>
                     <name>width</name>
@@ -2968,6 +3065,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
                         <conditions>
@@ -2996,6 +3101,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
                         <conditions>
@@ -3026,6 +3139,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>OnlineSchedulingEnabled2</name>
@@ -3038,6 +3159,14 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Source</name>
@@ -3049,11 +3178,27 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     <fieldType>DropdownBox</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>SiteLocationType</name>
                     <fieldText>&lt;p&gt;Drive Type&lt;/p&gt;&lt;p&gt;{!varLocationTypeFormula}&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <fields>
                     <name>Drive_Keyword</name>
@@ -3063,9 +3208,17 @@ MOD(({!Drive_Date} - {!Get_Opportunity_Date_MetaData.Days_from_Drive_Date__c}) -
                     </defaultValue>
                     <fieldText>Drive Keyword</fieldText>
                     <fieldType>InputField</fieldType>
-                    <helpText>&lt;p&gt;&lt;span style=&quot;color: rgb(23, 43, 77); font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &apos;and&apos;, &apos;or&apos;, &apos;left&apos;, &apos;right&apos; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
+                    <helpText>&lt;p&gt;&lt;span style=&quot;color: rgb(23, 43, 77); font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;Keywords are used to search for drives on RCB.org. Maximum 50 characters, not required to be unique; not case sensitive; excludes numbers; &#39;and&#39;, &#39;or&#39;, &#39;left&#39;, &#39;right&#39; as standalone words; special characters.&lt;/span&gt;&lt;/p&gt;</helpText>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>false</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                     <validationRule>
                         <errorMessage>&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords are recommended to be 50 letters or less.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should begin by being letter based. They may have numbers after words; i.e. Bulldog2018, not 2018Bulldog&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 11.36px; font-family: Arial, Helvetica, sans-serif; color: rgb(0, 0, 0);&quot;&gt;Keywords should not allow special characters (*&amp;amp;?%)&lt;/span&gt;&lt;/p&gt;</errorMessage>
                         <formulaExpression>LEN({!Drive_Keyword}) &lt; 51 &amp;&amp;
@@ -3082,6 +3235,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                     <fieldType>InputField</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
                 </fields>
                 <inputParameters>
                     <name>width</name>
@@ -3093,6 +3254,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             </fields>
             <isRequired>false</isRequired>
             <regionContainerType>SectionWithoutHeader</regionContainerType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3112,6 +3281,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>Create_New_Drive_From_Template</name>
             <fieldText>&lt;p&gt;&lt;b style=&quot;font-size: 14px;&quot;&gt;Create New Drive From Template&lt;/b&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>AccountName</name>
@@ -3123,6 +3300,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Site_TBD</name>
@@ -3134,6 +3319,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Select_AccountSite</name>
@@ -3143,6 +3336,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -3164,6 +3365,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -3191,8 +3400,16 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>DefunctAccount</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. Are you sure you would like to proceed creating a new Drive and updating the Account&apos;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. Are you sure you would like to proceed creating a new Drive and updating the Account&#39;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>YES_Defunct_Continue</name>
@@ -3203,6 +3420,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <pausedText>&lt;p&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt;This Account is currently in a &quot;Defunct&quot; status. &lt;/span&gt;&lt;/p&gt;</pausedText>
         <showFooter>true</showFooter>
@@ -3220,6 +3445,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>EndTimeLessThanStartTime</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;You selected an End Time &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;({!FlowEndTimePicklist}) &lt;/b&gt;&lt;span style=&quot;font-size: 14px; color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;that is prior or equal to the Start Time &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;({!FlowStartTimePicklist}).&lt;/b&gt;&lt;span style=&quot;font-size: 14px; color: rgb(240, 9, 39); background-color: rgb(255, 255, 255);&quot;&gt;  Please make sure the End Time is always after the Start Time.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3236,6 +3469,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>Finish</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(71, 134, 224); font-size: 16px;&quot;&gt;Click&lt;/span&gt;&lt;b style=&quot;color: rgb(71, 134, 224); font-size: 16px;&quot;&gt;&lt;i&gt; Finish&lt;/i&gt;&lt;/b&gt;&lt;span style=&quot;color: rgb(71, 134, 224); font-size: 16px;&quot;&gt; to return to the Account.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3255,6 +3496,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>DriveDateLessThan85Days</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(59, 83, 169); font-size: 14px;&quot;&gt;The Drive Date &lt;/span&gt;&lt;b style=&quot;color: rgb(59, 83, 169); font-size: 14px;&quot;&gt;{!Drive_Date}&lt;/b&gt;&lt;span style=&quot;color: rgb(59, 83, 169); font-size: 14px;&quot;&gt; is less than 85 calendar days from Today, please enter a Close Date and a Targeted Ask Date below:&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Close_Date</name>
@@ -3263,6 +3512,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;Close Date cannot be after the Drive Date.&lt;/p&gt;</errorMessage>
                 <formulaExpression>{!Close_Date} &lt;= {!Drive_Date}</formulaExpression>
@@ -3275,6 +3532,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;Targeted Ask Date cannot be after the Drive Date and/or after the Close Date.&lt;/p&gt;</errorMessage>
                 <formulaExpression>({!Targeted_Ask_Date} &lt;= {!Drive_Date}) &amp;&amp; ({!Targeted_Ask_Date} &lt;= {!Close_Date})</formulaExpression>
@@ -3298,6 +3563,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>DriveDateLessThan180Days</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(59, 83, 169); font-size: 14px;&quot;&gt;The Drive Date &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(59, 83, 169); font-size: 14px;&quot;&gt;{!Drive_Date}&lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(59, 83, 169); font-size: 14px;&quot;&gt; is less than 180 but greater than 85 calendar days days from Today, please enter a Targeted Ask Date below:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(59, 83, 169); font-size: 14px;&quot;&gt;NOTE:  The close date is auto-calculated to: &lt;/span&gt;&lt;b style=&quot;background-color: rgb(255, 255, 255); color: rgb(59, 83, 169); font-size: 14px;&quot;&gt; {!varCloseDateAuto}&lt;/b&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>Targeted_Ask_Date_Only</name>
@@ -3306,6 +3579,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>InputField</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <validationRule>
                 <errorMessage>&lt;p&gt;&lt;span style=&quot;color: rgb(240, 23, 11); background-color: rgb(255, 255, 255);&quot;&gt;Targeted Ask Date cannot be after the Drive Date and/or after the Close Date.&lt;/span&gt;&lt;/p&gt;</errorMessage>
                 <formulaExpression>({!Targeted_Ask_Date_Only} &lt;= {!Drive_Date}) &amp;&amp; ({!Targeted_Ask_Date_Only} &lt;= {!varCloseDateAuto})</formulaExpression>
@@ -3326,6 +3607,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>Test_Display1</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(255, 0, 0);&quot;&gt;{!Error_Msg_Test1}&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3342,6 +3631,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>Display_Error_Msg</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(255, 0, 0);&quot;&gt;{!Error_Msg_Test2}&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3358,6 +3655,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>ExceptionHandler</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(250, 1, 1); font-size: 14px;&quot;&gt;There was problem with creating an opportunity record.  Please contact the IT team for resolution and include this error message:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(250, 1, 1); font-size: 14px;&quot;&gt;{!$Flow.FaultMessage}&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3377,6 +3682,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>FinalConfirmation</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;The following Opportunity Record(s) will be created:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;color: rgb(36, 73, 211); font-size: 14px; font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255));&quot;&gt;Account:&lt;/b&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px; font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255));&quot;&gt; {!AccountName} &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;Site:&lt;/b&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;  {!Select_AccountSite}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;Drive Date:&lt;/b&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;  {!Drive_Date} &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3396,6 +3709,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>displayFinalConfirmationForRecurringSeries</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;The following Opportunity Record(s) will be created:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(36, 73, 211); font-size: 14px; font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255));&quot;&gt;Account:&lt;/strong&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px; font-family: var(--lwc-fontFamily,-apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Helvetica, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;); background-color: var(--lwc-colorBackgroundInput,rgb(255, 255, 255));&quot;&gt; {!AccountName} &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;Site:&lt;/strong&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;  {!Select_AccountSite}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;Drive/Series Start Date: &lt;/strong&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;{!outStartDate}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;Drive/Series End Date:&lt;/strong&gt;&lt;span style=&quot;color: rgb(36, 73, 211); font-size: 14px;&quot;&gt;  {!outEndDate}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(37, 28, 173); background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif;&quot;&gt;Total Number Of Drives Being Created In This Series&lt;/strong&gt;&lt;strong style=&quot;color: rgb(37, 28, 173); background-color: rgb(255, 255, 255);&quot;&gt; &lt;/strong&gt;&lt;strong style=&quot;color: rgb(31, 23, 147);&quot;&gt;:&lt;/strong&gt;&lt;span style=&quot;color: rgb(94, 97, 234);&quot;&gt;{!TotalCountofRecurringDrives}&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3412,6 +3733,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>InvalidDriveDateMessage</name>
             <fieldText>&lt;p&gt;Your choice of recurring series end date {!seriesEndDate} is greater than site end date {!varSiteEndDate}. Please choose dates less than site end date&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3428,6 +3757,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>InvalidSiteAddressMessage</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(176, 24, 24); background-color: rgb(255, 255, 255);&quot;&gt;This selected site is missing address (Please check to make sure Address, City, State and Zip code fields are all populated) . Please update with valid address and try again.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3445,8 +3782,16 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>AccountLostReason</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in the &quot;Lost&quot; Status with a Lost Reason of &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;&lt;i&gt;{!Get_Account.Lost_Reason__c}&lt;/i&gt;. &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;Are you sure you would like to proceed creating a new Drive and updating the Account&apos;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;This Account is currently in the &quot;Lost&quot; Status with a Lost Reason of &lt;/span&gt;&lt;b style=&quot;font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;&lt;i&gt;{!Get_Account.Lost_Reason__c}&lt;/i&gt;. &lt;/b&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(59, 83, 169);&quot;&gt;Are you sure you would like to proceed creating a new Drive and updating the Account&#39;s status to &quot;Reactivate&quot;?&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <fields>
             <name>YesOrNo</name>
@@ -3457,6 +3802,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>RadioButtons</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <pausedText>&lt;p&gt;&lt;span style=&quot;font-size: 16px; color: rgb(0, 0, 0);&quot;&gt;This Account is currently marked as &quot;Lost&quot; because of either Market Optimization or a Red Cross Decision not to run. If you are sure you want to continue creating a new Drive for this Account, click &quot;Next.&quot; If you do not, close the page.&lt;/span&gt;&lt;/p&gt;</pausedText>
         <showFooter>true</showFooter>
@@ -3475,6 +3828,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>more_than_Recurring_limit</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;Exceeding the maximum number of recurring drives that can be created in a single invocation. Modify the recurring dates such that the total drive count is lesser or equal to the limit of {!RecurringDriveLimit}. Once you have added the first &lt;/span&gt;&lt;span style=&quot;color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);&quot;&gt;{!RecurringDriveLimit} &lt;/span&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;drives, you can use the same plan a drive button again to create the remaining {!remainingOverTheLimit} drives&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <nextOrFinishButtonLabel>Cancel</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -3492,6 +3853,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>No_Template_Found_Text</name>
             <fieldText>&lt;p&gt;There are no templates found with either Account+Marketing program combination or Account+Site combination, please create a Template matching either of these combination to proceed forward.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3508,6 +3877,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>DisplayTextNonCollectionAreaRecords</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(51, 51, 51);&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3524,6 +3901,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>Confirmation</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;{!OpportunitySuccessMessage} successfully created.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -3543,6 +3928,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>ErrorBanner</name>
             <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(211, 23, 23);&quot;&gt;Please select a Template&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -3563,6 +3956,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <fieldType>DropdownBox</fieldType>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3633,7 +4034,7 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <inputParameters>
                 <name>InputStartDateOffset</name>
                 <value>
-                    <numberValue>180.0</numberValue>
+                    <numberValue>0.0</numberValue>
                 </value>
             </inputParameters>
             <inputParameters>
@@ -3708,6 +4109,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
                 <assignToReference>OutputEligibilityNeededFor</assignToReference>
                 <name>OutputDonorEligibilityType</name>
             </outputParameters>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>false</showFooter>
         <showHeader>true</showHeader>
@@ -3724,6 +4133,14 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
             <name>TextNonCollectionArea</name>
             <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif;&quot;&gt;Based on Drive Date, there is not a valid Site Collection Operation (Non-Collection Area). Please contact your administrator for additional support.&lt;/strong&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -3741,8 +4158,16 @@ REGEX( {!Drive_Keyword}, &quot;[a-zA-Z0-9 ]+&quot;)</formulaExpression>
         </connector>
         <fields>
             <name>Confirmation_0</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;The template&apos;s status is &apos;Inactive&apos; and will now be updated to &apos;Active&apos;.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(71, 124, 234);&quot;&gt;The template&#39;s status is &#39;Inactive&#39; and will now be updated to &#39;Active&#39;.&lt;/span&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>

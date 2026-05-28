@@ -253,7 +253,7 @@ public class BSF_Batch_UpdateAccountStatus_Test
         test.stopTest();
         
         Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Active');
+        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Reactivate');
     }
     
     @isTest

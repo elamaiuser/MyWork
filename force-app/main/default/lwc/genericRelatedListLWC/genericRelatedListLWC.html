@@ -1,0 +1,150 @@
+<template>
+    <div class="slds-card_boundary">
+
+        <header class="slds-page-header slds-page-header_record-home" style="padding: 20px;">
+            <span>
+                <lightning-icon icon-name={iconName} size="small" alternative-text="icon"></lightning-icon>
+            </span>
+            <a class="slds-card__header-link" style="font-size:16px; padding-left:12px" href="javascript:void(0);">
+                {headerName}&nbsp;({countDisplay})
+                <template if:true={isFilesHeader}>
+                    <div class="slds-float_right">
+                        <lightning-button
+                            class="fontsizecss"
+                            variant="neutral"
+                            label="Add Files"
+                            onclick={handleShowModal}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </a>
+        </header>
+
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+        <template if:true={hasData}>
+            <p class="slds-p-horizontal_xxx-small">
+                <lightning-datatable
+                    key-field="Id"
+                    data={tableData}
+                    columns={columns}
+                    hide-checkbox-column
+                    show-row-number-column="false"
+                    onrowaction={handleRowAction}>
+                </lightning-datatable>
+            </p>
+            <div style="height:45px; padding-top:15px; background-color:white; text-align:center;">
+                <a onclick={handleViewAll}>View All</a>
+            </div>
+        </template>
+
+    </div>
+
+    <!-- View All Full-Screen Page -->
+    <template if:true={showViewAll}>
+        <div class="view-all-page">
+
+            <!-- Header: breadcrumbs, title, meta -->
+            <div class="view-all-header">
+                <div class="view-all-header-top">
+                    <div class="view-all-breadcrumbs">
+                        <span class="breadcrumb-link" onclick={handleCloseViewAll}>{_objectName}</span>
+                        <span class="breadcrumb-sep">&nbsp;&rsaquo;&nbsp;</span>
+                        <span class="breadcrumb-link" onclick={handleCloseViewAll}>{_recordName}</span>
+                    </div>
+                    <div class="view-all-actions">
+                        <lightning-button-icon
+                            icon-name="utility:refresh"
+                            onclick={handleRefreshViewAll}
+                            alternative-text="Refresh"
+                            variant="bare"
+                            title="Refresh">
+                        </lightning-button-icon>
+                        <lightning-button-icon
+                            icon-name="utility:close"
+                            onclick={handleCloseViewAll}
+                            alternative-text="Close"
+                            variant="bare"
+                            title="Close">
+                        </lightning-button-icon>
+                    </div>
+                </div>
+                <h1 class="view-all-title">{headerName}</h1>
+                <p class="view-all-meta">
+                    {viewAllData.length} items &bull; Page {viewAllPage} &bull; Sorted by {viewAllSortedByLabel} &bull; Updated a few seconds ago
+                </p>
+            </div>
+
+            <!-- Pagination bar: sits between header and table, always visible -->
+            <div class="view-all-pagination">
+                <lightning-button
+                    label="Previous"
+                    variant="neutral"
+                    icon-name="utility:chevronleft"
+                    icon-position="left"
+                    onclick={handleViewAllPrev}
+                    disabled={viewAllPrevDisabled}>
+                </lightning-button>
+                <span class="page-label">Page {viewAllPage}</span>
+                <lightning-button
+                    label="Next"
+                    variant="neutral"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
+                    onclick={handleViewAllNext}
+                    disabled={viewAllNextDisabled}>
+                </lightning-button>
+            </div>
+
+            <!-- Table area — scrolls independently -->
+            <div class="view-all-body">
+                <template if:true={viewAllLoading}>
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </template>
+                <lightning-datatable
+                    key-field="Id"
+                    data={viewAllData}
+                    columns={viewAllColumns}
+                    hide-checkbox-column
+                    show-row-number-column={showRowNumbers}
+                    sorted-by={viewAllSortedBy}
+                    sorted-direction={viewAllSortedDir}
+                    onsort={handleViewAllSort}
+                    onrowaction={handleRowAction}>
+                </lightning-datatable>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- File Upload Modal -->
+    <template if:true={showFileModal}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        onclick={handleHideModal}
+                        alternative-text="Close"
+                        variant="bare-inverse"
+                        class="slds-modal__close">
+                    </lightning-button-icon>
+                    <h2 class="slds-text-heading_medium slds-hyphenate">Upload Files</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" style="height:400px;">
+                    <c-a-r-c-file-upload-component-container
+                        record-id={effectiveCurrentRecordId}
+                        onclosethemodal={handleHideModal}>
+                    </c-a-r-c-file-upload-component-container>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={handleHideModal}></lightning-button>
+                    <lightning-button variant="brand"    label="OK"     onclick={handleHideModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

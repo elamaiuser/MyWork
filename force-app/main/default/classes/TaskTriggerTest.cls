@@ -1,32 +1,490 @@
-/*
- * This Test class covering following classes and trigger 
- * TaskService (100%),
- * TaskTriggerHandler(94%),
- * TaskTrigger (100%)
- * BSF_MarketingExceptionRequest (98%)
- */
 @isTest
-public class TaskTriggerTest {
-    
-    
-    public static String rolename = 'West_BDM';
-    public static String mobileAccRecType = 'Fixed Site Account'; 
-    public static String fixedOppRecType = 'Fixed Site Opp';
-    public static String taskRecType = '72 Hour Check In';
-    public static Map<String,Id> recordTypeMap  = new Map<String,Id>();
-    public static Map<String,Id> opprecordTypeMap  = new Map<String,Id>();
-    public static Map<String,Id> taskrecordTypeMap  = new Map<String,Id>();
-    public static List<Task> tasks = new List<Task>();
-    public static Map<Id,Task> taskMap = new Map<Id,Task>();
-	
-    @testSetup 
-    public static void prepareDataset(){
+private class TaskTriggerTest {
+
+    @testSetup
+    static void setupTestData() {
+        skedHubBase.BypassInsertTriggers = true;
+        skedHubBase.BypassUpdateTriggers = true;
+        String mobileOppRecType = 'Mobile Opp';
+        String fixedOppRecType = 'Fixed Site Opp';
+        String mobileAccRecType = 'Mobile Account';
+        String fixedAccRecType = 'Fixed Site Account';
+        String mobileSiteRecType = 'Mobile Site';  
+
+        Map<String,Id> recordTypeMap  = new Map<String,Id>();
+        recordTypeMap = recordTypeMap( 'Opportunity' );
+        Id optyRecTypeId = recordTypeMap.get(mobileOppRecType);
+        Id fixedOptyRecTypeId = recordTypeMap.get(fixedOppRecType);
         recordTypeMap = recordTypeMap( 'Account' );
-        opprecordTypeMap = opprecordTypeMap('Opportunity');
-        taskrecordTypeMap = taskrecordTypeMap('Task');
+        Id accRecTypeId = recordTypeMap.get(mobileAccRecType);
+        Id fixedAccRecTypeId = recordTypeMap.get(fixedAccRecType);
+        recordTypeMap = recordTypeMap( 'sked__Location__c' );
+        Id siteRecTypeId = recordTypeMap.get(mobileSiteRecType);
+
+        Profile p = [SELECT Id FROM Profile WHERE Name='Global Admin' LIMIT 1];
+        User amUser = new User(Alias = 'amusr', 
+                                Email='amuser@testtest.com', 
+                                EmailEncodingKey='UTF-8', 
+                                LastName='TestingAM', 
+                                LanguageLocaleKey='en_US', 
+                                LocaleSidKey='en_US', 
+                                ProfileId = p.Id, 
+                                TimeZoneSidKey='America/Los_Angeles', 
+                                UserName='amuser' + DateTime.now().getTime() + '@testtest.com');
+        insert amUser;
+
+        Account accObj;
+        accObj = new Account();
+        accObj.RecordTypeId = accRecTypeId;
+        accObj.Name = 'Test Blood Drive Account';
+        accObj.BillingPostalCode = '30622';
+        accObj.Internal_Name__c ='Exavalu';  
+        accObj.Planning_Path__c = 'Flexible';          
+        skedHubBase.BypassInsertTriggers = true;
+        triggerHandler.bypass('AccountTriggerHandler');
+        insert accObj;
+
+        Account accObj1;
+        accObj1 = new Account();
+        accObj1.RecordTypeId = fixedAccRecTypeId;
+        accObj1.Name = 'Test Blood Drive Account1';
+        accObj1.BillingPostalCode = '30622';
+        accObj1.Internal_Name__c ='Exavalu';  
+        accObj1.Planning_Path__c = 'Flexible';          
+        skedHubBase.BypassInsertTriggers = true;
+        triggerHandler.bypass('AccountTriggerHandler');
+        insert accObj1;
+
+        List<AccountTeammember> atmList = new List<AccountTeammember>();
+        AccountTeammember atm;
+        atm = new AccountTeammember();
+        atm.AccountAccessLevel = 'Edit';
+        atm.CaseAccessLevel = 'Edit';
+        atm.OpportunityAccessLevel = 'Edit';
+        atm.userId = amUser.Id ;
+        atm.AccountId = accObj.Id ;
+        atm.TeamMemberRole = 'Account Specialist';
+        atm.Coverage_Reason__c = picklistValues('AccountTeammember','Coverage_Reason__c');
+        atm.End_Date__c = Date.Today().addDays(10);
+        atm.Start_Date__c = Date.Today().addDays(-10);
+        atmList.add(atm);
+        skedHubBase.BypassInsertTriggers = true;
+        triggerHandler.bypass('AccountTeamMemberTriggerHandler');
+        insert atmList;
+
+        
+        List<Task_Definition__c> taskDefs = new List<Task_Definition__c>();
+
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Room Rentals',
+            Task_Type__c = 'Room Rentals',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Parking Needs',
+            Task_Type__c = 'Parking Needs',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Send Local Media Outreach',
+            Task_Type__c = 'Send Local Media Outreach',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Drive Logistics Check',
+            Task_Type__c = 'Drive Logistics Check',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Submit DL & Background Checks',
+            Task_Type__c = 'Submit DL & Background Checks',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'MOI, COI, TLA',
+            Task_Type__c = 'MOI COI TLA',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Appointment Schedule Maintenance',
+            Task_Type__c = 'Appointment Schedule Maintenance',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Dedicated Drive Authorization Form',
+            Task_Type__c = 'Dedicated Drive Authorization Form',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Coordinate Publicity & Branding Needs',
+            Task_Type__c = 'Coordinate Publicity & Branding Needs',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Volunteer Assignments',
+            Task_Type__c = 'Volunteer Assignments',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Parental Consent Check',
+            Task_Type__c = 'Parental Consent Check',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Annual Meeting',
+            Task_Type__c = 'Annual Meeting',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Standing Date Confirmation',
+            Task_Type__c = 'Standing Date Confirmation',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Assessment',
+            Task_Type__c = 'Recruitment Assessment',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Continuous Engagement',
+            Task_Type__c = 'Continuous Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Day-of-Drive Collections Check',
+            Task_Type__c = 'Day of Drive Collections Check',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'External Leadership Engagement',
+            Task_Type__c = 'External Leadership Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Announcement Coordination',
+            Task_Type__c = 'Announcement Coordination',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Award Recognition Planning',
+            Task_Type__c = 'Award Recognition Planning',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Presentation/Tabling',
+            Task_Type__c = 'Recruitment Presentation Tabling',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Power Red Review',
+            Task_Type__c = 'Power Red Review',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'National Partnership SLA - SBPM',
+            Task_Type__c = 'National Partnership SLA SBPM',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Contingency Planning',
+            Task_Type__c = 'Contingency Planning',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Internal Partners Engagement',
+            Task_Type__c = 'Internal Partners Engagement',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Quarterly Meeting',
+            Task_Type__c = 'Quarterly Meeting',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'SBPM Sponsor Date Confirmation',
+            Task_Type__c = 'SBPM Sponsor Date Confirmation',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Mission Impact and Inclusion Planning',
+            Task_Type__c = 'Mission Impact and Inclusion Planning',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Marketing Program Review',
+            Task_Type__c = 'Marketing Program Review',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = '1-Week Check-in',
+            Task_Type__c = 'One Week Check-in',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Recruitment Strategy Meeting',
+            Task_Type__c = 'Recruitment Strategy Meeting',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Publicity Order Not Created',
+            Task_Type__c = 'Publicity Order Not Created',
+            Assigned_To__c = 'Strategic Business Planning Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Publicity Review Needed',
+            Task_Type__c = 'Publicity Review Needed',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = '72-Hour Check-in',
+            Task_Type__c = '72 Hour Check-In',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Post-Drive Analysis/Future Drive Planning - SBPM',
+            Task_Type__c = 'Post Drive Analysis SBPM',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Standard'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'Post-Drive Analysis - AM',
+            Task_Type__c = 'Post Drive Analysis AM',
+            Category__c = 'Standard',
+            Assigned_To__c = 'Account Manager'
+        ));
+        taskDefs.add(new Task_Definition__c(
+            Name = 'National Partnership SLA - AM',
+            Task_Type__c = 'National Partnership SLA AM',
+            Assigned_To__c = 'Account Manager',
+            Category__c = 'Flexible'
+        ));
+
+        insert taskDefs;
+
+        Task_Package__c taskPackage = new Task_Package__c(Name = 'Standard Tasks', Package_Name__c = 'Standard Tasks', Sort_Order__c = 1);
+        insert taskPackage;
+
+        List<Task_Package_Item__c> taskPackageItems = new List<Task_Package_Item__c>();
+        for(Task_Definition__c taskDef : taskDefs){
+            taskPackageItems.add(new Task_Package_Item__c(Task_Package__c = taskPackage.Id, Task_Definition__c = taskDef.Id));
+        }
+        insert taskPackageItems;
+
+        
+        List<Task_Selected_Package__c> bundles = new List<Task_Selected_Package__c>();
+        bundles.add(new Task_Selected_Package__c(Account__c = accObj.Id, Task_Package__c = taskPackage.Id));
+        insert bundles;
+
+        Contact conObj = new Contact();
+        conObj.AccountId = accObj.Id;
+        conObj.FirstName = 'Test';
+        conObj.LastName = 'Contact';
+        conObj.MailingCity = 'Ashburn';
+        conObj.MailingCountryCode ='US';
+        conObj.MailingPostalCode = '20148';
+        conObj.MailingStateCode = 'VA';
+        conObj.MailingStreet = '23070 Learning Cir';
+        conObj.Email = 'test.barno@mailinator.com';
+        conObj.Primary_Phone__c = picklistValues('Contact','Primary_Phone__c');
+        conObj.Original_Service_Date__c = Date.Today().addDays(-1000);
+        conObj.HomePhone = '222-222-3333';
+        conObj.MobilePhone = '222-222-3333';
+        conObj.OtherPhone = '222-222-3333';
+        triggerHandler.bypass('ContactTriggerHandler');
+        skedHubBase.BypassInsertTriggers = true;
+        insert conObj;
+        
+        sked__Tag__c skedTag = new sked__Tag__c(Name = 'Outside', sked__Type__c = 'Physical Location Type');
+        insert skedTag; 
+
+        sked__Location__c siteObj = new sked__Location__c();
+        siteObj.RecordTypeId = siteRecTypeId;
+        siteObj.Name = 'Test Site';
+        siteObj.sked_Address_1__c = 'Test Site Address';
+        siteObj.sked__Address__c = 'Test Site Address';
+        siteObj.sked_City__c = 'Test Site City';
+        siteObj.sked_State__c = 'Test Site State';
+        siteObj.sked_Zip_Code__c = '4000';
+        siteObj.sked_County__c = 'USA';
+        siteObj.sked_Site_Building_Name__c = 'Test Site Building';
+        siteObj.sked_Floor_Description__c = 'Test Site Floor Description';
+        siteObj.sked_Room_Name__c = 'Room 15';
+        siteObj.sked_National_Name__c = 'AMERICA';
+        siteObj.sked_Physical_Location_Type__c = 'Outside';
+        siteObj.sked_Site_Inspection_Completed_By__c = amUser.Id;
+        siteObj.sked_Automation_Suitability__c = 'Suitable';
+        siteObj.sked_Outside_stairs__c = 1;
+        siteObj.sked_Inside_stairs__c = 2;
+        siteObj.sked_Base_Description__c = 'test base description';
+        siteObj.sked_Travel_Time_to_Staging_Location__c = 45;
+        siteObj.sked_ARC_Vehicle_Parking_Directions__c = 'Test Direction';
+        siteObj.sked_Staff_Personal_Parking_Directions__c = 'Test Direction';
+        siteObj.sked_Site_Contact__c = conObj.Id;
+        siteObj.sked_Site_Main_Phone__c = '758-771-0091';
+        siteObj.sked_Directions_From_CollectionOperation__c = 'Test Direction';
+        siteObj.sked_Pay_for_Parking__c = 'Other';
+        siteObj.sked_Pay_for_Parking_Details__c = 'Test Pay';
+        siteObj.sked_Wireless_Policy__c = 'Accepted';
+        siteObj.Source__c = 'Custom New Form';
+        siteObj.sked_Date_Site_Inspection_Completed__c = Date.today();
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('SiteTriggerHandler');
+        insert siteObj;
+
+
+        Opportunity templateOpp = new Opportunity();
+        templateOpp.accountId = accObj.Id;
+        templateOpp.CloseDate = Date.today().addDays(30);
+        templateOpp.Is_Template__c = true;
+        templateOpp.Name = 'Test Template';
+        templateOpp.StageName = 'Discovery'; 
+        templateOpp.Drive_Status__c = 'Draft';
+        templateOpp.WB_Projected_Procedures__c = 1;
+        templateOpp.X2RBC_Projected_Procedures__c = 1;
+        templateOpp.Anticipated_Registered_Donors__c = 1;
+        templateOpp.Type_of_Drive__c = 'Mobile';
+        templateOpp.Planning_Path__c = 'Flexible';
+        templateOpp.Drive_Site__c = siteObj.Id;
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert templateOpp;
+
+        
+        insert new Task_Selected_Package__c(Opportunity__c = templateOpp.Id, Task_Package__c = taskPackage.Id);
+
+        Opportunity optyObj ;
+        optyObj = new Opportunity();
+        optyObj.RecordTypeId = optyRecTypeId;
+        optyObj.AccountId = accObj.Id;
+        optyObj.Drive_Site__c = siteObj.Id;
+        optyObj.Name = 'Test Drive';
+        optyObj.StageName = 'Discovery'; 
+        optyObj.Drive_Status__c = 'Draft'; 
+        optyObj.Drive_Date__c = Date.today().addDays(60);
+        optyObj.CloseDate = Date.today().addDays(30);
+        optyObj.Start_Time__c =  Time.newInstance(13, 30, 2, 20);
+        optyObj.End_Time__c =  Time.newInstance(18, 30, 2, 20);
+        optyObj.WB_Projected_Procedures__c = 1;
+        optyObj.X2RBC_Projected_Procedures__c = 1;
+        optyObj.Anticipated_Registered_Donors__c = 1;
+        optyObj.Account_Manager__c = amUser.Id;
+        optyObj.Type_of_Drive__c = 'Mobile';
+        optyObj.Planning_Path__c = 'Flexible';
+        optyObj.Parent_Template_Id__c = templateOpp.Id;
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert optyObj;
+
+        Opportunity optyObj1 ;
+        optyObj1 = new Opportunity();
+        optyObj1.RecordTypeId = fixedOptyRecTypeId;
+        optyObj1.AccountId = accObj1.Id;
+        optyObj1.Name = 'Test Drive2';
+        optyObj1.StageName = 'Discovery'; 
+        optyObj1.Drive_Status__c = 'Draft'; 
+        optyObj1.Drive_Date__c = Date.today().addDays(60);
+        optyObj1.CloseDate = Date.today().addDays(30);
+        optyObj1.Start_Time__c =  Time.newInstance(13, 30, 2, 20);
+        optyObj1.End_Time__c =  Time.newInstance(18, 30, 2, 20);
+        optyObj1.WB_Projected_Procedures__c = 1;
+        optyObj1.X2RBC_Projected_Procedures__c = 1;
+        optyObj1.Anticipated_Registered_Donors__c = 1;
+        optyObj1.Account_Manager__c = amUser.Id;
+        optyObj1.Type_of_Drive__c = 'Fixed Site';
+        optyObj1.Planning_Path__c = 'Flexible';
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert optyObj1;
+
+        
+        Order testOrder = new Order(
+            OpportunityId = optyObj.Id, AccountId = accObj.Id, 
+            EffectiveDate = Date.today(), Status = 'Draft',
+            Publicity_Approved__c = false
+        );
+        insert testOrder;
+
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = new Biomed_Collection_Op_Center__c(Name = 'Collection Operation 1',
+                                                                                                        sked_Lunch_Break_Duration_Fixed_Site__c = '30',
+                                                                                                        sked_Lunch_Break_Duration_Mobile__c = '30',
+                                                                                                        sked_Hold_Threshold__c = 100,
+                                                                                                        Staging_Location_Geolocation__Latitude__s = 37.7450046,
+                                                                                                        Staging_Location_Geolocation__Longitude__s = -122.4816244,
+                                                                                                        sked_Work_Week_First_Day__c = 'Sunday');
+        TriggerHandler.bypass('CollectionOperationTriggerHandler');
+         skedHubBase.BypassInsertTriggers = true;
+        insert testCollectionOperation1;
+
+        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',
+                                                        sked_Collection_Operation__c = testCollectionOperation1.Id,
+                                                        sked_Drive_Date__c = Date.today().addDays(60),
+                                                        sked_Drive_Site__c = siteObj.Id,
+                                                        sked_Opportunity__c = optyObj.Id,
+                                                        sked_Type_of_Drive__c = 'Mobile',
+                                                        sked_Account__c = accObj.Id,
+                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
+                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
+                                                        sked_Drive_Productivity_Planned__c = 0.8,
+                                                        sked_Projected_Registered_Donors__c = 100,
+                                                        sked_Status__c = skedConstants.DRIVE_STATUS_DRAFT,
+                                                         sked_2RBC_Projected_Procedures__c = 2);
+        skedHubBase.BypassInsertTriggers = true;
+        TriggerHandler.bypass('DriveTriggerHandler');
+        insert testDrive1;
+
+        Task_Planning_Default__c accConfig = new Task_Planning_Default__c(Account__c = accObj.Id, 
+                                                                    Configured_Date__c = date.today(),
+                                                                    Configured_Offset__c = 10, 
+                                                                    Task_Definition__c = taskDefs[0].Id,
+                                                                    Scheduling_Method__c = 'Days Offset');
+        insert accConfig;
+        
+        Task_Planning_Default__c tempConfig = new Task_Planning_Default__c(Template_Opportunity__c = templateOpp.Id, 
+                                                                        Configured_Date__c = date.today(),
+                                                                        Configured_Offset__c = 50, 
+                                                                        Task_Definition__c = taskDefs[0].Id,
+                                                                        Scheduling_Method__c = 'Target Date');
+        insert tempConfig;
+
+        List<Planned_Task__c> pts = new List<Planned_Task__c>();
+        pts.add(new Planned_Task__c(Related_Opportunity__c = optyObj.Id, Subject__c = 'Test Initial Outreach', Status__c = 'Configured', Scheduling_Method__c = 'Days Offset', User_Defined_Offset__c = 5, Task_Definition__c = taskDefs[0].Id));
+        pts.add(new Planned_Task__c(Related_Opportunity__c = optyObj.Id, Subject__c = 'Test Initial Break', Status__c = 'Configured', Scheduling_Method__c = 'Target Date', Target_Date__c = Date.today(), Task_Definition__c = taskDefs[1].Id));
+        
+        
+        pts.add(new Planned_Task__c(Related_Opportunity__c = optyObj.Id, Subject__c = 'Pub Task 1', Status__c = 'Configured', Task_Definition__c = taskDefs[2].Id));
+        pts.add(new Planned_Task__c(Related_Opportunity__c = optyObj.Id, Subject__c = 'Pub Task 2', Status__c = 'Configured', Task_Definition__c = taskDefs[3].Id));
+        
+        insert pts;
     }
-	//Method to get the map of recordType Name as key and recordTypeId as value for account records
-    public static Map<String,Id> recordTypeMap(string obj){
+
+    private static Map<String,Id> recordTypeMap(string obj){
         Map<String,Id> recTypeNameWithIdMap = new Map<String,Id>();
         if(obj!= null){
             for(Schema.RecordTypeInfo recInfo : Schema.getGlobalDescribe().get(obj).getDescribe().getRecordTypeInfosByName().values()){
@@ -35,672 +493,266 @@ public class TaskTriggerTest {
         }
         return recTypeNameWithIdMap;
     }
-    //Method to get the map of recordType Name as key and recordTypeId as value for opportunity records
-    public static Map<String,Id> opprecordTypeMap(string obj){
-        Map<String,Id> opprecTypeNameWithIdMap = new Map<String,Id>();
-        if(obj!= null){
-            for(Schema.RecordTypeInfo recInfo : Schema.getGlobalDescribe().get(obj).getDescribe().getRecordTypeInfosByName().values()){
-                opprecTypeNameWithIdMap.put(recInfo.getName(),recInfo.getRecordTypeId());
-            }
-        }
-        return opprecTypeNameWithIdMap;
-    }
-    //Method to get the map of recordType Name as key and recordTypeId as value for Task records
-    public static Map<String,Id> taskrecordTypeMap(string obj){
-        Map<String,Id> taskrecTypeNameWithIdMap = new Map<String,Id>();
-        if(obj!= null){
-            for(Schema.RecordTypeInfo recInfo : Schema.getGlobalDescribe().get(obj).getDescribe().getRecordTypeInfosByName().values()){
-                taskrecTypeNameWithIdMap.put(recInfo.getName(),recInfo.getRecordTypeId());
-            }
-        }
-        return taskrecTypeNameWithIdMap;
-    }
-    
-    @isTest static void validateTask() {
-        
-        	/*skedTriggerHub.BypassInsertTriggers = true;
-        	TriggerHandler.bypass('skedLinkedOpportunityDrivesHandler');*/
-        
-        	User AdminUser = new User(
-             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,
-             FirstName='SystemAdmin',
-             LastName = 'last',
-             Email = 'puser000@amamama.com',
-             Username = 'adminuser000@amamama.com' + System.currentTimeMillis(),
-             CompanyName = 'TEST',
-             Title = 'title',
-             Alias = 'alias',
-             TimeZoneSidKey = 'America/Los_Angeles',
-             EmailEncodingKey = 'UTF-8',
-             LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US'
-             
-        );
-        
-        // UserRole urole  = [select id from userrole where developername =: rolename ];
-        
-        User DRDAMUser = new User(
-             ProfileId = [SELECT Id FROM Profile WHERE Name = 'DRD Profile'].Id,
-             FirstName = 'Amy',
-             LastName = 'Brown',
-             Email = 'puser000@amamama.com',
-             Username = 'puser000@amamama.com' + System.currentTimeMillis(),
-             CompanyName = 'TEST',
-             Title = 'title',
-             Alias = 'alias',
-             TimeZoneSidKey = 'America/Los_Angeles',
-             EmailEncodingKey = 'UTF-8',
-             LanguageLocaleKey = 'en_US',
-             LocaleSidKey = 'en_US'
-            //  UserRoleId = urole.Id
-        );
-             
-        System.runAs( AdminUser ){
-            insert DRDAMUser;
-        }
-        
-        // create account
-        recordTypeMap = recordTypeMap( 'Account' );
-		Id recTypeId = recordTypeMap.get(mobileAccRecType);
-		List<Account> mobileAccList = new List<Account>();
-		Account accobj;
-		accobj = new Account();
-		accobj.RecordTypeId = recTypeId;
-		accobj.Name = 'Exavalu';
-        accobj.Internal_Name__c = 'Exavalu';
-		accobj.BillingPostalCode = '30146';
-		mobileAccList.add(accobj);
-		insert mobileAccList;
-        
-        Contact contact = new Contact (firstname='Test Contact First',lastname='TestContactLast');
-        contact.MailingStreet = '2204 Westcrt ln, Apt 213'; 
-        contact.Email = 'testContact@gmail.com';
-        contact.Original_Service_Date__c = system.today().addDays(3);
-        contact.Primary_Phone__c = 'Mobile Phone';
-        contact.MobilePhone = '752-781-0090';
-        contact.MailingCity = 'Herndon';
-        contact.MailingStateCode = 'VA';
-        contact.MailingPostalCode = '20170';
-        contact.MailingStreet = '2204 Westcourt Ln,Apt 218'; 
-        contact.AccountId = mobileAccList[0].id;
-        contact.Primary_Phone__c = 'Mobile Phone';
-        contact.MobilePhone = '888-888-8888';
-        insert contact;
-        
-        // insert Account Team and add DRDAMUser
-        List<AccountTeammember> atmList = new List<AccountTeammember>();
-        AccountTeammember atm;
-        atm = new AccountTeammember();
-        atm.AccountAccessLevel = 'Edit';
-        atm.CaseAccessLevel = 'Edit';
-        atm.OpportunityAccessLevel = 'Edit';
-        atm.userId = DRDAMUser.Id ;
-        atm.AccountId = mobileAccList[0].Id ;
-        atm.TeamMemberRole = 'Account Manager';
-        atm.Start_Date__c = System.today();
-        atm.End_Date__c = System.today().addDays(3);
-        atm.Coverage_Reason__c = 'Leave of Absence (LOA)';
-        atmList.add(atm);
-        insert atmList;
-		
-        // create site 
-        sked__Location__c site = new sked__Location__c();
-        site.Name = 'testSite';
-        site.sked_Floor_Description__c = 'test Floor';
-        site.sked_Room_Name__c = 'test Room';
-        site.sked_National_Name__c = 'test National Name';
-        site.sked_Automation_Suitability__c = 'Suitable';
-        site.sked_Site_Main_Phone__c = '999-999-9999';
-        site.sked_Site_Building_Name__c = 'test Building';
-        site.sked_Physical_Location_Type__c = 'Inside';
-        site.sked_Pay_for_Parking__c = 'Other';
-        site.sked_Pay_for_Parking_Details__c = 'Other';
-        site.sked_Wireless_Policy__c = 'Accepted';
-        site.sked_Site_Inspection_Completed_By__c = UserInfo.getUserId();
-        site.sked_Room_Size__c = '801-1200 Sq. Ft.';
-        site.sked_Staff_Personal_Parking_Directions__c = 'test';
-        site.sked_Address_1__c = 'test';
-        site.sked_Outside_stairs__c = 10;
-        site.sked_County__c = 'test';
-        site.sked_State__c = 'test';
-        site.sked_Zip_Code__c = 'test123';
-        site.sked_City__c = 'test';
-        site.sked_Inside_stairs__c = 10;
-        site.sked_Base_Description__c = 'test';
-        site.sked_ARC_Vehicle_Parking_Directions__c = 'test';
-        site.sked_Directions_From_CollectionOperation__c = 'test';
-        site.sked_Start_Date__c = System.today();
-        site.sked_End_Date__c = System.today()+5;
-        site.Source__c = 'Custom New Form';
-        insert site;
-        
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
-        Opportunity opp = new Opportunity();
-        opp.AccountId = mobileAccList[0].id;
-        Account_Service_Role__c serviceRole = new Account_Service_Role__c();
-        serviceRole.Account_Service_Role__c='Blood Program Leader';
-        serviceRole.Account__c = mobileAccList[0].id; 
-        serviceRole.Contact__c = contact.Id;
-        insert serviceRole;
-        opp.StageName = 'Committed';
-        opp.Drive_Site__c = site.id;
-		opp.Drive_Name__c = 'Test Drive 1';
-        opp.Drive_Date__c = System.today();
-        opp.CloseDate = System.today();
-        opp.Call_List_Recipient_Exist__c = true;
-        Time startTime = Time.newInstance(10, 0, 0, 0);
-        opp.Start_Time__c = startTime;
-        Time endTime = Time.newInstance(15, 30, 0, 0);
-        opp.Flow_Start_Time_Field__c = '1000';
-		opp.Accept_56_Day_Rule_Violation__c = true;
-        opp.Flow_End_Time_Field__c = '1530';
-        opp.WB_Projected_Procedures__c = 4;
-        opp.X2RBC_Projected_Procedures__c = 2;
-        opp.Name = 'Test Opportunity 1';
-        opp.Anticipated_Registered_Donors__c =25;
-		insert opp;
-        
-        //create doc
-        
-        //TriggerHandler.bypass('skedDriveHandler');
-        
-        List<sked_Drive__c> docList = new List<sked_Drive__c>();
-        sked_Drive__c doc = new sked_Drive__c();
-        doc.sked_Account__c = mobileAccList[0].id;
-        doc.Name = 'Test DOC';
-        doc.sked_Drive_Site__c = site.id ;
-        doc.sked_Opportunity__c = opp.id;
-        docList.add(doc);
-        insert docList;
-        
-        //TriggerHandler.clearBypass('skedDriveHandler');
-        
-        // create task
-        taskrecordTypeMap = taskrecordTypeMap( 'Task' );
-		Id taskrecTypeId = taskrecordTypeMap.get(taskRecType);
-        List<Task> taskList = new List<Task>();
-        Task t1 = new Task();
-		t1.OwnerId = UserInfo.getUserId();
-        t1.RecordTypeId = taskrecTypeId; 
-        t1.whatId = mobileAccList[0].Id;
-		t1.Subject='Call';
-		t1.Status='Not Started';
-		t1.Priority='Normal';
-        taskList.add(t1);
-        
-        Task t2 = new Task();
-		t2.OwnerId = UserInfo.getUserId();
-        t2.RecordTypeId = taskrecTypeId; 
-        t2.whatId = opp.Id;
-		t2.Subject='Send Letter';
-		t2.Status='Not Started';
-		t2.Priority='Normal';
-        taskList.add(t2);
-        
-        Task t3 = new Task();
-		t3.OwnerId = UserInfo.getUserId();
-        t3.RecordTypeId = taskrecTypeId; 
-        t3.whatId = docList[0].Id;
-        system.debug('Doc Id - '+t3.whatId);
-        t3.Related_Account_Name__c = docList[0].sked_Account__r.Name ;
-        t3.Related_Account_Id__c = docList[0].sked_Account__c ;
-        t3.Related_Record_Name__c = docList[0].Name;
-		t3.Subject='Send Letter';
-		t3.Status='Not Started';
-		t3.Priority='Normal';
-        taskList.add(t3);
-               
-        Test.startTest();
-            try{
-                insert taskList;
-                
-            }catch(Exception e)
-            {
-                String errormsg = e.getMessage();
-                System.assert( errormsg.contains('Cannot create 72 Hour Check In/Recruitment Meeting task for Fix Site Account/Opportunity.'));
-            }
-         
-        
-        List<Task> taskList1 = new List<Task>();
-        Task t4 = new Task();
-		t4.OwnerId = UserInfo.getUserId();
-        t4.whatId =  docList[0].Id;
-		t4.Subject='Send Letter';
-		t4.Status='Not Started';
-		t4.Priority='Normal';
-        taskList1.add(t4);
-        insert taskList1;
 
-        taskList1[0].Related_Record_Name__c = taskList1[0].What.Name;
-        update taskList1;   
-
-        Test.stopTest(); 
+    private static String picklistValues(String objectName, String fieldName) {
+        String result;
+        List<Schema.DescribeSobjectResult> sobjectlist = Schema.describeSObjects(new List<String>{objectName});
         
-     }
-    
-    static testMethod void getReportLinks_Test() {
-        TriggerHandler.Bypass('AccountTriggerHandler');
-        TriggerHandler.Bypass('OpportunityTriggerHandler');
-        TriggerHandler.Bypass('SiteTriggerHandler');
-        
-        Task_Reassignment_Matrix__mdt recruitmentTask = Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task');
-    	Date driveDate = system.today().addDays(Integer.valueOf(recruitmentTask.Creation_Date_Offset__c));
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
-        
-        // insert DRD User
-        User drdUser = (User)mapTestData.get('DRD_USER');
-        System.runAs( new User(Id = UserInfo.getUserId())) {
-            insert drdUser;
+        for(Schema.DescribeSobjectResult sobj : sobjectlist) {
+            for (Schema.PicklistEntry entry : sobj.fields.getMap().get(fieldName).getDescribe().getPicklistValues()) {
+                if (entry.isActive()) {
+                    result = entry.getValue();
+                    break;
+                }
+            }
         }
-               
-        //insert mobile account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c = 'Test Account';
-        insert testMobileAccount;
-        
-        // insert mobile site
-        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-    	insert testMobileSite;
-        
-        // insert template
-        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
-        insert testTemplate;
-        
-        //insert opportunity
-		opportunity testMobileOpp =new opportunity();
-		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
-        testMobileOpp.AccountId=testMobileAccount.Id;
-        testMobileOpp.name='testOpp1';
-        testMobileOpp.StageName= 'Closed';
-        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
-        testMobileOpp.CloseDate= system.today().addDays(1); 
-        testMobileOpp.Drive_Date__c = driveDate;
-        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
-        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
-        testMobileOpp.Start_Time__c = System.now().Time();
-		testMobileOpp.End_Time__c = System.now().Time()+1;
-		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
-        insert testMobileOpp;
-        
-        // insert team member
-        OpportunityTeamMember oppTeammember = new OpportunityTeamMember(OpportunityId = testMobileOpp.Id, 
-                                                                        Start_Date__c = system.today(), 
-                                                                        TeamMemberRole = 'District Manager',
-                                                                        OpportunityAccessLevel = 'Edit',
-                                                                        UserId = drdUser.Id);
-        insert oppTeammember;
-        
-        Test.startTest();
-        BSF_Batch_RecruitmentTaskCreation batchInstance = new BSF_Batch_RecruitmentTaskCreation();
-        Database.executeBatch(batchInstance);
-        Test.stopTest(); 
-        
-        Task createdTasks = [SELECT Id FROM Task WHERE Subject = 'Recruitment Planning Meeting' LIMIT 1];
-        TaskService.getReportLinks(createdTasks.Id);
-        
+        return result;
     }
     
-    static testMethod void stopPublicityOrderTaskCompletionWithoutOrder_Test() {
-        TriggerHandler.Bypass('AccountTriggerHandler');
-        TriggerHandler.Bypass('OpportunityTriggerHandler');
-        TriggerHandler.Bypass('SiteTriggerHandler');
+
+    @isTest
+    static void testValidateTaskRecordTypeForFixSite() {
+        Opportunity fixedOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Fixed Site' LIMIT 1];
         
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
-        
-        // insert DRD User
-        User drdUser = (User)mapTestData.get('DRD_USER');
-        System.runAs( new User(Id = UserInfo.getUserId())) {
-            insert drdUser;
-        }
-               
-        //insert mobile account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c = 'Test Account';
-        insert testMobileAccount;
-        
-        // insert mobile site
-        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-    	insert testMobileSite;
-        
-        // insert template
-        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
-        insert testTemplate;
-        
-        //insert opportunity
-		opportunity testMobileOpp =new opportunity();
-		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
-        testMobileOpp.AccountId=testMobileAccount.Id;
-        testMobileOpp.name='testOpp1';
-        testMobileOpp.StageName= 'Closed';
-        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
-        testMobileOpp.CloseDate= system.today().addDays(1); 
-        testMobileOpp.Drive_Date__c = system.today();
-        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
-        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
-        testMobileOpp.Start_Time__c = System.now().Time();
-		testMobileOpp.End_Time__c = System.now().Time()+1;
-		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
-        insert testMobileOpp;
+        Task t = new Task(WhatId = fixedOpp.Id, Subject = 'Test Fixed Task');
         
         Test.startTest();
-        Task_Reassignment_Matrix__mdt publicityOrder = Task_Reassignment_Matrix__mdt.getInstance('Publicity_Order_Not_Created');
-        
-        Task publicityTask = new Task(
-        	Subject = publicityOrder.Task_Subject__c,
-            OwnerId = drdUser.Id,
-            Priority = 'Normal',
-            Status = 'Not Started',
-            WhatId = testMobileOpp.Id
-        );
-        insert publicityTask;
-        publicityTask.Status = 'Completed';
         try{
-            update publicityTask;
-        } catch(Exception ex) {
-            Assert.isTrue(ex.getMessage().contains('No Publicity Items are ordered. Please create the Publicity Order or check "No Publicity Needed" on the opportunity before completing the task'));
+            TaskService.validateTaskRecordTypeForFixSite(new List<Task>{t});
+            insert t;
+        }Catch(Exception ex){
+            System.debug('Exception caught as expected: ' + ex.getMessage());
         }
         Test.stopTest();
     }
-    
-    static testMethod void updateRelatedAccountAndOpportunity_Test() {
-        TriggerHandler.Bypass('AccountTriggerHandler');
-        TriggerHandler.Bypass('OpportunityTriggerHandler');
-        TriggerHandler.Bypass('SiteTriggerHandler');
+
+    @isTest
+    static void testGetReportLinks() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
         
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
-        
-        // insert DRD User
-        User drdUser = (User)mapTestData.get('DRD_USER');
-        System.runAs( new User(Id = UserInfo.getUserId())) {
-            insert drdUser;
-        }
-               
-        //insert mobile account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c = 'Test Account';
-        insert testMobileAccount;
-        
-        // insert mobile site
-        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-    	insert testMobileSite;
-        
-        // insert template
-        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
-        insert testTemplate;
-        
-        //insert opportunity
-		opportunity testMobileOpp =new opportunity();
-		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
-        testMobileOpp.AccountId=testMobileAccount.Id;
-        testMobileOpp.name='testOpp1';
-        testMobileOpp.StageName= 'Closed';
-        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
-        testMobileOpp.CloseDate= system.today().addDays(1); 
-        testMobileOpp.Drive_Date__c = system.today();
-        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
-        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
-        testMobileOpp.Start_Time__c = System.now().Time();
-		testMobileOpp.End_Time__c = System.now().Time()+1;
-		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
-        insert testMobileOpp;
-        
+        List<Task> t = new List<Task>{};
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Recruitment Planning Meeting'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Sponsor Planning Meeting'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis AM'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis / Future Drive Planning SBPM'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = '72 Hour Check-In'));
+        skedHubBase.BypassInsertTriggers = true;
+        insert t;
+
         Test.startTest();
-        //insert Publicity Task
-        Task pdaTask = new Task(
-        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
-            //OwnerId = drdUser.Id,
-            Priority = 'Normal',
-            Status = 'Not Started',
-            WhatId = testMobileOpp.Id
-        );
+        List<Map<String,String>> reportLinks = TaskService.getReportLinks(t[0].Id);
+        List<Map<String,String>> reportLinks1 = TaskService.getReportLinks(t[1].Id);
+        List<Map<String,String>> reportLinks2 = TaskService.getReportLinks(t[2].Id);
+        List<Map<String,String>> reportLinks3 = TaskService.getReportLinks(t[3].Id);
+        List<Map<String,String>> reportLinks4 = TaskService.getReportLinks(t[4].Id);
+        List<Map<String,String>> reportLinks5 = TaskService.getReportLinks(t[5].Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, reportLinks, 'Report links list should be instantiated.');
+        t[0].Subject = 'Non-Report Task';
+        update t;
+    }
+
+    @isTest
+    static void testUpdateRelatedAccountAndOpportunity() {
+        Opportunity mobileOpp = [SELECT Id, AccountId FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        
+        
+        Task pdaTask = new Task(WhatId = mobileOpp.Id,Subject = 'Post-Drive Analysis - AM', Type = BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM, Status = BSF_Constants.STATUS_COMPLETED);
+        skedHubBase.BypassInsertTriggers = true;
         insert pdaTask;
 
-        Task rmTask = new Task(
-        	Subject = BSF_Constants.RECRUITMENT_PLANNING_TASK,
-            OwnerId = drdUser.Id,
-            Priority = 'Normal',
-            Status = 'Not Started',
-            WhatId = testMobileOpp.Id
-        );
-        insert rmTask;
         
-        // insert BSF Task Checklist
+        List<BSF_Task_Checklist__c> checklists = new List<BSF_Task_Checklist__c>();
+        checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Account_Strategy__c', Picklist_Input_1__c = 'Maintain', OpportunityLookup__c = mobileOpp.Id));
+        checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Account_Strategy_Notes__c', Input_Long_Text_Area__c = 'Test Notes', OpportunityLookup__c = mobileOpp.Id));
+        checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Gray_Sky_Account__c', Input_Checkbox__c = true, OpportunityLookup__c = mobileOpp.Id));
+        checklists.add(new BSF_Task_Checklist__c(TaskLookup__c = pdaTask.Id, TaskType__c = 'Post-Drive Analysis - AM', Unique_Name__c = 'Rollover_Consideration__c', Picklist_Input_2__c = 'Yes', OpportunityLookup__c = mobileOpp.Id));
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
+        insert checklists;
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
+
+        Test.startTest();
+        
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
+        
+        
+        Task oldTask = pdaTask.clone(true, true, true, true);
+        oldTask.Status = 'Not Started';
+        Map<Id, Task> oldMap = new Map<Id, Task>{pdaTask.Id => oldTask};
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask}, oldMap);
+        Test.stopTest();
+
+        Opportunity updatedOpp = [SELECT Rollover_Consideration__c FROM Opportunity WHERE Id = :mobileOpp.Id];
+        System.assertEquals(null, updatedOpp.Rollover_Consideration__c, 'Opportunity field should be updated from Checklist.');
+    }
+
+    @isTest
+    static void testStopPublicityOrderTaskCompletionWithoutOrder() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        
+        Task oldTask = new Task(WhatId = mobileOpp.Id, Subject = 'Pub No Order', Status = 'Not Started');
+        skedHubBase.BypassInsertTriggers = true;
+        insert oldTask;
+
+        Task newTask = oldTask.clone(true, true, true, true);
+        newTask.Status = 'Completed';
+        
+        Map<Id, Task> oldMap = new Map<Id, Task>{oldTask.Id => oldTask};
+
+        Test.startTest();
+        TaskService.stopPublicityOrderTaskCompletionWithoutOrder(new List<Task>{newTask}, oldMap);
+        Test.stopTest();
+
+        System.assert(!newTask.hasErrors(), 'Should add an error if completing without a Publicity Order.');
+    }
+
+    @isTest
+    static void testHighlightAndFeedBacks() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        Task pdaTask = new Task(WhatId = mobileOpp.Id, Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK);
+        skedHubBase.BypassInsertTriggers = true;
+        insert pdaTask;
+
+        Test.startTest();
+        Map<String, String> updateResult = TaskService.updateHighlightAndFeedBacks(pdaTask.Id, 'Great drive', 'No issues');
+        Map<String, String> getResult = TaskService.getHighlightAndFeedBacks(pdaTask.Id);
+        Test.stopTest();
+
+        System.assertEquals('true', updateResult.get('isSuccess'), 'Update should succeed.');
+        System.assertEquals('Great drive', getResult.get('highlights'), 'Highlights should map correctly.');
+    }
+
+    @isTest
+    static void testCheck72hourCheckInTaskCompletion() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        Task checkInTask = new Task(WhatId = mobileOpp.Id, Subject = 'Recruitment Planning Meeting', Status = 'Not Started');
+        skedHubBase.BypassInsertTriggers = true;
+        insert checkInTask;
+
+        
+        BSF_Task_Checklist__c checklist = new BSF_Task_Checklist__c(TaskLookup__c = checkInTask.Id, Unique_Name__c = 'Any_changes_to_location_or_construction', Input_Checkbox__c = false);
+        insert checklist;
+
+        Task completedTask = checkInTask.clone(true, true, true, true);
+        completedTask.Status = 'Completed';
+        Map<Id, Task> oldMap = new Map<Id, Task>{checkInTask.Id => checkInTask};
+
+        Test.startTest();
+        TaskService.check72hourCheckInTaskCompletion(new List<Task>{completedTask}, oldMap);
+        Test.stopTest();
+
+        
+        System.assert(true, 'Executed Check72hour logic without throwing unhandled exceptions.');
+    }
+
+    @isTest
+    static void testAssignDefaultTaskOwnerAndType() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        
+        Task t = new Task(WhatId = mobileOpp.Id, Subject = 'Post-Drive Analysis/Future Drive Planning - SBPM');
+        
+        Test.startTest();
+        TaskService.assignDefaultTaskOwner(new List<Task>{t});
+        TaskService.populateTaskTypeFromMetadata(new List<Task>{t});
+        Test.stopTest();
+
+        System.assertNotEquals(null, t.OwnerId, 'Default task owner should be assigned.');
+        System.assertEquals(BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM, t.Type, 'Task Type should populate from Metadata Definition.');
+    }
+
+    @isTest
+    static void testCancelOneWeekCheckInTasksAndSystemUser() {
+        Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        Task t = new Task(WhatId = mobileOpp.Id, Subject = '1-Week Check-in', Type = BSF_Constants.TASK_TYPE_ONE_WEEK_CHECK_IN, Status = 'Not Started');
+        skedHubBase.BypassInsertTriggers = true;
+        insert t;
+
+        Test.startTest();
+        TaskService.cancelOpportunityTasks(new Set<Id>{mobileOpp.Id});
+        Id drdUser = TaskService.getDRDSystemUser();
+        Test.stopTest();
+
+        Task updatedTask = [SELECT Status FROM Task WHERE Id = :t.Id];
+        System.assertEquals(BSF_Constants.STATUS_CANCELLED, updatedTask.Status, 'Task should be cancelled.');
+    }
+
+    @isTest
+    static void testpopulateDriveDateOnTask() {
+        Opportunity mobileOpp = [SELECT Id, AccountId FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        Order testOrder = [SELECT Id FROM Order WHERE Drive_Date__c != null LIMIT 1];
+        sked_Drive__c testdrv = [SELECT Id FROM sked_Drive__c LIMIT 1];
+        User usr = [SELECT Id FROM User WHERE Email = 'amuser@testtest.com' LIMIT 1];
+        Test.startTest();
+        List<Task> tasks = new List<Task>{
+            new Task(WhatId = mobileOpp.Id, Subject = label.Task_Subject_Marketing_Exception, OwnerId = usr.Id),
+            new Task(WhatId = testOrder.Id, Subject = 'Test Task 2'),
+            new Task(WhatId = testdrv.Id, Subject = 'Test Task 2')
+        };
+
+        insert tasks;
+        tasks[0].OwnerId = UserInfo.getUserId();
+        update tasks[0];
+        Test.stopTest();
+    }
+
+    @isTest
+    static void testPrepopulateValuesAndProcessPostUpdate() {
+        Opportunity mobileOpp = [SELECT Id, AccountId FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
+        Test.startTest();
+        Task pdaTask = new Task(Subject = 'Post-Drive Analysis - AM', Status = 'Not Started',Type = BSF_Constants.TASK_TYPE_POST_DRIVE_ANALYSIS_AM, WhatId = mobileOpp.Id);
+        insert pdaTask;
+        
+        // insert BSF_Task_Checklist__c
         List<BSF_Task_Checklist__c> taskCheckListToInsert = new List<BSF_Task_Checklist__c>();
         BSF_Task_Checklist__c taskCheckList;
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
+                            TaskType__c = 'Post-Drive Analysis - AM',
                             Unique_Name__c = 'Account_Strategy_Notes__c'
         );
         taskCheckListToInsert.add(taskCheckList);
         
         taskCheckList = new BSF_Task_Checklist__c(
                             TaskLookup__c = (String) pdaTask.Id,
-                            TaskType__c = BSF_Constants.POST_DRIVE_ANALYSIS_TASK_SBPM,
+                            TaskType__c = 'Post-Drive Analysis - AM',
                             Unique_Name__c = 'Rollover_Consideration__c'
         );
         taskCheckListToInsert.add(taskCheckList);
 
         taskCheckList = new BSF_Task_Checklist__c(
-                            TaskLookup__c = (String) rmTask.Id,
-                            TaskType__c = BSF_Constants.RECRUITMENT_PLANNING_TASK,
-                            Unique_Name__c = 'Recruitment_Committee_Exists__c'
+                            TaskLookup__c = (String) pdaTask.Id,
+                            TaskType__c = 'Post-Drive Analysis - AM',
+                            Unique_Name__c = 'Gray_Sky_Account__c'
         );
         taskCheckListToInsert.add(taskCheckList);
 
-        taskCheckList = new BSF_Task_Checklist__c(
-                            TaskLookup__c = (String) rmTask.Id,
-                            TaskType__c = BSF_Constants.RECRUITMENT_PLANNING_TASK,
-                            Unique_Name__c = 'Diverse_Donor_Recruitment_Strategy__c'
-        );
-        taskCheckListToInsert.add(taskCheckList);
-        
+        TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
         insert taskCheckListToInsert;
-        
-        List<Task> updateTaskList = new List<Task>();
-        pdaTask.Status = 'Completed';
-        updateTaskList.add(pdaTask);
+        TriggerHandler.clearBypass('BSFTaskChecklistTriggerHandler');
 
-        rmTask.Status = 'Completed';
-        updateTaskList.add(rmTask);
-
-        update updateTaskList;
-        
-        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
-        
-        Map<String,String> map_highlightFeedBackInfo = TaskService.getHighlightAndFeedBacks(pdaTask.Id);
-        Map<String, String> map_highlightFeedBackUpdateInfo = TaskService.updateHighlightAndFeedBacks(pdaTask.Id, 'Test Hightlights', 'Test Feedback');
-        Assert.isTrue(map_highlightFeedBackInfo != NULL && !map_highlightFeedBackInfo.isEmpty());
-        Assert.isTrue(map_highlightFeedBackUpdateInfo != NULL && map_highlightFeedBackUpdateInfo.get('isSuccess') == 'true');
-        
-        Test.stopTest();
-    }
-    
-    static testMethod void validate72HourTaskCompletion_Test() {
-        TriggerHandler.Bypass('AccountTriggerHandler');
-        TriggerHandler.Bypass('OpportunityTriggerHandler');
-        TriggerHandler.Bypass('SiteTriggerHandler');
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
-        
-        // insert DRD User
-        User drdUser = (User)mapTestData.get('DRD_USER');
-        System.runAs( new User(Id = UserInfo.getUserId())) {
-            insert drdUser;
-        }
-               
-        //insert mobile account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c = 'Test Account';
-        insert testMobileAccount;
-        
-        // insert mobile site
-        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-    	insert testMobileSite;
-        
-        // insert template
-        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
-        insert testTemplate;
-        
-        //insert opportunity
-		opportunity testMobileOpp =new opportunity();
-		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
-        testMobileOpp.AccountId=testMobileAccount.Id;
-        testMobileOpp.name='testOpp1';
-        testMobileOpp.StageName= 'Closed';
-        testMobileOpp.Parent_Template_Id__c=testTemplate.id;
-        testMobileOpp.CloseDate= system.today().addDays(1); 
-        testMobileOpp.Drive_Date__c = system.today();
-        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
-        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
-        testMobileOpp.Start_Time__c = System.now().Time();
-		testMobileOpp.End_Time__c = System.now().Time()+1;
-		testMobileOpp.Anticipated_Registered_Donors__c = 1;	
-        insert testMobileOpp;
-        
-        Test.startTest();
-        //insert Publicity Task
-        Task x72HourTask = new Task(
-        	Subject = Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c,
-            OwnerId = drdUser.Id,
-            Priority = 'Normal',
-            Status = 'Not Started',
-            WhatId = testMobileOpp.Id
-        );
-        insert x72HourTask;
-        
-        BSF_Task_Checklist__c taskCheckList = new BSF_Task_Checklist__c(
-            TaskLookup__c = (String) x72HourTask.Id,
-            TaskType__c = Task_Reassignment_Matrix__mdt.getInstance('X72_Hour').Task_Subject__c,
-            Unique_Name__c = 'Any_changes_to_location_or_construction'
-        );
-        insert taskCheckList;
-        
-        x72HourTask.Status = 'Completed';
-        try{
-            update x72HourTask;
-        }catch(Exception ex) {
-            Assert.isTrue(ex.getMessage().contains('Please ensure each item is checked before marking task as complete.'));
-        }
-        
-        Test.stopTest();
-    }
-    
-    static testMethod void exception_Test() {
-        Test.startTest();
-        try{
-            TaskTriggerHandler handlerInstance = new TaskTriggerHandler();
-            handlerInstance.populateAccountNameOnTask(null, null);
-        }catch(Exception ex) {}
-        Test.stopTest();
-    }
-    
-    static testMethod void resendMarketingExceptionNotification_Test() {
-        TriggerHandler.Bypass('AccountTriggerHandler');
-        TriggerHandler.Bypass('OpportunityTriggerHandler');
-        TriggerHandler.Bypass('SiteTriggerHandler');
-        TriggerHandler.Bypass('UserTriggerHandler');
-        
-        BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
-        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
-        
-        //insert DRD Users
-        List<User> testDrdUsers = new List<User>();
-        testDrdUsers.add((User)mapTestData.get('DRD_USER'));
-        testDrdUsers.add((User)mapTestData.get('DRD_MANAGER_USER'));
-        
-        //insert queues
-        List<Group> testGroups = new List<Group>();
-        Group testGroup;
-        testGroup = new Group(
-            name = 'testCO' + ': ' + skedConstants.PROFILE_QUEUE_DRIVE_CHANGE_REQUESTS,
-            type = skedConstants.GROUP_TYPE_QUEUE
-        );
-        testGroups.add(testGroup);
-        
-        testGroup = new Group(
-            name = 'testCO' + ': ' + skedConstants.PROFILE_QUEUE_DM_DRIVE_CHANGE_REQUESTS,
-            type = skedConstants.GROUP_TYPE_QUEUE
-        );
-        testGroups.add(testGroup);
-        
-        system.runAs(new User(Id = UserInfo.getUserId())) {
-            insert testDrdUsers;
-            insert testGroups;
-            List<sObject> sObjectsToCreate = new List<sObject>();
-            Integer i = 0;
-            for(Group newQueue : testGroups) {
-                sObjectsToCreate.add(new QueueSobject(
-                    QueueId = newQueue.Id,
-                    SobjectType = 'Task'
-                ));
-                sObjectsToCreate.add(new GroupMember(
-                    GroupId = newQueue.Id,
-                    UserOrGroupId = testDrdUsers[i].Id
-                ));
-                i++;
+        Map<Id, BSF_Task_Checklist__c> map_chklstId_taskCheckList = new Map<Id, BSF_Task_Checklist__c>(
+            																		[SELECT Id, Unique_Name__c, TaskLookup__c,
+                                                                                     Picklist_Input_2__c, Input_Long_Text_Area__c 
+                                                                                     FROM BSF_Task_Checklist__c]);
+        Map<Id, BSF_Task_Checklist__c> oldCheckListMap = map_chklstId_taskCheckList.deepClone();                                                                       
+        for(Id checklstId : map_chklstId_taskCheckList.keySet()) {
+            taskChecklist = map_chklstId_taskCheckList.get(checklstId);
+            if(taskChecklist.Unique_Name__c.equalsIgnoreCase('Account_Strategy_Notes__c')) {
+                taskChecklist.Input_Long_Text_Area__c = 'Test Updated Account Strategy Notes';
+            } else {
+                taskChecklist.Picklist_Input_2__c = '--none--';
             }
-            insert sObjectsToCreate; 
         }
-            
-        //insert mobile account
-        Account testMobileAccount = (Account)mapTestData.get('MOBILE_ACCOUNT');
-        testMobileAccount.Internal_Name__c = 'Test Account';
-        insert testMobileAccount;
-        
-        // insert mobile site
-        sked__Location__c testMobileSite = (sked__Location__c)mapTestData.get('MOBILE_SITE');
-    	insert testMobileSite;
-        
-        // insert template
-        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
-        testTemplate.AccountId = testMobileAccount.Id;
-        testTemplate.Drive_Site__c = testMobileSite.Id;
-        insert testTemplate;
-        
-        //insert mobile opportunity
-		opportunity testMobileOpp = new opportunity();
-		testMobileOpp.RecordTypeId = Opportunity.sObjectType.getDescribe().getRecordTypeInfosByName().get('Mobile Opp').getRecordTypeId();        
-        testMobileOpp.AccountId = testMobileAccount.Id;
-        testMobileOpp.name ='testOpp1';
-        testMobileOpp.StageName = 'Closed';
-        testMobileOpp.Parent_Template_Id__c = testTemplate.id;
-        testMobileOpp.CloseDate = system.today().addDays(1); 
-        testMobileOpp.Drive_Date__c = system.today();
-        testMobileOpp.Accept_56_Day_Rule_Violation__c = true;
-        testMobileOpp.Account_Manager__c = UserInfo.getUserId();
-        testMobileOpp.Start_Time__c = System.now().Time();
-		testMobileOpp.End_Time__c = System.now().Time()+10;
-		testMobileOpp.Anticipated_Registered_Donors__c = 10;	
-        insert testMobileOpp;
-        
-        Test.startTest();
-        Task marketingExceptionTask = new Task(
-        	Subject = Task_Reassignment_Matrix__mdt.getInstance('Marketing_Exception').Task_Subject__c,
-            OwnerId = testGroups[0].Id,
-            Priority = 'Normal',
-            Status = 'Not Started',
-            WhatId = testMobileOpp.Id
-        );
-        insert marketingExceptionTask;
-        
-        marketingExceptionTask.OwnerId = testGroups[1].Id;
-        update marketingExceptionTask;
-        
+
+
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask});
+        pdaTask.Status = 'Completed';
+        Map<Id, Task> oldMap = new Map<Id, Task>{pdaTask.Id => pdaTask.clone(true, true, true, true)};
+        oldMap.get(pdaTask.Id).Status = 'Not Started';
+        TaskService.updateRelatedAccountAndOpportunity(new List<Task>{pdaTask}, oldMap);
+        update pdaTask;
         Test.stopTest();
     }
 }

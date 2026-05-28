@@ -11,7 +11,7 @@ public class skedResourceHandler extends skedTriggerHub {
     public static boolean canUpdateResourceRole = false;
     
     public override void onBeforeInsert() {
-        validate(this.context.newRecords);
+        validate(this.context.newRecords, null);
         populateData(this.context.newRecords);
         populateSupervisor(this.context.newRecords);
         populateTaxonomyData(this.context.newRecords);
@@ -36,7 +36,7 @@ public class skedResourceHandler extends skedTriggerHub {
     }
     
     public override void onBeforeUpdate() {
-        validate(this.context.newRecords);
+        validate(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         if (!skedSetting.instance.Admin.migrationMode) {
             revertAccidientallyChangedGeolocation(this.context.newRecords, (Map<Id, sked__Resource__c>)this.context.oldMap);
         }
@@ -68,11 +68,11 @@ public class skedResourceHandler extends skedTriggerHub {
     }
 
     public override void onBeforeDelete() {
-        validate(this.context.oldRecords);
+        validate(this.context.oldRecords, null);
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
-    private void validate(List<sked__Resource__c> newRecords) {
+    private void validate(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
         for (sked__Resource__c newRecord : newRecords) {
             if (newRecord.sked__Geolocation__Longitude__s != NULL || newRecord.sked__GeoLocation__Latitude__s != NULL) {
                 if (newRecord.sked__Geolocation__Longitude__s < -180 || newRecord.sked__Geolocation__Longitude__s >= -30  || newRecord.sked__GeoLocation__Latitude__s > 71 || newRecord.sked__GeoLocation__Latitude__s < 25) {
@@ -85,7 +85,14 @@ public class skedResourceHandler extends skedTriggerHub {
             }
 
             if (String.isBlank(newRecord.sked_Asset_Type__c) || newRecord.sked_Asset_Type__c == skedConstants.ASSET_TYPE_VEHICLE) {
-                if(newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) {
+                sked__Resource__c oldRecord;
+                if(oldMap != null) {
+                    oldRecord = oldMap.get(newRecord.Id);
+                }
+
+                if((newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) 
+                && (oldRecord == null || (oldRecord != null && newRecord.sked_Dedicated_to_Site__c != oldRecord.sked_Dedicated_to_Site__c))) {
+                    system.debug('getting inside validation oldRecord '+oldRecord.sked_Dedicated_to_Site__c+' newRecord '+newRecord.sked_Dedicated_to_Site__c);
                     newRecord.sked_Dedicated_to_Site__c.addError(Custom_Messages__mdt.getInstance('Asset_Validation_for_Dedicated_to_Site').Value__c);
                 }
             }
@@ -414,15 +421,14 @@ public class skedResourceHandler extends skedTriggerHub {
     }
     
     private void captureResourceIsInactiveExceptionLog(List<sked__Resource__c> newRecords, Map<Id, sked__Resource__c> oldMap) {
-        Date currentDate = system.today();
         List<skedExceptionLogService.resourceUnavailabilityModel> unavailabilityList = new List<skedExceptionLogService.resourceUnavailabilityModel>();
         for (sked__Resource__c newRecord : newRecords) {
             if (newRecord.sked_Timezone__c != null) {
                 sked__Resource__c oldData = oldMap.get(newRecord.Id);
-                
-                boolean isOnLeaveChanged = isResourceOnLeaveChanged(newRecord, oldData);
-                boolean isTerminationChanged = isResourceTerminationChanged(newRecord, oldData);
-                boolean isInactiveChanged = newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c;
+
+                Boolean isOnLeaveChanged = isResourceOnLeaveChanged(newRecord, oldData);
+                Boolean isTerminationChanged = isResourceTerminationChanged(newRecord, oldData);
+                Boolean isInactiveChanged = newRecord.sked__Is_Active__c != oldData.sked__Is_Active__c;
                 if (isInactiveChanged) {
                     unavailabilityList.add(getInactiveUnavailability(newRecord));
                 }
@@ -431,6 +437,12 @@ public class skedResourceHandler extends skedTriggerHub {
                 }
                 if (isTerminationChanged) {
                     unavailabilityList.add(getTerminationUnavailability(newRecord));
+                }
+
+                if (newRecord.sked__Resource_Type__c == skedConstants.RESOURCE_TYPE_ASSET
+                    && newRecord.sked_Asset_Type__c == skedConstants.ASSET_TYPE_VEHICLE
+                    && newRecord.sked_Future_Inactive_Date__c != oldData.sked_Future_Inactive_Date__c) {
+                    unavailabilityList.add(getFutureInactiveUnavailability(newRecord));
                 }
             }
         }
@@ -470,6 +482,20 @@ public class skedResourceHandler extends skedTriggerHub {
         unavailability.startTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.getStartOfDate(terminationDate, resource.sked_Timezone__c);
         unavailability.endTime = terminationDate == NULL ? skedDateTimeUtils.MIN_DATETIME : skedDateTimeUtils.MAX_DATETIME;
         unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_PENDING_TERMINATION;
+        return unavailability;
+    }
+
+    private skedExceptionLogService.resourceUnavailabilityModel getFutureInactiveUnavailability(sked__Resource__c resource) {
+        skedExceptionLogService.resourceUnavailabilityModel unavailability = new skedExceptionLogService.resourceUnavailabilityModel();
+        unavailability.resourceId = resource.Id;
+        unavailability.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_IS_INACTIVE;
+        if (resource.sked_Future_Inactive_Date__c == null) {
+            unavailability.startTime = skedDateTimeUtils.MIN_DATETIME;
+            unavailability.endTime = skedDateTimeUtils.MIN_DATETIME;
+        } else {
+            unavailability.startTime = skedDateTimeUtils.getStartOfDate(resource.sked_Future_Inactive_Date__c, resource.sked_Timezone__c);
+            unavailability.endTime = skedDateTimeUtils.MAX_DATETIME;
+        }
         return unavailability;
     }
 

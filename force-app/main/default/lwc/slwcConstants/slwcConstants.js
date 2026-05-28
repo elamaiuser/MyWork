@@ -254,6 +254,7 @@ export const DRIVE_CONTENTION = {
   STAFFING_COMPLEMENT_CHANGED: 'Staffing Complement Changed',
   CO_CHANGED_CROSS_REGIONS: 'Collection Operation Change cross regions',
   ASSETS_NOT_SHARED_WITH_NEW_CO: 'Assets are not shared with new Collection Operation',
+  LOCKED_RESOURCE_UNAVAILABLE: 'Locked Resource Unavailable',
   EXCESS_STAFF_CAPACITY: 'Excess Staff Capacity'
 }
 
@@ -275,6 +276,7 @@ export const DRIVE_CONTENTION_RESOLUTION = {
   ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT: 'Keep Current Staffing Complement',
   ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE: 'Remove from Linked Drive',
   ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO: 'Elect to acknowledge the drive has assets that are not shared with new Collection Operation',
+  ELECT_LOCKED_RESOURCE_UNAVAILABLE: 'Elect to acknowledge locked resource unavailable',
   ELECT_EXCESS_STAFF_CAPACITY: 'Elect to Proceed with Excess Staff Capacity'
 }
 

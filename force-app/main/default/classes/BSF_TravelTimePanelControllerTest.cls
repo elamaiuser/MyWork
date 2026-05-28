@@ -201,7 +201,7 @@ private class BSF_TravelTimePanelControllerTest {
             classRef[0].overrideComment = 'Test';
             skedHubBase.BypassUpdateTriggers = true;
             TriggerHandler.bypass('TravelTimeIndexItemTriggerHandler');
-            BSF_TravelTimePanelController.saveUpdatedRecords(classRef);
+            BSF_TravelTimePanelController.saveUpdatedRecords(classRef, siteCO.Id);
         Test.stopTest();
         Assert.isNotNull(classRef);
     }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Real ID integration components -->
+
+    <types>
+        <members>BSF_RealIdComplianceBatch</members>
+        <members>BSF_RealIdComplianceBatch_Test</members>
+        <members>skedConstants</members>
+        <members>BSF_WorkdayBatchHelper</members>
+        <name>ApexClass</name>
+    </types>
+
+    <types>
+        <members>BSF_Workday_RealID_Config__c</members>
+        <members>BSF_Workday_Staging__c</members>
+        <name>CustomObject</name>
+    </types>
+
+    <types>
+        <members>BSF_Workday_RealID_Config__c.Batch_Size__c</members>
+		<members>BSF_Workday_RealID_Config__c.Initial_Backfill_Date__c</members>
+		<members>BSF_Workday_RealID_Config__c.Last_Successful_Run_Date__c</members>
+        <members>sked__Resource__c.sked_Real_ID_Expiration_Date__c</members>
+        <members>BSF_Workday_Staging__c.Employee_ID__c</members>
+        <members>BSF_Workday_Staging__c.Resource__c</members>
+        <members>BSF_Workday_Staging__c.Real_ID_Compliant__c</members>
+        <members>BSF_Workday_Staging__c.Expiration_Date__c</members>
+        <members>BSF_Workday_Staging__c.Workday_Last_Functionally_Updated__c</members>
+        <members>BSF_Workday_Staging__c.Workday_Record_Created_Moment__c</members>
+        <members>BSF_Workday_Staging__c.Sync_Status__c</members>
+        <members>BSF_Workday_Staging__c.Sync_Comment__c</members>
+        <name>CustomField</name>
+    </types>
+
+    <types>
+        <members>sked_Workday_XML_Template.RealID_Compliance_Report</members>
+		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_Resource</members>
+		<members>BSF_Access_Control_Rule.HRP_14579_Field_Permission_Set_WDStaging</members>
+		<members>BSF_Access_Control_Rule.HRP_14579_Object_PermissionSet_WDStaging</members>
+        <members>BSF_Access_Control_Rule.HRP_14579_Class_Permission_Set</members>
+		<name>CustomMetadata</name>
+	</types>
+
+    <types>
+		<members>BSF_Workday_Staging__c.Real_ID_Compliance</members>
+		<name>RecordType</name>
+	</types>
+
+    <types>
+		<members>sked__Resource__c-Staff Layout</members>
+		<name>Layout</name>
+	</types>
+
+    <version>65.0</version>
+</Package>

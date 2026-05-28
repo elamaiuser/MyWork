@@ -100,7 +100,13 @@ public class TaskChecklistController_Test {
     static testmethod void testGetRelatedCheckistRecordsForOpp() {
         Test.startTest();
         Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
-        Map<String, TaskChecklistController.CheckListWrapper> map_chklstUniqueName_checklistWrapper = TaskChecklistController.getRelatedCheckistRecords((String) mobileOpp.Id);
+        Map<String, TaskChecklistController.CheckListWrapper> map_chklstUniqueName_checklistWrapper;
+        try{
+            map_chklstUniqueName_checklistWrapper = TaskChecklistController.getRelatedCheckistRecords((String) mobileOpp.Id);
+        } catch (Exception e) {
+            System.debug('Error occurred while fetching checklist records for opportunity: ' + e.getMessage());
+            System.debug('Stack Trace: ' + e.getStackTraceString());
+        }
         Test.stopTest();
         Assert.isNotNull(map_chklstUniqueName_checklistWrapper);
     }

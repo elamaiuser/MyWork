@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Technical_Team_Distribution_List__c</fullName>
+    <description>Comma-separated email addresses for technical failure notifications. Preferred over Technical Team Email when populated.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Technical Team Distribution List</label>
+    <length>32768</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>
