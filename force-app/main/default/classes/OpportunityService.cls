@@ -5300,15 +5300,16 @@ opp.StageName = 'Closed';
     public static void applyDefaultPlanningPath(List<Opportunity> newOpps) {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> templateIds = new Set<Id>();
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
 
         // 1. Collect Parent IDs from the new Opportunities
         for(Opportunity opp : newOpps) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId) continue;
 
-            if(opp.AccountId != null) {
+            if(opp.Is_Template__c && opp.AccountId != null) {
                 accountIds.add(opp.AccountId);
             }
-            if(opp.Parent_Template_Id__c != null) {
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null) {
                 templateIds.add(opp.Parent_Template_Id__c);
             }
         }
@@ -5332,7 +5333,7 @@ opp.StageName = 'Closed';
 
         // 4. Assign Values based on Hierarchy
         for(Opportunity opp : newOpps) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId) continue;
             
             // Only apply logic if the user hasn't manually selected a path during creation
             if(opp.Planning_Path__c == null) {
