@@ -7,6 +7,10 @@
 	<types>
 		<members>assignResourcesToUsersBasedOnConfig</members>
 		<name>ApexTrigger</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_17034_Class_Permission_Set</members>
+		<name>CustomMetadata</name>
 	</types>	
 	<types>
 		<members>User_Special_Permission__mdt</members>
@@ -15,6 +19,11 @@
 	<types>
 		<members>Lead_360_Visibility_Permission</members>
 		<name>CustomPermission</name>
+	</types>
+	<types>
+		<members>Biomed_Recruitment_Record_Page</members>
+		<members>Lead_Record_Page1</members>
+		<name>FlexiPage</name>
 	</types>
 	<version>66.0</version>
 </Package>
