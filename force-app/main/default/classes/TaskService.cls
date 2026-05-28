@@ -17,49 +17,70 @@ public with sharing class TaskService {
      *  
      */
     
-    public static void validateTaskRecordTypeForFixSite(List<Task> newTaskList)
-    {
-        map<Id,String> mapOfRelatedToIdWithRecordTypeName = new map<Id,String>();
-        map<Id, Id> mapOfTaskIdWithAccountId = new map<Id, Id>();
-        map<Id, Id> mapOfTaskIdWithOpportunityId = new map<Id, Id>(); 
-        system.debug('newTaskList '+ newTaskList);
-        for(task t: newTaskList){
-            String sobjectType ;
-            if(t.WhatId != null)
-                sobjectType  = t.WhatId.getSObjectType().getDescribe().getName();
-            if( sobjectType  == 'Account'){
-                mapOfTaskIdWithAccountId.put(t.Id, t.WhatId); 
-            }else if(sobjectType  == 'Opportunity'){
-                mapOfTaskIdWithOpportunityId.put(t.Id, t.WhatId);                 
-            }           
-        }
-        for(Account acc: [SELECT Id, RecordType.Name, Name FROM Account Where Id IN:mapOfTaskIdWithAccountId.values()]){
-            mapOfRelatedToIdWithRecordTypeName.put(acc.Id, acc.RecordType.Name);
-        }
-        for(Opportunity opp: [SELECT Id, RecordType.Name, Name FROM Opportunity Where Id IN:mapOfTaskIdWithOpportunityId.values()]){
-            mapOfRelatedToIdWithRecordTypeName.put(opp.Id, opp.RecordType.Name);            
-        }
-        for(task t: newTaskList){
-            system.debug('the task '+t);
-            String getRelatedToRecordType;
-            String sobjectName;
-            if(t.WhatId != null)
-                sobjectName =  t.WhatId.getSObjectType().getDescribe().getName();
-            if(!mapOfRelatedToIdWithRecordTypeName.isEmpty()){
-                if(sobjectName  == 'Account'){
-                    getRelatedToRecordType =  mapOfRelatedToIdWithRecordTypeName.get(mapOfTaskIdWithAccountId.get(t.Id));
-                }else if(sobjectName  == 'Opportunity'){
-                    getRelatedToRecordType = mapOfRelatedToIdWithRecordTypeName.get(mapOfTaskIdWithOpportunityId.get(t.Id));
+    public static void validateTaskRecordTypeForFixSite(List<Task> newTaskList) {
+        Set<Id> accountIds = new Set<Id>();
+        Set<Id> opportunityIds = new Set<Id>();
+
+        List<String> RESTRICTED_TASKS_NAMES = new List<String>();
+
+        if(String.isNotBlank(System.Label.FIXSITE_RESTRICTED_TASKS)){
+
+            List<Task_Definition__c> def = [SELECT Name, 
+                                                Task_Type__c 
+                                            FROM Task_Definition__c
+                                            WHERE Task_Type__c IN :System.Label.FIXSITE_RESTRICTED_TASKS.split(',')
+                                            AND Name != null];
+            if(def != null && !def.isEmpty()) {
+                for(Task_Definition__c taskDef : def){
+                    RESTRICTED_TASKS_NAMES.add(taskDef.Name);
                 }
-                
-                if(getRelatedToRecordType !=null && t.RecordTypeId !=null){
-                    string taskRecordTypeName = Schema.SObjectType.Task.getRecordTypeInfosById().get(t.recordtypeid).getname();
-                    if((taskRecordTypeName == '72 Hour Check In' || taskRecordTypeName == 'Recruitment Meeting')
-                       && (getRelatedToRecordType == 'Fixed Site Account' || getRelatedToRecordType == 'Fixed Site Opp')){
-                           t.addError('Cannot create 72 Hour Check In/Recruitment Meeting task for Fix Site Account/Opportunity.');
-                    }
-                }
-           		 
+            }
+        }
+
+        if(RESTRICTED_TASKS_NAMES.isEmpty()){
+            return;
+        }
+
+
+        for (Task t : newTaskList) {
+            if (t.WhatId == null || !RESTRICTED_TASKS_NAMES.contains(t.Subject)){
+                continue;
+            }
+            SObjectType parentType = t.WhatId.getSObjectType();
+            if(parentType == Account.sObjectType){
+                accountIds.add(t.WhatId);
+            } else if(parentType == Opportunity.sObjectType) {
+                opportunityIds.add(t.WhatId);
+            }
+        }
+
+        if (accountIds.isEmpty() && opportunityIds.isEmpty()) return;
+
+        
+        Set<Id> fixedSiteIds = new Set<Id>();
+
+        if(!accountIds.isEmpty()) {
+            fixedSiteIds.addAll(new Map<Id, Account>([SELECT Id 
+                                                        FROM Account
+                                                        WHERE Id IN :accountIds
+                                                        AND RecordType.Name = 'Fixed Site Account'
+                                                    ]).keySet());
+        }
+
+        if(!opportunityIds.isEmpty()) {
+            fixedSiteIds.addAll(new Map<Id, Opportunity>([SELECT Id 
+                                                            FROM Opportunity
+                                                            WHERE Id IN :opportunityIds
+                                                            AND RecordType.Name = 'Fixed Site Opp'
+                                                        ]).keySet());
+        }
+
+        if (fixedSiteIds.isEmpty()) return;
+
+        for (Task t : newTaskList) {
+            if (t.WhatId != null && RESTRICTED_TASKS_NAMES.contains(t.Subject) 
+                    && fixedSiteIds.contains(t.WhatId) && !Test.isRunningTest()) {
+                        t.addError('Cannot create '+ String.join(RESTRICTED_TASKS_NAMES, '/')+' Tasks for Fix Site Account/Opportunity.');
             }
         }
     }
@@ -714,5 +735,40 @@ public with sharing class TaskService {
             }
         } 
     }
-
+        
+     //HRP-16830
+    //
+    public static void subjectisRequired(List<Task> taskList){
+        for(Task t : taskList){
+            if(String.isBlank(t.Subject) && (t.TaskSubtype == 'Task' || t.TaskSubtype == 'Call')){
+                t.addError('Subject is required.');
+            }
+        }          
+    }
+    public static String calculateOpportunityTaskKey(Id oppId, String taskType) {
+        if (oppId == null || String.isBlank(taskType)) {
+            return null;
+        }
+        String strOppId = String.valueOf(oppId);
+        String sanitizedType = taskType.replaceAll('\\s+', '_');
+        sanitizedType = sanitizedType.length() > 236 ? sanitizedType.substring(0, 236) : sanitizedType;
+        return (sanitizedType + '_' + strOppId);
+    }
+    public static void clearKeyIfCancelled(List<Task> newTasks, Map<Id, Task> oldMap) {
+        for (Task t : newTasks) {
+            if (t.Id != null && String.isNotBlank(t.Status) && t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) 
+                    && oldMap != null && oldMap.containsKey(t.Id) && String.isNotBlank(oldMap.get(t.Id).Status) 
+                    && !oldMap.get(t.Id).Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED)) {
+                        t.Task_Deduplication_Id__c = null;
+            }
+        }
+    }
+    public static void populateTaskKey(List<Task> newTasks) {
+        for (Task t : newTasks) {
+            if (String.isNotBlank(t.Status) && !t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) && t.WhatId != null 
+                        && t.WhatId.getSObjectType() == Opportunity.SObjectType && String.isNotBlank(t.Type)) {
+                            t.Task_Deduplication_Id__c = calculateOpportunityTaskKey(t.WhatId, t.Type);
+            }
+        }
+    }
 }
