@@ -283,7 +283,7 @@ public with sharing class BSF_TaskPlanningService {
         if(!templateChangedIds.isEmpty()) {
             Map<Id, Opportunity> templatesById = new Map<Id, Opportunity>([SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateChangedIds WITH SYSTEM_MODE]);
             for (Opportunity opp : newOpps) {
-                if(opp.RecordTypeId == fixedSiteRecTypeId || opp.Is_Template__c || opp.Parent_Template_Id__c == null || !templatesById.containsKey(opp.Parent_Template_Id__c)) continue;
+                if(opp.RecordTypeId == fixedSiteRecTypeId || opp.Is_Path_Overridden__c || opp.Is_Template__c || opp.Parent_Template_Id__c == null || !templatesById.containsKey(opp.Parent_Template_Id__c)) continue;
 
                 Opportunity parentTemplate = templatesById.get(opp.Parent_Template_Id__c);
                 opp.Planning_Path__c = parentTemplate.Planning_Path__c;
