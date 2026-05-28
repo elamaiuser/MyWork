@@ -56,6 +56,17 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
         }
 
         if (!driveIds.isEmpty()) {
+            // Defer Drive count refresh to a Queueable while a Taxonomy Run is in
+            // progress. This removes the Drive-row update from the DCR-insert
+            // transaction and avoids UNABLE_TO_LOCK_ROW failures when another
+            // Taxonomy transaction is holding the Drive locks. HRP-17291.
+            if (Taxo_Utilities.isTaxonomyRunning()) {
+                System.enqueueJob(new skedUpdateDcrCountQueueable(driveIds));
+                return;
+            }
+
+            // Synchronous (UI-initiated) path: keeps the count update atomic with the
+            // DCR change so the user sees an immediately consistent value.
             Set<String> nonPendingStatuses = new Set<String>{'Approved', 'Rejected', 'Cancelled', 'Approved by System'};
             List<sked_Drive__c> drives = [
                 SELECT Id, sked_Num_Of_Pending_DCRs__c, 
