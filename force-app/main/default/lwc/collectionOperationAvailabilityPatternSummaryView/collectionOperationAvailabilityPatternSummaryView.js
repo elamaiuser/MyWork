@@ -80,6 +80,8 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
                         collectionOperationAvailabilities: this.model.collectionOperationAvailabilities.map(item => {
                             return { 
                                 ...item,
+                                startDateString: this.formatDate(item.startDate),
+                                endDateString: this.formatDate(item.endDate),
                                 showApTotals: (queryResult?.some(apRole => apRole.colOpAvailabilityId === item.id)) ?? false,
                                 totalApModels: [
                                     {
@@ -136,6 +138,11 @@ export default class CollectionOperationAvailabilityPatternSummaryView extends L
 
     hideLoading = () => {
         this.showSpinner = false;
+    }
+
+    formatDate = (dateIso) => {
+        if(!dateIso) return '';
+        return DateTime.fromString(dateIso, 'yyyy-MM-dd').toFormat('M/d/yyyy')
     }
 
     exceptionHandler = (error) => {
