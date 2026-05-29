@@ -831,7 +831,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       timeOffPlan: timeOffPlan,
       timeOffReasonCode: timeOffReasonCode,
       usePtoForCallOut: usePtoForCallOut,
-      hasTimeOffPlans: hasTimeOffPlans
+      hasTimeOffPlans: hasTimeOffPlans,
+      isFromOnCallCallOutForm: true
     };
 
     if(this.selectedEvent.isDrive) {
