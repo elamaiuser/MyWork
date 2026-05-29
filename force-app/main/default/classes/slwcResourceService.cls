@@ -264,6 +264,11 @@ global class slwcResourceService {
         insert callOutAvailability;
         
         if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
+            String ptoCustomStatus = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL;
+            if (request.isFromOnCallCallOutForm) {
+                ptoCustomStatus = skedConstants.AVAILABILITY_STATUS_PENDING;
+            }
+
             sked__Availability__c relatedAvailability = new sked__Availability__c(
                 sked__Type__c = request.timeOffPlan,
                 sked__Is_Available__c = FALSE,
@@ -274,7 +279,7 @@ global class slwcResourceService {
                 sked__Notes__c = request.callOutNotes,
                 sked__Status__c = skedConstants.AVAILABILITY_STATUS_PENDING,
                 sked__Timezone__c = unavailabilityTimezone,
-                sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL,
+                sked_Custom_Status__c = ptoCustomStatus,
                 sked_Time_Off_Reason_Code__c = request.timeOffReasonCode,
                 sked_Related_Call_Out__c = callOutAvailability.Id
             );
@@ -327,6 +332,7 @@ global class slwcResourceService {
         @AuraEnabled public string timeOffReasonCode {get;set;}
         @AuraEnabled public boolean usePtoForCallOut {get;set;}
         @AuraEnabled public boolean hasTimeOffPlans {get;set;}
+        @AuraEnabled public boolean isFromOnCallCallOutForm {get;set;}
         
         @AuraEnabled public string jobAllocationId {get;set;}
     }
