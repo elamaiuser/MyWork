@@ -265,7 +265,7 @@ global class slwcResourceService {
         
         if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
             String ptoCustomStatus = skedConstants.AVAILABILITY_STATUS_PROCESSING_APPROVAL;
-            if (request.isFromOnCallCallOutForm) {
+            if (request.isFromOnCallCallOutForm == true) {
                 ptoCustomStatus = skedConstants.AVAILABILITY_STATUS_PENDING;
             }
 
