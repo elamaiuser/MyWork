@@ -63,7 +63,8 @@ const TABS = {
     MOBILE: 'mobile',
     PRODUCTIVITY: 'productivity',
     ACCOUNT_INFORMATION: 'accountInformation',
-    SYSTEM_INFORMATION: 'systemInformation'
+    SYSTEM_INFORMATION: 'systemInformation',
+    RESULTS: 'results'
 }
 
 const eventListeners = {
@@ -230,6 +231,14 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
 
     get showMobileTab() {
         return this.currentTab === TABS.MOBILE;
+    }
+
+    get isCompletedDrive() {
+        return this.drive && this.drive.status === DRIVE_STATUS.COMPLETE;
+    }
+
+    get showResultsTab() {
+        return this.currentTab === TABS.RESULTS;
     }
 
     get showSaveDraftButton() {
