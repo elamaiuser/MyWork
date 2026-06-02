@@ -306,6 +306,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.validateManualFirstTimeFlagSelection((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
 
+        if(super.getTriggerMethodsToBypass().indexOf('handleOpportunityTemplateChange') == -1) {
+            BSF_TaskPlanningService.handleOpportunityTemplateChange((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         System.debug('Exiting method beforeUpdate');
     }
     
