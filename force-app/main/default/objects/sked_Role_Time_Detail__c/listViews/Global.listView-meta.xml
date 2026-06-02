@@ -21,5 +21,10 @@
         <operation>equals</operation>
         <value>Global</value>
     </filters>
+    <filters>
+        <field>sked_Drive_Type__c</field>
+        <operation>equals</operation>
+        <value>Fixed Site</value>
+    </filters>
     <label>Global</label>
 </ListView>

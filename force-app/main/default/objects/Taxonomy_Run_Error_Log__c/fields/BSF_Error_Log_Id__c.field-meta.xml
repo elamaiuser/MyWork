@@ -3,6 +3,7 @@
     <fullName>BSF_Error_Log_Id__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description>Lookup to the BSF Error Log.</description>
+    <externalId>false</externalId>
     <label>BSF Error Log Id</label>
     <referenceTo>BSF_Error_Log__c</referenceTo>
     <relationshipLabel>Taxonomy Run Error Log</relationshipLabel>
