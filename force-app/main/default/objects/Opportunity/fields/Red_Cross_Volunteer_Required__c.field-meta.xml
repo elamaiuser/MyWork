@@ -3,6 +3,7 @@
     <fullName>Red_Cross_Volunteer_Required__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Created as part of HRP-14653</description>
+    <externalId>false</externalId>
     <label>Red Cross Volunteer Required</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
