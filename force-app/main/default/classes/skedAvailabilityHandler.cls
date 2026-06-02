@@ -118,7 +118,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
             try {
                 captureExceptionLogs(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
                 syncToResourceHoursRecord(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
-                syncToStaffingBudgetAvailabilities(this.context.newRecords);
+                syncToStaffingBudgetAvailabilities(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
                 cancelCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
                 onAvailabilityCallOutTypeChangeToCallOut(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
                 sendCancelledApprovedTimeOffNotification(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
@@ -535,25 +535,100 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         }
     }
 
-    private void syncToStaffingBudgetAvailabilities(List<sked__Availability__c> newRecords) {
+    private void syncToStaffingBudgetAvailabilities(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
+        Set<String> unavailabilityTypesToSync = new Set<String>{ 'Floating Holiday', 'PTO' };
+
         Map<Id, sked__Availability__c> availabilityById = new Map<Id, sked__Availability__c>();
-        for (sked__Availability__c availability : newRecords) {
-            availabilityById.put(availability.Id, availability);
+        Set<Id> cancellingApprovedIds = new Set<Id>();
+
+        for (sked__Availability__c av : newRecords) {
+            availabilityById.put(av.Id, av);
+            sked__Availability__c old = oldMap.get(av.Id);
+            if (
+                skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(old.sked_Custom_Status__c) &&
+                !skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(av.sked_Custom_Status__c) &&
+                unavailabilityTypesToSync.contains(av.sked__Type__c)
+            ) {
+                cancellingApprovedIds.add(av.Id);
+            }
         }
 
-        List<sked_Staffing_Budget_Availability__c> staffingBudgetAvailabilities = [
-            SELECT Id, sked_Availability_Status__c, sked_Availability__c
+        List<sked_Staffing_Budget_Availability__c> sbaList = [
+            SELECT Id, sked_Availability_Status__c, sked_Availability__c, sked_Staffing_Budget__c
             FROM sked_Staffing_Budget_Availability__c
             WHERE sked_Availability__c IN :availabilityById.keySet()
         ];
 
-        if (!staffingBudgetAvailabilities.isEmpty()) {
-            for (sked_Staffing_Budget_Availability__c sba : staffingBudgetAvailabilities) {
-                sked__Availability__c relatedAvailability = availabilityById.get(sba.sked_Availability__c);
-                sba.sked_Availability_Status__c = relatedAvailability.sked_Custom_Status__c;
+        if (!sbaList.isEmpty()) {
+            if (!cancellingApprovedIds.isEmpty()) {
+                Set<Id> resourceIds = new Set<Id>();
+                Set<Date> startDates = new Set<Date>();
+                for (Id cancelId : cancellingApprovedIds) {
+                    sked__Availability__c av = availabilityById.get(cancelId);
+                    resourceIds.add(av.sked__Resource__c);
+                    startDates.add(av.sked_Start_Date__c);
+                }
+
+                // Find other approved PTO/FH availabilities for the same resources and dates
+                List<sked__Availability__c> candidates = [
+                    SELECT Id, sked__Resource__c, sked_Start_Date__c
+                    FROM sked__Availability__c
+                    WHERE sked__Resource__c IN :resourceIds
+                    AND sked_Start_Date__c IN :startDates
+                    AND sked_Custom_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+                    AND sked__Type__c IN :unavailabilityTypesToSync
+                    AND Id NOT IN :cancellingApprovedIds
+                    AND sked_Related_Call_Out__c = NULL
+                    AND sked__Is_Available__c = FALSE
+                ];
+
+                // Skip candidates that already have their own SBA (already counted)
+                Set<Id> candidateIds = new Map<Id, sked__Availability__c>(candidates).keySet();
+                Set<Id> alreadyHasSba = new Set<Id>();
+                if (!candidateIds.isEmpty()) {
+                    for (sked_Staffing_Budget_Availability__c existingSba : [
+                        SELECT sked_Availability__c
+                        FROM sked_Staffing_Budget_Availability__c
+                        WHERE sked_Availability__c IN :candidateIds
+                    ]) {
+                        alreadyHasSba.add(existingSba.sked_Availability__c);
+                    }
+                }
+
+                // First eligible replacement per (resource, date) — takes over the SBA
+                Map<String, Id> replacementByResourceDate = new Map<String, Id>();
+                for (sked__Availability__c candidate : candidates) {
+                    if (!alreadyHasSba.contains(candidate.Id)) {
+                        String key = candidate.sked__Resource__c + '-' + candidate.sked_Start_Date__c;
+                        if (!replacementByResourceDate.containsKey(key)) {
+                            replacementByResourceDate.put(key, candidate.Id);
+                        }
+                    }
+                }
+
+                for (sked_Staffing_Budget_Availability__c sba : sbaList) {
+                    sked__Availability__c av = availabilityById.get(sba.sked_Availability__c);
+                    if (cancellingApprovedIds.contains(sba.sked_Availability__c)) {
+                        String key = av.sked__Resource__c + '-' + av.sked_Start_Date__c;
+                        Id replacementId = replacementByResourceDate.get(key);
+                        if (replacementId != null) {
+                            // Reassign SBA to the remaining active time-off so the slot stays consumed
+                            sba.sked_Availability__c = replacementId;
+                            sba.sked_Availability_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+                        } else {
+                            sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
+                        }
+                    } else {
+                        sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
+                    }
+                }
+            } else {
+                for (sked_Staffing_Budget_Availability__c sba : sbaList) {
+                    sba.sked_Availability_Status__c = availabilityById.get(sba.sked_Availability__c).sked_Custom_Status__c;
+                }
             }
-    
-            update staffingBudgetAvailabilities;
+
+            update sbaList;
         }
     }
     
