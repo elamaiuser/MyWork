@@ -462,6 +462,27 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                 }
                 
                 Map<Date, List<skedStaffingBudgetWrapper>> staffingBudgetWrappersByDate = skedStaffingBudgetUtils.getSkedStaffingBudgetWrappersByDate(datesByResourceId, resourceById);
+
+                Set<Id> allStaffingBudgetIds = new Set<Id>();
+                for (List<skedStaffingBudgetWrapper> sbWrappers : staffingBudgetWrappersByDate.values()) {
+                    for (skedStaffingBudgetWrapper sbWrapper : sbWrappers) {
+                        allStaffingBudgetIds.add(sbWrapper.staffingBudget.Id);
+                    }
+                }
+
+                // A resource with multiple time-off records on the same day should only consume one slot
+                Set<String> countedResourceBudgetPairs = new Set<String>();
+                if (!allStaffingBudgetIds.isEmpty()) {
+                    for (sked_Staffing_Budget_Availability__c existingSba : [
+                        SELECT sked_Staffing_Budget__c, sked_Availability__r.sked__Resource__c
+                        FROM sked_Staffing_Budget_Availability__c
+                        WHERE sked_Staffing_Budget__c IN :allStaffingBudgetIds
+                        AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+                    ]) {
+                        countedResourceBudgetPairs.add(existingSba.sked_Availability__r.sked__Resource__c + '-' + existingSba.sked_Staffing_Budget__c);
+                    }
+                }
+
                 for (unavailabilityWrapper wrapper : unavailabilityWrappers) {
                     Boolean hasMatchingStaffingBudgetSlot = false;
                     List<skedStaffingBudgetWrapper> staffingBudgetWrappersForDate = staffingBudgetWrappersByDate.get(wrapper.unavailabilityDate);
@@ -480,18 +501,22 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                                 rolesFromStaffingBudget.retainAll(wrapperRoles);
                                 if (!rolesFromStaffingBudget.isEmpty()) {
                                     hasMatchingStaffingBudgetSlot = true;
-                                    staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
-                                        sked_Availability__c = wrapper.unavailability.Id,
-                                        sked_Staffing_Budget__c = staffingBudgetWrapper.staffingBudget.Id,
-                                        sked_Availability_Status__c = wrapper.unavailability.sked_Custom_Status__c
-                                    ));
+                                    String resourceBudgetKey = wrapper.resource.Id + '-' + staffingBudgetWrapper.staffingBudget.Id;
+                                    if (!countedResourceBudgetPairs.contains(resourceBudgetKey)) {
+                                        countedResourceBudgetPairs.add(resourceBudgetKey);
+                                        staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
+                                            sked_Availability__c = wrapper.unavailability.Id,
+                                            sked_Staffing_Budget__c = staffingBudgetWrapper.staffingBudget.Id,
+                                            sked_Availability_Status__c = wrapper.unavailability.sked_Custom_Status__c
+                                        ));
 
-                                    if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
-                                        staffingBudgetWrapper.approvedSlots++;
-                                    }
-                                    
-                                    if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED && staffingBudgetWrapper.availableSlots < 0) {
-                                        wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY);
+                                        if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
+                                            staffingBudgetWrapper.approvedSlots++;
+                                        }
+
+                                        if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED && staffingBudgetWrapper.availableSlots < 0) {
+                                            wrapper.unavailability.addError(skedConstants.AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY);
+                                        }
                                     }
                                 }
                             }
