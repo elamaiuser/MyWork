@@ -4,6 +4,13 @@
 	<types>
 		<members>Update_Drive_Status_Field_on_Opportunity_Booking_Date_2_1</members>
 		<name>Flow</name>
+		<types>
+		<members>OpportunityService</members>
+		<members>OpportunityServiceControllerTest</members>
+		<members>OpportunityTriggerTest</members>
+		<name>ApexClass</name>
+	</types>
 	</types>
 	<version>64.0</version>
 </Package>
+
