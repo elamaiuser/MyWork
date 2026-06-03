@@ -75,11 +75,11 @@ public without sharing class BSF_TaskPlanningWizardController {
 
         // 1. Fetch Context Details
         if (objectApiName == 'Account') {
-            Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH USER_MODE];
+            Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH SYSTEM_MODE];
             response.currentPath = acc.Planning_Path__c;
             response.isOverridden = false;
         } else {
-            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c, Is_Path_Overridden__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
+            Opportunity opp = [SELECT Planning_Path__c, Drive_Status__c, Is_Path_Overridden__c FROM Opportunity WHERE Id = :recordId WITH SYSTEM_MODE];
             response.currentPath = opp.Planning_Path__c;
             response.driveStatus = opp.Drive_Status__c;
             response.isOverridden = opp.Is_Path_Overridden__c;
@@ -91,10 +91,10 @@ public without sharing class BSF_TaskPlanningWizardController {
 
         // 2. Fetch Metadata
         List<Task_Package__c> taskPackages = [SELECT Id, Name, Sort_Order__c, Hide_Select_All__c 
-                                              FROM Task_Package__c WITH USER_MODE ORDER BY Sort_Order__c ASC];
+                                              FROM Task_Package__c WITH SYSTEM_MODE ORDER BY Sort_Order__c ASC];
         List<Task_Package_Item__c> packageItems = [SELECT Task_Package__c, Task_Definition__c, Task_Definition__r.Name,
                                             Task_Definition__r.Description__c, Task_Definition__r.Scheduling_Method__c,
-                                            Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH USER_MODE];
+                                            Task_Definition__r.Due_Date_Offset__c FROM Task_Package_Item__c WITH SYSTEM_MODE];
         
         Map<String, SavePayload> savedStateByKey = getSavedState(recordId, objectApiName);
 
@@ -158,13 +158,13 @@ public without sharing class BSF_TaskPlanningWizardController {
 
             // Validation: Block Confirmed Drives
             if (objectApiName == 'Opportunity') {
-                Opportunity opp = [SELECT Drive_Status__c, Planning_Path__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE];
+                Opportunity opp = [SELECT Drive_Status__c, Planning_Path__c FROM Opportunity WHERE Id = :recordId WITH SYSTEM_MODE];
                 currentPath = opp.Planning_Path__c;
                 if (opp.Drive_Status__c == 'Confirmed') {
                     throw new AuraHandledException('Planning is Read-Only for Confirmed Drives.');
                 }
             } else {
-                Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH USER_MODE];
+                Account acc = [SELECT Planning_Path__c FROM Account WHERE Id = :recordId WITH SYSTEM_MODE];
                 currentPath = acc.Planning_Path__c;
             }
 
@@ -188,7 +188,7 @@ public without sharing class BSF_TaskPlanningWizardController {
 
             Map<Id, Task_Definition__c> taskDefinitionsById = new Map<Id, Task_Definition__c>([
                 SELECT Id, Creation_Date_Offset__c, Name FROM Task_Definition__c 
-                WHERE Id IN :definitionIds WITH USER_MODE
+                WHERE Id IN :definitionIds WITH SYSTEM_MODE
             ]);
 
             if (objectApiName == 'Account' || isTemplateRecord) {
@@ -214,7 +214,7 @@ public without sharing class BSF_TaskPlanningWizardController {
         
         if (objectApiName == 'Account' || isTemplate(recordId)) {
             String lookupField = getConfigurationLookupField(objectApiName);
-            String query = String.format('SELECT Task_Definition__c, Task_Package__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c FROM Task_Planning_Default__c WHERE {0} = :recordId WITH USER_MODE', 
+            String query = String.format('SELECT Task_Definition__c, Task_Package__c, Scheduling_Method__c, Configured_Offset__c, Configured_Date__c FROM Task_Planning_Default__c WHERE {0} = :recordId WITH SYSTEM_MODE', 
                            new List<String>{ String.escapeSingleQuotes(lookupField) });
 
             for (Task_Planning_Default__c config : Database.query(query)) {
@@ -231,7 +231,7 @@ public without sharing class BSF_TaskPlanningWizardController {
             }
         } else {
             for (Planned_Task__c pt : [SELECT Task_Definition__c, Task_Package__c, Scheduling_Method__c, User_Defined_Offset__c, Target_Date__c 
-                                      FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId WITH USER_MODE]) {
+                                      FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId WITH SYSTEM_MODE]) {
                 SavePayload payload = new SavePayload();
                 payload.definitionId = pt.Task_Definition__c;
                 payload.packageId = pt.Task_Package__c;
@@ -248,12 +248,12 @@ public without sharing class BSF_TaskPlanningWizardController {
     }
 
     private static void saveToQueue(Id opportunityId, List<SavePayload> payloads, Map<Id, Task_Definition__c> taskDefinitionsById) {
-        List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :opportunityId AND Status__c = 'Configured' WITH USER_MODE];
+        List<Planned_Task__c> existingTasks = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :opportunityId AND Status__c = 'Configured' WITH SYSTEM_MODE];
         if (!existingTasks.isEmpty()) {
-            delete existingTasks;
+            Database.delete(existingTasks, false, AccessLevel.SYSTEM_MODE);
         }
 
-        Opportunity opp = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Id = :opportunityId WITH USER_MODE];
+        Opportunity opp = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Id = :opportunityId WITH SYSTEM_MODE];
 
         List<Planned_Task__c> tasksToInsert = new List<Planned_Task__c>();
         for (SavePayload payload : payloads) {
@@ -275,9 +275,10 @@ public without sharing class BSF_TaskPlanningWizardController {
                 task.Creation_Offset__c = taskDef.Creation_Date_Offset__c;
                 task.Subject__c = taskDef.Name;
             }
+            task.Config_Key__c = BSF_TaskPlanningService.generateConfigKey(task);
             tasksToInsert.add(task);
         }        
-        insert as user tasksToInsert;
+        Database.upsert(tasksToInsert, Planned_Task__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE);
 
         if(opp.Drive_Status__c == 'Confirmed') {
             System.debug('Drive is Confirmed - Skipping Task Generation');
@@ -329,9 +330,9 @@ public without sharing class BSF_TaskPlanningWizardController {
 
     private static void resetToStandardConfig(Id recordId, String objectApiName) {
         List<Task_Definition__c> stdDefinitions = [SELECT Id, Name, Due_Date_Offset__c, Creation_Date_Offset__c, Scheduling_Method__c
-                                                   FROM Task_Definition__c WHERE Category__c = 'Standard' WITH USER_MODE];
+                                                   FROM Task_Definition__c WHERE Category__c = 'Standard' WITH SYSTEM_MODE];
         
-        List<Task_Package__c> stdPkgs = [SELECT Id FROM Task_Package__c WHERE Sort_Order__c = 1 WITH USER_MODE LIMIT 1];
+        List<Task_Package__c> stdPkgs = [SELECT Id FROM Task_Package__c WHERE Sort_Order__c = 1 WITH SYSTEM_MODE LIMIT 1];
         Id stdPkgId = stdPkgs.isEmpty() ? null : stdPkgs[0].Id;
 
         List<SavePayload> payloads = new List<SavePayload>();
@@ -370,7 +371,7 @@ public without sharing class BSF_TaskPlanningWizardController {
                 delete existingConfigs;
             }
         } else {
-            List<Planned_Task__c> tasksToWipe = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId AND Status__c = 'Configured' WITH USER_MODE];
+            List<Planned_Task__c> tasksToWipe = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId AND Status__c = 'Configured' WITH SYSTEM_MODE];
             if (!tasksToWipe.isEmpty()) {
                 delete tasksToWipe;
             }
@@ -411,7 +412,7 @@ public without sharing class BSF_TaskPlanningWizardController {
         if (recordId.getSObjectType() == Account.SObjectType) {
             return false;
         }
-        return [SELECT Is_Template__c FROM Opportunity WHERE Id = :recordId WITH USER_MODE].Is_Template__c;
+        return [SELECT Is_Template__c FROM Opportunity WHERE Id = :recordId WITH SYSTEM_MODE].Is_Template__c;
     }
 
     private static void fireTemplateCascadeBatch(Id templateId) {
