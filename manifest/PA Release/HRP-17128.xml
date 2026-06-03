@@ -8,6 +8,7 @@
 		<members>OpportunityService</members>
 		<members>OpportunityServiceControllerTest</members>
 		<members>OpportunityTriggerTest</members>
+		<members>CalendarBuildEvaluateDrivesBatch_Test</members>
 		<name>ApexClass</name>
 	</types>
 	</types>
