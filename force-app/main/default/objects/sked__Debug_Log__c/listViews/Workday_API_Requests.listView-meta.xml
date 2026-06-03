@@ -15,13 +15,8 @@
     </filters>
     <filters>
         <field>CREATED_DATE</field>
-        <operation>greaterOrEqual</operation>
-        <value>11/16/2024 12:00 AM</value>
-    </filters>
-    <filters>
-        <field>CREATEDBY_USER</field>
         <operation>equals</operation>
-        <value>Automated Process</value>
+        <value>TODAY</value>
     </filters>
     <label>Workday API Requests</label>
 </ListView>
