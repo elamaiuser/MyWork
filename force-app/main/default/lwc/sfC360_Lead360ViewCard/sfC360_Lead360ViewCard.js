@@ -160,20 +160,66 @@ export default class SfC360_Lead360ViewCard extends LightningElement {
     }
 
     get accAmArray() {
-        return Object.entries(this.accAmDetails).map(([orgName, value]) => {
-            const hasAccounts = value && value.length > 0;
-            const accounts = (value || []).map(v => ({
-                name: v.name,
-                email: v.email,
-                mailto: v.email ? `mailto:${v.email}` : null
-            }));
+        if (!this.accAmDetails) return [];
 
-            return {
-                orgName,
-                accounts,
-                statusIcon: hasAccounts ? this.greenIcon : this.grayIcon
-            };
+        // 1. Define the exact desired order and the formatted display names
+        // (BioMedSF is intentionally excluded from this list)
+        const displayConfig = [
+            { rawKey: 'HospitalSales', displayLabel: 'Hospital Sales' },
+            { rawKey: 'Cell Gene Therapy', displayLabel: 'Cell Gene Therapy' },
+            { rawKey: 'Fundraising', displayLabel: 'Fundraising' },
+            { rawKey: 'TrainingServices', displayLabel: 'Training Services' }
+        ];
+
+        const finalArray = [];
+        
+        // Pre-fill processedKeys with 'BioMedSF' so the fallback loop completely ignores it
+        const processedKeys = new Set(['BioMedSF']); 
+
+        // 2. Build the array based on our ordered configuration
+        displayConfig.forEach(config => {
+            // Only add to display if Apex returned this key
+            if (this.accAmDetails[config.rawKey]) {
+                const value = this.accAmDetails[config.rawKey];
+                const hasAccounts = value && value.length > 0;
+                
+                const accounts = (value || []).map(v => ({
+                    name: v.name,
+                    email: v.email,
+                    mailto: v.email ? `mailto:${v.email}` : null
+                }));
+
+                finalArray.push({
+                    orgName: config.displayLabel, // Use the formatted label with spaces
+                    accounts: accounts,
+                    statusIcon: hasAccounts ? this.greenIcon : this.grayIcon
+                });
+                
+                // Track that we've processed this item
+                processedKeys.add(config.rawKey);
+            }
         });
+
+        // 3. Fallback: Catch any future/additional elements returned by Apex 
+        // (This will skip BioMedSF since we added it to processedKeys above)
+        Object.entries(this.accAmDetails).forEach(([orgName, value]) => {
+            if (!processedKeys.has(orgName)) {
+                const hasAccounts = value && value.length > 0;
+                const accounts = (value || []).map(v => ({
+                    name: v.name,
+                    email: v.email,
+                    mailto: v.email ? `mailto:${v.email}` : null
+                }));
+
+                finalArray.push({
+                    orgName: orgName,
+                    accounts: accounts,
+                    statusIcon: hasAccounts ? this.greenIcon : this.grayIcon
+                });
+            }
+        });
+
+        return finalArray;
     }
 
     get fetchGroupedActivities() {
