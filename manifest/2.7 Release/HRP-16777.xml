@@ -53,7 +53,12 @@
 		<members>BSF_Access_Control_Rule.HRP_16777_Planned_Task_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16777_Class_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_17373_Field_Permission_Set_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_1_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_2_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_3_EDIT</members>
 		<name>CustomMetadata</name>
 	</types>
+
+
 	<version>66.0</version>
 </Package>
