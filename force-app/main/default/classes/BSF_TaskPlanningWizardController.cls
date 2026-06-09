@@ -278,7 +278,7 @@ public without sharing class BSF_TaskPlanningWizardController {
             task.Config_Key__c = BSF_TaskPlanningService.generateConfigKey(task);
             tasksToInsert.add(task);
         }        
-        Database.upsert(tasksToInsert, Planned_Task__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE);
+        Database.insert(tasksToInsert, false, AccessLevel.SYSTEM_MODE);
 
         if(opp.Drive_Status__c == 'Confirmed') {
             System.debug('Drive is Confirmed - Skipping Task Generation');
@@ -308,9 +308,10 @@ public without sharing class BSF_TaskPlanningWizardController {
             /*if (taskDefinitionsById.containsKey(payload.definitionId)) {
                 config.Configured_Offset__c = taskDefinitionsById.get(payload.definitionId).Creation_Date_Offset__c;
             }*/
+            config.Config_Key__c = BSF_TaskPlanningService.generateConfigKey(config);
             configsToInsert.add(config);
         }
-        insert as user configsToInsert;
+        Database.insert(configsToInsert, false, AccessLevel.SYSTEM_MODE);
     }
 
     private static void saveSelectedPackages(Id recordId, List<String> packageIds) {
@@ -320,11 +321,12 @@ public without sharing class BSF_TaskPlanningWizardController {
         for (Id packageId : packageIds) {
             Task_Selected_Package__c bundle = new Task_Selected_Package__c(Task_Package__c = packageId);
             bundle.put(lookupField, recordId);
+            bundle.Config_Key__c = BSF_TaskPlanningService.generateConfigKey(bundle);
             bundlesToInsert.add(bundle);
         }
 
         if (!bundlesToInsert.isEmpty()) {
-            insert as user bundlesToInsert;
+            Database.insert(bundlesToInsert, false, AccessLevel.SYSTEM_MODE);
         }
     }
 
@@ -357,23 +359,23 @@ public without sharing class BSF_TaskPlanningWizardController {
         
         // Wipe Bundles
         String bundleQuery = String.format('SELECT Id FROM Task_Selected_Package__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(bundleField) });
-        List<Task_Selected_Package__c> existingBundles = Database.query(bundleQuery);
+        List<Task_Selected_Package__c> existingBundles = Database.query(bundleQuery, AccessLevel.SYSTEM_MODE);
         if (!existingBundles.isEmpty()) {
-            delete existingBundles;
+            Database.delete(existingBundles, false, AccessLevel.SYSTEM_MODE);
         }
 
         // Wipe Specific Settings
         if (objectApiName == 'Account' || isTemplate(recordId)) {
             String configField = getConfigurationLookupField(objectApiName);
             String configQuery = String.format('SELECT Id FROM Task_Planning_Default__c WHERE {0} = :recordId', new List<String>{ String.escapeSingleQuotes(configField) });
-            List<Task_Planning_Default__c> existingConfigs = Database.query(configQuery);
+            List<Task_Planning_Default__c> existingConfigs = Database.query(configQuery, AccessLevel.SYSTEM_MODE);
             if (!existingConfigs.isEmpty()) {
-                delete existingConfigs;
+                Database.delete(existingConfigs, false, AccessLevel.SYSTEM_MODE);
             }
         } else {
             List<Planned_Task__c> tasksToWipe = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c = :recordId AND Status__c = 'Configured' WITH SYSTEM_MODE];
             if (!tasksToWipe.isEmpty()) {
-                delete tasksToWipe;
+                Database.delete(tasksToWipe, false, AccessLevel.SYSTEM_MODE);
             }
         }
     }

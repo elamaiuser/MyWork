@@ -764,24 +764,28 @@ public with sharing class BSF_TaskPlanningService {
         if (record == null) return null;
         
         String parentId;
+        String childId;
         String itemId;
 
         if (record instanceof Planned_Task__c) {
             Planned_Task__c pt = (Planned_Task__c) record;
             parentId = pt.Related_Opportunity__c;
             itemId = pt.Task_Definition__c;
+            childId = pt.Task_Package__c;
         }else if (record instanceof Task_Planning_Default__c) {
             Task_Planning_Default__c tpd = (Task_Planning_Default__c) record;
             parentId = String.isNotBlank(tpd.Account__c) ? tpd.Account__c : tpd.Template_Opportunity__c;
             itemId = tpd.Task_Definition__c;
+            childId = tpd.Task_Package__c;
         }else if (record instanceof Task_Selected_Package__c) {
             Task_Selected_Package__c tsp = (Task_Selected_Package__c) record;
             parentId = String.isNotBlank(tsp.Account__c) ? tsp.Account__c : tsp.Opportunity__c;
             itemId = tsp.Task_Package__c;
+            childId = '';
         }
 
         if (String.isNotBlank(parentId) && String.isNotBlank(itemId)) {
-            return parentId + '_' + itemId;
+            return parentId + '_' + itemId + '_' + childId;
         }
         
         return null;
