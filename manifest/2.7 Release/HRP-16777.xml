@@ -15,6 +15,7 @@
         <members>BSF_TemplateTaskPlanningCascadeBatch</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
+        <members>BSF_TaskPlanningWizardController</members>
 		<name>ApexClass</name>
 	</types>
     <types>
