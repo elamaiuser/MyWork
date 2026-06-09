@@ -47,12 +47,12 @@ public class BSF_TemplateTaskPlanningCascadeBatch implements Database.Batchable<
 
     public void execute(Database.BatchableContext bc, List<Opportunity> scope) {
         // 1. Cascade Logic (Clean Queue -> Clone from Template)
-        Set<Id> confirmedDriveIds = BSF_TaskPlanningService.cascadeTemplateToDrives(scope);
+        /*Set<Id> confirmedDriveIds = */BSF_TaskPlanningService.cascadeTemplateToDrives(scope);
 
         // 2. Trigger Task Generation for Confirmed Drives
-        if(!confirmedDriveIds.isEmpty()) {
+        /*if(!confirmedDriveIds.isEmpty()) {
             BSF_TaskPlanningService.generateTasksFromQueue(confirmedDriveIds);
-        }
+        }*/
     }
 
     /**
