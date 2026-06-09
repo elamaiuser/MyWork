@@ -5,7 +5,7 @@
     <summaryFilterItems>
         <field>Opportunity.CreatedDate</field>
         <operation>lessOrEqual</operation>
-        <value>12/31/2020 12:00 AM</value>
+        <value>12/31/2020</value>
     </summaryFilterItems>
     <summaryFilterItems>
         <field>Opportunity.Drive_Date__c</field>
