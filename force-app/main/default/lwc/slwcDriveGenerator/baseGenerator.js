@@ -808,9 +808,10 @@ class BaseGenerator {
   }
 
   onDriveDataChanged(properties, {
-    skipNotifyDriveChanged = false, 
-    changedFromApplyingDCRs = false, 
-    isCalledFromDCRProcessingModal = false
+    skipNotifyDriveChanged = false,
+    changedFromApplyingDCRs = false,
+    isCalledFromDCRProcessingModal = false,
+    preserveExistingSlots = false
   } = {}) {
     this.isRegenerateDriveChange = isCalledFromDCRProcessingModal && properties.filter(record => record.targetName === 'regenerateDrive').length > 0 ;
     
@@ -843,7 +844,8 @@ class BaseGenerator {
     })
 
     const skipGenerateSlotsProperties = ['roleTimeDetailChanged', 'travelTimeChanged'];
-    this.masterData.skipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
+    const derivedSkipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
+    this.masterData.skipGenerateSlots = (preserveExistingSlots && this.masterData.skipGenerateSlots) || derivedSkipGenerateSlots;
 
     let actionGroups = this.mergeFieldChanged(properties, this.DRIVE_FIELD_CHANGE_MAPPING, this.DRIVE_ACTION_GROUPS_ORDER);
     return this.runActions(actionGroups)
