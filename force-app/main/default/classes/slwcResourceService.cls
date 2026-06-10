@@ -252,7 +252,10 @@ global class slwcResourceService {
         	skedTriggerUtils.maintainDateTimeField(callOutAvailability, 'sked_DateTime_of_Call_Out__c', 'sked_Date_of_Call_Out__c', 'sked_Time_of_Call_Out__c', 'sked__Timezone__c');
         }
         if (request.usePtoForCallOut == false && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT) {
-            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NoTimeOFF_message;
+            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_NOTIMEOFF_MESSAGE;
+        }
+        if (request.usePtoForCallOut == true && request.calloutType == skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT && request.isFromOnCallCallOutForm == true) {
+            callOutAvailability.sked_Workday_Sync_Message__c = skedConstants.AVAILABILITY_WORKDAY_SYNC_STATUS_ONCALL_CALLOUT_MESSAGE;
         }
         
         if (!notes.isEmpty()) {
