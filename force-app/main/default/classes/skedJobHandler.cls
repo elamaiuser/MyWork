@@ -442,16 +442,9 @@ public class skedJobHandler extends skedTriggerHub {
                 if (newRecord.sked_Drive__c != NULL) {
                     sked_Drive__c skedDrive = mapDrive.get(newRecord.sked_Drive__c);
                     sked__Tag__c skedTag;
-                    if (
-                        skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_MOBILE ||
-                        (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE && 
-                        skedDrive.sked_Operation_Type__c == skedConstants.OPERATION_TYPE_WB)
-                    ) {
+                    if (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_MOBILE) {
                         skedTag = mapDriveTypeTag.get(skedConstants.DRIVE_TYPE_MOBILE);
-                    } else if (
-                        skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE && 
-                        skedDrive.sked_Operation_Type__c != skedConstants.OPERATION_TYPE_WB
-                    ) {
+                    } else if (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE) {
                         skedTag = mapDriveTypeTag.get(skedConstants.DRIVE_TYPE_FIXED_SITE);
                     }
 

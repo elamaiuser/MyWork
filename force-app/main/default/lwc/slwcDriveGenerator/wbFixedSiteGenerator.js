@@ -1544,6 +1544,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
         if (job.assetType === ASSET_TYPE.EQUIPMENT) {
           job.equipmentSubtype = '2RBC Asset';
           job.jobTags = cloneDeep(jobTagsMap[ASSET_TYPE.EQUIPMENT]);
+          job.jobTags.push({ tag: { name: DRIVE_TYPE.FIXED_SITE }, systemCreated: true });
         }
         job.quantity = quantity || 0;
         jobs.push(job);
