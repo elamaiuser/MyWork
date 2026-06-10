@@ -2,6 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>High_School_Drive__c</fullName>
     <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>High School Drive</label>
     <type>Checkbox</type>
