@@ -16,6 +16,10 @@
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
         <members>BSF_TaskPlanningWizardController</members>
+        <members>BSF_TaskPlanningWizardControllerTest</members>
+        <members>BSF_TemplateTaskPlanningCascadeBatchTest</members>
+        <members>TaskTriggerTest</members>
+        <members>OpportunityTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
