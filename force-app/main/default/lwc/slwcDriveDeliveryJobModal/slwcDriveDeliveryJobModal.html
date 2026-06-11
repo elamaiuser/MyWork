@@ -39,13 +39,13 @@
                                 </lightning-input>
                             </div>
                             <div class="slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-size_1-of-1 slds-p-horizontal--small">
-                                <lightning-input type="text" name="deliveryId" label="Pick Up Assignment" value={driveDeliveryJobs.deliveryId} onchange={handleOnChange} max-length="80">
+                                <lightning-input type="text" name="deliveryId" label="Pick Up Assignment(Max 20 characters)" value={driveDeliveryJobs.deliveryId} onchange={handleOnChange} max-length="20">
                                 </lightning-input>
                             </div>
                         </div>
                         <div class="slds-grid slds-wrap slds-grow slds-grid_pull-padded-medium slds-m-top--xx-small">
                             <div class="slds-size_1-of-1 slds-p-horizontal--small">
-                                <lightning-textarea name="comments" label="Comments" value={driveDeliveryJobs.comments} onchange={handleOnChange}></lightning-textarea>
+                                <lightning-textarea name="comments" label="Comments(Max 255 characters)" value={driveDeliveryJobs.comments} onchange={handleOnChange} max-length="255"></lightning-textarea>
                             </div>
                         </div>
                         
