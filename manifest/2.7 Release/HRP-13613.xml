@@ -2,7 +2,21 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>skedAvailabilityHandler</members>
+		<members>skedAvailabilityTrigger_Test</members>
 		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_13613_Field_Permission_Set</members>
+		<members>BSF_Access_Control_Rule.HRP_13613_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>sked_Staffing_Budget_Availability__c.sked_Is_Duplicate__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>sked_Staffing_Budget__c.sked_Approved_Slots_Rollup__c</members>
+		<name>CustomField</name>
 	</types>
 	<types>
     	<members>sked_HLT_Dist</members>
