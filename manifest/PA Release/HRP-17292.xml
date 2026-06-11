@@ -10,6 +10,10 @@
 		<name>CustomField</name>
 	</types>
 	<types>
+		<members>Mobile_Opp_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>Sync_Opportunity_2RBC_Asset_with_DOC</members>
 		<name>Flow</name>
 	</types>
