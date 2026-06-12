@@ -24,8 +24,6 @@
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
                         <b>Identity Match</b>
-                        <lightning-helptext class="slds-m-left_xx-small"
-                            content='Indicates the Line of Service Account owner in Salesforce for Biomed, Training Services and Hospital Sales.'></lightning-helptext>
                     </lightning-layout-item>
                     <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
                         <b>Account Owner</b>
@@ -82,8 +80,6 @@
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
                         <b>Hospital Sales/Cell Gene Therapy:</b>
-                        <lightning-helptext class="slds-m-left_xx-small"
-                            content='help text for Hospital Sales'></lightning-helptext>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>
@@ -109,8 +105,6 @@
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
                         <b>Fundraising:</b>
-                        <lightning-helptext class="slds-m-left_xx-small"
-                            content='help text for Fundraising'></lightning-helptext>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>
@@ -135,9 +129,7 @@
             <div class="slds-text-align_left">
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        <b>TrainingServices:</b>
-                        <lightning-helptext class="slds-m-left_xx-small"
-                            content='The number of cumulative training classes from Salesforce Training Services. This is experimental reference data. May not be exact but is generally accurate.'></lightning-helptext>
+                        <b>Training Services:</b>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>
@@ -163,8 +155,6 @@
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
                         <b>Related Accounts:</b>
-                        <lightning-helptext class="slds-m-left_xx-small"
-                            content='Indicates accounts used to compile totals. Matching logic is system driven, it cannot be modified. Salesforce Training Services accounts produce Training Courses total. Salesforce Biomed accounts produce Blood Drive totals.'></lightning-helptext>
                     </lightning-layout-item>
                 </lightning-layout>
             </div>
@@ -173,7 +163,7 @@
             <div class="slds-text-align_left slds-m-bottom_small">
                 <lightning-layout size="12">
                     <lightning-layout-item size="6" class="slds-p-horizontal_small">
-                        Number of Accounts : <a href='#' title="See Account Details"
+                        Number of Accounts: <a href='#' title="See Account Details"
                             onclick={handleModalClickAccountDetails}>{numberOfAccounts}</a>
                     </lightning-layout-item>
                 </lightning-layout>

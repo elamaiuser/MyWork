@@ -808,9 +808,10 @@ class BaseGenerator {
   }
 
   onDriveDataChanged(properties, {
-    skipNotifyDriveChanged = false, 
-    changedFromApplyingDCRs = false, 
-    isCalledFromDCRProcessingModal = false
+    skipNotifyDriveChanged = false,
+    changedFromApplyingDCRs = false,
+    isCalledFromDCRProcessingModal = false,
+    preserveExistingSlots = false
   } = {}) {
     this.isRegenerateDriveChange = isCalledFromDCRProcessingModal && properties.filter(record => record.targetName === 'regenerateDrive').length > 0 ;
     
@@ -843,7 +844,8 @@ class BaseGenerator {
     })
 
     const skipGenerateSlotsProperties = ['roleTimeDetailChanged', 'travelTimeChanged'];
-    this.masterData.skipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
+    const derivedSkipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
+    this.masterData.skipGenerateSlots = (preserveExistingSlots && this.masterData.skipGenerateSlots) || derivedSkipGenerateSlots;
 
     let actionGroups = this.mergeFieldChanged(properties, this.DRIVE_FIELD_CHANGE_MAPPING, this.DRIVE_ACTION_GROUPS_ORDER);
     return this.runActions(actionGroups)
@@ -1169,29 +1171,38 @@ class BaseGenerator {
     let shift = this.drive.driveShifts.find((e) => e.key == shiftKey);
     let newList = this.helper.getDriveShiftJobs(shift);
 
-    // Insert a new job (no id) for the current drive — do NOT update the existing job.
-    // The existing role must remain; the user is adding a new role on top of it.
-    const newJob = {
-      key:                            generateUUID(),  // LWC in-memory identifier — not persisted to Salesforce
-      driveId:                        this.drive.id,
-      driveShiftId:                   shift.id,
-      driveSiteId:                    this.drive.driveSiteId,
-      start:                          shift.start,
-      finish:                         shift.finish,
-      volunteerRole:                  job.volunteerRole,
-      redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
-      quantity:                       job.quantity,
-      isLocked:                       !!job.isLocked,
-      volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
-      otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
-      isManuallyCreated:              true,
-      manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
-      jobAllocationTimeSource:        false,
-      jobTags:                        [],
-      bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives,
-    };
-
-    newList.push(newJob);
+    const existingJobIndex = newList.findIndex(item => item.volunteerRole === job.volunteerRole);
+    if (existingJobIndex >= 0) {
+      newList[existingJobIndex] = {
+        ...newList[existingJobIndex],
+        redcrossVolunteerQuantity:          job.redcrossVolunteerQuantity,
+        quantity:                           job.quantity,
+        isLocked:                           job.isLocked,
+        volunteerAdjustmentReason:          job.volunteerAdjustmentReason,
+        otherVolunteerAdjustmentReason:     job.otherVolunteerAdjustmentReason,
+        bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives,
+      };
+    } else {
+      newList.push({
+        key:                            generateUUID(),
+        driveId:                        this.drive.id,
+        driveShiftId:                   shift.id,
+        driveSiteId:                    this.drive.driveSiteId,
+        start:                          shift.start,
+        finish:                         shift.finish,
+        volunteerRole:                  job.volunteerRole,
+        redcrossVolunteerQuantity:      job.redcrossVolunteerQuantity,
+        quantity:                       job.quantity,
+        isLocked:                       !!job.isLocked,
+        volunteerAdjustmentReason:      job.volunteerAdjustmentReason,
+        otherVolunteerAdjustmentReason: job.otherVolunteerAdjustmentReason,
+        isManuallyCreated:              true,
+        manuallyCreatedFrom:            MANUALLY_CREATED_FROM.DRIVE_SCHEDULING,
+        jobAllocationTimeSource:        false,
+        jobTags:                        [],
+        bulkAddVolunteerJobsSelectedDrives: job.bulkAddVolunteerJobsSelectedDrives,
+      });
+    }
     shift.jobs = newList;
     return this.notifyDriveChanged();
   }
@@ -1609,7 +1620,7 @@ class BaseGenerator {
     });
 
     printLog('calculateRecurrenceNewVolunteerJobs',
-      '| new jobs to save:', newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
+      '| jobs to save:', newJobs.map(j => ({ driveId: j.driveId, driveShiftId: j.driveShiftId, driveDate: j.start?.substring(0, 10), volunteerRole: j.volunteerRole, quantity: j.quantity, redcrossVolunteerQuantity: j.redcrossVolunteerQuantity }))
     );
 
     return Promise.resolve(newJobs);
