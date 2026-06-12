@@ -247,10 +247,16 @@ public with sharing class BSF_TaskPlanningService {
                 templateChangedIds.add(opp.Parent_Template_Id__c);
                 OpportunityIds.add(opp.Id);
             }
+            if(opp.is_Template__c && opp.planning_path__c != old.planning_path__c) {
+                templateChangedIds.add(opp.Id);                
+            }
         }
 
         if(!templateChangedIds.isEmpty() && !OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
             Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds, OpportunityIds), 50);
+        }
+        if(!templateChangedIds.isEmpty() && OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
         }
     }
 
