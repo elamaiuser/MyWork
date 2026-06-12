@@ -110,7 +110,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>additionalFilter</name>
-                    <value>Status != &#39;Completed&#39;</value>
+                    <value>Status != &apos;Completed&apos;</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>childObjectName</name>
