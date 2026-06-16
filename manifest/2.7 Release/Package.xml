@@ -438,6 +438,7 @@
     <members>Task_Report_Link.Volunteer_Quick_Guide</members>
     <members>sked_Workday_XML_Template.Leave_Report</members>
     <members>sked_Workday_XML_Template.RealID_Compliance_Report</members>
+    <members>User_Special_Permission.Lead360_Test_User</members>
     <name>CustomMetadata</name>
   </types>
   <types>
