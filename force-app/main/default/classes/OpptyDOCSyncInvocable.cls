@@ -1,4 +1,4 @@
-public with sharing class OpptyDOCSyncInvocable {
+public without sharing class OpptyDOCSyncInvocable {
 
     @InvocableMethod(
         label='Opportunity DOC Sync'
@@ -23,7 +23,12 @@ public with sharing class OpptyDOCSyncInvocable {
             
             if (!opptysToUpdate.isEmpty()) {
                 skedHubBase.BypassUpdateTriggers = true;
+                TriggerHandler.bypass('AccountTriggerHandler');
+                TriggerHandler.bypass('DriveTriggerHandler');
+                TriggerHandler.bypass('SiteTriggerHandler');
+                TriggerHandler.bypass('BSFTaskChecklistTriggerHandler');
                 TriggerHandler.bypass('OpportunityTriggerHandler');
+                TriggerHandler.bypass('OpportunitySplitTriggerHandler');
                 
                 Database.SaveResult[] srList = Database.update(opptysToUpdate, false);
                 

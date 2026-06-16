@@ -278,8 +278,9 @@
                 <fields>
                     <name>X2RBC_Asset</name>
                     <dataType>Boolean</dataType>
-                    <fieldText># Of 2RBC Assets</fieldText>
+                    <fieldText>#of 2RBC Assets</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isDisabled>
                         <elementReference>disable2RBCAssetField</elementReference>
                     </isDisabled>
@@ -471,6 +472,7 @@
                     <dataType>Boolean</dataType>
                     <fieldText>Do you want to update Opportunity?</fieldText>
                     <fieldType>InputField</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <styleProperties>
                         <verticalAlignment>
@@ -581,7 +583,7 @@
     &lt;/thead&gt;
     &lt;tbody&gt;
         &lt;tr&gt;
-            &lt;td style=&quot;border:1px solid #ddd; padding:8px;&quot;&gt;# of 2RBC Assets&lt;/td&gt;
+            &lt;td style=&quot;border:1px solid #ddd; padding:8px;&quot;&gt;#of 2RBC Assets&lt;/td&gt;
             &lt;td style=&quot;border:1px solid #ddd; padding:8px;&quot;&gt;{!X2RBCAssetValue}&lt;/td&gt;
         &lt;/tr&gt;
     &lt;/tbody&gt;
