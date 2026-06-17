@@ -2,81 +2,173 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
   <types>
     <members>AccountService</members>
+    <members>AccountTriggerTest</members>
+    <members>AccountStatusUpdateHelper</members>
     <members>AccountTriggerHandler</members>
     <members>BSFTaskChecklistTriggerHandler</members>
+    <members>BSFTaskChecklistTrigger_Test</members>
+    <members>BSF_AccUpdPlanningPathOneTimeBatchTest</members>
+    <members>BSF_AccessControlManager</members>
+    <members>BSF_AccessControlManagerTest</members>
     <members>BSF_AccountTaskPlanningCascadeBatchTest</members>
+    <members>BSF_AccountUpdPlanningPathOneTimeBatch</members>
     <members>BSF_BatchSendNotificationToDM</members>
     <members>BSF_BatchSendNotificationToDM_Test</members>
     <members>BSF_BatchTaskSync</members>
     <members>BSF_Batch_CreatePublicityTasks</members>
+    <members>BSF_Batch_CreatePublicityTasksOnOrders</members>
     <members>BSF_Batch_CreatePublicityTasksTest</members>
     <members>BSF_Batch_RecruitmentTaskCreation</members>
     <members>BSF_Batch_RecruitmentTaskCreation_Test</members>
+    <members>BSF_Batch_TaskRename</members>
+    <members>BSF_Batch_TaskRename_Test</members>
+    <members>BSF_Batch_UpdateAccountStatusScheduler</members>
+    <members>BSF_Batch_UpdateAccountStatus_Test</members>
+    <members>BSF_Batch_UpdateTaskType</members>
+    <members>BSF_Batch_UpdateTaskType_Test</members>
     <members>BSF_Constants</members>
     <members>BSF_LeaveReturnBatch</members>
     <members>BSF_LeaveReturnBatch_Test</members>
+    <members>BSF_OpsRecordToTimeBlockMapper</members>
+    <members>BSF_OpsRecordToTimeBlockMapper_Test</members>
+    <members>BSF_OpsRecordWorkdaySubmissionBatch</members>
+    <members>BSF_OpsRecordWorkdaySubmissionBatch_Test</members>
     <members>BSF_RealIdComplianceBatch</members>
     <members>BSF_RealIdComplianceBatch_Test</members>
     <members>BSF_TaskCreationBatch</members>
     <members>BSF_TaskCreationBatch_Test</members>
     <members>BSF_TaskPlanningService</members>
     <members>BSF_TaskPlanningServiceTest</members>
+    <members>BSF_TaskPlanningWizardController</members>
     <members>BSF_TaskPlanningWizardControllerTest</members>
+    <members>BSF_TemplateTaskPlanningCascadeBatch</members>
     <members>BSF_TemplateTaskPlanningCascadeBatchTest</members>
     <members>BSF_WorkdayBatchHelper</members>
+    <members>BSF_WorkdayDirectSubmissionConfig</members>
+    <members>BSF_WorkdayOpsRecordDirectService</members>
+    <members>BSF_WorkdayOpsRecordDirectService_Test</members>
     <members>DriveResourceAllocationBatch</members>
     <members>DriveResourceAllocationBatchTest</members>
     <members>DriveTriggerHandler</members>
     <members>DriveTriggerService</members>
+    <members>DriveTriggerServiceTest</members>
     <members>GenerateDriveWorksheetPdfController</members>
+    <members>GenerateDriveWorksheetPdfControllerTest</members>
+    <members>GenericRelatedListLWCController</members>
+    <members>GenericRelatedListLWCControllerTest</members>
     <members>OpportunityService</members>
     <members>OpportunityTriggerHandler</members>
+    <members>OpportunityTriggerTest</members>
+    <members>SFC360_Lead360ViewController</members>
+    <members>SFC360_Lead360ViewController_Test</members>
     <members>StandardTaskGenerationBatch</members>
     <members>StandardTaskGenerationBatchTest</members>
     <members>TaskChecklistController</members>
+    <members>TaskChecklistController_Test</members>
+    <members>TaskForMigratedDrivesBatch</members>
+    <members>TaskForMigratedDrivesBatchTest</members>
     <members>TaskGenerationBatch</members>
     <members>TaskGenerationBatch_Test</members>
     <members>TaskPlatformEventTriggerTest</members>
     <members>TaskService</members>
+    <members>TaskTriggerHandler</members>
     <members>TaskTriggerTest</members>
-    <members>skedAvailabilityHandler</members>
+    <members>createPreDriveTaskBatch</members>
+    <members>createPreDriveTaskBatchTest</members>
     <members>skedAvailabilityService</members>
     <members>skedAvailabilityService_Test</members>
+    <members>skedBiddingExpirationBatch</members>
+    <members>skedBiddingExpirationSchedulable</members>
+    <members>skedBiddingExpiration_Test</members>
+    <members>skedCollectionOpTimeBlockService</members>
+    <members>skedCollectionOpTimeBlockService_Test</members>
+    <members>skedCollectionOpStagingLocTrigger_Test</members>
+		<members>skedCollectionOpStagingLocationHandler</members>
     <members>skedConstants</members>
     <members>skedDriveChangeRequestHandler</members>
     <members>skedDriveChangeRequestHandler_Test</members>
     <members>skedDriveRankingBatch</members>
+    <members>skedDriveRankingBatch_Test</members>
+    <members>skedExceptionLogService</members>
+    <members>skedJobAllocationHandler</members>
+    <members>skedJobAllocationTrigger_Test</members>
     <members>skedJobHandler</members>
+    <members>skedJobTrigger_Test</members>
     <members>skedMappingConfigContainer</members>
+    <members>skedMappingConfigController_Test</members>
     <members>skedModels</members>
+    <members>skedModels_Test</members>
     <members>skedNightlyRefreshTTIndexBatch_Test</members>
     <members>skedNightlyRefreshTravelTimeIndexBatch</members>
+    <members>skedNightlyUpdateCoApRoleTargetsBatch</members>
+    <members>skedOperationRecordUtils</members>
+    <members>skedOpsRecordApiData</members>
+    <members>skedOpsRecordApiManager_Test</members>
     <members>skedRacController</members>
     <members>skedRacStory_Test</members>
+    <members>skedResourceHandler</members>
+    <members>skedResourceTrigger_Test</members>
     <members>skedStaffingBudgetHandler</members>
     <members>skedStaffingBudgetUtils</members>
+    <members>skedStaffingBudgetUtils_Test</members>
     <members>skedTravelTimeIndexItemHandler</members>
+    <members>skedTravelTimeIndexItemHandler_Test</members>
     <members>skedTtiiCoPopulationOneTimeBatch</members>
     <members>skedTtiiCoPopulationOneTimeBatch_Test</members>
+    <members>skedUpdateCoApRoleTargetsBatchHelper</members>
+    <members>skedUpdateCoApRoleTargetsBatch_Test</members>
     <members>skedUtils</members>
-		<members>skedUtils_Test</members>
+    <members>skedUtils_Test</members>
     <members>skedVehicleFutureInactivateBatch</members>
     <members>skedVehicleFutureInactivateBatch_Test</members>
     <members>skedWorkdayAbsenceManagement</members>
     <members>skedWorkdayApiManager</members>
+    <members>skedWorkdayApiManager_Test</members>
     <members>skedWorkdayGetPlanBalanceResponse</members>
+    <members>skedWorkdayImportTimeBlockResponse</members>
+    <members>skedWorkdayTimeTrackingBsvc</members>
+    <members>BSF_WorkdayOpsRecordDirectService_Test</members>
     <members>skedWorkdayUtils</members>
     <members>skedWorkdayUtils_Test</members>
+    <members>slwcAllocationService</members>
+    <members>slwcAllocationService_Test</members>
+    <members>slwcDriveService</members>
+    <members>slwcDriveService_Test</members>
+    <members>slwcDriveShiftTradeService</members>
+    <members>slwcDriveShiftTradeService_Test</members>
+    <members>slwcOperationRecordService</members>
+    <members>slwcOperationRecordService_Test</members>
     <members>slwcResourceService</members>
+    <members>slwcResourceService_Test</members>
+    <members>userService</members>
+    <members>userServiceTest</members>
     <name>ApexClass</name>
   </types>
   <types>
     <members>TaskPlatformEvent</members>
+    <members>assignResourcesToUsersBasedOnConfig</members>
     <name>ApexTrigger</name>
+  </types>
+  <types>
+    <members>GenericRelatedListContainer</members>
+    <name>AuraDefinitionBundle</name>
   </types>
   <types>
     <members>Account.Defunct_Effective_Date__c</members>
     <members>Account.Planning_Path__c</members>
+    <members>Activity.Location__c</members>
+    <members>Activity.Task_Deduplication_Id__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Attach_Workday_XML_Log__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Business_Distribution_List__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Notification_From_Email__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Ops_Record_Batch_Scope_Size__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Reschedule_Delay_Minutes__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_Technical_Team_Distribution_List__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Emp_Rpt_URL__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_End_Date_Param__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Import_Blocks_URL__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Start_Date_Param__c</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt.sked_WD_Worker_Param__c</members>
     <members>BSF_Workday_Leave_Config__c.Batch_Size__c</members>
     <members>BSF_Workday_Leave_Config__c.Initial_Backfill_Date__c</members>
     <members>BSF_Workday_Leave_Config__c.Last_Successful_Run_Date__c</members>
@@ -93,18 +185,53 @@
     <members>BSF_Workday_Staging__c.Sync_Status__c</members>
     <members>BSF_Workday_Staging__c.Workday_Last_Functionally_Updated__c</members>
     <members>BSF_Workday_Staging__c.Workday_Record_Created_Moment__c</members>
+    <members>Biomed_Collection_Op_Center__c.Grand_Total_Available_Fixed_Site__c</members>
+    <members>Biomed_Collection_Op_Center__c.Grand_Total_Available_Mobile__c</members>
+    <members>Biomed_Collection_Op_Center__c.Grand_Total_Needed_Fixed_Site__c</members>
+    <members>Biomed_Collection_Op_Center__c.Grand_Total_Needed_Mobile__c</members>
     <members>Biomed_Collection_Op_Center__c.sked_Next_Travel_Time_Refresh_Date__c</members>
+    <members>Collection_Operation_Availability__c.Total_Actual_Resources_Fixed_Site__c</members>
+    <members>Collection_Operation_Availability__c.Total_Actual_Resources_Mobile__c</members>
+    <members>Collection_Operation_Availability__c.Total_Target_Fixed_Site__c</members>
+    <members>Collection_Operation_Availability__c.Total_Target_Mobile__c</members>
+    <members>Opportunity.Drive_Status__c</members>
     <members>Opportunity.Parent_Template_Id__c</members>
     <members>Planned_Task__c.Calculated_Creation_Date__c</members>
+    <members>Task.Type</members>
+    <members>Task_Checklist_Setting__mdt.Subject__c</members>
+    <members>Task_Checklist_Setting_mdt.Subject__c</members>
+    <members>Task_Definition__c.Assigned_To__c</members>
+    <members>Task_Definition__c.Category__c</members>
+    <members>Task_Definition__c.Creation_Date_Offset__c</members>
+    <members>Task_Definition__c.Description__c</members>
+    <members>Task_Definition__c.Due_Date_Offset__c</members>
+    <members>Task_Definition__c.Scheduling_Method__c</members>
+    <members>Task_Definition__c.Subject__c</members>
+    <members>Task_Definition__c.Task_Sub_Type__c</members>
+    <members>Task_Definition__c.Task_Type__c</members>
+    <members>Task_Package_Item__c.Task_Definition__c</members>
+    <members>Task_Package_Item__c.Task_Package__c</members>
+    <members>Task_Package__c.Hide_Select_All__c</members>
+    <members>Task_Package__c.Package_Name__c</members>
+    <members>Task_Package__c.Sort_Order__c</members>
     <members>Task_Platform_Event__e.Planned_Task_Id__c</members>
     <members>Task_Platform_Event__e.RecordTypeId__c</members>
     <members>Task_Platform_Event__e.Type__c</members>
+    <members>Task_Reassignment_Matrix__mdt.Task_Type__c</members>
+    <members>Task_Report_Link__mdt.Task_Type__c</members>
     <members>sked_Drive_Change_Request_Event__e.sked_Drive_Change_Request_Id__c</members>
     <members>sked_Drive_Change_Request_Event__e.sked_Opportunity_Id__c</members>
+    <members>sked_Drive__c.sked_Contention_Resolution__c</members>
+    <members>sked_Operation_Record_Staff__c.sked_Time_Already_Existed_In_Workday__c</members>
+    <members>sked_Operation_Record_Staff__c.sked_Workday_Submission_Status__c</members>
+    <members>sked_Operation_Record__c.sked_WD_Last_Submission_Date__c</members>
+    <members>sked_Operation_Record__c.sked_Workday_Import_Process_Id__c</members>
+    <members>sked_Operation_Record__c.sked_Workday_Submission_Attempt__c</members>
+    <members>sked_Operation_Record__c.sked_Workday_Submission_Status__c</members>
     <members>sked_Travel_Time_Index_Item__c.sked_Collection_Operation__c</members>
     <members>sked_Travel_Time_Index_Item__c.sked_Is_Sync_Refresh_Required__c</members>
-    <members>sked__Availability__c.sked_Related_Call_Out__c</members>
     <members>sked__Availability__c.sked_Requested_Time_Off_Hours__c</members>
+    <members>sked__Debug_Log__c.sked__Type__c</members>
     <members>sked__Location__c.sked_Next_Travel_Time_Refresh_Date__c</members>
     <members>sked__Resource__c.sked_Future_Inactive_Date__c</members>
     <members>sked__Resource__c.sked_Real_ID_Expiration_Date__c</members>
@@ -118,13 +245,16 @@
     <members>BSF_Task_Batch_Size</members>
     <members>BSF_Task_Field_Mapping_JSON</members>
     <members>BSF_Task_Owner_Hierarchy_JSON</members>
+    <members>FIXSITE_RESTRICTED_TASKS</members>
     <members>Online_Donor_Message_Length_Error</members>
     <name>CustomLabel</name>
   </types>
-  <types>      
+  <types>
+    <members>BSF_Access_Control_Rule.HRP_12478_Field_Permission_Set_EDIT</members>
+    <members>BSF_Access_Control_Rule.HRP_12478_Field_Permission_Set_Read</members>
     <members>BSF_Access_Control_Rule.HRP_13176_Field_Permission_Set</members>
     <members>BSF_Access_Control_Rule.HRP_13176_Field_Permission_Set_Read</members>
-    <members>BSF_Access_Control_Rule.HRP_13359_Field_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_13441_Class_Permission_Set</members>
     <members>BSF_Access_Control_Rule.HRP_13861_Field_Permission_Set</members>
     <members>BSF_Access_Control_Rule.HRP_13861_Field_Permission_Set_Read</members>
     <members>BSF_Access_Control_Rule.HRP_13941_Drive_Change_Event_Field_PS</members>
@@ -137,27 +267,225 @@
     <members>BSF_Access_Control_Rule.HRP_1524_Field_PermissionSet_WDStaging</members>
     <members>BSF_Access_Control_Rule.HRP_15854_Field_Permission_Set</members>
     <members>BSF_Access_Control_Rule.HRP_15854_Field_Permission_Set_2</members>
+    <members>BSF_Access_Control_Rule.HRP_16122_Class_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_1</members>
+    <members>BSF_Access_Control_Rule.HRP_16122_Field_Permission_Set_2</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Account_Path_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Class_Component</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Opportunity_Path_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Planned_Task_Object_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Task_Planning_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Task_Planning_Object_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Task_Sel_Pkg_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16123_Task_Sel_Pkg_Object_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Definition_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Definition_Object_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Item_Object_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16124_Task_Package_Object_PS</members>
     <members>BSF_Access_Control_Rule.HRP_16777_Class_Permission_Set</members>
     <members>BSF_Access_Control_Rule.HRP_16777_Planned_Task_Field_PS</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_CO_AP_Field_Permissions</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_CO_AP_Field_Permissions_Read</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_CO_AP_Total_Field_Permissions</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_CO_Field_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_CO_Field_Permission_Set_Read</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_Field_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_16916_Field_Permission_Set_Read</members>
     <members>BSF_Access_Control_Rule.HRP_16928_Field_Permission_Set_Read</members>
+    <members>BSF_Access_Control_Rule.HRP_17034_Class_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_17133_Class_Permission_Set</members>
+    <members>BSF_Access_Control_Rule.HRP_17373_Field_Permission_Set_EDIT</members>
+    <members>BSF_Access_Control_Rule.OpRecord_Staff_Workday_Direct_Field_2_7</members>
+    <members>BSF_Access_Control_Rule.OpRecord_Workday_Direct_Apex_2_7</members>
+    <members>BSF_Access_Control_Rule.OpRecord_Workday_Direct_Field_2_7</members>
+    <members>BSF_Access_Control_Rule.WD_Direct_Sub_Config_Field_27</members>
+    <members>BSF_Workday_Direct_Submission_Config.*</members>
+    <members>BSF_Workday_Direct_Submission_Config.Default_Config</members>
+    <members>Custom_Messages.Batch_Size_of_skedBiddingExpirationBatch</members>
+    <members>Task_Checklist_Setting.AA_Unit_Projection</members>
+    <members>Task_Checklist_Setting.AAandLatinoProjection</members>
+    <members>Task_Checklist_Setting.Account_Strategy_Notes</members>
+    <members>Task_Checklist_Setting.Account_Strategy_Notes1</members>
+    <members>Task_Checklist_Setting.After_Drive_Analysis</members>
+    <members>Task_Checklist_Setting.After_Drive_Analysis1</members>
+    <members>Task_Checklist_Setting.After_Drive_Analysis2</members>
+    <members>Task_Checklist_Setting.All_actions</members>
+    <members>Task_Checklist_Setting.AllowedProfileList</members>
+    <members>Task_Checklist_Setting.Annual_Account_Strategy</members>
+    <members>Task_Checklist_Setting.Annual_Account_Strategy1</members>
+    <members>Task_Checklist_Setting.Any_changes_to_location_or_construction</members>
+    <members>Task_Checklist_Setting.Any_odors_caused_by_construction</members>
+    <members>Task_Checklist_Setting.Ask_sponsor_changes_with_site</members>
+    <members>Task_Checklist_Setting.Available_Campaigns</members>
+    <members>Task_Checklist_Setting.BPL_Donors</members>
+    <members>Task_Checklist_Setting.BPL_Emergency_Action_Plan</members>
+    <members>Task_Checklist_Setting.BPL_connect_to_the_live_schedule</members>
+    <members>Task_Checklist_Setting.BPL_has_access_to_BDMP_Sponsor</members>
+    <members>Task_Checklist_Setting.BSF_Changes</members>
+    <members>Task_Checklist_Setting.Confirm_blood_drive_logistics_sponsor</members>
+    <members>Task_Checklist_Setting.Confirm_name_of_Collections_Supervisor</members>
+    <members>Task_Checklist_Setting.Confirm_no_issues_with_AC_Heat</members>
+    <members>Task_Checklist_Setting.Contacted_Sponsor</members>
+    <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_result2</members>
+    <members>Task_Checklist_Setting.Contacted_sponsor_provided_drive_results</members>
+    <members>Task_Checklist_Setting.Contingency_Worksheet</members>
+    <members>Task_Checklist_Setting.Customer_Service_Issues2</members>
+    <members>Task_Checklist_Setting.Customer_Service_Issues_Post_Drive_Task</members>
+    <members>Task_Checklist_Setting.Customer_service_issues_addressed</members>
+    <members>Task_Checklist_Setting.Customer_service_issues_addressed2</members>
+    <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled</members>
+    <members>Task_Checklist_Setting.Dates_need_to_confirmed_moved_cancelled1</members>
+    <members>Task_Checklist_Setting.Discuss_Appointments</members>
+    <members>Task_Checklist_Setting.Discuss_Opportunity</members>
+    <members>Task_Checklist_Setting.Discuss_security_needs_Sponsor</members>
+    <members>Task_Checklist_Setting.Discuss_volunteer_needs_sponsor</members>
+    <members>Task_Checklist_Setting.Diverse_Donor_Recruitment_Strategy_Text</members>
+    <members>Task_Checklist_Setting.Document_who_will_meet_our_staff</members>
+    <members>Task_Checklist_Setting.Donor_Appointments</members>
+    <members>Task_Checklist_Setting.Donor_Guidelines</members>
+    <members>Task_Checklist_Setting.Early_Close_affiliation_drive</members>
+    <members>Task_Checklist_Setting.Early_Close_affiliation_drive2</members>
+    <members>Task_Checklist_Setting.Ensure_tactics_from_contingency_workshet</members>
+    <members>Task_Checklist_Setting.Following_the_appointment_schedule</members>
+    <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL</members>
+    <members>Task_Checklist_Setting.Future_dates_confirmed_by_BPL1</members>
+    <members>Task_Checklist_Setting.Gray_Sky_Account</members>
+    <members>Task_Checklist_Setting.Gray_Sky_Account1</members>
+    <members>Task_Checklist_Setting.Highlights_and_Feedback2</members>
+    <members>Task_Checklist_Setting.Highlights_and_Feedback_Post_Drive_Task</members>
+    <members>Task_Checklist_Setting.Inform_BPL</members>
+    <members>Task_Checklist_Setting.Issues_changes_with_parking</members>
+    <members>Task_Checklist_Setting.Latino_Unit_Projection</members>
+    <members>Task_Checklist_Setting.New_information_on_blood_donations</members>
+    <members>Task_Checklist_Setting.Opportunity_to_convert_WB_donations</members>
+    <members>Task_Checklist_Setting.Provide_staff_s_arrival_time</members>
+    <members>Task_Checklist_Setting.Publicity_Items</members>
+    <members>Task_Checklist_Setting.Reconfirm_blood_drive_date</members>
+    <members>Task_Checklist_Setting.Recruitment_Committee_Exists</members>
+    <members>Task_Checklist_Setting.Recruitment_Planning_Meeting_Schedule_Sp</members>
+    <members>Task_Checklist_Setting.Recruitment_Successful</members>
+    <members>Task_Checklist_Setting.Reminder_plan_has_been_initiated</members>
+    <members>Task_Checklist_Setting.Review_blood_drive_productivity_sponsor</members>
+    <members>Task_Checklist_Setting.Review_plan_on_mode_of_communication</members>
+    <members>Task_Checklist_Setting.Review_publicity_materials_Sponsor</members>
+    <members>Task_Checklist_Setting.Review_scheduled_appointments</members>
+    <members>Task_Checklist_Setting.Review_scheduled_volunteers</members>
+    <members>Task_Checklist_Setting.Routine_Appointment</members>
+    <members>Task_Checklist_Setting.Schedule_Follow_Up</members>
+    <members>Task_Checklist_Setting.Schedule_Post_Drive_Analysis_for_BPL</members>
+    <members>Task_Checklist_Setting.Site_has_a_large_trashcan_available</members>
+    <members>Task_Checklist_Setting.Special_protocols_on_the_site</members>
+    <members>Task_Checklist_Setting.Sponsor_Applicable_drive_affiliations</members>
+    <members>Task_Checklist_Setting.Sponsor_Confirmed_all_dates_calendar</members>
+    <members>Task_Checklist_Setting.Sponsor_Discuss_ARC_Weapons_Policy</members>
+    <members>Task_Checklist_Setting.Sponsor_Managing_Donor_Appointments</members>
+    <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL</members>
+    <members>Task_Checklist_Setting.Sponsor_Satisfaction_Survey_with_BPL2</members>
+    <members>Task_Checklist_Setting.Sponsor_marketing_and_communications</members>
+    <members>Task_Checklist_Setting.Sponsor_table_and_chairs_ready_sponsor</members>
+    <members>Task_Checklist_Setting.Sponsor_will_have_table_and_chairs_ready</members>
+    <members>Task_Checklist_Setting.Strong_Recruitment_Text</members>
+    <members>Task_Checklist_Setting.Task Checklist Setting Name</members>
+    <members>Task_Checklist_Setting.Type_A_BPL</members>
+    <members>Task_Checklist_Setting.Update_Rollover_Consideration</members>
+    <members>Task_Checklist_Setting.Update_Rollover_Consideration1</members>
+    <members>Task_Checklist_Setting.Updated_Anticipated_Donors</members>
+    <members>Task_Checklist_Setting.Updated_Anticipated_Donors1</members>
+    <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives</members>
+    <members>Task_Checklist_Setting.What_can_be_improved_for_future_drives2</members>
+    <members>Task_Checklist_Setting.space_for_blood_drive_is_reserved</members>
+    <members>Task_Reassignment_Matrix.Marketing_Exception</members>
+    <members>Task_Reassignment_Matrix.One_Week_Check_in</members>
+    <members>Task_Reassignment_Matrix.Post_Drive_Analysis_AM</members>
+    <members>Task_Reassignment_Matrix.Post_Drive_Analysis_SBPM</members>
+    <members>Task_Reassignment_Matrix.Publicity_Order_Not_Created</members>
+    <members>Task_Reassignment_Matrix.Publicity_Review_Needed</members>
+    <members>Task_Reassignment_Matrix.Recruitment_Task</members>
+    <members>Task_Reassignment_Matrix.Security_Information_Completion</members>
+    <members>Task_Reassignment_Matrix.Sponsor_Planning</members>
+    <members>Task_Reassignment_Matrix.Template_Order_Task</members>
+    <members>Task_Reassignment_Matrix.X72_Hour</members>
+    <members>Task_Report_Link.APL_Material_Review_and_Approval_Form</members>
+    <members>Task_Report_Link.After_Drive_Analysis</members>
+    <members>Task_Report_Link.After_Drive_Analysis_AM</members>
+    <members>Task_Report_Link.After_Drive_Analysis_SBPM</members>
+    <members>Task_Report_Link.Authorization_Form</members>
+    <members>Task_Report_Link.BPL_Thank_You_Flyer</members>
+    <members>Task_Report_Link.BPL_Thank_You_Flyer_AM</members>
+    <members>Task_Report_Link.BPL_Thank_You_Flyer_SBPM</members>
+    <members>Task_Report_Link.Blood_Drive_Ambassador_Playbook</members>
+    <members>Task_Report_Link.Community_Agreement_Policy</members>
+    <members>Task_Report_Link.Contingency_Worksheet_Recruitment_Task</members>
+    <members>Task_Report_Link.Contingency_Worksheet_Task</members>
+    <members>Task_Report_Link.DRMS_Audit_report</members>
+    <members>Task_Report_Link.Donor_Appointments_Recruitment_Task</members>
+    <members>Task_Report_Link.Drive_Worksheet_Report</members>
+    <members>Task_Report_Link.Ferritin_Deferrals</members>
+    <members>Task_Report_Link.Ferritin_Deferrals_AM</members>
+    <members>Task_Report_Link.Ferritin_Deferrals_SBPM</members>
+    <members>Task_Report_Link.In_Memory_of_In_Honor_of_Resource_Suppor</members>
+    <members>Task_Report_Link.Managing_Donor_Appointment_Playbook</members>
+    <members>Task_Report_Link.Managing_Donor_Appointments_Playbook_72</members>
+    <members>Task_Report_Link.Request_Marketing_Communications_Suppo</members>
+    <members>Task_Report_Link.Same_Day_Rebooking_Results</members>
+    <members>Task_Report_Link.Same_Day_Rebooking_Results_AM</members>
+    <members>Task_Report_Link.Same_Day_Rebooking_Results_SBPM</members>
+    <members>Task_Report_Link.Site_Playbook</members>
+    <members>Task_Report_Link.Sponsor_Planning_Report</members>
+    <members>Task_Report_Link.Temporary_License_Agreement</members>
+    <members>Task_Report_Link.Volunteer_Quick_Guide</members>
     <members>sked_Workday_XML_Template.Leave_Report</members>
     <members>sked_Workday_XML_Template.RealID_Compliance_Report</members>
+    <members>User_Special_Permission.Lead360_Test_User</members>
     <name>CustomMetadata</name>
   </types>
   <types>
+    <members>BSF_Access_Control_Rule__mdt</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt</members>
     <members>BSF_Workday_Leave_Config__c</members>
     <members>BSF_Workday_RealID_Config__c</members>
     <members>BSF_Workday_Staging__c</members>
+    <members>Task_Definition__c</members>
+    <members>Task_Package_Item__c</members>
+    <members>Task_Package__c</members>
+    <members>User_Special_Permission__mdt</members>
     <members>sked_Drive_Change_Request_Event__e</members>
+    <members>sked_Operation_Record_Staff__c</members>
+    <members>sked_Operation_Record__c</members>
     <name>CustomObject</name>
+  </types>
+  <types>
+    <members>Lead_360_Visibility_Permission</members>
+    <name>CustomPermission</name>
+  </types>
+  <types>
+    <members>Task_Definition__c</members>
+    <members>Task_Package__c</members>
+    <name>CustomTab</name>
   </types>
   <types>
     <members>Planned_Task__c.Task_Generation_Fields</members>
     <name>FieldSet</name>
   </types>
   <types>
+    <members>APS_Homepage</members>
+    <members>Biomed_Recruitment_Record_Page</members>
+    <members>Drives_on_Calendar_Record_Page</members>
+    <members>Fixed_Site_Account_Record_Page</members>
+    <members>Fixed_Site_Opp_Record_Page</members>
+    <members>Home_Page_Default1</members>
+    <members>Lead_Record_Page1</members>
     <members>Location_Record_Page</members>
     <members>Location_Record_Page_for_Collection_Management_User</members>
+    <members>Location_Record_Page_for_Collection_Management_User1</members>
+    <members>Location_Record_Page_for_DRD_User</members>
+    <members>Main_Homepage</members>
+    <members>Mobile_Account_Record_Page</members>
+    <members>Mobile_Opp_Record_Page</members>
+    <members>Opportunity_Record_Page</members>
     <name>FlexiPage</name>
   </types>
   <types>
@@ -166,44 +494,105 @@
     <name>Flow</name>
   </types>
   <types>
+    <members>sked_Drive_Contention</members>
+    <name>GlobalValueSet</name>
+  </types>
+  <types>
     <members>Account-APS Management Fixed Site Account Layout</members>
-		<members>Account-APS Management Mobile Account Layout</members>
-		<members>Account-APS Planner Fixed Site Account Layout</members>
-		<members>Account-APS Planner Mobile Account Layout</members>
-		<members>Account-APS Scheduler Fixed Site Account Layout</members>
-		<members>Account-APS Scheduler Mobile Account Layout</members>
-		<members>Account-Biomed Read Only Fixed Site Layout</members>
-		<members>Account-Biomed Read Only Mobile Account Layout</members>
-		<members>Account-DRD Fixed Site Layout</members>
-		<members>Account-DRD Mobile Account Layout</members>
-		<members>Account-Sponsor Marketing Fixed Site Account Layout</members>
-		<members>Account-Sponsor Marketing Mobile Layout</members>
-		<members>Account-System Admin Fixed Site Account Layout</members>
-		<members>Account-System Admin Mobile Account Layout</members>
+    <members>Account-APS Management Mobile Account Layout</members>
+    <members>Account-APS Planner Fixed Site Account Layout</members>
+    <members>Account-APS Planner Mobile Account Layout</members>
+    <members>Account-APS Scheduler Fixed Site Account Layout</members>
+    <members>Account-APS Scheduler Mobile Account Layout</members>
+    <members>Account-Biomed Read Only Fixed Site Layout</members>
+    <members>Account-Biomed Read Only Mobile Account Layout</members>
+    <members>Account-DRD Fixed Site Layout</members>
+    <members>Account-DRD Mobile Account Layout</members>
+    <members>Account-Sponsor Marketing Fixed Site Account Layout</members>
+    <members>Account-Sponsor Marketing Mobile Layout</members>
+    <members>Account-System Admin Fixed Site Account Layout</members>
+    <members>Account-System Admin Mobile Account Layout</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt-*</members>
+    <members>BSF_Workday_Direct_Submission_Config__mdt-Workday Direct Submission Config Layout</members>
+    <members>Biomed_Collection_Op_Center__c-Biomed Collection Op %28Center%29 Layout</members>
+    <members>Biomed_Collection_Op_Center__c-Collection Operation Layout ReadOnly</members>
+    <members>Collection_Operation_Availability__c-Collection Operation Availability Layout</members>
+    <members>Task-Marketing Exception</members>
+    <members>Task-Task 72hrs Layout</members>
+    <members>Task-Task Layout</members>
+    <members>Task_Definition__c-Task Definition Layout</members>
+    <members>Task_Package__c-Task Package Layout</members>
+    <members>Task_Reassignment_Matrix__mdt-Task Reassignment Matrix Layout</members>
+    <members>Task_Reassignment_Matrix__mdt-Task_Reassignment_Matrix Layout</members>
     <members>sked__Availability__c-Sked Availability Layout</members>
     <members>sked__Location__c-Collections Management Profile Site Layout</members>
     <members>sked__Location__c-DRD Profiles Site Layout</members>
     <members>sked__Location__c-Fixed Site Layout</members>
     <members>sked__Location__c-Mobile Site Layout</members>
     <members>sked__Resource__c-Asset Layout</members>
+    <members>sked__Resource__c-Staff Layout</members>
     <name>Layout</name>
   </types>
   <types>
+    <members>autoMapper</members>
+    <members>bsfTaskPlanningWizard</members>
+    <members>collectionOperationAvailabilityPatternSummaryView</members>
     <members>dataService</members>
+    <members>genericRelatedListLWC</members>
+    <members>sfC360_Lead360ViewCard</members>
+    <members>sfc360GenericDataTable</members>
+    <members>sfc360GenericDetailModal</members>
+    <members>slwcAddRecurrenceStaffingConstraintModal</members>
+    <members>slwcAddStaffingConstraintModal</members>
+    <members>slwcApprovalConsoleDriveChangeRequestList</members>
+    <members>slwcApprovalConsoleDriveShiftTradeList</members>
+    <members>slwcApprovalConsolePendingActionDriveList</members>
+    <members>slwcApprovalConsoleSiteFeedbackList</members>
+    <members>slwcAvailator</members>
+    <members>slwcCallOutsSchedulingConsole</members>
+    <members>slwcConstants</members>
     <members>slwcDriveGenerator</members>
+    <members>slwcDriveListMap</members>
     <members>slwcDriveManagement</members>
+    <members>slwcDriveOptimizeDriveList</members>
     <members>slwcDriveShiftBulkAddVolunteerJobsModal</members>
-		<members>slwcDriveShiftJobTable</members>
-		<members>slwcDriveStaffingDetails</members>
+    <members>slwcDriveShiftJobTable</members>
+    <members>slwcDriveStaffingDetails</members>
+    <members>slwcEditRecurrenceStaffingConstraintModal</members>
     <members>slwcExceptionList</members>
     <members>slwcGenerateDriveModal</members>
     <members>slwcLinkedDriveExceptionList</members>
     <members>slwcListenDriveChange</members>
+    <members>slwcNewCollectionOperationMultiPicklist</members>
+    <members>slwcOptimizationHistory</members>
+    <members>slwcPlanDrive</members>
+    <members>slwcResolveDriveContentions</members>
+    <members>slwcSchedulingConsole</members>
+    <members>slwcSchedulingConsoleDriveList</members>
+    <members>slwcSchedulingConsolePendingDriveChangeRequests</members>
+    <members>slwcStaffingConstraintMassUpdate</members>
+    <members>slwcUtils</members>
+    <members>slwcVehiclePicker</members>
+    <members>slwcVehiclePickerModal</members>
+    <members>slwcVehicleReplacementConfirmModal</members>
+    <members>slwcVehicleReplacementConsole</members>
+    <members>slwcVehicleReplacementDriveList</members>
     <name>LightningComponentBundle</name>
+  </types>
+  <types>
+    <members>Task_Definition__c.All</members>
+    <members>Task_Package__c.All</members>
+    <name>ListView</name>
   </types>
   <types>
     <members>BSF_Workday_Staging__c.Leave_Report</members>
     <members>BSF_Workday_Staging__c.Real_ID_Compliance</members>
+    <members>Task.General_Task</members>
+    <members>Task.General_Task_for_Global_Action</members>
+    <members>Task.Marketing_Exception</members>
+    <members>Task.Recruitment_Meeting</members>
+    <members>Task.Team_Portfolio_Assignment</members>
+    <members>Task.X72_Hour_CheckIn</members>
     <name>RecordType</name>
   </types>
   <types>
@@ -217,6 +606,12 @@
     <name>ReportType</name>
   </types>
   <types>
+    <members>TaskType</members>
+    <name>StandardValueSet</name>
+  </types>
+  <types>
+    <members>grayIcon</members>
+    <members>greenIcon</members>
     <members>sked_HLT_Dist</members>
     <name>StaticResource</name>
   </types>
