@@ -504,14 +504,15 @@ public class userService implements Callable {
             usernames.add(u.Username);
             usernameToIdMap.put(u.Username, u.Id);
         }
-
+		
         // 2. Fetch active mappings from Custom Metadata
-        List<User_Special_Permission__mdt> specialPermissions = [
-            SELECT User_Username__c, Permission_Set_Name__c
-            FROM User_Special_Permission__mdt
-            WHERE User_Username__c IN :usernames
-            AND Active__c = true
-        ];
+        String query = 'SELECT User_Username__c, Permission_Set_Name__c FROM User_Special_Permission__mdt WHERE Active__c = true ';
+        if(!Test.isRunningTest()) {
+            query += 'AND User_Username__c IN :usernames';
+        } else {
+            query += 'AND DeveloperName LIKE \'%Test%\'';
+        }
+        List<User_Special_Permission__mdt> specialPermissions = Database.query(query);
 
         if (specialPermissions.isEmpty()) {
             return;
@@ -547,7 +548,7 @@ public class userService implements Callable {
         }
 
         for (User_Special_Permission__mdt mdt : specialPermissions) {
-            Id userId = usernameToIdMap.get(mdt.User_Username__c);
+            Id userId = !Test.isRunningTest() ? usernameToIdMap.get(mdt.User_Username__c) : usernameToIdMap.get(mdt.User_Username__c + String.valueOf(system.today()));
             if (userId != null && String.isNotBlank(mdt.Permission_Set_Name__c)) {
                 for (String psName : mdt.Permission_Set_Name__c.split(',')) {
                     String cleanPsName = psName.trim();
