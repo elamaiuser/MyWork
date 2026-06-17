@@ -234,7 +234,8 @@ public with sharing class BSF_TaskPlanningService {
     // 5. CENTRAL HANDLER
     // ============================================================================
     public static void handleOpportunityUpdates(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
-        List<Opportunity> templateChangedOpps = new List<Opportunity>();
+        Set<Id> templateChangedIds = new Set<Id>();
+        Set<Id> OpportunityIds = new Set<Id>();
         Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
 
         for(Opportunity opp : newOpps) {
@@ -243,12 +244,19 @@ public with sharing class BSF_TaskPlanningService {
             Opportunity old = oldMap.get(opp.Id);
             
             if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
-                templateChangedOpps.add(opp);
+                templateChangedIds.add(opp.Parent_Template_Id__c);
+                OpportunityIds.add(opp.Id);
+            }
+            if(opp.is_Template__c && opp.planning_path__c != old.planning_path__c) {
+                templateChangedIds.add(opp.Id);                
             }
         }
 
-        if(!templateChangedOpps.isEmpty()) {
-            cascadeTemplateToDrives(templateChangedOpps);
+        if(!templateChangedIds.isEmpty() && !OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds, OpportunityIds), 50);
+        }
+        if(!templateChangedIds.isEmpty() && OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
         }
     }
 
