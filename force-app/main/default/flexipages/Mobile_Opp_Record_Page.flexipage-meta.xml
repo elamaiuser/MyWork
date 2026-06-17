@@ -154,6 +154,9 @@
                         <valueListItems>
                             <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Sync_with_DOC</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
