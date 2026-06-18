@@ -7,6 +7,7 @@
     <members>AccountTriggerHandler</members>
     <members>BSFTaskChecklistTriggerHandler</members>
     <members>BSFTaskChecklistTrigger_Test</members>
+    <members>BSFTaskChecklistTriggerTest</members>
     <members>BSF_AccUpdPlanningPathOneTimeBatchTest</members>
     <members>BSF_AccessControlManager</members>
     <members>BSF_AccessControlManagerTest</members>
