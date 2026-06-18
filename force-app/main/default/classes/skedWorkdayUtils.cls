@@ -197,7 +197,8 @@ public class skedWorkdayUtils implements Callable {
             if (!deletedRecord.sked_Integrate_With_Workday__c) continue;
             sked__Resource__c availabilityResource = resourceById.get(deletedRecord.sked__Resource__c);
             cancelledRecordDetails.recordIds.add(deletedRecord.Id);
-            cancelledRecordDetails.adjustmentValById.put(deletedRecord.Id, getWorkdayPtoHours(deletedRecord, availabilityResource)*-1);
+            //cancelledRecordDetails.adjustmentValById.put(deletedRecord.Id, getWorkdayPtoHours(deletedRecord, availabilityResource)*-1);//HRP-16680
+            cancelledRecordDetails.adjustmentValById.put(deletedRecord.Id, getWorkdayPtoHoursForCancelEdit(deletedRecord, availabilityResource)*-1);//HRP-16680
             cancelledRecordDetails.resourceIdByAvailId.put(deletedRecord.Id, deletedRecord.sked__Resource__c);
             cancelledRecordDetails.employeeIdByResourceId.put(deletedRecord.sked__resource__c, deletedRecord.sked_Employee_Id__c);
         }
@@ -214,7 +215,8 @@ public class skedWorkdayUtils implements Callable {
                 if (skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(oldData.sked_Custom_Status__c) && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION) {
                     sked__Resource__c availabilityResource = resourceById.get(newRecord.sked__Resource__c);
                     cancelledRecordDetails.recordIds.add(newRecord.Id);
-                    cancelledRecordDetails.adjustmentValById.put(newRecord.Id, getWorkdayPtoHours(newRecord, availabilityResource)*-1);
+                    //cancelledRecordDetails.adjustmentValById.put(newRecord.Id, getWorkdayPtoHours(newRecord, availabilityResource)*-1);//HRP-16680
+                    cancelledRecordDetails.adjustmentValById.put(newRecord.Id, getWorkdayPtoHoursForCancelEdit(newRecord, availabilityResource)*-1);//HRP-16680
                     cancelledRecordDetails.resourceIdByAvailId.put(newRecord.Id, newRecord.sked__Resource__c);
                     cancelledRecordDetails.employeeIdByResourceId.put(newRecord.sked__Resource__c, newRecord.sked_Employee_Id__c);
                 }
@@ -398,9 +400,25 @@ public class skedWorkdayUtils implements Callable {
         return ptoDurationHours;
     }
 
+    // HRP-16680 Begin
+    public static Decimal getWorkdayPtoHoursForCancelEdit(sked__Availability__c record, sked__Resource__c availabilityResource) {
+        //Decimal availDurationHours = skedDateTimeUtils.getDifferenceInHoursAndMinutes(record.sked__Start__c, record.sked__Finish__c);
+        // This rounds our result up to the next .25 hours, 6.3 => 6.5, 7.05 => 7.25, 8.95 => 9
+        //availDurationHours = availDurationHours.divide(25, 2, System.RoundingMode.UP) * 25;
+        //Decimal ptoDurationHours = availabilityResource.sked_Daily_Time_Off_Hours__c;
+        Decimal ptoDurationHours = record.sked_Requested_Time_Off_Hours__c;
+        //if (!record.sked_Is_All_Day__c && availDurationHours < ptoDurationHours) {
+        //    ptoDurationHours = availDurationHours;
+        //}
+        return ptoDurationHours;
+    }
+    // HRP-16680 End
+
     private static Decimal getAdjustmentValue(sked__Availability__c newRecord, sked__Availability__c oldRecord, sked__Resource__c availabilityResource) {
-        Decimal oldDuration = getWorkdayPtoHours(oldRecord, availabilityResource);
-        Decimal newDuration = getWorkdayPtoHours(newRecord, availabilityResource);
+        //Decimal oldDuration = getWorkdayPtoHours(oldRecord, availabilityResource);//HRP-16680
+        Decimal oldDuration = getWorkdayPtoHoursForCancelEdit(oldRecord, availabilityResource);
+        //Decimal newDuration = getWorkdayPtoHours(newRecord, availabilityResource);//HRP-16680
+        Decimal newDuration = getWorkdayPtoHoursForCancelEdit(newRecord, availabilityResource);
         return newDuration-oldDuration;
     }
 
