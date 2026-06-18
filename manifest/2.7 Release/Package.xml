@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
   <types>
     <members>AccountService</members>
@@ -6,6 +6,7 @@
     <members>AccountStatusUpdateHelper</members>
     <members>AccountTriggerHandler</members>
     <members>BSFTaskChecklistTriggerHandler</members>
+    <members>BSFTaskChecklistTriggerTest</members>
     <members>BSF_AccUpdPlanningPathOneTimeBatchTest</members>
     <members>BSF_AccessControlManager</members>
     <members>BSF_AccessControlManagerTest</members>
@@ -22,6 +23,7 @@
     <members>BSF_Batch_TaskRename</members>
     <members>BSF_Batch_TaskRename_Test</members>
     <members>BSF_Batch_UpdateAccountStatusScheduler</members>
+    <members>BSF_Batch_UpdateAccountStatus_Test</members>
     <members>BSF_Batch_UpdateTaskType</members>
     <members>BSF_Batch_UpdateTaskType_Test</members>
     <members>BSF_Constants</members>
@@ -49,12 +51,16 @@
     <members>DriveResourceAllocationBatchTest</members>
     <members>DriveTriggerHandler</members>
     <members>DriveTriggerService</members>
+    <members>DriveTriggerServiceTest</members>
     <members>GenerateDriveWorksheetPdfController</members>
+    <members>GenerateDriveWorksheetPdfControllerTest</members>
     <members>GenericRelatedListLWCController</members>
     <members>GenericRelatedListLWCControllerTest</members>
     <members>OpportunityService</members>
     <members>OpportunityTriggerHandler</members>
+    <members>OpportunityTriggerTest</members>
     <members>SFC360_Lead360ViewController</members>
+    <members>SFC360_Lead360ViewController_Test</members>
     <members>StandardTaskGenerationBatch</members>
     <members>StandardTaskGenerationBatchTest</members>
     <members>TaskChecklistController</members>
@@ -68,35 +74,46 @@
     <members>TaskTriggerHandler</members>
     <members>TaskTriggerTest</members>
     <members>createPreDriveTaskBatch</members>
+    <members>createPreDriveTaskBatchTest</members>
     <members>skedAvailabilityService</members>
+    <members>skedAvailabilityService_Test</members>
     <members>skedBiddingExpirationBatch</members>
     <members>skedBiddingExpirationSchedulable</members>
     <members>skedBiddingExpiration_Test</members>
     <members>skedCollectionOpTimeBlockService</members>
+    <members>skedCollectionOpTimeBlockService_Test</members>
     <members>skedCollectionOpStagingLocTrigger_Test</members>
 		<members>skedCollectionOpStagingLocationHandler</members>
     <members>skedConstants</members>
     <members>skedDriveChangeRequestHandler</members>
     <members>skedDriveChangeRequestHandler_Test</members>
     <members>skedDriveRankingBatch</members>
+    <members>skedDriveRankingBatch_Test</members>
     <members>skedExceptionLogService</members>
     <members>skedJobAllocationHandler</members>
     <members>skedJobAllocationTrigger_Test</members>
     <members>skedJobHandler</members>
+    <members>skedJobTrigger_Test</members>
     <members>skedMappingConfigContainer</members>
+    <members>skedMappingConfigController_Test</members>
     <members>skedModels</members>
+    <members>skedModels_Test</members>
     <members>skedNightlyRefreshTTIndexBatch_Test</members>
     <members>skedNightlyRefreshTravelTimeIndexBatch</members>
     <members>skedNightlyUpdateCoApRoleTargetsBatch</members>
     <members>skedOperationRecordUtils</members>
     <members>skedOpsRecordApiData</members>
+    <members>skedOpsRecordApiManager_Test</members>
     <members>skedPtoRequestController</members>
     <members>skedRacController</members>
     <members>skedRacStory_Test</members>
     <members>skedResourceHandler</members>
+    <members>skedResourceTrigger_Test</members>
     <members>skedStaffingBudgetHandler</members>
     <members>skedStaffingBudgetUtils</members>
+    <members>skedStaffingBudgetUtils_Test</members>
     <members>skedTravelTimeIndexItemHandler</members>
+    <members>skedTravelTimeIndexItemHandler_Test</members>
     <members>skedTtiiCoPopulationOneTimeBatch</members>
     <members>skedTtiiCoPopulationOneTimeBatch_Test</members>
     <members>skedUpdateCoApRoleTargetsBatchHelper</members>
@@ -107,9 +124,11 @@
     <members>skedVehicleFutureInactivateBatch_Test</members>
     <members>skedWorkdayAbsenceManagement</members>
     <members>skedWorkdayApiManager</members>
+    <members>skedWorkdayApiManager_Test</members>
     <members>skedWorkdayGetPlanBalanceResponse</members>
     <members>skedWorkdayImportTimeBlockResponse</members>
     <members>skedWorkdayTimeTrackingBsvc</members>
+    <members>BSF_WorkdayOpsRecordDirectService_Test</members>
     <members>skedWorkdayUtils</members>
     <members>skedWorkdayUtils_Test</members>
     <members>slwcAllocationService</members>
@@ -117,10 +136,13 @@
     <members>slwcDriveService</members>
     <members>slwcDriveService_Test</members>
     <members>slwcDriveShiftTradeService</members>
+    <members>slwcDriveShiftTradeService_Test</members>
     <members>slwcOperationRecordService</members>
+    <members>slwcOperationRecordService_Test</members>
     <members>slwcResourceService</members>
     <members>slwcResourceService_Test</members>
     <members>userService</members>
+    <members>userServiceTest</members>
     <name>ApexClass</name>
   </types>
   <types>
@@ -418,6 +440,7 @@
     <members>Task_Report_Link.Volunteer_Quick_Guide</members>
     <members>sked_Workday_XML_Template.Leave_Report</members>
     <members>sked_Workday_XML_Template.RealID_Compliance_Report</members>
+    <members>User_Special_Permission.Lead360_Test_User</members>
     <name>CustomMetadata</name>
   </types>
   <types>

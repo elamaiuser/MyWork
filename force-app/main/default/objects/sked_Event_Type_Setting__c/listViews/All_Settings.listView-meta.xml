@@ -14,6 +14,13 @@
     <columns>sked_Step__c</columns>
     <columns>sked_Show_Legend__c</columns>
     <columns>sked_Is_Active__c</columns>
+    <columns>sked_Integrated_with_Workday__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>sked_Category__c</field>
+        <operation>startsWith</operation>
+        <value>availability</value>
+    </filters>
     <label>All Settings</label>
+    <language>en_US</language>
 </ListView>
