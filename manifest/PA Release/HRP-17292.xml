@@ -6,10 +6,6 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
-		<members>Opportunity.Number_of_2RBC_Assets__c</members>
-		<name>CustomField</name>
-	</types>
-	<types>
 		<members>Mobile_Opp_Record_Page</members>
 		<name>FlexiPage</name>
 	</types>
