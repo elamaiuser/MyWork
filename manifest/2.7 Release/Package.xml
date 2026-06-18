@@ -61,6 +61,7 @@
     <members>OpportunityTriggerHandler</members>
     <members>OpportunityTriggerTest</members>
     <members>SFC360_Lead360ViewController</members>
+    <members>SFC360_Lead360ViewController_Test</members>
     <members>StandardTaskGenerationBatch</members>
     <members>StandardTaskGenerationBatchTest</members>
     <members>TaskChecklistController</members>
