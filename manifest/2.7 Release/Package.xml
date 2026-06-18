@@ -89,6 +89,7 @@
     <members>skedNightlyUpdateCoApRoleTargetsBatch</members>
     <members>skedOperationRecordUtils</members>
     <members>skedOpsRecordApiData</members>
+    <members>skedPtoRequestController</members>
     <members>skedRacController</members>
     <members>skedRacStory_Test</members>
     <members>skedResourceHandler</members>
