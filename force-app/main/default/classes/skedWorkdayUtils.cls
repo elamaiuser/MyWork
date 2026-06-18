@@ -495,7 +495,7 @@ public class skedWorkdayUtils implements Callable {
     }
 
     return null;
-}
+}   
 
     public static string fetchXML(DOM.Document doc) {//HRP-13728
         String xml = doc.toXmlString();

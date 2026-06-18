@@ -4123,6 +4123,7 @@ opp.StageName = 'Closed';
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }
