@@ -321,6 +321,36 @@ export default class SlwcOperationRecord extends LightningElement {
                 this.errorData.driveInformation = true;
             }
         }
+        //START HRP-17200
+               if (this.model && this.model["actualDriveStart"] && this.model["driveStart"] && this.model["driveIssues"] == null && (this.model["driveStart"] < this.model["actualDriveStart"])) {
+            hasError = true;
+            if(!slientValidate) {
+                this.errorMessages.push({
+                    message: ' Drive Issue is required if the Actual Drive Start is later than the Scheduled Drive Start.'
+                })
+                this.errorData.operationTab = true;
+                this.errorData.driveInformation = true;
+            }
+        }
+
+// Actual Drive End validation
+      if (
+          this.model &&
+           this.model["actualDriveEnd"] &&
+          this.model["driveEnd"] &&
+            this.model["driveIssues"] == null &&
+           (this.model["actualDriveEnd"] !== this.model["driveEnd"])
+                 ) {
+      hasError = true;
+            if (!slientValidate) {
+            this.errorMessages.push({
+          message: 'Drive Issue is required if the Actual Drive End is more or less than the Scheduled Drive End.'
+          });
+          this.errorData.operationTab = true;
+         this.errorData.driveInformation = true;
+         }
+         }
+  //END HRP-17200
         if (this.model && this.model["powerRedMachinesUsed"] && this.model["powerRedMachinesSent"] && (this.model["powerRedMachinesUsed"] > this.model["powerRedMachinesSent"])) {
             hasError = true;
             if(!slientValidate) {
