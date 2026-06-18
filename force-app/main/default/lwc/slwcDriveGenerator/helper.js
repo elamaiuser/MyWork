@@ -4140,8 +4140,7 @@ class DriveHelper {
     }
   }
 
-  isRoleHoldCapacity({
-    resourceRole,
+  isRoleHoldCapacity(resourceRole, {
     isManuallyCreated,
     manuallyCreatedFrom
    }, {
