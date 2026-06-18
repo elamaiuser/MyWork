@@ -611,11 +611,11 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && asAndSbpmMap.get(BSF_Constants.ACCOUNT_SPECIALIST) != null && asAndSbpmMap.get(BSF_Constants.ACCOUNT_SPECIALIST).containsKey(opp.Id)) {
+        if (asAndSbpmMap.get(BSF_Constants.ACCOUNT_SPECIALIST) != null && asAndSbpmMap.get(BSF_Constants.ACCOUNT_SPECIALIST).containsKey(opp.Id)) {
             roles.put(BSF_Constants.ACCOUNT_SPECIALIST, asAndSbpmMap.get(BSF_Constants.ACCOUNT_SPECIALIST).get(opp.Id));
         }
 
-        if (roles.get(BSF_Constants.AREA_BOOKING_MANAGER) == null && asAndSbpmMap.get(BSF_Constants.AREA_BOOKING_MANAGER) != null && asAndSbpmMap.get(BSF_Constants.AREA_BOOKING_MANAGER).containsKey(opp.Id)) {
+        if (asAndSbpmMap.get(BSF_Constants.AREA_BOOKING_MANAGER) != null && asAndSbpmMap.get(BSF_Constants.AREA_BOOKING_MANAGER).containsKey(opp.Id)) {
             roles.put(BSF_Constants.AREA_BOOKING_MANAGER, asAndSbpmMap.get(BSF_Constants.AREA_BOOKING_MANAGER).get(opp.Id));
         }
 
