@@ -2137,7 +2137,8 @@ class MobileGenerator extends BaseGenerator {
       const isManuallyCreatedJob = this.helper.isManuallyCreatedJob(job, this.drive);
       const existed = this.helper.findJob(job, jobs);
       const isJobTakenCareOf = jobs.find(item => item.key === job.key);
-      return isManuallyCreatedJob && !existed && !isJobTakenCareOf;
+      const isConsumedViaDualRole = jobs.find(item => item.dualRole && item.dualRole === job.resourceRole);
+      return isManuallyCreatedJob && !existed && !isJobTakenCareOf && !isConsumedViaDualRole;
     })
     .map(job => {
       let updatedJob = extend({}, job, jobTemplate);
@@ -2152,8 +2153,8 @@ class MobileGenerator extends BaseGenerator {
       return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && 
       job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL &&
       (
-        this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
+        this.helper.isRoleHoldCapacity(job, this.masterData) ||
+        this.helper.isRoleHoldCapacity(job, this.masterData) 
       )
     });
 
@@ -2836,8 +2837,8 @@ class MobileGenerator extends BaseGenerator {
     }
     this.correctJobTime(job, driveShift);
     if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-      this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
+      this.helper.isRoleHoldCapacity(job, this.masterData) ||
+      this.helper.isRoleHoldCapacity(job, this.masterData) 
     )) {
       this.recalculateVphhQuantity(driveShift);
     }
