@@ -2153,8 +2153,8 @@ class MobileGenerator extends BaseGenerator {
       return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && 
       job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL &&
       (
-        this.helper.isRoleHoldCapacity(job, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job, this.masterData) 
+        this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
+        this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
       )
     });
 
@@ -2837,8 +2837,8 @@ class MobileGenerator extends BaseGenerator {
     }
     this.correctJobTime(job, driveShift);
     if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job, this.masterData) ||
-      this.helper.isRoleHoldCapacity(job, this.masterData) 
+      this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
+      this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
     )) {
       this.recalculateVphhQuantity(driveShift);
     }
