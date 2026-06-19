@@ -132,8 +132,7 @@ public class skedOperationRecordHandler extends skedTriggerHub implements Callab
 
         List<String> existingCallOutTypesToCheck = new List<String>{
             skedConstants.AVAILABILITY_CALLOUT_TYPE_LATE_ARRIVAL,
-            skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE,
-            skedConstants.AVAILABILITY_CALLOUT_TYPE_CALL_OUT
+            skedConstants.AVAILABILITY_CALLOUT_TYPE_EARLY_DEPARTURE
         };
         List<String> excludedCallOutReasonCodes = new List<String>{skedConstants.LATE_ARRIVAL_REASON_NOT_LATE, skedConstants.EARLY_DEPARTURE_REASON_NOT_EARLY};
         List<String> includedCallOutStatuses = new List<String>{skedConstants.AVAILABILITY_STATUS_APPROVED};

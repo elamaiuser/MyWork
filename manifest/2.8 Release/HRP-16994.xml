@@ -3,6 +3,7 @@
 	<types>
 		<members>skedOperationRecordHandler</members>
 		<members>skedOperationRecordHandler_Test</members>
+		<members>skedWorkdayUtils</members>
 		<name>ApexClass</name>
 	</types>
 	<version>65.0</version>
