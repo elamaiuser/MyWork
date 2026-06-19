@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactEmail>pulak.das@redcross.org</contactEmail>
+    <label>ProvarConnectedApp</label>
+    <oauthConfig>
+        <callbackUrl>https://biosf--test.sandbox.my.salesforce.com/services/oauth2/success</callbackUrl>
+        <certificate>MIIEijCCA3KgAwIBAgIOAZMIC7PuAAAAAFjf+gswDQYJKoZIhvcNAQELBQAwgYUxHTAbBgNVBAMMFFByb3ZhclRlc3RfTm92N18yMDI0MRgwFgYDVQQLDA8wMERvMDAwMDAwMFlyYlAxFzAVBgNVBAoMDlNhbGVzZm9yY2UuY29tMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQswCQYDVQQIDAJDQTEMMAoGA1UEBhMDVVNBMB4XDTI0MTEwNzE5MTMyNFoXDTI1MTEwNzEyMDAwMFowgYUxHTAbBgNVBAMMFFByb3ZhclRlc3RfTm92N18yMDI0MRgwFgYDVQQLDA8wMERvMDAwMDAwMFlyYlAxFzAVBgNVBAoMDlNhbGVzZm9yY2UuY29tMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQswCQYDVQQIDAJDQTEMMAoGA1UEBhMDVVNBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlqLsARRaDWINW+KDQmvkU5pUubcwcqPhkgaSuZlf3Ulqnue1mZDPaoOvHi17+1uLtEhmViqAJ3Oe6cVu5OIYtKJX/M3VqoA0Efd/BayKZMUwZVhkH1QVI79/CfeVCohqOpvYuprfMpFfV71b4XypMMOQKi/C6SigSmWgxm5+PWltU5oGrwXGBLDkq+q39TCbpcNumGGoLccxVqS1DYPj9AW8JAuYUYXn3CX4x41tqpeZk6ACIRh/O3ZTVOVE38nCIEDvAf9O1lfInVk+gqrbUMoz8sY8TLWKB4DjgnIQvuVfZhu43n85elY4wlXimmorzsXK3gCEbMcjTcxliWQPDQIDAQABo4H1MIHyMB0GA1UdDgQWBBRcQoanxYt8jnhECb5lY5HEKWDlSDAPBgNVHRMBAf8EBTADAQH/MIG/BgNVHSMEgbcwgbSAFFxChqfFi3yOeEQJvmVjkcQpYOVIoYGLpIGIMIGFMR0wGwYDVQQDDBRQcm92YXJUZXN0X05vdjdfMjAyNDEYMBYGA1UECwwPMDBEbzAwMDAwMDBZcmJQMRcwFQYDVQQKDA5TYWxlc2ZvcmNlLmNvbTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzELMAkGA1UECAwCQ0ExDDAKBgNVBAYTA1VTQYIOAZMIC7PuAAAAAFjf+gswDQYJKoZIhvcNAQELBQADggEBABcKaFk9h//d4lJgS2xTXnAf61pTvsgMOsNzmvIZVcMO1S/Y5Z1nTz8S0XNZO6Pvq4vUo7ofIkbc0Q27evGUuyXamRDB4FLNXl0ydIPwEf1UpKXuKjv8igtfev/gKT2ofOAKQhG1CaqQXfI/wVLKNPDyoXi1deANzOa+fHCDpWmBOwyglxFVut9cmjSv2HUXenwl/5PZfMVifNB319SajYrO5am8UaFCI9Php8PRbS1YnbG4ouWr9AxYnj7kbKRIlBnA0SEzHzt/134KmJiqo5DmXBbOExrKEaVjnVRZhac+tx0zFem0smG05pff6T+AfiTjukIrK0qtWfQ+EtCsK0c=</certificate>
+        
+        <isAdminApproved>true</isAdminApproved>
+        <isClientCredentialEnabled>false</isClientCredentialEnabled>
+        <isCodeCredentialEnabled>false</isCodeCredentialEnabled>
+        <isCodeCredentialPostOnly>false</isCodeCredentialPostOnly>
+        <isConsumerSecretOptional>true</isConsumerSecretOptional>
+        <isIntrospectAllTokens>false</isIntrospectAllTokens>
+        <isNamedUserJwtEnabled>false</isNamedUserJwtEnabled>
+        <isPkceRequired>false</isPkceRequired>
+        <isSecretRequiredForRefreshToken>false</isSecretRequiredForRefreshToken>
+        <scopes>Basic</scopes>
+        <scopes>Api</scopes>
+        <scopes>Web</scopes>
+        <scopes>RefreshToken</scopes>
+    </oauthConfig>
+    <oauthPolicy>
+        <ipRelaxation>BYPASS</ipRelaxation>
+        <refreshTokenPolicy>infinite</refreshTokenPolicy>
+    </oauthPolicy>
+    <profileName>System Administrator</profileName>
+    <sessionPolicy>
+        <sessionTimeout>1440</sessionTimeout>
+    </sessionPolicy>
+</ConnectedApp>
