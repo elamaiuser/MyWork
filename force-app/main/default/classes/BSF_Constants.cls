@@ -418,4 +418,11 @@ public class BSF_Constants {
     public static final String TASK_TYPE_RECRUITMENT_STRATEGY_MEETING = 'Recruitment Strategy Meeting';
     public static final String TASK_TYPE_72_HOUR_CHECK_IN = '72 Hour Check-In';
     public static final String TASK_TYPE_ONE_WEEK_CHECK_IN = 'One Week Check-in';
+
+    // User Assignment Type Constants
+    public static final String TYPE_PS      = 'Permission Set';
+    public static final String TYPE_PG      = 'Public Group';
+    public static final String TYPE_ROLE    = 'Role';
+    public static final String TYPE_LICENSE = 'Package License';
+    public static final String TYPE_UT      = 'User Type';
 }
