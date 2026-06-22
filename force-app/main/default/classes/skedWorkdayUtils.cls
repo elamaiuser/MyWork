@@ -320,7 +320,7 @@ public class skedWorkdayUtils implements Callable {
     private static void populateCalloutPtoReasonCodes(List<sked__Availability__c> timeOffRequests) {
         Map<String, String> reasonIdByKey = new Map<String, String>();
         for (sked__Availability__c record : timeOffRequests) {
-            if (record.sked_Related_Call_Out__c != null && String.isBlank(record.sked_Time_Off_Reason_Code__c)) {
+            if (record.sked_Related_Call_Out__c != null && (String.isBlank(record.sked_Time_Off_Reason_Code__c) || record.sked_Time_Off_Reason_Code__c == 'Unplanned')) {
                 String timeOffType = getWorkdayTimeOffType(record);
                 String key = record.sked__Resource__c + '|' + timeOffType + '|' + String.valueOf(record.sked_Start_Date__c);
                 if (!reasonIdByKey.containsKey(key)) {
@@ -340,7 +340,8 @@ public class skedWorkdayUtils implements Callable {
         balanceRequest.isCallOut = true;
 
         String reasonId = null;
-        skedWorkdayGetPlanBalanceResponse balanceResponse = skedWorkdayApiManager.getTimeOffPlanBalances(balanceRequest);
+        // skipLogging = true: avoid the inline debug-log DML so this callout can precede EnterTimeOff. HRP-16994
+        skedWorkdayGetPlanBalanceResponse balanceResponse = skedWorkdayApiManager.getTimeOffPlanBalances(balanceRequest, true);
         if (balanceResponse != null && balanceResponse.timeOffPlansByLabel != null) {
             // The Workday reasonId encodes the plan type, e.g. "Unplanned - PTO - 7 Day Lag - Time Off"
             // or "Unplanned - Floating Holiday - Time Off". Match it to the availability's type rather than
