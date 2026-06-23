@@ -422,7 +422,57 @@ public class BSF_Constants {
     // User Assignment Type Constants
     public static final String TYPE_PS      = 'Permission Set';
     public static final String TYPE_PG      = 'Public Group';
+    public static final String TYPE_QUEUE = 'Queue';
     public static final String TYPE_ROLE    = 'Role';
     public static final String TYPE_LICENSE = 'Package License';
     public static final String TYPE_UT      = 'User Type';
+    public static final Map<String, String> TYPE_TO_MDT_FIELD = new Map<String, String>{
+                                                TYPE_PS      => 'Permission_Set_Name__c',
+                                                TYPE_PG      => 'Public_Group_Name__c',
+                                                TYPE_QUEUE   => 'Queue_Name__c',
+                                                TYPE_ROLE    => 'Role_Name__c',
+                                                TYPE_LICENSE => 'Package_License_Name__c',
+                                                TYPE_UT      => 'User_Type_Name__c'
+                                            };
+    // ── Dynamic Provisioning Configurations ──────────────────────────────────
+    public static final UserAssignmentTypeConfig PS_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_PS, 
+        'PermissionSet', 
+        'Name', 
+        'PermissionSetAssignment', 
+        'AssigneeId', 
+        'PermissionSetId',
+        'IsOwnedByProfile = false AND Type != \'Standard\'', 
+        'PermissionSet.IsOwnedByProfile = false AND PermissionSet.Type != \'Standard\''
+    );
+    public static final UserAssignmentTypeConfig PG_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_PG, 
+        'Group', 
+        'DeveloperName', 
+        'GroupMember', 
+        'UserOrGroupId', 
+        'GroupId',
+        'Type = \'Regular\'', 
+        null
+    );
+    public static final UserAssignmentTypeConfig QUEUE_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_QUEUE, 
+        'Group', 
+        'DeveloperName', 
+        'GroupMember', 
+        'UserOrGroupId', 
+        'GroupId',
+        'Type = \'Queue\'',
+        null
+    );
+    public static final UserAssignmentTypeConfig LIC_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_LICENSE, 
+        'PackageLicense', 
+        'NamespacePrefix', 
+        'UserPackageLicense', 
+        'UserId', 
+        'PackageLicenseId',
+        'Status = \'Active\'',
+        null
+    );
 }

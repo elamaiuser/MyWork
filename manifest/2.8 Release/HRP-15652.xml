@@ -5,6 +5,8 @@
 		<members>BSF_Constants</members>
 		<members>userService</members>
         <members>UserProvisioningService</members>
+        <members>UserProvisioningErrorHandler</members>
+        <members>UserAssignmentTypeConfig</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -12,7 +14,8 @@
 		<name>ApexTrigger</name>
 	</types>
 	<types>
-		<members>User.Exclude_from_Auto_Provisioning__c</members>
+		<members>User.Bypass_Auto_Provisioning__c</members>
+        <members>AssignResourcesToUserEvent__e.Old_User_Profile__c</members>
 		<name>CustomField</name>
 	</types>
 	<version>66.0</version>
