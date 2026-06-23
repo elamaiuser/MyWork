@@ -92,7 +92,6 @@ public class UserProvisioningErrorHandler implements Callable {
             for (Database.SaveResult sr : srList) { 
                 if (!sr.isSuccess()) {
                     failedSaves.add(sr);
-                    errors.addAll(sr.getErrors()); 
                 }
             }
             if (!failedSaves.isEmpty()) {
@@ -101,14 +100,31 @@ public class UserProvisioningErrorHandler implements Callable {
         }
         else if (results instanceof List<Database.DeleteResult>) {
             List<Database.DeleteResult> drList = (List<Database.DeleteResult>)results;
+            List<Database.DeleteResult> failedDeletes = new List<Database.DeleteResult>(); 
             for (Database.DeleteResult dr : drList) { 
                 if (!dr.isSuccess()){ 
-                    errors.addAll(dr.getErrors()); 
+                    failedDeletes.add(dr);
                 }
             }
-            errorLogs = BSF_Utilities.createErrorLog(drList, context, UserProvisioningService.class.getName(), methodname, BSF_Constants.BATCH_STATUS_ERROR, 'DML Delete Error');
+            errorLogs = BSF_Utilities.createErrorLog(failedDeletes, context, UserProvisioningService.class.getName(), methodname, BSF_Constants.BATCH_STATUS_ERROR, 'DML Delete Error');
         }
         
+        if (!errorLogs.isEmpty()) {
+            dispatchErrorLogs(errorLogs);
+        }
+    }
+
+    public static void handleExceptions(Exception ex) {
+        List<BSF_Error_Log__c> errorLogs = new List<BSF_Error_Log__c>();
+        errorLogs.add(BSF_Utilities.createBsfErrorLogForExceptions(
+            ex, 
+            UserProvisioningService.class.getName(), 
+            'syncUserProvisioningBulk', 
+            'syncUserProvisioning',
+            'syncUserProvisioning',
+            'User',
+            null
+        ));
         if (!errorLogs.isEmpty()) {
             dispatchErrorLogs(errorLogs);
         }

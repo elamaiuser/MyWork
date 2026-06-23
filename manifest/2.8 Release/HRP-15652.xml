@@ -7,6 +7,7 @@
         <members>UserProvisioningService</members>
         <members>UserProvisioningErrorHandler</members>
         <members>UserAssignmentTypeConfig</members>
+        <members>BSF_Batch_UserProvisioning</members>
 		<name>ApexClass</name>
 	</types>
     <types>

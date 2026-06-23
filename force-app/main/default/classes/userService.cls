@@ -572,5 +572,57 @@ public class userService implements Callable {
             Database.insert(assignmentsToInsert, false);
         }
     }
-  
+    public static void syncUserProvisioning(List<User> newList, Map<Id, User> oldMap) {
+        if(UserProvisioningService.isUserProvisioningSyncUpdating || newList == null || newList.isEmpty()) return;
+          
+        Map<Id, String> profileMap = getProfileMap();
+
+        if(profileMap.isEmpty()) return;
+
+        List<AssignResourcesToUserEvent__e> asrEvents = new List<AssignResourcesToUserEvent__e>();
+
+        for(User usr : newList) {
+            if(usr.Bypass_Auto_Provisioning__c || !usr.IsActive || usr.id == null || usr.ProfileId == null || !profileMap.containsKey(usr.ProfileId)) {
+                continue;
+            }
+            if(oldMap != null && oldMap.containsKey(usr.Id)
+                    && usr.ProfileId == oldMap.get(usr.Id).ProfileId 
+                    && usr.IsActive == oldMap.get(usr.Id).IsActive
+                    && usr.UserRoleId == oldMap.get(usr.Id).UserRoleId
+                    && usr.Bypass_Auto_Provisioning__c == oldMap.get(usr.Id).Bypass_Auto_Provisioning__c
+                    && usr.sked__skeduloUserType__c == oldMap.get(usr.Id).sked__skeduloUserType__c) {
+                        continue;
+            }
+            String newProfileName = profileMap.get(usr.ProfileId);
+            String oldProfileName = (oldMap != null && oldMap.containsKey(usr.Id) && oldMap.get(usr.Id).ProfileId != null && profileMap.containsKey(oldMap.get(usr.Id).ProfileId)) ? profileMap.get(oldMap.get(usr.Id).ProfileId) : profileMap.get(usr.ProfileId);
+            Boolean roleChanged = (oldMap != null && oldMap.containsKey(usr.Id) && usr.UserRoleId != oldMap.get(usr.Id).UserRoleId) ? true : false;
+            asrEvents.add(new AssignResourcesToUserEvent__e(
+                UserId__c             = usr.Id,
+                UserProfile__c        = newProfileName,
+                Old_User_Profile__c   = oldProfileName,
+                skipUserRoleUpdate__c = roleChanged 
+            ));
+        }
+
+        if(!asrEvents.isEmpty()) {
+            EventBus.publish(asrEvents, AccessLevel.SYSTEM_MODE);
+        }
+    }     
+        
+    public static Map<Id, String> getProfileMap() {
+        Map<Id, String> profileMap = new Map<Id, String>();
+        Set<String> profileNames = new Set<String>();
+        for (Assign_SF_Resources_to_User__mdt mdt : [SELECT Profile_Name__c 
+                                                    FROM Assign_SF_Resources_to_User__mdt 
+                                                    WHERE Profile_Name__c != NULL
+                                                    AND Active__c = true WITH SYSTEM_MODE]) {
+            profileNames.add(mdt.Profile_Name__c.trim());
+        }
+        if(!profileNames.isEmpty()){
+            for (Profile p : [SELECT Id, Name FROM Profile WHERE Name IN :profileNames WITH SYSTEM_MODE]) {
+                profileMap.put(p.Id, p.Name);
+            }
+        }
+        return profileMap;
+    }
 }

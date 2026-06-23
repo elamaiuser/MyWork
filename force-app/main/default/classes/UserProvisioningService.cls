@@ -6,35 +6,41 @@ public without sharing class UserProvisioningService {
         public Boolean skipRoleUpdate = false;
     }
 
+    public static Boolean isUserProvisioningSyncUpdating = false;
+
     public static void syncUserProvisioningBulk(List<ProvisioningRequest> requests) {
         if (requests == null || requests.isEmpty()) return;
 
-        List<String> allProfileNames = new List<String>();
-        Set<Id>      allUserIds      = new Set<Id>();
+        try{
+            List<String> allProfileNames = new List<String>();
+            Set<Id>      allUserIds      = new Set<Id>();
 
-        for (ProvisioningRequest req : requests) {
-            if (String.isNotBlank(req.newProfileName)) allProfileNames.add(req.newProfileName);
-            if (String.isNotBlank(req.oldProfileName)) allProfileNames.add(req.oldProfileName);
-            if (String.isNotBlank(req.userId))         allUserIds.add((Id) req.userId);
+            for (ProvisioningRequest req : requests) {
+                if (String.isNotBlank(req.newProfileName)) allProfileNames.add(req.newProfileName);
+                if (String.isNotBlank(req.oldProfileName)) allProfileNames.add(req.oldProfileName);
+                if (String.isNotBlank(req.userId))         allUserIds.add((Id) req.userId);
+            }
+
+            Map<String, Map<String, List<Assign_SF_Resources_to_User__mdt>>> profileToMDT = loadMetadata(allProfileNames);
+
+            List<SObject> allJunctionsToInsert = new List<SObject>();
+            List<SObject> allJunctionsToDelete = new List<SObject>();
+            Map<Id, User> userFieldUpdates     = new Map<Id, User>();
+
+            syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.PS_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
+            syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.PG_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
+            syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.QUEUE_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
+            
+            if (!String.isEmpty(Label.AssignUserLicenses) && Label.AssignUserLicenses == 'Yes') {
+                syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.LIC_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
+            }
+
+            syncUserFieldsBulk(requests, profileToMDT, userFieldUpdates);
+
+            executeFinalDML(allJunctionsToDelete, allJunctionsToInsert, userFieldUpdates.values());
+        } catch (Exception ex) {
+            UserProvisioningErrorHandler.handleExceptions(ex);
         }
-
-        Map<String, Map<String, List<Assign_SF_Resources_to_User__mdt>>> profileToMDT = loadMetadata(allProfileNames);
-
-        List<SObject> allJunctionsToInsert = new List<SObject>();
-        List<SObject> allJunctionsToDelete = new List<SObject>();
-        Map<Id, User> userFieldUpdates     = new Map<Id, User>();
-
-        syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.PS_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
-        syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.PG_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
-        syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.QUEUE_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
-        
-        if (!String.isEmpty(Label.AssignUserLicenses) && Label.AssignUserLicenses == 'Yes') {
-            syncJunctionRecordsBulk(requests, profileToMDT, allUserIds, BSF_Constants.LIC_CONFIG, allJunctionsToInsert, allJunctionsToDelete);
-        }
-
-        syncUserFieldsBulk(requests, profileToMDT, userFieldUpdates);
-
-        executeFinalDML(allJunctionsToDelete, allJunctionsToInsert, userFieldUpdates.values());
     }
 
     private static void syncJunctionRecordsBulk(
@@ -194,7 +200,9 @@ public without sharing class UserProvisioningService {
         }
         
         if (!toUpdate.isEmpty()) {
+            isUserProvisioningSyncUpdating = true;
             Database.SaveResult[] srList = Database.update(toUpdate, false, AccessLevel.SYSTEM_MODE);
+            isUserProvisioningSyncUpdating = false;
             UserProvisioningErrorHandler.handleDatabaseResults(srList, 'Update User Records', 'syncUserProvisioningBulk');
         }
     }
@@ -261,26 +269,6 @@ public without sharing class UserProvisioningService {
 
         if (!requests.isEmpty()) {
             syncUserProvisioningBulk(requests);
-        }
-    }
-
-    @AuraEnabled
-    public static void syncUserMetadata(Id userId) {
-        try {
-            User u = [SELECT Id, Profile.Name FROM User WHERE Id = :userId WITH SYSTEM_MODE LIMIT 1];
-
-            ProvisioningRequest req = new ProvisioningRequest();
-            req.userId         = u.Id;
-            req.newProfileName = u.Profile.Name;
-            req.oldProfileName = u.Profile.Name;
-            req.skipRoleUpdate = false;
-
-            syncUserProvisioningBulk(
-                new List<ProvisioningRequest>{ req }
-            );
-            
-        } catch (Exception e) {
-            throw new AuraHandledException('Provisioning Sync Failed: ' + e.getMessage());
         }
     }
 }
