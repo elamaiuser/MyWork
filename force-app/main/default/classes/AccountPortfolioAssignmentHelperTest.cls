@@ -33,7 +33,7 @@ public class AccountPortfolioAssignmentHelperTest  {
         List<User> users = new List<User>();
         for(Integer index=1;index<=count;index++){
             User user1 = new User(Alias = firstName+index, FirstName = firstName+index, Email=firstName+index+'.'+lastName+index+'@test.com',EmailEncodingKey='UTF-8', LastName=lastName+index, LanguageLocaleKey='en_US', 
-            	LocaleSidKey='en_US', ProfileId = profileId, TimeZoneSidKey='America/Los_Angeles', UserName=firstName+index+'.'+lastName+index+'@test.com.tst1');
+            	LocaleSidKey='en_US', ProfileId = profileId, TimeZoneSidKey='America/Los_Angeles', UserName=firstName+index+'.'+lastName+index+'@test.com.tst1', CommunityNickname = firstName + index + '-' + String.valueOf(Date.today()));
         	users.add(user1);
         }
         return users;

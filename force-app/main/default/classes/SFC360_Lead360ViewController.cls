@@ -11,6 +11,10 @@
  */
 public with sharing class SFC360_Lead360ViewController {
 
+    // Test-visible hook to allow mocking of ConnectApi query responses during tests
+    @TestVisible
+    private static Map<String, ConnectApi.CdpQueryOutput> mockQueryMap = new Map<String, ConnectApi.CdpQueryOutput>();
+
     // -----------------------------
     // Data Cloud SQL Queries
     // -----------------------------
@@ -551,6 +555,14 @@ public with sharing class SFC360_Lead360ViewController {
      * @return Query output or null if execution fails
      */
     public static ConnectApi.CdpQueryOutput safeQueryAnsiSql(ConnectApi.CdpQueryInput q) {
+        // Evalute mock response map first for testing purposes
+        if (Test.isRunningTest() && !mockQueryMap.isEmpty() && q != null && q.sql != null) {
+            for (String key : mockQueryMap.keySet()) {
+                if (q.sql.contains(key)) {
+                    return mockQueryMap.get(key);
+                }
+            }
+        }
         try {
             return ConnectApi.CdpQuery.queryAnsiSql(q);
         } catch (Exception e) { return null; }

@@ -540,16 +540,17 @@ public with sharing class BSF_TaskPlanningService {
                                         FROM Opportunity 
                                         WHERE Id IN :oppIds];
 
-        Map<Id, Id> accSpecialistMap = getAccountSpecialistMap(oppList);
+        Map<String, Map<Id, Id>> accountTeamMap = getAccountTeam(oppList);
 
         for (Opportunity opp : oppList) {
-            oppRolesMap.put(opp.Id, mapRolesForSingleOpp(opp, systemUserId, accSpecialistMap));
+            oppRolesMap.put(opp.Id, mapRolesForSingleOpp(opp, systemUserId, accountTeamMap));
         }
         
         return oppRolesMap;
     }
 
-    private static Map<Id, Id> getAccountSpecialistMap(List<Opportunity> oppList) {
+    private static Map<String, Map<Id, Id>> getAccountTeam(List<Opportunity> oppList) {
+        Map<String, Map<Id, Id>> accountTeamMap = new Map<String, Map<Id, Id>>();
         Map<Id, List<Opportunity>> accountIdvsOpps = new Map<Id, List<Opportunity>>();
         for (Opportunity opp : oppList) {
             if (opp.AccountId != null && opp.Drive_Date__c != null) {
@@ -560,25 +561,28 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        Map<Id, Id> specialistMap = new Map<Id, Id>();
-        if (accountIdvsOpps.isEmpty()) return specialistMap;
+        if (accountIdvsOpps.isEmpty()) return accountTeamMap;
 
         for (AccountTeamMember atm : [SELECT AccountId, 
                                                 UserId, 
                                                 Start_Date__c,
                                                 End_Date__c,
+                                                TeamMemberRole,
                                                 Is_Covering_Recruiter__c 
                                         FROM AccountTeamMember 
                                         WHERE AccountId IN :accountIdvsOpps.keySet() 
-                                        AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
-                                        ORDER BY Is_Covering_Recruiter__c DESC, Start_Date__c ASC]) {
+                                        AND TeamMemberRole != null
+                                        ORDER BY Is_Covering_Recruiter__c ASC, Start_Date__c ASC]) {
             for(opportunity opp : accountIdvsOpps.get(atm.AccountId)) {
                 if (isActiveTeamMember(atm.Start_Date__c, atm.End_Date__c,opp.Drive_Date__c)) {
-                    specialistMap.put(opp.Id, atm.UserId);
+                    if(accountTeamMap.isEmpty() || !accountTeamMap.containsKey(atm.TeamMemberRole)) {
+                        accountTeamMap.put(atm.TeamMemberRole, new Map<Id, Id>());
+                    }
+                    accountTeamMap.get(atm.TeamMemberRole).put(opp.Id, atm.UserId);
                 }
             }
         }
-        return specialistMap;
+        return accountTeamMap;
     }
 
     private static Boolean isActiveTeamMember(Date startDate, Date endDate, Date referenceDate) {
@@ -588,7 +592,7 @@ public with sharing class BSF_TaskPlanningService {
         return isActive;
     }
 
-    private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<Id, Id> accSpecMap) {
+    private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<String, Map<Id, Id>> accountTeamMap) {
         Map<String, Id> roles = new Map<String, Id>{
             BSF_Constants.ACCOUNT_MANAGER => opp.Account_Manager__c,
             BSF_Constants.DISTRICT_MANAGER  => opp.District_Manager__c,
@@ -605,10 +609,14 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && accSpecMap.containsKey(opp.Id)) {
-            roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accSpecMap.get(opp.Id));
+        if(accountTeamMap != null && !accountTeamMap.isEmpty()){
+            for(String role : accountTeamMap.keySet()){
+                if(accountTeamMap.get(role).containsKey(opp.Id) && accountTeamMap.get(role).containsKey(opp.Id) != null){
+                    roles.put(role, accountTeamMap.get(role).get(opp.Id));
+                }
+            }
         }
-
+        
         return roles;
     }
     
