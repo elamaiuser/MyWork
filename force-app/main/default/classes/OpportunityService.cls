@@ -1547,7 +1547,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
     }
     
-    public static void cancelTasksForCancelledOpportunities(Map<Id,Opportunity> oldMap,Map<Id,Opportunity> newMap){ 
+    /*public static void cancelTasksForCancelledOpportunities(Map<Id,Opportunity> oldMap,Map<Id,Opportunity> newMap){ 
         System.debug('Entered method cancelTasksForCancelledOpportunities');    
         Set<Id> newOppMapKeys = newMap.keyset();    
         Map<Id,Opportunity> cancelledOppsMap = new Map<Id,Opportunity>();   
@@ -1581,11 +1581,12 @@ Note : It'll throw error if any sort of consequences happen when projection valu
             tsk.status = 'Cancelled';           
         } 
         /*Schema.DescribeSObjectResult ds = Task.sObjectType.getDescribe();
-if(ds.isUpdateable()){}*/
+if(ds.isUpdateable()){}
         update taskList; 
         
         
-    }
+    }*/
+    
     /*HRP-5002 :Global Web Scheduling ,HRP-4987=SF TimeZone Objects
 * Deactivated below flow:Update Blood Drive Opportunity Collection Zip Code and moved flow logic into this method.
 */
