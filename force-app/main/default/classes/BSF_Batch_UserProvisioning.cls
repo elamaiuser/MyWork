@@ -6,6 +6,7 @@ public without sharing class BSF_Batch_UserProvisioning implements Database.Batc
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
         Set<String> profileNames = getProfileNames();
+        Integer queryLimit = Test.isRunningTest() ? 200 : 50000000;
         return Database.getQueryLocator([
             SELECT Id, 
             ProfileId,
@@ -14,6 +15,7 @@ public without sharing class BSF_Batch_UserProvisioning implements Database.Batc
             WHERE IsActive = true
             AND Bypass_Auto_Provisioning__c = false
             AND Profile.Name IN :profileNames
+            LIMIT :queryLimit
         ]);
     }
 
