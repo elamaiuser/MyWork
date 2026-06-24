@@ -5,5 +5,5 @@
     <numPartitions>1</numPartitions>
     <partitionKey>EventUuid</partitionKey>
     <platformEventConsumer>assignResourcesToUsersBasedOnConfig</platformEventConsumer>
-    <user>batchuser@redcrossproduction.com</user>
+    <user>batchuser@redcrossproduction.com.releaseqa</user>
 </PlatformEventSubscriberConfig>
