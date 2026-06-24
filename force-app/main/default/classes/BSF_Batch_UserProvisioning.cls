@@ -24,8 +24,8 @@ public without sharing class BSF_Batch_UserProvisioning implements Database.Batc
             UserProvisioningService.ProvisioningRequest req = new UserProvisioningService.ProvisioningRequest();
             req.userId = u.Id;
             req.newProfileName = u.Profile.Name;
-            req.oldProfileName = u.Profile.Name;
-            req.skipRoleUpdate = false; 
+            req.oldProfileName = '';
+            req.skipRoleUpdate = true; 
             requests.add(req);
         }
         

@@ -19,5 +19,14 @@
         <members>AssignResourcesToUserEvent__e.Old_User_Profile__c</members>
 		<name>CustomField</name>
 	</types>
+    <types>
+		<members>BSF_Access_Control_Rule.HRP_15652_User_Field_PS</members>
+        <members>BSF_Access_Control_Rule.HRP_15652_Class_Permission_Set</members>
+		<name>CustomMetadata</name>
+	</types>
+    <types>
+		<members>assignResourcesToUsersBasedOnConfig</members>
+		<name>PlatformEventSubscriberConfig</name>
+	</types>
 	<version>66.0</version>
 </Package>

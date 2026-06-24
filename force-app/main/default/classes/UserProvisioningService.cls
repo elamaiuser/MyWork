@@ -257,7 +257,7 @@ public without sharing class UserProvisioningService {
         List<ProvisioningRequest> requests = new List<ProvisioningRequest>();
 
         for (AssignResourcesToUserEvent__e evt : events) {
-            if(String.isNotBlank(evt.UserId__c) && String.isNotBlank(evt.UserProfile__c) && String.isNotBlank(evt.Old_User_Profile__c)) {
+            if(String.isNotBlank(evt.UserId__c)) {
                 ProvisioningRequest req = new ProvisioningRequest();
                 req.userId = evt.UserId__c;
                 req.newProfileName = evt.UserProfile__c;
