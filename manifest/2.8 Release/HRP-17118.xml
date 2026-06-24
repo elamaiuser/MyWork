@@ -8,8 +8,9 @@
 		<members>OpportunityTriggerHandler</members>
 		<members>OpportunityTriggerTest</members>
 		<members>skedDriveHandler</members>
-		<members>skedDriveHandlerService</members>
 		<members>skedDriveTrigger_Test</members>
+		<members>skedDriveHandlerService</members>
+		<members>skedDriveHandlerService_Test</members>
 		<name>ApexClass</name>
 	</types>
     <version>64.0</version>
