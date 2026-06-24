@@ -8,6 +8,11 @@
         <members>UserProvisioningErrorHandler</members>
         <members>UserAssignmentTypeConfig</members>
         <members>BSF_Batch_UserProvisioning</members>
+        <members>UserProvisioningServiceTest</members>
+        <members>BSF_Batch_UserProvisioning_Test</members>
+        <members>userServiceTest</members>
+        <members>UserProvisioningErrorHandlerTest</members>
+        <members>assignResourcesToUsersBasedOnConfigTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
