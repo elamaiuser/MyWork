@@ -1596,13 +1596,19 @@ class FixedSiteGenerator extends BaseGenerator {
 
     if (driveShift.lunchBreak) {
       if (!driveShift.lunchBreakBeforeDrawHours) {
+        let coMaxLunchBreakDuration = driveShiftMetadata.lunchBreakSettings.maximumLunchBreakDuration;
+        let lunchBreakSetting = this.masterData.lunchBreakSettings.find((setting) => setting.maximumLunchBreakDuration == coMaxLunchBreakDuration);
+        let staffSetup = this.helper.calculateStaffSetup(['Apheresis', 'Apheresis Charge'], driveShift);
+        console.log('lunchBreakSetting==> ', JSON.stringify(lunchBreakSetting));
+        console.log('staffSetup==> ', JSON.stringify(staffSetup));
+        let lunchBreakDefinition = lunchBreakSetting.lunchBreakDefinitions.find(
+          (definition) => (definition.minNoOfStaff <= staffSetup && staffSetup <= definition.maxNoOfStaff)
+        );
+        console.log('lunchBreakDefinition==> ', JSON.stringify(lunchBreakDefinition));
+        
+        driveShift.signUpReduction = lunchBreakDefinition.slotReduction;
         if (wbSlots && wbSlots.length) {
-          let coMaxLunchBreakDuration = driveShiftMetadata.lunchBreakSettings.maximumLunchBreakDuration;
-          let lunchBreakSetting = this.masterData.lunchBreakSettings.find((setting) => setting.maximumLunchBreakDuration == coMaxLunchBreakDuration);
-          let staffSetup = this.helper.calculateStaffSetup(['Apheresis', 'Apheresis Charge'], driveShift);
-          let lunchBreakDefinition = lunchBreakSetting.lunchBreakDefinitions.find(
-            (definition) => (definition.minNoOfStaff <= staffSetup && staffSetup <= definition.maxNoOfStaff)
-          );
+          
           let slotReductionConfiguration = {
             endTime: this.helper.newDateTime(driveShift.driveDate, driveShift.lunchBreakEndTime, this.masterData.timezoneSidId),
             interval: 60,
@@ -1617,7 +1623,6 @@ class FixedSiteGenerator extends BaseGenerator {
           };
 
           this.reduceSlots(wbSlots, slotReductionConfiguration);
-          driveShift.signUpReduction = lunchBreakDefinition.slotReduction;
         }
       }
       else {
@@ -2043,6 +2048,7 @@ class FixedSiteGenerator extends BaseGenerator {
           this.drive,
           driveShiftMetadata
         );
+        console.log('driveShiftMetadata=> ', JSON.stringify(driveShiftMetadata));
         driveShiftMetadata.lunchBreakSettings = this.helper.calculateDriveShiftLunchBreakSettings(this.drive, driveShiftMetadata, this.masterData);
       });
       
