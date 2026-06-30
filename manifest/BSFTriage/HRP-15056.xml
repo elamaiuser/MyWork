@@ -13,6 +13,7 @@
         <members>Account-DRD Mobile Account Layout</members>
         <members>Account-System Admin Mobile Account Layout</members>
         <members>Account-Sponsor Marketing Mobile Layout</members>
+        <members>Account-APS Admin Mobile Account Layout</members>
         <name>Layout</name>
     </types>
     <types>
