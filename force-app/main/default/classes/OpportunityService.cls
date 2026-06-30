@@ -3691,64 +3691,30 @@ opp.StageName = 'Closed';
     }
     
     //HRP-7362
-    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity>oldMap,list<Opportunity>newOpp,Map<Id,Opportunity>newMap)
-    {
+    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity> oldMap, Map<Id,Opportunity> newMap) {
         
-        set<id> oppId = new set<id>();
-        map<id,id> OppIdSiteId = new map<id,id>();
+        Set<Id> oppIdSet = new Set<Id>();
+        Map<Id, Id> OppIdSiteId = new Map<Id, Id>();
+        List<Task> tasksToUpdate = new List<Task>();
         
-        for(opportunity opp : newOpp)
-        {
-            if(oldMap.get(opp.id).drive_date__c != opp.drive_Date__c)
-            {
-                oppId.add(opp.id);
-                if(opp.Drive_Site__c!=null)
-                    OppIdSiteId.put(opp.id,opp.Drive_Site__c);
+        for(opportunity opp : newMap.values()) {
+            if(oldMap != null && oldMap.get(opp.Id).Drive_Date__c != opp.Drive_Date__c) {
+                oppIdSet.add(opp.Id);
             }
         }
         
-        list<task> oppTasks = [select id,subject,activityDate,whatId from task where whatId IN:oppId and (subject like 'Sponsor Planning Meeting%' or subject like 'Recruitment%' or subject like '72 Hour Check in%' or subject like 'Security Information%')];// Changes for HRP-7123
-        system.debug('oppTasks'+oppTasks);
-        Opportunity_Date_Setting__mdt mdtOppDateSetting = Opportunity_Date_Setting__mdt.getInstance('Sponsor_Planning_Meeting');
-        Integer daysFromDriveDate = mdtOppDateSetting?.Days_from_Drive_Date__c.intValue();
+        if(oppIdSet != null && !oppIdSet.isEmpty()) {
+            List<Task> oppTasks = [
+                SELECT Id, Subject, 
+                ActivityDate, WhatId 
+                FROM Task 
+                WHERE whatId IN :oppIdSet 
+                AND Status != 'Cancelled'
+            ]; // Changes for HRP-7123
         
-        map<id,sked__Location__c> driveSite =new map<id,sked__Location__c>([select sked_Pre_Drive_Security_Due_Date__c from sked__Location__c where Id IN:OppIdSiteId.values()]);
-        system.debug('driveSite '+driveSite);
-        
-        list<task> taskToUpdate = new list<task>();
-        
-        for(task t : oppTasks)
-        {
-            opportunity opp = new opportunity();
-            opp=newMap.get(t.WhatId);
-            if(t.subject.containsIgnoreCase('Sponsor Planning'))
-            {
-                t.ActivityDate=opp.Drive_Date__c.addDays(-daysFromDriveDate);
+            if(oppTasks != null && !oppTasks.isEmpty()) {
+                OpportunityServiceController.updateTaskDates(newMap, oppTasks);
             }
-            else if (t.subject.containsIgnoreCase('Recruitment Planning'))// Changes for HRP-7123
-            {
-                system.debug('Helper.AddBusinessDays'+Helper.AddBusinessDays(opp.Drive_Date__c, -50));
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c, -50);
-            }
-            else if(t.subject.containsIgnoreCase('72 Hour Check in'))
-            {
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
-            }
-            else if(t.subject.containsIgnoreCase('Security Information'))
-            {
-                
-                system.debug(opp.drive_date__c+'___'+opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c);
-                t.ActivityDate = opp.drive_date__c - Integer.ValueOf(driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c);
-                t.Pre_Drive_Security_Due_Date__c = driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c;
-            }
-            t.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
-            taskToUpdate.add(t);
-        }
-        
-        if(!taskToUpdate.isEmpty())
-        {
-            Database.SaveResult[] srList = Database.Update(taskToUpdate,false);
-            
         }
     }
     
