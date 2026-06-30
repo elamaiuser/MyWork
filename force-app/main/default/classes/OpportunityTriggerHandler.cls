@@ -703,7 +703,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             
             //HRP-7362
             if(super.getTriggerMethodsToBypass().indexOf('modifyTasksOnDriveDateChange') == -1) {
-                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap ,(Map<Id, Opportunity>)trigger.newMap);
+                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap,(Map<Id, Opportunity>)trigger.newMap);
              } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.modifyTasksOnDriveDateChange() Bypassed');  
             }
