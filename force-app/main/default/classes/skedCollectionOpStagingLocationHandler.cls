@@ -5,7 +5,7 @@ public class skedCollectionOpStagingLocationHandler extends skedTriggerHub imple
             initiateRepopulateDriveStagingLocationBatch((List<sked_Collection_Op_Staging_Location__c>) this.context.newRecords);
         }
 
-        skedFutureCallEventHandler.publishFutureCallEvent(
+        skedFutureCallPostCommitEventHandler.publishFutureCallEvent(
             skedCollectionOpStagingLocationHandler.class.getName(),
             'createTravelTimeIndexItems',
             skedSObjectUtils.getRecordIds(this.context.newRecords)   
