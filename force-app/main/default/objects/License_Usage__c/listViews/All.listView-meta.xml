@@ -12,6 +12,9 @@
     <columns>License_Definition_Key__c</columns>
     <columns>Package_Id__c</columns>
     <columns>Namespace_Prefix__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>
