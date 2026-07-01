@@ -60,6 +60,8 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
@@ -74,7 +76,6 @@
         <fields>RunInMode</fields>
         <fields>ApiVersion</fields>
         <fields>CapacityCategory</fields>
-        <fields>AreMetricsLoggedToDataCloud</fields>
         <relatedList>FlowRecordVersions</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
