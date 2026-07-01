@@ -8,11 +8,11 @@
     </values>
     <values>
         <field>sked_Endpoint__c</field>
-        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo+ISU/Web_Services_-_EE_Time_Off_Report_Skedulo</value>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross5/Skedulo%20ISU/Web_Services_-_EE_Time_Off_Report_Skedulo?begin_date=%START_DATE%-00:00&amp;end_date=%END_DATE%-00:00&amp;Worker!Employee_ID=%EMPLOYEE_ID%</value>
     </values>
     <values>
         <field>sked_Namespace__c</field>
-        <value xsi:type="xsd:string">urn:com.workday.report/Web_Services_-_EE_Time_Off_Report_Skedulo</value>
+        <value xsi:type="xsd:string">urn:com.workday.report/Web_Services_Time_Off_Balances_Skedulo</value>
     </values>
     <values>
         <field>sked_Template__c</field>
