@@ -19,6 +19,9 @@ global class skedExceptionLogService extends skedDataService {
             if (unavailability.recordId != NULL) {
             	sourceRecordIds.add(unavailability.recordId);
             }
+            if (unavailability.conflictedJobAllocationId != NULL) {
+            	sourceRecordIds.add(unavailability.conflictedJobAllocationId);
+            }
             if (minDt == NULL || unavailability.startTime < minDt) {
                 minDt = unavailability.startTime;
             }
@@ -42,7 +45,9 @@ global class skedExceptionLogService extends skedDataService {
             skedHC__Job__r.sked__Start__c, skedHC__Job__r.sked__Finish__c,
             skedHC__Availability__c, skedHC__Availability__r.sked__Start__c, 
             skedHC__Availability__r.sked__Finish__c, skedHC__Activity__c,
-            skedHC__Activity__r.sked__Start__c, skedHC__Activity__r.sked__End__c
+            skedHC__Activity__r.sked__Start__c, skedHC__Activity__r.sked__End__c,
+            sked_Conflicted_Job_Allocation__c, sked_Conflicted_Job_Allocation__r.sked__Start__c,
+            sked_Conflicted_Job_Allocation__r.sked__Set_End__c
             FROM skedHC__Exception__c
             WHERE (skedHC__Availability__c IN :sourceRecordIds 
                     OR skedHC__Activity__c IN :sourceRecordIds
@@ -61,6 +66,12 @@ global class skedExceptionLogService extends skedDataService {
             if (existingExceptionLog.skedHC__Activity__c != NULL 
                 && (existingExceptionLog.skedHC__Job__r.sked__Start__c >= existingExceptionLog.skedHC__Activity__r.sked__End__c
                     || existingExceptionLog.skedHC__Job__r.sked__Finish__c <= existingExceptionLog.skedHC__Activity__r.sked__Start__c)) {
+                        existingExceptionLog.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                        exceptionLogsToUpdate.add(existingExceptionLog);
+                    }
+            if (existingExceptionLog.sked_Conflicted_Job_Allocation__c != NULL
+                && (existingExceptionLog.skedHC__Job__r.sked__Start__c >= existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Set_End__c
+                    || existingExceptionLog.skedHC__Job__r.sked__Finish__c <= existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Start__c)) {
                         existingExceptionLog.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
                         exceptionLogsToUpdate.add(existingExceptionLog);
                     }

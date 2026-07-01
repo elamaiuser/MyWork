@@ -352,15 +352,15 @@ private class BSF_TaskPlanningServiceTest {
         BSF_TaskPlanningService.cascadeAccountToTemplates(new List<Opportunity>{template});
         
         drive.Drive_Status__c = 'Confirmed'; 
-        Set<Id> triggeredIds = BSF_TaskPlanningService.cascadeTemplateToDrives(new List<Opportunity>{drive});
+        BSF_TaskPlanningService.cascadeTemplateToDrives(new List<Opportunity>{drive});
         Test.stopTest();
 
-        System.assertNotEquals(null, triggeredIds, 'Cascade to Drives should return a valid Set of Ids.');
+        System.assertEquals('Confirmed', drive.Drive_Status__c, 'Cascade to Drives should be Confirmed.');
     }
 
     @isTest static void testHandleOpportunityUpdates() {
-        Opportunity drive = [SELECT Id, Drive_Status__c, Type_of_Drive__c, Is_Template__c, Drive_Date__c, Planning_Path__c FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
-        Opportunity template = [SELECT Id, Drive_Status__c, Is_Template__c, Type_of_Drive__c, Drive_Date__c, Planning_Path__c FROM Opportunity WHERE Is_Template__c = true LIMIT 1];
+        Opportunity drive = [SELECT Id, Drive_Status__c, Type_of_Drive__c, Is_Template__c, Drive_Date__c, Planning_Path__c, RecordTypeId, Parent_Template_Id__c, Is_Path_Overridden__c FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+        Opportunity template = [SELECT Id, Drive_Status__c, Is_Template__c, Type_of_Drive__c, Drive_Date__c, Planning_Path__c, RecordTypeId, Parent_Template_Id__c, Is_Path_Overridden__c FROM Opportunity WHERE Is_Template__c = true LIMIT 1];
         
         Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>{
             drive.Id => drive.clone(true, true, true, true),

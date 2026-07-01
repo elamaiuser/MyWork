@@ -239,11 +239,33 @@ private class BSF_TemplateTaskPlanningCascadeBatchTest {
         
         Boolean containsProcessed = false;
         for(Planned_Task__c pt : generatedQueueItems) {
-            if(pt.Status__c == 'Processed') {
+            if(pt.Status__c == 'Configured') {
                 containsProcessed = true;
             }
         }
-        System.assert(containsProcessed, 'The batch should have triggered Task Generation, marking the Planned Task as Processed.');
+        System.assert(containsProcessed, 'The batch should not have triggered Task Generation, marking the Planned Task as Configured.');
+    }
+    @isTest
+    static void testBatchExecution_DraftDrive2() {
+        
+        Opportunity template = [SELECT Id FROM Opportunity WHERE Is_Template__c = TRUE LIMIT 1];
+        Opportunity drive = [SELECT Id, Drive_Status__c FROM Opportunity WHERE Is_Template__c = FALSE LIMIT 1];
+        
+        System.assertEquals('Draft', drive.Drive_Status__c, 'Drive should be in Draft status.');
+
+        Test.startTest();
+        
+        BSF_TemplateTaskPlanningCascadeBatch batch = new BSF_TemplateTaskPlanningCascadeBatch(new Set<Id>{template.Id},new Set<Id>{drive.Id});
+        Database.executeBatch(batch);
+        Test.stopTest(); 
+
+        
+        List<Planned_Task__c> generatedQueueItems = [SELECT Id, Task_Definition__c FROM Planned_Task__c WHERE Related_Opportunity__c = :drive.Id];
+        System.assert(!generatedQueueItems.isEmpty(), 'Planned Tasks should have been cascaded down from the Template to the Drive.');
+        
+        
+        List<Task> actualTasks = [SELECT Id FROM Task WHERE WhatId = :drive.Id];
+        System.assert(actualTasks.isEmpty(), 'Actual Tasks should NOT be generated for Draft drives.');
     }
 
     private static Map<String,Id> recordTypeMap(string obj){

@@ -456,7 +456,8 @@ class SlwcAvailator {
       this.timezoneSidId = this.drive.driveSite && this.drive.driveSite.timezoneSidId;
       this.collectionOperationIds = [this.drive.collectionOperationId];
       this.drive.driveShifts.forEach(item => {
-        this.jobs = this.jobs.concat(this.doTransformJobs(item.jobs));
+        const jobs = item.jobs.map(job => ({ ...job, driveDate: job.driveDate || this.drive.driveDate }));
+        this.jobs = this.jobs.concat(this.doTransformJobs(jobs));
       });
       return Promise.resolve();
     }
