@@ -10,19 +10,14 @@
     <columns>Error_Description_Long__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>contains</operation>
-        <value>Priti Jana</value>
-    </filters>
-    <filters>
         <field>CREATED_DATE</field>
-        <operation>greaterOrEqual</operation>
-        <value>YESTERDAY</value>
+        <operation>equals</operation>
+        <value>TODAY</value>
     </filters>
     <filters>
-        <field>ApexClass__c</field>
-        <operation>notEqual</operation>
-        <value>OpportunityService</value>
+        <field>CREATEDBY_USER</field>
+        <operation>notContain</operation>
+        <value>Bishakha</value>
     </filters>
     <label>Drive Generation Failure</label>
 </ListView>
