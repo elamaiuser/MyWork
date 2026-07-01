@@ -215,6 +215,7 @@ global class skedSetting {
     }
 
     public class skedAdminSetting {
+        public decimal adhocDriverSupportCapacity;
         public string bsfSupportEmail;
         public boolean dateTimeConversion;
         public string distanceMeasurementUnit;
@@ -248,6 +249,7 @@ global class skedSetting {
 
         public skedAdminSetting() {
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
+            this.adhocDriverSupportCapacity = setting.sked_Admin_Adhoc_Driver_Support_Capacity__c != NULL ? (decimal)setting.sked_Admin_Adhoc_Driver_Support_Capacity__c : 2.2;
             this.bsfSupportEmail = setting.sked_Admin_BSF_Support_Email__c != NULL ? setting.sked_Admin_BSF_Support_Email__c : 'bsfsupport@redcross.org';
             this.jobURL = setting.sked_Admin_Global_JobURL__c != NULL ? setting.sked_Admin_Global_JobURL__c : '';
             this.dateTimeConversion = setting.sked_Admin_DateTime_Conversion__c;
