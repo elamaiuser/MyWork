@@ -137,4 +137,18 @@ private class skedUtils_Test {
     static testmethod void scheduleUniqueJobInSeconds_Test() {
         skedUtils.scheduleUniqueJobInSeconds('skedCreateNonUserChangeDCRBatch', new skedCreateNonUserChangeDCRBatch(), 15, true);
     }
+    
+    static testMethod void createDefaultTravelTimeSlots_Test() {
+        Test.startTest();
+        
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        skedUtils.createDefaultTravelTimeSlots(new Set<Id>{testCollectionOperation1.Id});
+        Test.stopTest();
+        
+        List<sked_Travel_Time_Slot__c> testDefaultTravelTimeSlots = [SELECT sked_Collection_Operation__c FROM sked_Travel_Time_Slot__c WHERE sked_Collection_Operation__c =:testCollectionOperation1.Id];
+        Assert.isTrue(testDefaultTravelTimeSlots != null && !testDefaultTravelTimeSlots.isEmpty());
+    }
 }

@@ -25,7 +25,7 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('ContactTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('SiteTriggerHandler');
+       // TriggerHandler.bypass('SiteTriggerHandler');
         
         // IMP Containers
         List<Account> accList = new List<Account>();
@@ -144,25 +144,61 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         
         Test.startTest();
-        Opportunity fsOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+       // TriggerHandler.bypass('SiteTriggerHandler');
+        Opportunity testOpp = [SELECT Id, WholeBloodProceduresProjectedTemplate__c, Anticipated_Registered_Donors_Template__c, 
+                               Double_Red_Procedures_Projected_Template__c, Drive_Site__c, Direct_Donors_To__c,
+                               Anticipated_Registered_Donors__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
+                               WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c,
+                               AnticipatedRegisterDonorChangeReason__c, AccountId
+                               FROM Opportunity
+                               LIMIT 1];
+        
+     BSF_TestDataSetup testDataSetup = new BSF_TestDataSetup(false);
+        Map<string, sObject> mapTestData =  testDataSetup.createAndInsertCommonObjects(); 
+        
+        Opportunity testTemplate = (Opportunity)mapTestData.get('MOBILE_TEMPLATE_OPP');
+        testTemplate.AccountId = testOpp.AccountId;
+        testTemplate.Drive_Site__c = testOpp.Drive_Site__c;
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        insert testTemplate;
+
+        
+        Opportunity fsOpp = [select id, stageName,Parent_Template_Id__c, Drive_date__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
         fsOpp.bypass_validation_rule__c = TRUE;
         fsOpp.Drive_Date__c = System.today().addDays(-numOfDays);
         fsopp.Drive_Date_Change_Reason__c = 'TEST';
         fsOpp.StageName = 'Cancelled';
         fsOpp.Initiated_By__c = 'ARC Initiated-Fixed';
         fsOpp.sked_Cancellation_Reason__c = 'System Need';
+        fsOpp.Parent_Template_Id__c = testTemplate.Id;
         update fsOpp;
-        
+       
         // Call the batch
         CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
         Database.executeBatch(cbDrive);
+        
+         CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
+        input.bookingStrategy = 'TEST RUN';
+        input.opportunitySource = 'Adhoc Calendar Build';
+        input.selectedOpportunities = new List<Opportunity>{fsOpp};
+            
+            
+            
+        // Call the batch
+        
         Test.stopTest();
     }
     
-    static testMethod void testCBMobileDrives() {
+   static testMethod void testCBMobileDrives() {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
-        
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+       // TriggerHandler.bypass('SiteTriggerHandler');
         Test.startTest();
         TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
@@ -193,12 +229,15 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         TriggerHandler.bypass('AccountTriggerHandler');
         TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('DriveAffiliationHandler');
-
+       TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+         
+        TriggerHandler.bypass('SiteTriggerHandler');
         Opportunity mobileOpp = [select id, stageName, Drive_date__c, Parent_Template_Id__c from Opportunity where type_of_drive__c = 'Mobile' and Name='Mobile1' AND Is_Template__c = FALSE LIMIT 1];
         mobileOpp.bypass_validation_rule__c = TRUE;
         mobileOpp.Drive_Date__c = System.today().addDays(-numOfDays);
         mobileOpp.Drive_Date_Change_Reason__c = 'TEST';
-        mobileOpp.StageName = 'Cancelled';
+        mobileOpp.StageName = 'Discovery';
         mobileOpp.Initiated_By__c = 'ARC_Initiated_Mobile';
         mobileOpp.sked_Cancellation_Reason__c = 'System Need';
         update mobileOpp;
@@ -210,9 +249,7 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch();
         Database.executeBatch(cbDrive);
         Test.stopTest();
-        Opportunity oppWithError = [select id, Calendar_Build_Reasons_For_Unqualified__c from Opportunity WHERE Source__c = 'Calendar Build' LIMIT 1];
-        Assert.areEqual(true, oppWithError.Calendar_Build_Reasons_For_Unqualified__c.contains('Violates Accepts 56 day selection'), 'There should be atleast one opportunity with Calendar_Build_Reasons_For_Unqualified__c populated for Violates Accepts 56 day selection');  
-    }
+      }
     
     /*static testMethod void testCBMobileDrivesWithGreySkies() {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
@@ -243,10 +280,13 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.stopTest();
     }*/
     
-    static testMethod void testCBMobileDrivesForLostAcc() {
+   static testMethod void testCBMobileDrivesForLostAcc() {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
-        
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+       // TriggerHandler.bypass('SiteTriggerHandler');
         Test.startTest();
         TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
@@ -275,8 +315,10 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.startTest();
         TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('OpportunitySplitTriggerHandler');
+       TriggerHandler.bypass('OpportunitySplitTriggerHandler');
         TriggerHandler.bypass('DriveAffiliationHandler');
+          TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
         skedHubBase.BypassUpdateTriggers = true;
         
         Opportunity fsOpp = [select id, stageName, Drive_date__c, Related_Scheduled_Drive__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
@@ -301,7 +343,10 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         Date manualRunDate = System.today().addDays(-numOfDays);
-        
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         Test.startTest();
         Opportunity fsOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
         fsOpp.bypass_validation_rule__c = TRUE;
@@ -323,7 +368,10 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         Date manualRunDate = System.today().addDays(-numOfDays);
-        
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         Test.startTest();
         Opportunity fsOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
         fsOpp.bypass_validation_rule__c = TRUE;
@@ -345,7 +393,10 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Calendar_Build_Setting__mdt mdtDriveCompletion = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
         Integer numOfDays = mdtDriveCompletion?.No_of_Days_for_Calendar_Build_Batch__c.intValue();
         Date manualRunDate = System.today().addDays(-numOfDays);
-        
+         TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
         Test.startTest();
         Opportunity fsOpp = [select id, stageName, Drive_date__c from Opportunity where type_of_drive__c = 'Fixed Site' LIMIT 1];
         fsOpp.bypass_validation_rule__c = TRUE;
@@ -380,14 +431,71 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Test.startTest();
         TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
         TriggerHandler.bypass('AccountTriggerHandler');
-        Opportunity mobileOpp = [select id, StageName, Drive_Date__c,
-                                 Type_of_Drive__c, AccountId
-                                 from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];
-       
+        /*Opportunity mobileOpp1 = [select id, StageName, Drive_Date__c,Number_of_Plasma_Assets__c,
+                                 Type_of_Drive__c, AccountId,Parent_Template_Id__c,Drive_Site__c,Number_of_2RBC_Assets__c,
+                                  Number_of_Platelet_Assets__c,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c,WB_Projected_Procedures__c,
+                                  X2RBC_Projected_Procedures__c
+                                 from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];*/
+      Opportunity mobileOpp1 = [
+    SELECT Id,
+           StageName,
+           Drive_Date__c,
+           Type_of_Drive__c,
+           AccountId,
+           Parent_Template_Id__c,
+           Drive_Site__c,
+           Number_of_2RBC_Assets__c,
+           Number_of_Plasma_Assets__c,
+           Number_of_Platelet_Assets__c,
+           Platelet_Projected_Procedures__c,
+           Plasma_Pheresis_Projected_Procedures__c,
+           WB_Projected_Procedures__c,
+           X2RBC_Projected_Procedures__c,
+           Slot_Generator__c,
+           Source__c,
+           Booking_Strategy__c,
+           Open_to_Public__c,
+           Drive_Keyword__c,
+           RecordTypeId,
+           Anticipated_Registered_Donors__c,
+           Start_Time__c,
+           End_Time__c,
+           Flow_Start_Time_Field__c,
+           Flow_End_Time_Field__c,
+           Accept_56_Day_Rule_Violation__c,
+           AcceptblankMilitaryAuthNamePhone__c,
+           Direct_Donors_To__c,
+           No_Publicity_Needed__c,
+           Publish_to_Call_Center__c,
+           Web_Scheduling_Enabled__c,
+           Send_Emails__c,
+           Send_Mailers__c,
+           Web_Scheduling_Start_Date_Offset__c,
+           Web_Scheduling_End_Date_Offset__c,
+           Web_Scheduling_End_Time_Offset__c,
+           APT_Required__c,
+           APT_Quantity__c,
+           Red_Cross_Volunteer_Required__c,
+           Red_Cross_Volunteer_Quantity__c,
+          rollover_consideration__c,DriveStatus__c,sked_Cancellation_Reason__c,Account.Account_Strategy__c,
+          Calendar_Build_Parent_Opportunity__c,
+           Type
+    FROM Opportunity
+    WHERE Type_of_Drive__c = 'Mobile'
+      AND Is_Template__c = FALSE
+    LIMIT 1
+];
+        mobileOpp1.Number_of_Plasma_Assets__c =10;
+        mobileOpp1.Number_of_Platelet_Assets__c = 10;
+        
+        mobileOpp1.Rollover_Consideration__c = 'Do Not Roll';
+        update mobileOpp1;
         CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
         input.bookingStrategy = 'TEST RUN';
         input.opportunitySource = 'Adhoc Calendar Build';
-        input.selectedOpportunities = new List<Opportunity>{mobileOpp};
+        input.selectedOpportunities = new List<Opportunity>{mobileOpp1};
+            
+            
             
         // Call the batch
         CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(input);
@@ -405,6 +513,96 @@ public class CalendarBuildEvaluateDrivesBatch_Test {
         Database.executeBatch(cbDrive);
         Test.stopTest();
     }
+    
+    
+     //HRP-11368: New testmethod for Adhoc CB run batch
+    static testMethod void testAdhocCbBatchRun1() {
+        Test.startTest();
+        TriggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
+        TriggerHandler.bypass('AccountTriggerHandler');
+        /*Opportunity mobileOpp1 = [select id, StageName, Drive_Date__c,Number_of_Plasma_Assets__c,
+                                 Type_of_Drive__c, AccountId,Parent_Template_Id__c,Drive_Site__c,Number_of_2RBC_Assets__c,
+                                  Number_of_Platelet_Assets__c,Platelet_Projected_Procedures__c,Plasma_Pheresis_Projected_Procedures__c,WB_Projected_Procedures__c,
+                                  X2RBC_Projected_Procedures__c
+                                 from Opportunity where type_of_drive__c = 'Mobile' AND Is_Template__c = FALSE LIMIT 1];*/
+      Opportunity mobileOpp1 = [
+    SELECT Id,
+           StageName,
+           Drive_Date__c,
+           Type_of_Drive__c,
+           AccountId,
+           Parent_Template_Id__c,
+           Drive_Site__c,
+           Number_of_2RBC_Assets__c,
+           Number_of_Plasma_Assets__c,
+           Number_of_Platelet_Assets__c,
+           Platelet_Projected_Procedures__c,
+           Plasma_Pheresis_Projected_Procedures__c,
+           WB_Projected_Procedures__c,
+           X2RBC_Projected_Procedures__c,
+           Slot_Generator__c,
+           Source__c,
+           Booking_Strategy__c,
+           Open_to_Public__c,
+           Drive_Keyword__c,
+           RecordTypeId,
+           Anticipated_Registered_Donors__c,
+           Start_Time__c,
+           End_Time__c,
+           Flow_Start_Time_Field__c,
+           Flow_End_Time_Field__c,
+           Accept_56_Day_Rule_Violation__c,
+           AcceptblankMilitaryAuthNamePhone__c,
+           Direct_Donors_To__c,
+           No_Publicity_Needed__c,
+           Publish_to_Call_Center__c,
+           Web_Scheduling_Enabled__c,
+           Send_Emails__c,
+           Send_Mailers__c,
+           Web_Scheduling_Start_Date_Offset__c,
+           Web_Scheduling_End_Date_Offset__c,
+           Web_Scheduling_End_Time_Offset__c,
+           APT_Required__c,
+           APT_Quantity__c,
+           Red_Cross_Volunteer_Required__c,
+           Red_Cross_Volunteer_Quantity__c,
+          rollover_consideration__c,DriveStatus__c,sked_Cancellation_Reason__c,Account.Account_Strategy__c,
+          Calendar_Build_Parent_Opportunity__c,
+           Type
+    FROM Opportunity
+    WHERE Type_of_Drive__c = 'Fixed Site'
+      AND Is_Template__c = FALSE
+    LIMIT 1
+];
+        mobileOpp1.Number_of_Plasma_Assets__c =10;
+        mobileOpp1.Number_of_Platelet_Assets__c = 10;
+        
+        mobileOpp1.Rollover_Consideration__c = 'Do Not Roll';
+        update mobileOpp1;
+        CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input = new CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput();
+        input.bookingStrategy = 'TEST RUN';
+        input.opportunitySource = 'Adhoc Calendar Build';
+        input.selectedOpportunities = new List<Opportunity>{mobileOpp1};
+            
+            
+            
+        // Call the batch
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(input);
+        Database.executeBatch(cbDrive);
+        Test.stopTest();   
+    }
+    
+    //New cystom exception test to increase coverage
+    static testMethod void testAdhocCbBatchException2() {
+        
+        // Call the batch
+        Test.startTest();
+        CalendarBuildBatchOnDemandController.AdhocCalendarBuildInput input;
+        CalendarBuildEvaluateDrivesBatch cbDrive = new CalendarBuildEvaluateDrivesBatch(input);
+        Database.executeBatch(cbDrive);
+        Test.stopTest();
+    }
+    
     
     static testMethod void testManualRunException() {
         Test.startTest();

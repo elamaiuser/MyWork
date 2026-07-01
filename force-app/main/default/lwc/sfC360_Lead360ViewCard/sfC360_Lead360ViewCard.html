@@ -1,0 +1,292 @@
+<template>
+    <template if:true={hasObjectApiName}>
+        <!-- Header Card -->
+        <lightning-card title={header} icon-name={headerIcon}>
+        </lightning-card>
+
+        <article class="slds-card">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <!-- Constituent Data description -->
+            <div class="slds-p-horizontal_small slds-m-top_xx-small">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-text-body_medium slds-text-color_default"><b>Constituent Data</b></div>
+                </div>
+                <div class="slds-m-top_xx-small">
+                    <span class="slds-text-body_medium slds-text-color_default">This summary reflects a consolidated view of engagement across systems. While record-matching may vary slightly due to naming differences, the information is reliable for understanding overall engagement, and exact data can be verified if needed.</span>
+                </div>
+            </div>
+
+            <!-- Identity Match & Account Owner header -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
+                        <b>Identity Match</b>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small slds-m-top_small">
+                        <b>Account Owner</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+            
+            <!-- Identity match account mapping -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <template for:each={accAmArray} for:item="rec">
+                    <div key={rec.orgName}>
+                        <lightning-layout horizontal-align="spread" multiple-rows>
+
+                            <!-- Organization name and match status -->
+                            <lightning-layout-item size="6" class="slds-align-top">
+                                <div class="slds-p-left_small slds-p-bottom_xx-small">
+                                    <img src={rec.statusIcon} alt="Status" class="slds-m-right_x-small"
+                                        style="max-height:10px;" />
+                                    <span class="slds-text-body_regular">{rec.orgName}</span>
+                                </div>
+                            </lightning-layout-item>
+
+                            <!-- Account owners list -->
+                            <lightning-layout-item size="6" class="slds-align-top">
+                                <template if:true={rec.accounts.length}>
+                                    <template for:each={rec.accounts} for:item="item">
+                                        <div key={item.email} class="slds-p-horizontal_small slds-p-bottom_xx-small">
+                                            <span style="white-space: normal; word-wrap: break-word;">
+                                                <a href={item.mailto} title={item.email}>
+                                                    {item.name}
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!-- No account owners -->
+                                <template if:false={rec.accounts.length}>
+                                    <div class="slds-p-left_small slds-text-color_weak">
+                                        Not Available
+                                    </div>
+                                </template>
+
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+                </template>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+            <!-- Hospital Sales section -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Hospital Sales/Cell Gene Therapy:</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <!-- Hospital Sales activity counts -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId} data-filter="open"
+                            onclick={handleModalClickActivity}>{openActivityHS}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={hsActivityAccId} data-filter="all"
+                            onclick={handleModalClickActivity}>{totalActivityHS}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+            <!-- Fundraising section -->
+            <div class="slds-text-align_left ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Fundraising:</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <!-- Fundraising activities -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId} data-filter="open"
+                            onclick={handleModalClickActivity}>{openActivityFR}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={frActivityAccId} data-filter="all"
+                            onclick={handleModalClickActivity}>{totalActivityFR}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+            <!-- TrainingServices section -->
+            <div class="slds-text-align_left">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Training Services:</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <!-- Training Services activities -->
+            <div class="slds-text-align_left slds-m-bottom_small" >
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Open Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId} data-filter="open"
+                        onclick={handleModalClickActivity}>{openActivityTS}</a>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Total Activity: <a href='#' title="See Activity Details" data-accid={tsActivityAccId} data-filter="all"
+                            onclick={handleModalClickActivity}>{totalActivityTS}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <div class="slds-m-horizontal_small slds-border_top"></div>
+
+            <!-- Related Accounts section -->
+            <div class="slds-text-align_left ">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        <b>Related Accounts:</b>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <!-- Related account count -->
+            <div class="slds-text-align_left slds-m-bottom_small">
+                <lightning-layout size="12">
+                    <lightning-layout-item size="6" class="slds-p-horizontal_small">
+                        Number of Accounts: <a href='#' title="See Account Details"
+                            onclick={handleModalClickAccountDetails}>{numberOfAccounts}</a>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+            <c-sfc360-generic-detail-modal open={isModalOpen} loading={isModalLoading} title={modalTitle}
+                onclosemodal={closeModal}>
+
+                <!-- Account modal -->
+                <template if:true={isAccountModal}>
+                    <template if:true={hasAccountDetails}>
+                        <c-sfc360-generic-data-table data={accountDetailsData} columns={accDetailsDataColumns}
+                            key-field="accRecId">
+                        </c-sfc360-generic-data-table>
+                    </template>
+                    <template if:false={hasAccountDetails}>
+                        <p>No data available.</p>
+                    </template>
+                </template>
+                
+                <!-- Activity modal (accordion timeline without chevron/details) -->
+                <template if:true={isActivityModal}>
+                    <template if:true={fetchGroupedActivities.length}>
+                        <div class="slds-modal__content slds-p-around_small">
+                            <lightning-accordion allow-multiple-sections-open class="slds-theme_default slds-box_shadow"
+                                active-section-name="Upcoming &amp; Overdue">
+                                <template for:each={fetchGroupedActivities} for:item="group">
+                                    <lightning-accordion-section name={group.key} label={group.key}
+                                        class="slds-text-body_medium" key={group.key}>
+                                        <span slot="label"
+                                            class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                            <template if:true={group.isUpcomingGroup}>
+                                                <lightning-icon icon-name="utility:event" size="small"
+                                                    class="slds-m-right_x-small"
+                                                    alternative-text="Upcoming and Overdue"></lightning-icon>
+                                                <span
+                                                    class="slds-text-title_caps slds-text-color_inverse slds-text-body_medium">{group.key}</span>
+                                            </template>
+                                            <template if:false={group.isUpcomingGroup}>
+                                                {group.key}
+                                            </template>
+                                        </span>
+                                        <template if:true={group.values.length}>
+                                            <template for:each={group.values} for:item="activity">
+                                                <div key={activity.taskId} class={activity.timelineItemClass}>
+                                                    <span class="slds-assistive-text">activity</span>
+                                                    <div class="slds-media">
+                                                        
+                                                        <div class="slds-media__figure">
+                                                            <div class="slds-icon_container slds-timeline__icon"
+                                                                title="Activity Type">
+                                                                <lightning-icon icon-name={activity.typeIcon}
+                                                                    alternative-text="Activity Type" size="x-small">
+                                                                </lightning-icon>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="slds-media__body">
+                                                            <div class="slds-grid slds-grid_align-spread slds-timeline__trigger">
+                                                                <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                                                                    <h4 class="slds-truncate slds-text-body_regular">
+                                                                        <template if:true={activity.ownerName}>
+                                                                            
+                                                                            <!-- Task Text -->
+                                                                            <template if:true={activity.isTask}>
+                                                                                {activity.ownerName}&nbsp;
+                                                                                <template if:true={activity.isClosed}>had </template>
+                                                                                <template if:false={activity.isClosed}>has </template>
+                                                                                a task
+                                                                            </template>
+                                                                            
+                                                                            <!-- Event Text -->
+                                                                            <template if:true={activity.isEvent}>
+                                                                                {activity.ownerName}&nbsp;
+                                                                                <template if:true={activity.isClosed}>had </template>
+                                                                                <template if:false={activity.isClosed}>has </template>
+                                                                                an event
+                                                                            </template>
+                                                                            
+                                                                            <!-- Email Text -->
+                                                                            <template if:true={activity.isEmail}>
+                                                                                {activity.ownerName} sent an email
+                                                                            </template>
+                                                                            
+                                                                            <!-- Call Text -->
+                                                                            <template if:true={activity.isCall}>
+                                                                                {activity.ownerName} logged a call
+                                                                            </template>
+                                                                            
+                                                                        </template>
+                                                                        
+                                                                        <!-- Fallback if OwnerName is missing -->
+                                                                        <template if:false={activity.ownerName}>
+                                                                            {activity.subject}
+                                                                        </template>
+                                                                    </h4>
+                                                                </div>
+                                                                <div class="slds-timeline__actions slds-timeline__actions_inline">
+                                                                    <p class="slds-timeline__date">
+                                                                        {activity.completeDate}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                        <template if:false={group.values.length}>
+                                            <div class="slds-p-around_medium slds-text-align_center">
+                                                <p class="slds-text-body_regular slds-text-color_weak">No
+                                                    activities to show.</p>
+                                            </div>
+                                        </template>
+                                    </lightning-accordion-section>
+                                </template>
+                            </lightning-accordion>
+                        </div>
+                    </template>
+                    <template if:false={fetchGroupedActivities.length}>
+                        <p class="slds-p-around_medium">No activity data available.</p>
+                    </template>
+                </template>
+            </c-sfc360-generic-detail-modal>
+        </article>
+    </template>
+</template>
