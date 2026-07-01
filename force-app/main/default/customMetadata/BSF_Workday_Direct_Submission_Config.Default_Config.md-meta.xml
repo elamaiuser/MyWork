@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>sked_Technical_Team_Distribution_List__c</field>
-        <value xsi:type="xsd:string">kata.manishreddy@redcross.org</value>
+        <value xsi:type="xsd:string">kata.manishreddy@redcross.org,anil.kallu@redcross.org,nick.chandler@redcross.org,joseph.mcnevin@redcross.org</value>
     </values>
     <values>
         <field>sked_WD_Emp_Rpt_URL__c</field>
