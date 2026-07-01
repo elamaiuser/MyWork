@@ -5,6 +5,6 @@
     <columns>DRD_Territory_ID__c</columns>
     <columns>District__c</columns>
     <columns>OBJECT_ID</columns>
-    <filterScope>Mine</filterScope>
+    <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>
