@@ -45,3 +45,11 @@
   position: relative;
   top: 55px;
 }
+
+.ltowb-cell {
+  word-break: break-word;
+}
+
+.ltowb-error-msg {
+  font-size: 0.75rem;
+}
