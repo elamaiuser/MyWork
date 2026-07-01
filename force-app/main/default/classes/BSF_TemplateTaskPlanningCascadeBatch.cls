@@ -8,14 +8,19 @@
  **/
 public class BSF_TemplateTaskPlanningCascadeBatch implements Database.Batchable<sObject> {
     private Set<Id> templateIds;
+    private Set<Id> opportunityIds;
 
     /**
      * @description Constructor to initialize the batch with specific Template IDs.
      * @param ids A Set of Opportunity IDs where Is_Template__c is true.
      */
 
-    public BSF_TemplateTaskPlanningCascadeBatch(Set<Id> ids) {
-        this.templateIds = ids;
+    public BSF_TemplateTaskPlanningCascadeBatch(Set<Id> tempIds) {
+        this.templateIds = tempIds;
+    }
+    public BSF_TemplateTaskPlanningCascadeBatch(Set<Id> tempIds,Set<Id> oppIds) {
+        this.templateIds = tempIds;
+        this.opportunityIds = oppIds;
     }
 
     /**
@@ -27,15 +32,28 @@ public class BSF_TemplateTaskPlanningCascadeBatch implements Database.Batchable<
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
         // Query OPEN, Future Drives linked to these Templates (Not Overridden)
-        return Database.getQueryLocator([
-            SELECT Id, Parent_Template_Id__c, Drive_Status__c, Drive_Date__c, Planning_Path__c
-            FROM Opportunity
-            WHERE Parent_Template_Id__c IN :templateIds
-            AND Is_Template__c = FALSE
-            AND Is_Path_Overridden__c = FALSE
-            AND IsClosed = FALSE
-            AND Drive_Date__c >= TODAY
-        ]);
+        if(opportunityIds == null || opportunityIds.isEmpty()) {
+            return Database.getQueryLocator([
+                SELECT Id, Parent_Template_Id__c, Drive_Status__c, Drive_Date__c, Planning_Path__c
+                FROM Opportunity
+                WHERE Parent_Template_Id__c IN :templateIds
+                AND Is_Template__c = FALSE
+                AND Is_Path_Overridden__c = FALSE
+                AND IsClosed = FALSE
+                AND Drive_Date__c >= TODAY
+            ]);
+        }else{
+            return Database.getQueryLocator([
+                SELECT Id, Parent_Template_Id__c, Drive_Status__c, Drive_Date__c, Planning_Path__c
+                FROM Opportunity
+                WHERE Parent_Template_Id__c IN :templateIds
+                AND Id IN :opportunityIds
+                AND Is_Template__c = FALSE
+                AND Is_Path_Overridden__c = FALSE
+                AND IsClosed = FALSE
+                AND Drive_Date__c >= TODAY
+            ]);
+        }
     }
 
     /**
@@ -47,12 +65,12 @@ public class BSF_TemplateTaskPlanningCascadeBatch implements Database.Batchable<
 
     public void execute(Database.BatchableContext bc, List<Opportunity> scope) {
         // 1. Cascade Logic (Clean Queue -> Clone from Template)
-        Set<Id> confirmedDriveIds = BSF_TaskPlanningService.cascadeTemplateToDrives(scope);
+        /*Set<Id> confirmedDriveIds = */BSF_TaskPlanningService.cascadeTemplateToDrives(scope);
 
         // 2. Trigger Task Generation for Confirmed Drives
-        if(!confirmedDriveIds.isEmpty()) {
+        /*if(!confirmedDriveIds.isEmpty()) {
             BSF_TaskPlanningService.generateTasksFromQueue(confirmedDriveIds);
-        }
+        }*/
     }
 
     /**

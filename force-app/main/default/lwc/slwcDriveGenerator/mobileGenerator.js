@@ -646,7 +646,7 @@ class MobileGenerator extends BaseGenerator {
         return availableVehicleIds.includes(assignedVehicle.id) || (availableButNotSharedAssetIds.includes(assignedVehicle.id) && this.helper.isDriveInPathOfLinkedDrive(this.drive))
       })
 
-      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity !== maxRegisteredDonors) {
+      if (!isAllAssignedVehiclesValid || totalCurrentAssignedVehiclesCapacity < maxRegisteredDonors) {
         let { maxRegisteredDonorsToAllocate, availableVehiclesCanBeUsed, remainingMaxDOT, remainingMaxCDL } = this.helper.preProcessSuggestVehicles(maxRegisteredDonors, availableVehicles, lockedVehicles, {
           maxDOT,
           maxCDL
@@ -2751,8 +2751,6 @@ class MobileGenerator extends BaseGenerator {
       return job.volunteerRole === volunteerRole;
     }
 
-    this.initResourceQuantityMap();
-    
     if(!isEmpty(job))  {
       if (!isSpecificVolunteerJob(job, VOLUNTEER_TYPE.DONOR_AMBASSADOR)) return;
       this.mapVolunteerQuantity = new Map().set(VOLUNTEER_TYPE.DONOR_AMBASSADOR, job.isDeleted ? 0 : job.redcrossVolunteerQuantity || 0);
@@ -2787,16 +2785,37 @@ class MobileGenerator extends BaseGenerator {
           };
           driveShiftJobs[originalJobIndex] = originalJob;
         }
-      } else {
-        this.populateDriveShiftJobs(driveShift, this.drive.driveShifts.findIndex(item => item.key === driveShift.key));
-        driveShiftJobs = [...(driveShiftJobs || []).filter(item => !item.isManuallyCreated), ...driveShift.jobs];
+      } else if (redcrossVolunteerQuantity > 0) {
+        driveShiftJobs.push(this.buildDonorAmbassadorJob(redcrossVolunteerQuantity));
       }
       driveShift.jobs = driveShiftJobs;
       let volunteerJob = driveShift.jobs.find(job => job.volunteerRole === VOLUNTEER_TYPE.DONOR_AMBASSADOR);
       if(!isEmpty(volunteerJob)) this.correctJobTime(volunteerJob, driveShift);
       this.updateShiftMobileSetup(driveShift);
     });
-    
+  }
+
+  buildDonorAmbassadorJob(quantity) {
+    const jobTagsMap = this.helper.calculateJobTagsMap(this.masterData);
+    const job = {
+      key: generateUUID(),
+      driveSiteId: this.drive.driveSiteId,
+      collectionOperationId: this.drive.collectionOperationId,
+      address: this.drive.driveSite?.address,
+      latitude: this.drive.driveSite?.geoLocationLatitude,
+      longitude: this.drive.driveSite?.geoLocationLongitude,
+      jobAllocationTimeSource: false,
+      isManuallyCreated: false,
+      manuallyCreatedFrom: '',
+      jobTags: cloneDeep(jobTagsMap[RESOURCE_TYPE.PERSON]),
+      volunteerRole: VOLUNTEER_TYPE.DONOR_AMBASSADOR,
+      redcrossVolunteerQuantity: quantity,
+      sponsorVolunteerQuantity: 0,
+      quantity,
+      systemQuantity: quantity
+    };
+    job.tagNames = job.jobTags.map(item => item.tag.name).join(', ');
+    return job;
   }
 
   onJobChanged(driveShift, job, originalJob) {
