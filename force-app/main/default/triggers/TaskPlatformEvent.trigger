@@ -24,7 +24,8 @@ trigger TaskPlatformEvent on Task_Platform_Event__e (after insert) {
                         originalEvent.Planned_Task_Id__c, 
                         new Planned_Task__c(
                             Id = originalEvent.Planned_Task_Id__c,
-                            Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED
+                            Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED,
+                            Config_Key__c = null
                         )
                     );
                 }
