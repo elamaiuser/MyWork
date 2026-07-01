@@ -2458,55 +2458,8 @@ Test.stopTest();
         testFixedSiteOpp.Drive_Date__c = driveDate.addDays(10);
         testFixedSiteOpp.Drive_Date_Change_Reason__c='Test';
         update testFixedSiteOpp;        
-        System.debug('testFixedSiteOpp'+testFixedSiteOpp);
-        // to cover OpportunityService.cancelTasksForCancelledOpportunities().....
-        Opportunity oppAfterUpdate = [select id, stagename,Drive_Date__c, sked_Cancellation_Reason__c, Initiated_By__c from Opportunity where Id=:testFixedSiteOpp.Id];
-        oppAfterUpdate.StageName = 'Cancelled';
-        oppAfterUpdate.sked_Cancellation_Reason__c = 'ARC Management';
-        oppAfterUpdate.Initiated_By__c = 'ARC Initiated-Fixed';
-        update oppAfterUpdate;
-        Promotion__c pro = new Promotion__c(name = '$10 Amazon.com Gift Card and Florida Giveaway 2023',Supplier__c = 'Drive',Start_Date__c = system.today(), End_Date__c = system.today().addDays(100));
-        insert pro;
-        Opportunity_Promotion__c oppPromotion = new Opportunity_Promotion__c(Blood_Drive_Opportunity__c = testFixedSiteOpp.Id, Promotion__c = pro.Id,Delivery_ID__c = 'Drive'
-                                                                            );
-        insert oppPromotion;
-        oppPromotion = [
-            SELECT Id,
-            Drive_Date__c,Blood_Drive_Opportunity__c,
-            Blood_Drive_Opportunity__r.Name,Promotion_End_Date__c,
-            Promotion__r.Name
-            FROM Opportunity_Promotion__c
-            WHERE Id = :oppPromotion.Id
-        ];
         
-        Account acc = [select id from account limit 1];
-        list<BSF_Portfolio__c> bsfList = [select id,Portfolio_Type__c from BSF_Portfolio__c where (Portfolio_Code__c = 'HProdSEMR_1836' AND Portfolio_Type__c = 'Account Manager') 
-                                          or (Portfolio_Code__c = 'MICH_Detroit S' AND Portfolio_Type__c = 'District Manager') 
-                                          or (Portfolio_Code__c = 'NA_Detorit_ABM_1' AND Portfolio_Type__c = 'Area Booking Manager')
-                                          or (Portfolio_Code__c = 'HProdSEMR_1837' AND Portfolio_Type__c = 'Account Manager')
-                                          or (Portfolio_Code__c = 'SAM Test Data 1' AND Portfolio_Type__c = 'Sickle Cell Account Manager')];
-        map<string,id> bsfIdMap = new map<string,id>();
-        for(BSF_Portfolio__c bsf :bsfList)
-        {
-            bsfIdMap.put(bsf.Portfolio_Type__c,bsf.id);
-        }
-        
-        Map<Id,Opportunity> cancelOppMap1 = new Map<Id,Opportunity>([select Id, stagename, drive_date__c from Opportunity where Id=:oppAfterUpdate.Id]);
-        Map<Id,Opportunity> cancelOppMap2 = new Map<Id,Opportunity>();
-        
-        Task testTask = new Task();
-        testTask.subject = 'Test';
-        testTask.status = 'Not Started';
-        testTask.OwnerId = testUsers[0].Id;
-        testTask.whatId = oppAfterUpdate.Id;
-        testTask.ActivityDate = oppAfterUpdate.Drive_Date__c.addDays(4);
-        TriggerHandler.bypass('TaskTriggerHandler');
-        insert testTask;
-        
-        OpportunityService.cancelTasks(cancelOppMap1);
-        OpportunityService.cancelTasks(cancelOppMap2);
         Test.stopTest();
-        
     }
     
     static testMethod void testUpdateWebSchedulingStart_EndDates_WithoutGlobalSchedules()

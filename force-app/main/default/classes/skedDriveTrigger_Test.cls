@@ -385,6 +385,16 @@ private class skedDriveTrigger_Test {
         jobAllocations.add(testResource1_job1);
         insert jobAllocations;
         
+        skedHC__Exception__c testException = new skedHC__Exception__c(
+            sked_Drive__c = testDrive1.Id,
+            sked_Exception_Code__c = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT,
+            skedHC__Exception__c = 'Non-working time',
+            skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_OPEN,
+            skedHC__Job__c = job.Id,
+            skedHC__Job_Allocation__c = testResource1_job1.Id
+        );
+        insert testException;
+        
         testDrive1.sked_Status__c = skedConstants.DRIVE_STATUS_CONFIRMED;
         update testDrive1;
         
