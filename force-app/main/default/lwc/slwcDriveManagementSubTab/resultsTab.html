@@ -1,0 +1,61 @@
+<template>
+    <div class="slds-page-header__row slds-page-header__row_gutters slds-m-top_small">
+        <div class="slds-page-header__col-details">
+            <ul class="slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Presenting Donors</div>
+                    <div class="slds-truncate">{drive.actualVisitDonorCnt}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Total QNS</div>
+                    <div class="slds-truncate">{drive.actualTotalQns}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Total Deferrals</div>
+                    <div class="slds-truncate">{drive.actualTotalDeferrals}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slds-page-header__row slds-page-header__row_gutters slds-m-top_small">
+        <div class="slds-page-header__col-details">
+            <ul class="slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">WB Units Collected</div>
+                    <div class="slds-truncate">{drive.actualWbUnitsCollected}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">2RBC Units Collected</div>
+                    <div class="slds-truncate">{drive.actualDrbcUnitsCollected}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Latino Units Collected</div>
+                    <div class="slds-truncate">{drive.actualHispanicCnt}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">AA Units Collected</div>
+                    <div class="slds-truncate">{drive.actualAfricanAmrcnCnt}</div>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Total Collected</div>
+                    <div class="slds-truncate">{drive.actualTotalUnitsCollected}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slds-page-header__row slds-page-header__row_gutters slds-m-top_small">
+        <div class="slds-page-header__col-details">
+            <ul class="slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <div class="slds-text-title slds-truncate">Operational Efficiency</div>
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                        <span style={operationalEfficiencyIconStyle} title={operationalEfficiencyLabel}></span>
+                        <span class="slds-m-left_x-small">{operationalEfficiencyPercent}</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</template>
