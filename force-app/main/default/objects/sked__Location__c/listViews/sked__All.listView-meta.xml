@@ -19,5 +19,10 @@
         <operation>equals</operation>
         <value>sked__Location__c.sked_Fixed_Site</value>
     </filters>
+    <filters>
+        <field>Operation_Type__c</field>
+        <operation>equals</operation>
+        <value>Integrated,Non Integrated APH</value>
+    </filters>
     <label>All Fixed Sites</label>
 </ListView>
