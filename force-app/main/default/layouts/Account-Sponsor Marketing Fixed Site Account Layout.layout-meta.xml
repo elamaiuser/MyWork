@@ -104,14 +104,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>HS_Relationship_Manager__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>HS_Relationship_Manager_Notes__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Exclude_from_sponsor_direct_marketing__c</field>
             </layoutItems>
             <layoutItems>
@@ -129,6 +121,14 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Business_Planning_Completed_Date__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>HS_Relationship_Manager_Notes__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
