@@ -667,25 +667,28 @@
                             <value>Drive_Date__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Day_of_Week__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>OPPORTUNITY.STAGE_NAME</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Flow_Start_Time_Field__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>End_Time__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Total_Projected_Procedures__c</value>
+                            <value>Start_End_Time_Display__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Total_Products_Projected__c</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Parent_Template_Id__c</value>
+                            <value>actual_visit_donor_cnt__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_wb_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_drbc_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_total_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_african_amrcn_cnt__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_hispanic_cnt__c</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -742,7 +745,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>fieldsApiNames</name>
-                    <value>Name, Drive_Date__c,  StageName, DriveStatus__c</value>
+                    <value>Name,Drive_Date__c,   StageName, DriveStatus__c</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>fieldwithOrderBy</name>
@@ -777,7 +780,7 @@
                     <booleanFilter>1 AND 2</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
-                        <operator>EQUAL</operator>
+                        <operator>NE</operator>
                         <rightValue>Feeder Only</rightValue>
                     </criteria>
                     <criteria>
