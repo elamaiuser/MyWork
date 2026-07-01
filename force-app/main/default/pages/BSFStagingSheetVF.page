@@ -110,9 +110,14 @@
                         <td style="word-wrap: break-word  !important;width:12.5%;font-size:12px !important;vertical-align: top;" colspan="2">
                             <b>Coll/Univ/JC Drive?</b>
                         </td>
-                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                        <td style="word-wrap: break-word  !important;width:{!IF(ISBLANK(data.ltowbproj), '50%', '25%')};font-size:12px !important;vertical-align: top;" colspan="{!IF(ISBLANK(data.ltowbproj), '8', '4')}">
                             <b>Type Bags</b>
                         </td>
+                        <apex:outputPanel layout="none" rendered="{!NOT(ISBLANK(data.ltowbproj))}">
+                            <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="4">
+                                <b>LTOWB Proj</b>
+                            </td>
+                        </apex:outputPanel>
                     </tr>
                     <tr>
                         <td style="word-wrap: break-word  !important;width:6.25%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="1">
@@ -136,9 +141,14 @@
                         <td style="word-wrap: break-word  !important;width:12.5%;font-size:12px !important;vertical-align: top;text-align: center;" colspan="2">
                             {!data.collunivjcdrive}
                         </td>
-                        <td style="word-wrap: break-word  !important;width:50%;font-size:12px !important;vertical-align: top;" colspan="8">
+                        <td style="word-wrap: break-word  !important;width:{!IF(ISBLANK(data.ltowbproj), '50%', '25%')};font-size:12px !important;vertical-align: top;" colspan="{!IF(ISBLANK(data.ltowbproj), '8', '4')}">
                             {!data.typebags}
                         </td>
+                        <apex:outputPanel layout="none" rendered="{!NOT(ISBLANK(data.ltowbproj))}">
+                            <td style="word-wrap: break-word  !important;width:25%;font-size:12px !important;vertical-align: top;text-align: left;" colspan="4">
+                                {!data.ltowbproj}
+                            </td>
+                        </apex:outputPanel>
                     </tr>
                 </table>
                 <table style="width:100%;" class="fixed">
