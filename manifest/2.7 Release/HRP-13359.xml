@@ -13,7 +13,8 @@
 	<types>
 		<members>sked__Availability__c.sked_Related_Call_Out__c</members>
 		<name>CustomField</name>
-	</types>    
+	</types>
+	<types>    
 		<members>BSF_Access_Control_Rule.HRP_13359_Field_Permission_Set</members>
 		<name>CustomMetadata</name>
 	</types>
