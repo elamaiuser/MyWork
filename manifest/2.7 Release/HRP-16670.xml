@@ -14,9 +14,22 @@
 	</types>
 	<types>
 		<members>autoMapper</members>
+		<members>slwcApprovalConsoleDriveChangeRequestList</members>
+		<members>slwcApprovalConsoleDriveShiftTradeList</members>
+		<members>slwcApprovalConsolePendingActionDriveList</members>
+		<members>slwcApprovalConsoleSiteFeedbackList</members>
 		<members>slwcAvailator</members>
+		<members>slwcCallOutsSchedulingConsole</members>
 		<members>dataService</members>
+		<members>slwcDriveListMap</members>
+		<members>slwcDriveOptimizeDriveList</members>
+		<members>slwcExceptionList</members>
+		<members>slwcLinkedDriveExceptionList</members>
+		<members>slwcNewCollectionOperationMultiPicklist</members>
+		<members>slwcOptimizationHistory</members>
 		<members>slwcSchedulingConsole</members>
+		<members>slwcSchedulingConsoleDriveList</members>
+		<members>slwcSchedulingConsolePendingDriveChangeRequests</members>
 		<members>slwcVehiclePicker</members>
 		<members>slwcVehiclePickerModal</members>
 		<members>slwcVehicleReplacementConfirmModal</members>

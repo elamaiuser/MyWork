@@ -306,6 +306,10 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             OpportunityService.validateManualFirstTimeFlagSelection((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
         }
 
+        if(super.getTriggerMethodsToBypass().indexOf('handleOpportunityTemplateChange') == -1) {
+            BSF_TaskPlanningService.handleOpportunityTemplateChange((List<Opportunity>)trigger.new, (Map<Id,Opportunity>)trigger.oldMap);
+        }
+
         System.debug('Exiting method beforeUpdate');
     }
     
@@ -699,7 +703,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             
             //HRP-7362
             if(super.getTriggerMethodsToBypass().indexOf('modifyTasksOnDriveDateChange') == -1) {
-                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap,(List<Opportunity>)trigger.new,(Map<Id, Opportunity>)trigger.newMap);
+                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap,(Map<Id, Opportunity>)trigger.newMap);
              } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.modifyTasksOnDriveDateChange() Bypassed');  
             }

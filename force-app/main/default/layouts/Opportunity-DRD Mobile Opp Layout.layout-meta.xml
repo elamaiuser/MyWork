@@ -124,6 +124,10 @@
                 <behavior>Readonly</behavior>
                 <field>Total_Products_Projected__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Number_of_2RBC_Assets__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
