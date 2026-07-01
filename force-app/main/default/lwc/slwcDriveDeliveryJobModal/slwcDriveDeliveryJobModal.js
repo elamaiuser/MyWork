@@ -2,7 +2,7 @@ import { LightningElement, track, api, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 import * as slwcUtils from 'c/slwcUtils';
-import { DRIVE_DELIVERY_JOBS_TYPE } from 'c/slwcConstants';
+import { DRIVE_DELIVERY_JOBS_TYPE, DRIVE_BAG_TYPE } from 'c/slwcConstants';
 import { uniqueId,remove,isNull, cloneDeep } from 'c/lodash';
 
 export default class SlwcDriveDeliveryJobModal extends LightningElement {
@@ -17,6 +17,8 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
     @track modalHeader;
     @track bagType;
     @track quantity;
+    @track ltowbProjection;
+    @track ltowbProjHasError = false;
     @track dirty = false;
     @track isDeleteForm;
     @track actionOptions = [];
@@ -29,27 +31,40 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
     disconnectedCallback() {
         unregisterAllListeners(this);
     }
+
     get showButtonAdd(){
-        return this.bagType && this.quantity
+        if (!this.bagType || !this.quantity) return false;
+        if (this.showLtowbProj && this.ltowbProjHasError) return false;
+        return true;
     }
+
     get isMobile(){
         // return true
         return slwcUtils.isMobile()
     }
+
     get showBagSection() {
         return this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.BAG;
     }
+
+    get showLtowbProj() {
+        return this.bagType === DRIVE_BAG_TYPE.IM_TERUMO_IMUFLEX_WB;
+    }
+
     get showTimeSection() {
         return this.driveDeliveryJobs.type != DRIVE_DELIVERY_JOBS_TYPE.BAG;
     }
+
     get isPickUpRequired() {
         return this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.VOL_PICK_UP;
     }
+
     /** Custom functions **/
     closeModal() {
         fireEvent(this.pageRef, 'closeDriveDeliveryJobModal');
         this.showModal = false;
     }
+
     validate(){
         this.messages = []
         const isAllInputValid = [...this.template.querySelectorAll('lightning-input'), ...this.template.querySelectorAll('lightning-combobox')]
@@ -61,6 +76,13 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
         if(this.driveDeliveryJobs.type == DRIVE_DELIVERY_JOBS_TYPE.BAG && (!this.driveDeliveryJobs.driveBags || this.driveDeliveryJobs.driveBags && this.driveDeliveryJobs.driveBags.length == 0)){
             this.messages.push("Please add bags");
         }
+        if(this.driveDeliveryJobs.driveBags) {
+            this.driveDeliveryJobs.driveBags.forEach(bag => {
+                if(bag.bagType === DRIVE_BAG_TYPE.IM_TERUMO_IMUFLEX_WB && bag.ltowbProjection != null && (!Number.isInteger(bag.ltowbProjection) || bag.ltowbProjection < 0)) {
+                    this.messages.push("LTOWB Proj must be a non-negative integer");
+                }
+            });
+        }
         if(this.driveDeliveryJobs.start && this.driveDeliveryJobs.end && this.driveDeliveryJobs.start >= this.driveDeliveryJobs.end){
             this.messages.push("End should be greater than Start");
         }
@@ -69,6 +91,7 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
         }
         return !isAllInputValid || this.messages.length;
     }
+
     handleDelete = (confirm) => {
         if(confirm) {
             let eventValues = {action: this.action, driveDeliveryJobs: this.driveDeliveryJobs};
@@ -83,33 +106,83 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
         this.driveDeliveryJobs[targetName] = targetValue
         console.log("this.driveDeliveryJobs", this.driveDeliveryJobs);
     }
+
     handleOnChangeBag(event) {
         let targetName = event.target.name;
+
+        if (targetName === 'ltowbProjection') {
+            this.validateAndSetLtowb(event.target);
+            return;
+        }
+
         let targetValue = slwcUtils.getValueFromEvent(event);
-        this[targetName] = targetValue
+        this[targetName] = targetValue;
+
+        if (targetName === 'bagType' && targetValue !== DRIVE_BAG_TYPE.IM_TERUMO_IMUFLEX_WB) {
+            this.ltowbProjection = null;
+            this.ltowbProjHasError = false;
+        }
+
         console.log("this.driveDeliveryJobs", this.driveDeliveryJobs);
     }
+
+    validateAndSetLtowb(inputEl) {
+        const rawValue = inputEl.value;
+
+        if (!rawValue || rawValue.trim() === '') {
+            this.ltowbProjection = null;
+            this.ltowbProjHasError = false;
+        } else if (/^\d+$/.test(rawValue.trim())) {
+            this.ltowbProjection = parseInt(rawValue.trim(), 10);
+            this.ltowbProjHasError = false;
+        } else {
+            this.ltowbProjection = null;
+            this.ltowbProjHasError = true;
+        }
+
+        inputEl.setCustomValidity(this.ltowbProjHasError ? ' ' : '');
+        inputEl.reportValidity();
+    }
+
     handleAdd() {
-        if(this.bagType && this.quantity){
+        if (this.bagType && this.quantity) {
+            if (this.showLtowbProj) {
+                const ltowbInput = this.template.querySelector('lightning-input[name="ltowbProjection"]');
+                if (ltowbInput) {
+                    // Re-validate at click time to catch cases where onchange hasn't fired yet
+                    this.validateAndSetLtowb(ltowbInput);
+                    if (this.ltowbProjHasError) return;
+                }
+            }
+
             const newBag = {
                 bagType: this.bagType,
                 quantity: this.quantity,
                 key: uniqueId("bag_")
+            };
+
+            if (this.bagType === DRIVE_BAG_TYPE.IM_TERUMO_IMUFLEX_WB) {
+                newBag.ltowbProjection = this.ltowbProjection != null ? this.ltowbProjection : null;
             }
-            if(this.driveDeliveryJobs["driveBags"]){
-                this.driveDeliveryJobs["driveBags"].push(newBag)
+
+            if (this.driveDeliveryJobs["driveBags"]) {
+                this.driveDeliveryJobs["driveBags"].push(newBag);
             } else {
-                this.driveDeliveryJobs["driveBags"] = [newBag]
+                this.driveDeliveryJobs["driveBags"] = [newBag];
             }
-            
+
             this.quantity = null;
             this.bagType = null;
+            this.ltowbProjection = null;
+            this.ltowbProjHasError = false;
         }
     }
+
     handleDeleteBag(event){
         const {key} = event.currentTarget.dataset;
         remove(this.driveDeliveryJobs["driveBags"], item => item.key == key)
     }
+
     handleShowDriveDeliveryJobModal(detail) {
         this.action = detail.action;
         switch(this.action) {
@@ -130,6 +203,8 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
                 break;
         }
         this.messages = [];
+        this.ltowbProjection = null;
+        this.ltowbProjHasError = false;
         this.showModal = true;
     }
 
@@ -142,7 +217,7 @@ export default class SlwcDriveDeliveryJobModal extends LightningElement {
         fireEvent(this.pageRef, 'saveDriveDeliveryJob', eventValues);
         this.closeModal();
     }
-    
+
     handleSelectContact(event) {
         if (event.detail && event.detail.selection) {
             this.driveDeliveryJobs.contact = event.detail.selection;
