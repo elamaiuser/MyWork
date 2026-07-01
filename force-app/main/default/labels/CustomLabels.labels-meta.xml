@@ -148,6 +148,13 @@
         <value>{ &quot;Account Manager&quot;: [&quot;Account Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Area Booking Manager&quot;: [&quot;Area Booking Manager&quot;, &quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;Account Specialist&quot;: [&quot;Account Specialist&quot;, &quot;District Manager&quot;, &quot;DRD System User&quot;], &quot;District Manager&quot;: [&quot;District Manager&quot;, &quot;DRD System User&quot;] }</value>
     </labels>
     <labels>
+        <fullName>FIXSITE_RESTRICTED_TASKS</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Fix-Site Restricted Tasks</shortDescription>
+        <value>72 Hour Check-In,Recruitment Strategy Meeting</value>
+    </labels>
+    <labels>
         <fullName>Block_ZipCode_Update_On_Site</fullName>
         <language>en_US</language>
         <protected>false</protected>
