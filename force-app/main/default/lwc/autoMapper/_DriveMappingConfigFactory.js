@@ -151,6 +151,15 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfigWithRelatedList('sked_Exception_Log__r', 'exceptionLog', 'skedHC__Exception__c', 'sked_Drive__c');
       mappingConfig.addFieldConfigWithRelatedList('sked_Drive_Change_Requests__r', 'driveChangeRequests', 'sked_Drive_Change_Request__c', 'sked_Drive__c');
 
+      mappingConfig.addFieldConfig('sked_actual_visit_donor_cnt__c', 'actualVisitDonorCnt', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_total_qns__c', 'actualTotalQns', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_total_deferrals__c', 'actualTotalDeferrals', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_wb_units_collected__c', 'actualWbUnitsCollected', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_drbc_units_collected__c', 'actualDrbcUnitsCollected', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_hispanic_cnt__c', 'actualHispanicCnt', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_african_amrcn_cnt__c', 'actualAfricanAmrcnCnt', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_actual_total_units_collected__c', 'actualTotalUnitsCollected', MAPPING_TYPE.direct);
+
       mappingConfig.masterFields.push('sked_Opportunity__c');
 
       mappingConfig.readonlyFields.push('sked_Account_Type__c');

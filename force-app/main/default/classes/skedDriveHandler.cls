@@ -179,57 +179,28 @@ public class skedDriveHandler extends skedTriggerHub {
     
     private void onCancelDrives(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
         Set<Id> cancelledDriveIds = new Set<Id>();
+        Set<Id> cancelledOppIds = new Set<Id>();
         List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
         for (sked_Drive__c newRecord : newRecords) {
 			sked_Drive__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c) {
                 if (newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_CANCEL) {
                     cancelledDriveIds.add(newRecord.Id);
+                    if (newRecord.sked_Opportunity__c != null && !String.isBlank(newRecord.sked_Opportunity__c)) {
+                        cancelledOppIds.add(newRecord.sked_Opportunity__c);
+                    }
                 }
             }
         }
+        
+        //Separate the transaction to cascade cancel events to avoid hitting the governor limits
         if (!cancelledDriveIds.isEmpty()) {
-            List<sked__Job__c> skedJobsToCancelled = [SELECT Id, sked__Job_Status__c, sked__Job_Allocation_Count__c
-                                                      FROM sked__Job__c
-                                                      WHERE sked_Drive__c IN :cancelledDriveIds
-                                                      AND sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
-                                                      AND sked__Job_Status__c != :skedConstants.JOB_STATUS_COMPLETE];
-            if (!skedJobsToCancelled.isEmpty()) {
-                for (sked__Job__c skedJob : skedJobsToCancelled) {
-                    skedJob.sked__Job_Status__c = skedConstants.JOB_STATUS_CANCELLED;
-                }
-                update skedJobsToCancelled;
-            }
-            
-            List<skedHC__Exception__c> exceptionLogToClose = [SELECT Id, skedHC__Status__c
-                                                              FROM skedHC__Exception__c
-                                                              WHERE sked_Drive__c IN :cancelledDriveIds
-                                                              AND skedHC__Status__c != :skedConstants.EXCEPTION_LOG_STATUS_CLOSED];
-            if (!exceptionLogToClose.isEmpty()) {
-                for (skedHC__Exception__c exceptionItem : exceptionLogToClose) {
-                    exceptionItem.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
-                }
-                update exceptionLogToClose;
-            }
-            
-            List<sked_Drive_Change_Request__c> pendingDCRs = [SELECT Id, sked_Status__c
-                                                              FROM sked_Drive_Change_Request__c
-                                                              WHERE sked_Drive__c IN :cancelledDriveIds
-                                                              AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM
-                                                              AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED
-                                                              AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED
-                                                              AND sked_Status__c != :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED];
-            if (!pendingDCRs.isEmpty()) {
-                for (sked_Drive_Change_Request__c pendingDCR : pendingDCRs) {
-                    pendingDCR.sked_Status__c = skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED;
-                }
-                update pendingDCRs;
-            }
-            
             skedFutureCallEventHandler.publishFutureCallEvent(
-                slwcApprovalService.class.getName(),
-                'removeWorkItems',
-                cancelledDriveIds);
+                skedDriveHandlerService.class.getName(),
+                'cascadeCancelEvents',
+                cancelledDriveIds,
+                cancelledOppIds
+            );
         }
     }
     

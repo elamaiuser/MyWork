@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>skedSetting</members>
+		<members>skedSetting_Test</members>
+		<members>slwcSetting</members>
+		<members>slwcDataService_Test</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>sked_Admin_Setting__c.sked_Admin_Adhoc_Driver_Support_Capacity__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>slwcDriveGenerator</members>
+		<name>LightningComponentBundle</name>
+	</types>
+    <version>64.0</version>
+</Package>
