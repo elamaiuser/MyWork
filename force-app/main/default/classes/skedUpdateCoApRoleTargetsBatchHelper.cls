@@ -89,8 +89,7 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             (
                 SELECT Id, sked__Availability_Pattern__c
                 FROM sked__Availability_Pattern_Resources__r
-                WHERE sked__Availability_Pattern__c IN :apIds
-                AND sked_Start_Date__c <= TODAY
+                WHERE sked_Start_Date__c <= TODAY
                 AND (sked_End_Date__c = null OR sked_End_Date__c >= TODAY)
             )
             FROM sked__Resource__c
@@ -144,7 +143,6 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
             )
             FROM Collection_Operation_Availability__c
             WHERE Collection_Operation__c IN :colIds
-            AND Availability_Pattern__c IN :apIds
             AND (Effective_End_Date__c = null OR Effective_End_Date__c >= TODAY)
             ORDER BY Collection_Operation__c
         ];
@@ -164,12 +162,17 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
         }
 
         objectsToUpdate.addAll(getCalculateGrandTotalAvailableOnColOp(map_coIdKey_driveTypeVsNoOfResourcesMap));
-        objectsToUpdate.addAll(getUpdatedCoApStatusOnResources(resourceList, coApList));
         objectsToUpdate.sort();
 
         Database.SaveResult[] updateResults = Database.update(objectsToUpdate, false);
+        Database.SaveResult[] updateResultsForResources = Database.update(getUpdatedCoApStatusOnResources(resourceList, coApList), false);
+
+        List<Database.SaveResult> allResults = new List<Database.SaveResult>();
+        allResults.addAll(updateResults);
+        allResults.addAll(updateResultsForResources);
+
         List<BSF_Error_Log__c> errorLogToInsert = BSF_Utilities.createErrorLogWithObjectId(
-            updateResults,
+            allResults,
             'CO AP / CO / Resource Records update',
             'skedUpdateCoApRoleTargetsBatchHelper',
             'calculateTotalsAndUpdateCoApStatusOnResources',

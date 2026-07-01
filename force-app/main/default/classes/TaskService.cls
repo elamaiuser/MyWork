@@ -729,4 +729,30 @@ public with sharing class TaskService {
             }
         }          
     }
+    public static String calculateOpportunityTaskKey(Id oppId, String taskType) {
+        if (oppId == null || String.isBlank(taskType)) {
+            return null;
+        }
+        String strOppId = String.valueOf(oppId);
+        String sanitizedType = taskType.replaceAll('\\s+', '_');
+        sanitizedType = sanitizedType.length() > 236 ? sanitizedType.substring(0, 236) : sanitizedType;
+        return (sanitizedType + '_' + strOppId);
+    }
+    public static void clearKeyIfCancelled(List<Task> newTasks, Map<Id, Task> oldMap) {
+        for (Task t : newTasks) {
+            if (t.Id != null && String.isNotBlank(t.Status) && t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) 
+                    && oldMap != null && oldMap.containsKey(t.Id) && String.isNotBlank(oldMap.get(t.Id).Status) 
+                    && !oldMap.get(t.Id).Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED)) {
+                        t.Task_Deduplication_Id__c = null;
+            }
+        }
+    }
+    public static void populateTaskKey(List<Task> newTasks) {
+        for (Task t : newTasks) {
+            if (String.isNotBlank(t.Status) && !t.Status.equalsIgnoreCase(BSF_Constants.STATUS_CANCELLED) && t.WhatId != null 
+                        && t.WhatId.getSObjectType() == Opportunity.SObjectType && String.isNotBlank(t.Type)) {
+                            t.Task_Deduplication_Id__c = calculateOpportunityTaskKey(t.WhatId, t.Type);
+            }
+        }
+    }
 }
