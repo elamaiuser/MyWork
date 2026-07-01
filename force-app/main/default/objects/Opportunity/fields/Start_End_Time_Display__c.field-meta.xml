@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_End_Time_Display__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+    ISBLANK(Start_Time__c),
+    &quot;--&quot;,
+    LPAD(
+        TEXT(MOD(HOUR(Start_Time__c) - 1, 12) + 1),
+        2,
+        &quot;0&quot;
+    ) &amp;
+    &quot;:&quot; &amp;
+    LPAD(TEXT(MINUTE(Start_Time__c)), 2, &quot;0&quot;) &amp;
+    IF(HOUR(Start_Time__c) &gt;= 12, &quot; PM&quot;, &quot; AM&quot;)
+)
+&amp;
+&quot; - &quot;
+&amp;
+IF(
+    ISBLANK(End_Time__c),
+    &quot;--&quot;,
+    LPAD(
+        TEXT(MOD(HOUR(End_Time__c) - 1, 12) + 1),
+        2,
+        &quot;0&quot;
+    ) &amp;
+    &quot;:&quot; &amp;
+    LPAD(TEXT(MINUTE(End_Time__c)), 2, &quot;0&quot;) &amp;
+    IF(HOUR(End_Time__c) &gt;= 12, &quot; PM&quot;, &quot; AM&quot;)
+)</formula>
+    <label>Start - End Time</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
