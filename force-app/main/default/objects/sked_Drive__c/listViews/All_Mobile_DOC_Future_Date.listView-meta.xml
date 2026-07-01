@@ -18,13 +18,13 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Drive_Date__c</field>
-        <operation>greaterOrEqual</operation>
-        <value>10/31/2024</value>
+        <operation>greaterThan</operation>
+        <value>TODAY</value>
     </filters>
     <filters>
         <field>sked_Status__c</field>
         <operation>equals</operation>
-        <value>Draft</value>
+        <value>Confirmed</value>
     </filters>
     <label>All Mobile DOC_Future Date</label>
 </ListView>
