@@ -9,7 +9,7 @@ global with sharing class BSF_BatchUpdateAccountSchedule implements schedulable 
     }
     global void execute(SchedulableContext sc)
     {
-        BSF_BatchUpdateAccountForZipCode batch = new BSF_BatchUpdateAccountForZipCode();
+        BSF_BatchUpdateAccountForZipCode batch = new BSF_BatchUpdateAccountForZipCode(true);
         database.executebatch(batch,batchSize);
     }
 }
