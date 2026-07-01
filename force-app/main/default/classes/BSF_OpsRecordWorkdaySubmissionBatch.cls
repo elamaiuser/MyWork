@@ -57,7 +57,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             WHERE sked_Workday_Submission_Status__c IN ('Draft', 'Failed')
             AND sked_Drive__c != null
             AND sked_Locked__c = true
-            //AND CreatedDate < :todayStart
+            AND CreatedDate < :todayStart
             AND Id IN (SELECT sked_Operation_Record__c FROM sked_Operation_Record_Staff__c)
         ]);
     }
