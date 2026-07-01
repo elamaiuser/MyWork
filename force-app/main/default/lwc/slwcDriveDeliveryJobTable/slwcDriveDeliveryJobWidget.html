@@ -54,8 +54,13 @@
                                     <dd class="slds-item_detail slds-truncate">
                                         <div class="slds-p-horizontal_x-small" if:true={item.driveBags}>
                                             <div for:each={item.driveBags} for:item="driveBag" key={driveBag.key}>
-                                                <div>{driveBag.bagType} ({driveBag.quantity})</div>
-                                              </div>
+                                                <template if:true={driveBag.ltowbProjection}>
+                                                    <div>{driveBag.bagType} ({driveBag.quantity}) - LTOWB Proj: {driveBag.ltowbProjection}</div>
+                                                </template>
+                                                <template if:false={driveBag.ltowbProjection}>
+                                                    <div>{driveBag.bagType} ({driveBag.quantity})</div>
+                                                </template>
+                                            </div>
                                         </div>
                                     </dd>
                                 </dl>

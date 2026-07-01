@@ -179,13 +179,6 @@ export default class SlwcDriveShiftBulkAddVolunteerJobsModal extends LightningEl
             })
         }
 
-        // Check if the volunteer role already exists on the current drive shift
-        if (this.driveShift?.jobs?.find(job => job.volunteerRole === this.model.volunteerRole)) {
-            this.errorMessages.push({
-                message: `${this.model.volunteerRole} role already exists.`
-            });
-        }
-
         if (this.errorMessages.length) return false;
 
         return allValid;

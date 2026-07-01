@@ -491,6 +491,12 @@ const cloneDeep = (value) => {
     return JSON.parse(JSON.stringify(value));
 }
 
+const printLog = (message, ...args) => {
+    console.info(`%c${message}`,
+          'background: #555879; color: #FFFFFF; padding: 2px 5px; border-radius: 3px;',
+          ...args);
+  }
+
 export {
     isNullOrEmpty,
     generateUUID,
@@ -515,5 +521,6 @@ export {
     getTravelTimeIndexKey,
     waitUntil,
     isGeolocationValid,
-    cloneDeep
+    cloneDeep,
+    printLog
 }
