@@ -33,7 +33,7 @@ public class userServiceTest {
         User user2 = new User(
             LastName = 'user2',
             FirstName = 'user3',
-            Username = 'johnCENA@acme1.com',
+            Username = 'testUser@test.com'+String.valueOf(system.today()),
             Email = 'abc@gmail1.com',
             MobilePhone = '123-(456)-7890',
             Workphone__c = '123-(456)-7899',
@@ -46,7 +46,10 @@ public class userServiceTest {
             LanguageLocaleKey ='en_US'
         );
         userList.add(user2);
-        insert userList;   
+        system.runAs(new User(Id = UserInfo.getUserId())) {
+            insert userList; 
+        }
+          
         system.runAs(userList[0]) {  
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', system.today().addMonths(6), 14);
             Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData(); 
@@ -153,4 +156,31 @@ public class userServiceTest {
         Test.stopTest();
     }
     //HRP-9815 --> Ends Here
+    
+    @isTest
+    static void testSpecialPermissionSetAssignment() {
+        Test.startTest();
+        	List<User> usersLst = [Select Id, FirstName, CompanyName, Profile.Name From User Where FirstName = 'user3' LIMIT 1];
+            List<AssignResourcesToUserEvent__e> asrEvents = new List<AssignResourcesToUserEvent__e>();
+            For(User u : usersLst) {
+                AssignResourcesToUserEvent__e asrEvent = new AssignResourcesToUserEvent__e();
+                asrEvent.UserId__c = u.Id;
+                asrEvents.add(asrEvent);
+            }
+            if(asrEvents != null && asrEvents.size() > 0) {
+                EventBus.publish(asrEvents);
+            }
+
+        Test.stopTest();
+        List<PermissionSetAssignment> psaLst = [Select Id, AssigneeId, PermissionSetId, PermissionSet.Name From PermissionSetAssignment Where AssigneeId = :usersLst[0].Id];
+        Boolean hasSpecialPermission = false;
+        for(PermissionSetAssignment psa : psaLst) {
+            if(psa.PermissionSet.Name.equalsIgnoreCase('Lead_360_Visibility')) {
+                hasSpecialPermission = true;
+                break;
+            }
+        }
+        Assert.isTrue(hasSpecialPermission == true);
+    }
+    
 }
