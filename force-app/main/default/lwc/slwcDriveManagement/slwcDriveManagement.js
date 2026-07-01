@@ -18,7 +18,7 @@ import { approvalService, dataService, debugLogService, driveQueryModel, driveSe
 import { chunk } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
-import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
+import { DriveHelper, DriveFetch, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -701,20 +701,19 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         this.showErrors = true;
         if (this.isValid() === true) {
 
-            return Promise.resolve()
-            .then(() => {
-                return this.retrievePendingDriveChangeRequests({
-                    driveIds: [this.drive.id]
-                })
+            let fetch = new DriveFetch({
+                driveType: this.drive.typeOfDrive
             })
-            .then(driveChangeRequests => {
-                const hasPendingDCR = !!driveChangeRequests.find(item =>
-                    item.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE)
-                );
 
-                if (hasPendingDCR) {
+            return Promise.all([
+                fetch.retrieveActiveDriveChangeRequest(this.drive)
+            ])
+            .then(([driveChangeRequest]) => {
+                const isActiveDCR = !!driveChangeRequest?.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
+
+                if (isActiveDCR && !this.showDCRWarning && !this.showPendingUserChangeWarning) {
                     this.dispatchEvent(new ShowToastEvent({
-                        message: 'Please refresh the page and process the Pending [User Change] Drive Change Request prior to updating the Drive.',
+                        message: 'Please refresh the page and process the Active Drive Change Request prior to updating the Drive.',
                         variant: 'error',
                         mode: 'dismissable'
                     }));
@@ -724,7 +723,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             })
             .then(() => {
                 if (!this.requiresAssetValidation() && !this.requireTimeBlockValidation()) {
-                    return this.handleSave();
+                    return this.handleSave().then(() => true); // sentinelastic to indicate that save is already done and no need to call handleValidate again
                 }
 
                 this.showLoading();
@@ -837,7 +836,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                         })
                     })
                 })
-                .then(() => {
+                .then((alreadySaved) => {
+                    if (alreadySaved) return;
                     return this.handleValidate();
                 })
                 .catch(error => {
@@ -891,7 +891,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.showPendingActionDriveConfirmModal();
             } else {
                 this.drive.status = [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status;
-                this.handleSave();
+                return this.handleSave();
             }
         })
         .catch(error => this.exceptionHandler(error))
@@ -899,6 +899,12 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleSave(saveAndApproveApprovalIfAny = true) {
+        if (this.isSavingDrive) { // concurrent save prevention, in case user clicks save multiple times quickly or there are multiple save calls from different actions (e.g. submit for approval will call save as well)
+            slwcUtils.printLog('[DriveManagement::handleSave] Concurrent save detected — skipping duplicate call');
+            return Promise.resolve();
+        }
+
+        this.isSavingDrive = true;
         this.showLoading();
         
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
@@ -918,6 +924,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             .then(result => {
                 let drive = result.returnedData[0];
                 newDriveId = drive.Id;
+                slwcUtils.printLog('[DriveManagement::handleSave] Current drive saved', '| id:', drive.Id, '| name:', drive.Name);
             })
             .then(() => {
                 //approve drive submission if needed
@@ -1015,7 +1022,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 return jobSvc.saveList(chunkJobs);
                             }
                         });
-                        return slwcUtils.serial(promises);
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Edit Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ id: j.id, volunteerRole: j.volunteerRole, quantity: j.quantity}))));
                     })
             })
             .then(() => {
@@ -1030,7 +1038,8 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 return jobSvc.saveList(chunkJobs);
                             }
                         });
-                        return slwcUtils.serial(promises);
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Add Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ driveId: j.driveId, volunteerRole: j.volunteerRole, quantity: j.quantity, driveDate: j.start?.substring(0, 10) }))));
                     })
             })
             .then(() => {
@@ -1047,7 +1056,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.handleNavigateToRecord();
             })
             .catch(error => this.exceptionHandler(error))
-            .finally(this.hideLoading);
+            .finally(() => {
+                this.isSavingDrive = false;
+                this.hideLoading();
+            });
     }
 
     handleHoldDrive() {
@@ -1522,24 +1534,4 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             });
     }
 
-    retrievePendingDriveChangeRequests({
-        driveIds = []
-    }) {
-        return Promise.resolve()
-            .then(() => {
-                if (!driveIds.length) return [];
-
-                let dcrService = new driveChangeRequestService();
-                let dcrQueryModel = new driveChangeRequestQueryModel();
-                dcrQueryModel.driveIds = driveIds;
-                dcrQueryModel.statuses = [
-                    DRIVE_REQUEST_CHANGE_STATUS.PENDING
-                ];
-
-                return dcrService.query(dcrQueryModel)
-                    .then((result) => {
-                        return result;
-                    });
-            })
-    }
 }

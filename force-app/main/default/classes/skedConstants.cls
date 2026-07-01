@@ -69,7 +69,8 @@ public class skedConstants {
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NA = 'Not Applicable';
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
     
-    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NoTimeOFF_message = 'User chose to not submit time off';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NOTIMEOFF_MESSAGE = 'Action needed - Process Time Off Request in the RAC';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_ONCALL_CALLOUT_MESSAGE = 'See Time Off Request in Approval Requests - Call Out Tab';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';
     public static final String AVAILABILITY_STAFFING_BUDGET_NOT_FOUND = 'Required staffing budget record not found in the system';
@@ -496,7 +497,7 @@ public class skedConstants {
     public static final string TRADE_API_DATA_STATUS_NOT_APPLICABLE = 'Not Applicable';
 
     /* Time Entry Codes for WD Time Reporting */
-    public static final string WD_REST_BREAKS_NOT_TAKEN_CODE = 'TIME_ENTRY_CODE-3-112';
+    public static final string WD_REST_BREAKS_NOT_TAKEN_CODE = 'CA Missed/Short Rest Break';
 
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_PENDING = 'Pending';
     public static final string TRAVEL_TIME_INDEX_REFRESH_GROUP_STATUS_COMPLETED = 'Completed';
