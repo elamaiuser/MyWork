@@ -191,6 +191,12 @@ public class skedWorkdayApiManager {
     }
 
     public static skedWorkdayGetPlanBalanceResponse getTimeOffPlanBalances(skedWorkdayGetPlanBalanceRequest ptoPlanBalanceRequest) {
+        return getTimeOffPlanBalances(ptoPlanBalanceRequest, false);
+    }
+
+    // skipLogging avoids the inline debug-log DML so this callout can run before other callouts
+    // in the same transaction (e.g. reason-code resolution ahead of EnterTimeOff). HRP-16994
+    public static skedWorkdayGetPlanBalanceResponse getTimeOffPlanBalances(skedWorkdayGetPlanBalanceRequest ptoPlanBalanceRequest, Boolean skipLogging) {
         sked_Workday_XML_Template__mdt xml = [
             SELECT Id, sked_Endpoint__c, sked_Namespace__c
             FROM sked_Workday_XML_Template__mdt
@@ -273,7 +279,7 @@ public class skedWorkdayApiManager {
             result.message = exc.getMessage();
         }
 
-        if (skedSetting.instance.admin.enableWorkdayLogging) {
+        if (skedSetting.instance.admin.enableWorkdayLogging && !skipLogging) {
             sked__Debug_Log__c debugLog = new sked__Debug_Log__c();
             debugLog.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_WORKDAY_API;
             debugLog.sked__Summary__c = 'Get Time Off Plan Balances';
