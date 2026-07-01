@@ -182,10 +182,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Des Moines IA</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Detroit MI</fullName>
             <default>false</default>
         </values>
@@ -272,11 +268,7 @@
         <values>
             <fullName>Helena MT</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Holland MI</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Huntington WV</fullName>
             <default>false</default>
@@ -452,11 +444,7 @@
         <values>
             <fullName>Novi MI</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>OBI Arkansas</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Oakland MI</fullName>
             <default>false</default>
@@ -512,11 +500,7 @@
         <values>
             <fullName>Quincy IL</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Richland WA</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Richmond VA</fullName>
             <default>false</default>
@@ -570,21 +554,13 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>San Leandro CA</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Savannah GA</fullName>
             <default>false</default>
         </values>
         <values>
             <fullName>Seattle WA</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Springfield Fixed Site</fullName>
-            <default>false</default>
-        </values>
+        </values>        
         <values>
             <fullName>Springfield MA</fullName>
             <default>false</default>
