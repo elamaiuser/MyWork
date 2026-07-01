@@ -19,6 +19,7 @@ export default class SlwcCallOutModal extends LightningElement {
     @api hideHeader = false;
     @api showBackButton = false;
     @api saveBtnLabel = 'Save';
+    @api hideUseTimeOffOption = false;
     
     showSpinner = false;
 
@@ -40,7 +41,7 @@ export default class SlwcCallOutModal extends LightningElement {
                 if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                     this.model.hasTimeOffPlans = true;
 
-                     if (this.model.callOutType == 'Call Out') {
+                     if (this.model.callOutType == 'Call Out' && !this.hideUseTimeOffOption) {
                         this.model.usePtoForCallOut = true;
                     }
                 }
@@ -183,7 +184,7 @@ export default class SlwcCallOutModal extends LightningElement {
             if (!isNullOrEmpty(this._timeOffPlansByLabel) && !!Object.keys(this._timeOffPlansByLabel).length) {
                 this.model.hasTimeOffPlans = true;
 
-                if (this.model.callOutType == 'Call Out') {
+                if (this.model.callOutType == 'Call Out' && !this.hideUseTimeOffOption) {
                     this.model.usePtoForCallOut = true;
                 }
             }
@@ -201,12 +202,12 @@ export default class SlwcCallOutModal extends LightningElement {
     }
 
     get allowPtoForCallOut() {
-        return this.model.hasTimeOffPlans && this.model.callOutType == 'Call Out';
+        return !this.hideUseTimeOffOption && this.model.hasTimeOffPlans && this.model.callOutType == 'Call Out';
     }
 
     handleOnCallOutTypeChange(event) {
          let callOutType = getValueFromEvent(event);
-        if (callOutType == 'Call Out' && this.model.hasTimeOffPlans) {
+        if (callOutType == 'Call Out' && this.model.hasTimeOffPlans && !this.hideUseTimeOffOption) {
             this.model.usePtoForCallOut = true;
          } else {
              this.model.usePtoForCallOut = false;
@@ -250,6 +251,18 @@ export default class SlwcCallOutModal extends LightningElement {
 
     handleSave() {
         if(!this.validate()) return;
+
+        if (this.hideUseTimeOffOption && this.model.hasTimeOffPlans && this.model.callOutType == 'Call Out') {
+            this.model.usePtoForCallOut = true;
+            if (this._timeOffPlansByLabel && this._timeOffPlansByLabel['PTO']) {
+                this.model.timeOffPlan = 'PTO';
+                let reasonCodes = this._timeOffPlansByLabel['PTO'].timeOffReasons;
+                if (reasonCodes && reasonCodes.length > 0) {
+                    let unplannedReasonCode = reasonCodes.find(reason => reason.name && reason.name.toLowerCase().includes('unplanned'));
+                    this.model.timeOffReasonCode = unplannedReasonCode ? unplannedReasonCode.reasonId : null;
+                }
+            }
+        }
         
         let callOutReceivedDateTimeObj = DateTime.fromISO(this.model.callOutReceivedDate + 'T' + this.model.callOutReceivedTime, {
             zone: this.timezoneSidId

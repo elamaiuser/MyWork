@@ -25,6 +25,7 @@ export class ActivityMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Is_Group_Activity__c', 'isGroupActivity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Linked_Drives__c', 'linkedDrivesId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Linked_Drives__r.Name', 'linkedDrivesName', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Linked_Drives__r.sked_Linked_Drive_Type__c', 'linkedDriveType', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Mobile_Staff_Quantity__c', 'mobileStaffQuantity', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Notes__c', 'notes', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Quantity__c', 'quantity', MAPPING_TYPE.direct);
