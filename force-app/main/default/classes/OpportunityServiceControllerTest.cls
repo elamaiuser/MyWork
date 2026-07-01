@@ -149,7 +149,55 @@ private class OpportunityServiceControllerTest {
         Assert.isTrue(testOpp.Anticipated_Registered_Donors__c == testTemplate.Anticipated_Registered_Donors__c);
         Assert.isTrue(testOpp.AnticipatedRegisterDonorChangeReason__c.equalsIgnoreCase('Test Template Change')); 
     }
-    
+    @istest
+    static void updateTaskDatesTest() { 
+        Test.startTest();
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        TriggerHandler.bypass('DriveTriggerHandler');
+          TriggerHandler.bypass('AccountTriggerHandler');
+        TriggerHandler.bypass('SiteTriggerHandler');
+        TriggerHandler.bypass('TaskTriggerHandler');
+        Id opportunityId;
+        skedHubBase.BypassUpdateTriggers = true;
+          Map<Id,Opportunity> testOppMap = new Map<Id,Opportunity>([SELECT Id, WholeBloodProceduresProjectedTemplate__c, Anticipated_Registered_Donors_Template__c, 
+                               Double_Red_Procedures_Projected_Template__c, Drive_Site__c, Direct_Donors_To__c,
+                               Anticipated_Registered_Donors__c, WB_Projected_Procedures__c, X2RBC_Projected_Procedures__c,
+                               WholeBloodProcedureProjectedChangeReason__c, DoubleRedProceduresProjectedChangeReason__c,
+                               AnticipatedRegisterDonorChangeReason__c, AccountId, Drive_Date__c
+                               FROM Opportunity
+                               LIMIT 1]);
+
+        for(Id oppid : testOppMap.keySet()){
+            opportunityId = oppid;
+        }
+        
+        
+        Task_Definition__c taskDefPubNoOrder = new Task_Definition__c(Name = 'Pub No Order', 
+                                                                        Task_Type__c = 'Publicity Order Not Created',
+                                                                        Assigned_To__c = 'Account Manager',
+                                                                        Due_Date_Offset__c = 1);
+        insert taskDefPubNoOrder;
+
+        List<Task> taskList = new List<Task>();
+        Task t = new Task();
+        t.Subject = taskDefPubNoOrder.Name;
+        t.Drive_Date__c = testOppMap.get(opportunityId).Drive_Date__c;
+        t.ActivityDate = testOppMap.get(opportunityId).Drive_Date__c - 1;
+        t.Type = taskDefPubNoOrder.Task_Type__c;
+        t.OwnerId = UserInfo.getUserId();
+        t.WhatId = opportunityId;
+        taskList.add(t);
+        insert taskList;
+
+        Map<Id,Opportunity> newMap = new Map<Id,Opportunity>(testOppMap);
+
+        newMap.get(opportunityId).Drive_Date__c = testOppMap.get(opportunityId).Drive_Date__c + 1;
+        
+        
+        OpportunityServiceController.updateTaskDates(newMap,taskList);
+        TriggerHandler.clearAllBypasses();
+        Test.stopTest();
+    }
     
 
     
