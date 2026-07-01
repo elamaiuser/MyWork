@@ -198,11 +198,7 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>sked_Is_Surrogate__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>sked_Shadow_Drive__c</field>
-            </layoutItems>
+            </layoutItems>            
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>sked_Platelet_Projected_Procedures__c</field>
@@ -530,7 +526,7 @@
                 <field>sked_Promotions__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -591,9 +587,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -737,13 +733,13 @@
         <fields>NAME</fields>
         <fields>skedHC__Exception__c</fields>
         <fields>sked_Exception_Code__c</fields>
-        <fields>skedHC__Job__c</fields>
         <fields>skedHC__Job_Allocation__c</fields>
         <fields>skedHC__Activity__c</fields>
         <fields>skedHC__Availability__c</fields>
         <fields>skedHC__Resource__c</fields>
         <fields>sked_Priority__c</fields>
         <fields>skedHC__Status__c</fields>
+        <fields>sked_Conflicted_Drive__c</fields>
         <relatedList>skedHC__Exception__c.sked_Drive__c</relatedList>
     </relatedLists>
     <relatedLists>
