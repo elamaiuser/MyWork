@@ -84,6 +84,7 @@ public with sharing class BSF_TaskPlanningService {
     // 3. INHERITANCE (CLONE DOWN)
     // ============================================================================
     public static void inheritConfiguration(List<Opportunity> newOpportunities) {
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
         List<Task_Planning_Default__c> clonedDefaultConfigs = new List<Task_Planning_Default__c>();
         List<Planned_Task__c> newPlannedTasks = new List<Planned_Task__c>();
         List<Task_Selected_Package__c> clonedSelectedBundles = new List<Task_Selected_Package__c>();
@@ -91,7 +92,7 @@ public with sharing class BSF_TaskPlanningService {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> templateIds = new Set<Id>();
         for (Opportunity opp : newOpportunities) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId) continue;
 
             if (opp.AccountId != null) { accountIds.add(opp.AccountId); }
             if (opp.Parent_Template_Id__c != null) { templateIds.add(opp.Parent_Template_Id__c); }
@@ -108,10 +109,10 @@ public with sharing class BSF_TaskPlanningService {
             List<Task_Planning_Default__c> sourceConfigs = new List<Task_Planning_Default__c>();
             List<Task_Selected_Package__c> sourceBundles = new List<Task_Selected_Package__c>();
 
-            if (opp.Parent_Template_Id__c != null && configsByTemplateId.containsKey(opp.Parent_Template_Id__c)) {
+            if (!opp.Is_Template__c && opp.Parent_Template_Id__c != null && configsByTemplateId.containsKey(opp.Parent_Template_Id__c)) {
                 sourceConfigs = configsByTemplateId.get(opp.Parent_Template_Id__c);
                 sourceBundles = bundlesByTemplateId.get(opp.Parent_Template_Id__c) ?? new List<Task_Selected_Package__c>();
-            } else if (opp.AccountId != null && configsByAccountId.containsKey(opp.AccountId)) {
+            } else if (opp.Is_Template__c && opp.AccountId != null && configsByAccountId.containsKey(opp.AccountId)) {
                 sourceConfigs = configsByAccountId.get(opp.AccountId);
                 sourceBundles = bundlesByAccountId.get(opp.AccountId) ?? new List<Task_Selected_Package__c>();
             }
@@ -131,13 +132,13 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         if (!clonedDefaultConfigs.isEmpty()) {
-            handleDatabaseResults(Database.insert(clonedDefaultConfigs, false, AccessLevel.SYSTEM_MODE), 'Cloning Default Configs');
+            handleDatabaseResults(Database.upsert(clonedDefaultConfigs, Task_Planning_Default__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cloning Default Configs');
         }
         if (!newPlannedTasks.isEmpty()) {
-            handleDatabaseResults(Database.insert(newPlannedTasks, false, AccessLevel.SYSTEM_MODE), 'Creating Initial Planned Tasks');
+            handleDatabaseResults(Database.upsert(newPlannedTasks, Planned_Task__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Creating Initial Planned Tasks');
         }
         if (!clonedSelectedBundles.isEmpty()) {
-            handleDatabaseResults(Database.insert(clonedSelectedBundles, false, AccessLevel.SYSTEM_MODE), 'Cloning Selected Bundles');
+            handleDatabaseResults(Database.upsert(clonedSelectedBundles, Task_Selected_Package__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cloning Selected Bundles');
         }
     }
 
@@ -180,13 +181,13 @@ public with sharing class BSF_TaskPlanningService {
         }
 
         handleDatabaseResults(Database.update(templatesToSync, false, AccessLevel.SYSTEM_MODE), 'Updating Template Paths');
-        if (!newConfigs.isEmpty()) { handleDatabaseResults(Database.insert(newConfigs, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Template'); }
-        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Template'); }
+        if (!newConfigs.isEmpty()) { handleDatabaseResults(Database.upsert(newConfigs, Task_Planning_Default__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Template'); }
+        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.upsert(newBundles, Task_Selected_Package__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Template'); }
     }
 
-    public static Set<Id> cascadeTemplateToDrives(List<Opportunity> drivesToSync) {
+    public static void cascadeTemplateToDrives(List<Opportunity> drivesToSync) {
         Set<Id> templateIds = new Set<Id>();
-        Set<Id> confirmedDriveIdsToTrigger = new Set<Id>(); 
+        //Set<Id> confirmedDriveIdsToTrigger = new Set<Id>(); 
         for (Opportunity d : drivesToSync) { templateIds.add(d.Parent_Template_Id__c); }
 
         Map<Id, Opportunity> templatesById = new Map<Id, Opportunity>([SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds WITH SYSTEM_MODE]);
@@ -217,49 +218,59 @@ public with sharing class BSF_TaskPlanningService {
                 }
             }
 
-            if (drive.Drive_Status__c == BSF_Constants.DOC_STATUS_CONFIRMED && drive.Planning_Path__c == BSF_Constants.PATH_FLEXIBLE) {
+            /*if (drive.Drive_Status__c == BSF_Constants.DOC_STATUS_CONFIRMED && drive.Planning_Path__c == BSF_Constants.PATH_FLEXIBLE) {
                 confirmedDriveIdsToTrigger.add(drive.Id);
-            }
+            }*/
         }
 
         handleDatabaseResults(Database.update(drivesToSync, false, AccessLevel.SYSTEM_MODE), 'Updating Drive Paths');
-        if (!newQueue.isEmpty()) { handleDatabaseResults(Database.insert(newQueue, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Drive'); }
-        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.insert(newBundles, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Drive'); }
+        if (!newQueue.isEmpty()) { handleDatabaseResults(Database.upsert(newQueue, Planned_Task__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cascading Configs to Drive'); }
+        if (!newBundles.isEmpty()) { handleDatabaseResults(Database.upsert(newBundles, Task_Selected_Package__c.Fields.Config_Key__c, false, AccessLevel.SYSTEM_MODE), 'Cascading Bundles to Drive'); }
 
-        return confirmedDriveIdsToTrigger;
+        //return confirmedDriveIdsToTrigger;
     }
 
     // ============================================================================
     // 5. CENTRAL HANDLER
     // ============================================================================
     public static void handleOpportunityUpdates(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
-        Set<Id> confirmedIds = new Set<Id>();
         Set<Id> templateChangedIds = new Set<Id>();
+        Set<Id> OpportunityIds = new Set<Id>();
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
 
         for(Opportunity opp : newOpps) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId || oldMap == null || !oldMap.containsKey(opp.Id)) continue;
 
             Opportunity old = oldMap.get(opp.Id);
             
-            // 1. Detect Status Change to 'Confirmed' (Trigger Task Generation)
-            /*if(opp.Drive_Status__c == 'Confirmed' && old.Drive_Status__c != 'Confirmed') {
-                confirmedIds.add(opp.Id);
-            }*/
-            
-            // 2. Detect Template Planning Path Change (Trigger Cascade Batch)
-            if(opp.Is_Template__c && opp.Planning_Path__c != old.Planning_Path__c) {
-                templateChangedIds.add(opp.Id);
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
+                templateChangedIds.add(opp.Parent_Template_Id__c);
+                OpportunityIds.add(opp.Id);
+            }
+            if(opp.is_Template__c && opp.planning_path__c != old.planning_path__c) {
+                templateChangedIds.add(opp.Id);                
             }
         }
 
-        // Action: Generate Tasks for newly Confirmed drives
-        /*if(!confirmedIds.isEmpty()) {
-            generateTasksFromQueue(confirmedIds);
-        }*/
-
-        // Action: Cascade changes from Template to Child Drives
-        if(!templateChangedIds.isEmpty() && !System.isBatch() && !System.isFuture()) {
+        if(!templateChangedIds.isEmpty() && !OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
+            Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds, OpportunityIds), 50);
+        }
+        if(!templateChangedIds.isEmpty() && OpportunityIds.isEmpty() && !System.isBatch() && !System.isFuture()) { 
             Database.executeBatch(new BSF_TemplateTaskPlanningCascadeBatch(templateChangedIds), 50);
+        }
+    }
+
+    public static void handleOpportunityTemplateChange(List<Opportunity> newOpps, Map<Id, Opportunity> oldMap) {
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
+        Set<Id> templateChangedIds = new Set<Id>();
+        for(Opportunity opp : newOpps) {
+            if(opp.RecordTypeId == fixedSiteRecTypeId || oldMap == null || !oldMap.containsKey(opp.Id)) continue;
+
+            Opportunity old = oldMap.get(opp.Id);
+            
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null && opp.Parent_Template_Id__c != old.Parent_Template_Id__c) {
+                opp.Is_Path_Overridden__c = false;
+            }
         }
     }
 
@@ -278,11 +289,14 @@ public with sharing class BSF_TaskPlanningService {
 
         if(!revertIds.isEmpty()) {
             // Delete Queue Items
-            delete [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c IN :revertIds];
+            List<Planned_Task__c> tasksToDelete = [SELECT Id FROM Planned_Task__c WHERE Related_Opportunity__c IN :revertIds WITH SYSTEM_MODE];
+            if (!tasksToDelete.isEmpty()) { handleDatabaseResults(Database.delete(tasksToDelete, false, AccessLevel.SYSTEM_MODE), 'Deleting Planned Tasks'); }
             // Delete Configs (if Template)
-            delete [SELECT Id FROM Task_Planning_Default__c WHERE Template_Opportunity__c IN :revertIds];
+            List<Task_Planning_Default__c> configsToDelete = [SELECT Id FROM Task_Planning_Default__c WHERE Template_Opportunity__c IN :revertIds WITH SYSTEM_MODE];
+            if (!configsToDelete.isEmpty()) { handleDatabaseResults(Database.delete(configsToDelete, false, AccessLevel.SYSTEM_MODE), 'Deleting Task Configs'); }
             // Delete Junctions
-            delete [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :revertIds];
+            List<Task_Selected_Package__c> junctionsToDelete = [SELECT Id FROM Task_Selected_Package__c WHERE Opportunity__c IN :revertIds WITH SYSTEM_MODE];
+            if (!junctionsToDelete.isEmpty()) { handleDatabaseResults(Database.delete(junctionsToDelete, false, AccessLevel.SYSTEM_MODE), 'Deleting Task Junctions'); }
             // Delete Generated Tasks (Flexible Only)
             //delete [SELECT Id FROM Task WHERE WhatId IN :revertIds AND Planning_Task_Category__c = 'Flexible' AND IsClosed = FALSE];
         }
@@ -348,6 +362,7 @@ public with sharing class BSF_TaskPlanningService {
         config.Configured_Date__c = source.Configured_Date__c;
         config.Task_Package__c = source.Task_Package__c;        
         config.put(lookupFieldApiName, parentRecordId);
+        config.Config_Key__c = generateConfigKey(config);
         return config;
     }
 
@@ -366,6 +381,7 @@ public with sharing class BSF_TaskPlanningService {
         } else { 
             plannedTask.Target_Date__c = source.Configured_Date__c; 
         }
+        plannedTask.Config_Key__c = generateConfigKey(plannedTask);
         return plannedTask;
     }
 
@@ -374,6 +390,7 @@ public with sharing class BSF_TaskPlanningService {
         bundleClone.Account__c = null; 
         bundleClone.Opportunity__c = null;
         bundleClone.put(lookupFieldApiName, parentRecordId);
+        bundleClone.Config_Key__c = generateConfigKey(bundleClone);
         return bundleClone;
     }
 
@@ -410,13 +427,15 @@ public with sharing class BSF_TaskPlanningService {
     }
 
     private static Task_Planning_Default__c createConfig(Id accountId, Task_Package_Item__c item) {
-        return new Task_Planning_Default__c(
+        Task_Planning_Default__c config = new Task_Planning_Default__c(
             Account__c = accountId,
             Task_Definition__c = item.Task_Definition__c,
             Task_Package__c = item.Task_Package__c,
             Scheduling_Method__c = item.Task_Definition__r.Scheduling_Method__c,
             Configured_Offset__c = item.Task_Definition__r.Due_Date_Offset__c
         );
+        config.Config_Key__c = generateConfigKey(config);
+        return config;
     }
 
     public static void handleDatabaseResults(Object results, String context) {
@@ -438,6 +457,19 @@ public with sharing class BSF_TaskPlanningService {
             }
             if (!failedSaves.isEmpty()) {
                 errorLogs = BSF_Utilities.createErrorLog(failedSaves, context, className, 'handleDatabaseResults', 'Error', 'DML Save Error');
+            }
+        }
+        else if (results instanceof List<Database.UpsertResult>) {
+            List<Database.UpsertResult> urList = (List<Database.UpsertResult>)results;
+            List<Database.UpsertResult> failedUpserts = new List<Database.UpsertResult>(); 
+            for (Database.UpsertResult ur : urList) { 
+                if (!ur.isSuccess()) {
+                    failedUpserts.add(ur);
+                    errors.addAll(ur.getErrors()); 
+                }
+            }
+            if (!failedUpserts.isEmpty()) {
+                errorLogs = BSF_Utilities.createErrorLog(failedUpserts, context, className, 'handleDatabaseResults', 'Error', 'DML Upsert Error');
             }
         } 
         else if (results instanceof List<Database.DeleteResult>) {
@@ -508,16 +540,17 @@ public with sharing class BSF_TaskPlanningService {
                                         FROM Opportunity 
                                         WHERE Id IN :oppIds];
 
-        Map<Id, Id> accSpecialistMap = getAccountSpecialistMap(oppList);
+        Map<String, Map<Id, Id>> accountTeamMap = getAccountTeam(oppList);
 
         for (Opportunity opp : oppList) {
-            oppRolesMap.put(opp.Id, mapRolesForSingleOpp(opp, systemUserId, accSpecialistMap));
+            oppRolesMap.put(opp.Id, mapRolesForSingleOpp(opp, systemUserId, accountTeamMap));
         }
         
         return oppRolesMap;
     }
 
-    private static Map<Id, Id> getAccountSpecialistMap(List<Opportunity> oppList) {
+    private static Map<String, Map<Id, Id>> getAccountTeam(List<Opportunity> oppList) {
+        Map<String, Map<Id, Id>> accountTeamMap = new Map<String, Map<Id, Id>>();
         Map<Id, List<Opportunity>> accountIdvsOpps = new Map<Id, List<Opportunity>>();
         for (Opportunity opp : oppList) {
             if (opp.AccountId != null && opp.Drive_Date__c != null) {
@@ -528,25 +561,28 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        Map<Id, Id> specialistMap = new Map<Id, Id>();
-        if (accountIdvsOpps.isEmpty()) return specialistMap;
+        if (accountIdvsOpps.isEmpty()) return accountTeamMap;
 
         for (AccountTeamMember atm : [SELECT AccountId, 
                                                 UserId, 
                                                 Start_Date__c,
                                                 End_Date__c,
+                                                TeamMemberRole,
                                                 Is_Covering_Recruiter__c 
                                         FROM AccountTeamMember 
                                         WHERE AccountId IN :accountIdvsOpps.keySet() 
-                                        AND TeamMemberRole = :BSF_Constants.ACCOUNT_SPECIALIST 
-                                        ORDER BY Is_Covering_Recruiter__c DESC, Start_Date__c ASC]) {
+                                        AND TeamMemberRole != null
+                                        ORDER BY Is_Covering_Recruiter__c ASC, Start_Date__c ASC]) {
             for(opportunity opp : accountIdvsOpps.get(atm.AccountId)) {
                 if (isActiveTeamMember(atm.Start_Date__c, atm.End_Date__c,opp.Drive_Date__c)) {
-                    specialistMap.put(opp.Id, atm.UserId);
+                    if(accountTeamMap.isEmpty() || !accountTeamMap.containsKey(atm.TeamMemberRole)) {
+                        accountTeamMap.put(atm.TeamMemberRole, new Map<Id, Id>());
+                    }
+                    accountTeamMap.get(atm.TeamMemberRole).put(opp.Id, atm.UserId);
                 }
             }
         }
-        return specialistMap;
+        return accountTeamMap;
     }
 
     private static Boolean isActiveTeamMember(Date startDate, Date endDate, Date referenceDate) {
@@ -556,7 +592,7 @@ public with sharing class BSF_TaskPlanningService {
         return isActive;
     }
 
-    private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<Id, Id> accSpecMap) {
+    private static Map<String, Id> mapRolesForSingleOpp(Opportunity opp, Id systemUserId, Map<String, Map<Id, Id>> accountTeamMap) {
         Map<String, Id> roles = new Map<String, Id>{
             BSF_Constants.ACCOUNT_MANAGER => opp.Account_Manager__c,
             BSF_Constants.DISTRICT_MANAGER  => opp.District_Manager__c,
@@ -573,10 +609,14 @@ public with sharing class BSF_TaskPlanningService {
             }
         }
 
-        if (roles.get(BSF_Constants.ACCOUNT_SPECIALIST) == null && accSpecMap.containsKey(opp.Id)) {
-            roles.put(BSF_Constants.ACCOUNT_SPECIALIST, accSpecMap.get(opp.Id));
+        if(accountTeamMap != null && !accountTeamMap.isEmpty()){
+            for(String role : accountTeamMap.keySet()){
+                if(accountTeamMap.get(role).containsKey(opp.Id) && accountTeamMap.get(role).containsKey(opp.Id) != null){
+                    roles.put(role, accountTeamMap.get(role).get(opp.Id));
+                }
+            }
         }
-
+        
         return roles;
     }
     
@@ -698,6 +738,7 @@ public with sharing class BSF_TaskPlanningService {
 
     private static Planned_Task__c markProcessed(Planned_Task__c pt) {
         pt.Status__c = BSF_Constants.PLANNED_TASK_STATUS_PROCESSED;
+        pt.Config_Key__c = null;
         return pt;
     }
 
@@ -733,6 +774,37 @@ public with sharing class BSF_TaskPlanningService {
         }
         
         return target;
+    }
+
+    public static String generateConfigKey(SObject record) {
+        if (record == null) return null;
+        
+        String parentId;
+        String childId;
+        String itemId;
+
+        if (record instanceof Planned_Task__c) {
+            Planned_Task__c pt = (Planned_Task__c) record;
+            parentId = pt.Related_Opportunity__c;
+            itemId = pt.Task_Definition__c;
+            childId = pt.Task_Package__c;
+        }else if (record instanceof Task_Planning_Default__c) {
+            Task_Planning_Default__c tpd = (Task_Planning_Default__c) record;
+            parentId = String.isNotBlank(tpd.Account__c) ? tpd.Account__c : tpd.Template_Opportunity__c;
+            itemId = tpd.Task_Definition__c;
+            childId = tpd.Task_Package__c;
+        }else if (record instanceof Task_Selected_Package__c) {
+            Task_Selected_Package__c tsp = (Task_Selected_Package__c) record;
+            parentId = String.isNotBlank(tsp.Account__c) ? tsp.Account__c : tsp.Opportunity__c;
+            itemId = tsp.Task_Package__c;
+            childId = '';
+        }
+
+        if (String.isNotBlank(parentId) && String.isNotBlank(itemId)) {
+            return parentId + '_' + itemId + '_' + childId;
+        }
+        
+        return null;
     }
 
     // ============================================================================

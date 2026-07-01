@@ -239,7 +239,7 @@ const STEP = {
                     equipmentJobsMap: newEquipmentJobsMap,
                     lockedEquipments: lockedEquipments
                   }
-                }])
+                }], { preserveExistingSlots: true })
               }
             })
             .then(() => {
@@ -261,7 +261,7 @@ const STEP = {
                 vehicles: newVehicles,
                 lockedVehicles: lockedVehicles
               }
-            }])
+            }], { preserveExistingSlots: true })
           }
 
           if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
@@ -272,7 +272,7 @@ const STEP = {
                 vehicles: newVehicles,
                 lockedVehicles: lockedVehicles
               }
-            }])
+            }], { preserveExistingSlots: true })
           }
         })
         .then(() => {
