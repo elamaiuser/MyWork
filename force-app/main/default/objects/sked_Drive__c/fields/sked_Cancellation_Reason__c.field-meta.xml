@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Cancellation_Reason__c</fullName>
-    <externalId>false</externalId>
     <label>Cancellation Reason</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
@@ -56,6 +55,11 @@
                 <fullName>Equipment Issues</fullName>
                 <default>false</default>
                 <label>Equipment Issues</label>
+            </value>
+            <value>
+                <fullName>Fixed Site Trade Area</fullName>
+                <default>false</default>
+                <label>Fixed Site Trade Area</label>
             </value>
             <value>
                 <fullName>FS Quarterly Calibration</fullName>
@@ -164,6 +168,10 @@
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>Equipment Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <valueName>Fixed Site Trade Area</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
