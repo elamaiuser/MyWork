@@ -443,4 +443,46 @@ public without sharing class OpportunityServiceController {
             }
         }
     }
+    
+    public static void updateTaskDates(Map<Id, Opportunity> newOppMap, List<Task> oppTasks) {
+        List<String> taskSubjects = new List<String>();
+        Map<String, Integer> map_taskDefName_taskDueDate = new Map<String, Integer>();
+        
+        for(Task task : oppTasks) {
+            taskSubjects.add(task.Subject);
+        }
+        
+        List<Task_Definition__c> taskDefs = [
+            SELECT Name, 
+            Due_Date_Offset__c 
+            FROM Task_Definition__c
+            WHERE Name IN :taskSubjects
+            AND Due_Date_Offset__c != null
+        ];
+        
+        if(taskDefs != null && !taskDefs.isEmpty()) {
+            for(Task_Definition__c taskDef : taskDefs) {
+            	map_taskDefName_taskDueDate.put(taskDef.Name, Integer.valueOf(taskDef.Due_Date_Offset__c));
+            }
+        }
+        
+        for(Task task : oppTasks) {
+            task.Drive_Date__c = newOppMap.get(task.WhatId).Drive_Date__c; //HRP-12700
+            if(map_taskDefName_taskDueDate.containsKey(task.Subject)) {
+                Integer dueDateOffSet = map_taskDefName_taskDueDate.get(task.Subject);
+                task.ActivityDate = newOppMap.get(task.WhatId).Drive_Date__c.addDays(-dueDateOffSet);
+            }
+        }
+        
+        Database.SaveResult[] taskUpdateResultList = Database.update(oppTasks, false);
+        List<BSF_Error_Log__c> errorLogsToInsert = BSF_Utilities.createErrorLogWithObjectId(
+            taskUpdateResultList, 
+            'Tasks update on opportunity drive date change', 
+            'OpportunityServiceController', 
+            'updateTaskDates', 
+            'Error', 
+            ''
+        );
+        if(!errorLogsToInsert.isEmpty()) insert errorLogsToInsert;
+    }
 }
