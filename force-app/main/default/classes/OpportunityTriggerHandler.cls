@@ -669,13 +669,13 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             }
             System.debug('Exiting method AfterUpdate');
             
-            //HRP-3459
+            /*HRP-3459
             if(super.getTriggerMethodsToBypass().indexOf('cancelTasksForCancelledOpportunities') == -1) {	
                 OpportunityService.cancelTasksForCancelledOpportunities((Map<Id,Opportunity>)trigger.oldMap,(Map<Id,Opportunity>)trigger.newMap);
             } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.cancelTasksForCancelledOpportunities() Bypassed');  
             }
-            System.debug('Exiting method AfterUpdate');
+            System.debug('Exiting method AfterUpdate');*/
             
             //HRP-6920
             if(super.getTriggerMethodsToBypass().indexOf('deleteDriveAffiliationOnDriveDateChange') == -1) {
