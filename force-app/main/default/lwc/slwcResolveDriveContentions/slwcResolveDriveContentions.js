@@ -1,7 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { sObjectType, debugLogService, driveService, driveQueryModel, operationDriveLimitService, operationDriveLimitQueryModel, staffingConstraintService, staffingConstraintQueryModel, driveChangeRequestQueryModel, driveChangeRequestService, jobService, jobQueryModel } from 'c/dataService';
-import { DRIVE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS, LINK_DRIVE_TYPE } from 'c/slwcConstants';
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { DateTime } from 'c/luxon';
 import { getValueFromEvent } from 'c/slwcUtils';
@@ -573,7 +573,29 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         let totalEquipment = 0;
         let totalVehiclesQuantity = 0;
         let totalVehiclesCapacity = 0;
+        // [ext] HRP-15611: collapse same-day linked drive pairs so shared staff is counted once — max(A, B) not A+B.
+        // DriveA=3, DriveB=3 → totalStaff += 3 (not 6). DriveA=10, DriveB=14 → totalStaff += 14 (not 24).
+        // Equipment/vehicles from the first entry only (staff-only fix per Jira AC).
+        // Non-linked drives and pairs with absent partner count normally.
+        const processedHoldDrives = new Set();
         holdDrives.forEach(holdDrive => {
+          if (processedHoldDrives.has(holdDrive.id)) return;
+
+          if (holdDrive.linkedDriveId && holdDrive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY) {
+            const partner = holdDrives.find(d => d.id !== holdDrive.id && d.linkedDriveId === holdDrive.linkedDriveId && d.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY);
+            if (partner) {
+              processedHoldDrives.add(holdDrive.id);
+              processedHoldDrives.add(partner.id);
+              // AC-1: staff = max(A, B); equipment/vehicles from the first entry only (staff-only per Jira AC)
+              totalStaff += Math.max(holdDrive.totalStaffRequested || 0, partner.totalStaffRequested || 0);
+              totalEquipment += (holdDrive.equipmentAllocated || 0);
+              totalVehiclesQuantity += (holdDrive.vehiclesAllocated || 0);
+              totalVehiclesCapacity += (holdDrive.vehicleCapacity || 0);
+              return;
+            }
+          }
+
+          // Non-linked drive or partner absent — count normally
           totalStaff += (holdDrive.totalStaffRequested || 0);
           totalEquipment += (holdDrive.equipmentAllocated || 0);
           totalVehiclesQuantity += (holdDrive.vehiclesAllocated || 0);

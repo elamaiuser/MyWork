@@ -15,6 +15,13 @@
         <members>BSF_TemplateTaskPlanningCascadeBatch</members>
         <members>OpportunityService</members>
         <members>OpportunityTriggerHandler</members>
+        <members>BSF_TaskPlanningWizardController</members>
+        <members>BSF_TaskPlanningWizardControllerTest</members>
+        <members>BSF_TemplateTaskPlanningCascadeBatchTest</members>
+        <members>TaskTriggerTest</members>
+        <members>OpportunityTriggerTest</members>
+        <members>OpportunityServiceController</members>
+        <members>OpportunityServiceControllerTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
@@ -28,6 +35,9 @@
         <members>Task_Platform_Event__e.RecordTypeId__c</members>
         <members>Account.Planning_Path__c</members>
         <members>Activity.Task_Deduplication_Id__c</members>
+        <members>Task_Planning_Default__c.Config_Key__c</members>
+        <members>Task_Selected_Package__c.Config_Key__c</members>
+        <members>Planned_Task__c.Config_Key__c</members>
 		<name>CustomField</name>
 	</types>
     <types>
@@ -49,7 +59,12 @@
 		<members>BSF_Access_Control_Rule.HRP_16777_Planned_Task_Field_PS</members>
         <members>BSF_Access_Control_Rule.HRP_16777_Class_Permission_Set</members>
         <members>BSF_Access_Control_Rule.HRP_17373_Field_Permission_Set_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_1_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_2_EDIT</members>
+        <members>BSF_Access_Control_Rule.HRP_17417_Field_Permission_Set_3_EDIT</members>
 		<name>CustomMetadata</name>
 	</types>
+
+
 	<version>66.0</version>
 </Package>

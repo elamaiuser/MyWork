@@ -136,9 +136,10 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     public override void onBeforeDelete() {
         skedTriggerUtils.validateServiceEntry(this.context.oldRecords, skedConstants.RECORD_CHANGES_INVALID_PERMISSIONS, new List<String>{'System Administrator'}, false);
         if (!skedSetting.instance.Admin.migrationMode) {
-        	removeExceptionLogs((Map<Id, sked__Availability__c>)this.context.oldMap);
-        	removeResourceHoursRecord(this.context.oldMap.values());
+          removeExceptionLogs((Map<Id, sked__Availability__c>)this.context.oldMap);
+          removeResourceHoursRecord(this.context.oldMap.values());
         }
+        promoteOnAvailabilityDelete((List<sked__Availability__c>)this.context.oldRecords);
     }
 
     public override void onAfterDelete() {
@@ -478,6 +479,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                         FROM sked_Staffing_Budget_Availability__c
                         WHERE sked_Staffing_Budget__c IN :allStaffingBudgetIds
                         AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+                        AND sked_Is_Duplicate__c = false
                     ]) {
                         countedResourceBudgetPairs.add(existingSba.sked_Availability__r.sked__Resource__c + '-' + existingSba.sked_Staffing_Budget__c);
                     }
@@ -502,14 +504,16 @@ public class skedAvailabilityHandler extends skedTriggerHub {
                                 if (!rolesFromStaffingBudget.isEmpty()) {
                                     hasMatchingStaffingBudgetSlot = true;
                                     String resourceBudgetKey = wrapper.resource.Id + '-' + staffingBudgetWrapper.staffingBudget.Id;
-                                    if (!countedResourceBudgetPairs.contains(resourceBudgetKey)) {
-                                        countedResourceBudgetPairs.add(resourceBudgetKey);
-                                        staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
-                                            sked_Availability__c = wrapper.unavailability.Id,
-                                            sked_Staffing_Budget__c = staffingBudgetWrapper.staffingBudget.Id,
-                                            sked_Availability_Status__c = wrapper.unavailability.sked_Custom_Status__c
-                                        ));
+                                    Boolean isDuplicate = countedResourceBudgetPairs.contains(resourceBudgetKey);
+                                    staffingBudgetAvailabilities.add(new sked_Staffing_Budget_Availability__c(
+                                        sked_Availability__c = wrapper.unavailability.Id,
+                                        sked_Staffing_Budget__c = staffingBudgetWrapper.staffingBudget.Id,
+                                        sked_Availability_Status__c = wrapper.unavailability.sked_Custom_Status__c,
+                                        sked_Is_Duplicate__c = isDuplicate
+                                    ));
 
+                                    if (!isDuplicate) {
+                                        countedResourceBudgetPairs.add(resourceBudgetKey);
                                         if (wrapper.unavailability.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_APPROVED) {
                                             staffingBudgetWrapper.approvedSlots++;
                                         }
@@ -554,77 +558,119 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         }
 
         List<sked_Staffing_Budget_Availability__c> sbaList = [
-            SELECT Id, sked_Availability_Status__c, sked_Availability__c, sked_Staffing_Budget__c
+            SELECT Id, sked_Availability_Status__c, sked_Availability__c, sked_Staffing_Budget__c,
+              sked_Is_Duplicate__c
             FROM sked_Staffing_Budget_Availability__c
             WHERE sked_Availability__c IN :availabilityById.keySet()
         ];
 
         if (!sbaList.isEmpty()) {
             if (!cancellingApprovedIds.isEmpty()) {
-                Set<Id> resourceIds = new Set<Id>();
-                Set<Date> startDates = new Set<Date>();
-                for (Id cancelId : cancellingApprovedIds) {
-                    sked__Availability__c av = availabilityById.get(cancelId);
-                    resourceIds.add(av.sked__Resource__c);
-                    startDates.add(av.sked_Start_Date__c);
-                }
-
-                // Find other approved PTO/FH availabilities for the same resources and dates
-                List<sked__Availability__c> candidates = [
-                    SELECT Id, sked__Resource__c, sked_Start_Date__c
-                    FROM sked__Availability__c
-                    WHERE sked__Resource__c IN :resourceIds
-                    AND sked_Start_Date__c IN :startDates
-                    AND sked_Custom_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
-                    AND sked__Type__c IN :unavailabilityTypesToSync
-                    AND Id NOT IN :cancellingApprovedIds
-                    AND sked_Related_Call_Out__c = NULL
-                    AND sked__Is_Available__c = FALSE
-                ];
-
-                // Skip candidates that already have their own SBA (already counted)
-                Set<Id> candidateIds = new Map<Id, sked__Availability__c>(candidates).keySet();
-                Set<Id> alreadyHasSba = new Set<Id>();
-                if (!candidateIds.isEmpty()) {
-                    for (sked_Staffing_Budget_Availability__c existingSba : [
-                        SELECT sked_Availability__c
-                        FROM sked_Staffing_Budget_Availability__c
-                        WHERE sked_Availability__c IN :candidateIds
-                    ]) {
-                        alreadyHasSba.add(existingSba.sked_Availability__c);
+                // Collect (resource, budget) keys from non-duplicate SBAs being cancelled
+                Set<Id> cancelBudgetIds = new Set<Id>();
+                Set<Id> cancelResourceIds = new Set<Id>();
+                for (sked_Staffing_Budget_Availability__c sba : sbaList) {
+                    if (cancellingApprovedIds.contains(sba.sked_Availability__c) && !sba.sked_Is_Duplicate__c) {
+                        cancelBudgetIds.add(sba.sked_Staffing_Budget__c);
+                        cancelResourceIds.add(availabilityById.get(sba.sked_Availability__c).sked__Resource__c);
                     }
                 }
 
-                // First eligible replacement per (resource, date) — takes over the SBA
-                Map<String, Id> replacementByResourceDate = new Map<String, Id>();
-                for (sked__Availability__c candidate : candidates) {
-                    if (!alreadyHasSba.contains(candidate.Id)) {
-                        String key = candidate.sked__Resource__c + '-' + candidate.sked_Start_Date__c;
-                        if (!replacementByResourceDate.containsKey(key)) {
-                            replacementByResourceDate.put(key, candidate.Id);
+                // Find one duplicate SBA per (resource, budget) to promote
+                Map<String, sked_Staffing_Budget_Availability__c> promotionByKey = new Map<String, sked_Staffing_Budget_Availability__c>();
+                if (!cancelBudgetIds.isEmpty()) {
+                    for (sked_Staffing_Budget_Availability__c dup : [
+                        SELECT Id, sked_Staffing_Budget__c, sked_Availability__r.sked__Resource__c,
+                          sked_Is_Duplicate__c
+                        FROM sked_Staffing_Budget_Availability__c
+                        WHERE sked_Staffing_Budget__c IN :cancelBudgetIds
+                        AND sked_Availability__r.sked__Resource__c IN :cancelResourceIds
+                        AND sked_Is_Duplicate__c = true
+                        AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+                    ]) {
+                        String key = dup.sked_Availability__r.sked__Resource__c + '-' + dup.sked_Staffing_Budget__c;
+                        if (!promotionByKey.containsKey(key)) {
+                            promotionByKey.put(key, dup);
                         }
                     }
                 }
 
+                Set<String> cancelledKeys = new Set<String>();
                 for (sked_Staffing_Budget_Availability__c sba : sbaList) {
                     sked__Availability__c av = availabilityById.get(sba.sked_Availability__c);
-                    if (cancellingApprovedIds.contains(sba.sked_Availability__c)) {
-                        String key = av.sked__Resource__c + '-' + av.sked_Start_Date__c;
-                        Id replacementId = replacementByResourceDate.get(key);
-                        if (replacementId != null) {
-                            // Reassign SBA to the remaining active time-off so the slot stays consumed
-                            sba.sked_Availability__c = replacementId;
-                            sba.sked_Availability_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
-                        } else {
-                            sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
-                        }
-                    } else {
-                        sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
+                    if (cancellingApprovedIds.contains(sba.sked_Availability__c) && !sba.sked_Is_Duplicate__c) {
+                        cancelledKeys.add(av.sked__Resource__c + '-' + sba.sked_Staffing_Budget__c);
+                    }
+                    sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
+                }
+
+                // Promote one duplicate per freed (resource, budget) key
+                List<sked_Staffing_Budget_Availability__c> sbasToPromote = new List<sked_Staffing_Budget_Availability__c>();
+                for (String key : cancelledKeys) {
+                    sked_Staffing_Budget_Availability__c dup = promotionByKey.get(key);
+                    if (dup != null) {
+                        dup.sked_Is_Duplicate__c = false;
+                        sbasToPromote.add(dup);
                     }
                 }
+
+                // Merge promoted SBAs into the DML set to avoid duplicate-id errors
+                Map<Id, sked_Staffing_Budget_Availability__c> toUpdate = new Map<Id, sked_Staffing_Budget_Availability__c>(sbaList);
+                for (sked_Staffing_Budget_Availability__c promoted : sbasToPromote) {
+                    toUpdate.put(promoted.Id, promoted);
+                }
+                update toUpdate.values();
             } else {
+                // Detect Pending→Approved transitions for PTO/FH to guard against duplicate slot consumption
+                Set<Id> approvingIds = new Set<Id>();
+                for (sked__Availability__c av : newRecords) {
+                    sked__Availability__c old = oldMap.get(av.Id);
+                    if (
+                        !skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(old.sked_Custom_Status__c) &&
+                        skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(av.sked_Custom_Status__c) &&
+                        unavailabilityTypesToSync.contains(av.sked__Type__c)
+                    ) {
+                        approvingIds.add(av.Id);
+                    }
+                }
+
+                // Pre-query approved SBAs for the same resource+budget to detect cross-transaction duplicates
+                Set<String> alreadyApprovedPairs = new Set<String>();
+                if (!approvingIds.isEmpty()) {
+                    Set<Id> relevantBudgetIds = new Set<Id>();
+                    for (sked_Staffing_Budget_Availability__c sba : sbaList) {
+                        if (approvingIds.contains(sba.sked_Availability__c)) {
+                            relevantBudgetIds.add(sba.sked_Staffing_Budget__c);
+                        }
+                    }
+                    if (!relevantBudgetIds.isEmpty()) {
+                        for (sked_Staffing_Budget_Availability__c existing : [
+                            SELECT sked_Staffing_Budget__c, sked_Availability__r.sked__Resource__c
+                            FROM sked_Staffing_Budget_Availability__c
+                            WHERE sked_Staffing_Budget__c IN :relevantBudgetIds
+                            AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+                            AND sked_Availability__c NOT IN :approvingIds
+                            AND sked_Is_Duplicate__c = false
+                        ]) {
+                            alreadyApprovedPairs.add(existing.sked_Availability__r.sked__Resource__c + '-' + existing.sked_Staffing_Budget__c);
+                        }
+                    }
+                }
+
+                // One slot per resource+budget: flag duplicates instead of deleting
+                Set<String> approvedThisBatch = new Set<String>();
                 for (sked_Staffing_Budget_Availability__c sba : sbaList) {
-                    sba.sked_Availability_Status__c = availabilityById.get(sba.sked_Availability__c).sked_Custom_Status__c;
+                    sked__Availability__c av = availabilityById.get(sba.sked_Availability__c);
+                    if (approvingIds.contains(sba.sked_Availability__c)) {
+                        String key = av.sked__Resource__c + '-' + sba.sked_Staffing_Budget__c;
+                        if (alreadyApprovedPairs.contains(key) || approvedThisBatch.contains(key)) {
+                            sba.sked_Is_Duplicate__c = true;
+                        } else {
+                            sba.sked_Is_Duplicate__c = false;
+                            approvedThisBatch.add(key);
+                        }
+                    }
+                    sba.sked_Availability_Status__c = av.sked_Custom_Status__c;
                 }
             }
 
@@ -641,6 +687,64 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         }
     }
     
+    private void promoteOnAvailabilityDelete(List<sked__Availability__c> deletingRecords) {
+        Set<String> unavailabilityTypesToSync = new Set<String>{ 'Floating Holiday', 'PTO' };
+        Set<Id> deletingIds = new Map<Id, sked__Availability__c>(deletingRecords).keySet();
+
+        // Find non-duplicate approved SBAs whose availability is being hard-deleted
+        List<sked_Staffing_Budget_Availability__c> deletingSbas = [
+            SELECT Id, sked_Staffing_Budget__c, sked_Availability__r.sked__Resource__c
+            FROM sked_Staffing_Budget_Availability__c
+            WHERE sked_Availability__c IN :deletingIds
+            AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+            AND sked_Is_Duplicate__c = false
+            AND sked_Availability__r.sked__Type__c IN :unavailabilityTypesToSync
+        ];
+        if (deletingSbas.isEmpty()) {
+            return;
+        }
+
+        Set<Id> budgetIds = new Set<Id>();
+        Set<Id> resourceIds = new Set<Id>();
+        for (sked_Staffing_Budget_Availability__c sba : deletingSbas) {
+            budgetIds.add(sba.sked_Staffing_Budget__c);
+            resourceIds.add(sba.sked_Availability__r.sked__Resource__c);
+        }
+
+        // Find one duplicate SBA per (resource, budget) to promote
+        Map<String, sked_Staffing_Budget_Availability__c> promotionByKey = new Map<String, sked_Staffing_Budget_Availability__c>();
+        for (sked_Staffing_Budget_Availability__c dup : [
+            SELECT Id, sked_Staffing_Budget__c, sked_Availability__r.sked__Resource__c, sked_Is_Duplicate__c
+            FROM sked_Staffing_Budget_Availability__c
+            WHERE sked_Staffing_Budget__c IN :budgetIds
+            AND sked_Availability__r.sked__Resource__c IN :resourceIds
+            AND sked_Is_Duplicate__c = true
+            AND sked_Availability_Status__c IN :skedConstants.AVAILABILITY_APPROVED_STATUSES
+            AND sked_Availability__c NOT IN :deletingIds
+        ]) {
+            String key = dup.sked_Availability__r.sked__Resource__c + '-' + dup.sked_Staffing_Budget__c;
+            if (!promotionByKey.containsKey(key)) {
+                promotionByKey.put(key, dup);
+            }
+        }
+
+        List<sked_Staffing_Budget_Availability__c> toPromote = new List<sked_Staffing_Budget_Availability__c>();
+        Set<String> promotedKeys = new Set<String>();
+        for (sked_Staffing_Budget_Availability__c sba : deletingSbas) {
+            String key = sba.sked_Availability__r.sked__Resource__c + '-' + sba.sked_Staffing_Budget__c;
+            if (!promotedKeys.contains(key) && promotionByKey.containsKey(key)) {
+                sked_Staffing_Budget_Availability__c dup = promotionByKey.get(key);
+                dup.sked_Is_Duplicate__c = false;
+                toPromote.add(dup);
+                promotedKeys.add(key);
+            }
+        }
+
+        if (!toPromote.isEmpty()) {
+            update toPromote;
+        }
+    }
+
     private void doDateTimeConversion(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
         for (sked__Availability__c newRecord : newRecords) {
             sked__Availability__c oldData = oldMap.get(newRecord.Id);

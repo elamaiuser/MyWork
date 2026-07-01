@@ -473,7 +473,9 @@ class DriveHelper {
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
           vphhQuantity: job.vphhQuantity || 0,
-          dualRole: job.dualRole
+          dualRole: job.dualRole,
+          isManuallyCreated: job.isManuallyCreated,
+          manuallyCreatedFrom: job.manuallyCreatedFrom
         });
       }
     })
@@ -1904,6 +1906,7 @@ class DriveHelper {
 
   calculateStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
+    adminSetting,
     timezoneSidId 
   }, { ignoreLunchBreak = false, useDriveShift = false } = {}) {
     const resourceRoleCapacityFieldMap = {
@@ -1953,16 +1956,28 @@ class DriveHelper {
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       let dualRole = null;
+      let isManuallyCreated = false;
+      let manuallyCreatedFrom = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
         if (resourceRole === 'VP/HH') {
           noOfResources = data.vphhQuantity || 0;
         }
         dualRole = data.dualRole;
+        isManuallyCreated = data.isManuallyCreated;
+        manuallyCreatedFrom = data.manuallyCreatedFrom;
       }
 
       let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+  
+      if(role === 'Driver Support' && 
+        roleCapacity <= 0 && 
+        isManuallyCreated && 
+        manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL
+      ) {
+        roleCapacity = adminSetting?.adhocDriverSupportCapacity || 0;
+      }
 
       if(resourceRoles.includes(role)) {
         if(role === RESOURCE_ROLE.x2RBC) {
@@ -2582,7 +2597,8 @@ class DriveHelper {
 
       const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.x2RBC_LIMIT);
       let sameDateMobileDrives2RBCRequested = 0;
-      sameDateDrives.forEach((sameDateDrive) => {
+      // [ext] collapse linked pairs to max(2RBC) before summing — same root cause as staff; see HRP-15611 Implementation Extensions.
+      this.collapseSameDayLinkedDrives(sameDateDrives).forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
             sameDateMobileDrives2RBCRequested += sameDateDrive.totalEquipmentRequested || 0;
@@ -2666,7 +2682,8 @@ class DriveHelper {
 
       const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.DOT_LIMIT);
       let sameDateMobileDrivesDOTAllocated = 0;
-      sameDateDrives.forEach((sameDateDrive) => {
+      // [ext] collapse linked pairs to max(DOT) before summing — same root cause as staff; see HRP-15611 Implementation Extensions.
+      this.collapseSameDayLinkedDrives(sameDateDrives).forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
             sameDateMobileDrivesDOTAllocated += sameDateDrive.noOfAllocatedDOTVehicles || 0;
@@ -2753,7 +2770,8 @@ class DriveHelper {
 
       const operationalLimit = this.findDriveLimitByDay(drive.driveDate, driveLimits.filter(driveLimit => !driveLimit.timeBlockId), OPERATION_DRIVE_LIMIT_TYPE.CDL_LIMIT);
       let sameDateMobileDrivesCDLAllocated = 0;
-      sameDateDrives.forEach((sameDateDrive) => {
+      // [ext] collapse linked pairs to max(CDL) before summing — same root cause as staff; see HRP-15611 Implementation Extensions.
+      this.collapseSameDayLinkedDrives(sameDateDrives).forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (!this.isFixedSiteDrive(sameDateDrive)) {
             sameDateMobileDrivesCDLAllocated += sameDateDrive.noOfAllocatedCDLVehicles || 0;
@@ -3027,7 +3045,9 @@ class DriveHelper {
         });
       });
 
-      sameDateDrives.forEach((sameDateDrive) => {
+      // HRP-15611 AC-1/AC-2 + [ext] same TB: collapse linked pairs to max(staff) before summing.
+      // DriveA=3, DriveB=3 → 3 (not 6). DriveA=10, DriveB=14 → 14 (not 24). See collapseSameDayLinkedDrives for TB logic.
+      this.collapseSameDayLinkedDrives(sameDateDrives).forEach((sameDateDrive) => {
         if (([DRIVE_STATUS.SYSTEM_GENERATED, DRIVE_STATUS.TENTATIVE, DRIVE_STATUS.CONFIRMED, DRIVE_STATUS.HOLD].includes(sameDateDrive.status))) {
           if (this.isFixedSiteDrive(drive) === this.isFixedSiteDrive(sameDateDrive)) {
             sameDateDrivesStaffRequested += sameDateDrive.totalStaffRequested || 0;
@@ -3041,7 +3061,8 @@ class DriveHelper {
           }
         }
       });
-      sameDateActivities.forEach((sameDateActivity) => {
+
+      this.collapseSameDayLinkedActivities(sameDateActivities).forEach((sameDateActivity) => {
         const timeBlockId = sameDateActivity.timeBlockId;
         let staffQuantity = 0;
 
@@ -3108,6 +3129,16 @@ class DriveHelper {
       
       result.violated = isStaffRequestedViolated || isTimeBlockStaffRequestedViolated;
       result.passed = !result.violated || isContentionOverrided(drive, DRIVE_CONTENTION.INSUFFICIENT_RESOURCES);
+      console.log('[helper] validateInsufficientResources', {
+        driveId: drive.id,
+        totalStaffConstraints,
+        sameDateDrivesStaffRequested,
+        sameDateNceStaffRequested,
+        totalStaffRequested,
+        isStaffRequestedViolated,
+        isTimeBlockStaffRequestedViolated,
+        ...result.data
+      });
       return result;
     }
 
@@ -3697,6 +3728,120 @@ class DriveHelper {
     }
   }
 
+  /**
+   * Returns true when `sameDateDrive` is the linked partner of `drive` in a same-day linked pair.
+   * Used as a skip guard so each pair is counted once instead of twice.
+   *
+   * Note: `linkedDriveId` is the ID of the shared LinkedDrive__c junction object — both drives
+   * in the pair hold the same value. Partner detection uses shared junction ID, not drive ID.
+   *
+   * Example: DriveA (linkedDriveId="JunctionX") and DriveB (linkedDriveId="JunctionX") are
+   * partners. When iterating DriveA, DriveB is skipped so the pair is counted only once.
+   */
+  isSameDayLinkedPartner(drive, sameDateDrive) {
+    return (
+      drive.id !== sameDateDrive.id &&
+      drive.linkedDriveId != null &&
+      drive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY &&
+      sameDateDrive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY &&
+      drive.linkedDriveId === sameDateDrive.linkedDriveId
+    );
+  }
+
+  /**
+   * HRP-15611 AC-1: no time blocks → max(A, B), not sum. DriveA=3, DriveB=3 → 3 (not 6). DriveA=10, DriveB=14 → 14 (not 24).
+   * HRP-15611 AC-2: spans TBs → deduct only from earliest TB. TB-Morning=5, TB-Afternoon=8 → TB-Morning staffSetup=8 only.
+   * [ext] same TB → max(A.shift, B.shift). TB-Morning: A=5, B=8 → 8 (not 13).
+   * Non-linked drives and drives whose partner is absent pass through unchanged.
+   */
+  collapseSameDayLinkedDrives(drives) {
+    const processedDriveIds = new Set();
+    const result = [];
+    drives.forEach(drive => {
+      if (processedDriveIds.has(drive.id)) return;
+      if (drive.linkedDriveId && drive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY) {
+        const partner = drives.find(d => this.isSameDayLinkedPartner(drive, d));
+        if (partner) {
+          processedDriveIds.add(drive.id);
+          processedDriveIds.add(partner.id);
+
+          // [ext] Merge shifts from both drives — max staffSetup per TB.
+          const mergedByTB = new Map();
+          [...(drive.driveShifts || []), ...(partner.driveShifts || [])].forEach(s => {
+            if (!s.timeBlockId) return;
+            const prev = mergedByTB.get(s.timeBlockId);
+            mergedByTB.set(s.timeBlockId, { ...(prev || s), staffSetup: Math.max(prev?.staffSetup || 0, s.staffSetup || 0) });
+          });
+          const uniqueShifts = [...mergedByTB.values()];
+          let driveShifts = uniqueShifts;
+          // Use drive-level totalStaffRequested for max in all cases: shift-level staffSetup
+          // may not be populated on the secondary drive in the linked pair.
+          const maxStaff = Math.max(drive.totalStaffRequested || 0, partner.totalStaffRequested || 0);
+          if (uniqueShifts.length > 1) {
+            // AC-2 (spans TBs): keep only the earliest TB, staffSetup = max(A, B).
+            const firstShift = uniqueShifts.reduce((min, s) => (s.timeBlock?.startTime ?? '') < (min.timeBlock?.startTime ?? '') ? s : min);
+            driveShifts = [{ ...firstShift, staffSetup: maxStaff }];
+          } else if (uniqueShifts.length === 1) {
+            // Scenario 3 [ext] — same time block: staffSetup = max(A, B); secondary drive value may be null.
+            driveShifts = [{ ...uniqueShifts[0], staffSetup: maxStaff }];
+          }
+
+          result.push({
+            ...drive,
+            totalStaffRequested: Math.max(drive.totalStaffRequested || 0, partner.totalStaffRequested || 0),
+            driveShifts
+          });
+          return;
+        }
+      }
+      result.push(drive);
+    });
+    return result;
+  }
+
+  /**
+   * [ext] Collapses same-day linked activity pairs so shared staff is counted once (max, not sum).
+   * HRP-15611 — beyond Jira AC; included based on technical analysis (same root cause as drives).
+   *
+   * Activities in a same-day linked pair share the same `linkedDrivesId` group key.
+   * The first member of the pair is kept; its staff quantities are raised to the group maximum.
+   * The second (and any further) member is dropped.
+   * Non-linked activities and activities whose partner is absent pass through unchanged.
+   *
+   * Note: Activities use `linkedDrivesId` (plural) per the activity autoMapper schema;
+   * Drives use `linkedDriveId` (singular). Both field names are correct — different schemas.
+   *
+   * Example:
+   *   ActivityA (linkedDrivesId="G1", mobileStaffQuantity=5)
+   *   ActivityB (linkedDrivesId="G1", mobileStaffQuantity=8)
+   *   → one collapsed entry with mobileStaffQuantity=8 (instead of summing 5+8=13).
+   *
+   * @param {Array} activities
+   * @returns {Array}
+   */
+  collapseSameDayLinkedActivities(activities) {
+    const processedActivityGroups = new Set();
+    const result = [];
+    (activities || []).forEach(activity => {
+      if (activity.linkedDrivesId && activity.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY) {
+        if (processedActivityGroups.has(activity.linkedDrivesId)) return; // second member — already collapsed
+        processedActivityGroups.add(activity.linkedDrivesId);
+        const group = activities.filter(
+          a => a.linkedDrivesId === activity.linkedDrivesId &&
+               a.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY
+        );
+        result.push({
+          ...activity,
+          fixedSiteStaffQuantity: Math.max(...group.map(a => a.fixedSiteStaffQuantity || 0)),
+          mobileStaffQuantity:    Math.max(...group.map(a => a.mobileStaffQuantity    || 0))
+        });
+      } else {
+        result.push(activity);
+      }
+    });
+    return result;
+  }
+
   calculateRequestedStaff(mappedDriveData, mappedActivityData, collectionOperationId, timeBlockId, driveTypes, dateIso) {
     const KEY_SEPERATOR = "__";
 
@@ -3720,13 +3865,18 @@ class DriveHelper {
     let totalMobileStaffNCERequested = 0;
 
     if (matchedDrives.length) {
-      matchedDrives.forEach((drive) => {
+      // HRP-15611 AC-1/AC-2 + [ext] same TB: collapse linked pairs to max(staff) so shared staff is counted once.
+      // DriveA=3, DriveB=3 → 3 (not 6). DriveA=10, DriveB=14 → 14 (not 24). See collapseSameDayLinkedDrives for TB scenarios.
+      this.collapseSameDayLinkedDrives(matchedDrives).forEach((drive) => {
         let totalStaffRequested = drive.totalStaffRequested;
         if (timeBlockId) {
+          // Time-block filter: sum only shifts matching the selected time block.
+          // Example: DriveA has TB-Morning (staffSetup=8) and TB-Afternoon (staffSetup=5).
+          // If timeBlockId=TB-Morning, only 8 is counted.
           totalStaffRequested = 0;
           drive.driveShifts?.forEach(driveShift => {
             if (driveShift.timeBlockId === timeBlockId) {
-              totalStaffRequested += driveShift.staffSetup
+              totalStaffRequested += driveShift.staffSetup || 0;
             }
           })
         }
@@ -3740,7 +3890,7 @@ class DriveHelper {
     }
 
     if(matchedActivities?.length) {
-      matchedActivities.forEach((activity) => {
+      this.collapseSameDayLinkedActivities(matchedActivities).forEach((activity) => {
         if (!timeBlockId || activity.timeBlockId === timeBlockId) {
           if (driveTypes.includes(DRIVE_TYPE.FIXED_SITE)) {
             totalFixedSiteStaffNCERequested += activity.fixedSiteStaffQuantity || 0;
@@ -4126,7 +4276,11 @@ class DriveHelper {
   }
 
   isRoleHoldCapacity(resourceRole, {
+    isManuallyCreated,
+    manuallyCreatedFrom
+   }, {
     staffingDecisionMatrix,
+    adminSetting
   }) {
     if(!resourceRole) return false;
     
@@ -4138,7 +4292,15 @@ class DriveHelper {
       'VP/HH': 'vpHhCapacity'
     }
 
-    const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+    let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+
+    if(resourceRole === 'Driver Support' && 
+      roleCapacity <= 0 && 
+      isManuallyCreated && 
+      manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL
+    ) {
+      roleCapacity = adminSetting?.adhocDriverSupportCapacity || 0;
+    }
     return roleCapacity > 0;
   }
 

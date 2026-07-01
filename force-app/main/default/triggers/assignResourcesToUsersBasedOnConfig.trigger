@@ -1,5 +1,5 @@
 trigger assignResourcesToUsersBasedOnConfig on AssignResourcesToUserEvent__e (After Insert) {
-    if(!checkRecursive.firstcall) {
+    /*if(!checkRecursive.firstcall) {
         checkRecursive.firstcall = true;
         Map<Id, Boolean> map_userId_skipRoleAssignment = new Map<Id, Boolean>();
         Set<String> userIds = new Set<String>();
@@ -17,5 +17,6 @@ trigger assignResourcesToUsersBasedOnConfig on AssignResourcesToUserEvent__e (Af
         if (!userIds.isEmpty()) {
             userService.assignSpecialPermissions(userIds);
         }
-    }
+    }*/
+    UserProvisioningService.handleEvents(Trigger.New);
 }

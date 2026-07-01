@@ -1,6 +1,7 @@
 public class slwcSetting {
     
     public class adminSetting {
+        @AuraEnabled public decimal adhocDriverSupportCapacity {get;set;}
         @AuraEnabled public decimal callListRecipient {get;set;}
         @AuraEnabled public decimal callListRecipientNone {get;set;}
         @AuraEnabled public decimal callListRecipientNoneFixedSite {get;set;}
@@ -18,6 +19,7 @@ public class slwcSetting {
         
         public adminSetting() { 
             sked_Admin_Setting__c setting = sked_Admin_Setting__c.getOrgDefaults();
+            this.adhocDriverSupportCapacity = setting.sked_Admin_Adhoc_Driver_Support_Capacity__c != NULL ? setting.sked_Admin_Adhoc_Driver_Support_Capacity__c : 2.2;
             this.callListRecipient = setting.sked_Admin_Call_List_Recipient__c != NULL ? setting.sked_Admin_Call_List_Recipient__c : 115;
             this.callListRecipientNone = setting.sked_Admin_Call_List_Recipient_None__c != NULL ? setting.sked_Admin_Call_List_Recipient_None__c : 130;
             this.callListRecipientNoneFixedSite = setting.Admin_Call_List_Recipient_None_FS__c != NULL ? setting.Admin_Call_List_Recipient_None_FS__c : 140;

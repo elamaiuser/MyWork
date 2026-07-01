@@ -69,7 +69,7 @@ public class skedConstants {
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NA = 'Not Applicable';
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
     
-    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NOTIMEOFF_MESSAGE = 'User chose to not submit time off';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NOTIMEOFF_MESSAGE = 'Action needed - Process Time Off Request in the RAC';
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_ONCALL_CALLOUT_MESSAGE = 'See Time Off Request in Approval Requests - Call Out Tab';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';

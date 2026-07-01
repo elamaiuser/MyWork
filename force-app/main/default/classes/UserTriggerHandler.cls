@@ -35,7 +35,7 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
         if(!checkRecursive.firstcall) {
             if(super.getTriggerMethodsToBypass().indexOf('PublishEventForAssigningResourcesToUsers') == -1) {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Executing...');
-                userService.PublishEventForAssigningResourcesToUsers((List<User>) Trigger.new);
+                //userService.PublishEventForAssigningResourcesToUsers((List<User>) Trigger.new);
             }
             else {
                 System.debug('UserTriggerHandler.afterUpdate() - userService.PublishEventForAssigningResourcesToUsers() Bypassed');
@@ -49,6 +49,15 @@ public with sharing class UserTriggerHandler extends TriggerHandler{
                 System.debug('UserTriggerHandler.afterUpdate() - userService.updateDrdRepContactOnOpRecordUponPhoneChange Bypassed');
             }
             //HRP-9815 --> Ends Here
+        }
+        if(super.getTriggerMethodsToBypass().indexOf('syncUserProvisioning') == -1) {
+            userService.syncUserProvisioning((List<User>) Trigger.new, (Map<Id, User>) Trigger.oldMap);
+        }
+    }  
+    
+    public override void afterInsert() {
+        if(super.getTriggerMethodsToBypass().indexOf('syncUserProvisioning') == -1) {
+            userService.syncUserProvisioning((List<User>) Trigger.new, null);
         }
     }    
 }
