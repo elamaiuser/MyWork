@@ -26,7 +26,7 @@ import {
 } from 'c/dataService';
 import productGoalCalendar from './productGoalCalendar.html';
 import productivityCalendar from './productivityCalendar.html';
-import { ASSET_TYPE, DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_OPERATION_TYPE, RESOURCE_TYPE } from 'c/slwcConstants';
+import { ASSET_TYPE, DRIVE_TYPE, LINK_DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE, DRIVE_OPERATION_TYPE, RESOURCE_TYPE } from 'c/slwcConstants';
 import { DriveHelper } from 'c/slwcDriveGenerator';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import * as slwcAvailator from 'c/slwcAvailator';
@@ -399,6 +399,88 @@ export default class SlwcDriveCalendar extends LightningElement {
         return calendarWeeks;
     }
 
+    computeSingleDriveEffectiveStaff(drive, selectedTimeBlockIds) {
+        if (selectedTimeBlockIds?.length && drive.driveOperationType !== DRIVE_OPERATION_TYPE.FIXED_SITE) {
+            return (drive.driveShifts || [])
+                .filter(s => selectedTimeBlockIds.includes(s.timeBlockId))
+                .reduce((sum, s) => sum + (s.staffSetup || 0), 0);
+        }
+        return drive.totalStaffRequested || 0;
+    }
+
+    /**
+     * HRP-15611 AC-1: no TB filter → max(A, B). DriveA=3, DriveB=3 → 3 (not 6). DriveA=10, DriveB=14 → 14 (not 24).
+     * HRP-15611 AC-2: spans TBs → earliest TB only. TB-Morning=5, TB-Afternoon=8 → effectiveStaff=5 (TB-Afternoon contributes 0).
+     * [ext] same TB → max(A.shift, B.shift). TB-Morning: A=5, B=8 → effectiveStaff=8 (not 13).
+     */
+    resolveLinkedDrivesStaff(driveA, driveB, selectedTimeBlockIds) {
+        // AC-1: no time block filter — deduct once for the larger totalStaffRequested (max, not sum)
+        if (!selectedTimeBlockIds || !selectedTimeBlockIds.length) {
+            return { ...driveA, effectiveStaffRequested: Math.max(driveA.totalStaffRequested || 0, driveB.totalStaffRequested || 0) };
+        }
+
+        const driveShiftsA = (driveA.driveShifts || []).filter(s => selectedTimeBlockIds.includes(s.timeBlockId));
+        const driveShiftsB = (driveB.driveShifts || []).filter(s => selectedTimeBlockIds.includes(s.timeBlockId));
+
+        const timeBlockIdsA = new Set(driveShiftsA.map(s => s.timeBlockId));
+        const timeBlockIdsB = new Set(driveShiftsB.map(s => s.timeBlockId));
+        const sharedTimeBlockIds = [...timeBlockIdsA].filter(id => timeBlockIdsB.has(id));
+
+        // [ext] same TB → deduct once for the larger staffSetup
+        if (sharedTimeBlockIds.length > 0) {
+            let effective = 0;
+            sharedTimeBlockIds.forEach(id => {
+                const setupA = driveShiftsA.find(s => s.timeBlockId === id)?.staffSetup || 0;
+                const setupB = driveShiftsB.find(s => s.timeBlockId === id)?.staffSetup || 0;
+                effective += Math.max(setupA, setupB);
+            });
+            return { ...driveA, effectiveStaffRequested: effective };
+        }
+
+        // AC-2: drives span different time blocks — deduct only from the earliest block (second block contributes 0)
+        const allShifts = [...driveShiftsA, ...driveShiftsB];
+        if (!allShifts.length) {
+            // no matching shifts for selected filter — fall back to Scenario 2 behaviour
+            return { ...driveA, effectiveStaffRequested: Math.max(driveA.totalStaffRequested || 0, driveB.totalStaffRequested || 0) };
+        }
+        const earliest = allShifts.reduce((best, s) => {
+            const start = s.timeBlock?.startTime ?? Infinity;
+            return start < (best.timeBlock?.startTime ?? Infinity) ? s : best;
+        });
+        return { ...driveA, effectiveStaffRequested: earliest.staffSetup || 0 };
+    }
+
+    /**
+     * HRP-15611 AC-1/AC-2 + [ext] same TB: collapses same-day linked pairs so shared staff is counted once.
+     * Non-linked drives and pairs with an absent partner count normally.
+     */
+    normalizeLinkedDriveStaff(drives, selectedTimeBlockIds) {
+        const processedDriveIds = new Set();
+        const result = [];
+
+        (drives || []).forEach(drive => {
+            if (processedDriveIds.has(drive.id)) return;
+
+            const isSameDayLinked = drive.linkedDriveId && drive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY;
+            if (!isSameDayLinked) {
+                result.push({ ...drive, effectiveStaffRequested: this.computeSingleDriveEffectiveStaff(drive, selectedTimeBlockIds) });
+                return;
+            }
+
+            const partner = drives.find(d => d.id !== drive.id && d.linkedDriveId === drive.linkedDriveId && d.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY);
+            if (!partner) {
+                result.push({ ...drive, effectiveStaffRequested: this.computeSingleDriveEffectiveStaff(drive, selectedTimeBlockIds) });
+                return;
+            }
+
+            processedDriveIds.add(drive.id);
+            processedDriveIds.add(partner.id);
+            result.push(this.resolveLinkedDrivesStaff(drive, partner, selectedTimeBlockIds));
+        });
+
+        return result;
+    }
+
     buildSlot_ProductGoalCalendar = (day) => {
         day.slot = {
             totalStaffs: 0,
@@ -520,25 +602,6 @@ export default class SlwcDriveCalendar extends LightningElement {
             } else {
                 day.slot.noOfDriveRequested += 1;
             }
-           
-            if (drive.totalStaffRequested) {
-                let totalStaffRequested = drive.totalStaffRequested;
-                if (!isFixedSiteDrive && selectedTimeBlockIds?.length) {
-                    totalStaffRequested = 0;
-                    drive.driveShifts?.forEach(driveShift => {
-                        if (selectedTimeBlockIds.includes(driveShift.timeBlockId)) {
-                            totalStaffRequested += driveShift.staffSetup
-                        }
-                    })
-                }
-
-                if(isFixedSiteDrive) {
-                    day.slot.noOfFixedSiteStaffRequested += totalStaffRequested;
-                } else {
-                    day.slot.noOfMobileStaffRequested += totalStaffRequested;
-                }
-                day.slot.noOfStaffRequested += totalStaffRequested;
-            }
 
             let isVehiclesIncluded = true;
             if (selectedTimeBlockIds?.length) {
@@ -575,6 +638,20 @@ export default class SlwcDriveCalendar extends LightningElement {
 
                 day.slot.noOfProductBooked += (x2rbcProjectedProcedures * 2 + wbProjectedProcedures);
             }
+        });
+
+        this.normalizeLinkedDriveStaff(
+            this.drivesMapByDate?.[day.dateIso],
+            selectedTimeBlockIds
+        ).forEach(entry => {
+            const staffAmount = entry.effectiveStaffRequested || 0;
+            if (!staffAmount) return;
+            if (entry.driveOperationType === DRIVE_OPERATION_TYPE.FIXED_SITE) {
+                day.slot.noOfFixedSiteStaffRequested += staffAmount;
+            } else {
+                day.slot.noOfMobileStaffRequested += staffAmount;
+            }
+            day.slot.noOfStaffRequested += staffAmount;
         });
 
         this.activitiesMapByDate?.[day.dateIso]?.forEach((activity) => {

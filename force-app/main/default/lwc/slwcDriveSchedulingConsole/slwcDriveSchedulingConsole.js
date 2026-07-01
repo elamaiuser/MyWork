@@ -7,14 +7,19 @@ import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { calendarMonthHelper } from "c/slwcHelpers";
 import { cloneDeep, pick, omit } from 'c/lodash';
+import { userService } from 'c/dataService';
+import { DriveHelper } from 'c/slwcDriveGenerator';
 
 const DEFAULT_CALENDAR_SETTINGS = {
     timezone: TIME_ZONE,
     firstDay: 0
 };
+const driveHelper = new DriveHelper();
+
 export default class SlwcDriveSchedulingConsole extends LightningElement {
     @api displayMode;
     @api isReadonly = false;
+    loginUser;
 
     _calendarHelper = null;
     get calendarHelper() {
@@ -70,6 +75,10 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
         return this.displayMode === 'productGoalCalendar';
     }
 
+    get autoSelectTimeBlocks() {
+        return driveHelper.isAPSUser(this.loginUser);
+    }
+
 		get driveCalendarFilter() {
 			let result = this.filters;
 			if (this.displayMode == "productGoalCalendar") {
@@ -103,11 +112,19 @@ export default class SlwcDriveSchedulingConsole extends LightningElement {
             let lastSearchQuery = this.getLastQuery();
             if (lastSearchQuery) {
                 this.filters = {
-                    ...this.filters, 
+                    ...this.filters,
                     ...lastSearchQuery
                 };
             }
         }
+        this.retrieveLoginUser();
+    }
+
+    retrieveLoginUser() {
+        const svc = new userService();
+        svc.getLoginUser().then(result => {
+            this.loginUser = result.returnedData;
+        });
     }  
     
     renderedCallback() {

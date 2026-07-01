@@ -1,6 +1,6 @@
-import { groupBy, sum, cloneDeep, difference, isObject } from 'c/lodash';
+import { groupBy, sum, cloneDeep, isObject } from 'c/lodash';
 import { DateTime } from 'c/luxon';
-import { ACCOUNT_AVAILABILITY_PREFERENCE, ASSET_TYPE, DRIVE_STATUS, DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE } from 'c/slwcConstants';
+import { ACCOUNT_AVAILABILITY_PREFERENCE, DRIVE_STATUS, DRIVE_TYPE, LINK_DRIVE_TYPE, OPERATION_DRIVE_LIMIT_TYPE } from 'c/slwcConstants';
 import * as slwcDateUtils from 'c/slwcDateUtils';
 import { DriveHelper, SlwcDrivesGenerator } from 'c/slwcDriveGenerator';
 import { isNullOrEmpty } from 'c/slwcUtils';
@@ -201,6 +201,61 @@ export default class slwcPlanDriveHelper {
     return !isOutOfOperationalHours;
   }
 
+  /**
+   * [ext] HRP-15611 AC-1: no TBs → max(A, B). DriveA=3, DriveB=3 → 3 (not 6).
+   * [ext] HRP-15611 AC-2: spans TBs → earliest TB only, staffSetup=max(A,B). TB-Morning=5, TB-Afternoon=8 → TB-Morning staffSetup=8 only.
+   * [ext] same TB → shift.staffSetup = max(A.shift, B.shift). TB-Morning: A=5, B=8 → 8 (not 13).
+   * Non-linked drives and drives whose partner is absent pass through unchanged.
+   */
+  collapseSameDayLinkedDrives(drives) {
+    const processed = new Set();
+    const result = [];
+    drives.forEach(drive => {
+      if (processed.has(drive.id)) return;
+      if (drive.linkedDriveId && drive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY) {
+        const partner = drives.find(d => d.id !== drive.id && d.linkedDriveId === drive.linkedDriveId && d.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY);
+        if (partner) {
+          processed.add(drive.id);
+          processed.add(partner.id);
+          // AC-1: drive-level max for totalStaffRequested (shift-level staffSetup may be null on the secondary drive).
+          const maxStaff = Math.max(drive.totalStaffRequested || 0, partner.totalStaffRequested || 0);
+          const mergedByTB = new Map();
+          [...(drive.driveShifts || []), ...(partner.driveShifts || [])].forEach(s => {
+            if (!s.timeBlockId) return;
+            const prev = mergedByTB.get(s.timeBlockId);
+            mergedByTB.set(s.timeBlockId, { ...(prev || s), staffSetup: Math.max(prev?.staffSetup || 0, s.staffSetup || 0) });
+          });
+          let mergedShifts = [...mergedByTB.values()];
+          if (mergedShifts.length > 1) {
+            // AC-2 (spans TBs): keep only the earliest block, staffSetup = max(A, B).
+            const earliest = mergedShifts.reduce((min, s) => (s.timeBlock?.startTime ?? '') < (min.timeBlock?.startTime ?? '') ? s : min);
+            mergedShifts = [{ ...earliest, staffSetup: maxStaff }];
+          } else if (mergedShifts.length === 1) {
+            // [ext] Scenario 3: same TB → staffSetup = max(A, B).
+            mergedShifts = [{ ...mergedShifts[0], staffSetup: maxStaff }];
+          }
+          const collapsed = {
+            ...drive,
+            totalStaffRequested: maxStaff,
+            totalEquipmentRequested: Math.max(drive.totalEquipmentRequested || 0, partner.totalEquipmentRequested || 0),
+            noOfAllocatedDOTVehicles: Math.max(drive.noOfAllocatedDOTVehicles || 0, partner.noOfAllocatedDOTVehicles || 0),
+            noOfAllocatedCDLVehicles: Math.max(drive.noOfAllocatedCDLVehicles || 0, partner.noOfAllocatedCDLVehicles || 0),
+            driveShifts: mergedShifts
+          };
+          console.log('[planDriveDateHelper] collapseSameDayLinkedDrives: collapsed pair', {
+            driveA: { id: drive.id, totalStaffRequested: drive.totalStaffRequested, totalEquipmentRequested: drive.totalEquipmentRequested },
+            driveB: { id: partner.id, totalStaffRequested: partner.totalStaffRequested, totalEquipmentRequested: partner.totalEquipmentRequested },
+            collapsed: { totalStaffRequested: collapsed.totalStaffRequested, totalEquipmentRequested: collapsed.totalEquipmentRequested }
+          });
+          result.push(collapsed);
+          return;
+        }
+      }
+      result.push(drive);
+    });
+    return result;
+  }
+
   calculateAvailableResources = (drive, {
     sameDateDrives = [], 
     sameDateActivities = []
@@ -208,7 +263,7 @@ export default class slwcPlanDriveHelper {
     const staffingConstraint = this.findStaffingConstraintByDay(drive.driveDate, this.timeBlockIds, staffingConstraints);
     const allResources = staffingConstraint ? staffingConstraint.totalStaffConstraints : 0;
     let driveResources = 0;
-    sameDateDrives.forEach((drive) => {
+    this.collapseSameDayLinkedDrives(sameDateDrives).forEach((drive) => {
       if (this.driveHelper.isFixedSiteDrive(this.opportunity) === this.driveHelper.isFixedSiteDrive(drive)) {
         let totalStaffRequested = drive.totalStaffRequested || 0;
         if(this.checkDriveUseTimeBlock(drive)) {
@@ -432,9 +487,9 @@ export default class slwcPlanDriveHelper {
       const sameDateMobileDrives = sameDateDrives.filter(drive => {
         return !this.driveHelper.isFixedSiteDrive(drive);
       });
-      
       const sameTimeBlockMobileDrives = [];
-      sameDateMobileDrives.forEach(drive => {
+      const collapsedMobileDrives = this.collapseSameDayLinkedDrives(sameDateMobileDrives);
+      collapsedMobileDrives.forEach(drive => {
         const existed = sameTimeBlockMobileDrives.find(item => item.key === drive.key);
         if(existed) return;
 
@@ -446,21 +501,21 @@ export default class slwcPlanDriveHelper {
       })
       
       const isDriveLimitValid = this.checkDriveLimitValid(drive, driveLimit, (
-        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : collapsedMobileDrives
       ));
 
       const required2RBC = sum((
-        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : collapsedMobileDrives
       ).map((drive) => (drive.totalEquipmentRequested || 0)));
       const is2RBCLimitValid = isNullOrEmpty(operational2RBCLimit) || operational2RBCLimit - required2RBC > 0;
 
       const requiredDOT = sum((
-        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : collapsedMobileDrives
       ).map((drive) => (drive.noOfAllocatedDOTVehicles || 0)));
       const isDOTLimitValid = isNullOrEmpty(operationalDOTLimit) || operationalDOTLimit - requiredDOT > 0;
 
       const requiredCDL = sum((
-        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : sameDateMobileDrives
+        timeBlockIds.length > 0 ? sameTimeBlockMobileDrives : collapsedMobileDrives
       ).map((drive) => (drive.noOfAllocatedCDLVehicles || 0)));
       const isCDLLimitValid = isNullOrEmpty(operationalCDLLimit) || operationalCDLLimit - requiredCDL > 0;
 
