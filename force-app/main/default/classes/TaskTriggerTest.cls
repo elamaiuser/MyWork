@@ -531,12 +531,12 @@ private class TaskTriggerTest {
         Opportunity mobileOpp = [SELECT Id FROM Opportunity WHERE Type_of_Drive__c = 'Mobile' LIMIT 1];
         
         List<Task> t = new List<Task>{};
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Recruitment Planning Meeting'));
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Sponsor Planning Meeting'));
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis AM'));
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis / Future Drive Planning SBPM'));
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis'));
-        t.add(new Task(WhatId = mobileOpp.Id, Subject = '72 Hour Check-In'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Recruitment Strategy Meeting', Type = 'Recruitment Strategy Meeting'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Sponsor Planning Meeting', Type = 'Sponsor Planning Meeting'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis AM', Type = 'Post Drive Analysis AM'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis / Future Drive Planning SBPM', Type = 'Post Drive Analysis / Future Drive Planning SBPM'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = 'Post Drive Analysis', Type = 'Post Drive Analysis'));
+        t.add(new Task(WhatId = mobileOpp.Id, Subject = '72 Hour Check-In', Type = '72 Hour Check-In'));
         skedHubBase.BypassInsertTriggers = true;
         insert t;
 
