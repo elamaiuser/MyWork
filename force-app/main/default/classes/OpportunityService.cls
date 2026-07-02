@@ -238,7 +238,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                                                                           AND RecordTypeId = :mobileRecTypeId 
                                                                           AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
                                                                           ] );
-        
+                                                                          
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
         Map<Id,Opportunity> accidOppmap = new Map<Id,Opportunity>();
@@ -334,7 +334,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                 if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
                     continue;
                 }
-
+              
                 //check if calendar build opp drive date is within 56 days of other opp on this account
                 if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
                     && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
@@ -1692,11 +1692,11 @@ if(ds.isUpdateable()){}*/
         }
         
         //Mobile Site Oppty WebSchedule StartDate,EndDate Calc
-        if(!setOfMobileTemplateOppties.isEmpty()){          
+        if(!setOfMobileTemplateOppties.isEmpty()){   
             Map<Id,Opportunity> mapOfOppties=new Map<Id,Opportunity>([select Id,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,
                                                                       Web_Sched_Offset_from_CO_Global_Settings__c 
-                                                                      from Opportunity where ID IN:setOfMobileTemplateOppties AND 
-                                                                      Web_Sched_Offset_from_CO_Global_Settings__c = false AND 
+                                                                      from Opportunity where ID IN:setOfMobileTemplateOppties AND
+                                                                     Web_Sched_Offset_from_CO_Global_Settings__c = false AND 
                                                                       Web_Scheduling_End_Date_Offset__c!=null AND 
                                                                       Web_Scheduling_End_Time_Offset__c!=null AND 
                                                                       Web_Scheduling_Start_Date_Offset__c!=null AND
@@ -2716,7 +2716,7 @@ if(ds.isDeletable()){}*/
 
         system.debug('###FWO###: Inside updateDrivesOnCalendarStatus');
 
-        
+       
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
         
         Map<Id, sked_Drive__c> mapOppToDriveId = new Map<Id, sked_Drive__c>();
@@ -2795,6 +2795,7 @@ if(ds.isDeletable()){}*/
                                 //HRP-11524 --> Ends Here
                                
                                 for(sked_Drive__c skedDr: allDrivesMatchingOpp){ //HRP 11393- propogate cancelled status to all drives associated with opportunity, not just one picked
+                                   if(skedDr.sked_Status__c != 'Cancel'){
                                     slwcDriveService.driveModel driveModelRecTemp = new slwcDriveService.driveModel();
 
                                    driveModelRecTemp.status = 'Cancel';
@@ -2803,6 +2804,7 @@ if(ds.isDeletable()){}*/
                                    driveModelRecTemp.id = skedDr.id;
                                    lstOfDrives.add(driveModelRecTemp);//HRP 11393-adding all matching drives, when cancelled status
                                 }
+                            }
                             }
                         }
                         if(driveModelRec != null && driveModelRec.id != null && newOpportunity.StageName != 'Cancelled') { //cancelled status drives are already added above
@@ -3024,7 +3026,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('Anticipated_Registered_Donors__c') == true){ //HRP-10312 begin
                         arcupdated = true;//HRP-10312 
                         if(oppRec.Anticipated_Registered_Donors__c != null){
-                            oppField.Anticipated_Registered_Donors = Integer.valueOf(oppRec.Anticipated_Registered_Donors__c);
+                            oppField.Anticipated_Registered_Donors = oppRec.Anticipated_Registered_Donors__c;
                         }
                         //HRP-10312 Begin
                         else{
@@ -3038,7 +3040,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                         wbcUpdated = true;
                         //HRP-10312 end
                         if(oppRec.WB_Projected_Procedures__c != null){
-                            oppField.WB_Projected_Procedures = Integer.valueOf(oppRec.WB_Projected_Procedures__c);
+                            oppField.WB_Projected_Procedures = oppRec.WB_Projected_Procedures__c;
                         }//HRP-10312 begin
                         else{
                             oppField.WB_Projected_Procedures = null;
@@ -3049,7 +3051,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                     if(data.containsKey('X2RBC_Projected_Procedures__c') == true){
                         doubleRbcUpdated = true; //HRP-10312 end
                         if(oppRec.X2RBC_Projected_Procedures__c != null){
-                            oppField.X2RBC_Projected_Procedures = Integer.valueOf(oppRec.X2RBC_Projected_Procedures__c);
+                            oppField.X2RBC_Projected_Procedures = oppRec.X2RBC_Projected_Procedures__c;
                         } //HRP-10312 begin
                         else{
                             oppField.X2RBC_Projected_Procedures = null;
@@ -3313,22 +3315,31 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
                 updateEventList.add(event);
                 
                 System.debug('\n #### Inside syncOppsWithDrives JSON =>' + objectDataJSON);
+                List<BSF_Error_Log__c> insertErrorLog = new List<BSF_Error_Log__c>();
                 
                 //Publish Event
                 if(!updateEventList.isEmpty()) {
                     List<Database.SaveResult> eventPubResultList = EventBus.publish(updateEventList);
-                    
-                    for(Database.SaveResult eventPubResult : eventPubResultList) {
+
+                   
+                     for(Database.SaveResult eventPubResult : eventPubResultList) {
                         if(eventPubResult.isSuccess()) {
                             System.debug('\n #### Inside syncOppsWithDrives Events published successfully  => ' + eventPubResult);
                         }
                         else {
                             for(Database.Error pubError : eventPubResult.getErrors()) {
+                               
+                                //HRP-16932
+                                BSF_Error_Log__c errorLog = BSF_Utilities.getErrorLog('Syncing Opporunity values with drives','Opportunity Service','syncOppsWithDrives', 'Error',  pubError.getMessage(), 'Sync Request platform event publish failed');
+                                insertErrorLog.add(errorLog);  
                                 System.debug('\n #### Inside syncOppsWithDrives Event publishing failed => ' + pubError.getStatusCode() + ' => ' + pubError.getMessage());
                             }
                         }
                     }
-                }            
+                    if (!insertErrorLog.isEmpty()) {
+                        Database.insert(insertErrorLog, false);
+                    }
+            }            
             } 
         }catch(Exception ex){
             System.debug('#### Inside ex  => ' + ex);
@@ -4012,15 +4023,15 @@ opp.StageName = 'Closed';
                                            WHERE sked_Opportunity__c IN: oppFieldsRelatedToDOCMap.keySet()];
             if(!drvList.isEmpty()) {
                 for(sked_Drive__c drive : drvList) {
+                      sked_Drive__c driveToUpdate = new sked_Drive__c();
                     Map<String, String> map_fieldName_fieldValueToUpdate = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c);
                     if(map_fieldName_fieldValueToUpdate != null && !map_fieldName_fieldValueToUpdate.isEmpty()) {
                         for(String fieldToUpdate : map_fieldName_fieldValueToUpdate.keySet()) {
                             String existingFieldValueOnDrive = (String)drive.get(fieldToUpdate);
                         	if(existingFieldValueOnDrive != null && existingFieldValueOnDrive.equals(map_fieldName_fieldValueToUpdate.get(fieldToUpdate))) continue;
-                            
-                            drive.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
+                            driveToUpdate.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
                         }
-                        driveListToBeUpdatedList.add(drive);
+                        driveListToBeUpdatedList.add(driveToUpdate);
                     }   
                 }
             }
@@ -4564,7 +4575,7 @@ opp.StageName = 'Closed';
             if (relatedSkedDriveId != null && skedDriveWithPendingAction.contains(relatedSkedDriveId)) {//HRP-13045 start
                 if(oppVsPendingActionAndApprovalStatus.containsKey(op.Id) && oppVsPendingActionAndApprovalStatus.get(op.Id).sked_Pending_Action__c == null && oppVsPendingActionAndApprovalStatus.get(op.Id).sked_Approval_Status__c == null){
                     continue;
-                }//HRP-13045 end
+               }//HRP-13045 end
                 Opportunity oldOp = oldMap.get(op.Id);
                 List<String> changedFields = getChangedFields(op, oldOp);
                 if (!changedFields.isEmpty()) {

@@ -154,6 +154,16 @@
                         <valueListItems>
                             <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Sync_with_DOC</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Type_of_Drive__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Mobile</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -381,7 +391,7 @@
             </componentInstance>
         </itemInstances>
         <itemInstances>
-            <componentInstance>                
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-ed8b92db-1868-4b04-874b-0be68143478a</value>
