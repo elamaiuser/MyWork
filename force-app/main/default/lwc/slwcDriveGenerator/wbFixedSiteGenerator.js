@@ -1569,8 +1569,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
     const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
       return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
-        this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
+        this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
+        this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
       )
     });
 
@@ -2066,8 +2066,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
   onJobChanged(driveShift, job) {
     this.correctJobTime(job, driveShift);
     if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job.resourceRole, this.masterData) ||
-      this.helper.isRoleHoldCapacity(job.dualRole, this.masterData) 
+      this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
+      this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
     )) {
       this.recalculateVphhQuantity(driveShift);
     }
