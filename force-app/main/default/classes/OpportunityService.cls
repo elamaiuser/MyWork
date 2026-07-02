@@ -238,7 +238,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                                                                           AND RecordTypeId = :mobileRecTypeId 
                                                                           AND Id NOT IN:newItems //-> HRP-11850, Pick Calendar build Opps as well for 56day validation 
                                                                           ] );
-        
+                                                                          
         Map<Id,Opportunity> oppqueryResultFilteredMap = new Map<Id,Opportunity>();
         Map<Id,Id> oppIdAccId = new Map<Id,Id>();
         Map<Id,Opportunity> accidOppmap = new Map<Id,Opportunity>();
@@ -334,7 +334,7 @@ opty.addError('This drive date violates the 56 day rule.Please acknowledge.');
                 if(calendarBuildOpp.id == otherOppOnAccount.id || calendarBuildOpp.Accept_56_Day_Rule_Violation__c ==true){ //if we hit, same opp, no need to compare
                     continue;
                 }
-
+              
                 //check if calendar build opp drive date is within 56 days of other opp on this account
                 if(calendarBuildOpp.Drive_Date__c >  otherOppOnAccount.Drive_Date__c.addDays(-56)
                     && calendarBuildOpp.Drive_Date__c < otherOppOnAccount.Drive_Date__c.addDays(56)
@@ -1547,7 +1547,7 @@ Note : It'll throw error if any sort of consequences happen when projection valu
         }
     }
     
-    public static void cancelTasksForCancelledOpportunities(Map<Id,Opportunity> oldMap,Map<Id,Opportunity> newMap){ 
+    /*public static void cancelTasksForCancelledOpportunities(Map<Id,Opportunity> oldMap,Map<Id,Opportunity> newMap){ 
         System.debug('Entered method cancelTasksForCancelledOpportunities');    
         Set<Id> newOppMapKeys = newMap.keyset();    
         Map<Id,Opportunity> cancelledOppsMap = new Map<Id,Opportunity>();   
@@ -1581,11 +1581,12 @@ Note : It'll throw error if any sort of consequences happen when projection valu
             tsk.status = 'Cancelled';           
         } 
         /*Schema.DescribeSObjectResult ds = Task.sObjectType.getDescribe();
-if(ds.isUpdateable()){}*/
+if(ds.isUpdateable()){}
         update taskList; 
         
         
-    }
+    }*/
+    
     /*HRP-5002 :Global Web Scheduling ,HRP-4987=SF TimeZone Objects
 * Deactivated below flow:Update Blood Drive Opportunity Collection Zip Code and moved flow logic into this method.
 */
@@ -1692,11 +1693,11 @@ if(ds.isUpdateable()){}*/
         }
         
         //Mobile Site Oppty WebSchedule StartDate,EndDate Calc
-        if(!setOfMobileTemplateOppties.isEmpty()){          
+        if(!setOfMobileTemplateOppties.isEmpty()){   
             Map<Id,Opportunity> mapOfOppties=new Map<Id,Opportunity>([select Id,Web_Scheduling_End_Date_Offset__c,Web_Scheduling_End_Time_Offset__c,Web_Scheduling_Start_Date_Offset__c,Web_Scheduling_Start_Time__c,
                                                                       Web_Sched_Offset_from_CO_Global_Settings__c 
-                                                                      from Opportunity where ID IN:setOfMobileTemplateOppties AND 
-                                                                      Web_Sched_Offset_from_CO_Global_Settings__c = false AND 
+                                                                      from Opportunity where ID IN:setOfMobileTemplateOppties AND
+                                                                     Web_Sched_Offset_from_CO_Global_Settings__c = false AND 
                                                                       Web_Scheduling_End_Date_Offset__c!=null AND 
                                                                       Web_Scheduling_End_Time_Offset__c!=null AND 
                                                                       Web_Scheduling_Start_Date_Offset__c!=null AND
@@ -2716,7 +2717,7 @@ if(ds.isDeletable()){}*/
 
         system.debug('###FWO###: Inside updateDrivesOnCalendarStatus');
 
-        
+       
         skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true; //HRP-11418 (Add check to prevent DOC update failure)
         
         Map<Id, sked_Drive__c> mapOppToDriveId = new Map<Id, sked_Drive__c>();
@@ -2795,6 +2796,7 @@ if(ds.isDeletable()){}*/
                                 //HRP-11524 --> Ends Here
                                
                                 for(sked_Drive__c skedDr: allDrivesMatchingOpp){ //HRP 11393- propogate cancelled status to all drives associated with opportunity, not just one picked
+                                   if(skedDr.sked_Status__c != 'Cancel'){
                                     slwcDriveService.driveModel driveModelRecTemp = new slwcDriveService.driveModel();
 
                                    driveModelRecTemp.status = 'Cancel';
@@ -2803,6 +2805,7 @@ if(ds.isDeletable()){}*/
                                    driveModelRecTemp.id = skedDr.id;
                                    lstOfDrives.add(driveModelRecTemp);//HRP 11393-adding all matching drives, when cancelled status
                                 }
+                            }
                             }
                         }
                         if(driveModelRec != null && driveModelRec.id != null && newOpportunity.StageName != 'Cancelled') { //cancelled status drives are already added above
@@ -3689,64 +3692,30 @@ opp.StageName = 'Closed';
     }
     
     //HRP-7362
-    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity>oldMap,list<Opportunity>newOpp,Map<Id,Opportunity>newMap)
-    {
+    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity> oldMap, Map<Id,Opportunity> newMap) {
         
-        set<id> oppId = new set<id>();
-        map<id,id> OppIdSiteId = new map<id,id>();
+        Set<Id> oppIdSet = new Set<Id>();
+        Map<Id, Id> OppIdSiteId = new Map<Id, Id>();
+        List<Task> tasksToUpdate = new List<Task>();
         
-        for(opportunity opp : newOpp)
-        {
-            if(oldMap.get(opp.id).drive_date__c != opp.drive_Date__c)
-            {
-                oppId.add(opp.id);
-                if(opp.Drive_Site__c!=null)
-                    OppIdSiteId.put(opp.id,opp.Drive_Site__c);
+        for(opportunity opp : newMap.values()) {
+            if(oldMap != null && oldMap.get(opp.Id).Drive_Date__c != opp.Drive_Date__c) {
+                oppIdSet.add(opp.Id);
             }
         }
         
-        list<task> oppTasks = [select id,subject,activityDate,whatId from task where whatId IN:oppId and (subject like 'Sponsor Planning Meeting%' or subject like 'Recruitment%' or subject like '72 Hour Check in%' or subject like 'Security Information%')];// Changes for HRP-7123
-        system.debug('oppTasks'+oppTasks);
-        Opportunity_Date_Setting__mdt mdtOppDateSetting = Opportunity_Date_Setting__mdt.getInstance('Sponsor_Planning_Meeting');
-        Integer daysFromDriveDate = mdtOppDateSetting?.Days_from_Drive_Date__c.intValue();
+        if(oppIdSet != null && !oppIdSet.isEmpty()) {
+            List<Task> oppTasks = [
+                SELECT Id, Subject, 
+                ActivityDate, WhatId 
+                FROM Task 
+                WHERE whatId IN :oppIdSet 
+                AND Status != 'Cancelled'
+            ]; // Changes for HRP-7123
         
-        map<id,sked__Location__c> driveSite =new map<id,sked__Location__c>([select sked_Pre_Drive_Security_Due_Date__c from sked__Location__c where Id IN:OppIdSiteId.values()]);
-        system.debug('driveSite '+driveSite);
-        
-        list<task> taskToUpdate = new list<task>();
-        
-        for(task t : oppTasks)
-        {
-            opportunity opp = new opportunity();
-            opp=newMap.get(t.WhatId);
-            if(t.subject.containsIgnoreCase('Sponsor Planning'))
-            {
-                t.ActivityDate=opp.Drive_Date__c.addDays(-daysFromDriveDate);
+            if(oppTasks != null && !oppTasks.isEmpty()) {
+                OpportunityServiceController.updateTaskDates(newMap, oppTasks);
             }
-            else if (t.subject.containsIgnoreCase('Recruitment Planning'))// Changes for HRP-7123
-            {
-                system.debug('Helper.AddBusinessDays'+Helper.AddBusinessDays(opp.Drive_Date__c, -50));
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c, -50);
-            }
-            else if(t.subject.containsIgnoreCase('72 Hour Check in'))
-            {
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
-            }
-            else if(t.subject.containsIgnoreCase('Security Information'))
-            {
-                
-                system.debug(opp.drive_date__c+'___'+opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c);
-                t.ActivityDate = opp.drive_date__c - Integer.ValueOf(driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c);
-                t.Pre_Drive_Security_Due_Date__c = driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c;
-            }
-            t.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
-            taskToUpdate.add(t);
-        }
-        
-        if(!taskToUpdate.isEmpty())
-        {
-            Database.SaveResult[] srList = Database.Update(taskToUpdate,false);
-            
         }
     }
     
@@ -4021,15 +3990,15 @@ opp.StageName = 'Closed';
                                            WHERE sked_Opportunity__c IN: oppFieldsRelatedToDOCMap.keySet()];
             if(!drvList.isEmpty()) {
                 for(sked_Drive__c drive : drvList) {
+                      sked_Drive__c driveToUpdate = new sked_Drive__c();
                     Map<String, String> map_fieldName_fieldValueToUpdate = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c);
                     if(map_fieldName_fieldValueToUpdate != null && !map_fieldName_fieldValueToUpdate.isEmpty()) {
                         for(String fieldToUpdate : map_fieldName_fieldValueToUpdate.keySet()) {
                             String existingFieldValueOnDrive = (String)drive.get(fieldToUpdate);
                         	if(existingFieldValueOnDrive != null && existingFieldValueOnDrive.equals(map_fieldName_fieldValueToUpdate.get(fieldToUpdate))) continue;
-                            
-                            drive.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
+                            driveToUpdate.put(fieldToUpdate, map_fieldName_fieldValueToUpdate.get(fieldToUpdate));
                         }
-                        driveListToBeUpdatedList.add(drive);
+                        driveListToBeUpdatedList.add(driveToUpdate);
                     }   
                 }
             }
@@ -4573,7 +4542,7 @@ opp.StageName = 'Closed';
             if (relatedSkedDriveId != null && skedDriveWithPendingAction.contains(relatedSkedDriveId)) {//HRP-13045 start
                 if(oppVsPendingActionAndApprovalStatus.containsKey(op.Id) && oppVsPendingActionAndApprovalStatus.get(op.Id).sked_Pending_Action__c == null && oppVsPendingActionAndApprovalStatus.get(op.Id).sked_Approval_Status__c == null){
                     continue;
-                }//HRP-13045 end
+               }//HRP-13045 end
                 Opportunity oldOp = oldMap.get(op.Id);
                 List<String> changedFields = getChangedFields(op, oldOp);
                 if (!changedFields.isEmpty()) {

@@ -669,13 +669,13 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             }
             System.debug('Exiting method AfterUpdate');
             
-            //HRP-3459
+            /*HRP-3459
             if(super.getTriggerMethodsToBypass().indexOf('cancelTasksForCancelledOpportunities') == -1) {	
                 OpportunityService.cancelTasksForCancelledOpportunities((Map<Id,Opportunity>)trigger.oldMap,(Map<Id,Opportunity>)trigger.newMap);
             } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.cancelTasksForCancelledOpportunities() Bypassed');  
             }
-            System.debug('Exiting method AfterUpdate');
+            System.debug('Exiting method AfterUpdate');*/
             
             //HRP-6920
             if(super.getTriggerMethodsToBypass().indexOf('deleteDriveAffiliationOnDriveDateChange') == -1) {
@@ -703,7 +703,7 @@ public class OpportunityTriggerHandler extends TriggerHandler{
             
             //HRP-7362
             if(super.getTriggerMethodsToBypass().indexOf('modifyTasksOnDriveDateChange') == -1) {
-                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap,(List<Opportunity>)trigger.new,(Map<Id, Opportunity>)trigger.newMap);
+                 OpportunityService.modifyTasksOnDriveDateChange((Map<Id, Opportunity>)trigger.oldMap,(Map<Id, Opportunity>)trigger.newMap);
              } else{
                 System.debug('OpportunityTriggerHandler.afterUpdate - OpportunityService.modifyTasksOnDriveDateChange() Bypassed');  
             }
