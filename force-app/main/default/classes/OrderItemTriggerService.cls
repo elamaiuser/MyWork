@@ -62,29 +62,29 @@ public with sharing class OrderItemTriggerService {
                                                             
                                                             
                                                             orders = [ select Id, Material_Recipient_Type__c, Material_Recipient__c, Material_Recipient_Default__c from Order where Id IN:orderids ];
-                                                            
+
                                                             if( !orders.isEmpty() ){
                                                                 for( Order od : orders ){
                                                                     if( !orderObjectmap.containsKey( od.Id ) ){
                                                                         orderObjectmap.put( od.Id, od);
-                                                                    }				
+                                                                    }
                                                                 }
                                                             }
-                                                            
-                                                            
+
+
                                                             for( OrderItem odi : newOrderItems ){
                                                                 if( odi.Material_Recipient__c != null ){
                                                                     if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == null   ){ // scenario #1
-                                                                        odi.addError( materialrecipientisnull );
-                                                                    }	
-                                                                    
+                                                                        // odi.addError( materialrecipientisnull ); // RESTORE AFTER FIELD TYPE CHANGE
+                                                                    }
+
                                                                     else if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Same' ){ // scenario #3
                                                                         String mrecipient = orderObjectmap.get( odi.orderId).Material_Recipient__c ;
                                                                         if( mrecipient != odi.Material_Recipient__c ){
                                                                             odi.addError( mrinitemnotmatchforSame );
                                                                         }
                                                                     }
-                                                                    
+
                                                                     else if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Split' ){ // scenario #4
                                                                         String [] mrecipients = orderObjectmap.get( odi.orderId).Material_Recipient__c.split(';') ;
                                                                         
@@ -96,12 +96,12 @@ public with sharing class OrderItemTriggerService {
                                                                 // else if( odi.Material_Recipient__c == null ){ // All covered scenario #2
                                                                 // if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c != null &&  orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Split' ){ //scenario #2
                                                                 // odi.addError( materialrecipientProductisnull );
-                                                                // }				
                                                                 // }
-                                                                
+                                                                // }
+
                                                                 if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Same' ){
                                                                     odi.Material_Recipient__c = orderObjectmap.get( odi.orderId).Material_Recipient_Default__c;
-                                                                }			
+                                                                }
                                                             }
                                                             // In case of Split only
                                                             String firstMR;
@@ -111,26 +111,26 @@ public with sharing class OrderItemTriggerService {
                                                                 for( OrderItem odi : newOrderItems ){
                                                                     newOrderItemRemainingList.add(odi);
                                                                 }
-                                                                
+
                                                                 newOrderItemRemainingList.remove(0);
-                                                                
-                                                                
+
+
                                                                 for( OrderItem odi : newOrderItemRemainingList ){
                                                                     if( odi.Material_Recipient__c == null ){ // All covered scenario #2
                                                                         if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c != null &&  orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Split' ){ //scenario #2
                                                                             odi.Material_Recipient__c =   firstMR;
-                                                                        }				
-                                                                    }		
+                                                                        }
+                                                                    }
                                                                 }
                                                             }else if( newOrderItems.size() > 1 && newOrderItems[0].Material_Recipient__c == null ){
                                                                 for( OrderItem odi : newOrderItems ){
                                                                     if( odi.Material_Recipient__c == null ){ // All covered scenario #2
                                                                         if( orderObjectmap.get( odi.orderId).Material_Recipient_Type__c != null &&  orderObjectmap.get( odi.orderId).Material_Recipient_Type__c == 'Split' ){ //scenario #2
                                                                             odi.Material_Recipient__c =   orderObjectmap.get( newOrderItems[0].orderId).Material_Recipient_Default__c;
-                                                                        }				
-                                                                    }		
+                                                                        }
+                                                                    }
                                                                 }
-                                                                
+
                                                             }else if( newOrderItems.size() == 1 && newOrderItems[0].Material_Recipient__c == null ){
                                                                 if( orderObjectmap.get( newOrderItems[0].orderId).Material_Recipient_Type__c != null &&  orderObjectmap.get( newOrderItems[0].orderId).Material_Recipient_Type__c == 'Split' ){ //scenario #2
                                                                     newOrderItems[0].Material_Recipient__c =   orderObjectmap.get( newOrderItems[0].orderId).Material_Recipient_Default__c;
