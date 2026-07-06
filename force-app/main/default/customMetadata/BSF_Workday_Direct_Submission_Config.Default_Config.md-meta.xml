@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Business_Distribution_List__c</field>
-        <value xsi:type="xsd:string">anil.kallu@redcross.org, kata.manishreddy@redcross.org,joseph.mcnevin@redcross.org,nick.chandler@redcross.org,Tammy.Steele@redcross.org</value>
+        <value xsi:type="xsd:string">APSProcessDesignandEnablement@redcross.org,APSDirectors@redcross.org,BHQ-APSStaffScheduling/Timekeeping@redcross.org,anil.kallu@redcross.org</value>
     </values>
     <values>
         <field>sked_Enable_Direct_Workday_Submission__c</field>
@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>sked_Technical_Team_Distribution_List__c</field>
-        <value xsi:type="xsd:string">kata.manishreddy@redcross.org,anil.kallu@redcross.org,nick.chandler@redcross.org,joseph.mcnevin@redcross.org</value>
+        <value xsi:type="xsd:string">elampiraii.thamizhpa@redcross.org,anil.kallu@redcross.org,nick.chandler@redcross.org,joseph.mcnevin@redcross.org</value>
     </values>
     <values>
         <field>sked_WD_Emp_Rpt_URL__c</field>
