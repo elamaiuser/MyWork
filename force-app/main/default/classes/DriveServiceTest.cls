@@ -32,12 +32,12 @@ private class DriveServiceTest {
     @isTest static void retrievePriorDrivesTest() {  
         Test.startTest();
         
+        Period period = [SELECT Id,StartDate,EndDate FROM Period WHERE (StartDate < :system.today() AND EndDate > :system.today()) LIMIT 1];
         Opportunity testOpp = [SELECT Id, CloseDate FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        update new Opportunity(Id = testOpp.Id, CloseDate = system.today().addDays(-10));       
+        update new Opportunity(Id = testOpp.Id, CloseDate = period.StartDate);       
         TriggerHandler.clearAllBypasses();
-        
-        Period period = [SELECT Id,StartDate,EndDate FROM Period WHERE (StartDate < :system.today() AND EndDate > :system.today()) LIMIT 1];  
+          
        
         List<DriveService.Drive> testDrives = DriveService.retrievePriorDrives(period.Id, 1);
         Test.stopTest();
