@@ -1,6 +1,5 @@
 global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable<SObject>, Schedulable, Database.Stateful {
 
-    private Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
     private List<BSF_Error_Log__c> errorLogListToInsert = new List<BSF_Error_Log__c>();
     private Set<Id> primaryCoIds = new Set<Id>();
     private static final List<String> includedResourceCoApStatus = new List<String>{
@@ -57,7 +56,7 @@ global class skedNightlyUpdateCoApRoleTargetsBatch implements Database.Batchable
         }
 		
         errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.autoAssignCollectionOpAvailabilityRecordsAndGetErrorLogs(map_coIdName_uniqueApIdNames));
-        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(map_coIdName_uniqueApIdNamesCopy, map_coIdapIdKey_roleVsNoOfResourcesMap));
+        errorLogListToInsert.addAll(skedUpdateCoApRoleTargetsBatchHelper.calculateTotalsAndUpdateCoApStatusOnResources(map_coIdName_uniqueApIdNamesCopy));
     }
 
     global void finish(Database.BatchableContext bc) {

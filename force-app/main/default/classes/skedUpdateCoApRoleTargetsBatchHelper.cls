@@ -60,11 +60,11 @@ public with sharing class skedUpdateCoApRoleTargetsBatchHelper {
     }
 
     public static List<BSF_Error_Log__c> calculateTotalsAndUpdateCoApStatusOnResources(
-        Map<String, Set<String>> map_coId_uniqueApIds, 
-        Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap
+        Map<String, Set<String>> map_coId_uniqueApIds
     ) {
         Map<String, Map<String, Decimal>> map_coIdapIdKey_driveTypeVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
         Map<String, Map<String, Decimal>> map_coIdKey_driveTypeVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
+        Map<String, Map<String, Decimal>> map_coIdapIdKey_roleVsNoOfResourcesMap = new Map<String, Map<String, Decimal>>();
         Set<Id> colIds = new Set<Id>();
         Set<Id> apIds = new Set<Id>();
         

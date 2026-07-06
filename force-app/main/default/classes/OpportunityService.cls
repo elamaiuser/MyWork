@@ -3368,7 +3368,7 @@ System.debug('--> \n Exavalu call to generate drives is done. ');
             Date bookingStart = dAff.Marketing_Program__r.Booking_Start_Date__c;
             Date bookingEnd   = dAff.Marketing_Program__r.Booking_End_Date__c;
             Date driveDate    = driveDateChangedOpp.get(dAff.Blood_Drive_Opportunity__c).drive_Date__c;
-            if(!(driveDate >= bookingStart && driveDate <= bookingEnd))
+            if(!((bookingStart == null || driveDate >= bookingStart) && (bookingEnd == null || driveDate <= bookingEnd)))
             {
                 d_affiliationToDel.add(dAff);
             }
