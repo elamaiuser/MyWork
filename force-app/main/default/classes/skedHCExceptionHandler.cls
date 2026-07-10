@@ -85,6 +85,7 @@ public class skedHCExceptionHandler extends skedTriggerHub {
         List<sked__Activity_Resource__c> activityResourcesToUpdate = new List<sked__Activity_Resource__c>();
         List<sked__Job_Allocation__c> jobAllocationsToUpdate = new List<sked__Job_Allocation__c>();
         Set<Id> jobAllocIds = new Set<Id>();
+        Set<Id> activityResourceIds = new Set<Id>();
 
         Set<Id> activityIds = new Set<Id>();
         Set<Id> resourceIds = new Set<Id>();
@@ -119,8 +120,9 @@ public class skedHCExceptionHandler extends skedTriggerHub {
           
             if (isOutsideAP && mapActivity.containsKey(record.skedHC__Activity__c)) {
                 sked__Activity__c activity = mapActivity.get(record.skedHC__Activity__c);
-               for (sked__Activity_Resource__c activityResource : activity.sked__Activity_Resources__r) {
-                     if (activityResource.sked__Resource__c == record.skedHC__Resource__c) {
+                for (sked__Activity_Resource__c activityResource : activity.sked__Activity_Resources__r) {
+                    if (activityResource.sked__Resource__c == record.skedHC__Resource__c && !activityResourceIds.contains(activityResource.Id)) {
+                        activityResourceIds.add(activityResource.Id);
                         activityResource.sked_Staffing_Reason__c = NULL;
                         activityResourcesToUpdate.add(activityResource);
                     }

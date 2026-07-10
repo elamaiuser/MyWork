@@ -3,10 +3,7 @@
     <fullName>Order_Compact_Layout</fullName>
     <fields>Drive_Date__c</fields>
     <fields>OpportunityId</fields>
-    <fields>TotalAmount</fields>
-    <fields>BudgetCurrency__c</fields>
     <fields>Order_Due_Date__c</fields>
     <fields>Publicity_Approved__c</fields>
-    <fields>Publicity_Submitted__c</fields>
     <label>Order Compact Layout</label>
 </CompactLayout>
