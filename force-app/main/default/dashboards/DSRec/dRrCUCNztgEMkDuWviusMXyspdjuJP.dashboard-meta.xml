@@ -376,7 +376,7 @@
                     </flexTableSortInfo>
                     <hideChatterPhotos>true</hideChatterPhotos>
                 </flexComponentProperties>
-                <groupingSortProperties/>
+                <groupingSortProperties />
                 <header>Fixed Site Opportunities</header>
                 <report>BSFRecruitment/FS_Opps_for_Dashboard_snr</report>
             </dashboardComponent>
@@ -388,8 +388,8 @@
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
     <isGridLayout>true</isGridLayout>
-    <owner>deploymentuser@redcross.org.biomed</owner>
-    <runningUser>deploymentuser@redcross.org.biomed</runningUser>
+    <owner>deploymentuser@redcross.org</owner>
+    <runningUser>deploymentuser@redcross.org</runningUser>
     <textColor>#000000</textColor>
     <title>Fixed Site Dashboard: Southwest &amp; Rocky Mountains Division</title>
     <titleColor>#000000</titleColor>

@@ -15,7 +15,6 @@
     <columns>sked_Max_Shift_End__c</columns>
     <columns>sked_Status__c</columns>
     <columns>sked_Linked_Drives__c</columns>
-    <columns>sked_Industry_Code__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>sked_Status__c</field>

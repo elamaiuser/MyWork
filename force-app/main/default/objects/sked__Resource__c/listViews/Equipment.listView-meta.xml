@@ -24,5 +24,10 @@
         <operation>equals</operation>
         <value>Baltimore MD</value>
     </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>sked__Resource__c.sked_Asset</value>
+    </filters>
     <label>Equipment</label>
 </ListView>
