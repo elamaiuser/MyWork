@@ -440,13 +440,11 @@ public class skedWorkdayUtils implements Callable {
 
     public static Decimal getWorkdayPtoHours(sked__Availability__c record, sked__Resource__c availabilityResource) {
         Decimal availDurationHours = skedDateTimeUtils.getDifferenceInHoursAndMinutes(record.sked__Start__c, record.sked__Finish__c);
-        // This rounds our result up to the next .25 hours, 6.3 => 6.5, 7.05 => 7.25, 8.95 => 9
-        availDurationHours = availDurationHours.divide(25, 2, System.RoundingMode.UP) * 25;
         Decimal ptoDurationHours = availabilityResource.sked_Daily_Time_Off_Hours__c;
         if (!record.sked_Is_All_Day__c && availDurationHours < ptoDurationHours) {
             ptoDurationHours = availDurationHours;
         }
-        return ptoDurationHours;
+        return ptoDurationHours.setScale(2, System.RoundingMode.HALF_UP);
     }
 
     // HRP-16680 Begin
