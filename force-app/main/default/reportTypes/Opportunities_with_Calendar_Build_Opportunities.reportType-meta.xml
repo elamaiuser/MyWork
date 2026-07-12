@@ -1167,6 +1167,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Opportunity.Blood_Drive_Opportunities__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>Is_Recursion_On__c</field>
             <table>Opportunity</table>
         </columns>

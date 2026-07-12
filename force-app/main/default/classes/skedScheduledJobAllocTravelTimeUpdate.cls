@@ -8,7 +8,7 @@ global class skedScheduledJobAllocTravelTimeUpdate implements Schedulable{
             AND sked_Optimization_Run__c != NULL 
             AND sked__Job__r.sked_Resource_Role__c != NULL
             AND sked__Job__r.sked_Drive__r.sked_Drive_Date__c > TODAY
-            AND sked__Job__r.sked_Drive__r.sked_Status__c != 'Cancel'            
+            AND sked__Job__r.sked_Drive__r.sked_Status__c != 'Cancel'
         ];
 
         Set<Id> recordIds = new Set<Id>();
@@ -18,12 +18,12 @@ global class skedScheduledJobAllocTravelTimeUpdate implements Schedulable{
             debugLogs.sked__Summary__c += record.Id + ', ';
             recordIds.add(record.Id);
         }
-        System.debug('Record Count: '+ recordIds.size());        
+        System.debug('Record Count: '+ recordIds.size());
         debugLogs.sked__Message__c = 'Number of Job Allocations that has null Travel Time: '+ recordIds.size() + ' records';
         debugLogs.sked__Type__c = 'Debug Log';
         insert debugLogs;
         if(!recordIds.isEmpty()){
-            Database.executeBatch(new skedJobAllocationTravelTimeBatch(recordIds), 40);            
-        }        
+            Database.executeBatch(new skedJobAllocationTravelTimeBatch(recordIds), 40);
+        }
     }
 }

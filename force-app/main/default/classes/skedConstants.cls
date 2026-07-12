@@ -68,8 +68,12 @@ public class skedConstants {
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_MANUAL = 'Manual';
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NA = 'Not Applicable';
     public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_SUCCESS = 'Success';
+    
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_NOTIMEOFF_MESSAGE = 'Action needed - Process Time Off Request in the RAC';
+    public static final string AVAILABILITY_WORKDAY_SYNC_STATUS_ONCALL_CALLOUT_MESSAGE = 'See Time Off Request in Approval Requests - Call Out Tab';
 
     public static final String AVAILABILITY_STAFFING_BUDGET_NO_CAPACITY = 'Unable to approve Unavailability due to insufficient Staffing Budget balance';
+    public static final String AVAILABILITY_STAFFING_BUDGET_NOT_FOUND = 'Required staffing budget record not found in the system';
     public static final String AVAILABILITY_CRUD_MUST_COME_FROM_RAC = 'Unable to complete operation - Please use the Resource Availability Console to perform Availability/Activity related actions';
     public static final String DRIVE_CRUD_MUST_COME_FROM_RECORD_PAGE = 'Unable to complete operation - Please use the Drive Record Page to perform Drive/Job/Allocation related actions';
     public static final String RECORD_CHANGES_INVALID_FROM_LIST_VIEW = 'Unable to complete operation - You do not have permission to update records from this location.';
@@ -370,7 +374,9 @@ public class skedConstants {
     public static final string TAG_FIXED_SITE = 'Fixed Site';
     public static final string TAG_MOBILE = 'Mobile';
     public static final string TAG_REAL_ID = 'REAL ID';
-
+    public static final string TAG_DRIVER = 'Driver';
+    public static final string TAG_DRIVER_DOT = 'Driver - DOT';
+    public static final string TAG_DRIVER_CDL = 'Driver CDL B';
 
     public static final string TAG_ROLE_STATUS_ACTIVE = 'Active';
     public static final string TAG_ROLE_STATUS_INACTIVE = 'Inactive';
@@ -443,6 +449,10 @@ public class skedConstants {
 
     /* Debug Log */
     public static final string DEBUG_LOG_TYPE_WORKDAY_API = 'Workday API Request';
+    public static final string DEBUG_LOG_WORKDAY_CREATE_TIMEOFF = 'Create Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_TIMEOFF = 'Adjust Time Off Entry'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_CANCEL_COMMENT = 'Cancelled via Skedulo'; //HRP-13728
+    public static final string DEBUG_LOG_WORKDAY_ADJUST_COMMENT = 'Adjusted via Skedulo'; //HRP-13728
     public static final string DEBUG_LOG_TYPE_ERROR_LOG = 'Error Log';
 
     public static final string DEBUG_LOG_CATEGORY_SYSTEM_ERROR = 'System Error';
@@ -505,5 +515,10 @@ public class skedConstants {
     public static final string CRON_TRIGGER_ACQUIRED = 'ACQUIRED';
     public static final string CRON_TRIGGER_EXECUTING = 'EXECUTING';
     public static final string CRON_TRIGGER_PAUSED = 'PAUSED';
+
+    /* Resource RealId Compliance Related */
+    public static final string STAGING_SYNC_STATUS_REMOVED = 'Removed';
+    public static final string STAGING_SYNC_STATUS_CREATED = 'Created';
+    public static final string STAGING_SYNC_STATUS_UPDATED = 'Updated';
 
 }

@@ -81,6 +81,7 @@ public class BSF_Constants {
     public static final String driveStatusDraft='Draft';
     public static final String driveStatusCancel='Cancel';
     public static final String driveStatusComplete='Complete';
+    public static final String driveStatusConfirmed='Confirmed'; // EK-HRP-16871
 
     // Portfolio types
     public static final String REGION_PORTFOLIO_TYPE = 'RDSE';
@@ -159,7 +160,19 @@ public class BSF_Constants {
     public static final String STATUS_NOT_STARTED = 'Not Started';
     public static final String STATUS_IN_PROGRESS = 'In Progress';
     public static final String STATUS_COMPLETED = 'Completed';
-    public static final String STATUS_CANCELLED = 'Cancelled';    
+    public static final String STATUS_CANCELLED = 'Cancelled';
+
+    // Task Types
+    public static final String SPONSOR_PLANNING_MEETING = 'Sponsor Planning Meeting';
+    public static final String RECRUITMENT_PLANNING_MEETING = 'Recruitment Planning Meeting';
+    public static final String X72_HOUR_CHECK_IN = '72 Hour Check In';
+    public static final String REQUEST_FOR_MARKETING_EXCEPTION = 'Request for Marketing Exception';
+    public static final String SECURITY_INFORMATION_COMPLETION = 'Security Information Completion';
+    public static final String POST_DRIVE_ANALYSIS_AM = 'Post Drive Analysis AM';
+    public static final String POST_DRIVE_ANALYSIS_SBPM = 'Post Drive Analysis SBPM';
+    public static final String PUBLICITY_ORDER_NOT_CREATED = 'Publicity Order Not Created';
+    public static final String PUBLICITY_REVIEW_NEEDED = 'Publicity Review Needed';
+    public static final String TEMPLATE_ORDER_TASK = 'Template Order Task';
 
     // Planned Task Status
     public static final String PLANNED_TASK_STATUS_CONFIGURED = 'Configured';
@@ -177,18 +190,6 @@ public class BSF_Constants {
     public static final Set<String> ALLOWED_PLANNING_DEFAULT_LOOKUPS = new Set<String>{ 'Account__c', 'Template_Opportunity__c' };
     public static final Set<String> ALLOWED_SELECTED_PACKAGE_LOOKUPS = new Set<String>{ 'Account__c', 'Opportunity__c' };
 
-    // Task Types
-    public static final String SPONSOR_PLANNING_MEETING = 'Sponsor Planning Meeting';
-    public static final String RECRUITMENT_PLANNING_MEETING = 'Recruitment Planning Meeting';
-    public static final String X72_HOUR_CHECK_IN = '72 Hour Check In';
-    public static final String REQUEST_FOR_MARKETING_EXCEPTION = 'Request for Marketing Exception';
-    public static final String SECURITY_INFORMATION_COMPLETION = 'Security Information Completion';
-    public static final String POST_DRIVE_ANALYSIS_AM = 'Post Drive Analysis AM';
-    public static final String POST_DRIVE_ANALYSIS_SBPM = 'Post Drive Analysis SBPM';
-    public static final String PUBLICITY_ORDER_NOT_CREATED = 'Publicity Order Not Created';
-    public static final String PUBLICITY_REVIEW_NEEDED = 'Publicity Review Needed';
-    public static final String TEMPLATE_ORDER_TASK = 'Template Order Task';
-    
     // Site Record Types
     public static final String MOBILE_SITE_RECORD_TYPE = 'Mobile Site';
     public static final String FIXED_SITE_RECORD_TYPE = 'Fixed Site';
@@ -388,7 +389,7 @@ public class BSF_Constants {
     //HRP-13426 --> 
     public static final String POST_DRIVE_ANALYSIS_TASK_AM = 'Post Drive Analysis AM';
     public static final String POST_DRIVE_ANALYSIS_TASK_SBPM = 'Post Drive Analysis / Future Drive Planning SBPM';
-    public static final String DRD_SYSTEM_USER = 'DRD System UserM';
+    public static final String DRD_SYSTEM_USER = 'DRD System User';
 
     //Special Circumstances Badges -> HRP-701
     public static final String SSBS_BADGE_FIRST_TIME_DRIVE = 'First Time Drive';
@@ -397,4 +398,24 @@ public class BSF_Constants {
     public static final String SSBS_BADGE_RISK_FOR_REMOVAL = 'Risk for Removal';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH = 'Strategic Stretch Booking';
     public static final String SSBS_BADGE_STRATEGIC_STRETCH_DIVERSE = 'Strategic Stretch Booking - Diverse';
+
+    // Assignment Roles & Hierarchies
+    public static final String ASSIGNED_TO_AM = 'Account Manager';
+    public static final String ASSIGNED_TO_SBPM = 'Strategic Business Planning Manager';
+
+    // StandardTaskGenerationBatch Constants
+    public static final String STANDARD_TASK_BATCH_FILTER = Label.BSF_Standard_Task_Batch_Filter;
+    public static final String PLANNED_TASK_TRIGGER_FILTER = Label.BSF_Planned_Task_Trigger_Filter;
+    public static final String TASK_FIELD_MAPPING_JSON = Label.BSF_Task_Field_Mapping_JSON;
+    public static final String TASK_OWNER_HIERARCHY_JSON = Label.BSF_Task_Owner_Hierarchy_JSON;
+    public static final String PE_FIELD_MAPPING_JSON = Label.BSF_PE_Field_Mapping_JSON;
+
+    // TaskTypes
+    public static final String TASK_TYPE_PUBLICITY_ORDER_NOT_CREATED = 'Publicity Order Not Created';
+    public static final String TASK_TYPE_PUBLICITY_REVIEW_NEEDED = 'Publicity Review Needed';
+    public static final String TASK_TYPE_POST_DRIVE_ANALYSIS_SBPM = 'Post Drive Analysis SBPM';
+    public static final String TASK_TYPE_POST_DRIVE_ANALYSIS_AM = 'Post Drive Analysis AM';
+    public static final String TASK_TYPE_RECRUITMENT_STRATEGY_MEETING = 'Recruitment Strategy Meeting';
+    public static final String TASK_TYPE_72_HOUR_CHECK_IN = '72 Hour Check-In';
+    public static final String TASK_TYPE_ONE_WEEK_CHECK_IN = 'One Week Check-in';
 }

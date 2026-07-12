@@ -476,8 +476,7 @@ export default class SlwcDriveShiftJobModal extends LightningElement {
                 })
                 return false;
             }
-        }        
-
+        }
         return allValid && !this.errorMessages.length;
     }
 

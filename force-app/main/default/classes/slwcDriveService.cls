@@ -789,5 +789,284 @@ global class slwcDriveService {
         public string fieldType;
         public string driveChangeRequestType;
     }
-    
+
+    // HRP-13941 — Vehicle Replacement Workflow
+
+    @AuraEnabled
+    public static slwcAuraResult getImpactedDrives(getImpactedDrivesRequestModel request) {
+        slwcAuraResult result = new slwcAuraResult();
+
+        Date startDate = skedDateTimeUtils.getDateFromIsoString(request.startDate);
+        Date endDate   = skedDateTimeUtils.getDateFromIsoString(request.endDate);
+        Date today = Date.today();
+        if (startDate <= today) startDate = today.addDays(1);
+
+        Set<Id> vehicleDriveIds = new Set<Id>();
+        Set<Id> vehicleJobIds = new Set<Id>();
+        for (sked__Job_Allocation__c ja : [
+            SELECT sked__Job__c, sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Resource__c = :request.vehicleToChangeId
+            AND   sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            AND   sked__Job__r.sked_Drive__c != null
+            AND   sked__Job__r.sked_Start_Date__c >= :startDate
+            AND   sked__Job__r.sked_Start_Date__c <= :endDate
+            AND   sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+            AND   sked__Job__r.sked_Drive__r.sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
+            AND   sked__Job__r.sked_Drive__r.sked_Status__c != :skedConstants.DRIVE_STATUS_COMPLETE
+        ]) {
+            vehicleDriveIds.add(ja.sked__Job__r.sked_Drive__c);
+            vehicleJobIds.add(ja.sked__Job__c);
+        }
+
+        Set<Id> collectionOperationIds = new Set<Id>(request.collectionOperationIds);
+
+        List<sked_Drive__c> drives = [
+            SELECT Id, Name, sked_Drive_Date__c, sked_Status__c,
+                   sked_Projected_Registered_Donors__c,
+                   sked_Vehicle_Capacity__c,
+                   sked_Collection_Operation__c,
+                   sked_Timezone__c
+            FROM sked_Drive__c
+            WHERE sked_Drive_Date__c >= :startDate
+            AND   sked_Drive_Date__c <= :endDate
+            AND   sked_Status__c != :skedConstants.DRIVE_STATUS_CANCEL
+            AND   sked_Status__c != :skedConstants.DRIVE_STATUS_COMPLETE
+            AND   Id IN :vehicleDriveIds
+            AND   sked_Collection_Operation__c IN :collectionOperationIds
+            ORDER BY sked_Drive_Date__c ASC
+        ];
+
+        List<sked__Job__c> vehicleJobs = [
+            SELECT Id, sked__Start__c, sked__Finish__c, sked_Drive__r.Id,
+                   (SELECT Id, sked__Tag__r.Id, sked__Tag__r.Name FROM sked__JobTags__r)
+            FROM sked__Job__c
+            WHERE Id IN :vehicleJobIds
+        ];
+
+        impactedDrivesDataModel data = new impactedDrivesDataModel();
+        data.drives = drives;
+        data.jobs = vehicleJobs;
+        result.returnedData = data;
+        return result;
+    }
+
+    private static final Integer DEMAND_STANDARD = 0;
+    private static final Integer DEMAND_DOT      = 1;
+    private static final Integer DEMAND_CDL      = 2;
+
+    @AuraEnabled
+    public static slwcAuraResult applyVehicleReplacement(applyVehicleReplacementRequestModel request) {
+        skedTriggerUtils.CHANGES_INITIATED_FROM_SERVICE = true;
+        slwcAuraResult result = new slwcAuraResult();
+        Set<Id> driveIds = new Set<Id>(request.driveIds);
+
+        List<sked__Job_Allocation__c> existingAllocations = [
+            SELECT Id, sked__Job__c, sked__Status__c, sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Resource__c = :request.vehicleToChangeId
+            AND   sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            AND   sked__Job__r.sked_Drive__c IN :driveIds
+            AND   sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+        ];
+
+        List<sked__Job_Allocation__c> newAllocations = new List<sked__Job_Allocation__c>();
+        for (sked__Job_Allocation__c ja : existingAllocations) {
+            ja.sked__Status__c = skedConstants.JOB_ALLOCATION_STATUS_DELETED;
+            newAllocations.add(new sked__Job_Allocation__c(
+                sked__Job__c = ja.sked__Job__c,
+                sked__Resource__c = request.replacementVehicleId,
+                sked_Replacement_For__c = ja.Id
+            ));
+        }
+
+        update existingAllocations;
+        insert newAllocations;
+
+        reassignDriverJaFlags(driveIds);
+        saveContentionResolutions(driveIds, request.contentionResolutions);
+
+        return result;
+    }
+
+    private static void saveContentionResolutions(Set<Id> driveIds, Map<String, String> contentionResolutions) {
+        if (contentionResolutions == null || contentionResolutions.isEmpty()) return;
+
+        List<sked_Drive__c> drivesToUpdate = new List<sked_Drive__c>();
+        for (sked_Drive__c drive : [
+            SELECT Id, sked_Contention_Resolution__c
+            FROM sked_Drive__c
+            WHERE Id IN :driveIds
+            AND   Id IN :contentionResolutions.keySet()
+        ]) {
+            Set<String> existing = new Set<String>();
+            if (!String.isBlank(drive.sked_Contention_Resolution__c)) {
+                existing.addAll(drive.sked_Contention_Resolution__c.split(';'));
+            }
+            for (String resolution : contentionResolutions.get(drive.Id).split(';')) {
+                existing.add(resolution);
+            }
+            drive.sked_Contention_Resolution__c = String.join(new List<String>(existing), ';');
+            drivesToUpdate.add(drive);
+        }
+        if (!drivesToUpdate.isEmpty()) {
+            update drivesToUpdate;
+        }
+    }
+
+    private static void reassignDriverJaFlags(Set<Id> driveIds) {
+        // Build vehicle JAs per drive (after replacement — old JA already deleted)
+        Map<Id, List<sked__Job_Allocation__c>> vehicleJasByDrive = new Map<Id, List<sked__Job_Allocation__c>>();
+        for (sked__Job_Allocation__c ja : [
+            SELECT Id, sked__Resource__r.sked_DOT__c, sked__Resource__r.sked_CDL__c,
+                   sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Job__r.sked_Drive__c IN :driveIds
+            AND   sked__Job__r.sked_Asset_Type__c = :skedConstants.ASSET_TYPE_VEHICLE
+            AND   sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            AND   sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+        ]) {
+            Id driveId = ja.sked__Job__r.sked_Drive__c;
+            if (!vehicleJasByDrive.containsKey(driveId)) vehicleJasByDrive.put(driveId, new List<sked__Job_Allocation__c>());
+            vehicleJasByDrive.get(driveId).add(ja);
+        }
+
+        // Build driver JAs per Driver job (drive shift) — each drive shift independently assigns drivers to vehicles
+        Map<Id, List<sked__Job_Allocation__c>> driverJasByJob = new Map<Id, List<sked__Job_Allocation__c>>();
+        Map<Id, Id> driverJobToDriveId = new Map<Id, Id>();
+        Set<Id> driverResourceIds = new Set<Id>();
+        for (sked__Job_Allocation__c ja : [
+            SELECT Id, sked__Resource__c, sked_DOT__c, sked_CDL__c,
+                   sked__Job__c, sked__Job__r.sked_Drive__c
+            FROM sked__Job_Allocation__c
+            WHERE sked__Job__r.sked_Drive__c IN :driveIds
+            AND   sked_Resource_Role__c = :skedConstants.JOB_RESOURCE_ROLE_DRIVER
+            AND   sked__Status__c != :skedConstants.JOB_ALLOCATION_STATUS_DELETED
+            AND   sked__Job__r.sked__Job_Status__c != :skedConstants.JOB_STATUS_CANCELLED
+        ]) {
+            Id jobId = ja.sked__Job__c;
+            if (!driverJasByJob.containsKey(jobId)) driverJasByJob.put(jobId, new List<sked__Job_Allocation__c>());
+            driverJasByJob.get(jobId).add(ja);
+            driverJobToDriveId.put(jobId, ja.sked__Job__r.sked_Drive__c);
+            driverResourceIds.add(ja.sked__Resource__c);
+        }
+
+        if (driverResourceIds.isEmpty()) return;
+
+        // Get driver resource tags to determine qualification level
+        Map<Id, Set<String>> tagsByResourceId = new Map<Id, Set<String>>();
+        for (Id rid : driverResourceIds) tagsByResourceId.put(rid, new Set<String>());
+        for (sked__Resource_Tag__c rt : [
+            SELECT sked__Resource__c, sked__Tag__r.Name
+            FROM sked__Resource_Tag__c
+            WHERE sked__Resource__c IN :driverResourceIds
+            AND   sked__Tag__r.Name IN :new Set<String>{ skedConstants.TAG_DRIVER, skedConstants.TAG_DRIVER_DOT, skedConstants.TAG_DRIVER_CDL }
+            AND   (sked_Role_Status__c = null OR sked_Role_Status__c = :skedConstants.TAG_ROLE_STATUS_ACTIVE)
+        ]) {
+            tagsByResourceId.get(rt.sked__Resource__c).add(rt.sked__Tag__r.Name);
+        }
+
+        List<sked__Job_Allocation__c> jasToUpdate = new List<sked__Job_Allocation__c>();
+
+        for (Id driverJobId : driverJasByJob.keySet()) {
+            Id driveId = driverJobToDriveId.get(driverJobId);
+            List<sked__Job_Allocation__c> driveVehicleJAs = vehicleJasByDrive.get(driveId);
+            List<sked__Job_Allocation__c> driveDriverJAs  = driverJasByJob.get(driverJobId);
+            if (driveVehicleJAs == null || driveDriverJAs == null) continue;
+
+            // Vehicle slot demand: 0=Standard, 1=DOT, 2=CDL
+            Map<Id, Integer> vehicleDemand = new Map<Id, Integer>();
+            for (sked__Job_Allocation__c vJa : driveVehicleJAs) {
+                Integer demand = DEMAND_STANDARD;
+                if (vJa.sked__Resource__r.sked_DOT__c) demand = DEMAND_DOT;
+                if (vJa.sked__Resource__r.sked_CDL__c) demand = DEMAND_CDL;
+                vehicleDemand.put(vJa.Id, demand);
+            }
+
+            // Driver qualification: 0=Standard, 1=DOT, 2=CDL
+            Map<Id, Integer> driverQualification = new Map<Id, Integer>();
+            for (sked__Job_Allocation__c dJa : driveDriverJAs) {
+                Set<String> tags = tagsByResourceId.get(dJa.sked__Resource__c);
+                Integer q = DEMAND_STANDARD;
+                if (tags.contains(skedConstants.TAG_DRIVER_DOT)) q = DEMAND_DOT;
+                if (tags.contains(skedConstants.TAG_DRIVER_CDL)) q = DEMAND_CDL;
+                driverQualification.put(dJa.Id, q);
+            }
+
+            // Greedy matching: process most demanding slots first,
+            // assign least-qualified sufficient driver to preserve higher-qualified drivers for demanding slots
+            Map<Id, Id> vehicleJaToDriverJa = new Map<Id, Id>();
+            Set<Id> assignedDriverJaIds = new Set<Id>();
+
+            for (Integer demand : new List<Integer>{ DEMAND_CDL, DEMAND_DOT, DEMAND_STANDARD }) {
+                for (Id vehicleJaId : vehicleDemand.keySet()) {
+                    if (vehicleDemand.get(vehicleJaId) != demand) continue;
+                    Id bestDriverJaId = null;
+                    Integer bestQ = 999;
+                    for (Id dJaId : driverQualification.keySet()) {
+                        if (assignedDriverJaIds.contains(dJaId)) continue;
+                        Integer q = driverQualification.get(dJaId);
+                        if (q >= demand && q < bestQ) {
+                            bestQ = q;
+                            bestDriverJaId = dJaId;
+                        }
+                    }
+                    // No qualified driver available — assign any remaining (exception will be captured by batch)
+                    if (bestDriverJaId == null) {
+                        for (Id dJaId : driverQualification.keySet()) {
+                            if (!assignedDriverJaIds.contains(dJaId)) {
+                                bestDriverJaId = dJaId;
+                                break;
+                            }
+                        }
+                    }
+                    if (bestDriverJaId != null) {
+                        vehicleJaToDriverJa.put(vehicleJaId, bestDriverJaId);
+                        assignedDriverJaIds.add(bestDriverJaId);
+                    }
+                }
+            }
+
+            // Collect driver JA updates
+            Map<Id, sked__Job_Allocation__c> driverJaById = new Map<Id, sked__Job_Allocation__c>();
+            for (sked__Job_Allocation__c dJa : driveDriverJAs) driverJaById.put(dJa.Id, dJa);
+
+            for (Id vehicleJaId : vehicleJaToDriverJa.keySet()) {
+                Id driverJaId = vehicleJaToDriverJa.get(vehicleJaId);
+                Integer demand = vehicleDemand.get(vehicleJaId);
+                sked__Job_Allocation__c dJa = driverJaById.get(driverJaId);
+                Boolean newDot = (demand == DEMAND_DOT);
+                Boolean newCdl = (demand == DEMAND_CDL);
+                if (dJa.sked_DOT__c != newDot || dJa.sked_CDL__c != newCdl) {
+                    jasToUpdate.add(new sked__Job_Allocation__c(
+                        Id = driverJaId,
+                        sked_DOT__c = newDot,
+                        sked_CDL__c = newCdl
+                    ));
+                }
+            }
+        }
+
+        if (!jasToUpdate.isEmpty()) update jasToUpdate;
+    }
+
+    public class getImpactedDrivesRequestModel {
+        @AuraEnabled public String vehicleToChangeId {get;set;}
+        @AuraEnabled public String startDate {get;set;}
+        @AuraEnabled public String endDate {get;set;}
+        @AuraEnabled public List<Id> collectionOperationIds {get;set;}
+    }
+
+    public class applyVehicleReplacementRequestModel {
+        @AuraEnabled public String vehicleToChangeId {get;set;}
+        @AuraEnabled public String replacementVehicleId {get;set;}
+        @AuraEnabled public List<Id> driveIds {get;set;}
+        @AuraEnabled public Map<String, String> contentionResolutions {get;set;}
+    }
+
+    public class impactedDrivesDataModel {
+        @AuraEnabled public List<sked_Drive__c> drives {get;set;}
+        @AuraEnabled public List<sked__Job__c> jobs {get;set;}
+    }
+
 }

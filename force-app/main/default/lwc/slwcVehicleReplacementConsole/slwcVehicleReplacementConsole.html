@@ -1,0 +1,104 @@
+<template>
+  <div class="slds-grid slds-gutters slds-wrap">
+    <!-- Filters + Drive List -->
+    <div class="slds-col slds-size_1-of-1 slds-scrollable_y slds-is-relative" style="min-height: 400px;">
+      <!-- Filter Card -->
+      <div class="slds-m-bottom_small">
+        <div class="slds-grid slds-gutters slds-grid_vertical-align-end slds-wrap">
+          <!-- All filters (bumped right) -->
+          <div class="slds-col_bump-left slds-p-right_small">
+            <div class="slds-grid">
+              <div class="slds-p-right_small">
+                <c-slwc-vehicle-picker
+                  data-id="currentVehicle"
+                  label="Current Vehicle"
+                  icon-name="utility:transport_heavy_truck"
+                  vehicles={availableVehicles}
+                  selected-vehicle-id={currentVehicleId}
+                  disabled={isLoadingVehicles}
+                  onvehicleselected={handleCurrentVehicleSelected}
+                  onvehiclecleared={handleCurrentVehicleCleared}>
+                </c-slwc-vehicle-picker>
+              </div>
+              <div class="slds-p-right_small">
+                <c-slwc-vehicle-picker
+                  data-id="replacementVehicle"
+                  label="Replacement Vehicle"
+                  icon-name="utility:transport_heavy_truck"
+                  vehicles={activeVehicles}
+                  selected-vehicle-id={replacementVehicleId}
+                  exclude-vehicle-id={replacementVehicleExcludeId}
+                  disabled={isReplacementDisabled}
+                  onvehicleselected={handleReplacementVehicleSelected}
+                  onvehiclecleared={handleReplacementVehicleCleared}>
+                </c-slwc-vehicle-picker>
+              </div>
+              <div class="slds-p-right_small">
+                <c-slwc-new-collection-operation-multi-picklist
+                  division-single-select
+                  date-range={collectionOperationDateRange}
+                  default-values={filters.collectionOperationValues}
+                  onchange={handleCollectionOperationChanged}>
+                </c-slwc-new-collection-operation-multi-picklist>
+              </div>
+              <div class="slds-p-right_small">
+                <c-slwc-date-range-picker
+                  label="Date Range"
+                  default-start-date={filters.startDate}
+                  default-end-date={filters.endDate}
+                  ondaterangechange={handleDateChanged}>
+                </c-slwc-date-range-picker>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter warning -->
+      <template if:true={isFilterIncomplete}>
+        <div class="slds-align_absolute-center slds-p-around_small">
+          <lightning-icon icon-name="utility:warning" size="x-small" alternative-text="Warning!" title="Warning" class="slds-m-right_xx-small"></lightning-icon>
+          <span>Please select a date range, collection operation, and current vehicle to load drives.</span>
+        </div>
+      </template>
+
+      <!-- Loading Spinner -->
+      <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+      </template>
+
+      <!-- Drive List -->
+      <template if:true={isDriveTableVisible}>
+        <c-slwc-vehicle-replacement-drive-list
+          drives={impactedDrives}
+          selected-drive-ids={selectedDriveIdsArray}
+          selected-contention-resolutions={selectedContentionResolutionsData}
+          total-matches={totalMatches}
+          current-page={currentPage}
+          current-vehicle={vehicleToChange}
+          replacement-vehicle={replacementVehicle}
+          onrowselection={handleRowSelection}
+          oncontentionresolution={handleContentionResolutionChanged}
+          onpaginate={handlePageChange}
+          onselectalltab={handleSelectAllTab}
+          ondeselectalltab={handleDeselectAllTab}>
+        </c-slwc-vehicle-replacement-drive-list>
+
+        <!-- Action Buttons -->
+        <div class="slds-grid slds-grid_align-end slds-m-top_small">
+          <lightning-button
+            label="Cancel"
+            onclick={handleCancel}
+            class="slds-m-right_small">
+          </lightning-button>
+          <lightning-button
+            label="Apply"
+            variant="brand"
+            disabled={isApplyDisabled}
+            onclick={handleApply}>
+          </lightning-button>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

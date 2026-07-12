@@ -503,7 +503,7 @@ if(ds.isCreateable()){}*/
     }
     
     //SYSTEM Generating Recruitment Meeting task during Closed Stage - HRP -2072
-    public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createRecruitmentTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         System.debug('Entered method createRecruitmentTask with opp items->' + newItems);
         if (newItems == null || newItems.size() < 1)
             return;
@@ -560,7 +560,7 @@ if(ds.isCreateable()){}*/
                 }else if(taskDueDayString.equalsIgnoreCase('Sun')){
                     taskDueDate = taskDueDate.addDays(-2);
                 }*/
-                recruitmentTask.ActivityDate = taskDueDate;
+                /*recruitmentTask.ActivityDate = taskDueDate;
                 recruitmentTask.OwnerId = getTaskOwner(opp, oppTeamMembersMap,Task_Reassignment_Matrix__mdt.getInstance('Recruitment_Task').Assigned_To__c);//part of ticket HRP-9562;//HRP-12333 added 3rd paarameter// Changes for HRP-7123
                 recruitmentTask.subject = taskSubject;
                 recruitmentTask.Type = taskType;
@@ -613,10 +613,10 @@ if(ds.isCreateable()){}*/
             }
             //HRP-10788
         }   
-    }
+    }*/
     
     //Generate Sponsor Planning Meeting task when Opportunity stage is set to committed or closed
-    public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
+    /*public static void createSponsorPlanningMeetingTask(List<Opportunity> newItems, Map<Id, Opportunity> oldMap) {
         if (newItems == null || newItems.size() < 1)
             return;
         set<id> oppIds = new set<id>();
@@ -694,7 +694,7 @@ if(ds.isCreateable()){}*/
                 }
             }
         }   
-    } 
+    } */
     
     public static void setCallListRecipientFlag(set<id> accIDs) {
         Map<id, opportunity> oppMap = new Map<id, opportunity>([select id,Accountid from opportunity where Accountid = :accIDs]);
@@ -3561,7 +3561,7 @@ opp.StageName = 'Closed';
         }
     }
     
-    Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
+    /*Public static void closedOpportunity72HourTaskCreation(list<Opportunity> oppNewList, map<Id, Opportunity> oppOldMap)
     {
         
         set<id> oppIds = new set<id>();
@@ -3642,7 +3642,7 @@ opp.StageName = 'Closed';
                 }
             }
         }   
-    }
+    }*/
     
     public static void updateDoubleRedProcedures(List<Opportunity> listOfnewOppties, Map<Id, Opportunity> mapOfOfOldOppties) { 
         Id mobileRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Mobile_Opp').getRecordTypeId();
@@ -3691,64 +3691,30 @@ opp.StageName = 'Closed';
     }
     
     //HRP-7362
-    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity>oldMap,list<Opportunity>newOpp,Map<Id,Opportunity>newMap)
-    {
+    public static void modifyTasksOnDriveDateChange(Map<Id,Opportunity> oldMap, Map<Id,Opportunity> newMap) {
         
-        set<id> oppId = new set<id>();
-        map<id,id> OppIdSiteId = new map<id,id>();
+        Set<Id> oppIdSet = new Set<Id>();
+        Map<Id, Id> OppIdSiteId = new Map<Id, Id>();
+        List<Task> tasksToUpdate = new List<Task>();
         
-        for(opportunity opp : newOpp)
-        {
-            if(oldMap.get(opp.id).drive_date__c != opp.drive_Date__c)
-            {
-                oppId.add(opp.id);
-                if(opp.Drive_Site__c!=null)
-                    OppIdSiteId.put(opp.id,opp.Drive_Site__c);
+        for(opportunity opp : newMap.values()) {
+            if(oldMap != null && oldMap.get(opp.Id).Drive_Date__c != opp.Drive_Date__c) {
+                oppIdSet.add(opp.Id);
             }
         }
         
-        list<task> oppTasks = [select id,subject,activityDate,whatId from task where whatId IN:oppId and (subject like 'Sponsor Planning Meeting%' or subject like 'Recruitment%' or subject like '72 Hour Check in%' or subject like 'Security Information%')];// Changes for HRP-7123
-        system.debug('oppTasks'+oppTasks);
-        Opportunity_Date_Setting__mdt mdtOppDateSetting = Opportunity_Date_Setting__mdt.getInstance('Sponsor_Planning_Meeting');
-        Integer daysFromDriveDate = mdtOppDateSetting?.Days_from_Drive_Date__c.intValue();
+        if(oppIdSet != null && !oppIdSet.isEmpty()) {
+            List<Task> oppTasks = [
+                SELECT Id, Subject, 
+                ActivityDate, WhatId 
+                FROM Task 
+                WHERE whatId IN :oppIdSet 
+                AND Status != 'Cancelled'
+            ]; // Changes for HRP-7123
         
-        map<id,sked__Location__c> driveSite =new map<id,sked__Location__c>([select sked_Pre_Drive_Security_Due_Date__c from sked__Location__c where Id IN:OppIdSiteId.values()]);
-        system.debug('driveSite '+driveSite);
-        
-        list<task> taskToUpdate = new list<task>();
-        
-        for(task t : oppTasks)
-        {
-            opportunity opp = new opportunity();
-            opp=newMap.get(t.WhatId);
-            if(t.subject.containsIgnoreCase('Sponsor Planning'))
-            {
-                t.ActivityDate=opp.Drive_Date__c.addDays(-daysFromDriveDate);
+            if(oppTasks != null && !oppTasks.isEmpty()) {
+                OpportunityServiceController.updateTaskDates(newMap, oppTasks);
             }
-            else if (t.subject.containsIgnoreCase('Recruitment Planning'))// Changes for HRP-7123
-            {
-                system.debug('Helper.AddBusinessDays'+Helper.AddBusinessDays(opp.Drive_Date__c, -50));
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c, -50);
-            }
-            else if(t.subject.containsIgnoreCase('72 Hour Check in'))
-            {
-                t.ActivityDate = Helper.AddBusinessDays(opp.Drive_Date__c,-3);
-            }
-            else if(t.subject.containsIgnoreCase('Security Information'))
-            {
-                
-                system.debug(opp.drive_date__c+'___'+opp.Drive_Site__r.sked_Pre_Drive_Security_Due_Date__c);
-                t.ActivityDate = opp.drive_date__c - Integer.ValueOf(driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c);
-                t.Pre_Drive_Security_Due_Date__c = driveSite.get(OppIdSiteId.get(opp.id)).sked_Pre_Drive_Security_Due_Date__c;
-            }
-            t.Drive_Date__c = opp.Drive_Date__c; //HRP-12700
-            taskToUpdate.add(t);
-        }
-        
-        if(!taskToUpdate.isEmpty())
-        {
-            Database.SaveResult[] srList = Database.Update(taskToUpdate,false);
-            
         }
     }
     
@@ -4120,10 +4086,10 @@ opp.StageName = 'Closed';
         Id districtManager;
         Id accountSpecialist;
         Id owner=opp.OwnerId;
-        
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }
@@ -4132,14 +4098,15 @@ opp.StageName = 'Closed';
                 }
             }
         }
+
         if (accountManager != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333
         {
             return accountManager;
         } else if (accountSpecialist != null && AM_DM ==BSF_Constants.ACCOUNT_MANAGER) //HRP-12333 reordered specialist before DM
-        {
+        { 
             return accountSpecialist;
         }else if (districtManager != null) 
-        {
+        { 
             return districtManager;
         }  else 
         {
@@ -5301,42 +5268,40 @@ opp.StageName = 'Closed';
     public static void applyDefaultPlanningPath(List<Opportunity> newOpps) {
         Set<Id> accountIds = new Set<Id>();
         Set<Id> templateIds = new Set<Id>();
+        Id fixedSiteRecTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Fixed_Site_Opp').getRecordTypeId();  
 
         // 1. Collect Parent IDs from the new Opportunities
         for(Opportunity opp : newOpps) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId) continue;
 
-            if(opp.AccountId != null) {
+            if(opp.Is_Template__c && opp.AccountId != null) {
                 accountIds.add(opp.AccountId);
             }
-            if(opp.Parent_Template_Id__c != null) {
+            if(!opp.Is_Template__c && opp.Parent_Template_Id__c != null) {
                 templateIds.add(opp.Parent_Template_Id__c);
             }
         }
 
+        Boolean isAutomatedProcessUser = UserInfo.getName() == BSF_Constants.AUTOMATED_PROCESS;
+        String userModeClause = isAutomatedProcessUser ? '' : ' WITH USER_MODE';
+        String accountBaseQuery = accountIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Account WHERE Id IN :accountIds' + userModeClause;
+        String templateBaseQuery = templateIds.isEmpty() ? '' : 'SELECT Id, Planning_Path__c FROM Opportunity WHERE Id IN :templateIds' + userModeClause;
+
         // 2. Query Parent Account Settings
         Map<Id, Account> accountMap = new Map<Id, Account>();
-        if(!accountIds.isEmpty()) {
-            accountMap = new Map<Id, Account>([
-                SELECT Id, Planning_Path__c 
-                FROM Account 
-                WHERE Id IN :accountIds                
-            ]);
+        if(String.isNotBlank(accountBaseQuery)) {
+            accountMap = new Map<Id, Account>((List<Account>)Database.query(accountBaseQuery));
         }
 
         // 3. Query Parent Template Settings
         Map<Id, Opportunity> templateMap = new Map<Id, Opportunity>();
-        if(!templateIds.isEmpty()) {
-            templateMap = new Map<Id, Opportunity>([
-                SELECT Id, Planning_Path__c 
-                FROM Opportunity 
-                WHERE Id IN :templateIds                
-            ]);
+        if(String.isNotBlank(templateBaseQuery)) {
+            templateMap = new Map<Id, Opportunity>((List<Opportunity>)Database.query(templateBaseQuery));
         }
 
         // 4. Assign Values based on Hierarchy
         for(Opportunity opp : newOpps) {
-            if(opp.Type_of_Drive__c.equalsIgnoreCase(BSF_Constants.FIXED_SITE_DRIVE)) continue;
+            if(opp.RecordTypeId == fixedSiteRecTypeId) continue;
             
             // Only apply logic if the user hasn't manually selected a path during creation
             if(opp.Planning_Path__c == null) {
