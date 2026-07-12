@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_WD_Import_Blocks_URL__c</fullName>
+    <description>Optional override for Import Time Blocks endpoint. If blank, use Time_Tracking.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Workday Import Time Blocks Endpoint</label>
+    <required>false</required>
+    <type>Url</type>
+</CustomField>

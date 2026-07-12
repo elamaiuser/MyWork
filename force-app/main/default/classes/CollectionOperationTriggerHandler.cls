@@ -1,7 +1,7 @@
 /**
  * @description: Handler class for Biomed_Collection_Op_Center__c trigger
 **/
-public with sharing class CollectionOperationTriggerHandler extends TriggerHandler{
+public without sharing class CollectionOperationTriggerHandler extends TriggerHandler{
 
     public override void afterInsert(){
         if(super.getTriggerMethodsToBypass().indexOf('updateUserCollectionOpPicklist') == -1) {

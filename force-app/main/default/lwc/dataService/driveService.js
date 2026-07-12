@@ -518,6 +518,8 @@ class driveService extends dataService {
 
     dispatchDrives = (params) => auraProxy.getInstance().dispatchDrives(params);
     captureDriveImpact = (params) => auraProxy.getInstance().captureDriveImpact(params);
+    getImpactedDrives = (params) => auraProxy.getInstance().getImpactedDrives(params);
+    applyVehicleReplacement = (params) => auraProxy.getInstance().applyVehicleReplacement(params);
     searchDriveSite = (params) => auraProxy.getInstance().searchDriveSite(params);
     getTerritoryKeys = (params) => auraProxy.getInstance().getTerritoryKeys(params);
     validateDraftDrive = (params) => auraProxy.getInstance().validateDraftDrive(params);

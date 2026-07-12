@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_12478_Field_Permission_Set_EDIT</members>
+		<members>BSF_Access_Control_Rule.HRP_12478_Field_Permission_Set_Read</members>
+		<name>CustomMetadata</name>
+	</types>
+	<version>66.0</version>
+</Package>

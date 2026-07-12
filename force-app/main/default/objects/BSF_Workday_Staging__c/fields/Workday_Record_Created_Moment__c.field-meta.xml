@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workday_Record_Created_Moment__c</fullName>
+    <description>Stores the Created_Moment field returned by Workday.
+This field represents when the Real ID record was initially created in Workday.
+
+Used for audit purposes and troubleshooting.</description>
+    <label>Workday Record Created Moment</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

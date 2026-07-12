@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Shadow_Drive_Shift__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <externalId>false</externalId>
     <label>Shadow Drive Shift</label>
     <referenceTo>sked_Shadow_Drive_Shift__c</referenceTo>
     <relationshipLabel>Drive Shifts</relationshipLabel>
