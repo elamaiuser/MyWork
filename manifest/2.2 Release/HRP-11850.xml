@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Opportunity.Calendar_Build_Reasons_For_Unqualified__c</members>
+        <members>Opportunity.Calendar_Build_Alert_Reviewed__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Opportunity-APS Planner Mobile Opp Layout</members>
+        <members>Opportunity-APS Scheduler Mobile Opp Layout</members>
+        <members>Opportunity-DRD Mobile Opp Layout</members>
+        <members>Opportunity-Mobile Opp Layout</members>
+        <members>Opportunity-Sponsor Marketing Mobile Opp Layout</members>
+        <members>Opportunity-APS Planner Fixed Site Opp Layout</members>
+        <members>Opportunity-APS Scheduler Fixed Site Opp Layout</members>
+        <members>Opportunity-DRD Fixed Site Opp Layout</members>
+        <members>Opportunity-Fixed Site Opp APS Layout</members>
+        <members>Opportunity-Fixed Site Opp Non-APS Layout</members>
+        <members>Opportunity-Sponsor Marketing Fixed Site Opp Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>BSF_Utilities</members>
+        <members>BSF_UtilitiesTest</members>
+        <members>CalendarBuildBatchHandler</members>
+        <members>CalendarBuildEvaluateDrivesBatch_Test</members>
+        <members>GenerateMobileDrive</members>
+        <members>GenerateMobileDriveTest</members>
+        <members>MobileDriveGeneratorDMLService</members>
+        <members>OpportunityService</members>
+        <members>OpportunityTriggerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>62.0</version>
+</Package>

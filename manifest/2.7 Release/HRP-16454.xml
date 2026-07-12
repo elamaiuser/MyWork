@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Opportunity.Parent_Template_Id__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Opportunity.Account_Internal_Name_Requirement</members>
+		<members>Opportunity.Cancellation_Reason_Required</members>
+		<name>ValidationRule</name>
+	</types>
+	<version>66.0</version>
+</Package>
