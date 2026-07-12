@@ -233,7 +233,7 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
   'lunchBreak': {
     groups: [
       { actions: [] },
-      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
+      { actions: ['updateLunchBreakSettings', 'populateLunchBreakTime', 'populateShiftTime', 'populateDriveTime', 'recalculateVphhQuantity', 'updateDriveStaffCapacity', 'updateDriveAverageStaffCapacity', 'updateDriveMaxRoleCapacity', 'updateDriveExcessStaffCapacity', 'generateShiftSlots', 'updateDriveTotalSlots'] },
     ]
   },
   'lunchBreakBeforeDrawHours': {
@@ -249,17 +249,19 @@ const DRIVE_SHIFT_FIELD_CHANGE_MAPPING = {
             $this.moveLunchBreakToBeforeDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
             $this.updateDriveExcessStaffCapacity();
             $this.generateShiftSlots(driveShift);
-            $this.updateDriveTotalSlots()
+            $this.updateDriveTotalSlots();
           }
           else {
             $this.moveLunchBreakToDuringDrawHours(driveShift);
             $this.populateShiftTime(driveShift);
             $this.populateDriveTime();
+            $this.recalculateVphhQuantity(driveShift);
             $this.updateDriveStaffCapacity();
             $this.updateDriveAverageStaffCapacity();
             $this.updateDriveMaxRoleCapacity();
@@ -617,17 +619,24 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
         return Promise.all([
           driveLimitSvc.query(driveLimitQuery),
-          staffingConstraintSvc.query(staffingConstraintQuery)
+          staffingConstraintSvc.query(staffingConstraintQuery),
+          this.helper.getAvailableAssets([], this.drive),
+          this.helper.getLockedStaffAvailability(this.drive)
         ]);
       })
-      .then(([driveLimitResult, staffingConstraintResult]) => {
+      .then(([driveLimitResult, staffingConstraintResult, availableAssetsInfo, staffPossibleAllocations]) => {
+        availableAssetsInfo.possibleAllocations = (availableAssetsInfo.possibleAllocations || []).concat(staffPossibleAllocations);
         let {
           passed,
           pendingActionReasonCodes
         } = this.helper.validateDrive(this.drive, {
           ...this.masterData,
           driveLimits: driveLimitResult,
-          staffingConstraints: staffingConstraintResult
+          staffingConstraints: staffingConstraintResult,
+          availableAssetsInfo,
+          availabilityData: {
+            possibleAllocations: availableAssetsInfo.possibleAllocations || []
+          }
         }, [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -642,6 +651,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
           DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
           DRIVE_CONTENTION.DUAL_ROLE_REMOVAL,
           DRIVE_CONTENTION.STAFFING_COMPLEMENT_CHANGED,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE,
           DRIVE_CONTENTION.EXCESS_STAFF_CAPACITY
         ])
 

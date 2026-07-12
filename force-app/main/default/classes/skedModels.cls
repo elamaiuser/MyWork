@@ -252,12 +252,18 @@ global class skedModels {
         public string biddingType;
         public List<staffingBudgetAvailability> staffingBudgetAvailabilities;
         public List<exceptionLog> exceptionLogs;
+        public string timeOffPlan;
         public string timeOffReasonCode;
         public decimal noOfRequestedHours; // HRP-13861 Eric Keating
+        public string parentCalloutType;//HRP-16778 -v2
         public string workdaySyncMessage;
         public string workdaySyncStatus;
         
         public transient Date availabilityDate;
+
+        public string timeConflictMessage; // HRP-13613
+        public decimal dailyTimeOffHoursMax; // HRP-13613
+        public boolean isAllDayLeaveAvailable = true; // HRP-13613
     }
     
     global virtual class availabilityCapacitySetting extends modelBase {
@@ -419,6 +425,7 @@ global class skedModels {
         public decimal dailyTimeOffHours;
         public string districtName;
         public string effectiveDate;
+        public string futureInactiveDate;
         public string email;
         public string employmentStatus;
         public string employmentType;

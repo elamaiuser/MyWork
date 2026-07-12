@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>55.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_AM_Task_Fields1</name>
         <label>Assign AM Task Fields</label>
@@ -46,6 +47,13 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Post Drive Analysis AM</stringValue>
             </value>
         </assignmentItems>
         <connector>
@@ -99,6 +107,13 @@
                 <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_AM_Task.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Post Drive Analysis AM</stringValue>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Assign_SBPM_Task_Fields2</targetReference>
         </connector>
@@ -150,6 +165,13 @@
                 <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Post Drive Analysis SBPM</stringValue>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Post_Drive_Analysis_SBPM_Task_Creation1</targetReference>
         </connector>
@@ -199,6 +221,13 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Opportunity.Drive_Date__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Post_Drive_Analysis_SBPM_task.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Post Drive Analysis SBPM</stringValue>
             </value>
         </assignmentItems>
         <connector>
@@ -264,7 +293,7 @@
             <label>SBPM task Not present</label>
         </rules>
     </decisions>
-    <description>HRP-13426</description>
+    <description>HRP-16122</description>
     <environments>Default</environments>
     <formulas>
         <description>Assign the task to the opp&apos;s account manager if present. Else it will go straight to the opportunity owner</description>
@@ -478,7 +507,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>SubjectTask1</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
@@ -487,7 +516,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <textTemplates>
         <name>SubjectTask2</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>Post Drive Analysis SBPM</text>
+        <text>Post Drive Analysis / Future Drive Planning SBPM</text>
     </textTemplates>
     <variables>
         <name>New_Post_Drive_Analysis_AM_Task</name>

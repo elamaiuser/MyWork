@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Endpoint__c</field>
-        <value xsi:type="xsd:string">https://services1.myworkday.com/ccx/service/customreport2/americanredcross/Skedulo%20ISU/Web_Services_Time_Off_Balances_Skedulo?As_Of=%EFFECTIVE_DATE%-00:00&amp;Worker!Employee_ID=%EMPLOYEE_ID%</value>
+        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross5/Skedulo%20ISU/Web_Services_Time_Off_Balances_Skedulo?As_Of=%EFFECTIVE_DATE%-00:00&amp;Worker!Employee_ID=%EMPLOYEE_ID%</value>
     </values>
     <values>
         <field>sked_Namespace__c</field>
