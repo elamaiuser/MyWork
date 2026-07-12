@@ -159,7 +159,7 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Shadow Drive Shifts</pluralLabel>
-    <searchLayouts />
+    <searchLayouts></searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

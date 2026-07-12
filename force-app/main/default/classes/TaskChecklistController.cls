@@ -24,7 +24,12 @@ public with sharing class TaskChecklistController {
                 taskSubjectList.add(objPickList.getValue());
             }
             if(sObjName.equalsIgnoreCase('Opportunity')){
-                taskType = BSF_Constants.RECRUITMENT_PLANNING_TASK;
+                for(Task_Definition__c taskDef : [SELECT Name
+                                                FROM Task_Definition__c
+                                                WHERE Task_Type__c = :BSF_Constants.TASK_TYPE_RECRUITMENT_STRATEGY_MEETING
+                                                AND Name != null]){
+                    taskType = taskDef.Name;
+                }
                 isOpportunity = true;
                 oppId = recordId;
                 String taskFilter = '';
@@ -147,29 +152,31 @@ public with sharing class TaskChecklistController {
             }
             System.debug('taskChecklistMstr==> '+taskChecklistMstr);
             for (Task_Checklist_Setting__mdt checklist : taskChecklistMdt) {
-                if (taskChecklistMstr.containsKey(checklist.Unique_Name__c)) {
-                    Set<String> inputFields = taskChecklistMstr.get(checklist.Unique_Name__c).inputs.keySet();
-                    System.debug('checklist.Unique_Name__c==> '+checklist.Unique_Name__c);
-                    taskChecklistMstr.get(checklist.Unique_Name__c).recordId = taskChecklistRecordMap.get(checklist.Unique_Name__c).Id;
-                    System.debug('checklist.Unique_Name__c==> '+checklist.Unique_Name__c);
+                CheckListWrapper currentWrapper = taskChecklistMstr.get(checklist.Unique_Name__c);
+                BSF_Task_Checklist__c currentRecord = taskChecklistRecordMap.get(checklist.Unique_Name__c);
+                System.debug('checklist.Unique_Name__c==> '+checklist.Unique_Name__c);
+                if (currentRecord != null && currentWrapper.inputs != null) {
+                    currentWrapper.recordId = currentRecord.Id;
+                    Set<String> inputFields = currentWrapper.inputs.keySet();
                     System.debug('inputFields==> '+inputFields);
                     for (String key : inputFields) {
-                        String inputType = taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).inputType;
-                        System.debug('inputType=> '+inputType);
-                        taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).recordId = taskChecklistRecordMap.get(checklist.Unique_Name__c).Id;
-                        taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).inputAPIName = key;
-                        taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).value = taskChecklistRecordMap.get(checklist.Unique_Name__c).get(key);
-                        System.debug('Input Value=> '+taskChecklistRecordMap.get(checklist.Unique_Name__c).get(key));
-                        if (inputType.equalsIgnoreCase('Checkbox')) {
-                            taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).isCheckbox = true;
-                        } else if (inputType.equalsIgnoreCase('Text')) {
-                            taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).isTextInput = true;
-                        } else if (inputType.equalsIgnoreCase('Number')) {
-                            taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).isNumber = true;
-                        } else if (inputType.equalsIgnoreCase('Picklist')) {
-                            taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).isPicklist = true;
-                        } else if (inputType.equalsIgnoreCase('TextArea')) {
-                            taskChecklistMstr.get(checklist.Unique_Name__c).inputs.get(key).isTextArea = true;
+                        InputWrapper currentInput = currentWrapper.inputs.get(key);
+                        String inputType = currentInput.inputType;
+                        
+                        currentInput.recordId = currentRecord.Id;
+                        currentInput.inputAPIName = key;
+                        currentInput.value = currentRecord.get(key);
+                        
+                        if ('Checkbox'.equalsIgnoreCase(inputType)) {
+                            currentInput.isCheckbox = true;
+                        } else if ('Text'.equalsIgnoreCase(inputType)) {
+                            currentInput.isTextInput = true;
+                        } else if ('Number'.equalsIgnoreCase(inputType)) {
+                            currentInput.isNumber = true;
+                        } else if ('Picklist'.equalsIgnoreCase(inputType)) {
+                            currentInput.isPicklist = true;
+                        } else if ('TextArea'.equalsIgnoreCase(inputType)) {
+                            currentInput.isTextArea = true;
                         }
                     }
                 } else {
@@ -205,7 +212,7 @@ public with sharing class TaskChecklistController {
     
     private static String metadataQuery(){
         String createQuery = '';
-        createQuery += 'SELECT ' + getAllFields('Task_Checklist_Setting__mdt') + ' FROM Task_Checklist_Setting__mdt WHERE Subject__c = :taskType';
+        createQuery += 'SELECT ' + getAllFields('Task_Checklist_Setting__mdt') + ' FROM Task_Checklist_Setting__mdt WHERE Subject__c = :taskType AND MasterLabel != \'AllowedProfileList\'';
         return createQuery;
     }
     
@@ -237,10 +244,12 @@ public with sharing class TaskChecklistController {
     public static Boolean checkEditAccess() {
         Boolean hasEditAccess = false;
         Id profileId= userinfo.getProfileId();
-        String profileName=[Select Id,Name from Profile where Id=:profileId].Name;
-        Task_Checklist_Setting__mdt taskChecklistMdt = [SELECT Id, MasterLabel, UI_Text__c FROM Task_Checklist_Setting__mdt WHERE MasterLabel='AllowedProfileList' LIMIT 1];
-        if(taskChecklistMdt.UI_Text__c!=null)
-            hasEditAccess = taskChecklistMdt.UI_Text__c.split(';').contains(profileName);
+        List<Profile> profiles = [SELECT Id, Name FROM Profile WHERE Id = :profileId LIMIT 1];
+        String profileName = !profiles.isEmpty() ? profiles[0].Name : '';
+        List<Task_Checklist_Setting__mdt> taskChecklistMdtList = [SELECT Id, MasterLabel, UI_Text__c FROM Task_Checklist_Setting__mdt WHERE MasterLabel='AllowedProfileList' LIMIT 1];
+        if(!taskChecklistMdtList.isEmpty() && String.isNotBlank(taskChecklistMdtList[0].UI_Text__c)){
+            hasEditAccess = taskChecklistMdtList[0].UI_Text__c.split(';').contains(profileName);
+        }
         System.debug('hasEditAccess=> '+hasEditAccess);
         return hasEditAccess;
     }

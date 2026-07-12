@@ -38,6 +38,7 @@ public class skedWorkdayTimeTrackingBsvc {
 		public Boolean Do_Not_Bill;
 		public Decimal Override_Rate;
 		public String Comment;
+		public String Custom_Worktag_01_Reference;
 		private transient String[] Worker_Reference_type_info = new String[]{'Worker_Reference',s_ns0,'WorkerObjectType','1','1','false'};
 		// private transient String[] Worker_Time_Block_Reference_type_info = new String[]{'Worker_Time_Block_Reference',s_ns0,'Worker_Time_BlockObjectType','0','1','false'};
 		private transient String[] Delete_Time_Block_type_info = new String[]{'Delete_Time_Block',s_ns0,'boolean','0','1','false'};
@@ -50,8 +51,9 @@ public class skedWorkdayTimeTrackingBsvc {
 		private transient String[] Do_Not_Bill_type_info = new String[]{'Do_Not_Bill',s_ns0,'boolean','0','1','false'};
 		private transient String[] Override_Rate_type_info = new String[]{'Override_Rate',s_ns0,'','0','1','false'};
 		private transient String[] Comment_type_info = new String[]{'Comment',s_ns0,'string','0','1','false'};
+		private transient String[] Custom_Worktag_01_Reference_type_info = new String[]{'Custom_Worktag_01_Reference',s_ns0,'string','0','1','false'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
-		private transient String[] field_order_type_info = new String[]{'Worker_Reference',/*'Worker_Time_Block_Reference',*/'Delete_Time_Block','Time_Entry_Code_Reference','Date_x','Quantity','In_Date_Time','Out_Date_Time'/*,'Out_Reason_Reference'*/,'Do_Not_Bill','Override_Rate','Comment'};
+		private transient String[] field_order_type_info = new String[]{'Worker_Reference',/*'Worker_Time_Block_Reference',*/'Delete_Time_Block','Time_Entry_Code_Reference','Date_x','Quantity','In_Date_Time','Out_Date_Time'/*,'Out_Reason_Reference'*/,'Do_Not_Bill','Override_Rate','Comment','Custom_Worktag_01_Reference'};
 		public Reported_Time_Block_DataType(){
 		}
 		public void populateXmlNode(Dom.XmlNode outerNode){
@@ -113,6 +115,17 @@ public class skedWorkdayTimeTrackingBsvc {
 			if (this.Comment != null) {
 				Dom.XmlNode CommentNode = outerNode.addChildElement('Comment', 'urn:com.workday/bsvc', '');
 				CommentNode.addTextNode((this.Comment == null) ? '' : this.Comment);
+			}
+
+			if (this.Custom_Worktag_01_Reference != null) {
+				// Emit Workday-style Custom_Worktag_01_Reference with nested ID element.
+				// <Custom_Worktag_01_Reference>
+				//   <bsvc:ID bsvc:type="Custom_Worktag_1_ID">30 Min Deduct</bsvc:ID>
+				// </Custom_Worktag_01_Reference>
+				Dom.XmlNode customWorktagNode = outerNode.addChildElement('Custom_Worktag_01_Reference', s_ns0, '');
+				Dom.XmlNode idNode = customWorktagNode.addChildElement('ID', s_ns0, '');
+				idNode.setAttribute('bsvc:type', 'Custom_Worktag_1_ID');
+				idNode.addTextNode(this.Custom_Worktag_01_Reference);
 			}
 		}
 	}

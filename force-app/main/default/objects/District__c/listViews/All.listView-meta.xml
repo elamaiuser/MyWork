@@ -6,10 +6,5 @@
     <columns>Donor_Services_Region__c</columns>
     <columns>OBJECT_ID</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>NAME</field>
-        <operation>contains</operation>
-        <value>buffalo</value>
-    </filters>
     <label>All</label>
 </ListView>

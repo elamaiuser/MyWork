@@ -7,12 +7,16 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">If possible. Or, if a must have, print the appointment schedule as close to the drive start time as possible.</value>
     </values>
     <values>
         <field>Hyperlink__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Input_API_Name__c</field>
@@ -32,11 +36,11 @@
     </values>
     <values>
         <field>Parent__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Picklist_Input_1__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Section_Header__c</field>
@@ -44,15 +48,15 @@
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">72 Hour Check-In</value>
+        <value xsi:type="xsd:string">72-Hour Check-in</value>
     </values>
     <values>
         <field>Subtype__c</field>
-        <value xsi:nil="true" />
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>UI_Text__c</field>
-        <value xsi:type="xsd:string">Request BPL connect to the &#39;live&#39; schedule on a personal electronic device.</value>
+        <value xsi:type="xsd:string">Request BPL connect to the &apos;live&apos; schedule on a personal electronic device.</value>
     </values>
     <values>
         <field>Unique_Name__c</field>

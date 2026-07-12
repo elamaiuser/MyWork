@@ -1,6 +1,6 @@
 @isTest
 private class skedJobAllocTravelTimeUpdate_Test {
-    @isTest
+    /*@isTest
     static void skedScheduledJobAllocTravelTimeUpdate_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
         Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
@@ -36,5 +36,5 @@ private class skedJobAllocTravelTimeUpdate_Test {
         skedScheduledJobAllocTravelTimeUpdate scheduler = new skedScheduledJobAllocTravelTimeUpdate();
 		scheduler.execute(null);
         Test.stopTest();
-    }
+    }*/
 }

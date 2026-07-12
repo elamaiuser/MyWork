@@ -361,16 +361,24 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>ColumnName</name>
-                    <value>Blood Drive,Team Member,Role,Start Date,End Date</value>
+                    <name>childObjectName</name>
+                    <value>Team_Member_History__c</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>SOQLQuery</name>
-                    <value>SELECT Opportunity_Name__c,User_Name__c,Role__c,Start_Date__c,End_Date__c FROM Team_Member_History__c WHERE Blood_Drive_Opportunity__c  IN:</value>
+                    <name>columnName</name>
+                    <value>Blood Drive,Team Member,Role,Start Date,End Date</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Opportunity_Name__c,User_Name__c,Role__c,Start_Date__c,End_Date__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>Blood_Drive_Opportunity__c</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -380,11 +388,8 @@
                     <name>iconName</name>
                     <value>standard:opportunity</value>
                 </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>recordButton</name>
-                </componentInstanceProperties>
-                <componentName>GenericRelatedList</componentName>
-                <identifier>GenericRelatedList</identifier>
+                <componentName>genericRelatedListLWC</componentName>
+                <identifier>c_genericRelatedListLWC</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-c810a114-a4b0-4df2-900f-950892b9d017</name>
