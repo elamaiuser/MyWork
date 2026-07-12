@@ -2,11 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Parent_Template_Id__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <externalId>false</externalId>
     <label>Parent Template Id</label>
     <lookupFilter>
         <active>true</active>
-        <booleanFilter>1 AND 2 AND 6 AND (3 OR 4 OR 5)</booleanFilter>
+        <booleanFilter>(1 AND 2 AND 6 AND 3) OR 4 OR 5</booleanFilter>
         <errorMessage>Only Templates related to the same Account are eligible and related site must be active</errorMessage>
         <filterItems>
             <field>Opportunity.AccountId</field>

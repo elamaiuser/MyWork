@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>sked_Opt_Parm_Geo_Prefer__c</fullName>
     <description>HRP-12511: Optimization Run Stats Field</description>
-    <externalId>false</externalId>
     <label>Geographic Preferences (Optimizer Stats)</label>
     <required>false</required>
     <trackHistory>false</trackHistory>

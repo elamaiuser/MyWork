@@ -107,11 +107,29 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type from Task where Status != &apos;Completed&apos; AND (OwnerId in:</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>additionalFilter</name>
+                    <value>Status != &apos;Completed&apos;</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>childObjectName</name>
+                    <value>Task</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
                     <value>Custom Date Format</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldsApiNames</name>
+                    <value>Subject,ActivityDate,Related_Record_Link__c,Account_Link__c,Type</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fieldwithOrderBy</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>filterFieldApiName</name>
+                    <value>OwnerId</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>headerName</name>
@@ -134,7 +152,7 @@
                     <value>Edit,Delete</value>
                 </componentInstanceProperties>
                 <componentName>GenericRelatedListContainer</componentName>
-                <identifier>c_GenericRelatedListContainer</identifier>
+                <identifier>c_GenericRelatedListContainer1</identifier>
             </componentInstance>
         </itemInstances>
         <name>bottomRight</name>

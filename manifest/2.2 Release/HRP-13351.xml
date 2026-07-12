@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>AccountTeamMemberHelper</members>
+		<members>AccountTeamMemberService</members>
+		<members>BatchAccountsMilitaryMoAUploadedFiles</members>
+		<members>BatchAcctsMilitaryMoAUploadedFiles_Test</members>
+		<members>BSF_Constants</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>ARCFileContentTypeMatrix.Military_MoA_Local</members>
+		<members>Custom_Notification_Setting.RenewMilitaryMoA</members>
+		<members>Task_Reassignment_Matrix.Renew_Military_MoA</members>		
+		<name>CustomMetadata</name>
+	</types>
+	<version>63.0</version>
+</Package>

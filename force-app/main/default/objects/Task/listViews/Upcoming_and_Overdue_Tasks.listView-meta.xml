@@ -6,8 +6,8 @@
     <columns>Account_Name__c</columns>
     <columns>DUE_DATE</columns>
     <columns>STATUS</columns>
-    <columns>Status_Visual__c</columns>
     <columns>PRIORITY</columns>
+    <columns>Status_Visual__c</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>

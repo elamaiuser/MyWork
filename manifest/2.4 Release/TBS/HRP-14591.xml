@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>skedActivityResourceHandler</members>
+		<members>skedConstants</members>
+		<members>skedExceptionLogService</members>
+		<members>skedRacController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>skedHC__Exception__c.sked_Exception_Code__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>autoMapper</members>
+		<members>dataService</members>
+		<members>slwcDriveSchedulingFilters</members>
+		<members>slwcExceptionConsole</members>
+		<members>slwcExceptionList</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>60.0</version>
+</Package>

@@ -1,0 +1,50 @@
+<template>
+  <lightning-modal-header label="Confirm Vehicle Replacement"></lightning-modal-header>
+  <lightning-modal-body>
+    <dl class="slds-dl_horizontal slds-m-bottom_small">
+      <dt class="slds-dl_horizontal__label">Current Vehicle:</dt>
+      <dd class="slds-dl_horizontal__detail">{currentVehicle.name}</dd>
+      <dt class="slds-dl_horizontal__label">Replacement Vehicle:</dt>
+      <dd class="slds-dl_horizontal__detail">{replacementVehicle.name}</dd>
+    </dl>
+    <p class="slds-m-bottom_small slds-text-body_regular">
+      Applying replacement to <strong>{driveCount}</strong> selected drives.
+    </p>
+    <div class="slds-scrollable_y" style="max-height:400px;">
+      <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" role="grid">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th scope="col"><div class="slds-truncate">Drive Name</div></th>
+            <th scope="col"><div class="slds-truncate">Date</div></th>
+            <th scope="col"><div class="slds-truncate">Acknowledged Contentions</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={enrichedDrives} for:item="drive">
+            <tr key={drive.id}>
+              <td><div class="slds-truncate" title={drive.name}>{drive.name}</div></td>
+              <td><div class="slds-truncate">{drive.driveDateDisplay}</div></td>
+              <td>
+                <template if:true={drive.hasContentions}>
+                  <span class="slds-text-body_small slds-text-color_weak">{drive.selectedResolution}</span>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </lightning-modal-body>
+  <lightning-modal-footer>
+    <lightning-button
+      label="Cancel"
+      onclick={handleCancel}
+      class="slds-m-right_x-small">
+    </lightning-button>
+    <lightning-button
+      label="Confirm"
+      variant="brand"
+      onclick={handleConfirm}>
+    </lightning-button>
+  </lightning-modal-footer>
+</template>
