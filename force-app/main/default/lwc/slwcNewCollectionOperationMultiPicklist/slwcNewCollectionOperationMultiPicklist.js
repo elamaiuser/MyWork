@@ -23,6 +23,18 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
   @api dropdownPosition = 'left';
   @api timeBlockEnabled;
   @api sharedTimeBlockDisabled = false;
+  @api
+  get autoSelectTimeBlocks() {
+    return this._autoSelectTimeBlocks;
+  }
+  set autoSelectTimeBlocks(value) {
+    const changed = this._autoSelectTimeBlocks !== value;
+    this._autoSelectTimeBlocks = value;
+    if (changed && value && this.timeBlockEnabled && this.collectionOperationPicklistState.selectedTerritoryCollectionOperations?.length) {
+      this.refreshTimeBlockData();
+    }
+  }
+  _autoSelectTimeBlocks = false;
 
   @track _defaultValues = {
     divisions: [],
@@ -452,12 +464,11 @@ export default class SlwcNewCollectionOperationMultiPicklist extends LightningEl
 
     const timeBlocks = Array.from(mapTimeBlockById.values());
     const availableTimeBlockIds = timeBlocks?.map(tb => tb.id);
-    let selectedTimeBlockIds = [];
-    this.timeBlockState.selectedTimeBlocks?.forEach(selectedTb => {
-      if (availableTimeBlockIds.includes(selectedTb.value)) {
-        selectedTimeBlockIds.push(selectedTb.value);
-      }
-    });
+    const selectedTimeBlockIds = this.autoSelectTimeBlocks
+      ? [...availableTimeBlockIds]
+      : (this.timeBlockState.selectedTimeBlocks ?? [])
+          .filter(tb => availableTimeBlockIds.includes(tb.value))
+          .map(tb => tb.value);
 
     let timeBlockOptions = [];
     let selectedTimeBlocks = [];

@@ -473,7 +473,9 @@ class DriveHelper {
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
           vphhQuantity: job.vphhQuantity || 0,
-          dualRole: job.dualRole
+          dualRole: job.dualRole,
+          isManuallyCreated: job.isManuallyCreated,
+          manuallyCreatedFrom: job.manuallyCreatedFrom
         });
       }
     })
@@ -1904,6 +1906,7 @@ class DriveHelper {
 
   calculateStaffCapacity(resourceRoles = [], drive, driveShiftMetadata, mapResourceQuantity, {
     staffingDecisionMatrix,
+    adminSetting,
     timezoneSidId 
   }, { ignoreLunchBreak = false, useDriveShift = false } = {}) {
     const resourceRoleCapacityFieldMap = {
@@ -1953,16 +1956,28 @@ class DriveHelper {
       const data = resourceQuantity.get(resourceRole);
       let noOfResources = data || 0;
       let dualRole = null;
+      let isManuallyCreated = false;
+      let manuallyCreatedFrom = null;
       if(isObject(data)) {
         noOfResources = data.quantity || 0;
         if (resourceRole === 'VP/HH') {
           noOfResources = data.vphhQuantity || 0;
         }
         dualRole = data.dualRole;
+        isManuallyCreated = data.isManuallyCreated;
+        manuallyCreatedFrom = data.manuallyCreatedFrom;
       }
 
       let role = resourceRole.split('-')[0];
       let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[role]] || 0;
+  
+      if(role === 'Driver Support' && 
+        roleCapacity <= 0 && 
+        isManuallyCreated && 
+        manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL
+      ) {
+        roleCapacity = adminSetting?.adhocDriverSupportCapacity || 0;
+      }
 
       if(resourceRoles.includes(role)) {
         if(role === RESOURCE_ROLE.x2RBC) {
@@ -4261,7 +4276,11 @@ class DriveHelper {
   }
 
   isRoleHoldCapacity(resourceRole, {
+    isManuallyCreated,
+    manuallyCreatedFrom
+   }, {
     staffingDecisionMatrix,
+    adminSetting
   }) {
     if(!resourceRole) return false;
     
@@ -4273,7 +4292,15 @@ class DriveHelper {
       'VP/HH': 'vpHhCapacity'
     }
 
-    const roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+    let roleCapacity = staffingDecisionMatrix[resourceRoleCapacityFieldMap[resourceRole]] || 0;
+
+    if(resourceRole === 'Driver Support' && 
+      roleCapacity <= 0 && 
+      isManuallyCreated && 
+      manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL
+    ) {
+      roleCapacity = adminSetting?.adhocDriverSupportCapacity || 0;
+    }
     return roleCapacity > 0;
   }
 

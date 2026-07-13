@@ -257,7 +257,8 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c
+                                                sked_Bag_Type__c,
+                                                LTOWB_Proj__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
@@ -313,7 +314,8 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c
+                                                sked_Bag_Type__c,
+                                                LTOWB_Proj__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
@@ -360,7 +362,8 @@ public without sharing class BSFStagingSheetController {
                                         sked_Type__c,
                                         (SELECT Id,
                                                 sked_Quantity__c,												//Added for HRP-16909
-                                                sked_Bag_Type__c
+                                                sked_Bag_Type__c,
+                                                LTOWB_Proj__c
                                         FROM sked_Drive_Bags__r)
                                 FROM sked_Drive_Delivery_Jobs__r
                                 WHERE sked_Type__c IN ('Pick Up','VOL Pick Up','Bag'))
@@ -590,6 +593,10 @@ public without sharing class BSFStagingSheetController {
 									}									
                                     bagtypes.add(bagtypewithQty);
                                     //End: Added for HRP-16909
+                                    if(drvbag.sked_Bag_Type__c.equalsIgnoreCase('IM Terumo Imuflex WB') && drvbag.LTOWB_Proj__c != null && drvbag.LTOWB_Proj__c > 0){
+                                        String currentProj = String.valueOf(drvbag.LTOWB_Proj__c);
+                                        data.ltowbproj = String.isNotBlank(data.ltowbproj) ? data.ltowbproj + ', ' + currentProj : currentProj;
+                                    }
                                 }
                             }
                         }
@@ -841,6 +848,7 @@ public without sharing class BSFStagingSheetController {
         public String donorcapacity {get; set;}
         public String wbproj {get; set;}
         public String drcproj {get; set;}
+        public String ltowbproj {get; set;}
         public String shut {get; set;}
         public String veh {get; set;}
         public String hsdrive {get; set;}

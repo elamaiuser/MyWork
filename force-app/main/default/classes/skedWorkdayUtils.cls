@@ -197,7 +197,7 @@ public class skedWorkdayUtils implements Callable {
             if (!deletedRecord.sked_Integrate_With_Workday__c) continue;
             sked__Resource__c availabilityResource = resourceById.get(deletedRecord.sked__Resource__c);
             cancelledRecordDetails.recordIds.add(deletedRecord.Id);
-            cancelledRecordDetails.adjustmentValById.put(deletedRecord.Id, getWorkdayPtoHours(deletedRecord, availabilityResource)*-1);
+            cancelledRecordDetails.adjustmentValById.put(deletedRecord.Id, getWorkdayPtoHoursForCancelEdit(deletedRecord, availabilityResource)*-1);//HRP-16680
             cancelledRecordDetails.resourceIdByAvailId.put(deletedRecord.Id, deletedRecord.sked__Resource__c);
             cancelledRecordDetails.employeeIdByResourceId.put(deletedRecord.sked__resource__c, deletedRecord.sked_Employee_Id__c);
         }
@@ -214,7 +214,7 @@ public class skedWorkdayUtils implements Callable {
                 if (skedConstants.AVAILABILITY_APPROVED_STATUSES.contains(oldData.sked_Custom_Status__c) && newRecord.sked_Custom_Status__c == skedConstants.AVAILABILITY_STATUS_PROCESSING_CANCELLATION) {
                     sked__Resource__c availabilityResource = resourceById.get(newRecord.sked__Resource__c);
                     cancelledRecordDetails.recordIds.add(newRecord.Id);
-                    cancelledRecordDetails.adjustmentValById.put(newRecord.Id, getWorkdayPtoHours(newRecord, availabilityResource)*-1);
+                    cancelledRecordDetails.adjustmentValById.put(newRecord.Id, getWorkdayPtoHoursForCancelEdit(newRecord, availabilityResource)*-1);//HRP-16680
                     cancelledRecordDetails.resourceIdByAvailId.put(newRecord.Id, newRecord.sked__Resource__c);
                     cancelledRecordDetails.employeeIdByResourceId.put(newRecord.sked__Resource__c, newRecord.sked_Employee_Id__c);
                 }
@@ -245,11 +245,13 @@ public class skedWorkdayUtils implements Callable {
                         sked__Resource__c, sked__Is_Available__c, sked_Is_All_Day__c, sked_Duration__c,
                         sked__Type__c, sked__Resource__r.sked_Employee_Id__c, sked__Resource__r.Name,
                         sked__Resource__r.sked_Daily_Time_Off_Hours__c, sked__Finish__c, sked__Start__c,
-                        sked_Time_Off_Reason_Code__c, sked_Time_Off_Plan__c,sked_WID__c
+                        sked_Time_Off_Reason_Code__c, sked_Time_Off_Plan__c, sked_WID__c, sked_Related_Call_Out__c
                     FROM sked__Availability__c
                     WHERE Id IN :recordIds
                     AND sked_Workday_Sync_Status__c NOT IN :NON_SYNC_WORKDAY_STATUSES
                 ];
+
+                populateCalloutPtoReasonCodes(timeOffRequests); // HRP-16994
 
                 Map<Id, skedWorkdayEnterTimeOffResponse> resultById = new Map<Id, skedWorkdayEnterTimeOffResponse>();
                 for (sked__Availability__c timeOffRequest : timeOffRequests) {
@@ -311,6 +313,55 @@ public class skedWorkdayUtils implements Callable {
             sked__Debug_Log__c debugLog = skedTriggerUtils.prepareErrorLogEntry('Handle Workday Approvals', ex, recordIds);
             insert debugLog;
         }
+    }
+
+    // HRP-16994: callout-originated PTOs are created without a reason code (no UI step to resolve it).
+    // Resolve the worker/plan-specific unplanned Time_Off_Reason_ID here before syncing to Workday.
+    private static void populateCalloutPtoReasonCodes(List<sked__Availability__c> timeOffRequests) {
+        Map<String, String> reasonIdByKey = new Map<String, String>();
+        for (sked__Availability__c record : timeOffRequests) {
+            if (record.sked_Related_Call_Out__c != null && (String.isBlank(record.sked_Time_Off_Reason_Code__c) || record.sked_Time_Off_Reason_Code__c == 'Unplanned')) {
+                String timeOffType = getWorkdayTimeOffType(record);
+                String key = record.sked__Resource__c + '|' + timeOffType + '|' + String.valueOf(record.sked_Start_Date__c);
+                if (!reasonIdByKey.containsKey(key)) {
+                    reasonIdByKey.put(key, resolveUnplannedReasonId(
+                        record.sked__Resource__r.sked_Employee_Id__c, record.sked__Resource__c, record.sked_Start_Date__c, timeOffType));
+                }
+                record.sked_Time_Off_Reason_Code__c = reasonIdByKey.get(key);
+            }
+        }
+    }
+
+    private static String resolveUnplannedReasonId(String employeeId, Id resourceId, Date selectedDate, String timeOffType) {
+        skedWorkdayGetPlanBalanceRequest balanceRequest = new skedWorkdayGetPlanBalanceRequest();
+        balanceRequest.employeeId = employeeId;
+        balanceRequest.resourceId = resourceId;
+        balanceRequest.selectedDate = selectedDate;
+        balanceRequest.isCallOut = true;
+
+        String reasonId = null;
+        // skipLogging = true: avoid the inline debug-log DML so this callout can precede EnterTimeOff. HRP-16994
+        skedWorkdayGetPlanBalanceResponse balanceResponse = skedWorkdayApiManager.getTimeOffPlanBalances(balanceRequest, true);
+        if (balanceResponse != null && balanceResponse.timeOffPlansByLabel != null) {
+            // The Workday reasonId encodes the plan type, e.g. "Unplanned - PTO - 7 Day Lag - Time Off"
+            // or "Unplanned - Floating Holiday - Time Off". Match it to the availability's type rather than
+            // trusting plan bucketing, since both share the "Unplanned" descriptor.
+            String expectedPrefix = 'Unplanned - ' + timeOffType;
+            for (skedWorkdayGetPlanBalanceResponse.timeOffPlan plan : balanceResponse.timeOffPlansByLabel.values()) {
+                if (plan != null && plan.timeOffReasons != null) {
+                    for (skedWorkdayGetPlanBalanceResponse.timeOffReason reason : plan.timeOffReasons) {
+                        if (reason.reasonId != null && reason.reasonId.startsWithIgnoreCase(expectedPrefix)) {
+                            reasonId = reason.reasonId;
+                            break;
+                        }
+                    }
+                }
+                if (reasonId != null) {
+                    break;
+                }
+            }
+        }
+        return reasonId;
     }
 
     @future(Callout=true)
@@ -389,14 +440,19 @@ public class skedWorkdayUtils implements Callable {
 
     public static Decimal getWorkdayPtoHours(sked__Availability__c record, sked__Resource__c availabilityResource) {
         Decimal availDurationHours = skedDateTimeUtils.getDifferenceInHoursAndMinutes(record.sked__Start__c, record.sked__Finish__c);
-        // This rounds our result up to the next .25 hours, 6.3 => 6.5, 7.05 => 7.25, 8.95 => 9
-        availDurationHours = availDurationHours.divide(25, 2, System.RoundingMode.UP) * 25;
         Decimal ptoDurationHours = availabilityResource.sked_Daily_Time_Off_Hours__c;
         if (!record.sked_Is_All_Day__c && availDurationHours < ptoDurationHours) {
             ptoDurationHours = availDurationHours;
         }
+        return ptoDurationHours.setScale(2, System.RoundingMode.HALF_UP);
+    }
+
+    // HRP-16680 Begin
+    public static Decimal getWorkdayPtoHoursForCancelEdit(sked__Availability__c record, sked__Resource__c availabilityResource) {
+        Decimal ptoDurationHours = record.sked_Requested_Time_Off_Hours__c;
         return ptoDurationHours;
     }
+    // HRP-16680 End
 
     private static Decimal getAdjustmentValue(sked__Availability__c newRecord, sked__Availability__c oldRecord, sked__Resource__c availabilityResource) {
         Decimal oldDuration = getWorkdayPtoHours(oldRecord, availabilityResource);
