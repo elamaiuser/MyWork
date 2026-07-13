@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>Change</excludeButtons>
+    <excludeButtons>CreateContractFromOrder</excludeButtons>
+    <excludeButtons>DeepCloneAction</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -23,6 +27,10 @@
                 <behavior>Readonly</behavior>
                 <field>Account_Manager__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>AdditionalComments__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -30,20 +38,8 @@
                 <field>EffectiveDate</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>EndDate</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Order_Due_Date__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>BudgetCurrency__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>TotalAmount</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -56,25 +52,17 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Material_Recipient_Type__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Material_Recipient__c</field>
             </layoutItems>
             <layoutItems>
                 <emptySpace>true</emptySpace>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Local_Recruitment_Request__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Local_Recruitment_Request_Need_by_Date__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>DriveKeyword__c</field>
+            </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Comments__c</field>
@@ -94,25 +82,13 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Publicity_Approved_By__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Publicity_Approved_Date__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Publicity_Submitted__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Publicity_Submitted_By__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Publicity_Submitted_Date__c</field>
+                <field>Publicity_Approved_By__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -122,8 +98,8 @@
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
         <label>Description Information</label>
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -131,8 +107,8 @@
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
         <label>Address Information</label>
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -156,18 +132,6 @@
                 <field>OrderNumber</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>ActivatedById</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>ActivatedDate</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Type</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Required</behavior>
                 <field>Status</field>
             </layoutItems>
@@ -183,8 +147,8 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Additional Information</label>
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -192,7 +156,7 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Description Information</label>
-        <layoutColumns />
+        <layoutColumns/>
         <style>OneColumn</style>
     </layoutSections>
     <layoutSections>
@@ -200,9 +164,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <miniLayout>
@@ -211,7 +175,6 @@
         <fields>Status</fields>
         <fields>Material_Recipient__c</fields>
         <fields>Publicity_Approved__c</fields>
-        <fields>Publicity_Submitted__c</fields>
     </miniLayout>
     <platformActionList>
         <actionListContext>Record</actionListContext>

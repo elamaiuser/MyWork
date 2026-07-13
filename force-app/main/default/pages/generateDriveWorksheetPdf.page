@@ -126,18 +126,27 @@
                         <th style=" width: 5%;border-bottom: 1px solid black;"> No. </th>
                         <th style=" width: 10%;border-bottom: 1px solid black;">Job Type</th>
                         <th style=" width: 15%;border-bottom: 1px solid black;">Pickup Time</th>
-                        <th style=" width: 30%;border-bottom: 1px solid black;">Bag Details</th>
+                        <th style=" width: {!IF(shiftObj.hasLtowbProj, '20%', '30%')};border-bottom: 1px solid black;">Bag Details</th>
                         <th style=" width: 15%;border-bottom: 1px solid black;">Delivery Id</th>
-                        <th style=" width: 25%;border-bottom: 1px solid black;">Drive Comments</th>
+                        <th style=" width: {!IF(shiftObj.hasLtowbProj, '20%', '25%')};border-bottom: 1px solid black;">Drive Comments</th>
+                        
+                        <apex:outputPanel layout="none" rendered="{!shiftObj.hasLtowbProj}">
+                            <th style=" width: 15%;border-bottom: 1px solid black;">LTOWB Proj</th>
+                        </apex:outputPanel>
                     </tr>
+                    
                     <apex:repeat value="{!shiftObj.jobInfoList}" var="jobInfo">
                         <tr>
                             <td style=" width: 5%;border-bottom: 1px solid black;">{!jobInfo.num}</td>
                             <td style=" width: 10%;border-bottom: 1px solid black;">{!jobInfo.jobType}</td>
                             <td style=" width: 15%;border-bottom: 1px solid black;">{!jobInfo.pickupTime}</td>
-                            <td style=" width: 30%;border-bottom: 1px solid black;">{!jobInfo.bagDetails}</td>
+                            <td style=" width: {!IF(shiftObj.hasLtowbProj, '20%', '30%')};border-bottom: 1px solid black;">{!jobInfo.bagDetails}</td>
                             <td style=" width: 15%;border-bottom: 1px solid black;">{!jobInfo.deliveryID}</td>
-                            <td style=" width: 25%;border-bottom: 1px solid black;">{!jobInfo.driveComments}</td>
+                            <td style=" width: {!IF(shiftObj.hasLtowbProj, '20%', '25%')};border-bottom: 1px solid black;">{!jobInfo.driveComments}</td>
+                            
+                            <apex:outputPanel layout="none" rendered="{!shiftObj.hasLtowbProj}">
+                                <td style=" width: 15%;border-bottom: 1px solid black;">{!jobInfo.ltowbProj}</td>
+                            </apex:outputPanel>
                         </tr>
                     </apex:repeat>
                 </table>

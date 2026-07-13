@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Company_Sub_Type__c</fullName>
     <description>dependent on the Company type values</description>
-    <externalId>false</externalId>
     <label>Company Sub-Type</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
