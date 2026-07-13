@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:nil="true" />
     </values>

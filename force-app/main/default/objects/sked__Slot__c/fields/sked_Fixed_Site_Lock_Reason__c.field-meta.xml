@@ -12,6 +12,26 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Staffing</fullName>
+                <default>false</default>
+                <label>Staffing</label>
+            </value>
+            <value>
+                <fullName>Machines</fullName>
+                <default>false</default>
+                <label>Machines</label>
+            </value>
+            <value>
+                <fullName>Weather</fullName>
+                <default>false</default>
+                <label>Weather</label>
+            </value>
+            <value>
+                <fullName>Site Issue</fullName>
+                <default>false</default>
+                <label>Site Issue</label>
+            </value>
+            <value>
                 <fullName>BSF</fullName>
                 <default>false</default>
                 <label>BSF</label>
@@ -27,29 +47,9 @@
                 <label>Inventory Management</label>
             </value>
             <value>
-                <fullName>Machines</fullName>
-                <default>false</default>
-                <label>Machines</label>
-            </value>
-            <value>
                 <fullName>Manufacturing Constraint</fullName>
                 <default>false</default>
                 <label>Manufacturing Constraint</label>
-            </value>
-            <value>
-                <fullName>Site Issue</fullName>
-                <default>false</default>
-                <label>Site Issue</label>
-            </value>
-            <value>
-                <fullName>Staffing</fullName>
-                <default>false</default>
-                <label>Staffing</label>
-            </value>
-            <value>
-                <fullName>Weather</fullName>
-                <default>false</default>
-                <label>Weather</label>
             </value>
         </valueSetDefinition>
         <valueSettings>
@@ -57,14 +57,7 @@
             <controllingFieldValue>Whole Blood</controllingFieldValue>
             <controllingFieldValue>Plasma</controllingFieldValue>
             <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>BSF</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>2RBC</controllingFieldValue>
-            <controllingFieldValue>Whole Blood</controllingFieldValue>
-            <controllingFieldValue>Plasma</controllingFieldValue>
-            <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Freezing</valueName>
+            <valueName>Staffing</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>2RBC</controllingFieldValue>
@@ -78,7 +71,7 @@
             <controllingFieldValue>Whole Blood</controllingFieldValue>
             <controllingFieldValue>Plasma</controllingFieldValue>
             <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Manufacturing Constraint</valueName>
+            <valueName>Weather</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>2RBC</controllingFieldValue>
@@ -92,14 +85,14 @@
             <controllingFieldValue>Whole Blood</controllingFieldValue>
             <controllingFieldValue>Plasma</controllingFieldValue>
             <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Staffing</valueName>
+            <valueName>BSF</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>2RBC</controllingFieldValue>
             <controllingFieldValue>Whole Blood</controllingFieldValue>
             <controllingFieldValue>Plasma</controllingFieldValue>
             <controllingFieldValue>Platelet</controllingFieldValue>
-            <valueName>Weather</valueName>
+            <valueName>Freezing</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Plasma</controllingFieldValue>

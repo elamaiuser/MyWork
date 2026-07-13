@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Drive_Status__c</fullName>
     <description>This field reflects the value from Drive Status on Drives on Calendar as is.When the opportunity is created, this field should be left blank and should be updated once Drive is created .</description>
-    <externalId>false</externalId>
     <label>Drive Status(Legacy)</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

@@ -235,5 +235,143 @@ public class skedAvailabilityTrigger_Test {
         
         Test.stopTest();
     }
-    
+
+    static testMethod void syncToStaffingBudgetAvailabilities_deduplicatesSlot_whenTwoPendingApprovedSequentially() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+
+        sked_Staffing_Budget__c budget = new sked_Staffing_Budget__c(
+            sked_Bidding_End_Date__c = testDataFactory.summary.endDate,
+            sked_Bidding_Start_Date__c = testDataFactory.summary.endDate.addDays(-3),
+            sked_Request_Type__c = 'Standard',
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = testDataFactory.summary.startDate,
+            sked_Total_Slots__c = 100
+        );
+        insert budget;
+
+        sked_Staffing_Budget_Collection_Op__c budgetCo = new sked_Staffing_Budget_Collection_Op__c(
+            sked_Staffing_Budget__c = budget.Id,
+            sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id
+        );
+        insert budgetCo;
+
+        // Insert PTO and FH separately so each gets its own SBA at Pending status
+        sked__Availability__c pto = new sked__Availability__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Is_Available__c = FALSE,
+            sked__Status__c = 'Pending',
+            sked__Start__c = testDataFactory.summary.startTime,
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(8),
+            sked__Type__c = 'PTO',
+            sked_Bypass_Auto_Approval_Process__c = FALSE,
+            sked_Custom_Status__c = 'Pending'
+        );
+        insert pto;
+
+        sked__Availability__c fh = new sked__Availability__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Is_Available__c = FALSE,
+            sked__Status__c = 'Pending',
+            sked__Start__c = testDataFactory.summary.startTime,
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(8),
+            sked__Type__c = 'Floating Holiday',
+            sked_Bypass_Auto_Approval_Process__c = FALSE,
+            sked_Custom_Status__c = 'Pending'
+        );
+        insert fh;
+
+        Test.startTest();
+
+        // Approve sequentially — the second approval must not consume a second slot
+        pto.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+        update pto;
+
+        fh.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+        update fh;
+
+        Test.stopTest();
+
+        List<sked_Staffing_Budget_Availability__c> approvedSbas = [
+            SELECT Id FROM sked_Staffing_Budget_Availability__c
+            WHERE sked_Staffing_Budget__c = :budget.Id
+            AND sked_Availability_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+            AND sked_Is_Duplicate__c = false
+        ];
+        Assert.areEqual(1, approvedSbas.size(), 'Sequential approvals for the same resource+budget should consume exactly one slot');
+    }
+
+    static testMethod void syncToStaffingBudgetAvailabilities_promotesDuplicate_whenOriginalCancelled() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<String, sObject> mapTestData = testDataFactory.setupCommonTestData();
+
+        Biomed_Collection_Op_Center__c testCollectionOperation1 = (Biomed_Collection_Op_Center__c)mapTestData.get('testCollectionOperation1');
+        sked__Resource__c testResource1 = (sked__Resource__c)mapTestData.get('testResource1');
+
+        sked_Staffing_Budget__c budget = new sked_Staffing_Budget__c(
+            sked_Bidding_End_Date__c = testDataFactory.summary.endDate,
+            sked_Bidding_Start_Date__c = testDataFactory.summary.endDate.addDays(-3),
+            sked_Request_Type__c = 'Standard',
+            sked_Roles__c = '2RBC',
+            sked_Drive_Types__c = 'Mobile;Fixed Site',
+            sked_Staffing_Budget_Date__c = testDataFactory.summary.startDate,
+            sked_Total_Slots__c = 100
+        );
+        insert budget;
+
+        sked_Staffing_Budget_Collection_Op__c budgetCo = new sked_Staffing_Budget_Collection_Op__c(
+            sked_Staffing_Budget__c = budget.Id,
+            sked_Biomed_Collection_Operation__c = testCollectionOperation1.Id
+        );
+        insert budgetCo;
+
+        sked__Availability__c pto = new sked__Availability__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Is_Available__c = FALSE,
+            sked__Status__c = 'Pending',
+            sked__Start__c = testDataFactory.summary.startTime,
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(8),
+            sked__Type__c = 'PTO',
+            sked_Bypass_Auto_Approval_Process__c = FALSE,
+            sked_Custom_Status__c = 'Pending'
+        );
+        insert pto;
+
+        sked__Availability__c fh = new sked__Availability__c(
+            sked__Resource__c = testResource1.Id,
+            sked__Is_Available__c = FALSE,
+            sked__Status__c = 'Pending',
+            sked__Start__c = testDataFactory.summary.startTime,
+            sked__Finish__c = testDataFactory.summary.startTime.addHours(8),
+            sked__Type__c = 'Floating Holiday',
+            sked_Bypass_Auto_Approval_Process__c = FALSE,
+            sked_Custom_Status__c = 'Pending'
+        );
+        insert fh;
+
+        pto.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+        update pto;
+        fh.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_APPROVED;
+        update fh;
+
+        Test.startTest();
+
+        pto.sked_Custom_Status__c = skedConstants.AVAILABILITY_STATUS_CANCELLED;
+        update pto;
+
+        Test.stopTest();
+
+        List<sked_Staffing_Budget_Availability__c> activeSbas = [
+            SELECT Id, sked_Is_Duplicate__c FROM sked_Staffing_Budget_Availability__c
+            WHERE sked_Staffing_Budget__c = :budget.Id
+            AND sked_Availability_Status__c = :skedConstants.AVAILABILITY_STATUS_APPROVED
+            AND sked_Is_Duplicate__c = false
+        ];
+        Assert.areEqual(1, activeSbas.size(), 'Cancelling the original should promote the duplicate so exactly one slot is still consumed');
+    }
+
 }

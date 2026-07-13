@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">2.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Ensure room is unlocked, lights and room temperature are good, and the room has been cleared; apart from the number of tables and chairs needed for the blood drive.</value>
     </values>

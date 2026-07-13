@@ -56,7 +56,8 @@ private class skedUpdateCoApRoleTargetsBatch_Test {
         	Availability_Pattern__c = testAp.Id,
         	Effective_Start_Date__c = system.today(),
         	Effective_End_Date__c = Date.newInstance(4000, 12, 30),
-        	Total_Target__c = 5
+        	Total_Target_Fixed_Site__c = 5,
+            Total_Target_Mobile__c = 5
         );
         insert testCoAp;
         

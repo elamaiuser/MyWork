@@ -3,12 +3,12 @@
     <fullName>Validate_AddressReferencedforScheduling</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-(RecordType.Name =&apos;Staff&apos;),
-ISPICKVAL(sked_Address_Referenced_for_Scheduling__c, &apos;&apos;) ,
+(RecordType.Name =&#39;Staff&#39;),
+ISPICKVAL(sked_Address_Referenced_for_Scheduling__c, &#39;&#39;) ,
 $Profile.Name &lt;&gt; &quot;System Administrator&quot;,
 $Profile.Name &lt;&gt; &quot;Global Admin&quot;,
 $Profile.Name &lt;&gt; &quot;Informatica Integration Users&quot;
 )</errorConditionFormula>
     <errorDisplayField>sked_Address_Referenced_for_Scheduling__c</errorDisplayField>
-    <errorMessage>&apos;Address Referenced for Scheduling&apos; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
+    <errorMessage>&#39;Address Referenced for Scheduling&#39; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
 </ValidationRule>

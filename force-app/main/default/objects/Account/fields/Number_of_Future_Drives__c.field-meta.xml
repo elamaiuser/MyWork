@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Number_of_Future_Drives__c</fullName>
     <description>The number of Drives from &quot;TODAY()&quot; into the future no matter the stage other than cancelled or withdrawn.</description>
-    <externalId>false</externalId>
     <label># of Future Drives</label>
     <summaryFilterItems>
         <field>Opportunity.StageName</field>

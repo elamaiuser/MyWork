@@ -32,6 +32,13 @@
     margin: 1rem;
 }
 
+.ap-table-custom-start-end {
+    text-align: left !important;
+    vertical-align: middle !important;
+    padding: 8px !important;
+    font-weight: normal !important;
+}
+
 @media (max-width: 900px) {
     .availability-pattern-role-table-container {
         grid-template-columns: 1fr;

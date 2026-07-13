@@ -10,6 +10,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Alameda CA</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Albany NY</fullName>
             <default>false</default>
         </values>
@@ -114,10 +118,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Cincinnati OH</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Cleveland OH East</fullName>
             <default>false</default>
         </values>
@@ -179,10 +179,6 @@
         </values>
         <values>
             <fullName>Denver CO</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Des Moines IA</fullName>
             <default>false</default>
         </values>
         <values>
@@ -567,10 +563,6 @@
         </values>
         <values>
             <fullName>San Juan PR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>San Leandro CA</fullName>
             <default>false</default>
         </values>
         <values>

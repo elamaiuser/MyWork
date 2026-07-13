@@ -377,7 +377,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>Select Name, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (Drive_Status__c =null OR Drive_Status__c=&apos;Draft&apos;) and Drive_Date__c&gt;=today and AccountId IN:</value>
+                    <value>Select Name, Drive_Date__c,  StageName, DriveStatus__c,Flow_Start_Time_Label_Text__c,Flow_End_Time_Label_Text__c,Total_Projected_Procedures__c,Total_Products_Projected__c,Parent_Template_Id__c from opportunity  where Is_Template__c=false and (Drive_Status__c =null OR Drive_Status__c=&#39;Draft&#39;) and Drive_Date__c&gt;=today and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -543,7 +543,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &apos;Cancelled&apos; AND  Drive_Status__c in (&apos;Hold&apos;,&apos;System Generated&apos;,&apos;Tentative&apos;,&apos;Confirmed&apos;)  and AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,  StageName, DriveStatus__c from opportunity where Is_Template__c=false and Drive_Date__c&gt;=today and  StageName != &#39;Cancelled&#39; AND  Drive_Status__c in (&#39;Hold&#39;,&#39;System Generated&#39;,&#39;Tentative&#39;,&#39;Confirmed&#39;)  and AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -688,7 +688,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name,Drive_Date__c,   StageName, DriveStatus__c  from opportunity where Drive_Status__c=&apos;Complete&apos; AND AccountId IN:</value>
+                    <value>select Name,Drive_Date__c,   StageName, DriveStatus__c  from opportunity where Drive_Status__c=&#39;Complete&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -872,7 +872,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,StageName, DriveStatus__c from Opportunity where StageName= &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,StageName, DriveStatus__c from Opportunity where StageName= &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -1467,6 +1467,10 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-656872d1-84d0-43b3-87ad-ba5d3d871506</value>
                 </componentInstanceProperties>
@@ -1622,6 +1626,10 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>Facet-5d4d59d5-c904-416b-98ca-1bd88991218a</value>

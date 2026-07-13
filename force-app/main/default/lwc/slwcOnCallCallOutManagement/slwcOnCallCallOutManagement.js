@@ -16,8 +16,6 @@ import * as slwcAvailator from 'c/slwcAvailator';
 import * as slwcUtils from 'c/slwcUtils';
 import * as slwcDateUtils from "c/slwcDateUtils";
 
-
-
 const STEP = {
   SEARCH: 1,
   SELECT_EVENT: 2,
@@ -240,7 +238,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
     if(!resource || !resourceRoleGroups) return [];
 
     const teamSupervisorRoles = resourceRoleGroups['Supervisory roles'] || [];
-    const resourceRoles = resource.roles ? resource.roles.split(';') : [];
+    const resourceRoles = resource.roles || [];
 
     const hasAnyTeamSupervisorRole = resourceRoles.find(resourceRole => teamSupervisorRoles.includes(resourceRole));
     return !!hasAnyTeamSupervisorRole;
@@ -648,8 +646,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       )
       .map(apr => apr.patternName)
       .filter(Boolean)
-  }
-  
+  }  
 
   initStepReplaceResource = () => {
     //Reset values
@@ -689,6 +686,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
         collectionOperationIds: collectionOperationIds,
       })
     })
+
     //HRP-14118
   .then(() => {
       return this.selectedEvent.isDrive ? availator.fetchJobTags(this.selectedAllocationData.job.driveId): Promise.resolve([]); //HRP-15881
@@ -703,7 +701,7 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       let validPossibleAllocations = (result.possibleAllocations || []).filter(posAl => {
         const anyInvalidException = (posAl.exceptionLog || []).find(exception => {
           const hasConflictToPTOException = exception.exceptionCode === 'RESOURCE_TIME_CONFLICT' && !!exception.availabilityId;
-        // const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
+          // const invalidTagException = ['MISSING_REQUIRED_TAG', 'RESOURCE_ROLE_RESTRICTED', 'EXPIRED_REQUIRED_TAG'].includes(exception.exceptionCode);
           return hasConflictToPTOException; /*|| invalidTagException;*/
         })
         return !anyInvalidException;
@@ -831,7 +829,8 @@ export default class SlwcOnCallCallOutManagement extends LightningElement {
       timeOffPlan: timeOffPlan,
       timeOffReasonCode: timeOffReasonCode,
       usePtoForCallOut: usePtoForCallOut,
-      hasTimeOffPlans: hasTimeOffPlans
+      hasTimeOffPlans: hasTimeOffPlans,
+      isFromOnCallCallOutForm: true
     };
 
     if(this.selectedEvent.isDrive) {

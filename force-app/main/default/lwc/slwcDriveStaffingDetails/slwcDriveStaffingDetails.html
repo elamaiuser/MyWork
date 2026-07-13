@@ -841,6 +841,11 @@
                                                     class="slds-text-color_error slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
                                                     Termination Date: <lightning-formatted-date-time value={resource.terminationDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
                                                 </div>
+                                                <div
+                                                    if:true={resource.showFutureInactiveDate}
+                                                    class="slds-text-color_error slds-text-body_small hco-resource-category-info slds-has-flexi-truncate">
+                                                    Inactivation Date: <lightning-formatted-date-time value={resource.futureInactiveDate} year="numeric" month="short" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                                                </div>
                                                 <template if:true={resource.travelData.length}>
                                                     <template for:each={resource.travelData} for:item="obj">
                                                         <div key={obj.key}>
@@ -1176,6 +1181,7 @@
     <c-slwc-drive-shift-job-modal></c-slwc-drive-shift-job-modal>
     <c-slwc-drive-shift-tag-modal></c-slwc-drive-shift-tag-modal>
     <c-slwc-drive-shift-bulk-edit-volunteer-jobs-modal></c-slwc-drive-shift-bulk-edit-volunteer-jobs-modal>
+    <c-slwc-drive-shift-bulk-add-volunteer-jobs-modal></c-slwc-drive-shift-bulk-add-volunteer-jobs-modal>
 
     <c-slwc-confirm-modal
         if:true={confirmModalData.isOpen}

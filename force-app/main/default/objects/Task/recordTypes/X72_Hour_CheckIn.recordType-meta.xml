@@ -17,6 +17,10 @@
     <picklistValues>
         <picklist>Location__c</picklist>
         <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Face to Face</fullName>
             <default>false</default>
         </values>
@@ -122,6 +126,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Type</picklist>
+        <values>
+            <fullName>1 Week Check-In</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>Book Drive</fullName>
             <default>false</default>

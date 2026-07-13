@@ -1,7 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { sObjectType, debugLogService, driveService, driveQueryModel, operationDriveLimitService, operationDriveLimitQueryModel, staffingConstraintService, staffingConstraintQueryModel, driveChangeRequestQueryModel, driveChangeRequestService, jobService, jobQueryModel } from 'c/dataService';
-import { DRIVE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS } from 'c/slwcConstants';
+import { DRIVE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION, DRIVE_CONTENTION, DRIVE_TYPE, DRIVE_CONTENTION_RESOLUTION, ASSET_TYPE, JOB_ALLOCATION_STATUS, LINK_DRIVE_TYPE } from 'c/slwcConstants';
 import { slwcDriveGeneratorHelper, DriveHelper, DriveFetch } from 'c/slwcDriveGenerator';
 import { DateTime } from 'c/luxon';
 import { getValueFromEvent } from 'c/slwcUtils';
@@ -573,7 +573,29 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         let totalEquipment = 0;
         let totalVehiclesQuantity = 0;
         let totalVehiclesCapacity = 0;
+        // [ext] HRP-15611: collapse same-day linked drive pairs so shared staff is counted once — max(A, B) not A+B.
+        // DriveA=3, DriveB=3 → totalStaff += 3 (not 6). DriveA=10, DriveB=14 → totalStaff += 14 (not 24).
+        // Equipment/vehicles from the first entry only (staff-only fix per Jira AC).
+        // Non-linked drives and pairs with absent partner count normally.
+        const processedHoldDrives = new Set();
         holdDrives.forEach(holdDrive => {
+          if (processedHoldDrives.has(holdDrive.id)) return;
+
+          if (holdDrive.linkedDriveId && holdDrive.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY) {
+            const partner = holdDrives.find(d => d.id !== holdDrive.id && d.linkedDriveId === holdDrive.linkedDriveId && d.linkedDriveType === LINK_DRIVE_TYPE.SINGLE_DAY);
+            if (partner) {
+              processedHoldDrives.add(holdDrive.id);
+              processedHoldDrives.add(partner.id);
+              // AC-1: staff = max(A, B); equipment/vehicles from the first entry only (staff-only per Jira AC)
+              totalStaff += Math.max(holdDrive.totalStaffRequested || 0, partner.totalStaffRequested || 0);
+              totalEquipment += (holdDrive.equipmentAllocated || 0);
+              totalVehiclesQuantity += (holdDrive.vehiclesAllocated || 0);
+              totalVehiclesCapacity += (holdDrive.vehicleCapacity || 0);
+              return;
+            }
+          }
+
+          // Non-linked drive or partner absent — count normally
           totalStaff += (holdDrive.totalStaffRequested || 0);
           totalEquipment += (holdDrive.equipmentAllocated || 0);
           totalVehiclesQuantity += (holdDrive.vehiclesAllocated || 0);
@@ -894,6 +916,14 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         calendarOverview: `Assets are not shared with new Collection Operation`
       }
     }
+
+    if (contention === DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE) {
+      return {
+        requested: ``,
+        current: ``,
+        calendarOverview: `Locked resources are unavailable for the updated drive time`
+      }
+    }
   }
 
   getContentionActions = (item) => {
@@ -1099,6 +1129,25 @@ export default class SlwcResolveDriveContentions extends LightningElement {
         value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO)
       }]
     }
+
+    if (contention === DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE) {
+      let actions = [{
+        label: DRIVE_CONTENTION_RESOLUTION.ELECT_LOCKED_RESOURCE_UNAVAILABLE,
+        value: isContentionOverride(DRIVE_CONTENTION_RESOLUTION.ELECT_LOCKED_RESOURCE_UNAVAILABLE)
+      }];
+
+      if(this.allowToOpenDriveStaffing) {
+        actions.push({
+          isLink: true,
+          label: 'Allocate Resources',
+          onclick: () => {
+            this.openDriveStaffingDetails(this.drive, this.drive?.status !== DRIVE_STATUS.CONFIRMED);
+          }
+        });
+      }
+
+      return actions;
+    }
   }
 
   validateDriveStaffingChangedContention = () => {
@@ -1159,7 +1208,18 @@ export default class SlwcResolveDriveContentions extends LightningElement {
       .then(() => {
         return this.driveHelper.getAvailableAssets(this.masterData.vehicles, this.drive, true);
       })
-      .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [] }) => {
+      .then(({ availableVehicles = [], availableEquipments = [], availableButNotSharedAssetIds = [], possibleAllocations = [] }) => {
+        return this.driveHelper.getLockedStaffAvailability(this.drive)
+          .then((staffPossibleAllocations) => {
+            return {
+              availableVehicles,
+              availableEquipments,
+              availableButNotSharedAssetIds,
+              possibleAllocations: possibleAllocations.concat(staffPossibleAllocations)
+            };
+          });
+      })
+      .then(({ availableVehicles, availableEquipments, availableButNotSharedAssetIds, possibleAllocations }) => {
         let contentionsToValidate = [
           DRIVE_CONTENTION.DRIVE_LIMIT,
           DRIVE_CONTENTION.x2RBC_LIMIT,
@@ -1172,7 +1232,8 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           DRIVE_CONTENTION.WITHIN_42_DAYS,
           DRIVE_CONTENTION.CONFIRM_WITHIN_42_DAYS,
           DRIVE_CONTENTION.PART_OF_LINKED_DRIVE,
-          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE
+          DRIVE_CONTENTION.MULTI_SHIFT_DRIVE,
+          DRIVE_CONTENTION.LOCKED_RESOURCE_UNAVAILABLE
         ];
         if(this.drive.typeOfDrive === DRIVE_TYPE.MOBILE) {
           contentionsToValidate.push(DRIVE_CONTENTION.LACKING_VEHICLE);
@@ -1199,6 +1260,9 @@ export default class SlwcResolveDriveContentions extends LightningElement {
           backupDrive: this.driveGeneratorInstance.masterData.backupDrive,
           availableAssetsInfo: {
             availableButNotSharedAssetIds
+          },
+          availabilityData: {
+            possibleAllocations
           }
         }, contentionsToValidate, originalContentions);
 
@@ -1597,12 +1661,13 @@ export default class SlwcResolveDriveContentions extends LightningElement {
   }
 
   //staffing details
-  openDriveStaffingDetails(drive) {
+  openDriveStaffingDetails(drive, allocateAssetsOnly = true) {
     this.driveStaffingDetailsData = {
       shown: true,
       mode: 'local',
       recordId: drive.id,
-      drive: drive
+      drive: drive,
+      allocateAssetsOnly
     }
   }
 
@@ -1619,30 +1684,27 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     this.showLoading();
     Promise.resolve()
     .then(() => {
-      const { drives: newDrives, jobs: newJobs } = event.detail;
-      const equipmentJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.EQUIPMENT);
-      const vehicleJob = this.drive.driveShifts[0].jobs.find(job => job.assetType === ASSET_TYPE.VEHICLE);
-      const newEquipmentJob = newJobs.find(newJob => equipmentJob && newJob.key === equipmentJob.key);
-      const newVehicleJob = newJobs.find(newJob => vehicleJob && newJob.key === vehicleJob.key);
-      if(newEquipmentJob) {
-        equipmentJob.jobAllocations = [...newEquipmentJob.jobAllocations];
-      }
-      if(newVehicleJob) {
-        vehicleJob.jobAllocations = [...newVehicleJob.jobAllocations];
+      const { jobs: newJobs } = event.detail;
+      const mergedJobs = this.mergeJobAllocationsFromStaffingModal(this.drive, newJobs);
+
+      // In UPDATE_DRIVE mode, handleValidateBtn reassigns this.drive back from driveGeneratorInstance.drive,
+      // so mirror the merge there to keep role-job edits across the reassignment.
+      if(this.mode === MODE.UPDATE_DRIVE && this.driveGeneratorInstance?.drive) {
+        this.mergeJobAllocationsFromStaffingModal(this.driveGeneratorInstance.drive, newJobs);
       }
 
-      if(this.mode === MODE.DRIVE_CHANGE_REQUEST) {
+      // In DRIVE_SUBMISSION / DRIVE_CHANGE_REQUEST, handleValidateBtn re-fetches the drive from the server,
+      // so role-job edits must be persisted first for re-validation to see them.
+      if(this.mode === MODE.DRIVE_CHANGE_REQUEST || this.mode === MODE.DRIVE_SUBMISSION) {
         let service = new jobService();
-        return service.saveList([
-          {
-            id: equipmentJob.id,
-            jobAllocations: equipmentJob.jobAllocations
-          },
-          {
-            id: vehicleJob?.id,
-            jobAllocations: vehicleJob?.jobAllocations
-          }
-        ].filter(item => item.id)) 
+        return service.saveList(
+          mergedJobs
+            .filter(job => job.id)
+            .map(job => ({
+              id: job.id,
+              jobAllocations: job.jobAllocations
+            }))
+        );
       }
     })
     .then(() => {
@@ -1650,6 +1712,19 @@ export default class SlwcResolveDriveContentions extends LightningElement {
     })
     .catch(error => this.exceptionHandler(error))
     .finally(this.hideLoading);
+  }
+
+  mergeJobAllocationsFromStaffingModal = (drive, newJobs) => {
+    const mergedJobs = [];
+    (drive?.driveShifts || []).forEach(driveShift => {
+      (driveShift.jobs || []).forEach(job => {
+        const newJob = newJobs.find(item => item.key === job.key);
+        if(!newJob) return;
+        job.jobAllocations = [...newJob.jobAllocations];
+        mergedJobs.push(job);
+      });
+    });
+    return mergedJobs;
   }
 
   //staffing complement modal

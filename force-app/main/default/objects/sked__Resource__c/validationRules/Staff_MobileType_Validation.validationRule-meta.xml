@@ -3,12 +3,12 @@
     <fullName>Staff_MobileType_Validation</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-(RecordType.Name =&apos;Staff&apos;),
+(RecordType.Name =&#39;Staff&#39;),
 ISBLANK(sked_Mobile_Type__c),
 $Profile.Name &lt;&gt; &quot;System Administrator&quot;,
 $Profile.Name &lt;&gt; &quot;Global Admin&quot;,
 $Profile.Name &lt;&gt; &quot;Informatica Integration Users&quot;
 )</errorConditionFormula>
     <errorDisplayField>sked_Mobile_Type__c</errorDisplayField>
-    <errorMessage>&apos;Mobile Type&apos; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
+    <errorMessage>&#39;Mobile Type&#39; field is required for saving the record unless you are System Admin, Global Admin or Integration User</errorMessage>
 </ValidationRule>

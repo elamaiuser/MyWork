@@ -24,7 +24,12 @@ public with sharing class TaskChecklistController {
                 taskSubjectList.add(objPickList.getValue());
             }
             if(sObjName.equalsIgnoreCase('Opportunity')){
-                taskType = BSF_Constants.RECRUITMENT_PLANNING_TASK;
+                for(Task_Definition__c taskDef : [SELECT Name
+                                                FROM Task_Definition__c
+                                                WHERE Task_Type__c = :BSF_Constants.TASK_TYPE_RECRUITMENT_STRATEGY_MEETING
+                                                AND Name != null]){
+                    taskType = taskDef.Name;
+                }
                 isOpportunity = true;
                 oppId = recordId;
                 String taskFilter = '';
@@ -53,7 +58,7 @@ public with sharing class TaskChecklistController {
                 taskType = verifyTask[0].Subject;
                 oppId = verifyTask[0].WhatId;
 
-                String queryString = 'SELECT ' + getAllFields('BSF_Task_Checklist__c') + ' FROM BSF_Task_Checklist__c WHERE TaskLookup__c = :recordId';// OR OpportunityLookup__c = :oppId';
+                String queryString = 'SELECT ' + getAllFields('BSF_Task_Checklist__c') + ' FROM BSF_Task_Checklist__c WHERE TaskLookup__c = :recordId OR OpportunityLookup__c = :oppId';
                 taskChecklist = Database.query(queryString);
                 for (BSF_Task_Checklist__c record : taskChecklist) {
                     taskChecklistRecordMap.put(record.Unique_Name__c, record);
@@ -80,7 +85,7 @@ public with sharing class TaskChecklistController {
                     checklistWrapper.column = (Integer)mdt.Column__c;
                     inputWrapper.inputLabel = mdt.UI_Text__c;
                     inputWrapper.helpText = mdt.Help_Text__c;
-                    inputWrapper.helpTextAlign = ((Integer)mdt.Column__c == 2) ? 'top-right' : 'top-left';
+                    inputWrapper.helpTextAlign = (String.isBlank(inputWrapper.inputLabel) || inputWrapper.inputLabel.length() < 40) ? 'top-left' : 'top-right';
                     inputWrapper.hyperlink = mdt.Hyperlink__c;
                     inputWrapper.parent = mdt.Parent__c;
                     inputWrapper.order = (Integer)mdt.Order__c;
@@ -96,7 +101,7 @@ public with sharing class TaskChecklistController {
                 } else {
                     inputWrapper.inputLabel = mdt.UI_Text__c;
                     inputWrapper.helpText = mdt.Help_Text__c;
-                    inputWrapper.helpTextAlign = ((Integer)mdt.Column__c == 2) ? 'top-right' : 'top-left';
+                    inputWrapper.helpTextAlign = (String.isBlank(inputWrapper.inputLabel) || inputWrapper.inputLabel.length() < 40) ? 'top-left' : 'top-right';
                     inputWrapper.hyperlink = mdt.Hyperlink__c;
                     inputWrapper.parent = mdt.Parent__c;
                     inputWrapper.order = (Integer)mdt.Order__c;
@@ -149,7 +154,6 @@ public with sharing class TaskChecklistController {
             for (Task_Checklist_Setting__mdt checklist : taskChecklistMdt) {
                 if (taskChecklistMstr.containsKey(checklist.Unique_Name__c)) {
                     Set<String> inputFields = taskChecklistMstr.get(checklist.Unique_Name__c).inputs.keySet();
-                    System.debug('checklist.Unique_Name__c==> '+checklist.Unique_Name__c);
                     taskChecklistMstr.get(checklist.Unique_Name__c).recordId = taskChecklistRecordMap.get(checklist.Unique_Name__c).Id;
                     System.debug('checklist.Unique_Name__c==> '+checklist.Unique_Name__c);
                     System.debug('inputFields==> '+inputFields);
@@ -179,7 +183,6 @@ public with sharing class TaskChecklistController {
             }
 
         } catch (Exception e) {
-            System.debug('=======Line: '+e.getLineNumber()+' '+e.getMessage());
             throw new AuraHandledException('Line: '+e.getLineNumber()+' '+e.getMessage());
         }
 

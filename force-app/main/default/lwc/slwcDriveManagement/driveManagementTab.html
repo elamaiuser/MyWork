@@ -129,7 +129,7 @@
         <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-top_large" role="alert" style="margin-bottom: var(--lwc-cardSpacingMargin);" if:true={showDCRWarning}>
             <h2>
                 <lightning-icon class="slds-m-right_x-small slds-current-color" icon-name="utility:warning" size="x-small"></lightning-icon>
-                Drive Change Request has been applied to the Drive.
+                Drive on Calendar view has been updated to show pending changes.
             </h2>
         </div> 
 
@@ -247,15 +247,25 @@
                         <lightning-tab label="Linked Drives" value={TABS.MULTI_DAY_LINKED_DRIVES} onactive={handleChangeTab}>
                             <template if:true={showMultiDayLinkedDrivesTab}>
                                 <template if:true={drive}>
-                                    <c-slwc-linked-drives 
-                                        drive={drive} 
+                                    <c-slwc-linked-drives
+                                        drive={drive}
                                         read-only={masterData.fieldReadonlyMap.linkedDrives}
                                     ></c-slwc-linked-drives>
                                 </template>
                             </template>
                         </lightning-tab>
                     </template>
-                    
+
+                    <template if:true={isCompletedDrive}>
+                        <lightning-tab label="Results" value={TABS.RESULTS} onactive={handleChangeTab}>
+                            <template if:true={showResultsTab}>
+                                <template if:true={drive}>
+                                    <c-slwc-drive-management-sub-tab name="results" drive={drive} master-data={masterData}></c-slwc-drive-management-sub-tab>
+                                </template>
+                            </template>
+                        </lightning-tab>
+                    </template>
+
                 </lightning-tabset>
             </div>
         </div>

@@ -3,7 +3,7 @@
     <fullName>Primary_Drive_Contact__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description>This field is created as part of HRP-7470
-This field will be used in &apos;Create New Template&apos; flow to capture primary contact (default/user selected) and drive service role will be created based on the output value</description>
+This field will be used in &#39;Create New Template&#39; flow to capture primary contact (default/user selected) and drive service role will be created based on the output value</description>
     <label>Primary Drive Contact</label>
     <referenceTo>Contact</referenceTo>
     <relationshipLabel>Blood Drive Opportunities</relationshipLabel>

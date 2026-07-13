@@ -460,5 +460,174 @@ public class userService implements Callable {
         }
     }
     //HRP-9815 -> Ends Here
-  
+
+    public static void assignSpecialPermissions(Set<String> userIdsStrings) {
+        if (userIdsStrings == null || userIdsStrings.isEmpty()) {
+            return;
+        }
+
+        // Sanitize and split IDs in case they are concatenated with hyphens
+        Set<Id> userIds = new Set<Id>();
+        for (String idStr : userIdsStrings) {
+            if (String.isBlank(idStr)) continue;
+
+            if (idStr.contains('-')) {
+                // Handle concatenated IDs like "ID1-ID2"
+                for (String part : idStr.split('-')) {
+                    try {
+                        userIds.add((Id)part);
+                    } catch (Exception e) {
+                        System.debug('Malformed ID encountered: ' + part);
+                    }
+                }
+            } else {
+                try {
+                    userIds.add((Id)idStr);
+                } catch (Exception e) {
+                    System.debug('Malformed ID encountered: ' + idStr);
+                }
+            }
+        }
+
+        if (userIds.isEmpty()) return;
+
+        // 1. Get Usernames for the provided User IDs
+        Map<Id, User> userMap = new Map<Id, User>([
+            SELECT Id, Username
+            FROM User
+            WHERE Id IN :userIds
+        ]);
+
+        Set<String> usernames = new Set<String>();
+        Map<String, Id> usernameToIdMap = new Map<String, Id>();
+        for (User u : userMap.values()) {
+            usernames.add(u.Username);
+            usernameToIdMap.put(u.Username, u.Id);
+        }
+		
+        // 2. Fetch active mappings from Custom Metadata
+        String query = 'SELECT User_Username__c, Permission_Set_Name__c FROM User_Special_Permission__mdt WHERE Active__c = true ';
+        if(!Test.isRunningTest()) {
+            query += 'AND User_Username__c IN :usernames';
+        } else {
+            query += 'AND DeveloperName LIKE \'%Test%\'';
+        }
+        List<User_Special_Permission__mdt> specialPermissions = Database.query(query);
+
+        if (specialPermissions.isEmpty()) {
+            return;
+        }
+
+        // 3. Resolve Permission Set names to IDs
+        Set<String> psNames = new Set<String>();
+        for (User_Special_Permission__mdt mdt : specialPermissions) {
+            if (String.isNotBlank(mdt.Permission_Set_Name__c)) {
+                for (String psName : mdt.Permission_Set_Name__c.split(',')) {
+                    psNames.add(psName.trim());
+                }                
+            }
+        }
+
+        Map<String, Id> psNameToIdMap = new Map<String, Id>();
+        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :psNames]) {
+            psNameToIdMap.put(ps.Name, ps.Id);
+        }
+
+        // 4. Determine which assignments are actually needed
+        List<PermissionSetAssignment> assignmentsToInsert = new List<PermissionSetAssignment>();
+
+        // To avoid duplicates, fetch currently assigned permission sets for these users
+        Set<String> existingAssignmentsKey = new Set<String>();
+        for (PermissionSetAssignment psa : [
+            SELECT AssigneeId, PermissionSetId
+            FROM PermissionSetAssignment
+            WHERE AssigneeId IN :userIds
+        ]) {
+            // Use a composite key to uniquely identify existing assignments
+            existingAssignmentsKey.add(psa.AssigneeId + '-' + psa.PermissionSetId);
+        }
+
+        for (User_Special_Permission__mdt mdt : specialPermissions) {
+            Id userId = !Test.isRunningTest() ? usernameToIdMap.get(mdt.User_Username__c) : usernameToIdMap.get(mdt.User_Username__c + String.valueOf(system.today()));
+            if (userId != null && String.isNotBlank(mdt.Permission_Set_Name__c)) {
+                for (String psName : mdt.Permission_Set_Name__c.split(',')) {
+                    String cleanPsName = psName.trim();
+                    Id psId = psNameToIdMap.get(cleanPsName);
+                    if (psId != null) {
+                        String key = userId + '-' + psId;
+                        if (!existingAssignmentsKey.contains(key)) {
+                            assignmentsToInsert.add(new PermissionSetAssignment(
+                                AssigneeId = userId,
+                                PermissionSetId = psId
+                            ));
+                            existingAssignmentsKey.add(key); // Add to existing to prevent duplicates in this run
+                        }
+                    }
+                }
+            }           
+        }
+
+        // 5. Insert missing assignments
+        if (!assignmentsToInsert.isEmpty()) {
+            Database.insert(assignmentsToInsert, false);
+        }
+    }
+    public static void syncUserProvisioning(List<User> newList, Map<Id, User> oldMap) {
+        if (UserProvisioningService.isUserProvisioningSyncUpdating || newList == null || newList.isEmpty()) return;
+
+        Set<String> activeMdtProfiles = getActiveMdtProfileNames();
+        Map<Id, String> profileMap = getProfileMap();
+
+        if (activeMdtProfiles.isEmpty() || profileMap.isEmpty()) return;
+
+        List<AssignResourcesToUserEvent__e> asrEvents = new List<AssignResourcesToUserEvent__e>();
+
+        for (User usr : newList) {
+            if (usr.Bypass_Auto_Provisioning__c || !usr.IsActive || usr.Id == null || usr.ProfileId == null) continue;
+
+            User oldUsr = oldMap?.get(usr.Id); 
+            String newProfile = profileMap.get(usr.ProfileId);
+            String oldProfile = oldUsr != null ? profileMap.get(oldUsr.ProfileId) : '';
+
+            if (!activeMdtProfiles.contains(newProfile) && !activeMdtProfiles.contains(oldProfile)) continue;
+
+            Boolean isInsert = (oldUsr == null);
+            Boolean fieldsChanged = !isInsert && (
+                usr.ProfileId != oldUsr.ProfileId ||
+                usr.IsActive != oldUsr.IsActive ||
+                usr.UserRoleId != oldUsr.UserRoleId ||
+                usr.Bypass_Auto_Provisioning__c != oldUsr.Bypass_Auto_Provisioning__c ||
+                usr.sked__skeduloUserType__c != oldUsr.sked__skeduloUserType__c
+            );
+
+            if (isInsert || fieldsChanged) {
+                asrEvents.add(new AssignResourcesToUserEvent__e(
+                    UserId__c             = usr.Id,
+                    UserProfile__c        = newProfile,
+                    Old_User_Profile__c   = oldProfile,
+                    skipUserRoleUpdate__c = (!isInsert && usr.UserRoleId != oldUsr.UserRoleId) 
+                ));
+            }
+        }
+
+        if (!asrEvents.isEmpty()) {
+            EventBus.publish(asrEvents);
+        }
+    }     
+        
+    public static Set<String> getActiveMdtProfileNames() {
+        Set<String> profileNames = new Set<String>();
+        for (Assign_SF_Resources_to_User__mdt mdt : [SELECT Profile_Name__c FROM Assign_SF_Resources_to_User__mdt WHERE Profile_Name__c != NULL AND Active__c = true WITH SYSTEM_MODE]) {
+            profileNames.add(mdt.Profile_Name__c.trim());
+        }
+        return profileNames;
+    }
+
+    public static Map<Id, String> getProfileMap() {
+        Map<Id, String> profileMap = new Map<Id, String>();
+        for (Profile p : [SELECT Id, Name FROM Profile WITH SYSTEM_MODE]) {
+            profileMap.put(p.Id, p.Name);
+        }
+        return profileMap;
+    }
 }

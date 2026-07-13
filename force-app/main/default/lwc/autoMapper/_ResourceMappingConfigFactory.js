@@ -20,10 +20,12 @@ export class ResourceMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_Dedicated_to_Site__c', 'dedicatedToSiteId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Biomed_Collection_Op_Center_Name__c', 'collectionOperationName', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__c', 'collectionOperationId', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked__Primary_Region__r.sked__Timezone__c', 'timezoneId', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Latitude__s', 'collectionOperationStagingLocationGeolocationLatitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Primary_Region__r.sked_Biomed_Collection_Op_Center__r.Staging_Location_Geolocation__Longitude__s', 'collectionOperationStagingLocationGeolocationLongitude', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Primary_Phone__c', 'primaryPhone', MAPPING_TYPE.direct);       
       mappingConfig.addFieldConfig('sked_Effective_Date__c', 'effectiveDate', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Future_Inactive_Date__c', 'futureInactiveDate', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Email__c', 'email', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__Employment_Type__c', 'employmentType', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Equipment_Subtype__c', 'equipmentSubtype', MAPPING_TYPE.direct);

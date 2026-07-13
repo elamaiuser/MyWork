@@ -63,7 +63,7 @@ public class TaskChecklistController_Test {
         oppTasks.add(recruitmentTask);
         
         Task pdaTask = new Task(
-        	Subject = BSF_Constants.POST_DRIVE_ANALYSIS_TASK,
+        	Subject = 'Post Drive Analysis Task',
         	WhatId = mobileOpportunityRecord.Id,
         	ActivityDate = System.Today(),
         	Status = 'Not Started',
@@ -107,10 +107,12 @@ public class TaskChecklistController_Test {
     
     static testmethod void testGetRelatedCheckistRecordsForTask() {
         Test.startTest();
-        Task recruitmentTask = [SELECT Id FROM Task WHERE Subject = :BSF_Constants.POST_DRIVE_ANALYSIS_TASK LIMIT 1];
-        Map<String, TaskChecklistController.CheckListWrapper> map_chklstUniqueName_checklistWrapper = TaskChecklistController.getRelatedCheckistRecords((String) recruitmentTask.Id);
+        List<Task> testTasks = [SELECT Id FROM Task WHERE Subject IN (:BSF_Constants.POST_DRIVE_ANALYSIS_TASK, :BSF_Constants.RECRUITMENT_PLANNING_TASK) LIMIT 2];
+        Map<String, TaskChecklistController.CheckListWrapper> map_chklstUniqueName_checklistWrapper1 = TaskChecklistController.getRelatedCheckistRecords((String) testTasks[0].Id);
+        Map<String, TaskChecklistController.CheckListWrapper> map_chklstUniqueName_checklistWrapper2 = TaskChecklistController.getRelatedCheckistRecords((String) testTasks[1].Id);
         Test.stopTest();
-        Assert.isNotNull(map_chklstUniqueName_checklistWrapper);
+        Assert.isNotNull(map_chklstUniqueName_checklistWrapper1);
+        Assert.isNotNull(map_chklstUniqueName_checklistWrapper2);
     }
     
     static testMethod void testUpdateTaskChecklist() {

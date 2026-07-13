@@ -14,11 +14,11 @@ import surrogateDriveTemplate from './surrogateDrive.html';
 // import opportunityDriveShiftsTemplate from './opportunityDriveShifts.html';
 
 import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { approvalService, dataService, debugLogService, driveQueryModel, driveService, jobService, slotService } from 'c/dataService';
+import { approvalService, dataService, debugLogService, driveQueryModel, driveService, jobService, slotService, driveChangeRequestService, driveChangeRequestQueryModel } from 'c/dataService';
 import { chunk } from 'c/lodash';
 import { DateTime } from 'c/luxon';
 import { ASSET_TYPE, DRIVE_APPROVAL_STATUS, DRIVE_CHANGE_REQUEST_TYPE, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_SHIFT_TIME_BLOCK_CONTENTION, DRIVE_STATUS, OPPORTUNITY_STAGE, PENDING_ACTION } from 'c/slwcConstants';
-import { DriveHelper, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
+import { DriveHelper, DriveFetch, slwcDriveGeneratorHelper } from 'c/slwcDriveGenerator';
 
 // import { auraProxyConfig } from 'c/auraProxy';
 // auraProxyConfig.enableMock();
@@ -63,7 +63,8 @@ const TABS = {
     MOBILE: 'mobile',
     PRODUCTIVITY: 'productivity',
     ACCOUNT_INFORMATION: 'accountInformation',
-    SYSTEM_INFORMATION: 'systemInformation'
+    SYSTEM_INFORMATION: 'systemInformation',
+    RESULTS: 'results'
 }
 
 const eventListeners = {
@@ -232,6 +233,14 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         return this.currentTab === TABS.MOBILE;
     }
 
+    get isCompletedDrive() {
+        return this.drive && this.drive.status === DRIVE_STATUS.COMPLETE;
+    }
+
+    get showResultsTab() {
+        return this.currentTab === TABS.RESULTS;
+    }
+
     get showSaveDraftButton() {
         return !this.isFixedSiteDrive && this.drive && this.drive.status === DRIVE_STATUS.DRAFT;
     }  
@@ -317,6 +326,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         registerListener('deleteJob', this.handleDeleteJob, this);
 
         registerListener('saveBulkEditVolunteerJobModal', this.handleSaveBulkEditVolunteerJobModal, this);
+        registerListener('saveBulkAddVolunteerJobModal', this.handleSaveBulkAddVolunteerJobModal, this);
         registerListener('saveDualRoleAssignmentModal', this.handleSaveDualRoleAssignmentModal, this);
 
         registerListener('saveDriveShiftTag', this.handleSaveDriveShiftTag, this);
@@ -699,99 +709,62 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     btnSaveClicked() {
         this.showErrors = true;
         if (this.isValid() === true) {
-            if (!this.requiresAssetValidation() && !this.requireTimeBlockValidation()) {
-                return this.handleSave();
-            }
 
-            this.showLoading();
-            return Promise.resolve()
-                .then(() => {
-                    return driveGeneratorInstance.validateCurrentAssignedAssets([], this.showApproveDriveSubmissionBtn)
-                        .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
-                        //equipments
-                        return Promise.resolve()
-                        .then(() => {
-                            if (!allAssignedEquipmentsValid) {
-                                return driveGeneratorInstance.onDriveDataChanged([{
-                                    targetName: 'totalEquipmentRequestedChanged',
-                                    targetValue: {
-                                        equipmentJobsMap: newEquipmentJobsMap,
-                                        lockedEquipments: lockedEquipments
-                                    }
-                                }])
-                            }
-                        })
-                        .then(() => {
-                            return {
-                                allAssignedVehiclesValid, 
-                                newVehicles,
-                                lockedVehicles, 
-                                canHandleDriveProjectedRegisteredDonors
-                            }
-                        })
-                    })
-                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
-                        //vehicles
-                        if (!canHandleDriveProjectedRegisteredDonors) {
-                            Promise.resolve()
+            let fetch = new DriveFetch({
+                driveType: this.drive.typeOfDrive
+            })
+
+            return Promise.all([
+                fetch.retrieveActiveDriveChangeRequest(this.drive)
+            ])
+            .then(([driveChangeRequest]) => {
+                const isActiveDCR = !!driveChangeRequest?.type.includes(DRIVE_CHANGE_REQUEST_TYPE.USER_CHANGE);
+
+                if (isActiveDCR && !this.showDCRWarning && !this.showPendingUserChangeWarning) {
+                    this.dispatchEvent(new ShowToastEvent({
+                        message: 'Please refresh the page and process the Active Drive Change Request prior to updating the Drive.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    }));
+
+                    throw "break";
+                }
+            })
+            .then(() => {
+                if (!this.requiresAssetValidation() && !this.requireTimeBlockValidation()) {
+                    return this.handleSave().then(() => true); // sentinelastic to indicate that save is already done and no need to call handleValidate again
+                }
+
+                this.showLoading();
+                return Promise.resolve()
+                    .then(() => {
+                        return driveGeneratorInstance.validateCurrentAssignedAssets([], this.showApproveDriveSubmissionBtn)
+                            .then(({ allAssignedEquipmentsValid, newEquipmentJobsMap, lockedEquipments = [], allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
+                            //equipments
+                            return Promise.resolve()
                             .then(() => {
-                                return driveGeneratorInstance.onDriveDataChanged([{
-                                    targetName: 'totalVehicleRequestedChanged',
-                                    targetValue: {
-                                        totalVehicleRequested: newVehicles.length + lockedVehicles.length,
-                                        vehicles: newVehicles,
-                                        lockedVehicles: lockedVehicles
-                                    }
-                                }])
+                                if (!allAssignedEquipmentsValid) {
+                                    return driveGeneratorInstance.onDriveDataChanged([{
+                                        targetName: 'totalEquipmentRequestedChanged',
+                                        targetValue: {
+                                            equipmentJobsMap: newEquipmentJobsMap,
+                                            lockedEquipments: lockedEquipments
+                                        }
+                                    }])
+                                }
                             })
                             .then(() => {
-                                return this.handleValidate();
+                                return {
+                                    allAssignedVehiclesValid, 
+                                    newVehicles,
+                                    lockedVehicles, 
+                                    canHandleDriveProjectedRegisteredDonors
+                                }
                             })
-                            
-                            throw "break";
-                        }
-
-                        if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
-                            let currentNoOfVehicles = this.drive.totalVehicleRequested;
-                            if (!this.drive.preferSystemGeneratedVehicles) {
-                                driveGeneratorInstance.onDriveDataChanged([{
-                                    targetName: 'totalVehicleRequestedChanged',
-                                    targetValue: {
-                                        totalVehicleRequested: newVehicles.length + lockedVehicles.length,
-                                        vehicles: newVehicles,
-                                        lockedVehicles: lockedVehicles
-                                    }
-                                }])
-                                .then(() => {
-                                    return this.handleValidate();
-                                })
-
-
-                                throw 'break';
-                            }
-                            
-                            if (currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
-                                this.showConfirmModal({
-                                    title: 'Drive Confirmation',
-                                    message: 'Number of Vehicles changes. Please review again.',
-                                    confirmBtnLabel: 'OK',
-                                    cancelBtnLabel: 'none',
-                                    onClose: () => {
-                                        this.hideConfirmModal();
-                                        driveGeneratorInstance.onDriveDataChanged([{
-                                            targetName: 'numberOfVehicles',
-                                            targetValue: newVehicles.length + lockedVehicles.length
-                                        }, {
-                                            targetName: 'totalVehicleRequestedChanged',
-                                            targetValue: {
-                                                totalVehicleRequested: newVehicles.length + lockedVehicles.length,
-                                                vehicles: newVehicles,
-                                                lockedVehicles: lockedVehicles
-                                            }
-                                        }])
-                                    }
-                                });
-                            } else {
+                        })
+                        .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
+                            //vehicles
+                            if (!canHandleDriveProjectedRegisteredDonors) {
                                 Promise.resolve()
                                 .then(() => {
                                     return driveGeneratorInstance.onDriveDataChanged([{
@@ -806,13 +779,74 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 .then(() => {
                                     return this.handleValidate();
                                 })
+                                
+                                throw "break";
                             }
-                            
-                            throw "break";
-                        }
+
+                            if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
+                                let currentNoOfVehicles = this.drive.totalVehicleRequested;
+                                if (!this.drive.preferSystemGeneratedVehicles) {
+                                    driveGeneratorInstance.onDriveDataChanged([{
+                                        targetName: 'totalVehicleRequestedChanged',
+                                        targetValue: {
+                                            totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                                            vehicles: newVehicles,
+                                            lockedVehicles: lockedVehicles
+                                        }
+                                    }])
+                                    .then(() => {
+                                        return this.handleValidate();
+                                    })
+
+
+                                    throw 'break';
+                                }
+                                
+                                if (currentNoOfVehicles !== (newVehicles.length + lockedVehicles.length)) {
+                                    this.showConfirmModal({
+                                        title: 'Drive Confirmation',
+                                        message: 'Number of Vehicles changes. Please review again.',
+                                        confirmBtnLabel: 'OK',
+                                        cancelBtnLabel: 'none',
+                                        onClose: () => {
+                                            this.hideConfirmModal();
+                                            driveGeneratorInstance.onDriveDataChanged([{
+                                                targetName: 'numberOfVehicles',
+                                                targetValue: newVehicles.length + lockedVehicles.length
+                                            }, {
+                                                targetName: 'totalVehicleRequestedChanged',
+                                                targetValue: {
+                                                    totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                                                    vehicles: newVehicles,
+                                                    lockedVehicles: lockedVehicles
+                                                }
+                                            }])
+                                        }
+                                    });
+                                } else {
+                                    Promise.resolve()
+                                    .then(() => {
+                                        return driveGeneratorInstance.onDriveDataChanged([{
+                                            targetName: 'totalVehicleRequestedChanged',
+                                            targetValue: {
+                                                totalVehicleRequested: newVehicles.length + lockedVehicles.length,
+                                                vehicles: newVehicles,
+                                                lockedVehicles: lockedVehicles
+                                            }
+                                        }])
+                                    })
+                                    .then(() => {
+                                        return this.handleValidate();
+                                    })
+                                }
+                                
+                                throw "break";
+                            }
+                        })
                     })
                 })
-                .then(() => {
+                .then((alreadySaved) => {
+                    if (alreadySaved) return;
                     return this.handleValidate();
                 })
                 .catch(error => {
@@ -866,7 +900,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.showPendingActionDriveConfirmModal();
             } else {
                 this.drive.status = [DRIVE_STATUS.DRAFT].includes(this.drive.status) ? DRIVE_STATUS.TENTATIVE : this.drive.status;
-                this.handleSave();
+                return this.handleSave();
             }
         })
         .catch(error => this.exceptionHandler(error))
@@ -874,6 +908,12 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
     }
 
     handleSave(saveAndApproveApprovalIfAny = true) {
+        if (this.isSavingDrive) { // concurrent save prevention, in case user clicks save multiple times quickly or there are multiple save calls from different actions (e.g. submit for approval will call save as well)
+            slwcUtils.printLog('[DriveManagement::handleSave] Concurrent save detected — skipping duplicate call');
+            return Promise.resolve();
+        }
+
+        this.isSavingDrive = true;
         this.showLoading();
         
         const isAPSUser = this.driveHelper.isAPSUser(this.masterData.loginUser);
@@ -893,6 +933,7 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
             .then(result => {
                 let drive = result.returnedData[0];
                 newDriveId = drive.Id;
+                slwcUtils.printLog('[DriveManagement::handleSave] Current drive saved', '| id:', drive.Id, '| name:', drive.Name);
             })
             .then(() => {
                 //approve drive submission if needed
@@ -990,7 +1031,24 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                                 return jobSvc.saveList(chunkJobs);
                             }
                         });
-                        return slwcUtils.serial(promises);
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Edit Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ id: j.id, volunteerRole: j.volunteerRole, quantity: j.quantity}))));
+                    })
+            })
+            .then(() => {
+                if (!this.isFixedSiteDrive && !this.isWbFixedSiteDrive) return;
+                return driveGeneratorInstance.calculateRecurrenceNewVolunteerJobs(model)
+                    .then((jobsToSave = []) => {
+                        if (!jobsToSave.length) return;
+
+                        const jobSvc = new jobService();
+                        const promises = chunk(jobsToSave, 50).map(chunkJobs => {
+                            return () => {
+                                return jobSvc.saveList(chunkJobs);
+                            }
+                        });
+                        return slwcUtils.serial(promises)
+                            .then(() => slwcUtils.printLog('[DriveManagement::handleSave] Bulk Add Volunteer Roles/Jobs', '| jobs saved:', jobsToSave.map(j => ({ driveId: j.driveId, volunteerRole: j.volunteerRole, quantity: j.quantity, driveDate: j.start?.substring(0, 10) }))));
                     })
             })
             .then(() => {
@@ -1007,7 +1065,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                 this.handleNavigateToRecord();
             })
             .catch(error => this.exceptionHandler(error))
-            .finally(this.hideLoading);
+            .finally(() => {
+                this.isSavingDrive = false;
+                this.hideLoading();
+            });
     }
 
     handleHoldDrive() {
@@ -1157,9 +1218,9 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                             }
                         })
                     })
-                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors }) => {
+                    .then(({ allAssignedVehiclesValid, newVehicles, lockedVehicles = [], canHandleDriveProjectedRegisteredDonors, canHandleDriveProjRegDonorsWithLowerCapacity }) => {
                         //vehicles
-                        if (!canHandleDriveProjectedRegisteredDonors) {
+                        if (!canHandleDriveProjectedRegisteredDonors || canHandleDriveProjRegDonorsWithLowerCapacity) {
                             driveGeneratorInstance.onDriveDataChanged([...event.detail.properties, {
                                 targetName: 'totalVehicleRequestedChanged',
                                 targetValue: {
@@ -1359,6 +1420,10 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
         driveGeneratorInstance.saveBulkEditVolunteerJob(detail.shiftKey, detail.job);
     }
 
+    handleSaveBulkAddVolunteerJobModal(detail) {
+        driveGeneratorInstance.saveBulkAddVolunteerJob(detail.shiftKey, detail.job);
+    }
+
     /** Confirm Modal **/
     showConfirmModal(confirmModalData) {
         this.confirmModalData = {
@@ -1477,4 +1542,5 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     })
             });
     }
+
 }

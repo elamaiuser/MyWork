@@ -70,7 +70,7 @@ public class BSF_Batch_UpdateAccountStatus_Test
 		Test.stopTest();
         
         CronTrigger contrg = [select Id,CronJobDetailId,CronJobDetail.Name from CronTrigger where CronJobDetail.Name = 'Test schedule class'];
-        Assert.isTrue(contrg.CronJobDetail.Name == 'Test schedule class');
+        system.assert(contrg.CronJobDetail.Name == 'Test schedule class');
     }
     
     @isTest
@@ -83,168 +83,63 @@ public class BSF_Batch_UpdateAccountStatus_Test
 		Test.stopTest();
         
         CronTrigger contrg = [select Id,CronJobDetailId,CronJobDetail.Name from CronTrigger where CronJobDetail.Name = 'Test schedule class'];
-        Assert.isTrue(contrg.CronJobDetail.Name == 'Test schedule class');
-    }
-    
-    @isTest
-    public static void Test_Account_Inactive_NoFutureOpps() {
-        Account acc = [select id,account_status__c from account  where name ='Test Account 1'];
-        Test.setCreatedDate(acc.Id, System.today().addDays(-700));
-        
-        Test.StartTest();
-		UpdateAccountStatusInactive_Scheduler testsche = new UpdateAccountStatusInactive_Scheduler();
-		String sch = '0 0 23 * * ?';
-		system.schedule('Test schedule class', sch, testsche );
-		Test.stopTest();
-    }
-    
-    @isTest
-    public static void Test_Account_Lapsed_NoFutureOpps() {
-        Account acc = [select id,account_status__c from account  where name ='Test Account 1'];
-        Test.setCreatedDate(acc.Id, System.today().addDays(-800));
-        
-        Test.StartTest();
-		UpdateAccountStatusInactive_Scheduler testsche = new UpdateAccountStatusInactive_Scheduler();
-		String sch = '0 0 23 * * ?';
-		system.schedule('Test schedule class', sch, testsche );
-		Test.stopTest();
+        system.assert(contrg.CronJobDetail.Name == 'Test schedule class');
     }
     
     @isTest
     Public static void Test_Account_Active()
     {
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
         Account acc = [select id,account_status__c from account  where name ='Test Account 1'];
         acc.account_status__c = 'Inactive';
         Update acc;
         
+       
         BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Active',2);
         BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Active',0);
+      
         
         test.startTest();
         BSF_Batch_UpdateAccountStatus batch = new BSF_Batch_UpdateAccountStatus ();
         database.executeBatch(batch);
-        TriggerHandler.clearAllBypasses();
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
         test.stopTest();
         Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
         
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Active');
+        system.assert(UpdatedAcc.Account_Status__c == 'Active');
     }
     
     @isTest
     Public static void Test_Account_Lapsed()
     {
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        
         Account acc = [select id,account_status__c from account  LIMIT 1];
         acc.account_status__c = 'Inactive';
         Update acc;
         
-        Opportunity opp = BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Lapsed',800);
         
-        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',                                           
-                                                        sked_Drive_Date__c =opp.Drive_Date__c,
-                                                        sked_Opportunity__c = opp.Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
-                                                        sked_Account__c = opp.AccountId,
-                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
-                                                        sked_Drive_Productivity_Planned__c = 0.8,
-                                                        sked_Projected_Registered_Donors__c = 100,
-                                                        sked_2RBC_Projected_Procedures__c = 20,
-                                                     	sked_WB_Projected_Procedures__c = 20,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE);
-        insert testDrive1;
-        
-        update new Opportunity(Id = opp.Id, Related_Scheduled_Drive__c = testDrive1.Id);
+        BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Lapsed',800);
        
         test.startTest();
         BSF_Batch_UpdateAccountStatus batch = new BSF_Batch_UpdateAccountStatus ();
         database.executeBatch(batch);
-        TriggerHandler.clearAllBypasses();
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
         test.stopTest();
         
         Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Lapsed');
+        system.assert(UpdatedAcc.Account_Status__c == 'Lapsed');
     }
     
     @isTest
     Public static void Test_Account_Inactive()
     {
 		TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        skedHubBase.BypassInsertTriggers = true;
-        skedHubBase.BypassUpdateTriggers = true;
-        
         Account acc = [select id,account_status__c from account  LIMIT 1];
         acc.account_status__c = 'Active';
         Update acc;
         
-        Opportunity opp = BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Inactive',600);
         
-        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',                                           
-                                                        sked_Drive_Date__c =opp.Drive_Date__c,
-                                                        sked_Opportunity__c = opp.Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
-                                                        sked_Account__c = opp.AccountId,
-                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
-                                                        sked_Drive_Productivity_Planned__c = 0.8,
-                                                        sked_Projected_Registered_Donors__c = 100,
-                                                        sked_2RBC_Projected_Procedures__c = 20,
-                                                     	sked_WB_Projected_Procedures__c = 20,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE);
-        insert testDrive1;
-        
-        update new Opportunity(Id = opp.Id, Related_Scheduled_Drive__c = testDrive1.Id);
-        
-        test.startTest();
-        BSF_Batch_UpdateAccountStatus batch = new BSF_Batch_UpdateAccountStatus ();
-        database.executeBatch(batch);
-        TriggerHandler.clearAllBypasses();
-        skedHubBase.BypassInsertTriggers = false;
-        skedHubBase.BypassUpdateTriggers = false;
-        
-        test.stopTest();
-        
-        Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Inactive');
-    }
-    
-    @isTest
-    Public static void Test_Account_ActiveWithLatestDrive()
-    {
-        TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
-        TriggerHandler.bypass('DriveTriggerHandler');
-        TriggerHandler.bypass('TaskTriggerHandler');
-        Account acc = [select id,account_status__c from account  LIMIT 1];
-        acc.account_status__c = 'Defunct';
-        Update acc;
-        
-        Opportunity opp = BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Discovery','Test_Account_Active', -1);
-        
-        sked_Drive__c testDrive1 = new sked_Drive__c(Name = 'Test Drive',                                           
-                                                        sked_Drive_Date__c =opp.Drive_Date__c,
-                                                        sked_Opportunity__c = opp.Id,
-                                                        sked_Type_of_Drive__c = 'Fixed Site',
-                                                        sked_Account__c = opp.AccountId,
-                                                        sked_Start_Time__c = Time.newInstance(7, 0, 0, 0),
-                                                        sked_End_Time__c = Time.newInstance(17, 0, 0, 0),
-                                                        sked_Drive_Productivity_Planned__c = 0.8,
-                                                        sked_Projected_Registered_Donors__c = 100,
-                                                        sked_2RBC_Projected_Procedures__c = 20,
-                                                     	sked_WB_Projected_Procedures__c = 20,
-                                                        sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE);
-        insert testDrive1;
-        
-        update new Opportunity(Id = opp.Id, Related_Scheduled_Drive__c = testDrive1.Id);
+        BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Inactive',600);
         
         test.startTest();
         BSF_Batch_UpdateAccountStatus batch = new BSF_Batch_UpdateAccountStatus ();
@@ -253,14 +148,60 @@ public class BSF_Batch_UpdateAccountStatus_Test
         test.stopTest();
         
         Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Active');
+        system.assert(UpdatedAcc.Account_Status__c == 'Inactive');
+    }
+    
+    @isTest
+    Public static void Test_Account_Reactivate()
+    {
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        Account acc = [select id,account_status__c from account  LIMIT 1];
+        acc.account_status__c = 'Defunct';
+        Update acc;
+        
+        BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Discovery','Test_Account_Reactivate',0);
+        
+        Opportunity opp = [select Id,Drive_Date__c,AccountId,StageName from opportunity where accountId=:acc.id];
+        opp.AccountId =acc.id;
+        opp.StageName = 'Discovery';
+        update opp;
+        
+        test.startTest();
+        BSF_Batch_UpdateAccountStatus batch = new BSF_Batch_UpdateAccountStatus ();
+        database.executeBatch(batch);
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        test.stopTest();
+        
+        Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
+        system.assert(UpdatedAcc.Account_Status__c == 'Reactivate');
+    }
+    
+    @isTest
+    Public static void Test_Account_BSF_Batch_UpdateAccountStatusInactive()
+    {
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        Account acc = [select id,account_status__c from account  LIMIT 1];
+        acc.account_status__c = 'Active';
+        Update acc;
+        
+        List<Opportunity> oppList = [select Id,Drive_Date__c,AccountId,StageName from opportunity];
+        delete oppList;
+        BSF_Batch_UpdateAccountStatus_Test.createOpportunity (acc.id,'Closed','Test_Account_Inactive',600);
+        
+        test.startTest();
+        BSF_Batch_UpdateAccountStatusInactive batch = new BSF_Batch_UpdateAccountStatusInactive ();
+        database.executeBatch(batch);
+        TriggerHandler.clearBypass('OpportunityTriggerHandler');
+        test.stopTest();
+        
+        Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
+        system.assert(UpdatedAcc.Account_Status__c == 'Inactive');
     }
     
     @isTest
     Public static void Test_Account_BSF_Batch_UpdateAccountStatusInactive2()
     {
         TriggerHandler.bypass('OpportunityTriggerHandler');
-        TriggerHandler.bypass('AccountTriggerHandler');
         Account acc = [select id,account_status__c from account  LIMIT 1];
         acc.account_status__c = 'Active';
         Update acc;
@@ -275,7 +216,7 @@ public class BSF_Batch_UpdateAccountStatus_Test
         test.stopTest();
         
         Account UpdatedAcc = [select id,account_status__c from account where id=:acc.id];
-        Assert.isTrue(UpdatedAcc.Account_Status__c == 'Active');
+        system.assert(UpdatedAcc.Account_Status__c == 'Active');
     }
     
     @isTest
@@ -290,7 +231,7 @@ public class BSF_Batch_UpdateAccountStatus_Test
 		Test.stopTest();
         
         CronTrigger contrg = [select Id,CronJobDetailId,CronJobDetail.Name from CronTrigger where CronJobDetail.Name = 'Test schedule class'];
-        Assert.isTrue(contrg.CronJobDetail.Name == 'Test schedule class');
+        system.assert(contrg.CronJobDetail.Name == 'Test schedule class');
     }
     
     public static Opportunity createOpportunity (id accId,String Stage,String Name, Integer driveDateOffset)
@@ -313,6 +254,7 @@ public class BSF_Batch_UpdateAccountStatus_Test
             opp.Name = 'Test Opportunity';
             opp.Anticipated_Registered_Donors__c =25;
             opp.Accept_56_Day_Rule_Violation__c =true;
+            opp.Drive_Status__c='Complete';
 			insert opp; 
         return opp;
     }

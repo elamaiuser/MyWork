@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>55.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>Updating the site name field (Location Name) as the site/building name - room name</description>
     <formulas>
         <description>Using this formula , the site name (Location Name) will be updated - the site/building name and room name will be concatenated for this</description>

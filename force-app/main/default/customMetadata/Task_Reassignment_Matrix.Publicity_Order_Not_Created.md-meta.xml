@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Creation_Date_Offset__c</field>
-        <value xsi:type="xsd:double">63.0</value>
+        <value xsi:type="xsd:double">56.0</value>
     </values>
     <values>
         <field>Description__c</field>
@@ -20,10 +20,18 @@
     </values>
     <values>
         <field>Due_Date_Offset__c</field>
-        <value xsi:type="xsd:double">63.0</value>
+        <value xsi:type="xsd:double">56.0</value>
+    </values>
+    <values>
+        <field>Task_Creation_Threshold_In_Days__c</field>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Task_Subject__c</field>
+        <value xsi:type="xsd:string">Publicity Order Not Created</value>
+    </values>
+    <values>
+        <field>Task_Type__c</field>
         <value xsi:type="xsd:string">Publicity Order Not Created</value>
     </values>
 </CustomMetadata>

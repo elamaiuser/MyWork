@@ -1677,6 +1677,36 @@
             <field>sked_Stage_Options__c</field>
             <table>Opportunity.sked_Drives__r</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Max_Role_Capacity_With_Draw_Hours__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Dual_Roles_Auto_Generated__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Prefer_System_Generated_Vehicles__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Redcross_Volunteer_Required__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Redcross_Volunteer_Quantity__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>sked_Cancellation_Detail__c</field>
+            <table>Opportunity.sked_Drives__r</table>
+        </columns>
         <masterLabel>Drives on Calendar</masterLabel>
     </sections>
     <sections>
@@ -1713,12 +1743,27 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Red_Cross_Volunteer_Required__c</field>
+            <field>Special_Circumstances__c</field>
             <table>Opportunity</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Red_Cross_Volunteer_Quantity__c</field>
+            <field>Special_Circumstances_Notes__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Primary_Drive_Contact__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Special_Affiliations__c</field>
             <table>Opportunity</table>
         </columns>
         <masterLabel>Blood Drive Opportunities</masterLabel>

@@ -230,7 +230,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &apos;Cancel&apos; AND StageName != &apos;Cancelled&apos; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, Drive_Status__c, Drive_Name__c, Total_Projections__c from Opportunity where Drive_Status__c != &#39;Cancel&#39; AND StageName != &#39;Cancelled&#39; AND Drive_Date__c  &gt;= today AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -354,7 +354,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>SOQLQuery</name>
-                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &apos;Cancelled&apos; AND AccountId IN:</value>
+                    <value>select Name, Drive_Date__c,CloseDate,StageName, DriveStatus__c, Drive_Name__c, Total_Projections__c from Opportunity where StageName = &#39;Cancelled&#39; AND AccountId IN:</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>dateFormatType</name>
@@ -381,6 +381,103 @@
                 </componentInstanceProperties>
                 <componentName>GenericRelatedList</componentName>
                 <identifier>GenericRelatedList2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>actionNames</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>adminFilters</name>
+                    <valueList>
+                        <valueListItems>
+                            <value>DriveStatus__c|EQUALS|Complete</value>
+                        </valueListItems>
+                    </valueList>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>maxRecordsToDisplay</name>
+                    <value>5</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Account.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>Opportunities</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListDisplayType</name>
+                    <value>ADVGRID</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListFieldAliases</name>
+                    <valueList>
+                        <valueListItems>
+                            <value>OPPORTUNITY.NAME</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Drive_Date__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Start_End_Time_Display__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Total_Products_Projected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_visit_donor_cnt__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_wb_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_drbc_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_total_units_collected__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_african_amrcn_cnt__c</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>actual_hispanic_cnt__c</value>
+                        </valueListItems>
+                    </valueList>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListLabel</name>
+                    <value>Completed Blood Drives</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>sortFieldAlias</name>
+                    <value>Drive_Date__c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>sortFieldOrder</name>
+                    <value>Descending</value>
+                </componentInstanceProperties>
+                <componentName>lst:dynamicRelatedList</componentName>
+                <identifier>lst_dynamicRelatedList16</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 AND 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!$Client.formFactor}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Large</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Feeder_Account_Type__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Feeder Only</rightValue>
+                    </criteria>
+                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-1451e1df-eedf-4426-91c5-4aed3eab7972</name>

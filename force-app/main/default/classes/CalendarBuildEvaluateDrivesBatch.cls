@@ -134,7 +134,6 @@
 	*/
     
     global CalendarBuildEvaluateDrivesBatch() {
-        System.debug('Entered CalendarBuildEvaluateDrivesBatch');
         try {
             Calendar_Build_Setting__mdt cbMetadata = Calendar_Build_Setting__mdt.getInstance('Calendar_Build_Drives_Config');
             Decimal daysAfterDriveCompletion = cbMetadata?.No_of_Days_for_Calendar_Build_Batch__c;
@@ -184,7 +183,9 @@
             List<Opportunity> lstOpps = CalendarBuildBatchHandler.cloneDrives(eligibleOppList);
             lstCBOpps.add(lstOpps[0].Calendar_Build_Parent_Opportunity__c);
             if(lstOpps != NULL && lstOpps.size() > 0 ) {
+                checkRecursive.skipVolunteerCalculation = true; //HRP-13146
                 Database.SaveResult[] clonedOppInsertResultList = Database.insert(lstOpps, false);
+                checkRecursive.skipVolunteerCalculation = false; //HRP-13146
                 for(Database.SaveResult sr : clonedOppInsertResultList) {
                     Integer i = 0;
                     if(!sr.isSuccess()) {
@@ -257,8 +258,8 @@
                     DriveGenerationUtil.captureCbLogAndCbErrorLog(cbLogWrapper);
                 }
                 if(cbLogWrapper.opportunitySource.equalsIgnoreCase(BSF_Constants.OPP_SOURCE_CALENDAR_BUILD)) {
-                DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
-                driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
+                    DateTime dt = Helper.getSameDayOfNextYear(cbLogWrapper.driveDateToEval);
+                    driveDateToEval = Date.newInstance(dT.year(), dT.month(), dT.day());
                 }
                 
                 if(!this.byPassDriveGeneration) {

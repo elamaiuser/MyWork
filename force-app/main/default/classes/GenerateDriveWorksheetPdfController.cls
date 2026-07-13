@@ -27,6 +27,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
         public Boolean isFixedSite { get; set; }
         public OprationalInformation oppInfo {get; set;}
         public List<DriveJobInformation> jobInfoList {get; set;}
+        public Boolean hasLtowbProj {get; set;}
         public DriveShiftInformation shiftInfo {get; set;}
         public SiteInformation siteInfo {get; set;}
         public List<EmployeeTableInformation> empInfoList {get; set;}
@@ -66,6 +67,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
         public String deliveryID {get; set;}
         public String bagDetails {get; set;}
         public String driveComments {get; set;}
+        public String ltowbProj {get; set;}
     }
     public class DriveShiftInformation{
         public String shift {get; set;}
@@ -349,6 +351,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                             sked_Comments__c,
                                                                             sked_Drive__c,
                                                                             (SELECT Id, 
+                                                                                LTOWB_Proj__c,
                                                                                 sked_Bag_Type__c 
                                                                             FROM sked_Drive_Bags__r)
                                                                         FROM sked_Drive_Delivery_Job__c
@@ -450,6 +453,8 @@ public without sharing class GenerateDriveWorksheetPdfController {
                                                                                 sked_Primary_Contact__r.Name,
                                                                                 sked_Primary_Contact__r.Primary_Phone__c,
                                                                                 sked_Primary_Contact__r.MobilePhone,
+                                                                                sked_Primary_Contact__r.OtherPhone,
+                                                                                sked_Primary_Contact__r.HomePhone,
                                                                                 sked_Security_Escort_Name__c,
                                                                                 sked_Opportunity__r.Account_Manager__c,// added for HRP-11777
                                                                                 sked_Opportunity__r.Account_Manager__r.Name,// added for HRP-11777
@@ -548,7 +553,18 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     rw.siteInfo.siteContact = (drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.sked_Site_Contact__c != null)? drive.sked_Drive_Site__r.sked_Site_Contact__r.Name : '';
                     rw.siteInfo.priChair = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.Name : '';
                     rw.siteInfo.phone = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.Primary_Phone__c : '';
-                    rw.siteInfo.mobile = drive.sked_Primary_Contact__c != null ? drive.sked_Primary_Contact__r.MobilePhone : '';
+                    if(drive.sked_Primary_Contact__c != null) {
+                        String primaryPhone = drive.sked_Primary_Contact__r.Primary_Phone__c;
+                        if(primaryPhone == 'Work Phone') {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.OtherPhone != null ? drive.sked_Primary_Contact__r.OtherPhone : '';
+                        } else if(primaryPhone == 'Home Phone') {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.HomePhone != null ? drive.sked_Primary_Contact__r.HomePhone : '';
+                        } else {
+                            rw.siteInfo.mobile = drive.sked_Primary_Contact__r.MobilePhone != null ? drive.sked_Primary_Contact__r.MobilePhone : '';
+                        }
+                    } else {
+                        rw.siteInfo.mobile = '';
+                    }
                     rw.siteInfo.insideStairs = drive.sked_Drive_Site__c != null ? String.valueOf(drive.sked_Drive_Site__r.sked_Inside_stairs__c) : '';
                     rw.siteInfo.outsideStairs = drive.sked_Drive_Site__c != null ? String.valueOf(drive.sked_Drive_Site__r.sked_Outside_stairs__c) : '';
                     if(drive.sked_Drive_Site__c != null && drive.sked_Drive_Site__r.sked_Escort_Required__c != null){
@@ -605,6 +621,7 @@ public without sharing class GenerateDriveWorksheetPdfController {
                     }
                     if(deliveryJobMap.containsKey(drive.id) && deliveryJobMap.get(drive.id) != null){
                         rw.jobInfoList = new List<DriveJobInformation>();
+                        rw.hasLtowbProj = false;
                         for(sked_Drive_Delivery_Job__c driveJob : deliveryJobMap.get(drive.id)){
                             DriveJobInformation dj = new DriveJobInformation();
                             dj.num = String.valueOf(rw.jobInfoList.size() + 1);
@@ -613,15 +630,25 @@ public without sharing class GenerateDriveWorksheetPdfController {
                             dj.deliveryID = driveJob.sked_Delivery_ID__c;
                             dj.driveComments = driveJob.sked_Comments__c;
                             List<String> bagList = new List<String>();
+                            List<String> ltowbProjList = new List<String>();
                             if(driveJob.sked_Drive_Bags__r != null){
                                 for(sked_Drive_Bag__c dbag : driveJob.sked_Drive_Bags__r){
                                     if(String.isNotBlank(dbag.sked_Bag_Type__c)){
                                         bagList.add(dbag.sked_Bag_Type__c);
+                                        if(dbag.sked_Bag_Type__c.equalsIgnoreCase('IM Terumo Imuflex WB') && dbag.LTOWB_Proj__c != null && dbag.LTOWB_Proj__c > 0){
+                                            ltowbProjList.add(String.valueOf(dbag.LTOWB_Proj__c));
+                                            rw.hasLtowbProj = true;
+                                        }
                                     }
                                 }
                             }
                             if(bagList.size() > 0){
                                 dj.bagDetails = String.join(bagList,' , ');
+                            }
+                            if(ltowbProjList.size() > 0) {
+                                dj.ltowbProj = String.join(ltowbProjList, ', ');
+                            } else {
+                                dj.ltowbProj = '';
                             }
                             rw.jobInfoList.add(dj);
                         }

@@ -211,6 +211,10 @@ export const DRIVE_DELIVERY_JOBS_TYPE = {
   BAG : 'Bag'
 }
 
+export const DRIVE_BAG_TYPE = {
+  IM_TERUMO_IMUFLEX_WB : 'IM Terumo Imuflex WB'
+}
+
 export const DRIVE_DELIVERY_JOB_DISPLAY_MODE = {
   TAB: 'Tab',
   WIDGET: 'Widget'

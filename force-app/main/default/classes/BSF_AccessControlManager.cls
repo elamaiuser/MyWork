@@ -389,6 +389,7 @@ public without sharing class BSF_AccessControlManager {
             return;
         }
         try {
+            records.sort();
             if (operation == 'insert') {
                 insert records;
             } else if (operation == 'update') {

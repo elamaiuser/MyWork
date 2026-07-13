@@ -7,6 +7,10 @@
         <value xsi:type="xsd:double">1.0</value>
     </values>
     <values>
+        <field>Field_Mapping_Object__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>Help_Text__c</field>
         <value xsi:type="xsd:string">Within two days of the blood drive, the BPL will receive an automated Thank You email with a link to the online survey to complete. 
 
@@ -46,7 +50,7 @@ Emphasize to sponsor that their voice is important to continue improvement of pa
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">Post Drive Analysis</value>
+        <value xsi:type="xsd:string">Post Drive Analysis Task</value>
     </values>
     <values>
         <field>Subtype__c</field>

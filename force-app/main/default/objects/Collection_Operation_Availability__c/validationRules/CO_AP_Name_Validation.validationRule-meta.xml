@@ -3,7 +3,7 @@
     <fullName>CO_AP_Name_Validation</fullName>
     <active>true</active>
     <description>CO AP Name should be concentration of CO Name, Space, AP Name</description>
-    <errorConditionFormula>Name  &lt;&gt;  Collection_Operation__r.Name  + &apos; &apos;  +  Availability_Pattern__r.Name</errorConditionFormula>
+    <errorConditionFormula>Name  &lt;&gt;  Collection_Operation__r.Name  + &#39; &#39;  +  Availability_Pattern__r.Name</errorConditionFormula>
     <errorDisplayField>Name</errorDisplayField>
     <errorMessage>Name should be concentration of CO Name, Space, AP Name</errorMessage>
 </ValidationRule>

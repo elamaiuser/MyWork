@@ -11,6 +11,10 @@
                 <field>Error</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>FlowVersionViewId</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Required</behavior>
                 <field>InterviewStatus</field>
             </layoutItems>
@@ -73,6 +77,7 @@
         <fields>MasterVersionProcessType</fields>
         <fields>WasPausedFromScreen</fields>
         <fields>Error</fields>
+        <fields>FlowVersionViewId</fields>
     </miniLayout>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>

@@ -43,9 +43,6 @@
         <field>sked__Resource__c.sked__Availabilities1__r$sked__Type__c</field>
     </columns>
     <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$sked_Call_Out_Type__c</field>
-    </columns>
-    <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Custom_Status__c</field>
     </columns>
     <columns>
@@ -68,16 +65,19 @@
         <field>sked__Resource__c$sked_Roles__c</field>
     </columns>
     <columns>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_WID__c</field>
+    </columns>
+    <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Message__c</field>
     </columns>
     <columns>
         <field>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Status__c</field>
     </columns>
     <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Dispositioned_By_User__c</field>
     </columns>
     <columns>
-        <field>sked__Resource__c.sked__Availabilities1__r$sked_Dispositioned_By_User__c</field>
+        <field>sked__Resource__c.sked__Availabilities1__r$sked_Disposition_Date__c</field>
     </columns>
     <description>Time Off Request Evaluation Report</description>
     <filter>
@@ -86,7 +86,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>PTO,Call Out,Floating Holiday,Personal</value>
+            <value>Floating Holiday,PTO</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c$sked_Biomed_Collection_Op_Center_Name__c</column>
@@ -100,14 +100,14 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
-            <value>1/1/2025</value>
+            <value>9/10/2023</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$sked_Start_Date__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>lessOrEqual</operator>
-            <value>1/31/2025</value>
+            <value>5/13/2024</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c$Name</column>
@@ -163,21 +163,14 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Pending,Waitlist,Approved,Declined,Expired,Cancelled,Approved From Waitlist,Processing Approval,Processing Adjustment,Processing Cancellation</value>
+            <value>,Approved,Approved From Waitlist,Cancelled,Declined,Expired,Pending,Waitlist</value>
         </criteriaItems>
         <criteriaItems>
             <column>sked__Resource__c.sked__Availabilities1__r$sked_Workday_Sync_Status__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Failed,Manual,Success</value>
-        </criteriaItems>
-        <criteriaItems>
-            <column>sked__Resource__c.sked__Availabilities1__r$sked_Call_Out_Type__c</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>,Call Out</value>
+            <value>,Failed,Success</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -197,8 +190,8 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>sked__Resource__c.sked__Availabilities1__r$sked_Bidding_Type__c</sortColumn>
-    <sortOrder>Desc</sortOrder>
+    <sortColumn>sked__Resource__c.sked__Availabilities1__r$sked__Notes__c</sortColumn>
+    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>sked__Resource__c$sked_Anticipated_Leave_Return_Date__c</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

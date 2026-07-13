@@ -20,6 +20,7 @@ public class skedJobHandler extends skedTriggerHub {
     
     public override void onAfterInsert() {
         populateJobTags(this.context.newRecords);
+        updateDriveShiftVolunteerSetup(this.context.newRecords, null);
     }
     
     public override void onBeforeUpdate() {
@@ -241,6 +242,7 @@ public class skedJobHandler extends skedTriggerHub {
                 driveShiftIds.add(newRecord.sked_Drive_Shift__c);
             }
             newRecord.sked__Can_Be_Declined__c = false;
+            newRecord.sked__Job_Allocation_Time_Source__c = false;
             newRecord.sked__Type__c = newRecord.sked_Resource_Role__c != NULL ? newRecord.sked_Resource_Role__c 
                 : newRecord.sked_Asset_Type__c != NULL ? newRecord.sked_Asset_Type__c : newRecord.sked_Volunteer_Role__c;
         }
@@ -268,6 +270,9 @@ public class skedJobHandler extends skedTriggerHub {
             sked__Job__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked__Start__c != oldData.sked__Start__c || newRecord.sked__Finish__c != oldData.sked__Finish__c) {
                 newRecord.sked__Duration__c = skedDateTimeUtils.getDifferentMinutes(newRecord.sked__Start__c, newRecord.sked__Finish__c);
+            }
+            if (newRecord.sked_Volunteer_Role__c != oldData.sked_Volunteer_Role__c) {
+                newRecord.sked__Type__c = newRecord.sked_Volunteer_Role__c;
             }
             if (newRecord.sked_Is_Geolocation_Mismatched__c == TRUE || newRecord.sked__Location__c != oldData.sked__Location__c) {
                 locationIds.add(newRecord.sked__Location__c);
@@ -438,16 +443,9 @@ public class skedJobHandler extends skedTriggerHub {
                 if (newRecord.sked_Drive__c != NULL) {
                     sked_Drive__c skedDrive = mapDrive.get(newRecord.sked_Drive__c);
                     sked__Tag__c skedTag;
-                    if (
-                        skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_MOBILE ||
-                        (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE && 
-                        skedDrive.sked_Operation_Type__c == skedConstants.OPERATION_TYPE_WB)
-                    ) {
+                    if (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_MOBILE) {
                         skedTag = mapDriveTypeTag.get(skedConstants.DRIVE_TYPE_MOBILE);
-                    } else if (
-                        skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE && 
-                        skedDrive.sked_Operation_Type__c != skedConstants.OPERATION_TYPE_WB
-                    ) {
+                    } else if (skedDrive.sked_Type_of_Drive__c == skedConstants.DRIVE_TYPE_FIXED_SITE) {
                         skedTag = mapDriveTypeTag.get(skedConstants.DRIVE_TYPE_FIXED_SITE);
                     }
 
@@ -552,17 +550,23 @@ public class skedJobHandler extends skedTriggerHub {
     private void updateDriveShiftVolunteerSetup(List<sked__Job__c> newRecords, Map<Id, sked__Job__c> oldMap) {
         Set<Id> driveShiftIds = new Set<Id>();
         List<sked_Drive_Shift__c> driveShifts = new List<sked_Drive_Shift__c>();
+
         for (sked__Job__c newRecord : newRecords) {
-            sked__Job__c oldData = oldMap.get(newRecord.Id);
-            if (newRecord.sked_Volunteer_Role__c == null) {
+            if (newRecord.sked_Volunteer_Role__c == null || newRecord.sked_Drive_Shift__c == null) {
                 continue;
             }
-            Boolean isRedcrossVolunteerQuantityChanged = newRecord.sked_Redcross_Volunteer_Quantity__c != oldData.sked_Redcross_Volunteer_Quantity__c;
-            Boolean isQuantityChanged = newRecord.sked__Quantity__c != oldData.sked__Quantity__c;
 
-            if(isRedcrossVolunteerQuantityChanged || isQuantityChanged) {
-                driveShiftIds.add(newRecord.sked_Drive_Shift__c);
-            }
+            if (oldMap == null) {
+                driveShiftIds.add(newRecord.sked_Drive_Shift__c);                
+            } else {
+                sked__Job__c oldData = oldMap.get(newRecord.Id);
+                Boolean isRedcrossVolunteerQuantityChanged = newRecord.sked_Redcross_Volunteer_Quantity__c != oldData.sked_Redcross_Volunteer_Quantity__c;
+                Boolean isQuantityChanged = newRecord.sked__Quantity__c != oldData.sked__Quantity__c;                
+                
+                if(isRedcrossVolunteerQuantityChanged || isQuantityChanged) {
+                    driveShiftIds.add(newRecord.sked_Drive_Shift__c);
+                }
+            }            
         }
         if (!driveShiftIds.isEmpty()) {
             List<AggregateResult> sumOfVolunteerJobs = [SELECT sked_Drive_Shift__c shiftId, SUM(sked__Quantity__c) jobQuantity

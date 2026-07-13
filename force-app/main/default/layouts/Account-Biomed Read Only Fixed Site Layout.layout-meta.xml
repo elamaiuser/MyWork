@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>ChangeRecordType</excludeButtons>
-    <excludeButtons>DataDotComAccountInsights</excludeButtons>
-    <excludeButtons>DataDotComCompanyHierarchy</excludeButtons>
+    <excludeButtons>DataDotComClean</excludeButtons>
     <excludeButtons>Delete</excludeButtons>
     <excludeButtons>DisableCustomerPortalAccount</excludeButtons>
     <excludeButtons>Edit</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <excludeButtons>XClean</excludeButtons>
     <layoutSections>
@@ -75,6 +73,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Next_Scheduled_Drive_Updated__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Special_Partnership_Level__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -366,7 +368,7 @@
         <relatedList>Account_Affiliation_History__c.Account__c</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>sked_Location__c</fields>
+        <fields>NAME</fields>
         <relatedList>sked_Location_Account__c.sked_Account__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -414,6 +416,7 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>Contact__c</fields>
         <fields>Account_Service_Role__c</fields>
         <fields>Start_Date__c</fields>
@@ -440,7 +443,7 @@
         <fields>Drive_Date__c</fields>
         <fields>Is_Template__c</fields>
         <fields>OPPORTUNITY.STAGE_NAME</fields>
-        <fields>Drive_Status__c</fields>
+        <fields>DriveStatus__c</fields>
         <fields>Parent_Template_Id__c</fields>
         <relatedList>RelatedOpportunityList</relatedList>
         <sortField>Is_Template__c</sortField>

@@ -4,8 +4,8 @@
     <active>true</active>
     <description>Only system admin can change total actual resources</description>
     <errorConditionFormula>AND(
-NOT($User.FirstName &amp; &apos; &apos; &amp; $User.LastName = &apos;Automated Process&apos;),
-NOT($Profile.Name  = &apos;System Administrator&apos;),
+NOT($User.FirstName &amp; &#39; &#39; &amp; $User.LastName = &#39;Automated Process&#39;),
+NOT($Profile.Name  = &#39;System Administrator&#39;),
 OR( 
 AND( 
 ISNEW(), 

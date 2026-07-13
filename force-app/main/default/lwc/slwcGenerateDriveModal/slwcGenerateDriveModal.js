@@ -239,7 +239,7 @@ const STEP = {
                     equipmentJobsMap: newEquipmentJobsMap,
                     lockedEquipments: lockedEquipments
                   }
-                }])
+                }], { preserveExistingSlots: true })
               }
             })
             .then(() => {
@@ -261,7 +261,7 @@ const STEP = {
                 vehicles: newVehicles,
                 lockedVehicles: lockedVehicles
               }
-            }])
+            }], { preserveExistingSlots: true })
           }
 
           if (!allAssignedVehiclesValid && canHandleDriveProjectedRegisteredDonors) {
@@ -272,7 +272,7 @@ const STEP = {
                 vehicles: newVehicles,
                 lockedVehicles: lockedVehicles
               }
-            }])
+            }], { preserveExistingSlots: true })
           }
         })
         .then(() => {
@@ -447,6 +447,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   @track showARDValidationMessage=false;
   @track declineByUser=false;
   @track ardWarningMessage;
+  @track isModalClosed = false;
 
   get submissionNotesRequired() {
     return this.drive && this.drive.routeApprovalRequestTo === 'Request DM evaluation';
@@ -517,6 +518,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
     this.steps = MODE_STEPS[this.mode];
     this.needConfirmToContinue = false;
     this.needToRefreshPage = false;
+    this.isModalClosed = false;
     if(!this.steps.length) return;
 
     this.showLoading();
@@ -551,6 +553,8 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
    
     return this.currentStep.action(this)
     .then((result) => {
+      if(this.isModalClosed) return;
+
       if(result) {
         return this.nextStep();
       }
@@ -768,6 +772,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   }
 
   saveDrive(drive, scope) {
+    console.log('save drive');
     return Promise.resolve()
       .then(()=> {
           if(drive.status === DRIVE_STATUS.DRAFT) {
@@ -777,6 +782,7 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
           let model = { ...drive };
           drivesToSave.push(model);
           let service = new driveService();
+          console.log('before savelist');
           return service.saveList(drivesToSave);
       })
       .then((result) => {
@@ -1027,18 +1033,20 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
   }
 
   closeModal() { 
-    console.log('closeModal B showARDValidationMessage :',this.showARDValidationMessage,' declineByUser:',this.declineByUser);
+    this.isModalClosed = true;
+
     if(!this.declineByUser){
       //this.checkTimeDifference();
       if(this.oppArdValidationFlag){
         this.showARDValidationMessage=true;
       }
     }
-    console.log('closeModal A showARDValidationMessage :',this.showARDValidationMessage);
+    
     if(!this.showARDValidationMessage){
       this.conditionalCloseModal();
     }
   }
+
   conditionalCloseModal(){
     console.log('conditionalCloseModal ');
     const closeModalEvent = new CustomEvent('closemodal', {

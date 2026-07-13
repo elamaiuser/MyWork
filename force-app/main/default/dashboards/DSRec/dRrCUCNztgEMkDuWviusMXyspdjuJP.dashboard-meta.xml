@@ -376,7 +376,7 @@
                     </flexTableSortInfo>
                     <hideChatterPhotos>true</hideChatterPhotos>
                 </flexComponentProperties>
-                <groupingSortProperties/>
+                <groupingSortProperties />
                 <header>Fixed Site Opportunities</header>
                 <report>BSFRecruitment/FS_Opps_for_Dashboard_snr</report>
             </dashboardComponent>

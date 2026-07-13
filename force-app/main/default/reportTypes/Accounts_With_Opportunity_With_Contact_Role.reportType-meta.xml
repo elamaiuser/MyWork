@@ -781,6 +781,16 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>CFY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CY_Drives1__c</field>
+            <table>Account</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>Last_Closed_Drive_New__c</field>
             <table>Account</table>
         </columns>
@@ -2345,12 +2355,27 @@
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Red_Cross_Volunteer_Required__c</field>
+            <field>Special_Circumstances__c</field>
             <table>Account.Opportunities</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Red_Cross_Volunteer_Quantity__c</field>
+            <field>Special_Circumstances_Notes__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Cancellation_Detail__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Primary_Drive_Contact__c</field>
+            <table>Account.Opportunities</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Special_Affiliations__c</field>
             <table>Account.Opportunities</table>
         </columns>
         <masterLabel>Blood Drive Opportunities</masterLabel>

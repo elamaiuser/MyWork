@@ -109,8 +109,9 @@ public class skedWorkdayApiManager {
             HttpResponse res = absenceManagement.Enter_Time_Off_Http(businessProcessParams, enterTimeOffData);
             Dom.Document responseDoc = res.getBodyDocument();
             Dom.XmlNode rootNode = responseDoc.getRootElement();
-            result.response = res.getBody();
+            result.response = res.getBody().replaceAll('><', '>\n<');//HRP-13728
             result.statusCode = res.getStatusCode();
+            result.request = absenceManagement.requestXML;//HRP-13728
 
             if (res.getStatusCode() != 200) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
@@ -155,7 +156,7 @@ public class skedWorkdayApiManager {
 
             skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_Entry_DataType adjustTimeOffEntry = new skedWorkdayAbsenceManagementBsvc.Adjust_Time_Off_Entry_DataType();
             adjustTimeOffEntry.Adjustment_to_Requested =  timeOffEntry.adjustment;
-            adjustTimeOffEntry.Comment = timeOffEntry.comment;
+            adjustTimeOffEntry.Comment = timeOffEntry.comment;//HRP-13728
             adjustTimeOffEntry.Time_Off_Entry_Reference = timeOffEntryReference;
             adjustTimeOffEntryData.add(adjustTimeOffEntry);
         }
@@ -169,8 +170,9 @@ public class skedWorkdayApiManager {
             HttpResponse res = absenceManagement.Adjust_Time_Off_Http(businessProcessParams, adjustTimeOffData);
             Dom.Document responseDoc = res.getBodyDocument();
             Dom.XmlNode rootNode = responseDoc.getRootElement();
-            result.response = res.getBody();
+            result.response = res.getBody().replaceAll('><', '>\n<');//HRP-13728
             result.statusCode = res.getStatusCode();
+            result.request = absenceManagement.requestXML;//HRP-13728
 
             if (res.getStatusCode() != 200) {
                 Dom.XmlNode bodyNode = rootNode.getChildElement('Body', 'http://schemas.xmlsoap.org/soap/envelope/');
@@ -189,6 +191,12 @@ public class skedWorkdayApiManager {
     }
 
     public static skedWorkdayGetPlanBalanceResponse getTimeOffPlanBalances(skedWorkdayGetPlanBalanceRequest ptoPlanBalanceRequest) {
+        return getTimeOffPlanBalances(ptoPlanBalanceRequest, false);
+    }
+
+    // skipLogging avoids the inline debug-log DML so this callout can run before other callouts
+    // in the same transaction (e.g. reason-code resolution ahead of EnterTimeOff). HRP-16994
+    public static skedWorkdayGetPlanBalanceResponse getTimeOffPlanBalances(skedWorkdayGetPlanBalanceRequest ptoPlanBalanceRequest, Boolean skipLogging) {
         sked_Workday_XML_Template__mdt xml = [
             SELECT Id, sked_Endpoint__c, sked_Namespace__c
             FROM sked_Workday_XML_Template__mdt
@@ -200,7 +208,7 @@ public class skedWorkdayApiManager {
 
         HttpRequest req = getHttpRequest(endpoint, HTTP_METHOD_GET);
         String logCategory;
-        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint(), ptoPlanBalanceRequest.isCallOut);
+        skedWorkdayGetPlanBalanceResponse result = new skedWorkdayGetPlanBalanceResponse(req.getEndpoint());
         try {
             Http h = new Http();
             HttpResponse res = h.send(req);
@@ -271,7 +279,7 @@ public class skedWorkdayApiManager {
             result.message = exc.getMessage();
         }
 
-        if (skedSetting.instance.admin.enableWorkdayLogging) {
+        if (skedSetting.instance.admin.enableWorkdayLogging && !skipLogging) {
             sked__Debug_Log__c debugLog = new sked__Debug_Log__c();
             debugLog.sked__Type__c = skedConstants.DEBUG_LOG_TYPE_WORKDAY_API;
             debugLog.sked__Summary__c = 'Get Time Off Plan Balances';

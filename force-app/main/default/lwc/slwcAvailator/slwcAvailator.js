@@ -452,6 +452,16 @@ class SlwcAvailator {
   }
 
   fetchJobs() {
+    if(this.drive) {
+      this.timezoneSidId = this.drive.driveSite && this.drive.driveSite.timezoneSidId;
+      this.collectionOperationIds = [this.drive.collectionOperationId];
+      this.drive.driveShifts.forEach(item => {
+        const jobs = item.jobs.map(job => ({ ...job, driveDate: job.driveDate || this.drive.driveDate }));
+        this.jobs = this.jobs.concat(this.doTransformJobs(jobs));
+      });
+      return Promise.resolve();
+    }
+
     let service = new driveService();
     return service.getDriveById(this.driveId)
     .then((result) => {
@@ -690,7 +700,8 @@ fetchJobTags(driveId){
     timezoneSidId,
     excludedDriveIds = [],
     excludedActivityIds = [],
-    collectionOperationIds = []
+    collectionOperationIds = [],
+    resourceIds = []
   }) {
     console.log('>>> Start fetching data', new Date());
     return Promise.resolve()
@@ -708,7 +719,7 @@ fetchJobTags(driveId){
     })
     .then(() => {
       console.log('>>> Start fetching resources', new Date());
-      return this.fetchResources(1, null, true);
+      return this.fetchResources(1, null, true, resourceIds.length ? { recordIds: resourceIds } : null);
     })
     .then(() => {
       console.log('>>> Finished Fetching data', new Date());
@@ -2165,6 +2176,10 @@ fetchJobTags(driveId){
               let isPendingTermination = false;
               if (resource.resourceType === RESOURCE_TYPE.ASSET) {
                 isActive = resource.isActive;
+                if (isActive && resource.assetType === ASSET_TYPE.VEHICLE
+                  && resource.futureInactiveDate && resource.futureInactiveDate <= job.driveDate) {
+                  isActive = false;
+                }
               }
               else {
                 if (resource.terminationDate && resource.terminationDate <= job.driveDate) {

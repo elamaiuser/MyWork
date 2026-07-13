@@ -14,10 +14,15 @@ global class skedExceptionLogService extends skedDataService {
         DateTime minDt, maxDt;
         boolean hasTermination = false;
         for (resourceUnavailabilityModel unavailability : unavailabilityList) {
+            system.debug('unavailability '+unavailability);
+            system.debug('unavailability.conflictedJobAllocationId '+unavailability.conflictedJobAllocationId);
             resourceIds.add(unavailability.resourceId);
             
             if (unavailability.recordId != NULL) {
             	sourceRecordIds.add(unavailability.recordId);
+            }
+            if (unavailability.conflictedJobAllocationId != NULL) {
+            	sourceRecordIds.add(unavailability.conflictedJobAllocationId);
             }
             if (minDt == NULL || unavailability.startTime < minDt) {
                 minDt = unavailability.startTime;
@@ -34,6 +39,7 @@ global class skedExceptionLogService extends skedDataService {
         if (hasTermination) {
             maxDt = NULL;
         }
+        system.debug('sourceRecordIds '+sourceRecordIds.size());
         
         List<sked__Job_Allocation__c> conflictedAllocations = getConflictedAllocations(resourceIds, minDt, maxDt, excludedIds, false);
         
@@ -42,13 +48,16 @@ global class skedExceptionLogService extends skedDataService {
             skedHC__Job__r.sked__Start__c, skedHC__Job__r.sked__Finish__c,
             skedHC__Availability__c, skedHC__Availability__r.sked__Start__c, 
             skedHC__Availability__r.sked__Finish__c, skedHC__Activity__c,
-            skedHC__Activity__r.sked__Start__c, skedHC__Activity__r.sked__End__c
+            skedHC__Activity__r.sked__Start__c, skedHC__Activity__r.sked__End__c,
+            sked_Conflicted_Job_Allocation__c, sked_Conflicted_Job_Allocation__r.sked__Start__c,
+            sked_Conflicted_Job_Allocation__r.sked__Set_End__c
             FROM skedHC__Exception__c
             WHERE (skedHC__Availability__c IN :sourceRecordIds 
                     OR skedHC__Activity__c IN :sourceRecordIds
                     OR skedHC__Job_Allocation__c IN :sourceRecordIds)
             AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN
         ];
+        system.debug('existingExceptionLog '+existingExceptionLogs.size());
         Map<string, skedHC__Exception__c> mapExistingExceptionLog = new Map<string, skedHC__Exception__c>();
         List<skedHC__Exception__c> exceptionLogsToUpdate = new List<skedHC__Exception__c>();
         for (skedHC__Exception__c existingExceptionLog : existingExceptionLogs) {
@@ -64,8 +73,22 @@ global class skedExceptionLogService extends skedDataService {
                         existingExceptionLog.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
                         exceptionLogsToUpdate.add(existingExceptionLog);
                     }
+            system.debug('existingExceptionLog '+existingExceptionLog.Id);
+            system.debug('existingExceptionLog.sked_Conflicted_Job_Allocation__c '+existingExceptionLog.sked_Conflicted_Job_Allocation__c);
+            system.debug('existingExceptionLog.skedHC__Job__r.sked__Start__c '+existingExceptionLog.skedHC__Job__r.sked__Start__c);
+            system.debug('existingExceptionLog.skedHC__Job__r.sked__Finish__c '+existingExceptionLog.skedHC__Job__r.sked__Finish__c);
+            system.debug('existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Set_End__c '+existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Set_End__c);
+            system.debug('existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Start__c '+existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Start__c);
+            if (existingExceptionLog.sked_Conflicted_Job_Allocation__c != NULL
+                && (existingExceptionLog.skedHC__Job__r.sked__Start__c >= existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Set_End__c
+                    || existingExceptionLog.skedHC__Job__r.sked__Finish__c <= existingExceptionLog.sked_Conflicted_Job_Allocation__r.sked__Start__c)) {
+                        system.debug('existingExceptionLog '+existingExceptionLog.Id+' will be closed');
+                        existingExceptionLog.skedHC__Status__c = skedConstants.EXCEPTION_LOG_STATUS_CLOSED;
+                        exceptionLogsToUpdate.add(existingExceptionLog);
+                    }
             else {
                 string key = existingExceptionLog.skedHC__Job_Allocation__c + ':' + existingExceptionLog.skedHC__Exception__c;
+                system.debug('Inside else');
                 mapExistingExceptionLog.put(key, existingExceptionLog);	
             }
         }
@@ -453,8 +476,13 @@ global class skedExceptionLogService extends skedDataService {
                 maxEnd = activityResource.finish;
             }
             
-            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.startDate));
-            inputDates.add(skedDateTimeUtils.getDateFromIsoString(activityResource.endDate));
+            Date arStartDate = skedDateTimeUtils.getDateFromIsoString(activityResource.startDate);
+            Date arEndDate = skedDateTimeUtils.getDateFromIsoString(activityResource.endDate);
+            Date tempDate = arStartDate;
+            while (tempDate <= arEndDate) {
+              inputDates.add(tempDate);
+              tempDate = tempDate.addDays(1);
+            }
         }
         
         if (minStart != NULL && maxEnd != NULL) {
