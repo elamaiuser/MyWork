@@ -12,13 +12,14 @@
     <columns>Lead_AM_Porfolio__c</columns>
     <columns>Lead_Region_Name__c</columns>
     <columns>Lead_Stage_Status__c</columns>
-    <filterScope>Everything</filterScope>
+    <filterScope>Queue</filterScope>
     <filters>
         <field>LEAD.STATUS</field>
         <operation>equals</operation>
-        <value>Future Outreach</value>
+        <value>New,Contacted,Qualified,Active Feeder Group</value>
     </filters>
     <label>Future Outreach</label>
+    <queue>Future_Outreach</queue>
     <sharedTo>
         <allInternalUsers />
     </sharedTo>

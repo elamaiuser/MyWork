@@ -60,6 +60,20 @@
             <operator>equals</operator>
             <value></value>
         </criteriaItems>
+        <criteriaItems>
+            <column>CUST_CREATED_DATE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>greaterOrEqual</operator>
+            <value>1/17/2024 12:00 AM</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>sked__Resource__c.sked__Resource_Type__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Person</value>
+        </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Tabular</format>
