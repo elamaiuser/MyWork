@@ -379,4 +379,102 @@ private class BSF_OpsRecordWorkdaySubmissionBatch_Test {
         Test.stopTest();
         System.assert(true, 'Schedulable execute should complete without error');
     }
+
+    @IsTest
+    static void isStaffExcludedFromWorkday_ignoreOrVolunteer() {
+        sked_Operation_Record_Staff__c ignored = new sked_Operation_Record_Staff__c(
+            sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_IGNORE
+        );
+        System.assertEquals(true, BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(ignored));
+
+        sked_Operation_Record_Staff__c pending = new sked_Operation_Record_Staff__c(
+            sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_PENDING
+        );
+        System.assertEquals(false, BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(pending));
+        System.assertEquals(false, BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(null));
+    }
+
+    @IsTest
+    static void execute_onlyVolunteerStaff_marksOpProcessed_keepsIgnore() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<String, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        sked_Drive__c testDrive = (sked_Drive__c) mapTestData.get('testDrive1');
+        sked__Location__c testLocation1 = (sked__Location__c) mapTestData.get('testLocation1');
+        sked__Region__c testRegion1 = (sked__Region__c) mapTestData.get('testRegion1');
+        sked__Resource__c employeeResource = (sked__Resource__c) mapTestData.get('testResource1');
+
+        sked__Resource__c volunteerResource = new sked__Resource__c(
+            Name = 'Volunteer Batch Resource',
+            sked__Resource_Type__c = skedConstants.RESOURCE_TYPE_PERSON,
+            sked__Category__c = BSF_WorkdayDirectSubmissionConfig.RESOURCE_CATEGORY_VOLUNTEER,
+            sked__Is_Active__c = true,
+            sked__Primary_Region__c = testRegion1.Id,
+            sked_Employee_ID__c = '88888'
+        );
+        insert volunteerResource;
+
+        sked_Drive_Shift__c testDriveShift = new sked_Drive_Shift__c(
+            sked_Donors_Scheduled__c = 1, sked_End_Time__c = Time.newInstance(20, 0, 0, 0),
+            sked_Start_Time__c = Time.newInstance(14, 0, 0, 0), sked_Drive__c = testDrive.Id,
+            sked_Drive_Date__c = testDrive.sked_Drive_Date__c, sked_Equipment__c = 1,
+            sked_Lunch_Break__c = false, sked_Order__c = 1, sked_Staff_Setup__c = 1,
+            sked_Vehicles_Needed__c = 1, sked_Volunteer_Setup__c = 1
+        );
+        insert testDriveShift;
+
+        sked__Job__c testJob = new sked__Job__c(
+            sked__Region__c = testRegion1.Id, sked_Drive__c = testDrive.Id,
+            sked_Drive_Shift__c = testDriveShift.Id, sked__Location__c = testLocation1.Id,
+            sked__Job_Status__c = skedConstants.JOB_STATUS_PENDING_ALLOCATION,
+            sked_Resource_Role__c = 'VP/HH', sked_VPHH_Quantity__c = 1,
+            sked_APT_Quantity__c = 0, sked__Quantity__c = 1,
+            sked__Duration__c = 60, sked__Start__c = System.now(), sked__Finish__c = System.now().addHours(1),
+            sked__Actual_Start__c = System.now(), sked__Actual_End__c = System.now().addHours(1)
+        );
+        insert testJob;
+
+        sked_Operation_Record__c op = new sked_Operation_Record__c(
+            sked_Drive__c = testDrive.Id, sked_Drive_Shift__c = testDriveShift.Id,
+            sked_Status__c = 'Not Submitted', sked_Locked__c = true,
+            sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STATUS_DRAFT,
+            sked_Power_Red_Machines_Sent__c = 1, sked_Power_Red_Machines_Used__c = 1,
+            sked_Submitted_By__c = employeeResource.Id, sked_Donor_Ambassadors_Actual__c = 0
+        );
+        insert op;
+        Test.setCreatedDate(op.Id, System.now().addDays(-1));
+
+        sked_Operation_Record_Staff__c volunteerStaff = new sked_Operation_Record_Staff__c(
+            sked_Operation_Record__c = op.Id, sked_Job__c = testJob.Id,
+            sked_Resource__c = volunteerResource.Id, sked_Absent__c = false,
+            sked_Actual_Roles__c = 'Donor Ambassador'
+        );
+        insert volunteerStaff;
+
+        // No HTTP mock needed — volunteer-only staff yields empty employee set / no callouts.
+        skedSetting.instance.Admin.enableOperationRecordLog = false;
+
+        Test.startTest();
+        Database.executeBatch(new BSF_OpsRecordWorkdaySubmissionBatch(), 1);
+        Test.stopTest();
+
+        sked_Operation_Record__c opAfter = [
+            SELECT Id, sked_Workday_Submission_Status__c FROM sked_Operation_Record__c WHERE Id = :op.Id
+        ];
+        System.assertEquals(
+            BSF_WorkdayDirectSubmissionConfig.STATUS_PROCESSED,
+            opAfter.sked_Workday_Submission_Status__c,
+            'Op with only volunteer staff should process with nothing to send'
+        );
+
+        sked_Operation_Record_Staff__c staffAfter = [
+            SELECT Id, sked_Workday_Submission_Status__c FROM sked_Operation_Record_Staff__c WHERE Id = :volunteerStaff.Id
+        ];
+        System.assertEquals(
+            BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_IGNORE,
+            staffAfter.sked_Workday_Submission_Status__c,
+            'Volunteer staff Ignore status must be preserved after batch'
+        );
+    }
 }

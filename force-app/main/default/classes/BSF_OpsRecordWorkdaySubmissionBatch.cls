@@ -133,21 +133,24 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
                 List<sked_Operation_Record_Staff__c> staffList = ctx.staffList;
                 for (Integer i = 0; i < req.StaffDetails.size(); i++) {
                     skedOpsRecordApiData.opsRecordStaffDetail sd = req.StaffDetails[i];
-                    String empId = String.valueOf(sd.personID);
-                    if (empId == null || empId == '0' || sd.notWorked) {
-                        continue;
-                    }
-                    
-                    allEmployeeIds.add(empId);
-                    
                     sked_Operation_Record_Staff__c staffRec = i < staffList.size() ? staffList[i] : null;
                     if (staffRec == null) {
+                        continue;
+                    }
+                    // Volunteers / Ignore — exclude from Employee Report and time blocks.
+                    if (BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(staffRec)) {
+                        continue;
+                    }
+                    String empId = String.valueOf(sd.personID);
+                    if (empId == null || empId == '0' || sd.notWorked) {
                         continue;
                     }
                     if (ctx.isRetry && staffRec.sked_Workday_Submission_Status__c == BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_SUCCESS) {
                         // On retry, skip staff already marked Success.
                         continue;
                     }
+                    allEmployeeIds.add(empId);
+
                     BSF_OpsRecordToTimeBlockMapper.StaffWithTimes st = new BSF_OpsRecordToTimeBlockMapper.StaffWithTimes();
                     st.detail = sd;
                     st.shiftStartGmt = staffRec.sked_Actual_Shift_Start__c;
@@ -355,6 +358,10 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             Date d = op.sked_Drive__r != null ? op.sked_Drive__r.sked_Drive_Date__c : null;
             if (op.sked_Operation_Record_Staff__r != null) {
                 for (sked_Operation_Record_Staff__c st : op.sked_Operation_Record_Staff__r) {
+                    // Do not overwrite Ignore (volunteers / intentionally excluded).
+                    if (BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(st)) {
+                        continue;
+                    }
                     st.sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_SUCCESS;
                     if (d != null && st.sked_Resource__r != null && String.isNotBlank(st.sked_Resource__r.sked_Employee_ID__c)) {
                         String key = String.valueOf(d) + '_' + st.sked_Resource__r.sked_Employee_ID__c;
@@ -385,6 +392,10 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         for (sked_Operation_Record__c op : opRecords) {
             if (op.sked_Operation_Record_Staff__r != null) {
                 for (sked_Operation_Record_Staff__c st : op.sked_Operation_Record_Staff__r) {
+                    // Do not overwrite Ignore (volunteers / intentionally excluded).
+                    if (BSF_WorkdayDirectSubmissionConfig.isStaffExcludedFromWorkday(st)) {
+                        continue;
+                    }
                     st.sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_FAILED;
                     staffToUpdate.add(st);
                 }

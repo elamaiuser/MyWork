@@ -2,12 +2,14 @@ public class skedOperationRecordStaffHandler extends skedTriggerHub {
     
     public override void onBeforeInsert() {
         populateData(this.context.newRecords);
+        applyWorkdayIgnoreForVolunteers(this.context.newRecords);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords);
         }
     }
     
     public override void onBeforeUpdate() {
+        applyWorkdayIgnoreForVolunteers(this.context.newRecords);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Operation_Record_Staff__c>)this.context.oldMap);
             populateData(this.context.newRecords, (Map<Id, sked_Operation_Record_Staff__c>)this.context.oldMap);
@@ -19,6 +21,37 @@ public class skedOperationRecordStaffHandler extends skedTriggerHub {
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
+
+    /**
+     * Volunteers (Resource Category) are not submitted to Workday — stamp staff status Ignore.
+     */
+    private void applyWorkdayIgnoreForVolunteers(List<sked_Operation_Record_Staff__c> newRecords) {
+        if (newRecords == null || newRecords.isEmpty()) {
+            return;
+        }
+        Set<Id> resourceIds = new Set<Id>();
+        for (sked_Operation_Record_Staff__c staff : newRecords) {
+            if (staff.sked_Resource__c != null) {
+                resourceIds.add(staff.sked_Resource__c);
+            }
+        }
+        if (resourceIds.isEmpty()) {
+            return;
+        }
+        Map<Id, sked__Resource__c> resourceById = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked__Category__c
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
+        for (sked_Operation_Record_Staff__c staff : newRecords) {
+            sked__Resource__c resource = resourceById.get(staff.sked_Resource__c);
+            if (resource != null
+                && resource.sked__Category__c == BSF_WorkdayDirectSubmissionConfig.RESOURCE_CATEGORY_VOLUNTEER) {
+                staff.sked_Workday_Submission_Status__c = BSF_WorkdayDirectSubmissionConfig.STAFF_STATUS_IGNORE;
+            }
+        }
+    }
+
 	private void doDateTimeConversion(List<sked_Operation_Record_Staff__c> newRecords) {
         for (sked_Operation_Record_Staff__c newRecord : newRecords) {
             skedTriggerUtils.maintainDateTimeField(newRecord, 'sked_Actual_Shift_Start__c', 'sked_Actual_Shift_Start_Date__c', 'sked_Actual_Shift_Start_Time__c', 'sked_Timezone__c');

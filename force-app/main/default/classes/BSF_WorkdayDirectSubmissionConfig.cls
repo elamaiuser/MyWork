@@ -10,8 +10,26 @@ public with sharing class BSF_WorkdayDirectSubmissionConfig {
     public static final String STAFF_STATUS_PENDING = 'Pending';
     public static final String STAFF_STATUS_SUCCESS = 'Success';
     public static final String STAFF_STATUS_FAILED = 'Failed';
+    /** Staff excluded from Workday Employee Report and Import (e.g. Volunteer resources). */
+    public static final String STAFF_STATUS_IGNORE = 'Ignore';
+    public static final String RESOURCE_CATEGORY_VOLUNTEER = 'Volunteer';
 
     private static BSF_Workday_Direct_Submission_Config__mdt cachedConfig;
+
+    /**
+     * True when staff must be excluded from Workday Employee Report and time-block submission.
+     * Uses Ignore status and/or Resource Category = Volunteer.
+     */
+    public static Boolean isStaffExcludedFromWorkday(sked_Operation_Record_Staff__c staff) {
+        if (staff == null) {
+            return false;
+        }
+        if (staff.sked_Workday_Submission_Status__c == STAFF_STATUS_IGNORE) {
+            return true;
+        }
+        return staff.sked_Resource__r != null
+            && staff.sked_Resource__r.sked__Category__c == RESOURCE_CATEGORY_VOLUNTEER;
+    }
 
     /**
      * Returns the first Workday Direct Submission Config record, or null if none.

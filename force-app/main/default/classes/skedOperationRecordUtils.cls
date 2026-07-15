@@ -25,6 +25,7 @@ public class skedOperationRecordUtils {
                  sked_Notes_Comments__c, sked_Resource__c, sked_Resource__r.sked__Email__c,
                  sked_Resource__r.sked_Employee_ID__c, sked_Resource__r.sked_Last_Name__c,
                  sked_Resource__r.sked_First_Name__c, sked_Resource__r.sked_eBDR_ID__c,
+                 sked_Resource__r.sked__Category__c,
                  sked_Added_Staff__c, sked_Role__c, sked_Actual_Shift_Start__c,
                  sked_Actual_Shift_End__c, sked_No_Meal__c, sked_Premiums_Op_Pay__c, sked_Actual_Roles__c,
                  sked_Rest_Breaks_Not_Taken__c,
