@@ -14,7 +14,7 @@ private class BSF_DeleteVolunteerOpRecordsJob_Test {
 
         sked__Resource__c volunteerResource = employeeResource.clone(false, true, false, false);
         volunteerResource.Name = 'Volunteer Delete Job Resource';
-        volunteerResource.sked__Category__c = BSF_WorkdayDirectSubmissionConfig.RESOURCE_CATEGORY_VOLUNTEER;
+        volunteerResource.sked__Category__c = 'Volunteer';
         volunteerResource.sked_Employee_ID__c = 'VOLDEL1';
         volunteerResource.sked_ULID__c = 'ULIDVOLDEL1';
         volunteerResource.sked_First_Name__c = 'Volunteer';
