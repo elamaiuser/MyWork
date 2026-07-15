@@ -14,9 +14,9 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>BloodDriveInvokable</nameSegment>
+        <nameSegment>BloodDriveInvokable</nameSegment>        
     </actionCalls>
-    <apiVersion>63.0</apiVersion>
+    <apiVersion>63.0</apiVersion>    
     <description>Migrated from the Send Bell Notification For Drive process using Check if the Drive has Drive date more than current date and the Account is unmanaged criteria.
 Send a bell notification to District Manager of the Account when a Drive is created where the Drive Date is more than current date and the related Account is unmanaged</description>
     <environments>Default</environments>
