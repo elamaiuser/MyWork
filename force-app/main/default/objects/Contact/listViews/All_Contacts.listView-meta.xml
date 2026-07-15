@@ -13,5 +13,10 @@
     <columns>Do_Not_Contact__c</columns>
     <columns>Primary_Phone__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Active__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
     <label>All Contacts</label>
 </ListView>

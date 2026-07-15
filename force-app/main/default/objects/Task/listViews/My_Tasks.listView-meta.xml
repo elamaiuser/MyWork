@@ -10,10 +10,5 @@
     <columns>Account_Manager__c</columns>
     <columns>Drive_Date__c</columns>
     <filterScope>Mine</filterScope>
-    <filters>
-        <field>STATUS</field>
-        <operation>notContain</operation>
-        <value>Completed,Cancelled</value>
-    </filters>
     <label>My Tasks</label>
 </ListView>

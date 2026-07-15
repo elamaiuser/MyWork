@@ -806,45 +806,45 @@
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Contacted&apos;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Contacted&#39;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_12</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Contacted&apos;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Contacted&#39;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Qualified&apos;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Qualified&#39;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_19</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Qualified&apos;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Qualified&#39;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;Unqualified&apos;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;Unqualified&#39;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_26</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;Unqualified&apos;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;Unqualified&#39;))</expression>
     </formulas>
     <formulas>
         <processMetadataValues>
             <name>originalFormula</name>
             <value>
-                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &apos;New&apos;))</stringValue>
+                <stringValue>AND ( ISCHANGED ([Lead].Status), ISPICKVAL( PRIORVALUE ([Lead].Status), &#39;New&#39;))</stringValue>
             </value>
         </processMetadataValues>
         <name>formula_myRule_5</name>
         <dataType>Boolean</dataType>
-        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &apos;New&apos;))</expression>
+        <expression>AND ( ISCHANGED ({!myVariable_current.Status}), ISPICKVAL( PRIORVALUE ({!myVariable_current.Status}), &#39;New&#39;))</expression>
     </formulas>
     <interviewLabel>Lead_Status_Timestamp-20_InterviewLabel</interviewLabel>
     <label>Lead Status Timestamp</label>
