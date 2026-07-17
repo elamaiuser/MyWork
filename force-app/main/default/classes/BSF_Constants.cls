@@ -194,6 +194,10 @@ public class BSF_Constants {
     public static final String MOBILE_SITE_RECORD_TYPE = 'Mobile Site';
     public static final String FIXED_SITE_RECORD_TYPE = 'Fixed Site';
 
+    // Site Type picklist values (sked__Location__c.sked__Type__c) - HRP-11270
+    public static final String SITE_TYPE_FIXED  = 'Fixed Site';
+    public static final String SITE_TYPE_MOBILE = 'Mobile Site';
+
     // Batch Related Stuffs
     public static final String DEFAULT_TERRITORY ='Called from DefaultTerritoryPortfolioBatchHelper';    
 
@@ -418,4 +422,61 @@ public class BSF_Constants {
     public static final String TASK_TYPE_RECRUITMENT_STRATEGY_MEETING = 'Recruitment Strategy Meeting';
     public static final String TASK_TYPE_72_HOUR_CHECK_IN = '72 Hour Check-In';
     public static final String TASK_TYPE_ONE_WEEK_CHECK_IN = 'One Week Check-in';
+
+    // User Assignment Type Constants
+    public static final String TYPE_PS      = 'Permission Set';
+    public static final String TYPE_PG      = 'Public Group';
+    public static final String TYPE_QUEUE = 'Queue';
+    public static final String TYPE_ROLE    = 'Role';
+    public static final String TYPE_LICENSE = 'Package License';
+    public static final String TYPE_UT      = 'User Type';
+    public static final Map<String, String> TYPE_TO_MDT_FIELD = new Map<String, String>{
+                                                TYPE_PS      => 'Permission_Set_Name__c',
+                                                TYPE_PG      => 'Public_Group_Name__c',
+                                                TYPE_QUEUE   => 'Queue_Name__c',
+                                                TYPE_ROLE    => 'Role_Name__c',
+                                                TYPE_LICENSE => 'Package_License_Name__c',
+                                                TYPE_UT      => 'User_Type_Name__c'
+                                            };
+    // ── Dynamic Provisioning Configurations ──────────────────────────────────
+    public static final UserAssignmentTypeConfig PS_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_PS, 
+        'PermissionSet', 
+        'Name', 
+        'PermissionSetAssignment', 
+        'AssigneeId', 
+        'PermissionSetId',
+        'IsOwnedByProfile = false AND Type != \'Standard\'', 
+        'PermissionSet.IsOwnedByProfile = false AND PermissionSet.Type != \'Standard\''
+    );
+    public static final UserAssignmentTypeConfig PG_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_PG, 
+        'Group', 
+        'DeveloperName', 
+        'GroupMember', 
+        'UserOrGroupId', 
+        'GroupId',
+        'Type = \'Regular\'', 
+        null
+    );
+    public static final UserAssignmentTypeConfig QUEUE_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_QUEUE, 
+        'Group', 
+        'DeveloperName', 
+        'GroupMember', 
+        'UserOrGroupId', 
+        'GroupId',
+        'Type = \'Queue\'',
+        null
+    );
+    public static final UserAssignmentTypeConfig LIC_CONFIG = new UserAssignmentTypeConfig(
+        TYPE_LICENSE, 
+        'PackageLicense', 
+        'NamespacePrefix', 
+        'UserPackageLicense', 
+        'UserId', 
+        'PackageLicenseId',
+        'Status = \'Active\'',
+        null
+    );
 }

@@ -699,7 +699,9 @@ public without sharing class DriveTriggerService {
         }
 
     }
-    //HRP-701 -> Ends Here
+    
+    // Refactored: Events triggered post Drive Cancellation are now handled in skedDriveHandler
+    /*HRP-701 -> Ends Here
     public static void handleTaskCancellation(List<sked_Drive__c> newDriveList, Map<Id, sked_Drive__c> oldDriveMap) {
         if(newDriveList == NULL || newDriveList.isEmpty() || oldDriveMap == NULL || oldDriveMap.isEmpty()) {
             return;
@@ -727,9 +729,9 @@ public without sharing class DriveTriggerService {
                                                                     WHERE Id IN :oppIdsToCreateTasks]);
             TaskService.createOneWeekCheckInTasks(oppMap);
         }*/
-        if(!oppIdsToCancelTasks.isEmpty()) {
+        /*if(!oppIdsToCancelTasks.isEmpty()) {
             TaskService.cancelOpportunityTasks(oppIdsToCancelTasks);
         }
 
-    }
+    }*/
 }

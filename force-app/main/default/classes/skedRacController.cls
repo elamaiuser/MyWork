@@ -804,12 +804,17 @@ global virtual class skedRacController extends skedBaseController {
                     boolean insufficientFixedSiteStaff = false;
                     boolean insufficientMobileStaff = false;
                     if (!staffingConstraints.isEmpty()) {
+                        List<string> driveStatuses = new List<string>();
+                        driveStatuses.add(skedConstants.DRIVE_STATUS_CONFIRMED);
+                        driveStatuses.add(skedConstants.DRIVE_STATUS_HOLD);
+                        driveStatuses.add(skedConstants.DRIVE_STATUS_TENTATIVE);
+                        driveStatuses.add(skedConstants.DRIVE_STATUS_SYSTEM_GENERATED);
+
                         List<sked_Drive__c> sameDateDrives = [SELECT Id, sked_Total_Staff_Requested__c, sked_Type_of_Drive__c
                                                               FROM sked_Drive__c
                                                               WHERE sked_Collection_Operation__c = :request.event.biomedCollectionOpId
                                                               AND sked_Drive_Date__c = :selectedDate
-                                                              AND (sked_Status__c = :skedConstants.DRIVE_STATUS_CONFIRMED
-                                                                   OR sked_Status__c = :skedConstants.DRIVE_STATUS_HOLD)];
+                                                              AND (sked_Status__c IN :driveStatuses)];
                         List<sked__Activity__c> sameDateNCEs = [SELECT Id, sked__Quantity__c, sked_Fixed_Site_Staff_Quantity__c,
                                                                 sked_Mobile_Staff_Quantity__c
                                                                 FROM sked__Activity__c

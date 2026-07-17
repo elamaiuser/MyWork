@@ -20,6 +20,8 @@
         <members>BSF_TemplateTaskPlanningCascadeBatchTest</members>
         <members>TaskTriggerTest</members>
         <members>OpportunityTriggerTest</members>
+        <members>OpportunityServiceController</members>
+        <members>OpportunityServiceControllerTest</members>
 		<name>ApexClass</name>
 	</types>
     <types>
