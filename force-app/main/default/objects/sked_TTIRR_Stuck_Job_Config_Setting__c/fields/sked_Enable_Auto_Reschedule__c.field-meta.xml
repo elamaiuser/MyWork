@@ -3,6 +3,7 @@
     <fullName>sked_Enable_Auto_Reschedule__c</fullName>
     <defaultValue>true</defaultValue>
     <description>This field is created as part of HRP-14097</description>
+    <externalId>false</externalId>
     <label>Enable Auto Reschedule</label>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

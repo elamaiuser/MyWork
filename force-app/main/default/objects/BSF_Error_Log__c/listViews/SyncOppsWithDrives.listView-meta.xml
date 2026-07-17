@@ -10,14 +10,14 @@
     <columns>OBJECT_ID</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>CREATEDBY_USER</field>
-        <operation>contains</operation>
-        <value>Automated Process,Amanda MacPherson,Theresa Benfer</value>
-    </filters>
-    <filters>
         <field>CREATED_DATE</field>
         <operation>equals</operation>
         <value>1/6/2025 10:54 AM</value>
+    </filters>
+    <filters>
+        <field>CREATEDBY_USER</field>
+        <operation>equals</operation>
+        <value>Automated Process,Amanda MacPherson,Theresa Benfer</value>
     </filters>
     <label>SyncOppsWithDrives</label>
 </ListView>
