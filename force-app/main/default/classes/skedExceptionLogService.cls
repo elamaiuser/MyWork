@@ -19,9 +19,6 @@ global class skedExceptionLogService extends skedDataService {
             if (unavailability.recordId != NULL) {
             	sourceRecordIds.add(unavailability.recordId);
             }
-            if (unavailability.conflictedJobAllocationId != NULL) {
-            	sourceRecordIds.add(unavailability.conflictedJobAllocationId);
-            }
             if (minDt == NULL || unavailability.startTime < minDt) {
                 minDt = unavailability.startTime;
             }
@@ -51,7 +48,8 @@ global class skedExceptionLogService extends skedDataService {
             FROM skedHC__Exception__c
             WHERE (skedHC__Availability__c IN :sourceRecordIds 
                     OR skedHC__Activity__c IN :sourceRecordIds
-                    OR skedHC__Job_Allocation__c IN :sourceRecordIds)
+                    OR skedHC__Job_Allocation__c IN :sourceRecordIds
+                    OR sked_Conflicted_Job_Allocation__c IN :sourceRecordIds)
             AND skedHC__Status__c = :skedConstants.EXCEPTION_LOG_STATUS_OPEN
         ];
         Map<string, skedHC__Exception__c> mapExistingExceptionLog = new Map<string, skedHC__Exception__c>();
@@ -108,7 +106,7 @@ global class skedExceptionLogService extends skedDataService {
                     unavailabilityModel.exceptionCode = skedConstants.EXCEPTION_CODE_RESOURCE_TIME_CONFLICT;
                     unavailabilityModel.exceptionText = 'Conflict with ' +  unavailability.driveName;
                     unavailabilityModel.relatedEventFieldApi = unavailability.relatedEventFieldApi;
-                    unavailabilityModel.recordId = unavailability.recordId;
+                    unavailabilityModel.recordId = conflictedAllocation.Id;
                     unavailabilityModel.jobId = conflictedAllocation.sked__Job__c; 
                     unavailabilityModel.jobAllocationId = conflictedAllocation.Id; 
                     unavailabilityModel.driveId = conflictedAllocation.sked__Job__r.sked_Drive__c; 
@@ -649,7 +647,6 @@ global class skedExceptionLogService extends skedDataService {
         jobAllocationBuilder.orderClause = 'ORDER BY sked__Start__c ASC';
         
         string queryString = jobAllocationBuilder.toString();
-        system.debug('#queryString#' + queryString);
         return (List<sked__Job_Allocation__c>)Database.query(queryString);
     }
 

@@ -135,6 +135,12 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
         /*
         * HRP-11099 changes ends here
         */
+
+        // HRP-11270 -----> Starts Here
+        if(super.getTriggerMethodsToBypass().indexOf('populateSiteType') == -1) {
+            SiteService.populateSiteType((List<sked__Location__c>)trigger.new);
+        }
+        // HRP-11270 -----> Ends Here
     }
     
     public override void afterUpdate() {

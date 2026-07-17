@@ -649,4 +649,44 @@ public with sharing class SiteService {
     /*
     * HRP-12045 changes ends here
     */
+
+    /*
+    * HRP-11270 changes Starts
+    * Populate Site Type (sked__Type__c) from the Site's record type so the field is
+    * never left NULL.
+    */
+    private static Map<Id, String> recordTypeIdToSiteType;
+
+    private static Map<Id, String> getRecordTypeIdToSiteType() {
+        if (recordTypeIdToSiteType == null) {
+            // Record type Name -> valid sked__Type__c picklist value
+            Map<String, String> nameToPicklist = new Map<String, String>{
+                BSF_Constants.FIXED_SITE_RECORD_TYPE  => BSF_Constants.SITE_TYPE_FIXED,
+                BSF_Constants.MOBILE_SITE_RECORD_TYPE => BSF_Constants.SITE_TYPE_MOBILE
+            };
+            recordTypeIdToSiteType = new Map<Id, String>();
+            for (Schema.RecordTypeInfo rtInfo :
+                    sked__Location__c.sObjectType.getDescribe().getRecordTypeInfosById().values()) {
+                if (nameToPicklist.containsKey(rtInfo.getName())) {
+                    recordTypeIdToSiteType.put(rtInfo.getRecordTypeId(), nameToPicklist.get(rtInfo.getName()));
+                }
+            }
+        }
+        return recordTypeIdToSiteType;
+    }
+
+    public static void populateSiteType(List<sked__Location__c> newSites) {
+        if (newSites == null) {
+            return;
+        }
+        Map<Id, String> rtToSiteType = getRecordTypeIdToSiteType();
+        for (sked__Location__c site : newSites) {
+            if (String.isBlank(site.sked__Type__c)
+                    && site.RecordTypeId != null
+                    && rtToSiteType.containsKey(site.RecordTypeId)) {
+                site.sked__Type__c = rtToSiteType.get(site.RecordTypeId);
+            }
+        }
+    }
+    /* HRP-11270 changes Ends */
 }

@@ -194,6 +194,10 @@ public class BSF_Constants {
     public static final String MOBILE_SITE_RECORD_TYPE = 'Mobile Site';
     public static final String FIXED_SITE_RECORD_TYPE = 'Fixed Site';
 
+    // Site Type picklist values (sked__Location__c.sked__Type__c) - HRP-11270
+    public static final String SITE_TYPE_FIXED  = 'Fixed Site';
+    public static final String SITE_TYPE_MOBILE = 'Mobile Site';
+
     // Batch Related Stuffs
     public static final String DEFAULT_TERRITORY ='Called from DefaultTerritoryPortfolioBatchHelper';    
 
