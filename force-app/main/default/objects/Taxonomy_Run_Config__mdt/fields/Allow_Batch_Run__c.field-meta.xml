@@ -2,6 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Allow_Batch_Run__c</fullName>
     <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Allow Batch Run</label>
     <type>Checkbox</type>
