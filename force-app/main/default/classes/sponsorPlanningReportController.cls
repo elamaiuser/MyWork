@@ -532,9 +532,9 @@ public without sharing class sponsorPlanningReportController {
             /* Order Section */
             Map<Id, List<OrderItem>> orderIdWithOrderItemMap = new  Map<Id, List<OrderItem>>();
             Map<Id, List<Order>> oppIdWithOrderMap = new  Map<Id, List<Order>>();
-            list<OrderItem> ordProdList = [Select OrderId,Quantity,TotalPrice,Product2.Name,Order.OpportunityId,Order.Comments__c, Order.Local_Recruitment_Request_Need_by_Date__c,
+            list<OrderItem> ordProdList = [Select OrderId,Quantity,TotalPrice,Product2.Name,Order.OpportunityId,Order.Publicity_Comment__c, Order.Local_Recruitment_Request_Need_by_Date__c,
             Order.Local_Recruitment_Request__c, Order.BudgetCurrency__c, Order.OrderNumber From OrderItem Where OrderId IN: [Select OpportunityId,Id From Order Where OpportunityId IN: oppId]];
-            list<Order> ordList = [Select Comments__c, Local_Recruitment_Request_Need_by_Date__c , OrderNumber,
+            list<Order> ordList = [Select Publicity_Comment__c, Local_Recruitment_Request_Need_by_Date__c , OrderNumber,
             Local_Recruitment_Request__c, BudgetCurrency__c, OpportunityId  From Order Where OpportunityId IN: oppId];
             for(OrderItem odi: ordProdList){
                 if(!orderIdWithOrderItemMap.containsKey(odi.OrderId)){

@@ -1,11 +1,14 @@
 global class BSF_Batch_UpdateTaskType implements Database.Batchable<sObject>{
 	public String query;
     public Map<String,String> subjectVsTypeMap = new Map<String,String>();
-	global BSF_Batch_UpdateTaskType(Map<String,String> subjectVsTypeMap, Datetime dueDate){
+	global BSF_Batch_UpdateTaskType(Map<String,String> subjectVsTypeMap, Datetime dueDate, Boolean filterTaskType){
         if(subjectVsTypeMap != null && !subjectVsTypeMap.isEmpty()){
             String query = 'SELECT Id, Subject, Type FROM Task WHERE Subject IN (\''+String.join(new List<String>(subjectVsTypeMap.keySet()), '\',\'')+'\')';
             if(dueDate != null){
                 query += ' AND ActivityDate >= '+dueDate.format('yyyy-MM-dd');
+            }
+            if(filterTaskType){
+                query += ' AND Type = null';
             }
             this.subjectVsTypeMap = subjectVsTypeMap;
             this.query=query;
@@ -19,8 +22,11 @@ global class BSF_Batch_UpdateTaskType implements Database.Batchable<sObject>{
         for(sObject sobj : scope){
             Task tsk = (Task)sobj;
             if(subjectVsTypeMap.containsKey(tsk.Subject)){
-                tsk.Type = subjectVsTypeMap.get(tsk.Subject);
-                tasksToUpdate.add(tsk);
+                String expectedType = subjectVsTypeMap.get(tsk.Subject);
+                if (tsk.Type == null || tsk.Type != expectedType) {
+                    tsk.Type = expectedType;
+                    tasksToUpdate.add(tsk);
+                }
             }
         }
         if(!tasksToUpdate.isEmpty()){

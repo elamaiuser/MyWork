@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>sked_Business_Distribution_List__c</field>
-        <value xsi:type="xsd:string">anil.kallu@redcross.org, kata.manishreddy@redcross.org,joseph.mcnevin@redcross.org,nick.chandler@redcross.org,Tammy.Steele@redcross.org</value>
+        <value xsi:type="xsd:string">APSProcessDesignandEnablement@redcross.org,APSDirectors@redcross.org,BHQ-APSStaffScheduling/Timekeeping@redcross.org,anil.kallu@redcross.org</value>
     </values>
     <values>
         <field>sked_Enable_Direct_Workday_Submission__c</field>
@@ -32,11 +32,11 @@
     </values>
     <values>
         <field>sked_Technical_Team_Distribution_List__c</field>
-        <value xsi:type="xsd:string">kata.manishreddy@redcross.org</value>
+        <value xsi:type="xsd:string">elampiraii.thamizhpa@redcross.org,anil.kallu@redcross.org,nick.chandler@redcross.org,joseph.mcnevin@redcross.org</value>
     </values>
     <values>
         <field>sked_WD_Emp_Rpt_URL__c</field>
-        <value xsi:type="xsd:string">https://wd2-impl-services1.workday.com/ccx/service/customreport2/americanredcross1/Skedulo%20ISU/BSF_No_Time_Punch_with_TZ</value>
+        <value xsi:type="xsd:string">https://services1.myworkday.com/ccx/service/customreport2/americanredcross/Skedulo+ISU/BSF_No_Time_Punch_with_TZ?Exclude_workers_who_have_never_entered_time_or_time_off=0%26Exclude_Scheduling_Data=1</value>
     </values>
     <values>
         <field>sked_WD_End_Date_Param__c</field>

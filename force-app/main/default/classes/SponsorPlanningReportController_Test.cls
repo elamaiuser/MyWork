@@ -267,7 +267,7 @@ private class SponsorPlanningReportController_Test {
             Blood_Drive_Opportunity__c = Opp1.Id);
         insert dmp;
 
-         Order order1 = new Order(Comments__c='Test Order',
+         Order order1 = new Order(Publicity_Comment__c = 'Print Appointment Contact',
                                  Local_Recruitment_Request_Need_by_Date__c = System.today().addDays(10) ,
                                  BudgetCurrency__c = 1000,
                                  OpportunityId=Opp1.Id,

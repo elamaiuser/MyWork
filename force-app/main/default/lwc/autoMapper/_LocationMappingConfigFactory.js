@@ -20,6 +20,7 @@ export class LocationMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_County__c', 'county', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Days_of_Week_Declined__c', 'daysOfWeekDeclined', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Days_of_Week_Preferred__c', 'daysOfWeekPreferred', MAPPING_TYPE.direct);
+      mappingConfig.addFieldConfig('sked_Do_Not_Use_Vehicle__c', 'doNotUseVehicle', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Date_Site_Inspection_Completed__c', 'dateSiteInspectionCompleted', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_Fixed_Site_Appointment_Pattern__c', 'fixedSiteAppointmentPattern', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked__GeoLocation__Latitude__s', 'geoLocationLatitude', MAPPING_TYPE.direct);

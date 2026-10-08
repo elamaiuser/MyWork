@@ -5,6 +5,7 @@
  *****************************************************************************************************************************************************************************
  26-09-2023				Kishore Das				Logic for HRP-11051(GEO_Publicity Report Not Functioning)
  03/18/24               Venkat D 				Logic for HRP-12165(Publicity Ordering Report Missing District/Recruitment Team Selection)
+ 09/25/26               Debabrata				Logic for HRP-18010(Added Print Appt Contact, Local Offerings, Package and Theme to the report)
  *****************************************************************************************************************************************************************************
 */
 
@@ -61,6 +62,7 @@ public class PublicityReportNewPortfoliosController {
 		public OrderItem oitem {get;set;}
         public Opportunity opp {get; set;}
         public OpportunityContactRole ocr {get;set;}
+        public OpportunityContactRole printApptOcr {get;set;} //HRP-18010
         public Opportunity_Promotion__c optypro {get;set;}
         public Boolean isSelected{get; set;}
         public String ufid {get; set;}
@@ -90,6 +92,7 @@ public class PublicityReportNewPortfoliosController {
         Account acc;
         public String checkboxWrap {get; set;}
         public OpportunityContactRole ocrWrap {get;set;}
+        public OpportunityContactRole printApptOcrWrap {get;set;} //HRP-18010
         public OrderItem oitemWrap {get;set;}
         public Opportunity_Promotion__c optyproWrap {get;set;}
         public String ufid {get;set;}
@@ -116,6 +119,7 @@ public class PublicityReportNewPortfoliosController {
     set<String> accIdSet = new set<String>();     
     public map<id,id> ordItemOppIdMap = new map<id,id>();
     public map<id,OpportunityContactRole> ocrMapOpp = new map<id,OpportunityContactRole>();
+    public map<id,OpportunityContactRole> printApptOcrMapOpp = new map<id,OpportunityContactRole>(); //HRP-18010
 	public map<id,Opportunity> OppMap = new map<id,Opportunity>();
 	public map<id,Opportunity_Promotion__c> oppPromotionMap = new  map<id,Opportunity_Promotion__c>();
     public map<id,String> ufidMap = new  map<id,String>();
@@ -213,6 +217,14 @@ public class PublicityReportNewPortfoliosController {
                 contact.individual.Name,contact.HomePhone,Role,Opportunityid,contact.OtherStreet,contact.OtherCity,Contact.OtherState,
                 Contact.OtherPostalCode,contact.OtherCountry,contact.Primary_Phone_Number_New__c,contact.Email 
                 from OpportunityContactRole where OpportunityId in :oppIdSet and role= 'Publicity Materials Recipient' ];
+            //HRP-18010: newest first, so the first role found per Opportunity is the latest assigned Print Appt Contact
+            printApptOcrMapOpp.clear();
+            for(OpportunityContactRole printApptOcr : [Select ContactId,Contact.Name,contact.Primary_Phone_Number_New__c,Opportunityid
+                from OpportunityContactRole where OpportunityId in :oppIdSet and role= 'Print Appt Contact' order by CreatedDate desc, Id desc]){
+                if(!printApptOcrMapOpp.containsKey(printApptOcr.OpportunityId)){
+                    printApptOcrMapOpp.put(printApptOcr.OpportunityId, printApptOcr);
+                }
+            }
             list<Opportunity_Promotion__c> oppPromotionList = [select Promotion__r.Name,Promotion__c,Blood_Drive_Opportunity__c 
                 from Opportunity_Promotion__c where Blood_Drive_Opportunity__c in :oppIdSet];
             list<Opportunity> oppList = [select id,Drive_Name__c,AccountId,Account.Name,End_Time__c,Direct_Donors_To__c,Drive_Date__c,
@@ -235,7 +247,8 @@ public class PublicityReportNewPortfoliosController {
 	{
         list<OrderItem> opprodList = new list<OrderItem>();
        
-        string q  = 'select id,order.OpportunityId,order.Opportunity.Drive_Status__c,orderId,order.BudgetCurrency__c,order.Comments__c,Material_Recipient__c,'+
+        string q  = 'select id,order.OpportunityId,order.Opportunity.Drive_Status__c,orderId,order.BudgetCurrency__c,order.Publicity_Comment__c,Material_Recipient__c,'+
+                    'order.Local_Offerings__c,order.AdditionalComments__c,order.Publicity_Package__r.Name,order.Theme__r.Name,'+ //HRP-18010
                     'order.OrderNumber,order.Publicity_Approved_By__r.Name,order.Material_Recipient__c,order.id,Product2.Name,Product2.PRODUCT_ID__C,Quantity,order.Publicity_Approved_By__c,order.Publicity_Approved_Date__c from orderItem '+
                      condition+' and order.Publicity_Submitted__c = false and order.Publicity_Approved__c = true '+
                      'AND order.OpportunityId != null AND order.Opportunity.Drive_Status__c != \'Cancel\' '+ //Added for HRP-9324
@@ -314,7 +327,14 @@ public class PublicityReportNewPortfoliosController {
                 orPromo = new Opportunity_Promotion__c();
             }
             
-            reportDataWrapperList.add(new ReportDataWrapper(OrdItem,opp,ocr,orPromo,extid,itemIdWrap,checkboxItems)); 
+            //HRP-18010: Specify Local Item Offered is shown only when a Local Offering is selected on the Order
+            if(String.isBlank(OrdItem.Order.Local_Offerings__c)){
+                OrdItem.Order.AdditionalComments__c = null;
+            }
+
+            ReportDataWrapper dataWrapper = new ReportDataWrapper(OrdItem,opp,ocr,orPromo,extid,itemIdWrap,checkboxItems);
+            dataWrapper.printApptOcr = printApptOcrMapOpp.containsKey(oppId) ? printApptOcrMapOpp.get(oppId) : new opportunityContactRole(); //HRP-18010
+            reportDataWrapperList.add(dataWrapper);
        	}
          if(!reportDataWrapperList.isEmpty())
          {ReportDataWrapperListPresent=true;}
@@ -361,6 +381,7 @@ public class PublicityReportNewPortfoliosController {
             ReportQueryWrapperObj.oppWrap = OppMap.get(oppId); 
             ReportQueryWrapperObj.checkboxWrap=callListMap.get(oppId);
             ReportQueryWrapperObj.ocrWrap = ocrMapOpp.get(oppId);
+            ReportQueryWrapperObj.printApptOcrWrap = printApptOcrMapOpp.get(oppId); //HRP-18010
             ReportQueryWrapperObj.oitemWrap = ordItem;
             ReportQueryWrapperObj.optyproWrap = oppPromotionMap.get(oppId);
             ReportQueryWrapperObj.ufid = ufidMap.get(oppId);

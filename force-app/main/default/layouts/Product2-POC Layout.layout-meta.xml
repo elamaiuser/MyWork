@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>SmartFillEnrich</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -18,6 +19,14 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Product_Family__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Needed_for_Ordering_Process__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Product_Image_Preview__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -107,6 +116,16 @@
         </platformActionListItems>
     </platformActionList>
     <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>NAME</fields>
+        <fields>Package__c</fields>
+        <fields>Type__c</fields>
+        <fields>Quantity__c</fields>
+        <fields>Product_Image_Preview__c</fields>
+        <relatedList>Publicity_Package_Item__c.Product__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <fields>Collection_Operation__c</fields>
         <relatedList>Product_Collection_Operation__c.Product__c</relatedList>
     </relatedLists>
@@ -131,7 +150,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8I000000RFbc</masterLabel>
+        <masterLabel>00h5c00000DaYMW</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

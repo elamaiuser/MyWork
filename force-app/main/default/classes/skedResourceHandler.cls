@@ -92,7 +92,7 @@ public class skedResourceHandler extends skedTriggerHub {
 
                 if((newRecord.sked_Dedicated_to_Site__c != null || String.isNotBlank(newRecord.sked_Dedicated_to_Site__c)) 
                 && (oldRecord == null || (oldRecord != null && newRecord.sked_Dedicated_to_Site__c != oldRecord.sked_Dedicated_to_Site__c))) {
-                    system.debug('getting inside validation oldRecord '+oldRecord.sked_Dedicated_to_Site__c+' newRecord '+newRecord.sked_Dedicated_to_Site__c);
+                    system.debug('getting inside validation oldRecord '+(oldRecord != null ? oldRecord.sked_Dedicated_to_Site__c : null)+' newRecord '+newRecord.sked_Dedicated_to_Site__c);
                     newRecord.sked_Dedicated_to_Site__c.addError(Custom_Messages__mdt.getInstance('Asset_Validation_for_Dedicated_to_Site').Value__c);
                 }
             }

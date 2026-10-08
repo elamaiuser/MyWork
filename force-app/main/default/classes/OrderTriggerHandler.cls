@@ -30,9 +30,7 @@ public with sharing class OrderTriggerHandler extends TriggerHandler {
         if(super.getTriggerMethodsToBypass().indexOf('setDefaultMaterialRecipient') == -1) {
             OrderService.setDefaultMaterialRecipient((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
         }
-        if(super.getTriggerMethodsToBypass().indexOf('validateMaterialrecipent') == -1) {
-            OrderService.validateMaterialrecipent((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
-        }
+        
         if(super.getTriggerMethodsToBypass().indexOf('setOrderBudget') == -1) {
             OrderService.setOrderBudget((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
         }
@@ -43,7 +41,7 @@ public with sharing class OrderTriggerHandler extends TriggerHandler {
             OrderService.checkOrderBudgetwithProduct((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
         }
         if(super.getTriggerMethodsToBypass().indexOf('setPublicityApproved') == -1) {
-            OrderService.setPublicityApproved((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
+            OrderService.setPublicityApproved((List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap);
         }
     }
     
@@ -77,15 +75,24 @@ public with sharing class OrderTriggerHandler extends TriggerHandler {
         }
     }
     
-    public override void afterUpdate(){
+    public override void afterUpdate() {
+        if(super.getTriggerMethodsToBypass().indexOf('deleteOrderProductsUponPackageChange') == -1) {
+            OrderService.deleteOrderProductsUponPackageChange((List<Order>)Trigger.new, (Map<Id,Order>)Trigger.oldMap);
+        }
         
-        
+        if(super.getTriggerMethodsToBypass().indexOf('createOrderProducts') == -1) {
+            OrderService.createOrderProducts((List<Order>)Trigger.new, (Map<Id,Order>)Trigger.oldMap);
+        }
+
+        if(super.getTriggerMethodsToBypass().indexOf('updateMaterialRecipientOnOrderProducts') == -1) {
+            OrderService.updateMaterialRecipientOnOrderProducts((Map<Id, Order>)Trigger.newMap, (Map<Id, Order>)Trigger.oldMap);
+        }
     }
     
     
-    public override void afterInsert(){
-        if(super.getTriggerMethodsToBypass().indexOf('validateMaterialrecipent') == -1) {
-            OrderService.validateMaterialrecipent((List<Order>)Trigger.old, (List<Order>)Trigger.new,(Map<Id,Order>)trigger.oldMap, (Map<Id,Order>)Trigger.newMap);
+    public override void afterInsert() {
+        if(super.getTriggerMethodsToBypass().indexOf('createOrderProducts') == -1) {
+            OrderService.createOrderProducts((List<Order>)Trigger.new, null);
         }
     }
     

@@ -96,7 +96,7 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
                 String relatedObjectType = String.valueOf((task.WhatId).getSObjectType());
                 if(task.WhatId != null && (driveRelatedObjList.contains(relatedObjectType)) && task.Drive_Date__c == null){
                     Boolean isOpportunity = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
-                    Boolean isOrder = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
+                    Boolean isOrder = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Order');
                     Boolean isDrive = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('sked_Drive__c');
                     System.debug('Object: '+String.valueOf((task.WhatId).getSObjectType()));
                     if (isOpportunity) {
@@ -116,13 +116,13 @@ public with sharing class TaskTriggerHandler extends TriggerHandler {
             for (Task task : taskList) {
                 if (task.whatId != null) {
                     Boolean isOpportunity = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
-                    Boolean isOrder = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Opportunity');
+                    Boolean isOrder = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('Order');
                     Boolean isDrive = (String.valueOf((task.WhatId).getSObjectType())).equalsIgnoreCase('sked_Drive__c');
-                    if (isOpportunity) {
+                    if (isOpportunity && getOppDate.containsKey(task.WhatId)) {
                         task.Drive_Date__c = getOppDate.get(task.WhatId).Drive_Date__c;
-                    } else if (isOrder) {
+                    } else if (isOrder && getOrderDate.containsKey(task.WhatId)) {
                         task.Drive_Date__c = getOrderDate.get(task.WhatId).Drive_Date__c;
-                    } else if (isDrive) {
+                    } else if (isDrive && getDriveDate.containsKey(task.WhatId)) {
                         task.Drive_Date__c = getDriveDate.get(task.WhatId).sked_Drive_Date__c;
                     }
                 }

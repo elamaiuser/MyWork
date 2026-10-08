@@ -42,9 +42,6 @@ public class FetchRelatedDriveData {
         List<Biomed_Collection_Op_Center__c> collectionOperations = fetchCollectionOperations(collectionOperationIds);
 
         List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations = fetchCollectionOperationStagingLocation(collectionOperationIds, schedulingBounds);  //HRP-11653
-
-        //HRP-11650
-        List<sked_Travel_Time_Index_Item__c> travelTimeIndexes = fetchTravelTimeIndexFromCOId(sites);
         
         List<sked_Collection_Operation_SDM__c> collectionOperationSDMs = fetchCollectionOperationSDMs(collectionOperationIds, schedulingBounds);
         
@@ -60,7 +57,7 @@ public class FetchRelatedDriveData {
         
         return combineDriveGeneratorData(oppportunities,accounts,sites,collectionOperations,collectionOperationSDMs, 
                                          staffingDecisionMatrices,resourceRoleGroups, roleTimeDetails, roleTimeVariances,
-                                         lunchBreakSettings,collectionOperationStagingLocations, travelTimeIndexes);
+                                         lunchBreakSettings,collectionOperationStagingLocations);
     }
     
     /*********************************************************** Privated Methods ***********************************************************/
@@ -76,8 +73,7 @@ public class FetchRelatedDriveData {
         List<sked_Role_Time_Detail__c> roleTimeDetails,
         List<sked_Role_Time_Variance__c> roleTimeVariances,
         List<sked_Lunch_Break_Setting__c> lunchBreakSettings,
-        List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations, //HRP-11653
-        List<sked_Travel_Time_Index_Item__c> travelTimeIndexes //HRP-11650        
+        List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations //HRP-11653      
     ) {
         
         DMLData data = new DMLData();
@@ -143,13 +139,6 @@ public class FetchRelatedDriveData {
         data.lunchBreakSettings = new List<DMLLunchBreakSetting>();
         for (sked_Lunch_Break_Setting__c lunchBreakSetting : lunchBreakSettings) {
             data.lunchBreakSettings.add(new DMLLunchBreakSetting(lunchBreakSetting));
-        }
-
-        data.travelTimeIndexes = new List<TravelTimeIndex>();
-        for (sked_Travel_Time_Index_Item__c travelTime : travelTimeIndexes){
-            if(travelTime.sked_Travel_Time_Breakdown_JSON__c != NULL){
-                data.travelTimeIndexes.add(new TravelTimeIndex(travelTime));
-            }
         }
 
         // HRP-11653 --> starts Here
@@ -226,18 +215,28 @@ public class FetchRelatedDriveData {
     }
 
     //HRP-11650 Start
-    static List<sked_Travel_Time_Index_Item__c> fetchTravelTimeIndexFromCOId(List<sked__Location__c> sites) {
-        Set<Double> setOfLatitude = new Set<Double>();
-        Set<Double> setOfLongitude = new Set<Double>();
-        for (sked__Location__c site : sites)
-        {
-            setOfLatitude.add(site.sked__GeoLocation__latitude__s);
-            setOfLongitude.add(site.sked__GeoLocation__longitude__s);
-        }
+    public static void fetchTravelTimeIndexFromCOId(
+        DMLData data, 
+        Location driveSiteLocation, 
+        Location coStagingLocation
+    ) {
+        String siteToCOKey = driveSiteLocation.latitude + ' ' + driveSiteLocation.longitude + ':' + coStagingLocation.latitude + ' ' + coStagingLocation.longitude;
+        String coToSiteKey = coStagingLocation.latitude + ' ' + coStagingLocation.longitude + ':' + driveSiteLocation.latitude + ' ' + driveSiteLocation.longitude;
         
-        return [SELECT Id, sked_From__c, sked_Key__c, sked_Last_Refresh_Date__c, sked_Timezone__c,
-                sked_To__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
-                FROM sked_Travel_Time_Index_Item__c Where (sked_From__latitude__s in:setOfLatitude AND sked_From__longitude__s in:setOfLongitude) OR (sked_To__latitude__s in:setOfLatitude AND sked_To__longitude__s in:setOfLongitude)];
+        List<sked_Travel_Time_Index_Item__c> travelTimeIndexItems = 
+        [
+            SELECT Id, sked_From__c, sked_Key__c, sked_Last_Refresh_Date__c, sked_Timezone__c,
+            sked_To__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
+            FROM sked_Travel_Time_Index_Item__c 
+            WHERE sked_Key__c = :siteToCOKey OR sked_Key__c = :coToSiteKey
+        ];
+        
+        data.travelTimeIndexes = new List<TravelTimeIndex>();
+        for (sked_Travel_Time_Index_Item__c travelTime : travelTimeIndexItems) {
+            if(travelTime.sked_Travel_Time_Breakdown_JSON__c != null) {
+                data.travelTimeIndexes.add(new TravelTimeIndex(travelTime));
+            }
+        }
     }
     //HRP-11650 End
     

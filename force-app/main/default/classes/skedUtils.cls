@@ -42,6 +42,12 @@ public class skedUtils {
     }
     
     public static object getFieldValue(string input, string fieldType) {
+        // A null input (e.g. a Change Item with no recorded old value) has no meaningful
+        // conversion - every branch below either throws (JSON.deserialize('"null"', ...) is not
+        // a valid date/datetime/time) or NPEs (String methods on a null) if this falls through.
+        if (input == null) {
+            return null;
+        }
         object result;
         if (fieldType == 'date') {
             if (input != null) {

@@ -114,13 +114,13 @@ export default class SlwcDriveCalendar extends LightningElement {
     get showFixedSiteStaffingDetails() {
         if(!this.filters) return true;
         if(!this.filters.driveOperationTypes || !this.filters.driveOperationTypes.length) return true;
-        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.FIXED_SITE);
+        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.FIXED_SITE) || this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.NIFS);
     }
 
     get showMobileStaffingDetails() {
         if(!this.filters) return true;
         if(!this.filters.driveOperationTypes || !this.filters.driveOperationTypes.length) return true;
-        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.MOBILE) || this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.NIFS);
+        return this.filters.driveOperationTypes.includes(DRIVE_OPERATION_TYPE.MOBILE);
     }
 
     get today() {
@@ -646,10 +646,11 @@ export default class SlwcDriveCalendar extends LightningElement {
         ).forEach(entry => {
             const staffAmount = entry.effectiveStaffRequested || 0;
             if (!staffAmount) return;
-            if (entry.driveOperationType === DRIVE_OPERATION_TYPE.FIXED_SITE) {
-                day.slot.noOfFixedSiteStaffRequested += staffAmount;
-            } else {
+            // HRP-17171: test for Mobile, not Fixed Site - NIFS drives reduce from the Fixed Site pool server-side.
+            if (entry.driveOperationType === DRIVE_OPERATION_TYPE.MOBILE) {
                 day.slot.noOfMobileStaffRequested += staffAmount;
+            } else {
+                day.slot.noOfFixedSiteStaffRequested += staffAmount;
             }
             day.slot.noOfStaffRequested += staffAmount;
         });
@@ -844,6 +845,14 @@ export default class SlwcDriveCalendar extends LightningElement {
         });
     }
 
+    // HRP-17171: sked_Staffing_Constraint__c.sked_Drive_Type__c is restricted to Fixed Site/Mobile, so NIFS never matches on its own.
+    toStaffingConstraintDriveTypes(driveOperationTypes) {
+        if (!driveOperationTypes?.length) return driveOperationTypes;
+        return uniq(driveOperationTypes.map(
+            type => type === DRIVE_OPERATION_TYPE.NIFS ? DRIVE_TYPE.FIXED_SITE : type
+        ));
+    }
+
     rebuildProductGoalCalendar = () => {
         const selectedMonth = this.filters.selectedMonth || DateTime.local().toISODate()
         let { startDate, endDate } = this.calendarHelper.getDateRange(selectedMonth);
@@ -867,7 +876,7 @@ export default class SlwcDriveCalendar extends LightningElement {
                 staffingConstraintQuery.startDate = startDate;
                 staffingConstraintQuery.endDate = endDate;
                 staffingConstraintQuery.collectionOpIds = collectionOpIds;
-                staffingConstraintQuery.driveTypes = this.filters.driveOperationTypes;
+                staffingConstraintQuery.driveTypes = this.toStaffingConstraintDriveTypes(this.filters.driveOperationTypes);
 
                 let productGoalQuery = new productGoalQueryModel();
                 productGoalQuery.startDate = startDate;
@@ -907,6 +916,10 @@ export default class SlwcDriveCalendar extends LightningElement {
                 //activityQuery.territoryKeys = territoryKeys;
                 activityQuery.startDate = startDate;
                 activityQuery.endDate = endDate;
+                // Overlap, not starts-within: an activity spanning this range must be found even
+                // when it started before the range, or it drops out of excludedActivityIds and Apex
+                // starts treating it as a hard block on the assets it holds.
+                activityQuery.overlapsDateRange = true;
                 activityQuery.isGroupActivity = true;
                 activityQuery.isShowOnCalendarOrReduceFromStaffingConstraints = true;
                 activityQuery.subQueryIndicator = sObjectType.ACTIVITY_RESOURCE | sObjectType.ACTIVITY_COLLECTION_OPERATION;
@@ -954,11 +967,26 @@ export default class SlwcDriveCalendar extends LightningElement {
                         (activity.activityCollectionOperations || []).find((activityCollectionOperation => territoryKeys.includes(activityCollectionOperation.territoryKey)))
                     );
                 });
+                const activitiesMapByDate = {};
                 activities.forEach((activity) => {
                     let activityStart = DateTime.fromISO(activity.start, { zone: activity.timezoneSidId });
                     activity.activityDate = activityStart.toISODate();
+                    // HRP-17888: a multi-day activity holds its assets for every day of its span, so it
+                    // must key under all of them. Keying only the start date left the later days reading
+                    // as fully free, and since HRP-16746 puts spanning activities into excludedActivityIds
+                    // their total is no longer reduced either — so nothing accounted for the hold at all.
+                    // Clamped to the rendered window: a span can run for months.
+                    const spanEnd = (activity.endDate && activity.endDate > activity.activityDate)
+                        ? activity.endDate : activity.activityDate;
+                    const lastDate = spanEnd > endDate ? endDate : spanEnd;
+                    let dateIso = activity.activityDate < startDate ? startDate : activity.activityDate;
+                    while (dateIso <= lastDate) {
+                        activitiesMapByDate[dateIso] = activitiesMapByDate[dateIso] || [];
+                        activitiesMapByDate[dateIso].push(activity);
+                        dateIso = DateTime.fromISO(dateIso).plus({ days: 1 }).toISODate();
+                    }
                 });
-                this.activitiesMapByDate = groupBy(activities, 'activityDate');
+                this.activitiesMapByDate = activitiesMapByDate;
                 this.holidays = holidayResult;
                 this.calendarMessages = calendarMessageResult;
                 this.driveLimits = driveLimitResult;
@@ -1017,7 +1045,9 @@ export default class SlwcDriveCalendar extends LightningElement {
                         const groupedEquipmentByDateIso = groupBy(validEquipmentPossibleAllocations, (item) => item.job.driveDate);
 
                         const groupedByDateIsoAndType = {};
-                        Object.keys(groupedVehicleByDateIso).map(dateIso => {
+                        // Both key sets, not just the vehicle one: a day with no available vehicle
+                        // would otherwise get no entry at all and its equipment would read as zero.
+                        uniq([...Object.keys(groupedVehicleByDateIso), ...Object.keys(groupedEquipmentByDateIso)]).forEach(dateIso => {
                             groupedByDateIsoAndType[dateIso] = {
                                 [ASSET_TYPE.EQUIPMENT]: (groupedEquipmentByDateIso[dateIso] || []).map(item => item.resource),
                                 [ASSET_TYPE.VEHICLE]: (groupedVehicleByDateIso[dateIso] || []).map(item => item.resource),
@@ -1062,6 +1092,7 @@ export default class SlwcDriveCalendar extends LightningElement {
                 driveQuery.startDate = startDate;
                 driveQuery.endDate = endDate;
                 driveQuery.eventTypes = this.filters.driveTypes;
+                driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
                 driveQuery.statuses = this.filters.driveStatuses;
                 driveQuery.stages = this.filters.stages;
                 driveQuery.accountTypes = this.filters.accountTypes;

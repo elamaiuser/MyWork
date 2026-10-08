@@ -5,6 +5,7 @@ public class skedOperationRecordUtils {
     public static List<sked_Operation_Record__c> getOpsRecords(Set<Id> recordIds) {
         List<sked_Operation_Record__c> result = [
             SELECT Id, Name, sked_Drive__c, sked_Drive__r.sked_UFID__c, sked_Drive__r.sked_Drive_Date__c,
+                sked_Collection_Operation__r.sked_Require_Number_of_Rest_Breaks__c,
                 sked_Drive__r.sked_Type_of_Drive__c, sked_Donor_Ambassadors_Actual__c, sked_Actual_Drive_Start__c, sked_Actual_Drive_End__c,
                 sked_Power_Red_Machines_Sent__c, sked_Power_Red_Machines_Used__c, 
                 sked_Drive__r.sked_Projected_Registered_Donors__c, sked_Drive_Issues__c,

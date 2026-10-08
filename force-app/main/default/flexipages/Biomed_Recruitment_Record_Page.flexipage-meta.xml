@@ -1488,13 +1488,6 @@
             <componentInstance>
                 <componentName>sfC360_Lead360ViewCard</componentName>
                 <identifier>c_sfC360_Lead360ViewCard</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.Lead_360_Visibility_Permission}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>

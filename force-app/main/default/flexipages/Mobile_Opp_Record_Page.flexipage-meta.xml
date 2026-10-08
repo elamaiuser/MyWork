@@ -168,6 +168,9 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
+                            <value>Opportunity.Create_New_Publicity_Order</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
                         <valueListItems>
@@ -373,6 +376,9 @@
                         <valueListItems>
                             <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Opportunity.Create_New_Publicity_Order</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -550,14 +556,6 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>New</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Order.Extend_End_Date</value>
-                        </valueListItems>
-                    </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>adminFilters</name>
@@ -706,6 +704,46 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>decorate</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>richTextValue</name>
+                    <value>&lt;p&gt;&lt;strong&gt; &lt;/strong&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;After Hours Contact:&lt;/strong&gt; Individual to be contacted regarding drive outside of accounts normal business hours. Contact record required to have After Hours phone number associated before service role applied.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Call List Recipient:&lt;/strong&gt; Downstream impact: indicates Type A account. Receives Sponsor Call List and organizes donor contact strategy.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Confirmation Letter:&lt;/strong&gt; Individual that coordinates blood program confirmation.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Event Contact: &lt;/strong&gt;Individuals associated in a general role for the day of the blood drive. Event contacts appear on the opportunity record and are used for drive planning and communication.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Online Appointment Contact:&lt;/strong&gt; Downstream impact: Individual(s) responsible for scheduling donor appointments using the Blood Drive Management Portal (BDMP); valid email address required.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Primary Contact – Required:&lt;/strong&gt; Required field&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Print Appt Contact:&lt;/strong&gt; Downstream impact: indicates the contact&apos;s information will be printed on marketing efforts such as emails, postcards, and promotional materials. Additionally, donors will be directed by telerecruitment to call the contact for scheduling appointments.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Publicity Materials Recipient:&lt;/strong&gt; Downstream impact: indicates which Account Contact will receive the publicity materials when ordered by AM.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Secondary Contact:&lt;/strong&gt; Alternate point of contact for blood drive.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Security List Recipient:&lt;/strong&gt; Individuals who pre-drive security list should be sent to.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Sign-Up Sheet Contact:&lt;/strong&gt; Individual that manages manual sign up sheet on day of blood drive.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Site Confirmation Recipient:&lt;/strong&gt; Individual to coordinate and confirm use of site for a blood drive.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Thank You Letter:&lt;/strong&gt; Individual who should receive thank you/drive follow up from recruitment.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(68, 68, 68);&quot;&gt;• &lt;/strong&gt;&lt;strong&gt;Whom To Meet:&lt;/strong&gt; Individuals who will meet collections staff upon arrival at blood drive.&lt;/p&gt;</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:richText</componentName>
+                <identifier>flexipage_richText3</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-2231a659-f778-4fbe-875c-5138a9c95871</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-2231a659-f778-4fbe-875c-5138a9c95871</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Drive Service Role Glossary</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>name</name>
+                    <value>accordionSection1</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:accordionSection</componentName>
+                <identifier>flexipage_accordionSection</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-11f3e805-bbcc-40f6-93ca-206d28cbae44</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>parentFieldApiName</name>
                     <value>Opportunity.Id</value>
                 </componentInstanceProperties>
@@ -719,6 +757,16 @@
                 </componentInstanceProperties>
                 <componentName>force:relatedListSingleContainer</componentName>
                 <identifier>force_relatedListSingleContainer8</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>accordionSections</name>
+                    <value>Facet-11f3e805-bbcc-40f6-93ca-206d28cbae44</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:accordion</componentName>
+                <identifier>flexipage_accordion</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

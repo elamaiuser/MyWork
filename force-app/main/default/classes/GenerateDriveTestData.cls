@@ -1654,9 +1654,9 @@ secondList.add(setting30definition3); */
         // fixed site
         sked_Collection_Operation_SDM__c collectionOperationSdm2 = new sked_Collection_Operation_SDM__c(
             sked_Collection_Operation__c = testCollectionOperation1.Id,
-            sked_Effective_End_Date__c = testDataFactory.summary.endDate, 
-            sked_Effective_Start_Date__c = testDataFactory.summary.startDate, 
-            sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix.Id
+            sked_Effective_End_Date__c = testDataFactory.summary.endDate,
+            sked_Effective_Start_Date__c = testDataFactory.summary.startDate,
+            sked_Staffing_Decision_Matrix__c = staffingDecisionMatrix2.Id
         );
         secondList.add(collectionOperationSdm2);
         
@@ -2133,7 +2133,7 @@ secondList.add(setting30definition3); */
         );
         firstList.add(testCollectionOperation2);
         mapTestData.put('testCollectionOperation2', testCollectionOperation2);
-        
+
         sked_Staffing_Decision_Matrix__c staffingDecisionMatrix = new sked_Staffing_Decision_Matrix__c (
             sked_2RBC_Staff_Capacity__c = 1.6,
             sked_Charge_Capacity__c = 1.1,
@@ -2145,7 +2145,11 @@ secondList.add(setting30definition3); */
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Mobile').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix);
-        
+
+        firstList.add(new sked_Staff_Count_Threshold__c(
+            sked_Staff_Count_Threshold__c = 5
+        ));
+
         // fixed site
         sked_Staffing_Decision_Matrix__c staffingDecisionMatrix2 = new sked_Staffing_Decision_Matrix__c (
             sked_WB_Hourly_Capacity__c = 2.1,
@@ -2340,38 +2344,38 @@ secondList.add(setting30definition3); */
         );
         secondList.add(setting30definition1);
         
-      /*  sked_Lunch_Break_Definition__c setting30definition2 = new sked_Lunch_Break_Definition__c(
+        sked_Lunch_Break_Definition__c setting30definition2 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 9,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 3,
             sked_Min_Number_of_Staff__c = 3,
             sked_Slot_Reduction__c = 3.33
         );
-        secondList.add(setting30definition2); */
-        
-        /*  sked_Lunch_Break_Definition__c setting30definition3 = new sked_Lunch_Break_Definition__c(
+        secondList.add(setting30definition2);
+
+        sked_Lunch_Break_Definition__c setting30definition3 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 120,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 8,
             sked_Min_Number_of_Staff__c = 4,
             sked_Slot_Reduction__c = 5
-            );
-            secondList.add(setting30definition3); */
-        
+        );
+        secondList.add(setting30definition3);
+
         sked_Lunch_Break_Definition__c setting30definition4 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 15,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
             sked_Max_Number_of_Staff__c = 16,
-            sked_Min_Number_of_Staff__c = 9,            
+            sked_Min_Number_of_Staff__c = 9,
             sked_Slot_Reduction__c = 2
         );
         secondList.add(setting30definition4);
-        
+
         sked_Lunch_Break_Definition__c setting30definition5 = new sked_Lunch_Break_Definition__c(
             sked_Lunch_Break_Duration__c = 12,
             sked_Lunch_Break_Setting__c = lunchBreakSetting30.Id,
-            sked_Max_Number_of_Staff__c = 9,
-            sked_Min_Number_of_Staff__c = 17,            
+            sked_Max_Number_of_Staff__c = 9999,
+            sked_Min_Number_of_Staff__c = 17,
             sked_Slot_Reduction__c = 6.67
         );
         secondList.add(setting30definition5);
@@ -4017,7 +4021,11 @@ sked_VP_HH_Capacity__c = 2.2,*/
             RecordTypeId = Schema.SObjectType.sked_Staffing_Decision_Matrix__c.getRecordTypeInfosByDeveloperName().get('sked_Mobile').getRecordTypeId()
         );
         firstList.add(staffingDecisionMatrix);
-        
+
+        firstList.add(new sked_Staff_Count_Threshold__c(
+            sked_Staff_Count_Threshold__c = 5
+        ));
+
         //LB Setting
         sked_Lunch_Break_Setting__c lunchBreakSetting30 = new sked_Lunch_Break_Setting__c(
             sked_Maximum_Lunch_Break_Duration__c = '30'

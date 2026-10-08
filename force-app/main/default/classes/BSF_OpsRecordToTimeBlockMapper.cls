@@ -14,6 +14,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
     public static final Decimal QUANTITY_PREMIUM = 1;
     
 
+    
     /**
      * Wrapper for staff + GMT shift times (from SF) for building time blocks.
      */
@@ -32,6 +33,7 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
         public skedOpsRecordApiData.opsRecordStaffDetail detail;
         public String staffRecordId;
         public String approverEmail;
+        public Boolean requireNumberOfRestBreaks;
     }
 
     /**
@@ -137,20 +139,18 @@ public with sharing class BSF_OpsRecordToTimeBlockMapper {
             if (sd.premiumLateEnd) {
                 blocks.add(buildPremiumBlock(empId, driveDate, TIME_ENTRY_LATE_END, comment));
             }
-            /*
-             * Missed/short rest breaks are submitted via Trade API (createBreaksNotTakenAPIData /
-             * skedNightlyTradeProcessBatch), not the direct Workday ops-record submission path.
-             *
-             * if (sd.restBreaksNotTaken != null && sd.restBreaksNotTaken > 0) {
-             *     blocks.add(buildPremiumBlock(
-             *         empId,
-             *         driveDate,
-             *         TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
-             *         comment,
-             *         sd.restBreaksNotTaken
-             *     ));
-             * }
-             */
+            if (staffCtx.requireNumberOfRestBreaks == true
+                && !sd.notWorked
+                && sd.restBreaksNotTaken != null
+                && sd.restBreaksNotTaken > 0) {
+                blocks.add(buildPremiumBlock(
+                    empId,
+                    driveDate,
+                    TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
+                    comment,
+                    sd.restBreaksNotTaken
+                ));
+            }
         }
         return blocks;
     }

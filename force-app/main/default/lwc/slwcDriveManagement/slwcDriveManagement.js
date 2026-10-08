@@ -728,6 +728,14 @@ export default class SlwcDriveManagement extends NavigationMixin(LightningElemen
                     }));
 
                     throw "break";
+                } else if (slwcUtils.isNullOrEmpty(driveChangeRequest) && this.showDCRWarning) {
+                    this.dispatchEvent(new ShowToastEvent({
+                        message: 'The Drive Change Request is already processed. Please refresh the page.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    }));
+
+                    throw "break";
                 }
             })
             .then(() => {

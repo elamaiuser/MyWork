@@ -63,7 +63,7 @@ public class BSF_AccUpdPlanningPathOneTimeBatchTest {
     @isTest
     static void testPositiveFlow() {
         Test.startTest();
-        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch('Active');
+        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch(True, new Set<String>{'Active'}, null);
         Database.executeBatch(batch);
         Test.stopTest();
 
@@ -87,4 +87,14 @@ public class BSF_AccUpdPlanningPathOneTimeBatchTest {
         Integer jobCount = [SELECT count() FROM AsyncApexJob WHERE ApexClass.Name = 'BSF_AccountTaskPlanningCascadeBatch'];
         System.assert(jobCount > 0, 'The cascade batch should have been queued in the finish method');
     }
+    
+    @isTest
+    static void testScheduleJob() {
+        String cronExp = '0 0 0 1 1 ? 2099';
+        Test.startTest();
+        BSF_AccountUpdPlanningPathOneTimeBatch batch = new BSF_AccountUpdPlanningPathOneTimeBatch();
+        String jobId = System.Schedule('BSF_AccountUpdPlanningPathOneTimeBatch', cronExp, batch);
+        Test.stopTest();
+        Assert.isNotNull(jobId);
+    } 
 }

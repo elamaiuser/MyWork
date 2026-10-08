@@ -8,7 +8,7 @@ public class skedDriveChangeRequestItemHandler extends skedTriggerHub {
     public override void onBeforeUpdate() {
         populateDisplayValue(this.context.newRecords, (Map<Id, sked_Drive_Change_Request_Item__c>)this.context.oldMap);
     }
-    
+
     public override void onAfterDelete() {
         deleteEmptyDcr(this.context.oldRecords);
     }

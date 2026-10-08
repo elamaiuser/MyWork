@@ -26,11 +26,11 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
     public override void onAfterInsert() {
         updateNumDCRsForRelatedDrives(this.context.newRecords);
     }
-    
+
 	public override void onBeforeUpdate() {
         populateNewCollectionOperationData(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
     }
-    
+
     public override void onAfterUpdate() {
         updateNumDCRsForRelatedDrives(this.context.newRecords, (Map<Id, sked_Drive_Change_Request__c>)this.context.oldMap);
         if (!skedSetting.instance.Admin.migrationMode) {
@@ -45,7 +45,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
     public override void onAfterDelete() {
         updateNumDCRsForRelatedDrives(this.context.oldRecords);
     }
-    
+
     /*********************************************************** Privated Methods ***********************************************************/
     private void updateNumDCRsForRelatedDrives(List<sked_Drive_Change_Request__c> records) {
         Set<Id> driveIds = new Set<Id>();
@@ -56,6 +56,17 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
         }
 
         if (!driveIds.isEmpty()) {
+            // Defer Drive count refresh to a Queueable while a Taxonomy Run is in
+            // progress. This removes the Drive-row update from the DCR-insert
+            // transaction and avoids UNABLE_TO_LOCK_ROW failures when another
+            // Taxonomy transaction is holding the Drive locks. HRP-17291.
+            if (Taxo_Utilities.isTaxonomyRunning()) {
+                System.enqueueJob(new skedUpdateDcrCountQueueable(driveIds));
+                return;
+            }
+
+            // Synchronous (UI-initiated) path: keeps the count update atomic with the
+            // DCR change so the user sees an immediately consistent value.
             Set<String> nonPendingStatuses = new Set<String>{'Approved', 'Rejected', 'Cancelled', 'Approved by System'};
             List<sked_Drive__c> drives = [
                 SELECT Id, sked_Num_Of_Pending_DCRs__c, 
@@ -101,7 +112,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             sked_Drive_Change_Request__c oldData = oldMap.get(newRecord.Id);
             if (newRecord.sked_Status__c != oldData.sked_Status__c && newRecord.sked_Status__c == 'Submitted') {
                 mapSubmittedDcr.put(newRecord.Id, newRecord);
-                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c || (newRecord.sked_Status__c == 'Submitted' && oldData.sked_Status__c == 'Waiting for APS Approval')) {//HRP-14627
+                if(newRecord.sked_Route_Approval_Request_To__c != oldData.sked_Route_Approval_Request_To__c || (newRecord.sked_Status__c == 'Submitted' && oldData.sked_Status__c == 'Waiting for APS Approval')) {
                     hasRouteApprovalRequestChanged = true;
                 }
             }
@@ -113,7 +124,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
     
     private void doSubmission(Map<Id, sked_Drive_Change_Request__c> mapSubmittedDcr, Boolean hasRouteApprovalRequestChanged) {
         List<sked_Drive_Change_Request__c> submittedDcrs = [SELECT Id, sked_Drive__c, sked_Route_Approval_Request_To__c, sked_Status__c,
-                                                            sked_New_Collection_Operation__c, sked_New_Collection_Operation__r.Name 
+                                                            sked_New_Collection_Operation__c, sked_New_Collection_Operation__r.Name, CreatedById
                                                             FROM sked_Drive_Change_Request__c
                                                             WHERE Id IN :mapSubmittedDcr.keySet()
                                                             FOR UPDATE];
@@ -176,6 +187,11 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
             skedDrive.sked_Pending_Action__c = 'Drive Change Request';
             drivesToUpdate.add(skedDrive);
             
+            // The running user submits, never the DCR's own creator: creation and submission are
+            // separate steps now, and a DCR raised by the non-user-change chain is created by the
+            // platform's automation user, which Approval.process rejects outright (INVALID_USERID).
+            // Routing is unaffected either way - it comes from the process definition and the
+            // Collection Operation queue below, never from the submitter.
             Id submitterId = UserInfo.getUserId();
             submittedDcr.sked_Submitted_By__c = submitterId;
             
@@ -438,7 +454,7 @@ public class skedDriveChangeRequestHandler extends skedTriggerHub {
                     boolean isOpportunityNeedToUpdate = FALSE;
                     for (sked_Drive_Change_Request_Item__c item : approvedDCR.sked_Drive_Change_Request_Items__r) {
                         string getDriveFieldNameFromOppField = genDriveFieldByOppFieldMap.get(item.sked_Field_API_Name__c);
-                        if(mapOfDoc.get(approvedDCR.sked_Drive__c) != null && getDriveFieldNameFromOppField != null && string.valueOf(mapOfDoc.get(approvedDCR.sked_Drive__c).get(getDriveFieldNameFromOppField)).toLowerCase() == item.sked_Old_Value__c.toLowerCase()){
+                        if(mapOfDoc.get(approvedDCR.sked_Drive__c) != null && getDriveFieldNameFromOppField != null && item.sked_Old_Value__c != null && string.valueOf(mapOfDoc.get(approvedDCR.sked_Drive__c).get(getDriveFieldNameFromOppField)).toLowerCase() == item.sked_Old_Value__c.toLowerCase()){
                             string oppDataField = item.sked_Field_API_Name__c;
                             object fieldVal = skedUtils.getFieldValue(item.sked_Old_Value__c, item.sked_Field_Type__c);
                             oppRec.put(oppDataField, fieldVal);

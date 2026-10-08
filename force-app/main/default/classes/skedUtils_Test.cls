@@ -12,6 +12,19 @@ private class skedUtils_Test {
     }
 
     @isTest
+    static void getFieldValue_nullInput_returnsNullForEveryFieldType() {
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'date'),
+            'Null input must return null for date, not throw JSONException deserializing the literal string "null"');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'datetime'), 'Null input must return null for datetime');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'time'), 'Null input must return null for time');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'double'), 'Null input must return null for double');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'percent'),
+            'Null input must return null for percent, not NPE calling String.replace on null');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'boolean'), 'Null input must return null for boolean');
+        System.assertEquals(null, skedUtils.getFieldValue(null, 'string'), 'Null input must return null for the default/string branch');
+    }
+
+    @isTest
     static void formatFieldValue_Test() {
         String testDate = skedUtils.formatFieldValue('2022-09-01', 'date');
         String testDateTime = skedUtils.formatFieldValue('2022-09-01T00:00:00+00:00', 'datetime');

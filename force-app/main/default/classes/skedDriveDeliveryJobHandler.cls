@@ -11,6 +11,14 @@ public class skedDriveDeliveryJobHandler extends skedTriggerHub {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked_Drive_Delivery_Job__c>)this.context.oldMap);
         }
     }
+
+    public override void onAfterUpdate() {
+        DriveMovementService.handleJobChanges((Map<Id, sked_Drive_Delivery_Job__c>)this.context.newMap, (Map<Id, sked_Drive_Delivery_Job__c>)this.context.oldMap);
+    }
+
+    public override void onBeforeDelete() {
+        DriveMovementService.handleJobChanges(null, (Map<Id, sked_Drive_Delivery_Job__c>)this.context.oldMap);
+    }
     
     /************************************************** Privated Methods ***************************************************/
     private void doDateTimeConversion(List<sked_Drive_Delivery_Job__c> newRecords) {

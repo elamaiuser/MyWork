@@ -49,6 +49,16 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] }
     ]
   },
+  // The SDM fetch sits alone in group 1 because groups run serially while actions inside a group run
+  // in parallel - the recalculation in group 2 reads what this fetch stores.
+  'sdmChanged': {
+    groups: [
+      { actions: [] },
+      { actions: ['retrieveCollectionOperationSDM'] },
+      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
   'siteAddressChanged': {
     groups: [
       { actions: [] },
@@ -1204,13 +1214,18 @@ class FixedSiteGenerator extends BaseGenerator {
         driveShift.defaultPlasmaSlots = originalDriveShift.defaultPlasmaSlots;
         driveShift.defaultPlateletSlots = originalDriveShift.defaultPlateletSlots;
 
+        let availableOriginalJobs = [ ...(originalDriveShift.jobs || []) ];
+
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {
           driveShift.jobs.forEach((job) => {
-            let originalJob = this.helper.findJob(job, originalDriveShift.jobs);
+            let originalJob = this.helper.findJob(job, availableOriginalJobs);
             if (originalJob) {
               job.id = originalJob.id;
               job.key = originalJob.key;
+              availableOriginalJobs = availableOriginalJobs.filter(
+                  item => item.id !== originalJob.id
+              );
 
               (originalJob.jobTags || []).forEach(originalJobTag => {
                 if (originalJobTag.systemCreated && originalJobTag.tag && originalJobTag.tag.type !== 'Physical Location Type') {
@@ -1604,13 +1619,14 @@ class FixedSiteGenerator extends BaseGenerator {
 
     if (driveShift.lunchBreak) {
       if (!driveShift.lunchBreakBeforeDrawHours) {
-        if (wbSlots && wbSlots.length) {
-          let coMaxLunchBreakDuration = driveShiftMetadata.lunchBreakSettings.maximumLunchBreakDuration;
-          let lunchBreakSetting = this.masterData.lunchBreakSettings.find((setting) => setting.maximumLunchBreakDuration == coMaxLunchBreakDuration);
-          let staffSetup = this.helper.calculateStaffSetup(['Apheresis', 'Apheresis Charge'], driveShift);
-          let lunchBreakDefinition = lunchBreakSetting.lunchBreakDefinitions.find(
-            (definition) => (definition.minNoOfStaff <= staffSetup && staffSetup <= definition.maxNoOfStaff)
-          );
+        let coMaxLunchBreakDuration = driveShiftMetadata.lunchBreakSettings.maximumLunchBreakDuration;
+        let lunchBreakSetting = this.masterData.lunchBreakSettings.find((setting) => setting.maximumLunchBreakDuration == coMaxLunchBreakDuration);
+        let staffSetup = this.helper.calculateStaffSetup(['Apheresis', 'Apheresis Charge'], driveShift);
+        let lunchBreakDefinition = lunchBreakSetting?.lunchBreakDefinitions.find(
+          (definition) => (definition.minNoOfStaff <= staffSetup && staffSetup <= definition.maxNoOfStaff)
+        );
+
+        if (wbSlots && wbSlots.length && lunchBreakDefinition) {
           let slotReductionConfiguration = {
             endTime: this.helper.newDateTime(driveShift.driveDate, driveShift.lunchBreakEndTime, this.masterData.timezoneSidId),
             interval: 60,
@@ -1625,8 +1641,9 @@ class FixedSiteGenerator extends BaseGenerator {
           };
 
           this.reduceSlots(wbSlots, slotReductionConfiguration);
-          driveShift.signUpReduction = lunchBreakDefinition.slotReduction;
         }
+
+        driveShift.signUpReduction = lunchBreakDefinition ? lunchBreakDefinition.slotReduction : null;
       }
       else {
         driveShift.signUpReduction = null;

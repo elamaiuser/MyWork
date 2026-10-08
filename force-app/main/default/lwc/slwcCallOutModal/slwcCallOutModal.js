@@ -262,6 +262,11 @@ export default class SlwcCallOutModal extends LightningElement {
                     this.model.timeOffReasonCode = unplannedReasonCode ? unplannedReasonCode.reasonId : null;
                 }
             }
+            if (!this.hasAvailableBalance) {
+                this.model.usePtoForCallOut = false;
+                this.model.timeOffPlan = null;
+                this.model.timeOffReasonCode = null;
+            }
         }
         
         let callOutReceivedDateTimeObj = DateTime.fromISO(this.model.callOutReceivedDate + 'T' + this.model.callOutReceivedTime, {

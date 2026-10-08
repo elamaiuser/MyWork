@@ -141,7 +141,7 @@ class SlwcDrivesGenerator {
   }
 
   retrieveCustomSettings() {
-    let settingKeys = ["resourceRoleGroups", "adminSetting", "lunchBreakSettings", "staffSetupExcludedRoles"];
+    let settingKeys = ["resourceRoleGroups", "adminSetting", "lunchBreakSettings", "staffSetupExcludedRoles", "staffCountThresholds"];
     return Promise.resolve()
       .then(() => {
         let service = new dataService();
@@ -151,6 +151,7 @@ class SlwcDrivesGenerator {
             this.masterData.adminSetting = result.returnedData.adminSetting;
             this.masterData.lunchBreakSettings = autoMapper.autoMapperInstance.mapToArray('sked_Lunch_Break_Setting__c', result.returnedData.lunchBreakSettings);
             this.masterData.staffSetupExcludedRoles = autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles);
+            this.masterData.staffCountThresholds = autoMapper.autoMapperInstance.mapToArray('sked_Staff_Count_Threshold__c', result.returnedData.staffCountThresholds ?? []);
           })
       });
   }
@@ -560,7 +561,8 @@ class SlwcDrivesGenerator {
           }, {
             endField: 'effectiveEndDate',
             endValue: drive.driveDate
-          })
+          }),
+          staffCountThresholds: this.masterData.staffCountThresholds
         }
       })
 

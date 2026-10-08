@@ -117,8 +117,8 @@ public class skedActivityTrigger_Test {
         
         sked__Activity__c testActivity = new sked__Activity__c(
             sked__Type__c = 'Administration',
-            sked__Start__c = testDrive.sked_Drive_Date__c,
-            sked__End__c = testDrive.sked_Drive_Date__c,
+            sked__Start__c = Datetime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(9, 0, 0, 0)),
+            sked__End__c = Datetime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(17, 0, 0, 0)),
             sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom',
             sked__GeoLocation__Latitude__s = 51.508105,
             sked__GeoLocation__Longitude__s = -0.132901,
@@ -169,8 +169,8 @@ public class skedActivityTrigger_Test {
         
         sked__Activity__c testActivity = new sked__Activity__c(
             sked__Type__c = 'Administration',
-            sked__Start__c = testDrive.sked_Drive_Date__c,
-            sked__End__c = testDrive.sked_Drive_Date__c,
+            sked__Start__c = Datetime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(9, 0, 0, 0)),
+            sked__End__c = Datetime.newInstance(testDrive.sked_Drive_Date__c, Time.newInstance(17, 0, 0, 0)),
             sked__Address__c = 'Retail Unit 2, 2 Regent St, London SW1Y 4PE, United Kingdom',
             sked__GeoLocation__Latitude__s = 51.508105,
             sked__GeoLocation__Longitude__s = -0.132901,

@@ -72,3 +72,5 @@ export * from './staffMealAndRestBreakService';
 export * from './collectionOperationOptimizerSettingService';
 export * from './collectionOpAvailabilityService';
 export * from './availabilityPatternRoleService';
+export * from './collectionOperationSlotConfigService';
+export * from './slotConfigurationDefaultService';

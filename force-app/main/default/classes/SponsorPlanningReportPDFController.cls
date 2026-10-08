@@ -350,7 +350,7 @@ public without sharing class SponsorPlanningReportPDFController{
         }
         if(!oppVsOrderMap.isEmpty()){
             List<Order> ordList = [SELECT Id,  
-                                            Comments__c, 
+                                            Publicity_Comment__c, 
                                             Local_Recruitment_Request_Need_by_Date__c , 
                                             OrderNumber,
                                             Local_Recruitment_Request__c, 
@@ -673,7 +673,7 @@ public without sharing class SponsorPlanningReportPDFController{
                         odrwrp.localRecruitmentReqNeedDate = getFormattedDate(odr.Local_Recruitment_Request_Need_by_Date__c,false);
                         odrwrp.publicityOrderBudget = odr.BudgetCurrency__c != null ? '$'+odr.BudgetCurrency__c.format() : '';
                         odrwrp.publicityOrderAmount = odr.TotalAmount != null ? '$'+odr.TotalAmount.format() : '';
-                        odrwrp.publicityComments = odr.Comments__c;
+                        odrwrp.publicityComments = odr.Publicity_Comment__c;
                         if(orderVsProductMap.get(odr.Id) != null && !orderVsProductMap.get(odr.Id).isEmpty()){
                             odrwrp.publicityProductData = new List<PublicityProductsWrapper>();
                             for(OrderItem prdt : orderVsProductMap.get(odr.Id)){

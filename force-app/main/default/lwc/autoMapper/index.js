@@ -76,6 +76,7 @@ export { SiteCollectionOperationMappingConfigFactory } from './_SiteCollectionOp
 export { SiteFeedbackMappingConfigFactory } from './_SiteFeedbackMappingConfigFactory.js';
 export { SlotMappingConfigFactory } from './_SlotMappingConfigFactory.js';
 export { StagingLocationMappingConfigFactory } from './_StagingLocationMappingConfigFactory.js';
+export { StaffCountThresholdMappingConfigFactory } from './_StaffCountThresholdMappingConfigFactory.js';
 export { StaffingConstraintMappingConfigFactory } from './_StaffingConstraintMappingConfigFactory.js';
 export { StaffingDecisionMatrixMappingConfigFactory } from './_StaffingDecisionMatrixMappingConfigFactory.js';
 export { TagMappingConfigFactory } from './_TagMappingConfigFactory.js';
@@ -91,3 +92,5 @@ export { StaffMealAndRestBreakMappingConfigFactory } from './_StaffMealAndRestBr
 export { CollectionOperationOptimizerSettingConfigFactory } from './_CollectionOperationOptimizerSettingConfigFactory.js';
 export { CollectionOpAvailabilityMappingConfigFactory } from './_CollectionOpAvailabilityMappingConfigFactory.js';
 export { AvailabilityPatternRoleMappingConfigFactory } from './_AvailabilityPatternRoleMappingConfigFactory.js';
+export { CollectionOperationSlotConfigMappingConfigFactory } from './_CollectionOperationSlotConfigMappingConfigFactory.js';
+export { SlotConfigurationDefaultMappingConfigFactory } from './_SlotConfigurationDefaultMappingConfigFactory.js';

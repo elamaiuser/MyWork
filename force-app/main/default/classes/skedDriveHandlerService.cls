@@ -74,6 +74,26 @@ public class skedDriveHandlerService implements Callable {
             'removeWorkItems',
             cancelledDriveIds
         );
+    }
 
+    public static void cascadeCompleteEvents(Set<Id> completeDriveIds) {
+        List<sked_Drive_Change_Request__c> pendingDCRs = [
+            SELECT Id, sked_Status__c
+            FROM sked_Drive_Change_Request__c
+            WHERE sked_Drive__c IN :completeDriveIds
+            AND sked_Status__c NOT IN (
+                :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM,
+                :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_APPROVED,
+                :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_REJECTED,
+                :skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED
+            )
+        ];
+
+        if (pendingDCRs != null && !pendingDCRs.isEmpty()) {
+            for (sked_Drive_Change_Request__c pendingDCR : pendingDCRs) {
+                pendingDCR.sked_Status__c = skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED;
+            }
+            update pendingDCRs;
+        }
     }
 }

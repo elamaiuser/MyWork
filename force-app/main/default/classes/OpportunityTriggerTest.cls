@@ -262,7 +262,7 @@ public class OpportunityTriggerTest
         OpportunityService.assignDefaultSiteDataIfNotPresent(null);
         //OpportunityService.createRecruitmentTask(null,null);
         //OpportunityService.createSponsorPlanningMeetingTask(null,null);
-        OpportunityService.updateTypeBasedOnPhysicalLocationType(null,null);
+        OpportunityService.updateTypeBasedOnPhysicalLocationType(new List<Opportunity>(),null);
         Test.stopTest();
     }
     

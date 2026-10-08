@@ -84,6 +84,9 @@ export default class SlwcActivityCalendarActivityList extends LightningElement {
         //activityQuery.territoryKeys = territoryKeys;
         activityQuery.startDate = startDate;
         activityQuery.endDate = endDate;
+        // Overlap, not starts-within: an activity spanning the selected day must be listed on that
+        // day, not only on the day it started. Applies to both hosts of this component.
+        activityQuery.overlapsDateRange = true;
         activityQuery.isGroupActivity = true;
         activityQuery.isShowOnCalendar = true;
         activityQuery.showOnlyLinkedEvents = this.filters.showOnlyLinkedEvents;

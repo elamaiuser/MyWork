@@ -5,7 +5,7 @@ import { debugLogService, operationDriveLimitService, operationDriveLimitQueryMo
   staffingConstraintService, staffingConstraintQueryModel } from 'c/dataService';
 import { isNullOrEmpty, generateUUID } from 'c/slwcUtils';
 import { DateTime } from 'c/luxon';
-import { cloneDeep, difference, uniqueId, extend, orderBy } from 'c/lodash';
+import { cloneDeep, difference, uniqueId, extend, orderBy, remove } from 'c/lodash';
 import { Fetch } from './fetch';
 import { PROCEDURE_TYPE, DRIVE_STATUS, ASSET_TYPE, PENDING_ACTION, DRIVE_APPROVAL_STATUS, RESOURCE_TYPE, DRIVE_TYPE, RESOURCE_ROLE_GROUP, DRIVE_CONTENTION, JOB_ALLOCATION_STATUS, MANUALLY_CREATED_FROM, VOLUNTEER_TYPE } from 'c/slwcConstants';
 
@@ -26,7 +26,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveDate': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveCollectionOperationTimeBlocksData', 'retrieveCollectionOperationAppointmentSlotInterval'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: [] }
     ]
@@ -44,6 +44,27 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
       { actions: [] },
       { actions: ['retrieveRoleTimeData'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: [] }
+    ]
+  },
+  // The SDM fetch sits alone in group 1 because groups run serially while actions inside a group run
+  // in parallel - the recalculation in group 2 reads what this fetch stores.
+  'sdmChanged': {
+    groups: [
+      { actions: [] },
+      { actions: ['retrieveCollectionOperationSDM'] },
+      { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
+      { actions: []}
+    ]
+  },
+  // Slot Configuration Change DCR — only re-resolves + regenerates slots (R9: hours/staffing
+  // unaffected), unlike roleTimeDetailChanged/roleTimeVarianceChanged above which re-run the full
+  // shift-metadata/productivity pipeline.
+  'appointmentSlotIntervalChanged': {
+    groups: [
+      { actions: [] },
+      { actions: ['retrieveCollectionOperationAppointmentSlotInterval'] },
+      { actions: ['proposeDriveShiftSlots', 'updateDriveTotalSlots'] },
       { actions: [] }
     ]
   },
@@ -66,7 +87,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'driveSiteId': {
     groups: [
       { actions: ['retrieveDriveSiteAndPopulateCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData', 'retrieveCollectionOperationAppointmentSlotInterval'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -74,7 +95,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'siteCollectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData', 'retrieveCollectionOperationAppointmentSlotInterval'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -82,7 +103,7 @@ const DRIVE_FIELD_CHANGE_MAPPING = {
   'collectionOperationId': {
     groups: [
       { actions: ['populateSiteCollectionOperation'] },
-      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData'] },
+      { actions: ['retrieveSameDateDrives', 'retrieveSameDateActivities', 'retrieveCollectionOperationSDM', 'retrieveRoleTimeData', 'retrieveDefaultTags', 'retrieveCollectionOperationTimeBlocksData', 'retrieveCollectionOperationAppointmentSlotInterval'] },
       { actions: ['calculateDriveShiftsMetadata', 'proposeDriveShifts', 'calculateDriveProductivityPlanned'] },
       { actions: ['correctJobAllocationTimes'] }
     ]
@@ -319,7 +340,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
                     lunchBreakSettings,
                     adminSetting,
                     staffSetupExcludedRoles,
-                    redcrossVolunteerMatrix
+                    redcrossVolunteerMatrix,
+                    staffCountThresholds
                   }]) => {
                     this.populateDriveCollectionOperation();
 
@@ -330,6 +352,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       adminSetting,
                       staffSetupExcludedRoles,
                       redcrossVolunteerMatrix,
+                      staffCountThresholds,
                       this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
                       this.fetch.retrieveSameDateDrives(this.drive),
                       this.fetch.retrieveSameDateActivities(this.drive),
@@ -337,10 +360,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       this.fetch.retrieveRoleTimeData(this.drive),
                       this.fetch.retrieveDefaultTags(this.drive),
                       this.fetch.retrieveTerritoryCollectionOperations(this.drive),
-                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+                      this.fetch.retrieveCollectionOperationTimeBlocks(this.drive),
+                      this.fetch.retrieveCollectionOperationAppointmentSlotInterval(this.drive)
                     ])
                   })
-                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks]) => {
+                  .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, staffCountThresholds, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, territoryCollectionOperations, collectionOperationTimeBlocks, appointmentSlotInterval]) => {
                     this.initMasterData({
                       loginUser,
                       driveSite,
@@ -356,7 +380,9 @@ class WbFixedSiteGenerator extends BaseGenerator {
                       territoryCollectionOperations,
                       staffSetupExcludedRoles,
                       redcrossVolunteerMatrix,
-                      collectionOperationTimeBlocks
+                      staffCountThresholds,
+                      collectionOperationTimeBlocks,
+                      appointmentSlotInterval
                     })
 
                     this.populateCollectionOperationData();
@@ -426,7 +452,8 @@ class WbFixedSiteGenerator extends BaseGenerator {
           lunchBreakSettings,
           adminSetting,
           staffSetupExcludedRoles,
-          redcrossVolunteerMatrix
+          redcrossVolunteerMatrix,
+          staffCountThresholds
         }]) => {
 
           return Promise.all([
@@ -436,6 +463,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
             adminSetting,
             staffSetupExcludedRoles,
             redcrossVolunteerMatrix,
+            staffCountThresholds,
             this.fetch.retrieveTravelTimeIndexItemMap(this.drive),
             this.fetch.retrieveSameDateDrives(this.drive),
             this.fetch.retrieveSameDateActivities(this.drive),
@@ -443,10 +471,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
             this.fetch.retrieveRoleTimeData(this.drive),
             this.fetch.retrieveDefaultTags(this.drive),
             this.fetch.retrieveActiveDriveChangeRequest(this.drive),
-            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
+            this.fetch.retrieveCollectionOperationTimeBlocks(this.drive),
+            this.fetch.retrieveCollectionOperationAppointmentSlotInterval(this.drive)
           ]);
         })
-        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks]) => {
+        .then(([driveSite, resourceRoleGroups, lunchBreakSettings, adminSetting, staffSetupExcludedRoles, redcrossVolunteerMatrix, staffCountThresholds, travelTimeIndexItemMap, sameDateDrives, sameDateActivities, staffingDecisionMatrix, roleTimeData, driveTags, activeDriveChangeRequest, collectionOperationTimeBlocks, appointmentSlotInterval]) => {
           this.initMasterData({
             loginUser,
             driveSite,
@@ -462,9 +491,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
             activeDriveChangeRequest,
             staffSetupExcludedRoles,
             redcrossVolunteerMatrix,
-            collectionOperationTimeBlocks
+            staffCountThresholds,
+            collectionOperationTimeBlocks,
+            appointmentSlotInterval
           })
-          
+
           this.populateCollectionOperationData();
           this.calculatePreferredNumberOf2rbcAssets();
           this.initDriveShiftsMetadata();
@@ -1262,18 +1293,22 @@ class WbFixedSiteGenerator extends BaseGenerator {
       let { quantity: noOf2rbcStaffs } = resourceQuantityMap.get('2RBC');
       let { quantity: noOfTeamSupervisor } = resourceQuantityMap.get('Team Supervisor') || {};
       let { quantity: noOfDriveLeads } = resourceQuantityMap.get('Drive Lead') || {};
-      let { vphhQuantity: noOfVpHhStaffs } = resourceQuantityMap.get('VP/HH');
+      let { vphhQuantity: noOfVpHhStaffs, aptQuantity: noOfAptStaffs } = resourceQuantityMap.get('VP/HH');
       if(!noOf2rbcStaffs) noOf2rbcStaffs = 0;
       if(!noOfTeamSupervisor) noOfTeamSupervisor = 0;
       if(!noOfDriveLeads) noOfDriveLeads = 0;
       if(!noOfVpHhStaffs) noOfVpHhStaffs = 0;
+      if(!noOfAptStaffs) noOfAptStaffs = 0;
       
-      const noOfStaffWithoutLeaders = noOf2rbcStaffs + noOfVpHhStaffs;
-      const noOfLeaders = Math.ceil(noOfStaffWithoutLeaders / 11);
-      let noOfCharges = noOfLeaders - noOfTeamSupervisor - noOfDriveLeads;
-      if (noOfCharges < 0) {
-        noOfCharges = 0;
+      const noOfInitialCharges = (noOfTeamSupervisor === 0 && noOfDriveLeads === 0) ? 1 : 0;
+
+      const noOfStaffWithoutLeaders = noOf2rbcStaffs + noOfVpHhStaffs + noOfAptStaffs;
+      let noOfChargesBasedOnStaffCountThreshold = Math.floor(noOfStaffWithoutLeaders / this.masterData.staffCountThresholds?.[0].staffCountThreshold);
+      if (noOfChargesBasedOnStaffCountThreshold < 0) {
+        noOfChargesBasedOnStaffCountThreshold = 0;
       }
+
+      const noOfCharges = noOfInitialCharges + noOfChargesBasedOnStaffCountThreshold;
 
       resourceQuantityMap.set('Charge', {
         quantity: noOfCharges
@@ -1282,6 +1317,77 @@ class WbFixedSiteGenerator extends BaseGenerator {
       //Recalculate VP/HH
       this.calculateVpHhQuantity();
     });
+  }
+
+   recalculateChargeQuantity(driveShift, resourceRoles = ['Driver', 'Driver Support', '2RBC', 'VP/HH']) {
+    if (!this.masterData.staffingDecisionMatrix || isNullOrEmpty(this.masterData.staffingDecisionMatrix.chargeThreshold)) return;
+
+    const resourceQuantityMap = this.helper.getDriveShiftResourceQuantity(driveShift);
+
+    let { quantity: noOfTeamSupervisor } = resourceQuantityMap.get('Team Supervisor') || {};
+    let { quantity: noOfDriveLeads } = resourceQuantityMap.get('Drive Lead') || {};
+
+    if(!noOfTeamSupervisor) noOfTeamSupervisor = 0;
+    if(!noOfDriveLeads) noOfDriveLeads = 0;
+
+    const noOfInitialCharges = (noOfTeamSupervisor === 0 && noOfDriveLeads === 0) ? 1 : 0;
+
+    let noOfStaffWithoutLeaders = 0;
+    for (let role of resourceQuantityMap.keys()) {
+      const baseRole = role.split('-')[0];
+      if(!resourceRoles.includes(baseRole)) continue;
+
+      const roleData = resourceQuantityMap.get(role) || {};
+      noOfStaffWithoutLeaders += roleData.quantity || 0;
+
+      if (baseRole === 'VP/HH') {
+        noOfStaffWithoutLeaders += roleData.aptQuantity || 0;
+      }
+    }
+      
+    let noOfChargesBasedOnStaffCountThreshold = Math.floor(noOfStaffWithoutLeaders / this.masterData.staffCountThresholds?.[0].staffCountThreshold);
+    if(noOfChargesBasedOnStaffCountThreshold < 0) noOfChargesBasedOnStaffCountThreshold = 0;
+
+    const noOfCharges = noOfInitialCharges + noOfChargesBasedOnStaffCountThreshold;
+
+    let existingChargeJob = driveShift.jobs.find(job => 
+      job.resourceRole === 'Charge' && 
+      !job.dualRole);
+
+    if(existingChargeJob?.manuallyCreatedFrom === MANUALLY_CREATED_FROM.STAFFING_MODAL) {
+      return;
+    }
+
+    if(noOfCharges > 0) {
+      if(existingChargeJob) {
+        existingChargeJob.quantity = noOfCharges;
+        existingChargeJob.systemQuantity = existingChargeJob.quantity;
+      } else {
+        const newList = [...driveShift.jobs];
+        let newJob = {
+          id: uniqueId('temp_job_'),
+          key: generateUUID(),
+          resourceRole: 'Charge',
+          dualRole: '',
+          quantity: noOfCharges,
+          systemQuantity: noOfCharges,
+          driveSiteId: this.drive.driveSiteId,
+          jobTags: []
+        };
+        newList.push(newJob);
+
+        driveShift.jobs = newList;
+        driveShift.jobs.forEach(job => {
+          if(newJob.key === job.key) {
+            this.applyRoleTimeForSingleJob(driveShift, job);
+          }
+        });
+      }
+    } else {
+      if(existingChargeJob) {
+        remove(driveShift.jobs, job => job.key === existingChargeJob.key);
+      }
+    }
   }
 
   calculateVolunteerDonorAmbassadors() {
@@ -1414,13 +1520,18 @@ class WbFixedSiteGenerator extends BaseGenerator {
         driveShift.default2rbcSlots = originalDriveShift.default2rbcSlots;
         driveShift.defaultWbSlots = originalDriveShift.defaultWbSlots;
 
+        let availableOriginalJobs = [ ...(originalDriveShift.jobs || []) ];
+
         //clone jobs but need to replace key or id.
         if (driveShift.jobs && driveShift.jobs.length) {
           driveShift.jobs.forEach((job) => {
-            let originalJob = this.helper.findJob(job, originalDriveShift.jobs);
+            let originalJob = this.helper.findJob(job, availableOriginalJobs);
             if (originalJob) {
               job.id = originalJob.id;
               job.key = originalJob.key;
+              availableOriginalJobs = availableOriginalJobs.filter(
+                  item => item.id !== originalJob.id
+              );
   
               (originalJob.jobTags || []).forEach(originalJobTag => {
                 if (originalJobTag.systemCreated && originalJobTag.tag && originalJobTag.tag.type !== 'Physical Location Type') {
@@ -1544,7 +1655,6 @@ class WbFixedSiteGenerator extends BaseGenerator {
         if (job.assetType === ASSET_TYPE.EQUIPMENT) {
           job.equipmentSubtype = '2RBC Asset';
           job.jobTags = cloneDeep(jobTagsMap[ASSET_TYPE.EQUIPMENT]);
-          job.jobTags.push({ tag: { name: DRIVE_TYPE.FIXED_SITE }, systemCreated: true });
         }
         job.quantity = quantity || 0;
         jobs.push(job);
@@ -1567,15 +1677,12 @@ class WbFixedSiteGenerator extends BaseGenerator {
     });
     driveShift.jobs = jobs.concat(cloneDeep(manuallyCreatedJobs));
 
-    const anyManuallyCreatedJobsHoldCapacity = driveShift.jobs.find(job => {
-      return job.resourceRole !== 'VP/HH' && this.helper.isManuallyCreatedJob(job, this.drive) && (
-        this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
-        this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
-      )
-    });
-
-    if(anyManuallyCreatedJobsHoldCapacity) {
+    if(this.helper.isRoleRecalculationNeeded(this.drive, driveShift, this.masterData, 'VP/HH')) {
       this.recalculateVphhQuantity(driveShift);
+    }
+
+    if(this.helper.isRoleRecalculationNeeded(this.drive, driveShift, this.masterData, 'Charge')) {
+      this.recalculateChargeQuantity(driveShift);
     }
   }
 
@@ -1758,6 +1865,12 @@ class WbFixedSiteGenerator extends BaseGenerator {
     if (!driveShift.driveDate || !driveShift.startTime || !driveShift.endTime || !driveShift.maxDonorCapacity) return;
     if (!this.masterData.staffingDecisionMatrix) return;
 
+    // Captured before the wipe below — booked/locked slots surviving regeneration (R10) are merged
+    // back in at this function's tail. backupDriveShiftMap is not a safe substitute: it's
+    // overwritten with the newly-generated slots at this same function's end (see backupDriveShift()
+    // call below), so by the next call it no longer holds what a "before regeneration" snapshot needs.
+    const existingSlots = driveShift.slots || [];
+
     const driveShiftMetadata = driveShift.driveShiftMetadata;
     let shiftStart = this.helper.newDateTime(driveShift.driveDate, driveShift.startTime, this.masterData.timezoneSidId);
     let shiftEnd = this.helper.newDateTime(driveShift.driveDate, driveShift.endTime, this.masterData.timezoneSidId);
@@ -1800,23 +1913,25 @@ class WbFixedSiteGenerator extends BaseGenerator {
       }
       
       if (driveShift.canGenerateSlots) {
-        let _2rbcSlots = this.generate2rbcSlots(driveShift, []);
+        let _2rbcSlots = this.generate2rbcSlots(driveShift, [], this.masterData.appointmentSlotInterval?.powerRed);
         const total2RBCSlots = _2rbcSlots.length;
         let totalWbSlots = totalDefaultSlots - total2RBCSlots;
 
+        // Resolved Whole Blood slotDuration drives roundConfigurations (fill-order offsets); the
+        // hourly round-robin cycle itself (interval: 60) is structural, not CO-configurable — see
+        // helper.deriveWholeBloodRoundConfig's own 'interval' field, which is a display-only value
+        // for the LWC's live preview, NOT the same 'interval' generateSlots()/reduceSlots() use below.
+        const resolvedWbSlotDuration = this.masterData.appointmentSlotInterval?.wholeBlood?.slotDuration ?? 15;
+        const wholeBloodRoundConfig = this.helper.deriveWholeBloodRoundConfig(resolvedWbSlotDuration);
         let WBConfiguration = {
           interval: 60,
-          roundConfigurations: [
-            { minutesIntoStart: 0 },
-            { minutesIntoStart: 30 },
-            { minutesIntoStart: 15 },
-            { minutesIntoStart: 45 }
-          ],
-          slotDuration: 15,
+          roundConfigurations: wholeBloodRoundConfig.roundConfigurations,
+          slotDuration: resolvedWbSlotDuration,
           slotType: 'Whole Blood',
           startTime: shiftStart,
           totalSlots: totalWbSlots
         }
+        console.log('WBConfiguration', WBConfiguration);
 
         const isLastShift = this.drive.driveShifts.findIndex(item => item.key === driveShift.key) === this.drive.driveShifts.length - 1;
         if (isLastShift) {
@@ -1843,15 +1958,11 @@ class WbFixedSiteGenerator extends BaseGenerator {
               const slotReductionConfiguration = {
                 endTime: this.helper.newDateTime(driveShift.driveDate, driveShift.lunchBreakEndTime, this.masterData.timezoneSidId),
                 interval: 60,
-                roundConfigurations: [
-                  { minutesIntoStart: 0 },
-                  { minutesIntoStart: 30 },
-                  { minutesIntoStart: 15 },
-                  { minutesIntoStart: 45 }
-                ],
+                roundConfigurations: wholeBloodRoundConfig.roundConfigurations,
                 slotReduction: lunchBreakDefinition.slotReduction,
                 startTime: this.helper.newDateTime(driveShift.driveDate, driveShift.lunchBreakStartTime, this.masterData.timezoneSidId)
               };
+              console.log('slotReductionConfiguration', slotReductionConfiguration);
 
               this.reduceSlots(wbSlots, slotReductionConfiguration);
             }
@@ -1865,7 +1976,7 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
         driveShift.default2rbcSlots = _2rbcSlots.length;
         driveShift.defaultWbSlots = wbSlots.length;
-        driveShift.slots = [..._2rbcSlots, ...wbSlots];
+        driveShift.slots = this.mergeGeneratedSlotsWithExisting(existingSlots, [..._2rbcSlots, ...wbSlots]);
       }
     }
 
@@ -2065,11 +2176,16 @@ class WbFixedSiteGenerator extends BaseGenerator {
 
   onJobChanged(driveShift, job) {
     this.correctJobTime(job, driveShift);
-    if(job.resourceRole !== 'VP/HH' && (
-      this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
+    if(this.helper.isRoleHoldCapacity(job.resourceRole, job, this.masterData) ||
       this.helper.isRoleHoldCapacity(job.dualRole, job, this.masterData) 
-    )) {
-      this.recalculateVphhQuantity(driveShift);
+    ) {
+      if(job.resourceRole !== 'VP/HH') {
+        this.recalculateVphhQuantity(driveShift);
+      }
+
+      if(job.resourceRole !== 'Charge' && job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL) {
+        this.recalculateChargeQuantity(driveShift);
+      }
     }
     this.updateShiftMobileSetup(driveShift);
 
@@ -2155,10 +2271,30 @@ class WbFixedSiteGenerator extends BaseGenerator {
   retrieveCollectionOperationTimeBlocksData() {
     return this.fetch.retrieveCollectionOperationTimeBlocks(this.drive)
     .then((collectionOperationTimeBlocks) => {
-      this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || []; 
+      this.masterData.collectionOperationTimeBlocks = collectionOperationTimeBlocks || [];
     })
   }
-  
+
+  retrieveCollectionOperationAppointmentSlotInterval() {
+    return this.fetch.retrieveCollectionOperationAppointmentSlotInterval(this.drive)
+    .then((appointmentSlotInterval) => {
+      this.masterData.appointmentSlotInterval = appointmentSlotInterval;
+    })
+  }
+
+  // BaseGenerator/FixedSiteGenerator do NOT define this getter — Critique Round 5/6 found
+  // getSlotDurationByType() is called from baseGenerator.js's shared saveSlot()/
+  // calculateRecurrenceSlots(), which FixedSiteGenerator (full-service) also inherits; leaving
+  // this undefined there means the optional-chained read at those 3 call sites always falls
+  // through to today's static hardcode, unchanged.
+  get resolvedSlotDurationOverrides() {
+    if (!this.masterData.appointmentSlotInterval) return {};
+    return {
+      'Whole Blood': this.masterData.appointmentSlotInterval.wholeBlood?.slotDuration,
+      '2RBC': this.masterData.appointmentSlotInterval.powerRed?.slotDuration
+    };
+  }
+
   retrieveDefaultTags() {
     return this.fetch.retrieveDefaultTags(this.drive)
     .then((driveTags) => {

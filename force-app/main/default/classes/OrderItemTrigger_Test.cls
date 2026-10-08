@@ -186,7 +186,7 @@ public class OrderItemTrigger_Test
 		o.AccountId= accobj.Id ;
 		o.OpportunityId = optyObj.Id ;
 		o.Material_Recipient_Type__c = 'Split';
-		o.Material_Recipient__c = 'Account Manager;Account Contact';
+		o.Material_Recipient__c = 'Account Manager';
         o.Material_Recipient_Default__c = 'Account Contact';
 		o.EffectiveDate=system.today();
 		o.status='draft' ;

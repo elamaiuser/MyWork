@@ -4,6 +4,11 @@ public class skedAvailabilityHandler extends skedTriggerHub {
         'Global Admin', 'System Administrator', 'APS Scheduler', 'APS Management'
   	};
     
+    // HRP-17429: allowed to edit Availabilities of Asset resources outside the RAC, but not those of People.
+    private static final List<String> ASSET_ONLY_EDIT_PROFILES = new List<String>{
+        'APS Planner'
+    };
+    
     private static final List<String> AVAILABILITY_APPROVED_STATUSES = new List<String>{
         skedConstants.AVAILABILITY_STATUS_APPROVED,
         skedConstants.AVAILABILITY_STATUS_APPROVED_FROM_PENDING,
@@ -106,7 +111,7 @@ public class skedAvailabilityHandler extends skedTriggerHub {
 
     
     public override void onBeforeUpdate() {
-        skedTriggerUtils.validateServiceEntry(this.context.newRecords, skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC, PERMITTED_INSERT_EDIT_PROFILES);
+        skedTriggerUtils.validateServiceEntry(getRecordsRequiringRacEntry(), skedConstants.AVAILABILITY_CRUD_MUST_COME_FROM_RAC, PERMITTED_INSERT_EDIT_PROFILES);
         populateData(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
         if (skedSetting.instance.Admin.dateTimeConversion) {
             doDateTimeConversion(this.context.newRecords, (Map<Id, sked__Availability__c>)this.context.oldMap);
@@ -154,6 +159,35 @@ public class skedAvailabilityHandler extends skedTriggerHub {
     }
 
     /*********************************************************** Private methods ***********************************************************/
+    private List<sObject> getRecordsRequiringRacEntry() {
+        if (!ASSET_ONLY_EDIT_PROFILES.contains(skedTriggerHub_Cache.loginUser.Profile.Name)) {
+            return this.context.newRecords;
+        }
+        
+        List<sked__Availability__c> newRecords = (List<sked__Availability__c>)this.context.newRecords;
+        Set<Id> resourceIds = new Set<Id>();
+        for (sked__Availability__c newRecord : newRecords) {
+            resourceIds.add(newRecord.sked__Resource__c);
+        }
+        
+        Map<Id, sked__Resource__c> mapResource = new Map<Id, sked__Resource__c>([
+            SELECT Id, sked__Resource_Type__c
+            FROM sked__Resource__c
+            WHERE Id IN :resourceIds
+        ]);
+        
+        List<sObject> recordsRequiringRacEntry = new List<sObject>();
+        for (sked__Availability__c newRecord : newRecords) {
+            sked__Resource__c skedResource = mapResource.get(newRecord.sked__Resource__c);
+            // A resource that cannot be positively identified as an Asset stays subject to the RAC check.
+            if (skedResource == NULL || skedResource.sked__Resource_Type__c != skedConstants.RESOURCE_TYPE_ASSET) {
+                recordsRequiringRacEntry.add(newRecord);
+            }
+        }
+        
+        return recordsRequiringRacEntry;
+    }
+    
     private void cancelCallOut(List<sked__Availability__c> newRecords, Map<Id, sked__Availability__c> oldMap) {
         Set<Id> jobAllocationIdsToDelete = new Set<Id>();
         for (sked__Availability__c newRecord : newRecords) {

@@ -95,6 +95,9 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
             System.debug('SiteTriggerHandler.beforeUpdate() - SiteService.validatePhysicaLocationTypeChange() Bypassed');                
         }       
         // HRP-10172 -----> Ends Here
+        if(super.getTriggerMethodsToBypass().indexOf('validateTMSSiteBeforeSave') == -1) {
+            TMSSiteService.validateTMSSiteBeforeSave((List<sked__Location__c>)trigger.new, (Map<Id, sked__Location__c>)trigger.oldMap);
+        }
         System.debug('Exiting method sked__Location__c BeforeUpdate');
     }
     
@@ -141,6 +144,9 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
             SiteService.populateSiteType((List<sked__Location__c>)trigger.new);
         }
         // HRP-11270 -----> Ends Here
+        if(super.getTriggerMethodsToBypass().indexOf('validateTMSSiteBeforeSave') == -1) {
+            TMSSiteService.validateTMSSiteBeforeSave((List<sked__Location__c>)trigger.new, null);
+        }
     }
     
     public override void afterUpdate() {
@@ -183,7 +189,9 @@ public with sharing class SiteTriggerHandler extends TriggerHandler {
         }else{
             System.debug('SiteTriggerHandler.afterUpdate() - SiteService.updateDivesOnCalenderForSiteBuidlingNameChange() Bypassed');
         }
-
+        if(super.getTriggerMethodsToBypass().indexOf('DriveMovementService.handleLocationChanges()') == -1) {
+            DriveMovementService.handleLocationChanges((Map<Id, sked__Location__c>)trigger.newMap,(Map<Id, sked__Location__c>)trigger.oldMap);
+        }
     }
     
     public override void afterInsert(){

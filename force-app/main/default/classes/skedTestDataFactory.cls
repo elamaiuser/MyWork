@@ -245,7 +245,8 @@ public class skedTestDataFactory {
             APT_Required__c = FALSE,
             Type = skedConstants.ACCOUNT_TYPE_EDUCATION,
             Industry_Code__c = skedConstants.ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL,
-            Contact_BPL__c = contactBPL.Id
+            Contact_BPL__c = contactBPL.Id,
+            Accepts_Automation2__c = 'Yes'
         );
         firstList.add(testAccount1);
         this.mapTestData.put('testAccount1', testAccount1);

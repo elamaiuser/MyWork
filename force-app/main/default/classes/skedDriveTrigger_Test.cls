@@ -501,6 +501,31 @@ private class skedDriveTrigger_Test {
         
         Test.stopTest();
     }
+    
+    static testmethod void onCompleteDrives_Test() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        Test.startTest();
+        sked_Drive__c testDrive1 = (sked_Drive__c) mapTestData.get('testDrive1');
+
+        sked_Drive_Change_Request__c testDcr = new sked_Drive_Change_Request__c();
+        testDcr.sked_Auto_Process__c = true;
+        testDcr.sked_Description__c = 'Test Request';
+        testDcr.sked_Drive__c = testDrive1.Id;
+        testDcr.sked_Drive_Contention__c = 'Exceed Operation Drive Limit';
+        testDcr.sked_Notes__c = 'Test Request';
+        testDcr.sked_Reason__c = 'Sponsor Initiated'; 
+        testDcr.sked_Status__c = 'Pending';
+        insert testDcr;
+        
+        testDrive1.sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE;
+        update testDrive1;
+        
+        Test.stopTest();
+        Assert.isTrue(skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED == [SELECT Id, sked_Status__c FROM sked_Drive_Change_Request__c WHERE Id = :testDcr.Id LIMIT 1].sked_Status__c);
+    }
 
     static testmethod void onStagingLocationChanged_Test() {
         skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);

@@ -159,7 +159,7 @@ export class DriveMappingConfigFactory {
       mappingConfig.addFieldConfig('sked_actual_hispanic_cnt__c', 'actualHispanicCnt', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_actual_african_amrcn_cnt__c', 'actualAfricanAmrcnCnt', MAPPING_TYPE.direct);
       mappingConfig.addFieldConfig('sked_actual_total_units_collected__c', 'actualTotalUnitsCollected', MAPPING_TYPE.direct);
-
+      mappingConfig.addFieldConfig('sked_actual_operational_efficiency__c', 'operationalEfficiency',  MAPPING_TYPE.direct);
       mappingConfig.masterFields.push('sked_Opportunity__c');
 
       mappingConfig.readonlyFields.push('sked_Account_Type__c');

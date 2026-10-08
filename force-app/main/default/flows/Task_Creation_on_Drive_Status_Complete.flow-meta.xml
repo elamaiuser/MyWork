@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Determine_Task_Owner</name>
+        <label>Determine Task Owner</label>
+        <locationX>446</locationX>
+        <locationY>1379</locationY>
+        <actionName>DetermineTaskOwnerInvocable</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>tasks</name>
+            <value>
+                <elementReference>taskList</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>taskTypes</name>
+            <value>
+                <elementReference>taskTypeList</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>DetermineTaskOwnerInvocable</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
     <apiVersion>55.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Assign_AM_Task_Fields1</name>
         <label>Assign AM Task Fields</label>
         <locationX>314</locationX>
-        <locationY>863</locationY>
+        <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>New_Post_Drive_Analysis_AM_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -53,18 +76,32 @@
             <assignToReference>New_Post_Drive_Analysis_AM_Task.Type</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Post Drive Analysis AM</stringValue>
+                <elementReference>TaskType1</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskTypeList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>TaskType1</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>New_Post_Drive_Analysis_AM_Task</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Post_Drive_Analysis_Task_Creation</targetReference>
+            <targetReference>Determine_Task_Owner</targetReference>
         </connector>
     </assignments>
     <assignments>
         <name>Assign_AM_Task_Fields2</name>
         <label>Assign AM Task Fields</label>
         <locationX>50</locationX>
-        <locationY>863</locationY>
+        <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>New_Post_Drive_Analysis_AM_Task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -111,7 +148,21 @@
             <assignToReference>New_Post_Drive_Analysis_AM_Task.Type</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Post Drive Analysis AM</stringValue>
+                <elementReference>TaskType1</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>New_Post_Drive_Analysis_AM_Task</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskTypeList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>TaskType1</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -122,7 +173,7 @@
         <name>Assign_SBPM_Task_Fields</name>
         <label>Assign SBPM Task Fields</label>
         <locationX>578</locationX>
-        <locationY>863</locationY>
+        <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>New_Post_Drive_Analysis_SBPM_task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -169,18 +220,32 @@
             <assignToReference>New_Post_Drive_Analysis_SBPM_task.Type</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Post Drive Analysis SBPM</stringValue>
+                <elementReference>TaskType2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskTypeList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>TaskType2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>New_Post_Drive_Analysis_SBPM_task</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Post_Drive_Analysis_SBPM_Task_Creation1</targetReference>
+            <targetReference>Determine_Task_Owner</targetReference>
         </connector>
     </assignments>
     <assignments>
         <name>Assign_SBPM_Task_Fields2</name>
         <label>Assign SBPM Task Fields</label>
         <locationX>50</locationX>
-        <locationY>971</locationY>
+        <locationY>1187</locationY>
         <assignmentItems>
             <assignToReference>New_Post_Drive_Analysis_SBPM_task.ActivityDate</assignToReference>
             <operator>Assign</operator>
@@ -227,18 +292,68 @@
             <assignToReference>New_Post_Drive_Analysis_SBPM_task.Type</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Post Drive Analysis SBPM</stringValue>
+                <elementReference>TaskType2</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>New_Post_Drive_Analysis_SBPM_task</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>taskTypeList</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>TaskType2</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Post_Drive_Analysis_Task_Creation2</targetReference>
+            <targetReference>Determine_Task_Owner</targetReference>
         </connector>
     </assignments>
+    <constants>
+        <name>TaskType1</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Post Drive Analysis AM</stringValue>
+        </value>
+    </constants>
+    <constants>
+        <name>TaskType2</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Post Drive Analysis SBPM</stringValue>
+        </value>
+    </constants>
+    <decisions>
+        <name>Whether_Planned_Task_Present</name>
+        <label>Whether Planned Task Present</label>
+        <locationX>776</locationX>
+        <locationY>647</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Planned_Task_Not_Present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Check_for_existing_Planned_Task_Record</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>check_for_existing_AM_task</targetReference>
+            </connector>
+            <label>Planned Task Not Present</label>
+        </rules>
+    </decisions>
     <decisions>
         <name>whether_task_present</name>
         <label>whether task present</label>
         <locationX>446</locationX>
-        <locationY>755</locationY>
+        <locationY>971</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Both_Task_Not_Present</name>
@@ -340,46 +455,11 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordCreates>
-        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
-        <name>Post_Drive_Analysis_SBPM_Task_Creation1</name>
-        <label>Post Drive Analysis SBPM Task Creation</label>
-        <locationX>578</locationX>
-        <locationY>971</locationY>
-        <inputReference>New_Post_Drive_Analysis_SBPM_task</inputReference>
-    </recordCreates>
-    <recordCreates>
-        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
-        <name>Post_Drive_Analysis_SBPM_Task_Creation2</name>
-        <label>Post Drive Analysis SBPM Task Creation</label>
-        <locationX>50</locationX>
-        <locationY>1187</locationY>
-        <inputReference>New_Post_Drive_Analysis_SBPM_task</inputReference>
-    </recordCreates>
-    <recordCreates>
-        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
-        <name>Post_Drive_Analysis_Task_Creation</name>
-        <label>Post Drive Analysis Task Creation</label>
-        <locationX>314</locationX>
-        <locationY>971</locationY>
-        <inputReference>New_Post_Drive_Analysis_AM_Task</inputReference>
-    </recordCreates>
-    <recordCreates>
-        <description>Post Drive Analysis Task Creation upon drive status complete and assigining it to the AM of the related  opp if present else go straight to the related  opp&apos;s owner. The due date will be 4 days after the drive date of the related opp</description>
-        <name>Post_Drive_Analysis_Task_Creation2</name>
-        <label>Post Drive Analysis Task Creation</label>
-        <locationX>50</locationX>
-        <locationY>1079</locationY>
-        <connector>
-            <targetReference>Post_Drive_Analysis_SBPM_Task_Creation2</targetReference>
-        </connector>
-        <inputReference>New_Post_Drive_Analysis_AM_Task</inputReference>
-    </recordCreates>
     <recordLookups>
         <name>check_for_existing_AM_task</name>
         <label>check for existing AM task</label>
         <locationX>446</locationX>
-        <locationY>539</locationY>
+        <locationY>755</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>check_for_existing_SBPM_task</targetReference>
@@ -404,10 +484,31 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Check_for_existing_Planned_Task_Record</name>
+        <label>Check for existing Planned Task Record</label>
+        <locationX>776</locationX>
+        <locationY>539</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Whether_Planned_Task_Present</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Related_Opportunity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.sked_Opportunity__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Planned_Task__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>check_for_existing_SBPM_task</name>
         <label>check for existing SBPM task</label>
         <locationX>446</locationX>
-        <locationY>647</locationY>
+        <locationY>863</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>whether_task_present</targetReference>
@@ -434,11 +535,11 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Opportunity</name>
         <label>Get Opportunity</label>
-        <locationX>446</locationX>
+        <locationX>776</locationX>
         <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>check_for_existing_AM_task</targetReference>
+            <targetReference>Check_for_existing_Planned_Task_Record</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -455,7 +556,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <recordLookups>
         <name>Get_Task_RecordType</name>
         <label>Get Task RecordType</label>
-        <locationX>446</locationX>
+        <locationX>776</locationX>
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -476,7 +577,7 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         </outputAssignments>
     </recordLookups>
     <start>
-        <locationX>320</locationX>
+        <locationX>650</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Task_RecordType</targetReference>
@@ -511,12 +612,12 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
     <textTemplates>
         <name>SubjectTask1</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>Post Drive Analysis AM</text>
+        <text>Post-Drive Analysis - AM</text>
     </textTemplates>
     <textTemplates>
         <name>SubjectTask2</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>Post Drive Analysis / Future Drive Planning SBPM</text>
+        <text>Post-Drive Analysis/Future Drive Planning - SBPM</text>
     </textTemplates>
     <variables>
         <name>New_Post_Drive_Analysis_AM_Task</name>
@@ -550,11 +651,26 @@ IF({!forAS}&lt;&gt; NULL, {!forAS},
         <objectType>OpportunityTeamMember</objectType>
     </variables>
     <variables>
+        <name>taskList</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
         <name>TaskOwner</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>taskTypeList</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>varRecTypeId</name>

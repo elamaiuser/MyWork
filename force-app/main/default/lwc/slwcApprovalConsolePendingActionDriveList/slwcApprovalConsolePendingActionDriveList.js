@@ -19,19 +19,18 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
   COLUMNS = [
     { label: 'Drive Date', sortable: true, fieldName: 'driveDate', type: 'date-local', typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' }, hideDefaultActions: true },
     { label: 'Drive Name', sortable: true, sortField: 'name', fieldName: 'recordUrl', type: 'url', hideDefaultActions: true, wrapText: true, typeAttributes: { label: { fieldName: 'name' }, target: '_blank' } },
+    { label: 'Collection Operation', sortable: true, fieldName: 'collectionOperationName', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'Pending Action', sortable: false, fieldName: 'pendingAction', type: 'text', hideDefaultActions: true, wrapText: true },
-    { label: 'Pending Action Reason Code', sortable: false, fieldName: 'pendingActionReasonCode', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Pending Action Request Code', sortable: false, fieldName: 'pendingActionReasonCode', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'Start Time', sortable: true, fieldName: 'startTimeStr', sortField: 'startTime', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: 'End Time', sortable: true, fieldName: 'endTimeStr', sortField: 'endTime', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: '# of Staff Requested', sortable: true, fieldName: 'totalStaffRequested', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
     { label: '# of Staff Scheduled', sortable: false, fieldName: 'staffAllocated', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
-    { label: 'Vehicle Types', sortable: true, fieldName: 'vehicleTypes', type: 'text', hideDefaultActions: true, wrapText: true },
     { label: '# of Machines Requested', sortable: true, fieldName: 'totalEquipmentRequested', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
-    { label: '# of Machines Allocated', sortable: true, fieldName: 'equipmentAllocated', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
     { label: 'Projected Procedures', sortable: true, fieldName: 'totalProceduresProjected', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
     { label: 'Projected Products', sortable: true, fieldName: 'totalProductsProjected', type: 'number', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
-    // { label: 'Planned Productivity', sortable: true, fieldName: 'driveProductivityPlanned', type: 'plannedProductivity', cellAttributes: { alignment: 'left' }, hideDefaultActions: true },
-    { label: 'Designated Approver', sortable: true, fieldName: 'designatedApproverName', type: 'text', hideDefaultActions: true, wrapText: true },
+    { label: 'Submission Date', sortable: true, fieldName: 'createdDate', type: 'date-local', typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' }, hideDefaultActions: true },
+    { label: 'Last Modified Date', sortable: true, fieldName: 'lastModifiedDate', type: 'date-local', typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' }, hideDefaultActions: true },
     { label: 'Approval Status', sortable: true, fieldName: 'approvalStatus', type: 'text', hideDefaultActions: true, wrapText: true },
     {
       label: '', type: 'actionButton', fieldName: 'id', hideDefaultActions: true, initialWidth: 100, typeAttributes: {
@@ -201,6 +200,7 @@ export default class SlwcApprovalConsolePendingActionDriveList extends Lightning
           item.startTimeStr = this.formatTime(item.startTime);
           item.endTimeStr = this.formatTime(item.endTime);
         })
+
         return result;
       })
       .catch((error) => {

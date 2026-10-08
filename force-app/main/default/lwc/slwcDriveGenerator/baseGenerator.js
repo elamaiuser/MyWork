@@ -57,6 +57,7 @@ class BaseGenerator {
     skipAPTCalculation: true,
     
     redcrossVolunteerMatrix: [],
+    staffCountThresholds: [],
     skipVolunteerRecalculation: true,
 
     //fixed site
@@ -102,9 +103,11 @@ class BaseGenerator {
     territoryCollectionOperations = [],
     staffSetupExcludedRoles,
     redcrossVolunteerMatrix,
-    collectionOperationTimeBlocks = []
+    staffCountThresholds = [],
+    collectionOperationTimeBlocks = [],
+    appointmentSlotInterval
   }) {
-    let masterData = {...this.masterData, 
+    let masterData = {...this.masterData,
       loginUser,
       driveSite,
       resourceRoleGroups,
@@ -122,7 +125,9 @@ class BaseGenerator {
       territoryCollectionOperations,
       staffSetupExcludedRoles,
       redcrossVolunteerMatrix,
-      collectionOperationTimeBlocks
+      staffCountThresholds,
+      collectionOperationTimeBlocks,
+      appointmentSlotInterval
     };
 
     if (this.drive.driveSite) {
@@ -843,7 +848,7 @@ class BaseGenerator {
       }
     })
 
-    const skipGenerateSlotsProperties = ['roleTimeDetailChanged', 'travelTimeChanged'];
+    const skipGenerateSlotsProperties = ['roleTimeDetailChanged', 'travelTimeChanged', 'sdmChanged'];
     const derivedSkipGenerateSlots = properties.length > 0 && properties.every(property => skipGenerateSlotsProperties.includes(property.targetName));
     this.masterData.skipGenerateSlots = (preserveExistingSlots && this.masterData.skipGenerateSlots) || derivedSkipGenerateSlots;
 
@@ -1320,7 +1325,22 @@ class BaseGenerator {
     });
   }
 
-  generate2rbcSlots(driveShift, excludedTimeRanges = []) {
+  // Scoped to MobileGenerator/WbFixedSiteGenerator call sites only (not FixedSiteGenerator — see
+  // critique.md Round 8 for the scope decision). Matches slots by slotType+startTime, mirroring
+  // reduceSlots()'s own slot-identity convention — regenerated slots always get a fresh UUID key,
+  // so there is no other stable identity to match on.
+  mergeGeneratedSlotsWithExisting(existingSlots, generatedSlots) {
+    const preservedSlots = (existingSlots || []).filter((slot) => slot.status === 'Filled' || slot.locked);
+    const preservedKeys = new Set(preservedSlots.map((slot) => `${slot.slotType}|${slot.startTime}`));
+    const filteredGeneratedSlots = generatedSlots.filter((slot) => !preservedKeys.has(`${slot.slotType}|${slot.startTime}`));
+    return [...preservedSlots, ...filteredGeneratedSlots];
+  }
+
+  // configOverride (optional): resolved CO-level Power Red config ({roundInterval, numberOfGroups,
+  // groupInterval, slotDuration}). FixedSiteGenerator (out-of-scope, full-service) always calls
+  // this with 2 args, so configOverride stays null there and this keeps today's hardcode as the
+  // default — do not remove that fallback.
+  generate2rbcSlots(driveShift, excludedTimeRanges = [], configOverride = null) {
     let numberOf2rbcAssets = this.drive.numberOf2rbcAssets || 0;
     if (!numberOf2rbcAssets) return [];
 
@@ -1337,13 +1357,14 @@ class BaseGenerator {
     // }
     firstSlotStart = driveShiftStart;
 
-    
+    const resolvedConfig = configOverride || { roundInterval: 60, numberOfGroups: 2, groupInterval: 30, slotDuration: 60 };
+
     return this.generateSlotsByNumberOfAssets(driveShift, {
-      roundInterval: 60,
-      numberOfGroups: 2,
-      groupInterval: 30,
+      roundInterval: resolvedConfig.roundInterval,
+      numberOfGroups: resolvedConfig.numberOfGroups,
+      groupInterval: resolvedConfig.groupInterval,
       slotType: '2RBC',
-      slotDuration: 60,
+      slotDuration: resolvedConfig.slotDuration,
       firstSlotStart: firstSlotStart,
       lastSlotStart: lastSlotStart,
       numberOfAssets: numberOf2rbcAssets,
@@ -1428,7 +1449,7 @@ class BaseGenerator {
         }, ...slot
       }
 
-      const slotDuration = this.helper.getSlotDurationByType(tempSlotTemplate.slotType);
+      const slotDuration = this.helper.getSlotDurationByType(tempSlotTemplate.slotType, this.resolvedSlotDurationOverrides?.[tempSlotTemplate.slotType]);
       tempSlotTemplate.name = tempSlotTemplate.slotType;
       tempSlotTemplate.endTime = new Date(new Date(tempSlotTemplate.startTime).getTime() + slotDuration * 60000).toISOString();
 
@@ -1760,7 +1781,7 @@ class BaseGenerator {
                   const currentDriveShiftId = (currentDrive.driveShifts || [])[driveShiftIndex]?.id;
                   if(currentDriveShiftId) {
                     const newStartTime = this.helper.newDateTime(currentDrive.driveDate, slot._startTime, currentDrive.timezone);
-                    const slotDuration = this.helper.getSlotDurationByType(slot.slotType);
+                    const slotDuration = this.helper.getSlotDurationByType(slot.slotType, this.resolvedSlotDurationOverrides?.[slot.slotType]);
                     const newSlot = {
                       ...slot,
                       startTime: newStartTime, 
@@ -1790,7 +1811,7 @@ class BaseGenerator {
                   }));
 
                   if(slotToUpdate) {
-                    const slotDuration = this.helper.getSlotDurationByType(slotToUpdate.slotType);
+                    const slotDuration = this.helper.getSlotDurationByType(slotToUpdate.slotType, this.resolvedSlotDurationOverrides?.[slotToUpdate.slotType]);
                     const newStartTime = this.helper.newDateTime(currentDrive.driveDate, slot._startTime, currentDrive.timezone);
                     mapDrivesToSave[currentDrive.id].slotsToSave.push({
                       ...slotToUpdate,

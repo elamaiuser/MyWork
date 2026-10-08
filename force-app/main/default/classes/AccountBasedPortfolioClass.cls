@@ -530,8 +530,8 @@ Creating Accoiut Portfolio data
                     //Schema.DescribeSObjectResult ds = Account_Portfolio_Assignment__c.sObjectType.getDescribe();if( ds.isUpdateable() ){}
                     system.debug('aplist'+aplist);
                     triggerHandler.bypass('AccountPortfolioAssignmentTriggerHandler');
-                    if(!aplist.isEmpty())
-                        update aplist;
+                    if(!aplistToUpdate.isEmpty())
+                        update aplistToUpdate;
                     //HRP-11401
                     if(!aplistTodelete.isEmpty())
                     {

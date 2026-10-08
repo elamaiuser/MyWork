@@ -3,14 +3,13 @@
  * @date 10/08/2025
  * @description Processes Access Control Rules for Permission Sets using efficient, bulk DML.
  *              This framework manages Object, Field, Apex Class, and Visualforce Page permissions.
- *              It includes a robust logging mechanism that creates a single, comprehensive summary
- *              log for each run in a custom bsf_errorlog__c object for complete auditability.
+ *              It creates a comprehensive summary log and detailed CSV attachment for complete auditability.
  * @important The user executing this needs the "Manage Profiles and Permission Sets" permission.
  */
 public without sharing class BSF_AccessControlManager {
 
     /**
-     * @description DTO to capture specific, row-level details of what was changed.
+     * @description DTO to capture specific, row-level details of what was changed or skipped.
      */
     private class ChangeDetail {
         String operation;
@@ -29,8 +28,7 @@ public without sharing class BSF_AccessControlManager {
     }
 
     /**
-     * @description A private inner class used as a data transfer object (DTO) to accumulate
-     *              all statistics and warnings from a single execution run.
+     * @description DTO to accumulate statistics and warnings from a single execution run.
      */
     private class RunSummary {
         Integer objInserted = 0, objUpdated = 0, fldInserted = 0, fldUpdated = 0;
@@ -45,29 +43,17 @@ public without sharing class BSF_AccessControlManager {
     }
     
     /**
-     * @description A Queueable inner class that handles inserting the final summary log.
-     *              This runs in a separate, asynchronous transaction to prevent Mixed DML errors
-     *              that occur when mixing setup and non-setup object DML.
+     * @description Queueable class that handles inserting the final summary log asynchronously.
      */
     public class AccessControlLogQueueable implements Queueable {
         private final String releaseTag;
         private final RunSummary summary;
 
-        /**
-         * @description Constructor to pass the necessary logging data to the async job.
-         * @param releaseTag The release tag that initiated the run.
-         * @param summary The completed RunSummary object containing all metrics.
-         */
         public AccessControlLogQueueable(String releaseTag, RunSummary summary) {
             this.releaseTag = releaseTag;
             this.summary = summary;
         }
 
-    	/**
-         * @description The main execution body of the Queueable job. It builds and inserts the
-         *              single, comprehensive summary log record.
-         * @param context The context for the Queueable job.
-         */
         public void execute(QueueableContext context) {
             try {
                 String shortMsg = 'ACM run summary';
@@ -120,10 +106,8 @@ public without sharing class BSF_AccessControlManager {
                 Database.SaveResult result = Database.insert(row, false);
 
                 if (result.isSuccess() && !summary.detailedLogs.isEmpty()) {
-                    // 1. Build the CSV Header
-                    String csvContent = 'Operation,Component Type,Target API Name,Permission Set,Access Granted\n';
+                    String csvContent = 'Operation,Component Type,Target API Name,Permission Set,Access Granted / Details\n';
                     
-                    // 2. Build the CSV Rows
                     for (ChangeDetail log : summary.detailedLogs) {
                         csvContent += '"' + log.operation + '","' 
                                     + log.componentType + '","' 
@@ -132,19 +116,17 @@ public without sharing class BSF_AccessControlManager {
                                     + log.accessLevel + '"\n';
                     }
                     
-                    // 3. Create the File (ContentVersion)
                     ContentVersion cv = new ContentVersion();
                     cv.Title = 'Detailed_Access_Log_' + releaseTag + '.csv';
                     cv.PathOnClient = 'Detailed_Access_Log_' + releaseTag + '.csv';
                     cv.VersionData = Blob.valueOf(csvContent);
                     insert cv;
                     
-                    // 4. Link the File to the Error Log Record
                     Id conDocId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id].ContentDocumentId;
                     ContentDocumentLink cdl = new ContentDocumentLink();
                     cdl.ContentDocumentId = conDocId;
-                    cdl.LinkedEntityId = row.Id; // Attach to the newly created Error Log record
-                    cdl.ShareType = 'V'; // Viewer permission
+                    cdl.LinkedEntityId = row.Id;
+                    cdl.ShareType = 'V';
                     insert cdl;
                 }
                 
@@ -157,12 +139,6 @@ public without sharing class BSF_AccessControlManager {
         }
     }
 
-    /**
-     * @description Main entry point for the framework. Initializes a RunSummary, retrieves all
-     *              'Permission Set' rules for a given release tag, and orchestrates processing.
-     * @param releaseTag The unique identifier from the Release_Tag__c field used to select which
-     *                   Access_Control_Rule__mdt records to process.
-     */
     public static void processRulesByReleaseTag(String releaseTag) {
         System.debug(LoggingLevel.INFO, 'Starting AccessControlManager for release tag: ' + releaseTag);
         RunSummary summary = new RunSummary();
@@ -207,11 +183,6 @@ public without sharing class BSF_AccessControlManager {
         System.enqueueJob(new AccessControlLogQueueable(releaseTag, summary));
     }
 
-    /**
-     * @description Processes rules for Object and Field Level Security, updating the RunSummary object.
-     * @param rules A list of 'Object/Field' type rules to process.
-     * @param summary The central RunSummary object to accumulate metrics and warnings.
-     */
     private static void processFieldAndObjectPermissions(List<BSF_Access_Control_Rule__mdt> rules, RunSummary summary) {
         System.debug(LoggingLevel.INFO, 'Processing ' + rules.size() + ' Object/Field rules...');
 
@@ -234,7 +205,7 @@ public without sharing class BSF_AccessControlManager {
         }
 
         Map<String, Id> permSetNameToIdMap = new Map<String, Id>();
-        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) {
+        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames AND IsOwnedByProfile = false]) {
             permSetNameToIdMap.put(ps.Name, ps.Id);
         }
 
@@ -248,6 +219,7 @@ public without sharing class BSF_AccessControlManager {
                 if (summary.undescribedObjectList.size() < 20) {
                     summary.undescribedObjectList.add(objName);
                 }
+                summary.detailedLogs.add(new ChangeDetail('Skipped', 'Object', objName, 'All Targets', 'Could not describe SObject'));
             }
         }
 
@@ -258,98 +230,174 @@ public without sharing class BSF_AccessControlManager {
                 existingFieldPerms.put(fp.ParentId + '-' + fp.Field, fp);
             }
         }
+        
         Map<String, ObjectPermissions> existingObjectPerms = new Map<String, ObjectPermissions>();
         if (!permSetIds.isEmpty() && !objectApiNames.isEmpty()) {
-             for (ObjectPermissions op : [SELECT Id, ParentId, SobjectType, PermissionsRead, PermissionsCreate, PermissionsEdit, PermissionsDelete FROM ObjectPermissions WHERE ParentId IN :permSetIds AND SobjectType IN :objectApiNames]) {
+             for (ObjectPermissions op : [
+                 SELECT Id, ParentId, SobjectType, PermissionsRead, PermissionsCreate, PermissionsEdit, PermissionsDelete,
+                        PermissionsViewAllRecords, PermissionsModifyAllRecords 
+                 FROM ObjectPermissions 
+                 WHERE ParentId IN :permSetIds AND SobjectType IN :objectApiNames]) {
                 existingObjectPerms.put(op.ParentId + '-' + op.SobjectType, op);
             }
         }
        
-        // FIX: Separate lists for specific sObject types to prevent DML chunking limit errors
+        Map<Id, ObjectPermissions> objPermsToUpdateMap = new Map<Id, ObjectPermissions>();
+        Map<Id, FieldPermissions> fldPermsToUpdateMap = new Map<Id, FieldPermissions>();
         List<ObjectPermissions> objPermsToInsert = new List<ObjectPermissions>();
-        List<ObjectPermissions> objPermsToUpdate = new List<ObjectPermissions>();
         List<FieldPermissions> fldPermsToInsert = new List<FieldPermissions>();
-        List<FieldPermissions> fldPermsToUpdate = new List<FieldPermissions>();
+
+        Set<String> queuedObjPermKeys = new Set<String>();
+        Set<String> queuedFieldPermKeys = new Set<String>();
 
         for (BSF_Access_Control_Rule__mdt rule : rules) {
             String sObjectName = String.isBlank(rule.SObject_API_Name__c) ? '' : rule.SObject_API_Name__c.trim();
-            if (sObjectName == '') {
-                continue;
-            }
-            for (String psName : cleanSplit(rule.Target_API_Names__c)) {
-                Id permSetId = permSetNameToIdMap.get(psName);
-                if (permSetId == null) {
-                    continue;
-                }
-                List<String> fieldNames = cleanSplit(rule.Field_API_Names__c);
-                if (fieldNames.isEmpty()) {
-                    String key = permSetId + '-' + sObjectName;
-                    ObjectPermissions op = existingObjectPerms.get(key);
-                    if (op == null) {
-                        objPermsToInsert.add(new ObjectPermissions(ParentId=permSetId, SobjectType=sObjectName, PermissionsRead=rule.PermissionsRead__c, PermissionsCreate=rule.PermissionsCreate__c, PermissionsEdit=rule.PermissionsEdit__c, PermissionsDelete=rule.PermissionsDelete__c));
-                        summary.objInserted++;                        
-                        summary.detailedLogs.add(new ChangeDetail('Insert', 'Object', sObjectName, psName, 'R:'+rule.PermissionsRead__c+' C:'+rule.PermissionsCreate__c+' E:'+rule.PermissionsEdit__c+' D:'+rule.PermissionsDelete__c));
-                    } else if (op.PermissionsRead!=rule.PermissionsRead__c || op.PermissionsCreate!=rule.PermissionsCreate__c || op.PermissionsEdit!=rule.PermissionsEdit__c || op.PermissionsDelete!=rule.PermissionsDelete__c) {
-                        op.PermissionsRead=rule.PermissionsRead__c; op.PermissionsCreate=rule.PermissionsCreate__c; op.PermissionsEdit=rule.PermissionsEdit__c; op.PermissionsDelete=rule.PermissionsDelete__c;
-                        objPermsToUpdate.add(op);
-                        summary.objUpdated++;
-                        summary.detailedLogs.add(new ChangeDetail('Update', 'Object', sObjectName, psName, 'R:'+rule.PermissionsRead__c+' C:'+rule.PermissionsCreate__c+' E:'+rule.PermissionsEdit__c+' D:'+rule.PermissionsDelete__c));
-                    }
-                } else {
-                    Map<String, Schema.SObjectField> fieldMap = objectFieldMaps.get(sObjectName);
-                    if (fieldMap == null) {
+            if (sObjectName == '') continue;
+
+            List<String> psNames = cleanSplit(rule.Target_API_Names__c);
+            List<String> rawFieldNames = cleanSplit(rule.Field_API_Names__c);
+
+            if (rawFieldNames.isEmpty()) {
+                // --- OBJECT LEVEL PERMISSIONS ---
+                for (String psName : psNames) {
+                    Id permSetId = permSetNameToIdMap.get(psName);
+                    if (permSetId == null) {
+                        summary.missingPS++;
+                        summary.detailedLogs.add(new ChangeDetail('Skipped', 'Object Permission', sObjectName, psName, 'Permission Set not found or is owned by Profile'));
                         continue;
                     }
-                    for (String fieldName : fieldNames) {
-                        Schema.SObjectField token = fieldMap.get(fieldName);
-                        if (token == null) {
-                            System.debug(LoggingLevel.WARN, 'Field "' + sObjectName + '.' + fieldName + '" not found. Skipping.');
-                            summary.missingFields++;
-                            if (summary.missingFieldList.size() < 25) {
-                                summary.missingFieldList.add(sObjectName + '.' + fieldName);
-                            }
-                            continue;
+
+                    String key = permSetId + '-' + sObjectName;
+                    ObjectPermissions op = existingObjectPerms.get(key);
+                    
+                    Boolean targetRead = rule.PermissionsRead__c != null ? rule.PermissionsRead__c : false;
+                    Boolean targetCreate = rule.PermissionsCreate__c != null ? rule.PermissionsCreate__c : false;
+                    Boolean targetEdit = rule.PermissionsEdit__c != null ? rule.PermissionsEdit__c : false;
+                    Boolean targetDelete = rule.PermissionsDelete__c != null ? rule.PermissionsDelete__c : false;
+
+                    if (op == null) {
+                        if (!queuedObjPermKeys.contains(key)) {
+                            objPermsToInsert.add(new ObjectPermissions(
+                                ParentId = permSetId, 
+                                SobjectType = sObjectName, 
+                                PermissionsRead = targetRead, 
+                                PermissionsCreate = targetCreate, 
+                                PermissionsEdit = targetEdit, 
+                                PermissionsDelete = targetDelete
+                            ));
+                            queuedObjPermKeys.add(key);
+                            summary.objInserted++;                        
+                            summary.detailedLogs.add(new ChangeDetail('Insert', 'Object', sObjectName, psName, 'R:'+targetRead+' C:'+targetCreate+' E:'+targetEdit+' D:'+targetDelete));
                         }
-                        Schema.DescribeFieldResult fieldDescribe = token.getDescribe();
-    
-    					// Skip fields that cannot have FLS applied (Master-Detail, System fields, etc.)
-    					if (!fieldDescribe.isPermissionable()) {
-        					System.debug(LoggingLevel.INFO, 'Skipping non-permissionable field: ' + sObjectName + '.' + fieldName);
-        					continue;
-   						}
+                    } else {
+                        Boolean targetModifyAll = op.PermissionsModifyAllRecords;
+                        Boolean targetViewAll = op.PermissionsViewAllRecords;
+
+                        if (!targetRead || !targetCreate || !targetEdit || !targetDelete) {
+                            targetModifyAll = false;
+                        }
+                        if (!targetRead) {
+                            targetViewAll = false;
+                        }
+
+                        if (op.PermissionsRead != targetRead || 
+                            op.PermissionsCreate != targetCreate || 
+                            op.PermissionsEdit != targetEdit || 
+                            op.PermissionsDelete != targetDelete ||
+                            op.PermissionsModifyAllRecords != targetModifyAll ||
+                            op.PermissionsViewAllRecords != targetViewAll) {
+
+                            op.PermissionsRead = targetRead; 
+                            op.PermissionsCreate = targetCreate; 
+                            op.PermissionsEdit = targetEdit; 
+                            op.PermissionsDelete = targetDelete;
+                            op.PermissionsModifyAllRecords = targetModifyAll;
+                            op.PermissionsViewAllRecords = targetViewAll;
+
+                            if (!objPermsToUpdateMap.containsKey(op.Id)) {
+                                summary.objUpdated++;
+                                summary.detailedLogs.add(new ChangeDetail('Update', 'Object', sObjectName, psName, 'R:'+targetRead+' C:'+targetCreate+' E:'+targetEdit+' D:'+targetDelete));
+                            }
+                            objPermsToUpdateMap.put(op.Id, op);
+                        }
+                    }
+                }
+            } else {
+                // --- FIELD LEVEL PERMISSIONS ---
+                Map<String, Schema.SObjectField> fieldMap = objectFieldMaps.get(sObjectName);
+                if (fieldMap == null) continue;
+
+                Map<String, Schema.DescribeFieldResult> validFieldsMap = new Map<String, Schema.DescribeFieldResult>();
+                for (String fieldName : rawFieldNames) {
+                    Schema.SObjectField token = fieldMap.get(fieldName);
+                    if (token == null) {
+                        summary.missingFields++;
+                        if (summary.missingFieldList.size() < 25) {
+                            summary.missingFieldList.add(sObjectName + '.' + fieldName);
+                        }
+                        summary.detailedLogs.add(new ChangeDetail('Skipped', 'Field (Missing)', sObjectName + '.' + fieldName, 'All Targets', 'Field API Name not found on SObject'));
+                        continue;
+                    }
+                    Schema.DescribeFieldResult fieldDescribe = token.getDescribe();
+
+                    if (!fieldDescribe.isPermissionable()) {
+                        summary.detailedLogs.add(new ChangeDetail('Skipped', 'Field (Non-Permissionable)', sObjectName + '.' + fieldName, 'All Targets', 'Field is non-permissionable (Master-Detail, Formula, or System)'));
+                        continue;
+                    }
+                    validFieldsMap.put(fieldName, fieldDescribe);
+                }
+
+                if (validFieldsMap.isEmpty()) continue;
+
+                for (String psName : psNames) {
+                    Id permSetId = permSetNameToIdMap.get(psName);
+                    if (permSetId == null) {
+                        summary.missingPS++;
+                        summary.detailedLogs.add(new ChangeDetail('Skipped', 'Field Permission', sObjectName, psName, 'Permission Set not found or is owned by Profile'));
+                        continue;
+                    }
+
+                    for (String fieldName : validFieldsMap.keySet()) {
+                        Schema.DescribeFieldResult fieldDescribe = validFieldsMap.get(fieldName);
                         Boolean effectiveEdit = rule.PermissionsEdit__c && fieldDescribe.isUpdateable();
                         String fullFieldApiName = sObjectName + '.' + fieldName;
                         String key = permSetId + '-' + fullFieldApiName;
+
                         FieldPermissions fp = existingFieldPerms.get(key);
                         if (fp == null) {
-                            fldPermsToInsert.add(new FieldPermissions(ParentId=permSetId, SobjectType=sObjectName, Field=fullFieldApiName, PermissionsRead=rule.PermissionsRead__c, PermissionsEdit=effectiveEdit));
-                            summary.fldInserted++;
-                            summary.detailedLogs.add(new ChangeDetail('Insert', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
+                            if (!queuedFieldPermKeys.contains(key)) {
+                                fldPermsToInsert.add(new FieldPermissions(
+                                    ParentId = permSetId, 
+                                    SobjectType = sObjectName, 
+                                    Field = fullFieldApiName, 
+                                    PermissionsRead = rule.PermissionsRead__c, 
+                                    PermissionsEdit = effectiveEdit
+                                ));
+                                queuedFieldPermKeys.add(key);
+                                summary.fldInserted++;
+                                summary.detailedLogs.add(new ChangeDetail('Insert', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
+                            }
                         } else if (fp.PermissionsRead != rule.PermissionsRead__c || fp.PermissionsEdit != effectiveEdit) {
-                            fp.PermissionsRead=rule.PermissionsRead__c; fp.PermissionsEdit=effectiveEdit;
-                            fldPermsToUpdate.add(fp);
-                            summary.fldUpdated++;
-                            summary.detailedLogs.add(new ChangeDetail('Update', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
+                            fp.PermissionsRead = rule.PermissionsRead__c; 
+                            fp.PermissionsEdit = effectiveEdit;
+
+                            if (!fldPermsToUpdateMap.containsKey(fp.Id)) {
+                                summary.fldUpdated++;
+                                summary.detailedLogs.add(new ChangeDetail('Update', 'Field', fullFieldApiName, psName, 'Read:'+rule.PermissionsRead__c+' Edit:'+effectiveEdit));
+                            }
+                            fldPermsToUpdateMap.put(fp.Id, fp);
                         }
                     }
                 }
             }
         }
         
-        // FIX: Execute DML on each specific list independently. 
-        // Your executeDml helper already checks if the list is empty, making this perfectly safe.
         executeDml(objPermsToInsert, 'insert', summary);
         executeDml(fldPermsToInsert, 'insert', summary);
-        executeDml(objPermsToUpdate, 'update', summary);
-        executeDml(fldPermsToUpdate, 'update', summary);
+        executeDml(objPermsToUpdateMap.values(), 'update', summary);
+        executeDml(fldPermsToUpdateMap.values(), 'update', summary);
     }
 
-    /**
-     * @description Processes component access rules using the generic SetupEntityAccess object.
-     * @param rules A list of component-type rules to process.
-     * @param childEntityType The API name of the component (e.g., 'ApexClass', 'ApexPage').
-     * @param summary The central RunSummary object to accumulate metrics and warnings.
-     */
     private static void processJunctionPermissionsWithSetupEntityAccess(List<BSF_Access_Control_Rule__mdt> rules, String childEntityType, RunSummary summary) {
         System.debug(LoggingLevel.INFO, 'Processing ' + rules.size() + ' ' + childEntityType + ' access rules via SetupEntityAccess...');
 
@@ -364,7 +412,7 @@ public without sharing class BSF_AccessControlManager {
         }
 
         Map<String, Id> permSetNameToId = new Map<String, Id>();
-        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames]) {
+        for (PermissionSet ps : [SELECT Id, Name FROM PermissionSet WHERE Name IN :permSetNames AND IsOwnedByProfile = false]) {
             permSetNameToId.put(ps.Name, ps.Id);
         }
 
@@ -395,12 +443,14 @@ public without sharing class BSF_AccessControlManager {
                 Id parentId = permSetNameToId.get(psName);
                 if (parentId == null) {
                     summary.missingPS++;
+                    summary.detailedLogs.add(new ChangeDetail('Skipped', childEntityType, 'N/A', psName, 'Permission Set not found or is owned by Profile'));
                     continue;
                 }
                 for (String compName : cleanSplit(rule.Component_API_Names__c)) {
                     Id setupEntityId = compNameToId.get(compName);
                     if (setupEntityId == null) {
                         summary.missingComp++;
+                        summary.detailedLogs.add(new ChangeDetail('Skipped', childEntityType, compName, psName, childEntityType + ' not found in org'));
                         continue;
                     }
                     String key = parentId + '-' + setupEntityId;
@@ -421,12 +471,6 @@ public without sharing class BSF_AccessControlManager {
         executeDml(inserts, 'insert', summary);
     }
 
-    /**
-     * @description Utility method to safely split a comma-separated string into a list of
-     *              trimmed, non-blank strings.
-     * @param input The raw, comma-separated string from the metadata rule.
-     * @return A list of clean string tokens.
-     */
     private static List<String> cleanSplit(String input) {
         List<String> results = new List<String>();
         if (String.isNotBlank(input)) {
@@ -440,30 +484,56 @@ public without sharing class BSF_AccessControlManager {
         return results;
     }
 
-    /**
-     * @description Centralized, safe DML execution helper. It wraps DML operations in a try-catch
-     *              block and updates the RunSummary object with any failures.
-     * @param records The list of SObjects to perform DML on.
-     * @param operation The DML operation as a string ('insert' or 'update').
-     * @param summary The central RunSummary object to update in case of DML failure.
-     */
     private static void executeDml(List<SObject> records, String operation, RunSummary summary) {
         if (records == null || records.isEmpty()) {
             return;
         }
-        try {
-            if (operation == 'insert') {
-                insert records;
-            } else if (operation == 'update') {
-                update records;
+
+        List<Database.SaveResult> saveResults;
+        if (operation == 'insert') {
+            saveResults = Database.insert(records, false);
+        } else if (operation == 'update') {
+            saveResults = Database.update(records, false);
+        }
+
+        Integer failureCount = 0;
+        for (Integer i = 0; i < saveResults.size(); i++) {
+            Database.SaveResult sr = saveResults[i];
+            if (!sr.isSuccess()) {
+                failureCount++;
+                SObject failedRecord = records[i];
+                String recordDetail = '';
+                String targetPermSet = 'N/A';
+
+                if (failedRecord instanceof FieldPermissions) {
+                    FieldPermissions fp = (FieldPermissions) failedRecord;
+                    recordDetail = fp.Field;
+                    targetPermSet = String.valueOf(fp.ParentId);
+                } else if (failedRecord instanceof ObjectPermissions) {
+                    ObjectPermissions op = (ObjectPermissions) failedRecord;
+                    recordDetail = op.SobjectType;
+                    targetPermSet = String.valueOf(op.ParentId);
+                } else if (failedRecord instanceof SetupEntityAccess) {
+                    SetupEntityAccess sea = (SetupEntityAccess) failedRecord;
+                    recordDetail = String.valueOf(sea.SetupEntityId);
+                    targetPermSet = String.valueOf(sea.ParentId);
+                }
+
+                for (Database.Error err : sr.getErrors()) {
+                    String errMsg = operation.toUpperCase() + ' Error -> ' + err.getMessage();
+                    System.debug(LoggingLevel.ERROR, errMsg);
+                    summary.dmlFailures++;
+                    if (summary.dmlErrors.size() < 10) {
+                        summary.dmlErrors.add(errMsg);
+                    }
+                    // LOG DML ERROR TO CSV ATTACHMENT AS WELL
+                    summary.detailedLogs.add(new ChangeDetail('Error (' + operation.toUpperCase() + ')', failedRecord.getSObjectType().getDescribe().getName(), recordDetail, targetPermSet, err.getMessage()));
+                }
             }
+        }
+
+        if (failureCount == 0) {
             System.debug(LoggingLevel.INFO, 'SUCCESS: Performed ' + operation + ' on ' + records.size() + ' records for ' + records[0].getSObjectType());
-        } catch (DmlException e) {
-            System.debug(LoggingLevel.ERROR, 'DML Error during ' + operation + ' on ' + records[0].getSObjectType() + '. Message: ' + e.getMessage());
-            summary.dmlFailures++;
-            if (summary.dmlErrors.size() < 10) {
-                summary.dmlErrors.add(e.getMessage());
-            }
         }
     }
 }

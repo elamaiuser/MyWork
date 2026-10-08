@@ -964,7 +964,7 @@ public class AccountTriggerTest
         Test.startTest();
         AccountService.updateTemplateBloodDriveOpportunitiesForAccountNameChange(null,null);
         AccountService.updateDivesOnCalenderForAccountInternalNameChange(null,null);
-        AccountService.setBusinessPlanningDateAndUser(null,null);
+        AccountService.setBusinessPlanningDateAndUser(new List<Account>(), null);
         Test.stopTest();
     }
     

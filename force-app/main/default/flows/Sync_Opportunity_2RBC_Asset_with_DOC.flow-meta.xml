@@ -173,7 +173,19 @@
     <formulas>
         <name>is2RBCAssetMismatch</name>
         <dataType>Boolean</dataType>
-        <expression>IF({!Get_Related_DOC.sked_Number_of_2RBC_Assets__c}&lt;&gt;{!Get_Related_DOC.sked_Opportunity__r.Number_of_2RBC_Assets__c}, true, false)</expression>
+        <expression>IF(
+  ISBLANK({!Get_Related_DOC.sked_Number_of_2RBC_Assets__c}) 
+  &amp;&amp; 
+  ISBLANK({!Get_Related_DOC.sked_Opportunity__r.Number_of_2RBC_Assets__c}),
+  false,
+  IF(
+    ISBLANK({!Get_Related_DOC.sked_Number_of_2RBC_Assets__c}) 
+    || 
+    ISBLANK({!Get_Related_DOC.sked_Opportunity__r.Number_of_2RBC_Assets__c}),
+    true,
+    {!Get_Related_DOC.sked_Number_of_2RBC_Assets__c} &lt;&gt; {!Get_Related_DOC.sked_Opportunity__r.Number_of_2RBC_Assets__c}
+  )
+)</expression>
     </formulas>
     <formulas>
         <name>X2RBCAssetValue</name>

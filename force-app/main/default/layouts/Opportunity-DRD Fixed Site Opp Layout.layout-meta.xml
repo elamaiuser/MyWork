@@ -795,10 +795,10 @@
         <relatedList>Opportunity_Promotion__c.Blood_Drive_Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>ORDERS.ORDER_NUMBER</fields>
         <fields>ORDERS.EFFECTIVE_DATE</fields>
         <fields>Publicity_Approved__c</fields>
-        <fields>Publicity_Submitted__c</fields>
         <fields>BudgetCurrency__c</fields>
         <fields>ORDERS.TOTAL_AMOUNT</fields>
         <fields>Order_Due_Date__c</fields>

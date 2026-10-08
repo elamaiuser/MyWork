@@ -26,7 +26,8 @@ import {
     SiteBridgeApiMappingConfigFactory, SiteCollectionOperationMappingConfigFactory, SiteFeedbackMappingConfigFactory, SlotMappingConfigFactory, 
     StagingLocationMappingConfigFactory, StaffingConstraintMappingConfigFactory, StaffingDecisionMatrixMappingConfigFactory, TagMappingConfigFactory, TerritoryCollectionOperationMappingConfigFactory,
     TerritoryMappingConfigFactory, TravelTimeIndexItemMappingConfigFactory, TravelTimeSlotConfigFactory, UserMappingConfigFactory, BsfPortfolioMappingConfigFactory, StaffSetupExcludedRoleMappingConfigFactory, StaffMealAndRestBreakMappingConfigFactory,
-    CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory, CollectionOpAvailabilityMappingConfigFactory, AvailabilityPatternRoleMappingConfigFactory
+    StaffCountThresholdMappingConfigFactory, CollectionOperationOptimizerSettingConfigFactory, CollectionOperationTimeBlockMappingConfigFactory, TimeBlockMappingConfigFactory, CollectionOpAvailabilityMappingConfigFactory, AvailabilityPatternRoleMappingConfigFactory,
+    CollectionOperationSlotConfigMappingConfigFactory, SlotConfigurationDefaultMappingConfigFactory
 } from './index.js';
 
 class mappingConfigContainer {
@@ -126,9 +127,12 @@ class mappingConfigContainer {
             'BSF_Portfolio__cMappingConfigFactory' : BsfPortfolioMappingConfigFactory,
             'sked_Staff_Setup_Excluded_Role__cMappingConfigFactory' : StaffSetupExcludedRoleMappingConfigFactory,
             'sked_Staff_Meal_Rest_Break_Setting__cMappingConfigFactory' : StaffMealAndRestBreakMappingConfigFactory,
+            'sked_Staff_Count_Threshold__cMappingConfigFactory' : StaffCountThresholdMappingConfigFactory,
             'sked_CollectionOperationOptimizerSetting__cMappingConfigFactory' : CollectionOperationOptimizerSettingConfigFactory,
             'Collection_Operation_Availability__cMappingConfigFactory' : CollectionOpAvailabilityMappingConfigFactory,
             'Availability_Pattern_Role__cMappingConfigFactory' : AvailabilityPatternRoleMappingConfigFactory,
+            'sked_Collection_Operation_Slot_Config__cMappingConfigFactory' : CollectionOperationSlotConfigMappingConfigFactory,
+            'sked_Slot_Configuration_Default__mdtMappingConfigFactory' : SlotConfigurationDefaultMappingConfigFactory,
         };
     }
 

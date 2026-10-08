@@ -203,6 +203,7 @@ export default class SlwcDriveListMap extends LightningElement {
     queryModel.startDate = startDate;
     queryModel.endDate = endDate;
     queryModel.eventTypes = this.filters.driveTypes;
+    queryModel.driveOperationTypes = this.filters.driveOperationTypes;
     queryModel.statuses = this.filters.driveStatuses;
     queryModel.stages = this.filters.stages;
     queryModel.accountTypes = this.filters.accountTypes;
@@ -256,6 +257,7 @@ export default class SlwcDriveListMap extends LightningElement {
     driveQuery.isNotLinkedDrive = true;
     driveQuery.showOnlyLinkedEvents = false;
     driveQuery.eventTypes = this.filters.driveTypes;
+    driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
     driveQuery.statuses = this.filters.driveStatuses;
     driveQuery.stages = this.filters.stages;
     driveQuery.accountTypes = this.filters.accountTypes;

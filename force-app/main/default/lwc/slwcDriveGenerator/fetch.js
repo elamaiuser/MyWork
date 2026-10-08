@@ -10,12 +10,40 @@ import {
   operationDriveLimitQueryModel, operationDriveLimitService,
   collectionOperationStagingLocationService, collectionOperationStagingLocationQueryModel,
   collectionOperationTimeBlockQueryModel, collectionOperationTimeBlockService,
-  roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel
+  roleTimeDetailService, sObjectType, territoryCollectionOperationService, territoryCollectionOperationQueryModel, operationRecordQueryModel, travelTimeIndexItemService, travelTimeIndexItemQueryModel,
+  collectionOperationSlotConfigService, collectionOperationSlotConfigQueryModel,
+  slotConfigurationDefaultService, slotConfigurationDefaultQueryModel
 } from 'c/dataService';
 import * as autoMapper from 'c/autoMapper';
-import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, DRIVE_CHANGE_REQUEST_TYPE } from 'c/slwcConstants';
+import { DRIVE_TYPE, ASSET_TYPE, PENDING_ACTION, DRIVE_REQUEST_CHANGE_STATUS, APPOINTMENT_SLOT_INTERVAL_PROCEDURE_TYPE } from 'c/slwcConstants';
 import { keyBy, groupBy, uniq } from 'c/lodash';
 import { getTravelTimeIndexKey } from 'c/slwcUtils';
+
+// CO-override rows and CMDT defaults both already persist Power Red's full 4-field shape
+// (skedSlotConfigHandler.POWER_RED_KEYS) — parsed JSON is passed straight through as
+// generate2rbcSlots()'s configOverride, no re-derivation via DriveHelper needed here.
+function resolveProcedureConfig(procedureType, driveType, fixedSiteOperationType, driveDateStr, overrideRows, defaultRows) {
+  const matchesKey = (row) =>
+    row.driveType === driveType &&
+    (driveType !== DRIVE_TYPE.FIXED_SITE || row.fixedSiteOperationType === fixedSiteOperationType) &&
+    row.procedureType === procedureType;
+
+  const overrideRow = overrideRows
+    .filter(matchesKey)
+    .find((row) => row.startDate <= driveDateStr && (!row.endDate || driveDateStr <= row.endDate));
+
+  const jsonString = overrideRow ? overrideRow.slotConfigurationJson : (defaultRows.find(matchesKey) || {}).configurationJson;
+  if (!jsonString) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return null;
+  }
+}
+
 class Fetch {
   driveType = DRIVE_TYPE.MOBILE;
 
@@ -27,7 +55,7 @@ class Fetch {
 
   get settingKeys() {
     if(this.driveType === DRIVE_TYPE.MOBILE) {
-      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles', 'redcrossVolunteerMatrix'];
+      return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles', 'redcrossVolunteerMatrix', 'staffCountThresholds'];
     } else {
       return ['adminSetting', 'resourceRoleGroups', 'lunchBreakSettings', 'staffSetupExcludedRoles'];
     }
@@ -56,7 +84,8 @@ class Fetch {
               resourceRoleGroups: result.returnedData.resourceRoleGroups,
               lunchBreakSettings: autoMapper.autoMapperInstance.mapToArray('sked_Lunch_Break_Setting__c', result.returnedData.lunchBreakSettings),
               staffSetupExcludedRoles: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Setup_Excluded_Role__c', result.returnedData.staffSetupExcludedRoles),
-              redcrossVolunteerMatrix: result.returnedData.redcrossVolunteerMatrix
+              redcrossVolunteerMatrix: result.returnedData.redcrossVolunteerMatrix,
+              staffCountThresholds: autoMapper.autoMapperInstance.mapToArray('sked_Staff_Count_Threshold__c', result.returnedData.staffCountThresholds ?? [])
             }
           })
       });
@@ -126,6 +155,33 @@ class Fetch {
             return result;
           })
       }
+    });
+  }
+
+  // Never call this for a FixedSiteGenerator (full-service) instance — matching key mirrors
+  // skedCreateDCRForSlotConfigChangeBatch.appliesToDrive() (CO + Drive Type + Fixed-Site-
+  // Operation-Type + effective date range, no Procedure Type filter) so this stays scoped to
+  // Mobile/WB-Fixed-Site the same way that batch already is.
+  retrieveCollectionOperationAppointmentSlotInterval(drive) {
+    if (!drive.collectionOperationId) {
+      return Promise.resolve(null);
+    }
+
+    const overrideQuery = new collectionOperationSlotConfigQueryModel();
+    overrideQuery.collectionOperationId = drive.collectionOperationId;
+
+    return Promise.all([
+      new collectionOperationSlotConfigService().query(overrideQuery),
+      new slotConfigurationDefaultService().query(new slotConfigurationDefaultQueryModel())
+    ]).then(([overrideRows, defaultRows]) => {
+      const driveType = drive.typeOfDrive;
+      const fixedSiteOperationType = drive.operationType;
+      const driveDateStr = drive.driveDate;
+
+      return {
+        wholeBlood: resolveProcedureConfig(APPOINTMENT_SLOT_INTERVAL_PROCEDURE_TYPE.WHOLE_BLOOD, driveType, fixedSiteOperationType, driveDateStr, overrideRows, defaultRows),
+        powerRed: resolveProcedureConfig(APPOINTMENT_SLOT_INTERVAL_PROCEDURE_TYPE.POWER_RED, driveType, fixedSiteOperationType, driveDateStr, overrideRows, defaultRows)
+      };
     });
   }
 

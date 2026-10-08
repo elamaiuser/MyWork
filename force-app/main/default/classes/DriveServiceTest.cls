@@ -23,6 +23,11 @@ private class DriveServiceTest {
         
         Period period = [SELECT Id,StartDate,EndDate FROM Period WHERE (StartDate < :system.today() AND EndDate > :system.today()) LIMIT 1]; 
         
+        Opportunity testOpp = [SELECT Id FROM Opportunity WHERE Is_Template__c = false LIMIT 1];
+        TriggerHandler.bypass('OpportunityTriggerHandler');
+        update new Opportunity(Id = testOpp.Id, CloseDate = System.today());
+        TriggerHandler.clearAllBypasses();
+
         List<DriveService.Drive> testDrivesList1 = DriveService.retrieveDrives(period.Id, 1);
         Test.stopTest();
         

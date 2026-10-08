@@ -82,6 +82,7 @@ public class skedDriveHandler extends skedTriggerHub {
             sendNotification(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             processLinkedDriveRemoval(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onUnholdDrives(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
+            onCompleteDrives(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onCancelDrives(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             onCancelledRejectedApproval(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
             revalidateAllocations(newRecords, (Map<Id, sked_Drive__c>)this.context.oldMap);
@@ -177,6 +178,23 @@ public class skedDriveHandler extends skedTriggerHub {
         }
     }
     
+    private void onCompleteDrives(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
+        Set<Id> completeDriveIds = new Set<Id>();
+
+        for (sked_Drive__c newRecord : newRecords) {
+			sked_Drive__c oldData = oldMap.get(newRecord.Id);
+            if (newRecord.sked_Status__c != oldData.sked_Status__c) {
+                if (newRecord.sked_Status__c == skedConstants.DRIVE_STATUS_COMPLETE) {
+                    completeDriveIds.add(newRecord.Id);
+                }
+            }
+        }
+        
+        if (!completeDriveIds.isEmpty()) {
+            skedDriveHandlerService.cascadeCompleteEvents(completeDriveIds);
+        }
+    }
+
     private void onCancelDrives(List<sked_Drive__c> newRecords, Map<Id, sked_Drive__c> oldMap) {
         Set<Id> cancelledDriveIds = new Set<Id>();
         Set<Id> cancelledOppIds = new Set<Id>();

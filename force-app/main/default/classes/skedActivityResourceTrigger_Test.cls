@@ -120,7 +120,7 @@ public class skedActivityResourceTrigger_Test {
         insert skedActivityResource;
 
         skedGroupActivity.sked__Start__c = testDataFactory.summary.startTime.addHours(10);
-        skedGroupActivity.sked__End__c = testDataFactory.summary.startTime.addHours(10);
+        skedGroupActivity.sked__End__c = testDataFactory.summary.startTime.addHours(12);
         update skedGroupActivity;
         Test.stopTest();
     }

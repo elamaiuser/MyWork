@@ -295,11 +295,6 @@ class DriveHelper {
   }
 
   splitProjectedProcedures(drive, driveShifts, driveShiftsMetadata, procedureType, timezoneSidId) {   
-    if(procedureType === PROCEDURE_TYPE._2RBC && !this.show2RBCField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.WB && !this.showWBField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.PLATELET && !this.showPlateletField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.PLASMA && !this.showPlasmaField(drive)) return;
-
     const excludeOverlappedTime = [PROCEDURE_TYPE._2RBC, PROCEDURE_TYPE.PLATELET, PROCEDURE_TYPE.PLASMA].includes(procedureType);
     const useRoundTimes = [PROCEDURE_TYPE.PLATELET, PROCEDURE_TYPE.PLASMA].includes(procedureType);
     const mapFieldProcedureType = {
@@ -366,11 +361,6 @@ class DriveHelper {
   }
   
   splitProcedureCapacity(drive, driveShifts, driveProcedureCapacityMap, procedureType, timezoneSidId) {   
-    if(procedureType === PROCEDURE_TYPE._2RBC && !this.show2RBCField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.WB && !this.showWBField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.PLATELET && !this.showPlateletField(drive)) return;
-    if(procedureType === PROCEDURE_TYPE.PLASMA && !this.showPlasmaField(drive)) return;
-
     const excludeOverlappedTime = [PROCEDURE_TYPE._2RBC, PROCEDURE_TYPE.PLATELET, PROCEDURE_TYPE.PLASMA].includes(procedureType);
     const useRoundTimes = [PROCEDURE_TYPE.PLATELET, PROCEDURE_TYPE.PLASMA].includes(procedureType);
     let fieldProcedureType = procedureType;
@@ -473,6 +463,7 @@ class DriveHelper {
         resourceQuantity.set(key, {
           quantity: this.getJobQuantity(job) || 0,
           vphhQuantity: job.vphhQuantity || 0,
+          aptQuantity: job.aptQuantity || 0,
           dualRole: job.dualRole,
           isManuallyCreated: job.isManuallyCreated,
           manuallyCreatedFrom: job.manuallyCreatedFrom
@@ -1123,6 +1114,17 @@ class DriveHelper {
       });
     }
 
+    // skedCreateDCRForSlotConfigChangeBatch only ever flags Mobile/WB-Fixed-Site drives
+    // (appliesToDrive() never matches full-service Fixed Site) — no driveType guard needed here;
+    // fixedSiteGenerator.js's own DRIVE_FIELD_CHANGE_MAPPING simply has no 'appointmentSlotIntervalChanged'
+    // key, so this pseudo-token is a harmless no-op there even in an unreachable edge case.
+    if (driveChangeRequest.type && driveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.APPOINTMENT_SLOT_INTERVAL_CHANGE)) {
+      results.push({
+        targetName: 'appointmentSlotIntervalChanged',
+        targetValue: null
+      });
+    }
+
     if (driveChangeRequest.type && driveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.SITE_ADDRESS_CHANGE)) {
       results.push({
         targetName: 'siteAddressChanged',
@@ -1137,9 +1139,25 @@ class DriveHelper {
       });
     }
 
+    if (driveChangeRequest.type && driveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.VEHICLE_REQUIREMENT_CHANGE)
+      && !isFixedSiteDrive && !isWbFixedSiteDrive && drive.driveSite) {
+      // The DCR item is only a marker, so the value to apply comes from the site's current setting
+      results.push({
+        targetName: 'doNotUseVehicle',
+        targetValue: !!drive.driveSite.doNotUseVehicle
+      });
+    }
+
     if (driveChangeRequest.type && driveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.REGENERATE_DRIVE)) {
       results.push({
         targetName: 'regenerateDrive',
+        targetValue: null
+      });
+    }
+
+    if (driveChangeRequest.type && driveChangeRequest.type.includes(DRIVE_CHANGE_REQUEST_TYPE.SDM_CHANGE)) {
+      results.push({
+        targetName: 'sdmChanged',
         targetValue: null
       });
     }
@@ -3881,10 +3899,11 @@ class DriveHelper {
           })
         }
 
-        if (this.isFixedSiteDrive(drive)) {
-          totalFixedSiteStaffRequested += totalStaffRequested;
-        } else {
+        // HRP-17171: not isFixedSiteDrive - it excludes WB-only Fixed Site drives, which skedStaffingConstraintHandler still reduces from the Fixed Site pool.
+        if (this.isMobileDrive(drive)) {
           totalMobileStaffRequested += totalStaffRequested;
+        } else {
+          totalFixedSiteStaffRequested += totalStaffRequested;
         }
       });
     }
@@ -3915,12 +3934,69 @@ class DriveHelper {
     };
   }
 
-  getSlotDurationByType = (slotType) => {
+  // override (optional): resolved CO-level slot duration for 'Whole Blood'/'2RBC' — passed by
+  // MobileGenerator/WbFixedSiteGenerator only (see resolvedSlotDurationOverrides). FixedSiteGenerator
+  // never passes one, so this keeps today's hardcode as the default for full-service Fixed Site.
+  getSlotDurationByType = (slotType, override) => {
+    if (override != null) return override;
     if(slotType === 'Platelet') return 3 * 60;
     if(slotType === 'Plasma') return 90;
     if(slotType === 'Whole Blood') return 15;
     if(slotType === '2RBC') return 60;
     return 15;
+  }
+
+  // Ties broken FIFO (earliest-created gap first) — required to reproduce the PO-confirmed reference orders exactly.
+  spreadRoundOrder = (numberOfRounds) => {
+    if (!numberOfRounds || numberOfRounds <= 1) return [0];
+
+    const points = [0];
+    const gaps = [{ start: 0, end: numberOfRounds, isFirst: true }];
+
+    while (points.length < numberOfRounds) {
+      let bestIndex = 0;
+      let bestLength = -1;
+      for (let i = 0; i < gaps.length; i++) {
+        const length = gaps[i].end - gaps[i].start;
+        if (length > bestLength) {
+          bestLength = length;
+          bestIndex = i;
+        }
+      }
+
+      const gap = gaps.splice(bestIndex, 1)[0];
+      const length = gap.end - gap.start;
+      const midpoint = gap.isFirst ? Math.ceil(length / 2) : Math.floor(length / 2);
+      const point = gap.start + midpoint;
+
+      points.push(point);
+      gaps.push({ start: gap.start, end: point, isFirst: false });
+      gaps.push({ start: point, end: gap.end, isFirst: false });
+    }
+
+    return points;
+  }
+
+  // Derives WBConfiguration's interval/roundConfigurations from the single stored slotDuration field.
+  deriveWholeBloodRoundConfig = (slotDuration) => {
+    const numberOfRounds = 60 / slotDuration;
+    const order = this.spreadRoundOrder(numberOfRounds);
+    return {
+      numberOfRounds,
+      interval: slotDuration,
+      roundConfigurations: order.map((index) => ({ minutesIntoStart: index * slotDuration }))
+    };
+  }
+
+  // groupInterval = roundInterval / numberOfGroups — a fixed 30 would collide with roundInterval 10/30, doubling capacity.
+  derivePowerRedRoundConfig = (roundInterval) => {
+    const numberOfGroups = 2;
+    return {
+      roundInterval,
+      numberOfGroups,
+      groupInterval: roundInterval / numberOfGroups,
+      slotDuration: roundInterval
+    };
   }
 
   findJob = (job, allJobs = []) => {
@@ -4503,6 +4579,18 @@ class DriveHelper {
       pendingActionReasonCodes: [],
       contentions: []
     }
+  }
+
+  isRoleRecalculationNeeded = (drive, driveShift, masterData, role) => {
+    return driveShift.jobs.find(job =>
+      job.resourceRole !== role &&
+      this.isManuallyCreatedJob(job, drive) &&
+      job.manuallyCreatedFrom !== MANUALLY_CREATED_FROM.STAFFING_MODAL &&
+      (
+        this.isRoleHoldCapacity(job.resourceRole, job, masterData) ||
+        this.isRoleHoldCapacity(job.dualRole, job, masterData)
+      )
+    );
   }
 }
 

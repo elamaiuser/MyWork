@@ -2,7 +2,7 @@
  * @Description        : Service class to handle Task Generation, Date Syncing, 
  *                       and Configuration Inheritance across Accounts and Opportunities.
  **/
-public with sharing class BSF_TaskPlanningService {
+public inherited sharing class BSF_TaskPlanningService {
     
     // ============================================================================
     // 1. TASK GENERATION (EXECUTION)

@@ -339,10 +339,8 @@ export default class SlwcAddStaffingConstraintModal extends LightningElement {
         );
         this.mappedDriveData = groupBy(
           [...driveResult],
-          (item) => {
-            let typeOfDrive = this.driveHelper.isFixedSiteDrive(item) ? DRIVE_TYPE.FIXED_SITE : DRIVE_TYPE.MOBILE;
-            return `${item.collectionOperationId}${KEY_SEPERATOR}${typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
-          }
+          (item) =>
+            `${item.collectionOperationId}${KEY_SEPERATOR}${item.typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
         );
         this.mappedActivityData = groupBy(
           [...activityResult], 

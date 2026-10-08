@@ -4,14 +4,14 @@
     <protected>false</protected>
     <values>
         <field>Element_Name__c</field>
-        <value xsi:type="xsd:string">Code</value>
+        <value xsi:type="xsd:string">Order</value>
     </values>
     <values>
         <field>Type__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Object</value>
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">Template Order cannot be Approved.</value>
+        <value xsi:type="xsd:string">Template Order cannot be Approved. Approval should occur at the Opportunity level.</value>
     </values>
 </CustomMetadata>

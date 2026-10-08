@@ -196,8 +196,18 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Comments__c</fieldItem>
-                <identifier>RecordComments_cField</identifier>
+                <fieldItem>Record.Publicity_Comment__c</fieldItem>
+                <identifier>RecordPublicity_Comment_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Local_Offerings__c</fieldItem>
+                <identifier>RecordLocal_Offerings_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -211,17 +221,17 @@
                 <visibilityRule>
                     <booleanFilter>1 OR 2 OR 3</booleanFilter>
                     <criteria>
-                        <leftValue>{!Record.Comments__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Local Promotion</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.Comments__c}</leftValue>
+                        <leftValue>{!Record.Local_Offerings__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Local Chance to Win</rightValue>
                     </criteria>
                     <criteria>
-                        <leftValue>{!Record.Comments__c}</leftValue>
+                        <leftValue>{!Record.Local_Offerings__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Local Promotion</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Local_Offerings__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Local Refreshments</rightValue>
                     </criteria>
@@ -253,6 +263,58 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-d4603a63-8e92-4db2-99ec-d78e85697d7f</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Theme__c</fieldItem>
+                <identifier>RecordTheme_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-a61c5e10-3f32-4239-a747-53b2faf18b1d</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Publicity_Package__c</fieldItem>
+                <identifier>RecordPublicity_Package_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-27cbd9fe-08ad-48c0-a259-ed6913aefb5d</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-a61c5e10-3f32-4239-a747-53b2faf18b1d</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column7</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-27cbd9fe-08ad-48c0-a259-ed6913aefb5d</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column8</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-1428f850-0e1d-4304-b7c9-1cf8fd8880cc</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -422,6 +484,24 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
+                    <value>Facet-1428f850-0e1d-4304-b7c9-1cf8fd8880cc</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Theme and Publicity Package</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection4</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
                     <value>Facet-33d127d1-7b7a-4788-9a33-3b462bd90652</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -529,11 +609,11 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>relatedListComponentOverride</name>
-                    <value>ADVGRID</value>
+                    <value>NONE</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>rowsToDisplay</name>
-                    <value>30</value>
+                    <value>10</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>showActionBar</name>

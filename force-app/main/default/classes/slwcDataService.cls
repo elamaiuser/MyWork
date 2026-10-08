@@ -157,6 +157,13 @@ public without sharing class slwcDataService {
                                               FROM sked_Staff_Setup_Excluded_Role__c];
             mapSetting.put('staffSetupExcludedRoles', staffSetupExcludedRoles);
         }
+        if (settingKeys.contains('staffCountThresholds')) {
+            List<sked_Staff_Count_Threshold__c> staffCountThresholds = [
+                SELECT sked_Staff_Count_Threshold__c
+                FROM sked_Staff_Count_Threshold__c 
+                LIMIT 1];
+            mapSetting.put('staffCountThresholds', staffCountThresholds);
+        }
         if (settingKeys.contains('travelTimeManager')) {
             mapSetting.put('travelTimeManager', new slwcSetting.travelTimeManager());
         }

@@ -15,8 +15,15 @@ class activityService extends dataService {
             queryBuilder.addCondition({ template: "sked_Territory_Key__c IN {0}", value: query.territoryKeys, type: "array_string" });
         }
         if (query.startDate && query.endDate) {
-            queryBuilder.addCondition({ template: "sked_Start_Date__c >= {0}", value: query.startDate });
-            queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.endDate });
+            if (query.overlapsDateRange) {
+                queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.endDate });
+                // A blank End Date must fall back to the start-within-range test, otherwise an
+                // open-ended activity matches every range forever.
+                queryBuilder.addCondition({ template: "(sked_End_Date__c >= {0} OR (sked_End_Date__c = NULL AND sked_Start_Date__c >= {0}))", value: query.startDate });
+            } else {
+                queryBuilder.addCondition({ template: "sked_Start_Date__c >= {0}", value: query.startDate });
+                queryBuilder.addCondition({ template: "sked_Start_Date__c <= {0}", value: query.endDate });
+            }
         }
         if (query.selectedDates && query.selectedDates.length) {
             queryBuilder.addCondition({ template: "sked_Start_Date__c IN {0}", value: query.selectedDates, type: "array" });
@@ -64,6 +71,9 @@ class activityQueryModel extends queryModelBase {
     showOnlyLinkedEvents;
     isShowOnCalendarOrReduceFromStaffingConstraints;
     driveTypes;
+    // Opt-in. Default (unset) keeps the legacy "starts inside the range" test so existing
+    // callers are unaffected; making this the default would silently change every caller.
+    overlapsDateRange;
 }
 
 export {

@@ -69,6 +69,9 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
+                            <value>Opportunity.Create_New_Publicity_Order</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Opportunity.Mass_Drive_Service_Role_Add</value>
                         </valueListItems>
                     </valueList>

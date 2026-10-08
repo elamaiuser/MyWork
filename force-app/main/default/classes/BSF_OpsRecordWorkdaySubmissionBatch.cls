@@ -160,6 +160,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
                     premiumCtx.detail = sd;
                     premiumCtx.staffRecordId = staffRec.Id;
                     premiumCtx.approverEmail = ctx.approverEmail;
+                    premiumCtx.requireNumberOfRestBreaks = ctx.requireNumberOfRestBreaks;
                     premiumStaffContexts.add(premiumCtx);
                 }
             }
@@ -316,6 +317,7 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
         List<sked_Operation_Record_Staff__c> staffList;
         String approverEmail;
         Boolean isRetry;
+        Boolean requireNumberOfRestBreaks;
     }
 
     private Map<Date, List<OpRecordContext>> groupByDriveDate(List<sked_Operation_Record__c> opRecords) {
@@ -330,6 +332,8 @@ public class BSF_OpsRecordWorkdaySubmissionBatch implements Database.Batchable<s
             ctx.staffList = op.sked_Operation_Record_Staff__r != null ? op.sked_Operation_Record_Staff__r : new List<sked_Operation_Record_Staff__c>();
             ctx.approverEmail = op.sked_Submitted_By__r != null ? op.sked_Submitted_By__r.sked__Email__c : '';
             ctx.isRetry = op.sked_Workday_Submission_Status__c == BSF_WorkdayDirectSubmissionConfig.STATUS_FAILED;
+            ctx.requireNumberOfRestBreaks = op.sked_Collection_Operation__r != null
+                && op.sked_Collection_Operation__r.sked_Require_Number_of_Rest_Breaks__c == true;
             if (!byDate.containsKey(d)) {
                 byDate.put(d, new List<OpRecordContext>());
             }

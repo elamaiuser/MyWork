@@ -26,6 +26,7 @@ public class skedLocationHandler extends skedTriggerHub {
             deactivateSites(this.context.newRecords, (Map<Id, sked__Location__c>) this.context.oldMap);
         }
         onAddressChanged(this.context.newRecords, (Map<Id, sked__Location__c>) this.context.oldMap);
+        onDoNotUseVehicleChanged(this.context.newRecords, (Map<Id, sked__Location__c>) this.context.oldMap);
     }
 
     /*********************************************************** Privated Methods ***********************************************************/
@@ -311,6 +312,27 @@ mapCollOperToRegion, site.sked_Timezone__c);*///HRP-12054
         }
     }
     
+    private void onDoNotUseVehicleChanged(List<sked__Location__c> newRecords, Map<Id, sked__Location__c> oldMap) {
+        Map<Id, Boolean> newValueBySiteId = getSitesWithChangedVehicleRequirement(newRecords, oldMap);
+        // Site updates can originate from integration/migration batches, where executeBatch is not permitted
+        if (!newValueBySiteId.isEmpty() && !Test.isRunningTest() && !System.isBatch()) {
+            Database.executeBatch(new skedCreateDCRForVehicleReqChangeBatch(newValueBySiteId));
+        }
+    }
+
+    @TestVisible
+    private static Map<Id, Boolean> getSitesWithChangedVehicleRequirement(List<sked__Location__c> newRecords, Map<Id, sked__Location__c> oldMap) {
+        Map<Id, Boolean> newValueBySiteId = new Map<Id, Boolean>();
+        for (sked__Location__c newRecord : newRecords) {
+            sked__Location__c oldRecord = oldMap.get(newRecord.Id);
+            if (newRecord.sked__Type__c == skedConstants.SITE_TYPE_MOBILE
+                && newRecord.sked_Do_Not_Use_Vehicle__c != oldRecord.sked_Do_Not_Use_Vehicle__c) {
+                newValueBySiteId.put(newRecord.Id, newRecord.sked_Do_Not_Use_Vehicle__c);
+            }
+        }
+        return newValueBySiteId;
+    }
+
     private void populateData(List<sked__Location__c> newRecords) {
         for (sked__Location__c newRecord : newRecords) {
             if (!string.isBlank(newRecord.sked_National_Name__c)) {

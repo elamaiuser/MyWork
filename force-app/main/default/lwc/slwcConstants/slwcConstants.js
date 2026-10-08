@@ -314,8 +314,16 @@ export const DRIVE_CHANGE_REQUEST_TYPE = {
   ROLE_TIME_DETAIL_CHANGE: 'Role Time Detail Change',
   SITE_ADDRESS_CHANGE: 'Site Address Change',
   TRAVEL_TIME_CHANGE: 'Travel Time Change',
-  REGENERATE_DRIVE: 'Regenerate Drive'
+  REGENERATE_DRIVE: 'Regenerate Drive',
+  VEHICLE_REQUIREMENT_CHANGE: 'Vehicle Requirement Change',
+  SDM_CHANGE: 'SDM Change',
+  APPOINTMENT_SLOT_INTERVAL_CHANGE: 'Slot Configuration Change'
 }
+
+export const APPOINTMENT_SLOT_INTERVAL_PROCEDURE_TYPE = {
+  WHOLE_BLOOD: 'Whole Blood',
+  POWER_RED: 'Power Red'
+};
 
 export const MANUALLY_CREATED_FROM = {
   STAFFING_MODAL: 'Staffing Modal',

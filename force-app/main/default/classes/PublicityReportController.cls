@@ -3,6 +3,7 @@
  * 
  * Date					Developer Name			Comments
  * ***************************************************************************************************************************************************************************
+ * 5/29/2023			Souvik M    			Portfolio Fetch SOQL condition modified to pick Portfolios with Start Date before Geo Alignment (Logic for HRP-17850)
  * 5/29/2023			Barnojit Sharma			Exclude Cancelled Drives from Publicity Ordering Report (Logic for HRP-9324)
  * 08/03/2023			Priti Jana				Logic for HRP-10307 (Concatenation of Item Ids for size products in the presence of theme products per order)
  * 26-09-2023			Kishore Das				Logic for HRP-11051(GEO_Publicity Report Not Functioning)
@@ -41,7 +42,7 @@ public class PublicityReportController {
     public List<SelectOption> portfolioOptions {
         get{List<SelectOption> options = new List<SelectOption>();
  	 	List<Bsf_Portfolio__c> bsfportfolio = [select Name from Bsf_Portfolio__c where ((Taxonomy_Type__c=:BSF_Constants.BIO_RECRUITMENT_RECORD_TYPE) OR (Taxonomy_Type__c=:BSF_Constants.TAXO_ACCOUNT_RECORD_TYPE)) And((Portfolio_Type__c='Account Manager') OR (Portfolio_Type__c='District Manager'))
-               AND Start_date__c != 2024-01-22 order by Name];//Changes for HRP-11051
+               AND Start_date__c < 2024-01-22 order by Name];//Changes for HRP-11051 //Changed for HRP-17850
         
         List<String> portfoliNames = new List<String>();
         portfoliNames.add('None');
@@ -247,7 +248,7 @@ public class PublicityReportController {
 	{
         list<OrderItem> opprodList = new list<OrderItem>();
        
-        string q  = 'select id,order.OpportunityId,order.Opportunity.Drive_Status__c,orderId,order.BudgetCurrency__c,order.Comments__c,Material_Recipient__c,'+
+        string q  = 'select id,order.OpportunityId,order.Opportunity.Drive_Status__c,orderId,order.BudgetCurrency__c,order.Publicity_Comment__c,Material_Recipient__c,'+
                     'order.OrderNumber,order.Publicity_Approved_By__r.Name,order.Material_Recipient__c,order.id,Product2.Name,Product2.PRODUCT_ID__C,Quantity,order.Publicity_Approved_By__c,order.Publicity_Approved_Date__c from orderItem '+
                      condition+' and order.Publicity_Submitted__c = false and order.Publicity_Approved__c = true '+
                      'AND order.OpportunityId != null AND order.Opportunity.Drive_Status__c != \'Cancel\' '+ //Added for HRP-9324
@@ -378,7 +379,7 @@ public class PublicityReportController {
             ReportQueryWrapperObj.checkboxWrap=callListMap.get(oppId);
             ReportQueryWrapperObj.ocrWrap = ocrMapOpp.get(oppId);
             ReportQueryWrapperObj.oitemWrap = ordItem;
-            ReportQueryWrapperObj.publicityComments = escapeCSVContent2(ordItem.order.Comments__c);//Logic for HRP-11520
+            ReportQueryWrapperObj.publicityComments = escapeCSVContent2(ordItem.order.Publicity_Comment__c);//Logic for HRP-11520
             ReportQueryWrapperObj.optyproWrap = oppPromotionMap.get(oppId);
             ReportQueryWrapperObj.ufid = ufidMap.get(oppId);
             ReportQueryWrapperObj.driveDate = formatDate(OppMap.get(oppId).Drive_Date__c);

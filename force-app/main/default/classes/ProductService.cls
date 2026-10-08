@@ -28,22 +28,24 @@ public with sharing class ProductService {
         if(!productIds.isEmpty()){
             //Check the Related OrderItems and get the related Opportunity Drives from their and check the Drive Date.
             List<OrderItem> orderItemList = [SELECT Id,
-                                                    Product2Id,
-                                                    OrderId,
-                                                    Order.OpportunityId,
-                                                    Order.Opportunity.Name, 
-                                                    Order.Opportunity.DriveStatus__c,
-                                                    Order.Opportunity.Drive_Date__c,
-                                                    Order.Opportunity.AccountId,
-                                                    Order.Opportunity.Account.Account_Manager__c
-                                            FROM OrderItem 
-                                            WHERE Product2Id IN: productIds
-                                            AND OrderId != null
-                                            AND Order.OpportunityId != null
-                                            AND Order.Opportunity.DriveStatus__c != 'Cancel'
-                                            AND Order.Opportunity.DriveStatus__c != null
-                                            AND Order.Opportunity.Drive_Date__c != null
-                                            AND Product2.Start_Date__c != null];
+                                                Product2Id,
+                                                OrderId,
+                                                Order.OpportunityId,
+                                                Order.Opportunity.Name, 
+                                                Order.Opportunity.DriveStatus__c,
+                                                Order.Opportunity.Drive_Date__c,
+                                                Order.Opportunity.AccountId,
+                                                Order.Opportunity.Account.Account_Manager__c
+                                                FROM OrderItem 
+                                                WHERE Product2Id IN: productIds
+                                                AND OrderId != null
+                                                AND Order.OpportunityId != null
+                                                AND Order.Opportunity.DriveStatus__c NOT IN ('Complete', 'Cancel')
+                                                AND Order.Opportunity.DriveStatus__c != null
+                                                AND Order.Opportunity.Drive_Date__c != null
+                                                AND Order.Opportunity.Drive_Date__c >= TODAY
+                                                AND Product2.Start_Date__c != null
+                                            ];
             for(OrderItem orderItem : orderItemList){
                 //Send Bell notification if the Drive Date does not fall between the Start and End Date of the Product
                 if((newProductMap.get(orderItem.Product2Id).End_Date__c == null
@@ -81,14 +83,36 @@ public with sharing class ProductService {
             }
         }
 
-        if(!notificationreqList.isEmpty()){
-            
-                BSF_CustomNotification.sendNotification(notificationreqList); 
-           
+        if(!notificationreqList.isEmpty()) {
+            BSF_CustomNotification.sendNotification(notificationreqList); 
         }
 
-        if(!orderItemListToDelete.isEmpty()){
+        if(!orderItemListToDelete.isEmpty()) {
             Database.delete(orderItemListToDelete, false);
+        }
+    }
+
+    public static void populateProductRTAImageOnPackageItems(List<Product2> newProductList, Map<Id, Product2> oldProductMap) {
+        List<Publicity_Package_Item__c> packageItemListToUpdate = new List<Publicity_Package_Item__c>();
+        Map<Id, String> map_productId_productImage = new Map<Id, String>();
+        for(Product2 product : newProductList) {
+            if(product.Product_Image_Preview__c != null 
+                && oldProductMap.containsKey(product.Id) 
+                && product.Product_Image_Preview__c != oldProductMap.get(product.Id).Product_Image_Preview__c
+            ) {
+                map_productId_productImage.put(product.Id, product.Product_Image_Preview__c);
+            }
+        }   
+             
+        if(!map_productId_productImage.isEmpty()) {
+            for(Publicity_Package_Item__c packageItem : [SELECT Id, Product_Image__c, Product__c FROM Publicity_Package_Item__c WHERE Product__c IN :map_productId_productImage.keySet()]) {
+                packageItem.Product_Image__c = map_productId_productImage.get(packageItem.Product__c);
+                packageItemListToUpdate.add(packageItem);
+            }
+        }
+
+        if(!packageItemListToUpdate.isEmpty()){
+            update packageItemListToUpdate;
         }
     }
 }

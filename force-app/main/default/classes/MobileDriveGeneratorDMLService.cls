@@ -45,9 +45,6 @@ public with sharing class MobileDriveGeneratorDMLService {
         List<Biomed_Collection_Op_Center__c> collectionOperations = fetchCollectionOperations(collectionOperationIds);
         //HRP-10846
         List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations = fetchCollectionOperationStagingLocation(collectionOperationIds, schedulingBounds);
-
-        //HRP-10846
-        List<sked_Travel_Time_Index_Item__c> travelTimeIndexes = fetchTravelTimeIndexFromCOId(sites);
        
         List<sked_Lunch_Break_Setting__c> lunchBreakSettings = fetchLunchBreakSettings();
         
@@ -66,10 +63,14 @@ public with sharing class MobileDriveGeneratorDMLService {
         List<sked_Collection_Operation_SDM__c> collectionOperationSDMs = fetchCollectionOperationSDMs(collectionOperationIds, schedulingBounds);
         
         List<sked_Staffing_Decision_Matrix__c> staffingDecisionMatrices = fetchStaffingDecisionMatrices(collectionOperationSDMs);
+
+        List<sked_Staff_Count_Threshold__c> staffCountThresholds = fetchStaffCountThresholds();
+
+        List<sked_Collection_Operation_Slot_Config__c> collectionOperationSlotConfigs = fetchCollectionOperationSlotConfigs(collectionOperationIds, schedulingBounds);
         
         return combineDriveGeneratorData(oppportunities, accounts, collectionOperations, sites, 	
                                          collectionOperationSDMs, staffingDecisionMatrices, lunchBreakSettings, 	
-                                         resourceRoleGroups, roleTimeDetails, roleTimeVariances, vehicles, secondaryCollOperation, resourceOverrides, collectionOperationStagingLocations, travelTimeIndexes);
+                                         resourceRoleGroups, roleTimeDetails, roleTimeVariances, vehicles, secondaryCollOperation, resourceOverrides, collectionOperationStagingLocations, staffCountThresholds, collectionOperationSlotConfigs);
     }
     
     public static void saveDrives(List<DMLDrive> drives) {
@@ -256,7 +257,8 @@ public with sharing class MobileDriveGeneratorDMLService {
         List<sked_Resource_Biomed_Collection_Op__c> secondaryCollOperation,	
         List<sked__Resource_Override__c> resourceOverrides,
         List<sked_Collection_Op_Staging_Location__c> collectionOperationStagingLocations,
-        List<sked_Travel_Time_Index_Item__c> travelTimeIndexes
+        List<sked_Staff_Count_Threshold__c> staffCountThresholds,
+        List<sked_Collection_Operation_Slot_Config__c> collectionOperationSlotConfigs
     ) {
         DMLData data = new DMLData();
         
@@ -353,16 +355,6 @@ public with sharing class MobileDriveGeneratorDMLService {
         }
 
         //HRP-10846 Start
-        data.travelTimeIndexes = new List<TravelTimeIndex>();
-        for (sked_Travel_Time_Index_Item__c travelTime : travelTimeIndexes)
-        {
-            if(travelTime.sked_Travel_Time_Breakdown_JSON__c != NULL)
-            {
-
-            
-            data.travelTimeIndexes.add(new TravelTimeIndex(travelTime));
-            }
-        }
         data.mapCoIdVsStagingLocations = new Map<Id, List<sked_Collection_Op_Staging_Location__c>>();
         for (sked_Collection_Op_Staging_Location__c collectionOperationStagingLocation : collectionOperationStagingLocations) {
             if (!data.mapCoIdVsStagingLocations.containsKey(collectionOperationStagingLocation.sked_Collection_Operation__c)) {
@@ -371,6 +363,12 @@ public with sharing class MobileDriveGeneratorDMLService {
             data.mapCoIdVsStagingLocations.get(collectionOperationStagingLocation.sked_Collection_Operation__c).add(collectionOperationStagingLocation);
         }
         //HRP-10846 End
+
+        data.staffCountThresholds = new List<sked_Staff_Count_Threshold__c>(staffCountThresholds);
+        data.collectionOperationSlotConfigs = new List<DMLColOpSlotConfiguration>();
+        for(sked_Collection_Operation_Slot_Config__c collectionOperationSlotConfig : collectionOperationSlotConfigs) {
+            data.collectionOperationSlotConfigs.add(new DMLColOpSlotConfiguration(collectionOperationSlotConfig));
+        }
         
         return data;
     }
@@ -414,18 +412,27 @@ public with sharing class MobileDriveGeneratorDMLService {
     }
 
     //HRP-10846 Start
-    static List<sked_Travel_Time_Index_Item__c> fetchTravelTimeIndexFromCOId(List<sked__Location__c> sites) {
-        Set<Double> setOfLatitude = new Set<Double>();
-        Set<Double> setOfLongitude = new Set<Double>();
-        for (sked__Location__c site : sites)
-        {
-            setOfLatitude.add(site.sked__GeoLocation__latitude__s);
-            setOfLongitude.add(site.sked__GeoLocation__longitude__s);
-        }
+    public static void fetchTravelTimeIndexFromCOId(
+        DMLData data, 
+        Location driveSiteLocation, 
+        Location coStagingLocation
+    ) {
+        String siteToCOKey = driveSiteLocation.latitude + ' ' + driveSiteLocation.longitude + ':' + coStagingLocation.latitude + ' ' + coStagingLocation.longitude;
+        String coToSiteKey = coStagingLocation.latitude + ' ' + coStagingLocation.longitude + ':' + driveSiteLocation.latitude + ' ' + driveSiteLocation.longitude;
         
-        return [SELECT Id, sked_From__c, sked_Key__c, sked_Last_Refresh_Date__c, sked_Timezone__c,
-                sked_To__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
-                FROM sked_Travel_Time_Index_Item__c Where (sked_From__latitude__s in:setOfLatitude AND sked_From__longitude__s in:setOfLongitude) OR (sked_To__latitude__s in:setOfLatitude AND sked_To__longitude__s in:setOfLongitude)];
+        List<sked_Travel_Time_Index_Item__c> travelTimeIndexItems = 
+        [
+            SELECT Id, sked_From__c, sked_Key__c, sked_Last_Refresh_Date__c, sked_Timezone__c,
+            sked_To__c, sked_Travel_Distance__c, sked_Travel_Time_Breakdown_JSON__c
+            FROM sked_Travel_Time_Index_Item__c 
+            WHERE sked_Key__c = :siteToCOKey OR sked_Key__c = :coToSiteKey
+        ];
+        data.travelTimeIndexes = new List<TravelTimeIndex>();
+        for (sked_Travel_Time_Index_Item__c travelTime : travelTimeIndexItems) {
+            if(travelTime.sked_Travel_Time_Breakdown_JSON__c != null) {
+                data.travelTimeIndexes.add(new TravelTimeIndex(travelTime));
+            }
+        }
     }
     
     static List<sked_Collection_Op_Staging_Location__c> fetchCollectionOperationStagingLocation(Set<Id> collectionOperationIds, DMLSchedulingBounds schedulingBounds) {
@@ -440,7 +447,7 @@ public with sharing class MobileDriveGeneratorDMLService {
     // HRP - 9901 - Added Site Operation Type Reference
     static List<sked__Location__c> fetchSites(Set<Id> siteIds, DMLSchedulingBounds schedulingBounds) {
         return [SELECT Id, Name, sked_Collection_Operation__c, sked_Date_Site_Inspection_Completed__c, sked_Fixed_Site_Appointment_Pattern__c,
-                sked_Physical_Location_Type__c, sked_Travel_Time_to_Staging_Location__c, sked_Timezone__c,
+                sked_Physical_Location_Type__c, sked_Travel_Time_to_Staging_Location__c, sked_Timezone__c, sked_Do_Not_Use_Vehicle__c,
                 sked_Travel_Time_Breakdown_JSON__c, sked_Travel_Time_Breakdown_JSON_2__c,Operation_Type__c, sked__GeoLocation__c,sked__GeoLocation__latitude__s,sked__GeoLocation__longitude__s, 
                 (SELECT Id, sked_Location__c, sked_Required__c, sked_Tag__c, sked_Tag__r.Name, sked_Minimum_Quantity__c,
                  sked_Tag__r.sked_Resource_Type__c, sked_Tag__r.sked__Type__c
@@ -539,6 +546,30 @@ public with sharing class MobileDriveGeneratorDMLService {
                 FROM sked_Staffing_Decision_Matrix__c
                 WHERE Id IN :staffingDecisionMatrixIds];
     }
+
+    static List<sked_Staff_Count_Threshold__c> fetchStaffCountThresholds() {
+        return [SELECT Id, sked_Staff_Count_Threshold__c
+                FROM sked_Staff_Count_Threshold__c];
+    }
+
+    static List<sked_Collection_Operation_Slot_Config__c> fetchCollectionOperationSlotConfigs(Set<Id> collectionOperationIds, DMLSchedulingBounds schedulingBounds) {
+        return [
+            SELECT Id, sked_Effective_Start_Date__c, sked_Effective_End_Date__c,
+            sked_Collection_Operation__c, sked_Procedure_Type__c,
+            sked_Drive_Type__c, sked_Fixed_Site_Operation_Type__c,
+            sked_Slot_Configuration__c 
+            FROM sked_Collection_Operation_Slot_Config__c
+            WHERE sked_Collection_Operation__c IN :collectionOperationIds
+            AND sked_Effective_Start_Date__c <= :schedulingBounds.endDate
+            AND (sked_Effective_End_Date__c = null OR sked_Effective_End_Date__c >= :schedulingBounds.startDate)
+            AND (sked_Drive_Type__c = :BSF_Constants.MOBILE_DRIVE
+            OR 
+            (
+                sked_Drive_Type__c = :BSF_Constants.FIXED_SITE_DRIVE
+                AND sked_Fixed_Site_Operation_Type__c = :skedConstants.OPERATION_TYPE_WB
+            ))
+        ];
+    }
     
     static Set<Id> reduceAccountIdsFromOpportunities(List<Opportunity> oppportunities) {
         Set<Id> accountIds = new Set<Id>();
@@ -608,8 +639,10 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Map<Id, List<sked__Resource_Override__c>> map_resourceOverrides;
         public Map<Id, List<sked_Collection_Op_Staging_Location__c>> mapCoIdVsStagingLocations;
         public List<TravelTimeIndex> travelTimeIndexes;
+        public List<sked_Staff_Count_Threshold__c> staffCountThresholds;
         public List<String> resourceRoleGroups; //HRP-11908
         public Map<String, String> map_resourceRole_resourceRoleGroup; //HRP-11908
+        public List<DMLColOpSlotConfiguration> collectionOperationSlotConfigs;
     }
     
     public virtual class DMLEntityBase {
@@ -807,6 +840,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Boolean isDualRolesAutoGenerated; //HRP-13862
         public Decimal redcrossVolunteerQuantity; //HRP-13146
         public Boolean redcrossVolunteerRequired; //HRP-13146
+        public boolean doNotUseVehicle;
         
         public DMLAccount account;
         public DMLCollectionOperation collectionOperation;
@@ -889,7 +923,8 @@ public with sharing class MobileDriveGeneratorDMLService {
                 sked_APT_Quantity__c = this.aptQuantity, //HRP-13190
                 sked_Redcross_Volunteer_Required__c = this.redcrossVolunteerRequired, //HRP-13146
                 sked_Redcross_Volunteer_Quantity__c = this.redcrossVolunteerQuantity, //HRP-13146
-                sked_Pending_Action_Reason_Code__c = pendingActionReasonCode//HRP-14369
+                sked_Pending_Action_Reason_Code__c = pendingActionReasonCode, //HRP-14369
+                sked_Do_Not_Use_Vehicle__c = this.doNotUseVehicle ?? false
             );
             return skedDrive;
         }
@@ -1253,6 +1288,7 @@ public with sharing class MobileDriveGeneratorDMLService {
         public Decimal travelTimeToStagingLocation;
         public String timezoneSidId;
         public string siteOperationType; // HRP - 9901
+        public boolean doNotUseVehicle;
         public List<DMLLocationTag> locationTags;
         public List<DMLSiteCollectionOperation> siteCollectionOperations;
         //public List<DMLTravelTimeBreakdown> travelTimeBreakdownsCoToSite;
@@ -1269,6 +1305,7 @@ public with sharing class MobileDriveGeneratorDMLService {
             this.travelTimeToStagingLocation = site.sked_Travel_Time_to_Staging_Location__c;
             this.timezoneSidId = site.sked_Timezone__c;
             this.siteOperationType = site.Operation_Type__c != null ? site.Operation_Type__c : ''; // HRP - 9901
+            this.doNotUseVehicle = site.sked_Do_Not_Use_Vehicle__c ?? false;
             
             if (site.sked_Location_Tags__r != NULL && !site.sked_Location_Tags__r.isEmpty()) {
                 this.locationTags = new List<DMLLocationTag>();
@@ -1508,6 +1545,28 @@ public with sharing class MobileDriveGeneratorDMLService {
             }*/
         }
     }
+
+    public class DMLColOpSlotConfiguration {
+        public date effectiveStartDate;
+        public date effectiveEndDate;
+        public String procedureType;
+        public string driveType;
+        public string operationType;
+        public string collectionOperationId;
+        public ColOpSlotConfigurationJson slotConfiguration;
+        
+        public DMLColOpSlotConfiguration(sked_Collection_Operation_Slot_Config__c colOpSlotConfig) {
+            this.effectiveStartDate = colOpSlotConfig.sked_Effective_Start_Date__c;
+            this.effectiveEndDate = colOpSlotConfig.sked_Effective_End_Date__c;
+            this.procedureType = colOpSlotConfig.sked_Procedure_Type__c;
+            this.driveType = colOpSlotConfig.sked_Drive_Type__c;
+            this.operationType = colOpSlotConfig.sked_Fixed_Site_Operation_Type__c;
+            this.collectionOperationId = colOpSlotConfig.sked_Collection_Operation__c;
+            if(!String.isBlank(colOpSlotConfig.sked_Slot_Configuration__c)) {
+                this.slotConfiguration = (ColOpSlotConfigurationJson)JSON.deserialize(colOpSlotConfig.sked_Slot_Configuration__c, ColOpSlotConfigurationJson.class);
+            }
+        }
+    }
     
     public class DMLSlot extends DMLEntityBase {
         public string id;
@@ -1628,5 +1687,13 @@ public with sharing class MobileDriveGeneratorDMLService {
         public decimal travelTime2;
         public decimal siteLogisticsBack; // HRP-11226
         public decimal siteLogisticsTo; // HRP-11226
+    }
+
+    public class ColOpSlotConfigurationJson {
+        public integer roundInterval;
+        public integer numberOfGroups;
+        public integer slotDuration;
+        public integer groupInterval;
+        public string roundOrderMode;
     }
 }

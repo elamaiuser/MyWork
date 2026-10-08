@@ -57,7 +57,6 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
     private Set<Id> errorLogIdsCreatedDuringBatchRun = new Set<Id>();
     public Set<Id> driveIdSet;
     public sked_Drive__c drive;
-    public Integer noOfVehicles = 0; 
     private Date targetCreatedDate;
     private DateTime targetCreatedDateTo;
     private DateTime targetCreatedDateFrom;
@@ -1087,7 +1086,30 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
         }
 
-        Integer maxNoOfVehicles = 0;
+        for(Id jobId : map_jobId_ResourceIds.keySet()) {
+            for(Id resId : map_jobId_ResourceIds.get(jobId)) {
+                Boolean canResourceBeAllocated = false;
+                sked__Resource__c resource = resourceIdVsResourceDetails.get(resId).resource;
+                if(resource.sked_DOT__c && 
+                (resourceModel.isDOTLimitPresent == true && 
+                (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) || (resourceModel.isDOTLimitPresent == FALSE)) {
+                    resourceModel.remainingNoOfDOT = resourceModel.remainingNoOfDOT != null ? resourceModel.remainingNoOfDOT - 1 : null;
+                    canResourceBeAllocated = true;
+                } else if(resource.sked_CDL__c && 
+                (resourceModel.isCDLLimitPresent == true && 
+                (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == null)) || (resourceModel.isCDLLimitPresent == FALSE)) {
+                    resourceModel.remainingNoOfCDL = resourceModel.remainingNoOfCDL != null ? resourceModel.remainingNoOfCDL - 1 : null;
+                    canResourceBeAllocated = true;
+                } else if(!resource.sked_CDL__c && !resource.sked_DOT__c) {
+                    canResourceBeAllocated = true;
+                }
+
+                if(!canResourceBeAllocated) {
+                    map_jobId_ResourceIds.get(jobId).remove(resId);
+                }
+            }
+        }
+
         for (Id jobId : map_jobId_ResourceIds.keySet()) {
             Decimal pdC = 0;
             Set<Id> resourceIds = new Set<Id>();
@@ -1138,68 +1160,51 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
             }
                 
             jobVsResourceAllocations.put(jobId, resourceIds);
-            maxNoOfVehicles = resourceIds.size() > maxNoOfVehicles ? resourceIds.size() : maxNoOfVehicles;
         }
         
-        for(Id jobId : jobVsResourceAllocations.keySet()) {
-            for(Id resId : jobVsResourceAllocations.get(jobId)) {
-                Boolean canResourceBeAllocated = false;
-                sked__Resource__c resource = resourceIdVsResourceDetails.get(resId).resource;
-                if(resource.sked_DOT__c && 
-                (resourceModel.isDOTLimitPresent == true && 
-                (resourceModel.remainingNoOfDOT > 0 || resourceModel.remainingNoOfDOT == NULL)) || (resourceModel.isDOTLimitPresent == FALSE)) {
-                    resourceModel.remainingNoOfDOT = resourceModel.remainingNoOfDOT != null ? resourceModel.remainingNoOfDOT - 1 : null;
-                    canResourceBeAllocated = true;
-                } else if(resource.sked_CDL__c && 
-                (resourceModel.isCDLLimitPresent == true && 
-                (resourceModel.remainingNoOfCDL > 0 || resourceModel.remainingNoOfCDL == null)) || (resourceModel.isCDLLimitPresent == FALSE)) {
-                    resourceModel.remainingNoOfCDL = resourceModel.remainingNoOfCDL != null ? resourceModel.remainingNoOfCDL - 1 : null;
-                    canResourceBeAllocated = true;
-                } else if(!resource.sked_CDL__c && !resource.sked_DOT__c) {
-                    canResourceBeAllocated = true;
-                }
-
-                if(!canResourceBeAllocated) {
-                    jobVsResourceAllocations.get(jobId).remove(resId);
-                }
-            }
-        }
-            
-        noOfVehicles = maxNoOfVehicles;
         return jobVsResourceAllocations;
     }
 
     //Job Allocation
     private  void allocateResourceToJob(JobAllocations jobAllocations, sked_Drive__c drive) {
-        Integer noOfVehicleAllocations = jobAllocations.vehicleAllocations.keySet().size();
-        Integer noOfEquipmentAllocations = jobAllocations.equipmentAllocations.keySet().size();
         List<sked__Job_Allocation__c> jobAlocList = new  List<sked__Job_Allocation__c>();
+        List<sked__Job__c> combinedJobList = new List<sked__Job__c>();
+        List<sked_Drive_Shift__c> driveshifts = getDriveShifts(drive.Id);
+        Integer noOfEquipmentAllocations = 0, noOfVehicleAllocations = 0;
         Map<Id,sked__Job__c> IdVsJobMap = new Map<Id,sked__Job__c>(drive.sked_Jobs__r);
-        if(jobAllocations != NULL && (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))) {
-            for(Id jobId : jobAllocations.equipmentAllocations.keySet()) {
-                if(IdVsJobMap.get(jobId).sked__Quantity__c == jobAllocations.equipmentAllocations.get(jobId).size()) {
-                    for(Id resId : jobAllocations.equipmentAllocations.get(jobId)){
+        
+        if(jobAllocations != null) {
+            if(jobAllocations.equipmentAllocations != null) {
+                for(Id jobId : jobAllocations.equipmentAllocations.keySet()) {
+                    if(IdVsJobMap.get(jobId).sked__Quantity__c == jobAllocations.equipmentAllocations.get(jobId).size()) {
+                        for(Id resId : jobAllocations.equipmentAllocations.get(jobId)) {
+                            sked__Job_Allocation__c jobAloc = new sked__Job_Allocation__c();
+                            jobAloc.sked__Job__c = jobId;
+                            jobAloc.sked__Resource__c = resId; 
+                            jobAlocList.add(jobAloc);
+                            noOfEquipmentAllocations++;
+                        }
+                    }            
+                }
+            }
+
+            if(jobAllocations.vehicleAllocations != null) {
+                for(Id jobId : jobAllocations.vehicleAllocations.keySet()) {
+                    for(Id resId : jobAllocations.vehicleAllocations.get(jobId)){
                         sked__Job_Allocation__c jobAloc = new sked__Job_Allocation__c();
                         jobAloc.sked__Job__c = jobId;
                         jobAloc.sked__Resource__c = resId; 
                         jobAlocList.add(jobAloc);
-                    }
-                }            
+                        noOfVehicleAllocations++;
+                    }          
+                }
             }
         }
-        if(jobAllocations != null && noOfVehicleAllocations > 0){
-            for(Id jobId : jobAllocations.vehicleAllocations.keySet()){
-                for(Id resId : jobAllocations.vehicleAllocations.get(jobId)){
-                    sked__Job_Allocation__c jobAloc = new sked__Job_Allocation__c();
-                    jobAloc.sked__Job__c = jobId;
-                    jobAloc.sked__Resource__c = resId;
-                    jobAlocList.add(jobAloc);
-                }
-          }
-        }
-        List<sked__Job__c> combinedJobList = new List<sked__Job__c>();
-        List<sked_Drive_Shift__c> driveshifts = getDriveShifts(drive.Id);
-        if(!jobAlocList.isEmpty() && (noOfVehicleAllocations > 0 || (noOfVehicleAllocations == 0 && vehicleTypeJob.size() == 0)) && (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))) {
+
+        if(!jobAlocList.isEmpty() && 
+            (noOfVehicleAllocations > 0 || (noOfVehicleAllocations == 0 && vehicleTypeJob.size() == 0)) && 
+            (noOfEquipmentAllocations > 0 || (noOfEquipmentAllocations == 0 && equipmentTypeJob.size() == 0))
+        ) {
             drive.sked_Status__c = drive.sked_Type_of_Drive__c == Constants.FIX_SITE_OPP ? (drive.sked_Opportunity__r.Source__c == Constants.SOURCE_CALENDAR_BUILD ? Constants.DRIVE_STATUS_CONFIRMED : Constants.DRIVE_STATUS_TENTATIVE) : Constants.DRIVE_STATUS_SYSTEM_GENERATED; //HRP-10009
             Boolean recalculationFlag = false;
             if (!jobAllocations.vehicleAllocations.isEmpty() && drive.sked_Type_of_Drive__c != Constants.FIX_SITE_OPP) {
@@ -1213,19 +1218,22 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                 reCalTotalNoOfStaffRequired = 0;
                 Map<String, Decimal> map_driveShiftId_driveShiftStaffCapacity = new Map<String, Decimal>();
                 for(sked_Drive_Shift__c shift : driveshifts) {
+                    Integer noOfVehiclesPerShift = 0;
                     GenerateMobileDrive.DriveStaffingComplementModel staffingComplement = new GenerateMobileDrive.DriveStaffingComplementModel(); //HRP-11634
                     for(sked__Job__c job : shift.sked_Jobs__r) { // HRP-11001 start
-                        if ( (job.sked_Asset_Type__c != null) && (job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE && job.sked__Quantity__c != noOfVehicles)) {
-                            recalculationFlag = true;
+                        if (job.sked_Asset_Type__c != null && job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {
+                            noOfVehiclesPerShift = jobAllocations.vehicleAllocations.get(job.Id).size();
+                            if(job.sked__Quantity__c != noOfVehiclesPerShift) recalculationFlag = true;
                         }
                     }
+
                     if(recalculationFlag) {
                         //HRP-11634 --> Starts Here
                         List<sked__Job__c> jobList = reCalculateStaffingComplement(
                             shift.sked_Jobs__r,
                             drive, 
                             shift,
-                            noOfVehicles,
+                            noOfVehiclesPerShift,
                             staffingComplement
                         );
                         combinedJobList.addAll(jobList);
@@ -1273,6 +1281,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                         List<sked_Drive_Shift__c> driveshiftsAfter = getDriveShifts(drive.Id); //HRP-11207 start
                         Map<Id, sked_Drive_Shift__c> map_driveShiftId_driveShift = new Map<Id, sked_Drive_Shift__c>();
                         for(sked_Drive_Shift__c driveShiftSingle : driveshiftsAfter) {
+                            Integer noOfVehiclesPerShift = 0;
                             driveProductivity += reCalculateDriveProductivityPlanned(drive, driveShiftSingle); //HRP-11634
                             decimal staffSetupAfter = 0;
                             decimal staffSetupBefore = driveShiftSingle.sked_Staff_Setup__c;
@@ -1280,18 +1289,21 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
                                 if (!string.isBlank(job.sked_Resource_Role__c)) {
                                     staffSetupAfter += job.sked__Quantity__c;
                                 }
+                                if (job.sked_Asset_Type__c != null && job.sked_Asset_Type__c == Constants.JOB_TYPE_VEHICLE) {
+                                    noOfVehiclesPerShift = jobAllocations.vehicleAllocations.get(job.Id).size();
+                                }
                             }
                             if(staffSetupAfter != staffSetupBefore) {
                                 driveShiftSingle.sked_Staff_Setup__c = staffSetupAfter;
                                 map_driveShiftId_driveShift.put(driveShiftSingle.Id, driveShiftSingle);
                             }
-                            if(driveShiftSingle.sked_Vehicles_Needed__c != noOfVehicles && driveShiftSingle.name == 'Shift 1') {
+                            if(driveShiftSingle.sked_Vehicles_Needed__c != noOfVehiclesPerShift && driveShiftSingle.name == 'Shift 1') {
                                 if(map_driveShiftId_driveShift.containsKey(driveShiftSingle.Id)) {
                                     driveShiftSingle = map_driveShiftId_driveShift.get(driveShiftSingle.Id);
                                 } else {
                                     map_driveShiftId_driveShift.put(driveShiftSingle.Id, driveShiftSingle);
                                 }
-                                driveShiftSingle.sked_Vehicles_Needed__c = noOfVehicles;
+                                driveShiftSingle.sked_Vehicles_Needed__c = noOfVehiclesPerShift;
                             }
                             driveShiftSingle.sked_Max_Donor_Capacity__c = map_driveShiftId_driveShiftStaffCapacity.get(driveShiftSingle.Id); //HRP-11634
                         }
@@ -1442,6 +1454,7 @@ global with sharing class DriveResourceAllocationBatch extends GenerateMobileDri
         driveShift.projectedRegisteredDonors = driveSingle.sked_Projected_Registered_Donors__c.divide(driveSingle.sked_Drive_Shift_Count__c, 2, System.RoundingMode.UP);
         sked_Staffing_Decision_Matrix__c matrix =  getStaffingDecisionMatrix(driveSingle.sked_Collection_Operation__c, driveSingle);
         staffingComplement.numberOfVehicles = (Decimal)noOfVehicles;
+        staffingComplement.staffCountThreshold = [SELECT sked_Staff_Count_Threshold__c FROM sked_Staff_Count_Threshold__c LIMIT 1].sked_Staff_Count_Threshold__c;
         staffingComplement = driveGenInstance.calculateJobQuantity(staffingComplement, driveShift, drive.typeOfDrive, new MobileDriveGeneratorDMLService.DMLStaffingDecisionMatrix(matrix), drive);
         for (sked__Job__c job : jobsToReCalculate) {
             if (job.sked__Type__c == Constants.JOB_TYPE_DRIVER) {

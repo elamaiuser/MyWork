@@ -780,10 +780,10 @@
         <relatedList>RelatedOpportunitySplits</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>New</excludeButtons>
         <fields>ORDERS.ORDER_NUMBER</fields>
         <fields>ORDERS.EFFECTIVE_DATE</fields>
         <fields>Publicity_Approved__c</fields>
-        <fields>Publicity_Submitted__c</fields>
         <relatedList>RelatedOrderList</relatedList>
     </relatedLists>
     <relatedLists>

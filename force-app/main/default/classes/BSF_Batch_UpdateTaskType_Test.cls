@@ -2,7 +2,7 @@
 public class BSF_Batch_UpdateTaskType_Test {
 
     @testSetup
-    static void setupData() {
+    static void setupData() { 
 
         List<Task> tasks = new List<Task>();
 
@@ -67,7 +67,7 @@ public class BSF_Batch_UpdateTaskType_Test {
 
         Test.startTest();
             BSF_Batch_UpdateTaskType batch =
-                new BSF_Batch_UpdateTaskType(subjectVsType, dueDate);
+                new BSF_Batch_UpdateTaskType(subjectVsType, dueDate, True);
             Database.executeBatch(batch, 5);
         Test.stopTest();
 
@@ -109,7 +109,7 @@ public class BSF_Batch_UpdateTaskType_Test {
 
         Test.startTest();
             BSF_Batch_UpdateTaskType batch =
-                new BSF_Batch_UpdateTaskType(subjectVsType, null);
+                new BSF_Batch_UpdateTaskType(subjectVsType, null, True);
             Database.executeBatch(batch, 5);
         Test.stopTest();
 

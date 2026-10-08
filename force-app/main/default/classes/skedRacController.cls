@@ -1019,6 +1019,9 @@ global virtual class skedRacController extends skedBaseController {
         skedRemoteResultModel result = new skedRemoteResultModel(request.viewData);
         SavePoint sp = Database.setSavepoint();
         try {
+            if(!hasAccess()) {
+                throw new skedException('You do not have permission to save Availability records.');
+            }
             string timezoneSidId = skedResourceUtils.getResourceTimezonesidId(request.resourceId);
             skedSetting.instance.App.setTimezoneSidId(timezoneSidId);
 
@@ -2373,6 +2376,17 @@ global virtual class skedRacController extends skedBaseController {
             result.userId = UserInfo.getUserId();
         }
         return result;
+    }
+
+    private static boolean hasAccess(){
+        String loggedInUserProfileName = [SELECT Id, Profile.Name FROM User WHERE Id = :UserInfo.getUserId()].Profile.Name;
+        List<String> allowedAssignments = Profile_Specific_Functionality_Access__mdt.getInstance('Availability_Access_Settings').Allowed_Assignments__c.split(',');
+        List<String> allowedProfiles = new List<String>();
+
+        for (String assignment : allowedAssignments) {
+            allowedProfiles.add(assignment.trim());
+        }
+        return allowedProfiles.contains(loggedInUserProfileName);
     }
     
     /*********************************************************** Sked APIs ***********************************************************/

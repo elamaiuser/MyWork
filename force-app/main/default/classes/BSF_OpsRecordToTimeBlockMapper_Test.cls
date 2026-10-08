@@ -52,12 +52,13 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
         sd.premiumCharge = true;
         sd.premiumTranslator = true;
         sd.premiumDriver = true;
-        // restBreaksNotTaken omitted: submitted via Trade API, not direct Workday mapper.
+        // restBreaksNotTaken without requireNumberOfRestBreaks should not create a rest-break block.
 
         BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
         premiumCtx.detail = sd;
         premiumCtx.staffRecordId = 'staff-guid-2';
         premiumCtx.approverEmail = 'approver2@example.org';
+        premiumCtx.requireNumberOfRestBreaks = false;
         List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext> staffContexts =
             new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>{ premiumCtx };
 
@@ -73,5 +74,54 @@ private class BSF_OpsRecordToTimeBlockMapper_Test {
             System.assertEquals('456', b.Worker_Reference.ID[0].input);
             System.assertEquals(BSF_OpsRecordToTimeBlockMapper.QUANTITY_PREMIUM, b.Quantity);
         }
+    }
+
+    @IsTest
+    static void buildPremiumTimeBlocks_createsRestBreakBlockWhenConfigured() {
+        skedOpsRecordApiData.opsRecordStaffDetail sd = new skedOpsRecordApiData.opsRecordStaffDetail();
+        sd.personID = 789;
+        sd.restBreaksNotTaken = 2;
+        sd.notWorked = false;
+
+        BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
+        premiumCtx.detail = sd;
+        premiumCtx.staffRecordId = 'staff-guid-3';
+        premiumCtx.approverEmail = 'approver3@example.org';
+        premiumCtx.requireNumberOfRestBreaks = true;
+
+        List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> blocks =
+            BSF_OpsRecordToTimeBlockMapper.buildPremiumTimeBlocks(
+                new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>{ premiumCtx },
+                Date.newInstance(2026, 1, 3)
+            );
+
+        System.assertEquals(1, blocks.size(), 'Expected one rest-break block');
+        System.assertEquals(
+            BSF_OpsRecordToTimeBlockMapper.TIME_ENTRY_CA_MISSED_SHORT_REST_BREAK,
+            blocks[0].Time_Entry_Code_Reference.ID[0].input
+        );
+        System.assertEquals(2, blocks[0].Quantity);
+    }
+
+    @IsTest
+    static void buildPremiumTimeBlocks_skipsRestBreakBlockForAbsentStaff() {
+        skedOpsRecordApiData.opsRecordStaffDetail sd = new skedOpsRecordApiData.opsRecordStaffDetail();
+        sd.personID = 790;
+        sd.restBreaksNotTaken = 1;
+        sd.notWorked = true;
+
+        BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext premiumCtx = new BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext();
+        premiumCtx.detail = sd;
+        premiumCtx.staffRecordId = 'staff-guid-4';
+        premiumCtx.approverEmail = 'approver4@example.org';
+        premiumCtx.requireNumberOfRestBreaks = true;
+
+        List<skedWorkdayTimeTrackingBsvc.Reported_Time_Block_DataType> blocks =
+            BSF_OpsRecordToTimeBlockMapper.buildPremiumTimeBlocks(
+                new List<BSF_OpsRecordToTimeBlockMapper.PremiumStaffContext>{ premiumCtx },
+                Date.newInstance(2026, 1, 4)
+            );
+
+        System.assertEquals(0, blocks.size(), 'Absent staff should not receive rest-break blocks');
     }
 }

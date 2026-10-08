@@ -317,7 +317,8 @@ public class publicityReportNewPortfoliosTest {
        
         // HRP-10307 - Adding different products for concatenation        
         Product2 prod2 = new Product2(Name = 'Power Red 11 x 17 Poster',Family = 'General;Power Red',isActive=true,Product_Id__c='ATC.Size001b',Start_Date__c=System.today()-10,End_Date__c=System.today()+5000);
-        Product2 prod3 = new Product2(Name = 'Theme- Seasonal',Family = 'Theme',isActive=true,Product_Id__c='Theme001',Start_Date__c=System.today()-10,End_Date__c=System.today()+5000);
+        Product2 prod3 = new Product2(Name = 'Theme- Seasonal',Family = 'Theme',isActive=true,Product_Id__c='Theme001',Start_Date__c=System.today()-10,End_Date__c=System.today()+5000,
+                                      Needed_for_Ordering_Process__c = true); // HRP-18010 - required by the Order.Theme__c lookup filter
         Product2 prod4 = new Product2(Name = 'Size - 8 1/2 x 11 Fliers-Electronic',Family = 'Theme;Education;Diversity;General',isActive=true,Product_Id__c='Size005.e',Start_Date__c=System.today()-10,End_Date__c=System.today()+5000);
         productlist.add(prod1);
         productlist.add(prod2);
@@ -335,16 +336,23 @@ public class publicityReportNewPortfoliosTest {
         pentrylist.add(new PricebookEntry(Pricebook2Id = pricebookId, Product2Id = productlist[3].Id,UnitPrice = 0.01, IsActive = true));
 		insert pentrylist;
 			
-        // create order 
+        // HRP-18010 - package for the Package Name column
+        Publicity_Package__c pkg = new Publicity_Package__c(Name = 'Test Publicity Package');
+        insert pkg;
+
+        // create order
         List<Order> orderlist = new List<Order>();
         Order o = new Order(name='Order 1',AccountId= id_acc,OpportunityId = id_opp,Publicity_Submitted__c = false,Publicity_Approved__c = false,
                             Material_Recipient_Type__c = 'Same',Material_Recipient__c = 'Account Manager',EffectiveDate=system.today(),
-                            status='draft',Pricebook2Id =  pricebookId,Publicity_Approved_Date__c=System.today()-5);
+                            status='draft',Pricebook2Id =  pricebookId,Publicity_Approved_Date__c=System.today()-5,
+                            Local_Offerings__c = 'Local Promotion',AdditionalComments__c = 'Local coffee coupons',
+                            Publicity_Package__c = pkg.Id,Theme__c = prod3.Id); // HRP-18010
         orderlist.add(o);
         
         o = new Order(name='Test2',AccountId= id_acc,OpportunityId = id_opp,Publicity_Submitted__c = false,Publicity_Approved__c = false,
                       Material_Recipient_Type__c = 'Same',Material_Recipient__c = 'Account Manager',EffectiveDate=system.today(),
-                      status='draft',Pricebook2Id =  pricebookId,Publicity_Approved_Date__c=System.today()-4);
+                      status='draft',Pricebook2Id =  pricebookId,Publicity_Approved_Date__c=System.today()-4,
+                      AdditionalComments__c = 'Leftover text'); // HRP-18010 - no Local Offering, so the report must not show this
         orderlist.add(o);
         insert orderlist;
         
@@ -399,6 +407,13 @@ public class publicityReportNewPortfoliosTest {
         ocr.ContactId = contactList[0].id;
         ocr.Role = 'Publicity Materials Recipient';
         insert ocr;
+
+        // HRP-18010 - two Print Appt Contacts; the report must show the latest assigned one
+        OpportunityContactRole olderPrintAppt = new OpportunityContactRole(OpportunityId = id_opp, ContactId = contactList[0].Id, Role = 'Print Appt Contact');
+        insert olderPrintAppt;
+        Test.setCreatedDate(olderPrintAppt.Id, System.now().addDays(-2));
+        OpportunityContactRole latestPrintAppt = new OpportunityContactRole(OpportunityId = id_opp, ContactId = contactList[1].Id, Role = 'Print Appt Contact');
+        insert latestPrintAppt;
         TriggerHandler.clearAllBypasses() ;
         
         Test.startTest();
@@ -455,12 +470,26 @@ public class publicityReportNewPortfoliosTest {
         reportController.setorderApprovedDate1(System.today() -10);
         reportController.setorderApprovedDate2(System.today() +10);
         reportController.search();
-        
+
+        // HRP-18010 - one row per Order Item: Order 1 has one item, Order 2 has three
+        System.assertEquals(4, reportController.ReportDataWrapperList.size(), 'Report should return one row per Order Item');
+
         for(PublicityReportNewPortfoliosController.ReportDataWrapper wrapper:reportController.ReportDataWrapperList){
             wrapper.isSelected = true;
+            System.assertEquals(contactList[1].Id, wrapper.printApptOcr.ContactId, 'Latest assigned Print Appt Contact should be shown');
+            if(wrapper.oitem.OrderId == orderlist[0].Id){
+                System.assertEquals('Local coffee coupons', wrapper.oitem.order.AdditionalComments__c);
+                System.assertEquals('Test Publicity Package', wrapper.oitem.order.Publicity_Package__r.Name);
+                System.assertEquals('Theme- Seasonal', wrapper.oitem.order.Theme__r.Name);
+            }
+            else{
+                System.assertEquals(null, wrapper.oitem.order.AdditionalComments__c, 'Specify Local Item Offered should be blank without a Local Offering');
+            }
         }
-             
+
         reportController.selectedRecords();
+        System.assertEquals(4, reportController.ReportQueryWrapperList.size(), 'All selected rows should be exported');
+        System.assertEquals(contactList[1].Id, reportController.ReportQueryWrapperList[0].printApptOcrWrap.ContactId, 'Export should carry the Print Appt Contact');
         reportController.ExportToExcel();
         reportController.ExportToCSV();
         reportController.clear();

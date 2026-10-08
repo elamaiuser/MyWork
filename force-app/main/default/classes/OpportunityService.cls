@@ -3975,21 +3975,12 @@ opp.StageName = 'Closed';
         }
     }
     
-    public static void populateRelatedFieldsOnDOC(List<Opportunity> oppList, Map<Id,Opportunity> oldOppMap)
-    {
-        Map<Id,String> openToPublicMap = new Map<Id,String>();
-        Map<Id,String> escrotNameMap = new Map<Id,String>();
-        Set<Id> oppIds = new Set<Id>();
+    public static void populateRelatedFieldsOnDOC(List<Opportunity> oppList, Map<Id,Opportunity> oldOppMap) {
         Map<Id, Map<String,String>> oppFieldsRelatedToDOCMap = new Map<Id, Map<String,String>>();
         Map<String,String> relatedFieldsMap = new Map<String,String>();
         List<sked_Drive__c> driveListToBeUpdatedList = new List<sked_Drive__c>();
-        Boolean updateFlag = FALSE;
-        if(oppList == null || oldOppMap == NULL)
-        {
-            return;
-        }
-        for(Opportunity newOpp: oppList)
-        {
+        
+        for(Opportunity newOpp: oppList) {
             Opportunity oldOpp = oldOppMap.get(newOpp.Id);
             if(oldOpp != null) {
                 if(oldOpp.Open_to_Public__c != newOpp.Open_to_Public__c) {
@@ -4015,9 +4006,9 @@ opp.StageName = 'Closed';
                                            WHERE sked_Opportunity__c IN: oppFieldsRelatedToDOCMap.keySet()];
             if(!drvList.isEmpty()) {
                 for(sked_Drive__c drive : drvList) {
-                      sked_Drive__c driveToUpdate = new sked_Drive__c();
                     Map<String, String> map_fieldName_fieldValueToUpdate = oppFieldsRelatedToDOCMap.get(drive.sked_Opportunity__c);
                     if(map_fieldName_fieldValueToUpdate != null && !map_fieldName_fieldValueToUpdate.isEmpty()) {
+                        sked_Drive__c driveToUpdate = new sked_Drive__c(Id = drive.Id);
                         for(String fieldToUpdate : map_fieldName_fieldValueToUpdate.keySet()) {
                             String existingFieldValueOnDrive = (String)drive.get(fieldToUpdate);
                         	if(existingFieldValueOnDrive != null && existingFieldValueOnDrive.equals(map_fieldName_fieldValueToUpdate.get(fieldToUpdate))) continue;
@@ -4043,6 +4034,7 @@ opp.StageName = 'Closed';
             insert errorLogList;
         }   
     }
+    
     //HRP-9439
     public static void sendOpportunityPromotionDisassociatEmail(Map<Opportunity_Promotion__c,OpportunityTeamMember> oppPromotionMap){
         System.debug('sendOpportunityPromotionDisassociatEmail==>');
@@ -4115,6 +4107,7 @@ opp.StageName = 'Closed';
         List<OpportunityTeamMember> oppteamlist = oppTeamMembersMap.get(opp.Id);
         if (oppteamlist != null) {
             for (OpportunityTeamMember oppteamem : oppteamlist) {
+                        System.debug(LoggingLevel.ERROR, 'OTM Role: ' + oppteamem.TeamMemberRole + ' , UserId: ' + oppteamem.UserId);
                 if (oppteamem.TeamMemberRole != null && oppteamem.TeamMemberRole == BSF_Constants.DISTRICT_MANAGER) {
                     districtManager = oppteamem.UserId;
                 }

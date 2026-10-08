@@ -319,10 +319,15 @@ class SlwcAvailator {
       });
       
       resource.groupActivities = (resource.activityResources || []).map((activityResource) => {
-        let groupActivity = groupActivitiesMap[activityResource.activityId];
+        // HRP-17888: clone -- populateDateTime feeds its own output back in, so the shared entry
+        // drifted a day per extra activity resource, and the last one processed won for all of them.
+        let groupActivity = { ...groupActivitiesMap[activityResource.activityId] };
         groupActivity.objectType = OBJECT_TYPE.ACTIVITY;
         groupActivity.start = activityResource.start || groupActivity.start;
         groupActivity.finish = activityResource.finish || groupActivity.finish;
+        // The junction's own window. NULL over undefined: a stale derived Date here is the bug.
+        groupActivity.startDate = activityResource.startDate || null;
+        groupActivity.endDate = activityResource.endDate || null;
         this.populateDateTime(groupActivity);
         return groupActivity;
       });

@@ -15,7 +15,7 @@ public without sharing class OrderService {
     /*
 * JIRA Ticket: HRP - 735, 
 * Description: 2.0 DRD AM: Selecting Publicity Order Item
-*/
+
     public static void validateMaterialrecipent( List<Order> oldOrders, List<Order> newOrders,
                                                 Map<Id,Order> oldOrdersMap,Map<Id,Order> newOrdersMap){
                                                     
@@ -359,27 +359,45 @@ public without sharing class OrderService {
             }
         }
     } 
-    public static void setPublicityApproved( List<Order> oldOrders, List<Order> newOrders,
-                                            Map<Id,Order> oldOrdersMap,Map<Id,Order> newOrdersMap)
-    {
-      Map<Id,Order> OrderIdMap =new Map<Id,Order>([SELECT Id,Opportunity.No_Publicity_Needed__c,(SELECT Id from OrderItems) from Order where Id IN:oldOrdersMap.KeySet()]);//HRP-12752
-                                                
-        for( Order od : newOrders )
-        {
-            if( oldOrdersMap.get(od.Id).Publicity_Approved__c != newOrdersMap.get(od.Id).Publicity_Approved__c  && newOrdersMap.get(od.Id).Publicity_Approved__c)//HRP-12752 Publicity_Approved__c value true
-            {
-                //HRP-12752
-                if(!OrderIdMap.get(od.Id).Opportunity.No_Publicity_Needed__c && OrderIdMap.get(od.Id).OrderItems.isEmpty())
-                {
-                    od.addError('Products have not been added to Order. Please add Products before approving Order or select \'No Publicity Needed\' on Opportunity Details tab.');
+    public static void setPublicityApproved( 
+        List<Order> newOrders,
+        Map<Id,Order> oldOrdersMap
+    ) {
+        Set<Id> orderIdsForFurtherProcessing = new Set<Id>();
+
+        for(Order od : newOrders) {
+            if(oldOrdersMap.get(od.Id).Publicity_Approved__c != od.Publicity_Approved__c && 
+                od.Publicity_Approved__c
+            ) {
+                orderIdsForFurtherProcessing.add(od.Id);
+            }
+        }
+
+        if(!orderIdsForFurtherProcessing.isEmpty()) {
+            Map<Id,Order> OrderIdMap = new Map<Id,Order>([
+                SELECT Id, Opportunity.No_Publicity_Needed__c, 
+                Opportunity.Is_Template__c, (
+                    SELECT Id from OrderItems
+                ) 
+                FROM Order 
+                WHERE Id IN :orderIdsForFurtherProcessing
+            ]);
+
+            for(Order order : newOrders) {
+                if(!orderIdsForFurtherProcessing.contains(order.Id)) continue;
+
+                if(orderIdMap.containsKey(order.Id) && orderIdMap.get(order.Id).Opportunity.Is_Template__c) continue;
+
+                if(!order.Opportunity.No_Publicity_Needed__c && OrderIdMap.get(order.Id).OrderItems.isEmpty()) {
+                    order.addError(Custom_Messages__mdt.getInstance('Restrict_Order_Approval_W_O_Products').value__c);
                 }
-                //HRP-12752
-                                                        od.Publicity_Approved_Date__c = System.today();
-                                                        od.Publicity_Approved_By__c = userInfo.getUserId();
-                                                    }
-                                                }                                                   
-                                                
-                                            }   
+
+                order.Publicity_Approved_Date__c = System.today();
+                order.Publicity_Approved_By__c = userInfo.getUserId();
+            }
+        }
+    }
+                                           
     /*
     * HRP-11307 changes starts here
     */
@@ -671,4 +689,133 @@ public without sharing class OrderService {
 
     }
 */
+    
+    public static void createOrderProducts(List<Order> newOrders, Map<Id, Order> oldOrdersMap) {
+        Set<Id> packageIds = new Set<Id>();
+        Set<Id> productIds = new Set<Id>();
+        List<OrderItem> orderItemsToInsert = new List<OrderItem>();
+        Map<Id, PricebookEntry> map_productId_pricebookEntry = new Map<Id, PricebookEntry>();
+
+        for(Order order : newOrders) {
+            if((oldOrdersMap == null && order.Publicity_Package__c != null) ||
+                (oldOrdersMap != null && oldOrdersMap.containsKey(order.Id) && order.Publicity_Package__c != oldOrdersMap.get(order.Id).Publicity_Package__c)) {
+                packageIds.add(order.Publicity_Package__c);
+            }
+        }
+
+        if(!packageIds.isEmpty()) {
+            List<Publicity_Package_Item__c> packageItems = [
+                SELECT Id, Product__c, Product__r.Name,
+                Package__c, Quantity__c 
+                FROM Publicity_Package_Item__c 
+                WHERE Package__c IN :packageIds
+            ];
+
+            if(!packageItems.isEmpty()) {
+                for(Publicity_Package_Item__c packageItem : packageItems) {
+                    productIds.add(packageItem.Product__c);
+                }
+
+                for(PricebookEntry pricebookEntry : [SELECT Id, Product2Id, UnitPrice, Pricebook2Id 
+                                                    FROM PricebookEntry 
+                                                    WHERE Product2Id IN :productIds]
+                ) {
+                    map_productId_pricebookEntry.put(pricebookEntry.Product2Id, pricebookEntry);
+                }
+
+                for(Order order : newOrders) {
+                    for(Publicity_Package_Item__c packageItem : packageItems) {
+                        if(packageItem.Package__c != order.Publicity_Package__c) continue;
+                        orderItemsToInsert.add(new OrderItem(
+                            OrderId = order.Id,
+                            Product2Id = packageItem.Product__c,
+                            Quantity = packageItem.Quantity__c,
+                            UnitPrice = map_productId_pricebookEntry.get(packageItem.Product__c).UnitPrice,
+                            ListPrice = map_productId_pricebookEntry.get(packageItem.Product__c).UnitPrice,
+                            PricebookEntryId = map_productId_pricebookEntry.get(packageItem.Product__c).Id,
+                            Material_Recipient__c = order.Material_Recipient__c
+                        ));
+                    }       
+                }
+            }
+        }
+
+        if(!orderItemsToInsert.isEmpty()) {
+            Database.SaveResult[] results = Database.insert(orderItemsToInsert, false);
+            List<BSF_Error_Log__c> errorLogsToInsert = BSF_Utilities.createErrorLog(
+                results, 
+                'Create Order Products',
+                'OrderService', 
+                'createOrderProducts',
+                'Error',
+                'Error in creating order products'
+            );
+            insert errorLogsToInsert;
+        }
+    }
+    
+    public static void deleteOrderProductsUponPackageChange(List<Order> newOrders, Map<Id, Order> oldOrdersMap) {
+        Set<Id> orderIds = new Set<Id>();
+
+        for(Order order : newOrders) {
+            if(
+                oldOrdersMap != null 
+                && oldOrdersMap.containsKey(order.Id) 
+                && order.Publicity_Package__c != oldOrdersMap.get(order.Id).Publicity_Package__c
+            ) {
+                orderIds.add(order.Id);
+            }
+        }
+
+        if(!orderIds.isEmpty()) {
+            List<OrderItem> orderItemsToDelete = [SELECT Id FROM OrderItem WHERE OrderId IN :orderIds];
+            if(!orderItemsToDelete.isEmpty()) {
+                Database.DeleteResult[] results = Database.delete(orderItemsToDelete, false);
+                List<BSF_Error_Log__c> errorLogsToInsert = BSF_Utilities.createErrorLog(
+                    results, 
+                    'Delete Order Products',
+                    'OrderService', 
+                    'deleteOrderProductsUponPackageChange',
+                    'Error',
+                    'Error in deleting order products'
+                );
+                insert errorLogsToInsert;
+            }
+        }
+    }
+
+    public static void updateMaterialRecipientOnOrderProducts(Map<Id, Order> newOrdersMap, Map<Id, Order> oldOrdersMap) {
+        Set<Id> orderIds = new Set<Id>();
+
+        for(Order order : newOrdersMap.values()) {
+            if(
+                oldOrdersMap != null 
+                && oldOrdersMap.containsKey(order.Id) 
+                && order.Material_Recipient__c != oldOrdersMap.get(order.Id).Material_Recipient__c
+                && order.publicity_Package__c == oldOrdersMap.get(order.Id).publicity_Package__c
+            ) {
+                orderIds.add(order.Id);
+            }
+        }
+
+        if(!orderIds.isEmpty()) {
+            List<OrderItem> orderItemsToUpdate = [SELECT Id, OrderId, Material_Recipient__c FROM OrderItem WHERE OrderId IN :orderIds];
+            for(OrderItem orderItem : orderItemsToUpdate) {
+                orderItem.Material_Recipient__c = newOrdersMap.get(orderItem.OrderId).Material_Recipient__c;
+            }
+
+            if(!orderItemsToUpdate.isEmpty()) {
+                Database.SaveResult[] results = Database.update(orderItemsToUpdate, false);
+                List<BSF_Error_Log__c> errorLogsToInsert = BSF_Utilities.createErrorLog(
+                    results, 
+                    'Update Material Recipient on Order Products',
+                    'OrderService', 
+                    'updateMaterialRecipientOnOrderProducts',
+                    'Error',
+                    'Error in updating material recipient on order products'
+                );
+                insert errorLogsToInsert;
+            }
+        }
+    }
 }

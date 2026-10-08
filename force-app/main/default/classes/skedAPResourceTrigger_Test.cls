@@ -38,8 +38,8 @@ private class skedAPResourceTrigger_Test {
     static testMethod void testEndApResourceFunctionality() {
         Test.startTest();
         
-        List<sked__Availability_Pattern_Resource__c> testApResources = [SELECT Id, sked_End_Date__c FROM sked__Availability_Pattern_Resource__c];
-        testApResources[0].sked_End_Date__c = system.today();
+        List<sked__Availability_Pattern_Resource__c> testApResources = [SELECT Id, sked__Start__c, sked_End_Date__c FROM sked__Availability_Pattern_Resource__c];
+        testApResources[0].sked_End_Date__c = testApResources[0].sked__Start__c.date().addDays(2);
         update testApResources[0];
         
         Test.stopTest();

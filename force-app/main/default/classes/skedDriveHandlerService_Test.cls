@@ -92,4 +92,33 @@ private class skedDriveHandlerService_Test {
         Assert.isTrue([SELECT Id, sked__Job_Status__c FROM sked__Job__c LIMIT 1].sked__Job_Status__c == 'Cancelled');
     
     }
+    
+    static testmethod void testCascadeCompleteEvents() {
+        skedTestDataFactory testDataFactory = new skedTestDataFactory('us', 14);
+        Map<string, sObject> mapTestData = testDataFactory.setupCommonTestData();
+        mapTestData = testDataFactory.setupDriveData();
+
+        Test.startTest();
+        sked_Drive__c testDrive1 = (sked_Drive__c) mapTestData.get('testDrive1');
+
+        sked_Drive_Change_Request__c testDcr = new sked_Drive_Change_Request__c();
+        testDcr.sked_Auto_Process__c = true;
+        testDcr.sked_Description__c = 'Test Request';
+        testDcr.sked_Drive__c = testDrive1.Id;
+        testDcr.sked_Drive_Contention__c = 'Exceed Operation Drive Limit';
+        testDcr.sked_Notes__c = 'Test Request';
+        testDcr.sked_Reason__c = 'Sponsor Initiated'; 
+        testDcr.sked_Status__c = 'Pending';
+        insert testDcr;
+        
+        testDrive1.sked_Status__c = skedConstants.DRIVE_STATUS_COMPLETE;
+        skedHubBase.BypassUpdateTriggers = true;
+        update testDrive1;
+        skedHubBase.BypassUpdateTriggers = false;
+        
+        skedDriveHandlerService.cascadeCompleteEvents(new Set<Id>{testDrive1.Id});
+        
+        Test.stopTest();
+        Assert.isTrue(skedConstants.DRIVE_CHANGE_REQUEST_STATUS_CANCELLED == [SELECT Id, sked_Status__c FROM sked_Drive_Change_Request__c WHERE Id = :testDcr.Id LIMIT 1].sked_Status__c);
+    }
 }

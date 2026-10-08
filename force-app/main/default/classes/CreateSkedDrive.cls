@@ -199,6 +199,7 @@ public class CreateSkedDrive
     
     static void generateDrive(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
         prepareDriveData(data, drive);		// preparing account, site, collection operationfor creating drives
+        populateTravelTimeIndexItemsOnDmlData(data, drive);
         calculateTotalProceduresProjected(drive);	    /****** point no 1 ******/ 
         calculatePlateletRounds(drive);         /****** point no 2 ******/
         proposeDriveShifts(data, drive);	    /****** point no 6d ******/
@@ -245,6 +246,13 @@ public class CreateSkedDrive
         drive.drawEnd = DateTime.newInstanceGmt(drive.driveDate, drive.endTime);
         drive.drawDuration = skedDateTimeUtils.getDifferentMinutes(drive.drawStart, drive.drawEnd);
         drive.drawHours = drive.drawDuration / 60;         
+    }
+
+    static void populateTravelTimeIndexItemsOnDmlData(FetchRelatedDriveData.DMLData data, FetchRelatedDriveData.DMLDrive drive) {
+        Location coStagingLocation = drive.coStagingLocation.sked_Staging_Location__r.sked_GeoLocation__c;
+        Location siteLocation = drive.driveSite.geoLocation;
+        
+        FetchRelatedDriveData.fetchTravelTimeIndexFromCOId(data, siteLocation, coStagingLocation);
     }
     
     /****** point no 1 ******/

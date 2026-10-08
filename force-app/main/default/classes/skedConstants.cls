@@ -10,12 +10,23 @@ public class skedConstants {
     public static final string OPERATION_TYPE_WB = 'Non Integrated WB';
     public static final string OPERATION_TYPE_APH = 'Non Integrated APH';
 
+    public static final string PROCEDURE_TYPE_2RBC = '2RBC';
+    public static final string PROCEDURE_TYPE_WB = 'WB';
+    public static final string PROCEDURE_TYPE_PLATELET = 'Platelet';
+    public static final string PROCEDURE_TYPE_PLASMA = 'Plasma';
+
+    public static final string FIXED_SITE_APPOINTMENT_PATTERN_GROUPED = 'Grouped';
+    public static final string FIXED_SITE_APPOINTMENT_PATTERN_EVEN = 'Even';
+    public static final string FIXED_SITE_APPOINTMENT_PATTERN_EVEN_4_INTERVAL = 'Even - 4 Interval';
+
     public static final string ACCCOUNT_RESOURCE_SCORE_DECLINED = 'Declined';
     public static final string ACCCOUNT_RESOURCE_SCORE_PREFERRED = 'Preferred';
 
     public static final string ACCOUNT_TYPE_EDUCATION = 'Education';
 
     public static final string ACCOUNT_INDUSTRY_CODE_HIGH_SCHOOL = 'High School';
+    public static final string ACCOUNT_INDUSTRY_CODE_MIDDLE_SCHOOL = 'Middle School';
+    public static final string ACCOUNT_INDUSTRY_CODE_ELEMENTARY_SCHOOL = 'Elementary School';
 
     public static final string ACCCOUNT_TEAM_ROLE_POWER_BOOKER = 'Power Booker';
 
@@ -35,6 +46,59 @@ public class skedConstants {
 
     public static final string ASSET_TYPE_EQUIPMENT = 'Equipment';
     public static final string ASSET_TYPE_VEHICLE = 'Vehicle';
+
+    public static final string DRIVE_CONTENTION_DRIVE_LIMIT = 'Exceed Operation Drive Limit';
+    public static final string DRIVE_CONTENTION_x2RBC_LIMIT = 'Exceed 2RBC Operational Limit';
+    public static final string DRIVE_CONTENTION_DOT_LIMIT = 'Exceed DOT Operational Limit';
+    public static final string DRIVE_CONTENTION_CDL_LIMIT = 'Exceed CDL Operational Limit';
+    public static final string DRIVE_CONTENTION_OUT_OF_OPERATIONAL_HOURS = 'Out of Operational Hours';
+    public static final string DRIVE_CONTENTION_LACKING_EQUIPMENT = 'Lacking of equipment';
+    public static final string DRIVE_CONTENTION_LACKING_VEHICLE = 'Lacking of vehicles';
+    public static final string DRIVE_CONTENTION_WITHIN_42_DAYS = 'Within 42 days';
+    public static final string DRIVE_CONTENTION_INSUFFICIENT_RESOURCES = 'Insufficient Resources';
+    public static final string DRIVE_CONTENTION_PART_OF_LINKED_DRIVE = 'Part of Linked Drive';
+    public static final string DRIVE_CONTENTION_MULTI_SHIFT_DRIVE = 'Multi Shift Drive';
+    public static final string DRIVE_CONTENTION_CONFIRM_WITHIN_42_DAYS = 'Confirmed within 42 days';
+    public static final string DRIVE_CONTENTION_DUAL_ROLE_REMOVAL = 'Dual Role Removal';
+    public static final string DRIVE_CONTENTION_STAFFING_COMPLEMENT_CHANGED = 'Staffing Complement Changed';
+    public static final string DRIVE_CONTENTION_CO_CHANGED_CROSS_REGIONS = 'Collection Operation Change cross regions';
+    public static final string DRIVE_CONTENTION_ASSETS_NOT_SHARED_WITH_NEW_CO = 'Assets are not shared with new Collection Operation';
+    public static final string DRIVE_CONTENTION_LOCKED_RESOURCE_UNAVAILABLE = 'Locked Resource Unavailable';
+    public static final string DRIVE_CONTENTION_EXCESS_STAFF_CAPACITY = 'Excess Staff Capacity';
+
+    // Only the resolutions currently referenced by contention checks - the rest are added alongside
+    // their own checks.
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_OUT_OF_OPERATIONAL_HOURS = 'Elect to run drive outside of Operational Hours';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_WITHIN_42_DAYS = 'Elect to approve the drive that is submitted within 42 days';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_LACKING_VEHICLE_INSUFFICIENT_CAPACITY = 'Elect to use a vehicle with insufficient capacity';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_LACKING_VEHICLE_USE_RENTAL = 'Use rental vehicles';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_PART_OF_LINKED_DRIVE = 'Elect to acknowledge the drive that is part of Linked Drive';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_CONFIRM_WITHIN_42_DAYS = 'Elect to approve the drive that is confirmed within 42 days';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_EXCESS_STAFF_CAPACITY = 'Elect to Proceed with Excess Staff Capacity';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_MULTI_SHIFT_DRIVE = 'Elect to acknowledge the drive that is multi shift drive';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_DRIVE_LIMIT = 'Elect to overbook drives';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_2RBC_LIMIT = 'Elect to overbook 2RBC';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_DOT_LIMIT = 'Elect to overbook DOT';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_CDL_LIMIT = 'Elect to overbook CDL';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_INSUFFICIENT_RESOURCES = 'Elect to overbook staff';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_CO_CHANGED_CROSS_REGIONS_REMOVE_FROM_LINKED_DRIVE = 'Remove from Linked Drive';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_ASSETS_NOT_SHARED_WITH_NEW_CO = 'Elect to acknowledge the drive has assets that are not shared with new Collection Operation';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_LOCKED_RESOURCE_UNAVAILABLE = 'Elect to acknowledge locked resource unavailable';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_DUAL_ROLE_REMOVAL = 'Elect to acknowledge dual role removal';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_STAFFING_COMPLEMENT_CHANGED_ACCEPT_NEW_CHANGE = 'Accept New Staffing Complement';
+    public static final string DRIVE_CONTENTION_RESOLUTION_ELECT_STAFFING_COMPLEMENT_CHANGED_KEEP_CURRENT = 'Keep Current Staffing Complement';
+
+    public static final string OPERATION_DRIVE_LIMIT_TYPE_x2RBC_LIMIT = '2RBC Limit';
+    public static final string OPERATION_DRIVE_LIMIT_TYPE_DOT_LIMIT = 'DOT Limit';
+    public static final string OPERATION_DRIVE_LIMIT_TYPE_CDL_LIMIT = 'CDL Limit';
+
+    public static final string DRIVE_SHIFT_TIME_BLOCK_CONTENTION_MISSING_TIME_BLOCK = 'Missing Time Block';
+    public static final string DRIVE_SHIFT_TIME_BLOCK_CONTENTION_OUT_OF_TIME_BLOCK = 'Out Of Time Block';
+    public static final string DRIVE_SHIFT_TIME_BLOCK_CONTENTION_FIT_MULTIPLE_TIME_BLOCKS = 'Fits Multiple Time Block';
+    public static final string DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION_ELECT_DRIVE_SHIFT_OUT_OF_TIME_BLOCK = 'Elect to acknowledge the drive shift is out of Time Block';
+    public static final string DRIVE_SHIFT_TIME_BLOCK_CONTENTION_RESOLUTION_ELECT_NOT_USE_DRIVE_SHIFT_TIME_BLOCK = 'Elect to acknowledge the drive shift without Time Block';
+
+    public static final string OPERATION_DRIVE_LIMIT_TYPE_DRIVE_LIMIT = 'Drive Limit';
 
     public static final string ASYNC_JOB_STATUS_COMPLETE = 'Complete';
     public static final string ASYNC_JOB_STATUS_ERROR = 'Error';
@@ -129,12 +193,17 @@ public class skedConstants {
     public static final String DRIVE_TYPE_MOBILE = 'Mobile';
     public static final String DRIVE_TYPE_RSMO = 'RSMO';
 
+    public static final String SITE_TYPE_FIXED = 'Fixed Site';
+    public static final String SITE_TYPE_MOBILE = 'Mobile Site';
+
     public static final string DRIVE_CHANGE_REQUEST_STATUS_APPROVED = 'Approved';
     public static final string DRIVE_CHANGE_REQUEST_STATUS_APPROVED_BY_SYSTEM = 'Approved by System';
     public static final string DRIVE_CHANGE_REQUEST_STATUS_CANCELLED = 'Cancelled';
     public static final string DRIVE_CHANGE_REQUEST_STATUS_REJECTED = 'Rejected';
     public static final string DRIVE_CHANGE_REQUEST_STATUS_PENDING = 'Pending';
     public static final string DRIVE_CHANGE_REQUEST_STATUS_SUBMITTED = 'Submitted';
+    public static final string DRIVE_CHANGE_REQUEST_STATUS_IN_PROCESS = 'In Process';
+    public static final string DRIVE_CHANGE_REQUEST_STATUS_ERROR = 'Error';
     public static final string DRIVE_CHANGE_REQUEST_TYPE_COLLECTION_OP = 'Collection Operation Change';
     public static final string DRIVE_CHANGE_REQUEST_TYPE_REGENERATE_DRIVE = 'Regenerate Drive';
     public static final string DRIVE_CHANGE_REQUEST_TYPE_RTD_CHANGE = 'Role Time Detail Change';
@@ -142,6 +211,12 @@ public class skedConstants {
     public static final string DRIVE_CHANGE_REQUEST_TYPE_USER_CHANGE = 'User Change';
     public static final string DRIVE_CHANGE_REQUEST_TYPE_SITE_ADDRESS_CHANGE = 'Site Address Change';
     public static final string DRIVE_CHANGE_REQUEST_TYPE_TRAVEL_TIME_CHANGE = 'Travel Time Change';
+    public static final string DRIVE_CHANGE_REQUEST_TYPE_SLOT_CONFIG_CHANGE = 'Slot Configuration Change';
+
+    public static final string SLOT_CONFIG_PROCEDURE_TYPE_WHOLE_BLOOD = 'Whole Blood';
+    public static final string SLOT_CONFIG_PROCEDURE_TYPE_POWER_RED = 'Power Red';
+    public static final string DRIVE_CHANGE_REQUEST_TYPE_VEHICLE_REQUIREMENT_CHANGE = 'Vehicle Requirement Change';
+    public static final string DRIVE_CHANGE_REQUEST_TYPE_SDM_CHANGE = 'SDM Change';
 
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_CUTOFF_REQUIREMENT = 'Shift Trade doesn\'t meet cutoff requirements';
     public static final string DRIVE_SHIFT_TRADE_APPROVAL_REASON_REQUESTING_STAFF_DUPLICATE_TRADE = 'Requesting User Shift is part of other Trade';

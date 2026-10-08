@@ -193,7 +193,7 @@ export default class SlwcApprovalConsoleSiteFeedbackList extends LightningElemen
   }
 
   handleOnChange(event) {
-    if (event.type === 'weekdatechange') {
+    if (event.type === 'daterangechange') {
         this.filters = {
           ...this.filters, 
           startDate: event.detail.startDate,

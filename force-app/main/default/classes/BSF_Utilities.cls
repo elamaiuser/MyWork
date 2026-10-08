@@ -696,5 +696,32 @@ public with sharing class BSF_Utilities {
         );
         return errorLog;
     }
+
+    @InvocableMethod(
+        label='Log Errors from Flow'
+        description='Logs errors from flow to BSF_Error_Log__c object using fault path'
+        category='BSF_Error_Log__c'
+    )
+    public static void createErrorLogsFromFlow(List<InputWrapper> invocableInput) {
+        InputWrapper inputFields = invocableInput[0];
+        BSF_Error_Log__c errorLog = new BSF_Error_Log__c(
+            ApexClass__c = 'Flow',
+            Method__c = 'Fault Path',
+            Type__c = 'Error',
+            Error_Description__c = inputFields.errorDescription.length() > 255 ? inputFields.errorDescription.subString(0, 255) : inputFields.errorDescription,
+            Process_Name__c = 'Flow',
+            Object_Name__c = 'Product2',
+            Object_RecordId__c = inputFields.productId
+        );
+        insert errorLog;
+
+    }
+
+    public class InputWrapper {
+        @InvocableVariable(label='Product Id' required=true)
+        public String productId;
+        @InvocableVariable(label='Error Description' required=true)
+        public String errorDescription;
+    }
     
 }

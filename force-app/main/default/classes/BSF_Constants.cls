@@ -479,4 +479,49 @@ public class BSF_Constants {
         'Status = \'Active\'',
         null
     );
+
+    // Drive Movement Notification Developer Names
+    public static final String NOTIFY_DRIVE_CANCELED = 'Drive_Canceled_Notify,Drive_Canceled_Email';
+    public static final String NOTIFY_JOB_DELETED = 'Drive_Job_Deleted_Notify,Drive_Job_Deleted_Email';
+    public static final String NOTIFY_DRIVE_DATE_FINAL = 'Drive_Date_Change_Final,Drive_Date_Change_Email';
+    public static final String NOTIFY_DRIVE_DATE_DRAFT = 'Drive_Date_Change_Draft,Drive_Date_Change_Email';
+    public static final String NOTIFY_DRIVE_TIME_FINAL = 'Drive_Time_Change_Final,Drive_Time_Change_Email';
+    public static final String NOTIFY_DRIVE_TIME_DRAFT = 'Drive_Time_Change_Draft,Drive_Time_Change_Email';
+    public static final String NOTIFY_SITE_CHANGE_FINAL = 'Drive_Site_Change_Final,Drive_Site_Change_Email';
+    public static final String NOTIFY_SITE_CHANGE_DRAFT = 'Drive_Site_Change_Draft,Drive_Site_Change_Email';
+    public static final String NOTIFY_JOB_CHANGE_FINAL = 'Drive_Job_Change_Final,Drive_Job_Change_Email';
+    public static final String NOTIFY_JOB_CHANGE_DRAFT = 'Drive_Job_Change_Draft,Drive_Job_Change_Email';
+    public static final String NOTIFY_SITE_ADDRESS_DRAFT = 'Site_Address_Change_Notify,Drive_Site_Change_Email';
+    public static final String NOTIFY_SITE_ADDRESS_FINAL = 'Site_Address_Change_Notify,Drive_Site_Change_Email';
+    public static final String NOTIFY_FROM_SITE_ADDRESS_DRAFT = 'Site_From_Address_Change_Notify,Shipment_Site_Address_Change_Email';
+    public static final String NOTIFY_FROM_SITE_ADDRESS_FINAL = 'Site_From_Address_Change_Notify,Shipment_Site_Address_Change_Email';
+    public static final String NOTIFY_TO_SITE_ADDRESS_DRAFT = 'Site_To_Address_Change_Notify,Shipment_Site_Address_Change_Email';
+    public static final String NOTIFY_TO_SITE_ADDRESS_FINAL = 'Site_To_Address_Change_Notify,Shipment_Site_Address_Change_Email';
+
+    // Drive Shipment Integration Actions
+    public static final String INTEG_ACTION_CREATE = 'CreateShipmentViaInteg';
+    public static final String INTEG_ACTION_DELETE = 'DeleteShipmentViaInteg';
+
+    // Drive Movement UI Actions
+    public static final String ACTION_NEW = 'New';
+    public static final String ACTION_EDIT = 'Edit';
+
+    // Drive Shipment Integration Statuses
+    public static final String STATUS_DRAFT = 'Draft';
+    public static final String STATUS_FINAL = 'Final';
+    public static final String STATUS_CANCELED = 'Canceled';
+    public static final String STATUS_IN_PROCESS = 'In Process';
+    public static final String STATUS_SUCCESS = 'Success';
+
+    // Drive Shipment Site Types
+    public static final String TYPE_TMS_SITE = 'TMS Site';
+    public static final String TYPE_BLOOD_DRIVE = 'Blood Drive Site';
+
+    // Record Data Identifiers
+    public static final String COUNTRY_US = 'US';
+    public static final String NOUFID_DEFAULT = 'NOUFID';
+    public static final String UNDERSCORE = '_';
+
+    //TMS Integration Constants values
+    public static final String SHIPMENT_TYPE_UPP = 'Unfinished Product Pick-up';
 }

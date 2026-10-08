@@ -11,13 +11,6 @@
         <div class="slds-col slds-scrollable_y slds-p-left_medium slds-is-relative" style="min-height: 400px; width:100%;">
             <div class="slds-grid slds-grid_vertical-align-end slds-p-top_small">
                 <div class="slds-col_bump-left slds-p-right_small">
-                    <c-slwc-date-range-picker
-                        ondaterangechange={handleOnChange}
-                        default-start-date={filters.startDate}
-                        default-end-date={filters.endDate}>
-                    </c-slwc-date-range-picker>
-                </div>
-                <div class="slds-no-flex slds-p-right_small">
                     <c-slwc-new-collection-operation-multi-picklist
                         division-single-select
                         dropdown-position="right"
@@ -25,6 +18,14 @@
                         default-values={filters.collectionOperationValues}
                         onchange={handleCollectionOperationChanged}>
                     </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+                <div class="slds-no-flex slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        label="Drive Date"
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
                 </div>
             </div>
 

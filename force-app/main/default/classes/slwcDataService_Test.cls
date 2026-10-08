@@ -56,6 +56,11 @@ private class slwcDataService_Test {
         );
         insert eventTypeSetting;
         
+        sked_Staff_Count_Threshold__c testStaffCountThreshold = new sked_Staff_Count_Threshold__c(
+        	sked_Staff_Count_Threshold__c = 11
+        );
+        insert testStaffCountThreshold;
+        
         Test.startTest();
         
         List<string> settingKeys = new List<string>();
@@ -74,6 +79,7 @@ private class slwcDataService_Test {
         settingKeys.add('rtvAPSApprovalWindow');
         settingKeys.add('travelTimeManager');
         settingKeys.add('redcrossVolunteerMatrix');
+        settingKeys.add('staffCountThresholds');
         slwcDataService.getCustomSettings(settingKeys);
         
         Test.stopTest();

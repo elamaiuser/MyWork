@@ -83,8 +83,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_DOT__c = TRUE,
             	sked__Category__c = 'Bus'
             );
-        insert testVehicle;
-        
         sked__Resource__c testVehicle1 = new sked__Resource__c(
                 Name = 'Test Vehicle 1',
                 sked__Primary_Region__c = testRegion1.Id,
@@ -95,7 +93,7 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_CDL__c = TRUE,
             	sked__Category__c = 'Truck'
             );
-        insert testVehicle1;
+        insert new List<sked__Resource__c>{ testVehicle, testVehicle1 };
         
         List<sked__Job__c> Jobs = driveList[0].sked_Jobs__r;
         List<sked__Job_Allocation__c> jobAllocationList = new List<sked__Job_Allocation__c>();
@@ -214,8 +212,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_DOT__c = TRUE,
             	sked__Category__c = 'Bus'
             );
-        insert testVehicle;
-        
         sked__Resource__c testVehicle1 = new sked__Resource__c(
                 Name = 'Test Vehicle 1',
                 sked__Primary_Region__c = testRegion1.Id,
@@ -226,7 +222,7 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_CDL__c = TRUE,
             	sked__Category__c = 'Truck'
             );
-        insert testVehicle1;
+        insert new List<sked__Resource__c>{ testVehicle, testVehicle1 };
         
         List<sked__Job__c> Jobs = driveList[0].sked_Jobs__r;
         List<sked__Job_Allocation__c> jobAllocationList = new List<sked__Job_Allocation__c>();
@@ -293,8 +289,6 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_DOT__c = TRUE,
             	sked__Category__c = 'Bus'
             );
-        insert testVehicle;
-        
         sked__Resource__c testVehicle1 = new sked__Resource__c(
                 Name = 'Test Vehicle 1',
                 sked__Primary_Region__c = testRegion1.Id,
@@ -305,7 +299,7 @@ public class UpdateDrivesVehicleAllocationFieldsTest {
             	sked_CDL__c = TRUE,
             	sked__Category__c = 'Truck'
             );
-        insert testVehicle1;
+        insert new List<sked__Resource__c>{ testVehicle, testVehicle1 };
         
         List<sked__Job__c> Jobs = driveList[0].sked_Jobs__r;
         List<sked__Job_Allocation__c> jobAllocationList = new List<sked__Job_Allocation__c>();

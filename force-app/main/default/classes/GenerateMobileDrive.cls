@@ -421,146 +421,251 @@ public with sharing class GenerateMobileDrive {
 
         //HRP-11908 --> Starts Here
         protected override void calculateStaffComplement(MobileDriveGeneratorDMLService.DMLData data, MobileDriveGeneratorDMLService.DMLDrive drive) {
+            Location coStagingLocation = drive.coStagingLocation.sked_Staging_Location__r.sked_GeoLocation__c;
+            Location siteLocation = drive.driveSite.geoLocation;
+            MobileDriveGeneratorDMLService.fetchTravelTimeIndexFromCOId(data, siteLocation, coStagingLocation);
             applyRoleTimeDetails (data, drive);
         }
         //HRP-11908 --> Ends Here
 
-        // HRP - 10478(1st Change)--> Starts here
-        protected virtual MobileDriveGeneratorDMLService.DMLDriveShift generateShiftSlots(MobileDriveGeneratorDMLService.DMLData data, 
-        MobileDriveGeneratorDMLService.DMLDrive drive, 
-        MobileDriveGeneratorDMLService.DMLDriveShift driveShift, 
-        Boolean isLastShift,
-        Decimal staffCapacityValue)// HRP-10667
-        {
+        protected virtual MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson getConfiguredJson(
+            MobileDriveGeneratorDMLService.DMLData data, 
+            MobileDriveGeneratorDMLService.DMLDrive drive,
+            String procedureType
+        ) {
+            MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson matchedSlotConfigJson = new MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson();
+            MobileDriveGeneratorDMLService.DMLColOpSlotConfiguration matchedSlotConfig;
             
-            String timezoneSidId = driveShift.drive.timezoneSidId;
-
-            //HRP-12011 --> starts Here
-            Decimal paddingPercentage; 
-
-            if(drive.slotGenerator != NULL) {
-                paddingPercentage = drive.slotGenerator / 100;
-            } else {
-                slwcSetting.adminSetting skedAdminSetting = new slwcSetting.adminSetting();  // HRP-11443 --> Starts Here - Slot multiplier percentages have been made configurable and are taken from skedulo admin settings   
-                paddingPercentage = skedAdminSetting.callListRecipient / 100;
-                if (!drive.isCallListRecipientExist)
-                {
-                    paddingPercentage = skedAdminSetting.callListRecipientNone / 100;
-                }
-            }  
-            // HRP-11443,12011 --> Ends Here
-
-            // Calculation of Total Appointments = staff Capacity * paddingPercentage
-
-            Decimal totalDefaultSlots = Math.ceil(staffCapacityValue*paddingPercentage); // HRP-10667
-            
-            Boolean reduceLastAppointmentSlot = false;
-
-            driveShift.slots = new List<MobileDriveGeneratorDMLService.DMLSlot>();
-            
-            if (driveShift.jobs != NULL && !driveShift.jobs.isEmpty()) {
-                MobileDriveGeneratorDMLService.DMLJob x2rbcJob;
-                for (MobileDriveGeneratorDMLService.DMLJob job : driveShift.jobs) {
-                    if (job.type == '2RBC') {                        
-                        x2rbcJob = job;
+            if (data.collectionOperationSlotConfigs != null && !data.collectionOperationSlotConfigs.isEmpty()) {
+                for (MobileDriveGeneratorDMLService.DMLColOpSlotConfiguration slotConfig : data.collectionOperationSlotConfigs) {
+                    Boolean isMatch = 
+                        slotConfig.collectionOperationId == drive.collectionOperationId &&
+                        slotConfig.procedureType == procedureType &&
+                        slotConfig.driveType == drive.typeOfDrive &&
+                        (slotConfig.operationType == null || slotConfig.operationType == drive.driveSite.siteOperationType) &&
+                        slotConfig.effectiveStartDate <= drive.driveDate &&
+                        (slotConfig.effectiveEndDate == null || drive.driveDate <= slotConfig.effectiveEndDate);
+                    if(isMatch) {
+                        matchedSlotConfig = slotConfig;
                         break;
                     }
                 }
-                Decimal x2rbcResourceQuantity = x2rbcJob != NULL ? x2rbcJob.quantity : 0;
-                Decimal driveShiftDrawHr = drive.drawHours / drive.noOfDriveShifts;   
-
-                Decimal total2rbcSlots = Math.ceil( driveShiftDrawHr * 1 * (driveShift.numberOf2rbcEquipments != null ? driveShift.numberOf2rbcEquipments : 0));
-                 
-                slotGeneratorConfigModel x2rbcConfig = new slotGeneratorConfigModel();
-                x2rbcConfig.interval = 60;
-                x2rbcConfig.lastSlotStart = driveShift.drawEnd.addMinutes(-30);
-                x2rbcConfig.rounds = new List<integer>();
-
-                // two groups 
-                x2rbcConfig.rounds.add(0);
-                x2rbcConfig.rounds.add(30);               
-                x2rbcConfig.slotDuration = 60; 
-                x2rbcConfig.slotType = '2RBC';
-                x2rbcConfig.startTime = driveShift.drawStart;
-                x2rbcConfig.totalSlots = integer.valueOf(total2rbcSlots);
-                x2rbcConfig.timezoneSidId = drive.timezoneSidId;	
-                x2rbcConfig.driveEndTime = drive.drawEnd;
-
-                // generate 2RBC appointment
-                List<MobileDriveGeneratorDMLService.DMLSlot> x2rbcSlots = generateSlots(x2rbcConfig,reduceLastAppointmentSlot,isLastShift);
-
-                integer wbSlotDuration = 15;
-                slotGeneratorConfigModel wbConfig = new slotGeneratorConfigModel();
-                wbConfig.interval = 60;
-                wbConfig.lastSlotStart = driveShift.drawEnd;
-                wbConfig.rounds = new List<integer>();
-                
-                // four groups 
-                wbConfig.rounds.add(0);
-                wbConfig.rounds.add(30);
-                wbConfig.rounds.add(15);
-                wbConfig.rounds.add(45);
-                wbConfig.slotDuration = wbSlotDuration;
-                wbConfig.slotType = 'Whole Blood';
-                wbConfig.startTime = driveShift.drawStart;
-                wbConfig.totalSlots = integer.valueOf(totalDefaultSlots - total2rbcSlots);
-                wbConfig.timezoneSidId = drive.timezoneSidId;	
-                wbConfig.driveEndTime = drive.drawEnd;
-                MobileDriveGeneratorDMLService.DMLCollectionOperation coRec = data.mapCollectionOperation.get(drive.collectionOperationId);
-                Boolean skipLastAppointment = !string.isBlank(coRec.skipLastAppointmentFor) && coRec.skipLastAppointmentFor.contains(drive.typeOfDrive);
-                
-                if (isLastShift && skipLastAppointment){
-                    reduceLastAppointmentSlot = true;
-                }
-                
-                // generate wb appointment
-                List<MobileDriveGeneratorDMLService.DMLSlot> wbSlots = generateSlots(wbConfig,reduceLastAppointmentSlot,isLastShift);
-
-                // Slot reduction logic - set reduction % 
-                DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
-                decimal otherResourceQuantity = 0;
-                
-                if (driveShift.lunchBreak && !driveShift.lunchBreakBeforeDrawHours){
-                    decimal coMaxLunchBreakDuration = drive.maximumLunchBreakDuration != NULL ? drive.maximumLunchBreakDuration : 30;
-                    if (wbSlots != NULL && !wbSlots.isEmpty()){
-                        
-                        MobileDriveGeneratorDMLService.DMLLunchBreakDefinition lunchBreakDefinition = findLunchBreakDefinition(data, coMaxLunchBreakDuration, otherResourceQuantityOne, driveShift );
-                        driveShift.signUpReduction = lunchBreakDefinition.slotReduction;
-                    }
-                    
-                    DateTime lunchBreakEndTime = DateTime.newInstanceGMT(driveShift.driveDate, driveShift.lunchBreakEndTime);
-                    lunchBreakEndTime = skedDateTimeUtils.switchTimezone(lunchBreakEndTime,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId); 
-                    
-                    DateTime lunchBreakStartTime = DateTime.newInstanceGMT(driveShift.driveDate, driveShift.lunchBreakStartTime);
-                   
-                    lunchBreakStartTime = skedDateTimeUtils.switchTimezone(lunchBreakStartTime,TimeZone.getTimeZone('GMT').getId(),drive.driveSite.timezoneSidId); 
-                    if (wbSlots != NULL && !wbSlots.isEmpty()) {
-                       
-                        MobileDriveGeneratorDMLService.DMLLunchBreakDefinition lunchBreakDefinition = findLunchBreakDefinition(data, coMaxLunchBreakDuration, otherResourceQuantityOne, driveShift );
-                        slotGeneratorConfigModel slotReductionConfiguration = new slotGeneratorConfigModel();
-                        slotReductionConfiguration.endTime = lunchBreakEndTime;
-                        slotReductionConfiguration.interval = 60;
-                        slotReductionConfiguration.rounds = new List<integer>();
-                        slotReductionConfiguration.rounds.add(0);
-                        slotReductionConfiguration.rounds.add(30);
-                        slotReductionConfiguration.rounds.add(15);
-                        slotReductionConfiguration.rounds.add(45);
-                        slotReductionConfiguration.slotReduction = integer.valueOf(lunchBreakDefinition.slotReduction);
-                        slotReductionConfiguration.startTime = lunchBreakStartTime;
-                        slotReductionConfiguration.timezoneSidId = drive.timezoneSidId;	
-                        slotReductionConfiguration.driveDate = drive.driveDate;
-                        if (driveShift.lunchBreak) {
-                            reduceSlots(wbSlots, slotReductionConfiguration);
-                        }
-                    }                       
-                }
-                
-                driveShift.default2rbcSlots = x2rbcSlots != NULL ? x2rbcSlots.size() : 0;
-                driveShift.slots.addAll(x2rbcSlots);
-                
-                driveShift.defaultWbSlots = wbSlots != NULL ? wbSlots.size() : 0;
-                driveShift.slots.addAll(wbSlots);
             }
+
+            if (matchedSlotConfig != null) {
+                matchedSlotConfigJson = matchedSlotConfig.slotConfiguration;
+            } else {
+                // Query Org Default Configuration
+                List<sked_Slot_Configuration_Default__mdt> defaultSlotConfigs = [
+                    SELECT sked_Procedure_Type__c, sked_Configuration_Json__c
+                    FROM sked_Slot_Configuration_Default__mdt
+                    WHERE sked_Procedure_Type__c = :procedureType
+                    AND sked_Drive_Type__c = :drive.typeOfDrive
+                    AND (sked_Fixed_Site_Operation_Type__c = null OR sked_Fixed_Site_Operation_Type__c = :drive.driveSite.siteOperationType)
+                ];
+                if (!defaultSlotConfigs.isEmpty()) {
+                    matchedSlotConfigJson = (MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson)JSON.deserialize(defaultSlotConfigs[0].sked_Configuration_Json__c, MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson.class);
+                }
+            }
+            return matchedSlotConfigJson; 
+        }
+
+        protected virtual List<MobileDriveGeneratorDMLService.DMLSlot> generate2RBCSlots(
+            MobileDriveGeneratorDMLService.DMLData data, 
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            MobileDriveGeneratorDMLService.DMLDriveShift driveShift
+        ) {
+            List<MobileDriveGeneratorDMLService.DMLSlot> x2rbcSlots = new List<MobileDriveGeneratorDMLService.DMLSlot>();
+
+            MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson slotConfig = getConfiguredJson(data, drive, 'Power Red');
+            slotGeneratorConfigModel x2rbcConfig = new slotGeneratorConfigModel();
+            x2rbcConfig.numberOfAssets = Integer.valueOf(driveShift.numberOf2rbcEquipments ?? 0);
+            x2rbcConfig.interval = slotConfig.roundInterval;
+            x2rbcConfig.numberOfGroups = slotConfig.numberOfGroups;
+            x2rbcConfig.groupInterval = slotConfig.groupInterval;
+            x2rbcConfig.slotDuration = slotConfig.slotDuration; 
+            x2rbcConfig.slotType = '2RBC';
+            x2rbcConfig.startTime = driveShift.drawStart;
+            x2rbcConfig.timezoneSidId = drive.driveSite.timezoneSidId;	
+            x2rbcConfig.firstSlotStart = skedDateTimeUtils.switchTimezone(driveShift.drawStart, TimeZone.getTimeZone('GMT').getId(), drive.driveSite.timezoneSidId);
+            x2rbcConfig.lastSlotStart = skedDateTimeUtils.switchTimezone(driveShift.drawEnd.addMinutes(-30), TimeZone.getTimeZone('GMT').getId(), drive.driveSite.timezoneSidId);
+            
+            // generate 2RBC appointments
+            x2rbcSlots = generateSlotsByNumberOfAssets(x2rbcConfig);
+            return x2rbcSlots;
+        }
+
+        protected virtual List<MobileDriveGeneratorDMLService.DMLSlot> generateSlotsByNumberOfAssets(slotGeneratorConfigModel config) {
+            List<MobileDriveGeneratorDMLService.DMLSlot> slots = new List<MobileDriveGeneratorDMLService.DMLSlot>();
+            
+            DateTime tempStartDt = config.firstSlotStart;
+            while(tempStartDt <= config.lastSlotStart) {
+                Decimal remainingAssets = config.numberOfAssets;
+                for (Integer i = 0; i < config.numberOfGroups; i++) {
+                    Decimal groupQuantity = Math.ceil(remainingAssets / (config.numberOfGroups - i));
+                    if (groupQuantity > remainingAssets) {
+                        groupQuantity = remainingAssets;
+                    }
+
+                    DateTime slotStartTime = tempStartDt.addMinutes(i * config.groupInterval);
+                    if (slotStartTime <= config.lastSlotStart) {
+                        for (integer groupIndex = 0; groupIndex < groupQuantity; groupIndex++) {
+                            MobileDriveGeneratorDMLService.DMLSlot slot = new MobileDriveGeneratorDMLService.DMLSlot();
+                            slot.name = config.slotType;	
+                            slot.label = '';	
+                            slot.startTime = slotStartTime;	
+                            slot.endTime = slotStartTime.addMinutes(config.slotDuration);
+                            slot.locked = false;	
+                            slot.slotType = config.slotType;	
+                            slot.status = 'Open';	
+                            slots.add(slot);
+                        }
+                    }
+
+                    remainingAssets -= groupQuantity;
+                }
+
+                tempStartDt = tempStartDt.addMinutes(config.interval); //Next Round
+            }
+
+            return slots;
+        }
+
+        protected virtual List<Integer> getRoundOrder(Integer noOfRounds) {
+            if (noOfRounds == null || noOfRounds <= 1) {
+                return new List<Integer>{ 0 };
+            }
+
+            List<Integer> orders = new List<Integer>{ 0 };
+            List<List<Integer>> gaps = new List<List<Integer>>{new List<Integer>{ 0, noOfRounds, 1 }};
+
+            while (orders.size() < noOfRounds) {
+                Integer bestIndex = 0;
+                Integer bestLength = -1;
+
+                for (Integer i = 0; i < gaps.size(); i++) {
+                    Integer length = gaps[i][1] - gaps[i][0];
+
+                    if (length > bestLength) {
+                        bestLength = length;
+                        bestIndex = i;
+                    }
+                }
+
+                List<Integer> gap = gaps.remove(bestIndex);
+                Integer start = gap[0];
+                Integer finish = gap[1];
+                Integer length = finish - start;
+
+                Integer midpoint = gap[2] == 1 ? (length + 1) / 2 : length / 2;
+                Integer point = start + midpoint;
+                orders.add(point);
+
+                gaps.add(new List<Integer>{ start, point, 0 });
+                gaps.add(new List<Integer>{ point, finish, 0 });
+            }
+
+            return orders;
+        }
+
+        protected virtual List<MobileDriveGeneratorDMLService.DMLSlot> generateWholeBloodSlots(
+            MobileDriveGeneratorDMLService.DMLData data, 
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            MobileDriveGeneratorDMLService.DMLDriveShift driveShift, 
+            Boolean isLastShift,
+            Integer total2rbcSlots,
+            Decimal staffCapacityValue
+        ) {
+            List<MobileDriveGeneratorDMLService.DMLSlot> wbSlots = new List<MobileDriveGeneratorDMLService.DMLSlot>();
+            Decimal paddingPercentage; 
+
+            if(drive.slotGenerator != null) {
+                paddingPercentage = drive.slotGenerator / 100;
+            } else {
+                slwcSetting.adminSetting skedAdminSetting = new slwcSetting.adminSetting();
+                paddingPercentage = skedAdminSetting.callListRecipient / 100;
+                if (!drive.isCallListRecipientExist) {
+                    paddingPercentage = skedAdminSetting.callListRecipientNone / 100;
+                }
+            }  
+            Integer totalAppointments = Integer.valueOf(Math.ceil(staffCapacityValue * paddingPercentage)); // HRP-10667
+
+            MobileDriveGeneratorDMLService.ColOpSlotConfigurationJson slotConfig = getConfiguredJson(data, drive, 'Whole Blood');
+
+            MobileDriveGeneratorDMLService.DMLCollectionOperation coRec = data.mapCollectionOperation.get(drive.collectionOperationId);
+            Boolean skipLastAppointment = !string.isBlank(coRec.skipLastAppointmentFor) && coRec.skipLastAppointmentFor.contains(drive.typeOfDrive);
+                
+            slotGeneratorConfigModel wbConfig = new slotGeneratorConfigModel();
+            wbConfig.interval = 60;
+            wbConfig.lastSlotStart = driveShift.drawEnd;
+            wbConfig.slotDuration = slotConfig.slotDuration;
+            wbConfig.slotType = 'Whole Blood';
+            wbConfig.startTime = driveShift.drawStart;
+            wbConfig.totalSlots = totalAppointments - total2rbcSlots;
+            wbConfig.timezoneSidId = drive.timezoneSidId;	
+            wbConfig.driveEndTime = drive.drawEnd;
+            wbConfig.rounds = new List<integer>();
+
+            Integer noOfRounds = 60 / slotConfig.slotDuration;
+            List<Integer> roundOrders = getRoundOrder(noOfRounds);
+            for(Integer i = 0; i < noOfRounds; i++) {
+                wbConfig.rounds.add(roundOrders[i] * slotConfig.slotDuration);
+            }
+
+            //generate whole blood appointments
+            wbSlots = generateSlots(wbConfig, (isLastShift && skipLastAppointment), isLastShift);
+
+            // LB Reduction
+            if (driveShift.lunchBreak && !driveShift.lunchBreakBeforeDrawHours) {
+                decimal coMaxLunchBreakDuration = drive.maximumLunchBreakDuration != NULL ? drive.maximumLunchBreakDuration : 30;
+                if (wbSlots != NULL && !wbSlots.isEmpty()) {
+                    MobileDriveGeneratorDMLService.DMLLunchBreakDefinition lunchBreakDefinition = findLunchBreakDefinition(data, coMaxLunchBreakDuration, otherResourceQuantityOne, driveShift);
+                    driveShift.signUpReduction = lunchBreakDefinition.slotReduction;
+                
+                    DateTime lunchBreakStartTime = DateTime.newInstanceGMT(driveShift.driveDate, driveShift.lunchBreakStartTime);
+                    lunchBreakStartTime = skedDateTimeUtils.switchTimezone(lunchBreakStartTime, TimeZone.getTimeZone('GMT').getId(), drive.driveSite.timezoneSidId); 
+
+                    DateTime lunchBreakEndTime = DateTime.newInstanceGMT(driveShift.driveDate, driveShift.lunchBreakEndTime);
+                    lunchBreakEndTime = skedDateTimeUtils.switchTimezone(lunchBreakEndTime, TimeZone.getTimeZone('GMT').getId(), drive.driveSite.timezoneSidId); 
+                    
+                    slotGeneratorConfigModel slotReductionConfiguration = new slotGeneratorConfigModel();
+                    slotReductionConfiguration.startTime = lunchBreakStartTime;
+                    slotReductionConfiguration.endTime = lunchBreakEndTime;
+                    slotReductionConfiguration.slotReduction = integer.valueOf(lunchBreakDefinition.slotReduction);
+                    slotReductionConfiguration.timezoneSidId = drive.timezoneSidId;	
+                    slotReductionConfiguration.driveDate = drive.driveDate;
+                    slotReductionConfiguration.interval = 60;
+
+                    slotReductionConfiguration.rounds = new List<integer>();
+                    slotReductionConfiguration.rounds.addAll(wbConfig.rounds);
+                    
+                    if (driveShift.lunchBreak) {
+                        reduceSlots(wbSlots, slotReductionConfiguration);
+                    }
+                }                       
+            }
+            return wbSlots;
+        }
+
+        // HRP - 10478(1st Change)--> Starts here
+        protected virtual MobileDriveGeneratorDMLService.DMLDriveShift generateShiftSlots(
+            MobileDriveGeneratorDMLService.DMLData data, 
+            MobileDriveGeneratorDMLService.DMLDrive drive, 
+            MobileDriveGeneratorDMLService.DMLDriveShift driveShift, 
+            Boolean isLastShift,
+            Decimal staffCapacityValue
+        ) {
+
+            driveShift.slots = new List<MobileDriveGeneratorDMLService.DMLSlot>();
+
+            List<MobileDriveGeneratorDMLService.DMLSlot> x2rbcSlots = generate2RBCSlots(data, drive, driveShift);
+            driveShift.default2rbcSlots = x2rbcSlots != null ? x2rbcSlots.size() : 0;
+            driveShift.slots.addAll(x2rbcSlots);
+                
+            List<MobileDriveGeneratorDMLService.DMLSlot> wbSlots = generateWholeBloodSlots(data, drive, driveShift, isLastShift, x2rbcSlots.size(), staffCapacityValue);
+            driveShift.defaultWbSlots = wbSlots != null ? wbSlots.size() : 0;
+            driveShift.slots.addAll(wbSlots);
+
             return driveShift;
         }
 
@@ -569,7 +674,7 @@ public with sharing class GenerateMobileDrive {
             integer roundCount = 1;
             integer slotCount = 0;
             integer numberOfRounds = configuration.rounds.size();
-            if(reduceLastAppointmentSlot){
+            if(reduceLastAppointmentSlot) {
                 configuration.lastSlotStart = configuration.lastSlotStart.addMinutes(-15);
             }
             while (slotCount < configuration.totalSlots) { 
@@ -699,15 +804,21 @@ public with sharing class GenerateMobileDrive {
             Decimal noOfDriverSupports = staffingComplement.numberOfDriverSupports != NULL ? staffingComplement.numberOfDriverSupports : 0;
             Decimal noOf2rbc = staffingComplement.numberOf2rbc != NULL ? staffingComplement.numberOf2rbc : 0;
             Decimal noOfVpHh = staffingComplement.numberOfVphh != NULL ? staffingComplement.numberOfVphh : 0;
+            Decimal noOfApt = staffingComplement.numberOfApt != NULL ? staffingComplement.numberOfApt : 0;
             Decimal noOfTeamSup = staffingComplement.numberOfTeamSupervisors != NULL ? staffingComplement.numberOfTeamSupervisors : 0;
 
-            decimal totalQtyWithoutCharge = noOfDrivers 
-                        + noOfDriverSupports
-                        + noOf2rbc
-                        + noOfVpHh;
-            
-            decimal noOfLeaders = Math.ceil(totalQtyWithoutCharge / 11);  
-            staffingComplement.numberOfCharge = noOfLeaders - noOfTeamSup;
+            decimal noOfInitialCharges = noOfTeamSup == 0 ? 1: 0; //Outside drives
+            decimal totalQtyWithoutCharge = 
+                noOfDrivers 
+                + noOfDriverSupports
+                + noOf2rbc
+                + noOfVpHh
+                + noOfApt;
+
+            decimal noOfChargesBasedOnStaffCountThreshold = Math.floor(totalQtyWithoutCharge / staffingComplement.staffCountThreshold);  
+            if(noOfChargesBasedOnStaffCountThreshold < 0) noOfChargesBasedOnStaffCountThreshold = 0;
+
+            staffingComplement.numberOfCharge = noOfInitialCharges + noOfChargesBasedOnStaffCountThreshold;
             staffingComplement.map_role_resourceQuantity.put(Constants.JOB_TYPE_CHARGE, staffingComplement.numberOfCharge); // HRP-11634
 
             // HRP-11634 --> Starts Here
@@ -947,9 +1058,10 @@ public with sharing class GenerateMobileDrive {
             for (MobileDriveGeneratorDMLService.DMLDriveShift driveShift :  driveShifts) {
                 totalDrawHoursIncludingLunchBreak +=  getShiftDrawHours(drive, driveShift);
                 DriveStaffingComplementModel staffingComplement = new DriveStaffingComplementModel();
-                staffingComplement.numberOfVehicles = suggestedVehicles.size() > 0 ? suggestedVehicles.size() : 1; //HRP-11749
+                staffingComplement.numberOfVehicles = drive.doNotUseVehicle ? 0 : suggestedVehicles.size();
                 staffingComplement.opportunityId = drive.opportunityId;
                 staffingComplement.success = FALSE;
+                staffingComplement.staffCountThreshold = data.staffCountThresholds[0].sked_Staff_Count_Threshold__c;
                 staffingComplement = calculateJobQuantity (staffingComplement, driveShift, drive.typeOfDrive, matrix, drive);
                 driveShift = populateDriveShiftTags (drive, driveShift);
                 driveShift.jobs = populateDriveShiftJobs (drive, driveShift, staffingComplement, drive.typeOfDrive, shiftCount, drive.impactCO); // HRP-11295
@@ -1293,6 +1405,7 @@ public with sharing class GenerateMobileDrive {
             drive.account = account;
             MobileDriveGeneratorDMLService.DMLLocation driveSite = data.mapLocation.get(drive.driveSiteId);
             drive.driveSite = driveSite;
+            drive.doNotUseVehicle = driveSite.doNotUseVehicle;
             MobileDriveGeneratorDMLService.DMLCollectionOperation collectionOperation;
             if (driveSite.siteCollectionOperations != NULL) {
                 for (MobileDriveGeneratorDMLService.DMLSiteCollectionOperation siteCollectionOperation : driveSite.siteCollectionOperations) {
@@ -1947,7 +2060,7 @@ public with sharing class GenerateMobileDrive {
                 roundIndex = (roundIndex == 0 ? configuration.rounds.size() : roundIndex) - 1;	
                 DateTime firstSlotStart = lunchBrkStart.addMinutes(configuration.rounds.get(roundIndex));	
                 DateTime tempDt = firstSlotStart;	
-                	
+                
                 while (tempDt < lunchBrkEnd) {	
                     integer index = -1;	
                     for (integer i = 0; i < slots.size(); i++) {	
@@ -1965,7 +2078,7 @@ public with sharing class GenerateMobileDrive {
                         break;	
                     }	
                     tempDt = tempDt.addMinutes(configuration.interval);	
-                }	
+                }
                 roundCount++;	
             }	
         }
@@ -2142,6 +2255,7 @@ public with sharing class GenerateMobileDrive {
         public decimal numberOfApt;
         public decimal numberOfCharge;
         public decimal numberOfVolunteerDonorAmbassadors;
+        public decimal staffCountThreshold;
         public Map<String, Decimal> map_role_resourceQuantity; // HRP-11634
         public List<MobileDriveGeneratorDMLService.DMLJob> jobs;
         
@@ -2173,6 +2287,7 @@ public with sharing class GenerateMobileDrive {
         public Set<DateTime> excludedSlots;
         public integer groupInterval;
         public integer interval;
+        public DateTime firstSlotStart;
         public DateTime lastSlotStart;
         public integer numberOfAssets;
         public integer numberOfGroups;

@@ -115,6 +115,9 @@ public class DriveTriggerHandler extends TriggerHandler{
         if(super.getTriggerMethodsToBypass().indexOf('triggerTaskGenerationOnConfirm') == -1) {
             BSF_TaskPlanningService.triggerTaskGenerationOnConfirm((List<sked_Drive__c>)trigger.new, (Map<Id, sked_Drive__c>)trigger.oldMap);
         }
+        if(super.getTriggerMethodsToBypass().indexOf('handleDriveChanges') == -1) {
+            DriveMovementService.handleDriveChanges((Map<Id, sked_Drive__c>)trigger.newMap, (Map<Id, sked_Drive__c>)trigger.oldMap);
+        }
     }
     public override void beforeDelete()
     {
