@@ -56,30 +56,23 @@ export default class SlwcSchedulingProgressTab extends LightningElement {
     return this.driveHelper.isMobileDrive(this.drive);
   }
 
-  get operationalEfficiencyValue() {
-    const collected = this.drive && this.drive.actualTotalUnitsCollected;
-    const projected = this.drive && this.drive.totalProductsProjected;
-    if (!projected || projected === 0) return null;
-    return (collected / projected) * 100;
-  }
-
   get operationalEfficiencyPercent() {
-    const val = this.operationalEfficiencyValue;
+    const val = this.drive.operationalEfficiency;
     if (val === null) return 'N/A';
-    return Math.round(val) + '%';
+    return val + '%';
   }
 
   get operationalEfficiencyLabel() {
-    const val = this.operationalEfficiencyValue;
+    const val = this.drive.operationalEfficiency;
     if (val === null) return '';
-    if (val > 97) return 'Exceeded Expectations';
+    if (val > 98) return 'Exceeded Expectations';
     if (val >= 95) return 'Achieved Expectations';
     if (val >= 93) return 'Partially Met Expectations';
     return 'Did Not Meet Expectations';
   }
 
   get operationalEfficiencyIconStyle() {
-    const val = this.operationalEfficiencyValue;
+    const val = this.drive.operationalEfficiency;
     let color;
     if (val === null) color = '#9e9e9e';
     else if (val >= 95) color = '#2e844a';

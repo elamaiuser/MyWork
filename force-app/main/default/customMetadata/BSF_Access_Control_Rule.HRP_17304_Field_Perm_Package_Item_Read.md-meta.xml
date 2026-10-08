@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>HRP-17304 Field Perm Package Item Read</label>
+    <protected>false</protected>
+    <values>
+        <field>Component_API_Names__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Field_API_Names__c</field>
+        <value xsi:type="xsd:string">Package__c,Product__c,Quantity__c,Type__c,Product_Image__c,Product_Image_Preview__c,Product_Image_URL__c</value>
+    </values>
+    <values>
+        <field>Is_Enabled__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsCreate__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsDelete__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsEdit__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsRead__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Release_Tag__c</field>
+        <value xsi:type="xsd:string">2.8 Release</value>
+    </values>
+    <values>
+        <field>Rule_Type__c</field>
+        <value xsi:type="xsd:string">Object/Field</value>
+    </values>
+    <values>
+        <field>SObject_API_Name__c</field>
+        <value xsi:type="xsd:string">Publicity_Package_Item__c</value>
+    </values>
+    <values>
+        <field>Target_API_Names__c</field>
+        <value xsi:type="xsd:string">sked_Recruitment_Admin,sked_DRD_Readonly,sked_Manufacturing,sked_Telerecruiter,sked_DRD,Campaign_Manager,Communication_Manager</value>
+    </values>
+    <values>
+        <field>Target_Type__c</field>
+        <value xsi:type="xsd:string">Permission Set</value>
+    </values>
+</CustomMetadata>

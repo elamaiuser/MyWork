@@ -8,5 +8,5 @@ AND(Publicity_Approved__c ,NOT(ISCHANGED(Publicity_Submitted__c))
 ),AND(Publicity_Submitted__c ,NOT(ISCHANGED(Publicity_Approved__c))
 )
 ))</errorConditionFormula>
-    <errorMessage>Publicity Approved And Publicity Submitted are can&#39;t be checked when creating new order.</errorMessage>
+    <errorMessage>Publicity Approved And Submitted can&apos;t be checked while creating new order</errorMessage>
 </ValidationRule>

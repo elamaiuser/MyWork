@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lock_Logistics_On_Final_Status</fullName>
+    <active>true</active>
+    <description>Prevent users from modifying any logistic fields on completed/cancelled drives</description>
+    <errorConditionFormula>AND(
+OR(DriveStatus__c = &apos;Complete&apos;,DriveStatus__c = &apos;Cancel&apos;),
+Not($User.FirstName &amp; &apos; &apos; &amp;  $User.LastName = &apos;Automated Process&apos;),
+OR(
+ISCHANGED(Drive_Date__c),
+ISCHANGED(Parent_Template_Id__c),
+ISCHANGED(Start_Time__c),
+ISCHANGED(End_Time__c),
+ISCHANGED(Drive_Site__c),
+ISCHANGED(Anticipated_Registered_Donors__c),
+ISCHANGED(WB_Projected_Procedures__c),
+ISCHANGED(X2RBC_Projected_Procedures__c),
+ISCHANGED(Platelet_Projected_Procedures__c),
+ISCHANGED(Plasma_Pheresis_Projected_Procedures__c),
+ISCHANGED(Number_of_2RBC_Assets__c),
+ISCHANGED(Number_of_Plasma_Assets__c),
+ISCHANGED(Number_of_Platelet_Assets__c),
+ISCHANGED(Slot_Generator__c),
+ISCHANGED(APT_Required__c),
+ISCHANGED(APT_Quantity__c),
+ISCHANGED(Red_Cross_Volunteer_Required__c),
+ISCHANGED(Red_Cross_Volunteer_Quantity__c)
+))</errorConditionFormula>
+    <errorMessage>Drive logistic fields cannot be modified on a completed/cancelled drive</errorMessage>
+</ValidationRule>

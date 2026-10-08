@@ -122,6 +122,11 @@
                 <label>System Need</label>
             </value>
             <value>
+                <fullName>Temperature</fullName>
+                <default>false</default>
+                <label>Temperature</label>
+            </value>
+            <value>
                 <fullName>Time elapsed</fullName>
                 <default>false</default>
                 <label>Time elapsed</label>
@@ -214,6 +219,11 @@
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
             <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
             <valueName>System Need</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>
+            <controllingFieldValue>ARC Initiated-Fixed</controllingFieldValue>
+            <valueName>Temperature</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>ARC_Initiated_Mobile</controllingFieldValue>

@@ -6,7 +6,7 @@ import {
     exceptionService, jobAllocationService, jobQueryModel, jobService, sObjectType
 } from 'c/dataService';
 import {
-    get, cloneDeep, compact, each, extend, find, groupBy, isEqual, keyBy, map, orderBy, remove, some, uniqBy, uniqueId, uniqWith, isString, differenceBy
+    get, cloneDeep, compact, each, extend, find, groupBy, isEqual, keyBy, map, orderBy, remove, some, sumBy, uniqBy, uniqueId, uniqWith, isString, differenceBy
 } from 'c/lodash';
 import {
     DateTime
@@ -1847,7 +1847,12 @@ export default class SlwcLinkedDriveStaffingDetails extends LightningElement {
     handleSort() {
         const resourceSort = this.resourceSort;
         if (resourceSort && resourceSort.sortBy && resourceSort.sortDirection) {
-            this.resourcesFilterList = orderBy(this.resourcesFilterList, [resourceSort.sortBy], [resourceSort.sortDirection]);
+            this.resourcesFilterList = orderBy(this.resourcesFilterList, [(resource) => {
+                if (resourceSort.sortBy === 'weeklyHours') {
+                    return sumBy(resource.weeklyHoursArray || [], 'weeklyHoursInMinutes');
+                }
+                return resource[resourceSort.sortBy];
+            }], [resourceSort.sortDirection]);
         }
     }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stop_Sequence_Number__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Sequence number of the shipment stop. Start begins with 1 and increments per transit shipment; the end record has the max sequence.</inlineHelpText>
+    <label>Stop Sequence Number</label>
+    <precision>2</precision>
+    <required>true</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

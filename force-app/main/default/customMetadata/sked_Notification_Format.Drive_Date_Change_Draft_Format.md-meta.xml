@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Drive_Date Change Draft Format</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Date_Time_Field__c</field>
+        <value xsi:type="xsd:string">Primary_Drive__r.sked_Drive_Date__c</value>
+    </values>
+    <values>
+        <field>sked_Format_For_Token__c</field>
+        <value xsi:type="xsd:string">DriveDate</value>
+    </values>
+    <values>
+        <field>sked_Format_String__c</field>
+        <value xsi:type="xsd:string">MM/dd/yyyy</value>
+    </values>
+    <values>
+        <field>sked_Notification_Setting__c</field>
+        <value xsi:type="xsd:string">Drive_Date_Change_Draft</value>
+    </values>
+    <values>
+        <field>sked_Timezone_Field__c</field>
+        <value xsi:type="xsd:string">Primary_Drive__r.sked_Timezone__c</value>
+    </values>
+</CustomMetadata>

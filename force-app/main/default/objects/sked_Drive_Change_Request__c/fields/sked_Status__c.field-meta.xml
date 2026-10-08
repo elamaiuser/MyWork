@@ -23,6 +23,16 @@
                 <label>Submitted</label>
             </value>
             <value>
+                <fullName>In Process</fullName>
+                <default>false</default>
+                <label>In Process</label>
+            </value>
+            <value>
+                <fullName>Error</fullName>
+                <default>false</default>
+                <label>Error</label>
+            </value>
+            <value>
                 <fullName>Waiting for DM Approval</fullName>
                 <default>false</default>
                 <label>Waiting for DM Approval</label>

@@ -47,6 +47,21 @@
                 <default>false</default>
                 <label>Regenerate Drive</label>
             </value>
+            <value>
+                <fullName>Slot Configuration Change</fullName>
+                <default>false</default>
+                <label>Slot Configuration Change</label>
+            </value>
+            <value>
+                <fullName>Vehicle Requirement Change</fullName>
+                <default>false</default>
+                <label>Vehicle Requirement Change</label>
+            </value>
+            <value>
+                <fullName>SDM Change</fullName>
+                <default>false</default>
+                <label>SDM Change</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
     <visibleLines>3</visibleLines>

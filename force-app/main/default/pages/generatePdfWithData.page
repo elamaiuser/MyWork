@@ -507,7 +507,7 @@
                                         <apex:param value="{!selectOppOrd.orderDetails.BudgetCurrency__c}" />
                                         </apex:outputText></td>
                                     <td colspan="2" style="padding-bottom: 10px; width: 8%;">Publicity Comments</td>
-                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppOrd.orderDetails.Comments__c}</td>
+                                    <td colspan="2" style="padding-bottom: 10px; width: 8%;">{!selectOppOrd.orderDetails.Publicity_Comment__c}</td>
                                     <td colspan="2" style="padding-bottom: 10px; width: 8%;"></td>
                                 </tr>
                                 <tr>

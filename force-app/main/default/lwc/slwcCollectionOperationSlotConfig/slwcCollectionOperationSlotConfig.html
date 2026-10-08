@@ -1,0 +1,309 @@
+<template>
+	<lightning-card title="Collection Operation — Slot Configuration" icon-name="standard:settings">
+		<template if:true={isLoading}>
+			<lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+		</template>
+
+		<template if:true={hasEditPermission}>
+			<div slot="actions" class="slds-grid slds-grid_vertical-align-center">
+				<lightning-button
+					variant="brand"
+					label="Review & Apply"
+					disabled={disableReviewButton}
+					onclick={handleOpenReviewModal}>
+				</lightning-button>
+			</div>
+		</template>
+
+		<template if:false={hasEditPermission}>
+			<div class="slds-p-horizontal_medium slds-p-top_medium">
+				<div class="slds-notify slds-notify_alert slds-theme_info" role="alert">
+					<h2>Read-only — only System and Global Admins can edit Slot Configuration.</h2>
+				</div>
+			</div>
+		</template>
+
+		<div class="slds-p-around_medium">
+			<template for:each={displaySections} for:item="section">
+				<div key={section.key} class="slds-box slds-theme_shade slds-m-bottom_medium">
+					<div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+						<h3 class="slds-text-heading_small">{section.title}</h3>
+						<template if:true={hasEditPermission}>
+							<lightning-button label="Add Row" icon-name="utility:add" data-section-key={section.key} onclick={handleOpenAddRow}>
+							</lightning-button>
+						</template>
+					</div>
+
+					<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th scope="col" style="width:130px">Start Date</th>
+								<th scope="col" style="width:130px">End Date</th>
+								<th scope="col">Configuration</th>
+								<template if:true={hasEditPermission}>
+									<th scope="col" style="width:60px"></th>
+								</template>
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={section.displayRows} for:item="row">
+								<tr key={row.id} class={row.rowClass} style={row.rowStyle}>
+									<td>{row.startDateDisplay}</td>
+									<td>{row.endDateDisplay}</td>
+									<td>
+										{row.summary}
+										<template if:true={row.statusLabel}>
+											<lightning-badge label={row.statusLabel} class={row.statusBadgeClass}></lightning-badge>
+										</template>
+										<template if:true={row.isChanged}>
+											<lightning-badge label={row.changeLabel} class="slds-m-left_x-small slds-theme_warning"></lightning-badge>
+										</template>
+									</td>
+									<template if:true={hasEditPermission}>
+										<td>
+											<lightning-button-icon
+												icon-name="utility:edit"
+												variant="bare"
+												alternative-text="Edit row"
+												data-section-key={section.key}
+												data-row-id={row.id}
+												onclick={handleOpenEditRow}>
+											</lightning-button-icon>
+										</td>
+									</template>
+								</tr>
+							</template>
+							<template if:true={section.isOrgDefault}>
+								<tr>
+									<td colspan={placeholderRowColspan} class="slds-text-color_weak">Currently using org default: {section.orgDefaultSummary}</td>
+								</tr>
+							</template>
+							<template if:true={section.isEmpty}>
+								<template if:false={section.isOrgDefault}>
+									<tr>
+										<td colspan={placeholderRowColspan} class="slds-text-color_weak">No configuration rows yet.</td>
+									</tr>
+								</template>
+							</template>
+							<template if:true={section.allHidden}>
+								<template if:false={section.isOrgDefault}>
+									<tr>
+										<td colspan={placeholderRowColspan} class="slds-text-color_weak">All rows are in history — click "Show History" to view.</td>
+									</tr>
+								</template>
+							</template>
+						</tbody>
+					</table>
+					<template if:true={section.hasHistory}>
+						<div class="slds-m-top_x-small">
+							<lightning-button
+								variant="base"
+								label={section.historyToggleLabel}
+								data-section-key={section.key}
+								onclick={handleToggleHistory}>
+							</lightning-button>
+						</div>
+					</template>
+				</div>
+			</template>
+		</div>
+	</lightning-card>
+
+	<!-- Add/Edit Row Modal -->
+	<template if:true={rowModal.isOpen}>
+		<section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCancelRowModal}>
+						<lightning-icon icon-name="utility:close" alternative-text="Close" variant="inverse" size="small"></lightning-icon>
+					</button>
+					<h2 class="slds-text-heading_medium slds-hyphenate">{rowModalTitle}</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium">
+					<template if:true={rowModal.blocked}>
+						<div class="slds-text-color_error">{rowModal.blockMessage}</div>
+					</template>
+					<template if:false={rowModal.blocked}>
+						<div class="slds-grid slds-gutters slds-wrap">
+							<div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+								<lightning-input type="date" label="Start Date" value={rowModal.form.startDate} data-field="startDate" onchange={handleRowFieldChange} disabled={rowModal.startDateReadOnly} required>
+								</lightning-input>
+								<template if:true={rowModalStartDateLockedMessage}>
+									<div class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">{rowModalStartDateLockedMessage}</div>
+								</template>
+							</div>
+							<div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+								<lightning-input type="date" label="End Date (blank = open-ended)" value={rowModal.form.endDate} data-field="endDate" onchange={handleRowFieldChange} min={rowModalMinEndDate}>
+								</lightning-input>
+							</div>
+
+							<template if:true={isRowModalWholeBlood}>
+								<div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+									<lightning-combobox label="Slot Duration" value={slotDurationValue} options={slotDurationOptions} data-field="slotDuration" onchange={handleRowFieldChange} required>
+									</lightning-combobox>
+								</div>
+								<template if:true={wbLivePreview}>
+									<div class="slds-col slds-size_1-of-1">
+										<div class="slds-text-body_small slds-text-color_weak slds-box slds-theme_shade slds-p-around_x-small">
+											{wbLivePreview}
+										</div>
+									</div>
+								</template>
+							</template>
+
+							<template if:false={isRowModalWholeBlood}>
+								<div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+									<lightning-combobox label="Round Interval" value={roundIntervalValue} options={roundIntervalOptions} data-field="roundInterval" onchange={handleRowFieldChange} required>
+									</lightning-combobox>
+								</div>
+							</template>
+						</div>
+						<template if:true={rowModalContinuityWarning}>
+							<div class="slds-notify slds-notify_alert slds-theme_warning slds-m-top_small" role="alert">
+								<h2>{rowModalContinuityWarning}</h2>
+							</div>
+						</template>
+						<template if:true={rowModal.error}>
+							<div class="slds-text-color_error slds-m-top_small">{rowModal.error}</div>
+						</template>
+					</template>
+				</div>
+				<footer class="slds-modal__footer">
+					<template if:true={rowModal.blocked}>
+						<button class="slds-button slds-button_neutral" onclick={handleCancelRowModal}>Close</button>
+					</template>
+					<template if:false={rowModal.blocked}>
+						<button class="slds-button slds-button_neutral" onclick={handleCancelRowModal}>Cancel</button>
+						<button class="slds-button slds-button_brand" onclick={handleSaveRow}>Save</button>
+					</template>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+
+	<!-- Review & Apply Modal -->
+	<template if:true={isReviewModalOpen}>
+		<section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large">
+			<div class="slds-modal__container review-modal-container">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" disabled={isSaving} onclick={handleCancelReviewModal}>
+						<lightning-icon icon-name="utility:close" alternative-text="Close" variant="inverse" size="small"></lightning-icon>
+					</button>
+					<h2 class="slds-text-heading_medium slds-hyphenate">Review & Apply</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium" style="position:relative;">
+					<template if:true={isSaving}>
+						<lightning-spinner alternative-text="Saving" size="medium"></lightning-spinner>
+					</template>
+					<template if:true={isLoadingAffectedDriveCounts}>
+						<lightning-spinner alternative-text="Calculating affected drives" size="medium"></lightning-spinner>
+					</template>
+					<template if:true={affectedDriveCountLoadFailed}>
+						<div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_medium" role="alert">
+							<h2>Couldn't calculate affected-drive counts, so Confirm is disabled. Retry before applying.</h2>
+							<button class="slds-button slds-button_neutral slds-m-top_x-small" onclick={handleRetryAffectedDriveCounts}>Retry</button>
+						</div>
+					</template>
+					<template if:true={hasReviewOverlapIssues}>
+						<div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_medium" role="alert">
+							<h2>Resolve the following before applying:</h2>
+							<ul class="slds-list_dotted">
+								<template for:each={reviewOverlapIssues} for:item="issue">
+									<li key={issue.id}>{issue.title}: {issue.message}</li>
+								</template>
+							</ul>
+						</div>
+					</template>
+					<template if:true={hasReviewGapNotices}>
+						<div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_medium" role="alert">
+							<h2>Heads up — this will leave a gap in the schedule:</h2>
+							<ul class="slds-list_dotted">
+								<template for:each={reviewGapNotices} for:item="notice">
+									<li key={notice.id}>{notice.title}: {notice.message}</li>
+								</template>
+							</ul>
+						</div>
+					</template>
+					<template if:true={hasPendingChanges}>
+						<p class="slds-m-bottom_small">The configuration below will be applied on save — changed rows are flagged:</p>
+
+						<template for:each={displaySections} for:item="section">
+							<div key={section.key} class="slds-box slds-theme_shade slds-m-bottom_medium">
+								<h3 class="slds-text-heading_small slds-m-bottom_small">{section.title}</h3>
+							<template if:true={section.hasAffectedDriveCount}>
+								<p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+									{section.affectedDriveCount} drive(s) affected by this change.
+								</p>
+							</template>
+								<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+									<thead>
+										<tr class="slds-line-height_reset">
+											<th scope="col" style="width:130px">Start Date</th>
+											<th scope="col" style="width:130px">End Date</th>
+											<th scope="col">Configuration</th>
+										</tr>
+									</thead>
+									<tbody>
+										<template for:each={section.displayRows} for:item="row">
+											<tr key={row.id} class={row.rowClass} style={row.rowStyle}>
+												<td>{row.startDateDisplay}</td>
+												<td>{row.endDateDisplay}</td>
+												<td>
+													{row.summary}
+													<template if:true={row.statusLabel}>
+														<lightning-badge label={row.statusLabel} class={row.statusBadgeClass}></lightning-badge>
+													</template>
+													<template if:true={row.isChanged}>
+														<lightning-badge label={row.changeLabel} class="slds-m-left_x-small slds-theme_warning"></lightning-badge>
+													</template>
+												</td>
+											</tr>
+										</template>
+										<template if:true={section.isEmpty}>
+											<tr>
+												<td colspan="3" class="slds-text-color_weak">No configuration rows yet.</td>
+											</tr>
+										</template>
+										<template if:true={section.allHidden}>
+											<tr>
+												<td colspan="3" class="slds-text-color_weak">All rows are in history — click "Show History" to view.</td>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+								<template if:true={section.hasHistory}>
+									<div class="slds-m-top_x-small">
+										<lightning-button
+											variant="base"
+											label={section.historyToggleLabel}
+											data-section-key={section.key}
+											onclick={handleToggleHistory}>
+										</lightning-button>
+									</div>
+								</template>
+							</div>
+						</template>
+
+						<div class="slds-notify slds-notify_alert slds-theme_warning slds-m-top_medium" role="alert">
+							<h2>Drive counts above cover existing drives in the effective date range only — drives created after this save need no DCR. A drive may be counted in more than one section above if you edited more than one section for the same drive type.</h2>
+						</div>
+						<template if:true={hasWholeBloodChange}>
+							<div class="slds-notify slds-notify_alert slds-theme_info slds-m-top_small" role="alert">
+								<h2>Note: changing the Whole Blood round interval does not change total slot capacity — capacity is driven by drive hours/staffing, not interval.</h2>
+							</div>
+						</template>
+					</template>
+					<template if:false={hasPendingChanges}>
+						<p>No pending changes.</p>
+					</template>
+				</div>
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" disabled={isSaving} onclick={handleCancelReviewModal}>Cancel</button>
+					<button class="slds-button slds-button_brand" disabled={disableConfirmApply} onclick={handleConfirmApply}>Confirm & Apply</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+</template>

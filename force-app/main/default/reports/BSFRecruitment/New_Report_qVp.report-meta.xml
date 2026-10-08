@@ -35,6 +35,14 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
+        <field>FK_$sked_Drive__c.sked_Total_Equipment_Requested__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>FK_$sked_Drive__c.sked_Equipment_Allocated__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
         <field>Opportunity.Total_Products_Projected__c</field>
     </columns>
     <columns>
@@ -55,10 +63,6 @@
     </columns>
     <columns>
         <field>Opportunity.Account_Manager__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>Opportunity.Number_of_2RBC_Assets__c</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
@@ -84,7 +88,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Mobile</value>
+            <value>Fixed Site</value>
         </criteriaItems>
         <criteriaItems>
             <column>Opportunity.Number_of_2RBC_Assets__c</column>
@@ -114,10 +118,10 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>Opportunity.Drive_Date__c</sortColumn>
-    <sortOrder>Asc</sortOrder>
+    <sortColumn>FK_$sked_Drive__c.sked_Total_Equipment_Requested__c</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>Opportunity.Drive_Date__c</dateColumn>
-        <interval>INTERVAL_NEXT120</interval>
+        <interval>INTERVAL_CURFY</interval>
     </timeFrameFilter>
 </Report>

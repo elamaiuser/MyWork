@@ -73,7 +73,7 @@
                 <td style="text-align:left;">{!record.ocrWrap.contact.Primary_Phone_Number_New__c}</td>
                 <td style="text-align:left;">{!record.ocrWrap.contact.Email}</td>
                 <td style="text-align:left;">{!record.oppWrap.Total_Products_Projected__c}</td>
-                <td style="text-align:left;">{!record.oitemWrap.order.Comments__c}</td>
+                <td style="text-align:left;">{!record.oitemWrap.order.Publicity_Comment__c}</td>
                 <td style="text-align:left;">{!record.optyproWrap.Promotion__r.Name}</td>
                 <td style="text-align:left;">{!record.oppWrap.Drive_Keyword__c}</td>
                 <td style="text-align:left;">{!record.oppWrap.Total_Products_Projected__c}</td>

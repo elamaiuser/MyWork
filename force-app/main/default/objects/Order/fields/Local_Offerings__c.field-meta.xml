@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Local_Offerings__c</fullName>
+    <label>Local Offerings</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>Local Chance to Win</fullName>
+                <default>false</default>
+                <label>Local Chance to Win</label>
+            </value>
+            <value>
+                <fullName>Local Promotion</fullName>
+                <default>false</default>
+                <label>Local Promotion</label>
+            </value>
+            <value>
+                <fullName>Local Refreshments</fullName>
+                <default>false</default>
+                <label>Local Refreshments</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

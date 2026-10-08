@@ -74,8 +74,7 @@ reRender="pgBlkTbl" />-->
                     <apex:inputCheckbox value="{!record.isSelected}" id="chkbox"/>
                 </apex:column>
                 <!--HRP-8136 Changes starts here-->
-                <apex:column Headervalue="Order Number" value="{!record.oitem.order.OrderNumber}">
-                </apex:column>
+                <!--HRP-18010: column list and order per HRP-18010 layout-->
                 <apex:column Headervalue="Order Number" value="{!record.oitem.order.OrderNumber}">
                 </apex:column>
                 <apex:column headerValue="Account Name" value="{!record.opp.AccountId}" />
@@ -98,27 +97,17 @@ reRender="pgBlkTbl" />-->
                 <apex:column headervalue="Publicity Recipient Mailing ZipCode" value="{!record.ocr.contact.OtherPostalCode}" />
                 <apex:column headervalue="Publicity Recipient Mailing Phone" value="{!record.ocr.contact.Primary_Phone_Number_New__c}" />
                 <apex:column headervalue="Publicity Recipient Mailing Email" value="{!record.ocr.contact.Email}" />
-                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
-                <apex:column headerValue="Publicity comments" >
-                    <apex:outputLink target="_blank" value="/{!record.oitem.order.id}">{!record.oitem.order.Comments__c}</apex:outputLink>
-                </apex:column>
+                <apex:column headervalue="Print Appt Contact Name" value="{!record.printApptOcr.contact.Name}" />
+                <apex:column headervalue="Print Appt Contact Phone" value="{!record.printApptOcr.contact.Primary_Phone_Number_New__c}" />
+                <apex:column headerValue="Publicity comments" value="{!record.oitem.order.Publicity_Comment__c}" />
+                <apex:column headerValue="Specify Local Item Offered" value="{!record.oitem.order.AdditionalComments__c}" />
                 <apex:column headerValue="Opportunity Promotion Name" value="{!record.optypro.Promotion__r.Name}" />
                 <apex:column headerValue="Drive Keyword" value="{!record.opp.Drive_Keyword__c}" />
-                <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
-                <apex:column headervalue="Budget" value="{!record.oitem.order.BudgetCurrency__c}" />
-                <apex:column headerValue="Quantity" value="{!record.oitem.Quantity}" />
-                <apex:column headervalue="Item ID" value="{!record.itemId}" /> <!--HRP - 10307-->
-                <apex:column headervalue="Product Name" value="{!record.oitem.Product2.Name}"/>
+                <apex:column headerValue="Package Name" value="{!record.oitem.order.Publicity_Package__r.Name}" />
+                <apex:column headerValue="Theme Name" value="{!record.oitem.order.Theme__r.Name}" />
                 <apex:column Headervalue="Material Recipient" value="{!record.oitem.Material_Recipient__c}" />
-                <apex:column headerValue="Drive Start Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_Start_Time_Offset__c}" />
-                <apex:column headerValue="End Time Offset" value="{!record.opp.Collections_Zip_Code__r.Collection_Operation__r.sked_End_Time_Offset__c}" />
                 <!--HRP-8136 Changes ends here-->
-                
-                <!-- HRP 10307(1st Change) Starts --> 
-                <apex:column Headervalue="Publish to Call Center" value="{!record.publishToCallCenter}" />
-                <apex:column Headervalue="Web Scheduling Enabled" value="{!record.webScheduling}" />
-                <!-- HRP 10307(1st Change) Ends --> 
-                
+
             </apex:pageBlockTable>
             
         </apex:pageBlock>

@@ -5,7 +5,10 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>slwcAddStaffingConstraintModal</members>
+		<members>slwcDriveCalendar</members>
 		<members>slwcDriveGenerator</members>
+		<members>slwcStaffingConstraintMassUpdate</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>66.0</version>

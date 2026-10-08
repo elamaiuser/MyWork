@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Availability Access Settings</label>
+    <protected>false</protected>
+    <values>
+        <field>Allowed_Assignments__c</field>
+        <value xsi:type="xsd:string">Global Admin,System Administrator, APS Admin, APS Management, APS Planner, APS Scheduler, DRD Manager, DRD Profile</value>
+    </values>
+    <values>
+        <field>Assignment_Type__c</field>
+        <value xsi:type="xsd:string">Profile</value>
+    </values>
+    <values>
+        <field>Process_Functionality_Name__c</field>
+        <value xsi:type="xsd:string">Availability Record Access</value>
+    </values>
+</CustomMetadata>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>AccountTriggerTest</members>
+		<members>DriveServiceTest</members>
+		<members>GenerateDriveTestData</members>
+		<members>OrderItemTrigger_Test</members>
+		<members>PersonalStaffScheduleReportTest</members>
+		<members>UpdateDrivesVehicleAllocationFieldsTest</members>
+		<members>skedAPResourceTrigger_Test</members>
+		<members>skedActivityResourceTrigger_Test</members>
+		<members>skedActivityTrigger_Test</members>
+		<members>skedResourceOverrideDistrictBatch_Test</members>
+		<members>skedSlotConfigHandler</members>
+		<name>ApexClass</name>
+	</types>
+	<version>67.0</version>
+</Package>

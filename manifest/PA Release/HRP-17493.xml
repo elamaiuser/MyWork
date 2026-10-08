@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>BSF_Access_Control_Rule.HRP_17493_Drive_Fld_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_17493_Drive_Obj_Permission_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_17493_Portfolio_Fld_Perm_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_17493_Portfolio_Obj_Perm_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_17493_Territory_Fld_Perm_Set_Read</members>
+        <members>BSF_Access_Control_Rule.HRP_17493_Territory_Obj_Perm_Set_Read</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+    <members>BSF_Support/Marketing_Birthday_Report_T97</members>
+    <name>Report</name>
+  </types>
+  <types>
+    <members>Drives_with_Primary_Contact</members>
+    <name>ReportType</name>
+  </types>
+    <version>67.0</version>
+</Package>

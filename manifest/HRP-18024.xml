@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>User.Is_Service_Account__c</members>
+		<members>User.Service_Account_Manager_Email__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>BSF_Access_Control_Rule.HRP_18024_Field_Permission_Set</members>
+		<name>CustomMetadata</name>
+	</types>
+	<!-- 
+	<types>
+		<members>SailPoint_Integration</members>
+		<name>ExternalClientApplication</name>
+	</types>
+	
+	<types>
+		<members>SailPoint_Integration_oauth</members>
+		<name>ExtlClntAppOauthSettings</name>
+	</types>
+	
+	<types>
+		<members>SailPoint_Integration_plcy</members>
+		<name>ExtlClntAppConfigurablePolicies</name>
+	</types>
+	<types>
+		<members>SailPoint_Integration_User_Permission_Set</members>
+		<name>PermissionSet</name>
+	</types>
+	-->
+	<version>64.0</version>
+</Package>

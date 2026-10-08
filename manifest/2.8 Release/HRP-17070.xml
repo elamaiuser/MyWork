@@ -3,7 +3,6 @@
     <types>
 		<members>skedExceptionLogService</members>
 		<name>ApexClass</name>
-	</types>
-	<types>
+	</types>	
     <version>64.0</version>
 </Package>

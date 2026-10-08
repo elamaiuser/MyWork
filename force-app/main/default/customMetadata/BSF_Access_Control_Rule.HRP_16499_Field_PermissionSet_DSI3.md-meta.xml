@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>HRP-16499 Field PermissionSet DSI3</label>
+    <protected>false</protected>
+    <values>
+        <field>Component_API_Names__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Field_API_Names__c</field>
+        <value xsi:type="xsd:string">Action_Type__c,CarrierPartnerName__c,CarrierPartnerProfileName__c,ClientFileName__c,Content_Type__c,CreationEnterpriseName__c,CreationOrganizationName__c,CurrentCarrierEnterpriseName__c,CurrentCarrierOrganizationName__c,CustomerOrderRef__c,Debug_Log__c,DeliveryDateRangeEnd__c,DeliveryDateRangeStart__c,Drive_Delivery_Movement__c,Drive_Delivery_Shipment__c,EquipmentType__c,FreightControlledBySystem__c,FreightTerms__c,InboundInterface__c,InboundInterfaceVersion__c,InboundQueueEnterpriseName__c,ItemDescription__c,ItemName__c,LoadType__c,Movement_Number__c,NonCataloguedItemName__c,OrderRefNumber__c,Pickup_Instructions__c,PickupDateRangeEnd__c,PickupDateRangeStart__c,QuantityUnitOfMeasure__c,QueueName__c,Retry_Count__c,Sender__c,ServiceLevel__c,ShipFromEnterpriseName__c,ShipFromOrganizationName__c,ShipFromPartnerSiteAlias__c,ShipFromSiteName__c,ShipmentLine_QuantityUnitOfMeasure2__c,ShipmentLineNumber__c,ShipmentNumber__c,ShipmentType__c,ShippedQuantity__c,ShipToEnterpriseName__c,ShipToOrganizationName__c,ShipToPartnerSiteAlias__c,ShipToSiteName__c,Size__c,Special_Instructions__c,Status__c,TempShipFromCity__c,TempShipFromCountry__c,TempShipFromEnterpriseName__c,TempShipFromOrganizationName__c,TempShipFromPostalCode__c,TempShipFromSiteName__c,TempShipFromState__c,TempShipFromStreet1__c,TempShipFromStreet2__c,TempShipToCity__c,TempShipToCountry__c,TempShipToEnterpriseName__c,TempShipToOrganizationName__c,TempShipToPostalCode__c,TempShipToSiteName__c,TempShipToState__c,TempShipToStreet1__c,TempShipToStreet2__c,Transmission_Date__c,TransmissionId__c</value>
+    </values>
+    <values>
+        <field>Is_Enabled__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsCreate__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsDelete__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsEdit__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>PermissionsRead__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Release_Tag__c</field>
+        <value xsi:type="xsd:string">2.8 Release</value>
+    </values>
+    <values>
+        <field>Rule_Type__c</field>
+        <value xsi:type="xsd:string">Object/Field</value>
+    </values>
+    <values>
+        <field>SObject_API_Name__c</field>
+        <value xsi:type="xsd:string">Delivery_Shipment_Integration__c</value>
+    </values>
+    <values>
+        <field>Target_API_Names__c</field>
+        <value xsi:type="xsd:string">Mulesoft_Integration</value>
+    </values>
+    <values>
+        <field>Target_Type__c</field>
+        <value xsi:type="xsd:string">Permission Set</value>
+    </values>
+</CustomMetadata>

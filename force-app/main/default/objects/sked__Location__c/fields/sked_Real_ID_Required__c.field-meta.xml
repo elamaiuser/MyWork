@@ -3,6 +3,7 @@
     <fullName>sked_Real_ID_Required__c</fullName>
     <defaultValue>false</defaultValue>
     <description>HRP-14700</description>
+    <externalId>false</externalId>
     <label>Real ID Required</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

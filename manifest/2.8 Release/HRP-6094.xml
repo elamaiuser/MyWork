@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>skedCollectionOperationSDMHandler</members>
+        <members>skedCollectionOperationSDMHandler_Test</members>
+        <members>skedConstants</members>
+        <members>skedCreateDCRForSDMChangeBatch</members>
+        <members>skedCreateDCRForSDMChangeBatch_Test</members>
+        <members>skedCreateNonUserChangeDCRBatch</members>
+        <members>skedCreateNonUserChangeDCRBatch_Test</members>
+        <members>skedStaffingDecisionMatrixHandler</members>
+        <members>skedStaffingDecisionMatrixHandler_Test</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>skedCollectionOperationSDMTrigger</members>
+        <members>skedStaffingDecisionMatrixTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>sked_Drive_Change_Request__c.sked_Type__c</members>
+        <members>sked_Drive__c.sked_SDM_Change_DCR_Required__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>BSF_Access_Control_Rule.HRP_6094_Field_PermissionSet_Drive1</members>
+        <members>BSF_Access_Control_Rule.HRP_6094_Field_PermissionSet_Drive2</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>slwcConstants</members>
+        <members>slwcDriveGenerator</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>64.0</version>
+</Package>

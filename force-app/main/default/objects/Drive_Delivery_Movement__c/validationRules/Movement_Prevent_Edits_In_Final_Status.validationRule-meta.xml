@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Movement_Prevent_Edits_In_Final_Status</fullName>
+    <active>true</active>
+    <description>Once a record is set to Final, fields cannot be modified unless you are moving the status to Canceled.</description>
+    <errorConditionFormula>AND(
+    NOT(ISNEW()),
+    ISPICKVAL(PRIORVALUE(Status__c), &apos;Final&apos;),
+    NOT(ISPICKVAL(Status__c, &apos;Canceled&apos;))
+)</errorConditionFormula>
+    <errorMessage>Record is already finalized. No information can be changed.</errorMessage>
+</ValidationRule>

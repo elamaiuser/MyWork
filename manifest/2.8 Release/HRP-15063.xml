@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>slwcDriveManagement</members>
+		<members>slwcGenerateDriveModal</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>sked_Drive_Change_Request__c.Restrict_Status_Change_DRD_APS_Profiles</members>
+		<members>sked_Drive_Change_Request__c.Restrict_Status_Change_For_DRD_Profiles</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>64.0</version>
+</Package>

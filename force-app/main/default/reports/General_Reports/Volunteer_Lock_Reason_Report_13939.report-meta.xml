@@ -73,7 +73,7 @@
         <field>FK_$sked_Drive__c.sked_Collection_Operation__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Volunteer Lock Reason Report</name>
+    <name>Volunteer Adjustment Reason Report</name>
     <params>
         <name>co</name>
         <value>1</value>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>skedRacController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Profile_Specific_Functionality_Access.Availability_Access_Settings</members>
+		<name>CustomMetadata</name>
+	</types>
+	<version>68.0</version>
+</Package>

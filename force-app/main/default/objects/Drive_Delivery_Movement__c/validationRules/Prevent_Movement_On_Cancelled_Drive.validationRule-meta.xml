@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Movement_On_Cancelled_Drive</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    ISNEW(),
+    NOT(ISBLANK(Primary_Drive__c)),
+    ISPICKVAL(Primary_Drive__r.sked_Status__c, &quot;Cancel&quot;)
+)</errorConditionFormula>
+    <errorMessage>This Drive is cancelled. You cannot create a new Delivery Movement for a cancelled Drive.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Movements</fullName>
+    <columns>NAME</columns>
+    <columns>Movement_Number__c</columns>
+    <columns>Primary_Drive__c</columns>
+    <columns>Delivery_Job_Info__c</columns>
+    <columns>Carrier__c</columns>
+    <columns>Is_Round_Trip__c</columns>
+    <columns>Status__c</columns>
+    <columns>Drive_Date__c</columns>
+    <columns>Drive_Site_City__c</columns>
+    <columns>Drive_Site_State__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Drive_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>1/1/2025</value>
+    </filters>
+    <filters>
+        <field>Drive_Site_City__c</field>
+        <operation>contains</operation>
+    </filters>
+    <filters>
+        <field>Drive_Site_State__c</field>
+        <operation>contains</operation>
+    </filters>
+    <filters>
+        <field>Movement_Number__c</field>
+        <operation>contains</operation>
+    </filters>
+    <label>My Movements</label>
+</ListView>

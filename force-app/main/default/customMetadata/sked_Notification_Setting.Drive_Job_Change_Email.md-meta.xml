@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Drive Job Change Email</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>sked_Content_Renderer__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Custom_Target_Destination__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Destination_Field__c</field>
+        <value xsi:type="xsd:string">OwnerId</value>
+    </values>
+    <values>
+        <field>sked_Email_From_Address_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Email_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Expiry_DateTime_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Filter__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Notification_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Notification_Type__c</field>
+        <value xsi:type="xsd:string">email</value>
+    </values>
+    <values>
+        <field>sked_Oneoff_Protocol_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Priority__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Sending_From_Email_Address__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Subject__c</field>
+        <value xsi:type="xsd:string">Alert: Blood Drive Pickup Change</value>
+    </values>
+    <values>
+        <field>sked_Target_Field_Value__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field_Values__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_Field__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Target_SObject__c</field>
+        <value xsi:type="xsd:string">Drive_Delivery_Movement__c</value>
+    </values>
+    <values>
+        <field>sked_Template__c</field>
+        <value xsi:type="xsd:string">&lt;p&gt;Hello &lt;b&gt;{{Owner.FirstName}}&lt;/b&gt;,&lt;/p&gt;
+
+&lt;p&gt;A change has occurred which affects the indicated blood pickup job and TMS Movement.&lt;/p&gt;
+&lt;table style=&quot;border-collapse: collapse; margin: 15px 0;&quot;&gt;
+  &lt;tr&gt;
+    &lt;td style=&quot;padding: 4px 8px; font-weight: bold;&quot;&gt;Blood Drive Name:&lt;/td&gt;
+    &lt;td style=&quot;padding: 4px 8px;&quot;&gt;
+      &lt;a href=&quot;{{Salesforce_Url__c}}{{Primary_Drive__c}}/view&quot;&gt;
+        {{Primary_Drive__r.Name}}
+      &lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style=&quot;padding: 4px 8px; font-weight: bold;&quot;&gt;Blood Pickup Job:&lt;/td&gt;
+    &lt;td style=&quot;padding: 4px 8px;&quot;&gt;
+      &lt;a href=&quot;{{Salesforce_Url__c}}{{Primary_Drive_Delivery_Job__c}}/view&quot;&gt;
+        {{Primary_Drive_Delivery_Job__r.Name}}
+      &lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style=&quot;padding: 4px 8px; font-weight: bold;&quot;&gt;TMS Movement Number:&lt;/td&gt;
+    &lt;td style=&quot;padding: 4px 8px;&quot;&gt;
+      &lt;a href=&quot;{{Salesforce_Url__c}}{{Id}}/view&quot;&gt;
+        {{Movement_Number__c}}
+      &lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style=&quot;padding: 4px 8px; font-weight: bold;&quot;&gt;Change:&lt;/td&gt;
+    &lt;td style=&quot;padding: 4px 8px;&quot;&gt;Blood Drive Pickup modified&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Please log in to Salesforce, review your assigned movements, and adjust any dependent logistics or schedules accordingly.&lt;/p&gt;</value>
+    </values>
+    <values>
+        <field>sked_Trigger__c</field>
+        <value xsi:type="xsd:string">Custom</value>
+    </values>
+</CustomMetadata>

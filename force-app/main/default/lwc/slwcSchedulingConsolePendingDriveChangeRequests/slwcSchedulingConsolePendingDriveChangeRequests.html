@@ -17,13 +17,6 @@
                 </div>
 
                 <div class="slds-p-right_small">
-                    <c-slwc-date-range-picker
-                        ondaterangechange={handleOnChange}
-                        default-start-date={filters.startDate}
-                        default-end-date={filters.endDate}>
-                    </c-slwc-date-range-picker>
-                </div>
-                <div class="slds-no-flex slds-p-right_small">
                     <c-slwc-new-collection-operation-multi-picklist
                         division-single-select
                         dropdown-position="right"
@@ -31,6 +24,14 @@
                         default-values={filters.collectionOperationValues}
                         onchange={handleCollectionOperationChanged}>
                     </c-slwc-new-collection-operation-multi-picklist>
+                </div>
+                <div class="slds-no-flex slds-p-right_small">
+                    <c-slwc-date-range-picker
+                        label="Drive Date"
+                        ondaterangechange={handleOnChange}
+                        default-start-date={filters.startDate}
+                        default-end-date={filters.endDate}>
+                    </c-slwc-date-range-picker>
                 </div>
             </div>
 

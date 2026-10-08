@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Debug_Log__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>Related Debug Log to track API call details.</inlineHelpText>
+    <label>Debug Log</label>
+    <referenceTo>sked__Debug_Log__c</referenceTo>
+    <relationshipLabel>Delivery Shipment Integrations</relationshipLabel>
+    <relationshipName>Delivery_Shipment_Integrations</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

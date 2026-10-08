@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Fixed_Site_Operation_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Fixed Site Operation Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>sked_Drive_Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Integrated</fullName>
+                <default>false</default>
+                <label>Integrated</label>
+            </value>
+            <value>
+                <fullName>Non Integrated WB</fullName>
+                <default>false</default>
+                <label>Non Integrated WB</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Fixed Site</controllingFieldValue>
+            <valueName>Integrated</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Fixed Site</controllingFieldValue>
+            <valueName>Non Integrated WB</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

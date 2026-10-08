@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Drive_Delivery_Job__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>Related Delivery Job.</inlineHelpText>
+    <label>Drive Delivery Job</label>
+    <referenceTo>sked_Drive_Delivery_Job__c</referenceTo>
+    <relationshipLabel>Drive Delivery Shipments</relationshipLabel>
+    <relationshipName>Drive_Delivery_Shipments</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

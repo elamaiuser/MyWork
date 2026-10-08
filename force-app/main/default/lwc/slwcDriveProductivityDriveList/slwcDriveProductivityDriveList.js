@@ -119,6 +119,7 @@ export default class SlwcDriveProductivityDriveList extends LightningElement {
                 driveQuery.startDate = this.startDate;
                 driveQuery.endDate = this.endDate;
                 driveQuery.eventTypes = this.filters.driveTypes;
+                driveQuery.driveOperationTypes = this.filters.driveOperationTypes;
                 driveQuery.statuses = this.filters.driveStatuses;
                 driveQuery.stages = this.filters.stages;
                 driveQuery.accountTypes = this.filters.accountTypes;

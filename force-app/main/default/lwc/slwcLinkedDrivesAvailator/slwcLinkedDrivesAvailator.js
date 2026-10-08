@@ -233,7 +233,8 @@ class SlwcLinkedDrivesAvailator {
       });
       
       resource.groupActivities = (resource.activityResources || []).map((activityResource) => {
-        let groupActivity = groupActivitiesMap[activityResource.activityId];
+        // HRP-17888: clone -- shared, the last resource processed set start/finish for all of them.
+        let groupActivity = { ...groupActivitiesMap[activityResource.activityId] };
         groupActivity.objectType = OBJECT_TYPE.ACTIVITY;
         groupActivity.start = activityResource.start || groupActivity.start;
         groupActivity.finish = activityResource.finish || groupActivity.finish;

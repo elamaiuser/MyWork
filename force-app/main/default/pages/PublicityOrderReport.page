@@ -107,9 +107,7 @@ console.log('Calling the LWC Component');
                 <apex:column headervalue="Publicity Recipient Mailing Phone" value="{!record.ocr.contact.Primary_Phone_Number_New__c}" />
                 <apex:column headervalue="Publicity Recipient Mailing Email" value="{!record.ocr.contact.Email}" />
                 <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />
-                <apex:column headerValue="Publicity comments" >
-                <apex:outputLink target="_blank" value="/{!record.oitem.order.id}">{!record.oitem.order.Comments__c}</apex:outputLink>
-                </apex:column>
+                <apex:column headerValue="Publicity comments" value="{!record.oitem.order.Publicity_Comment__c}" />
                 <apex:column headerValue="Opportunity Promotion Name" value="{!record.optypro.Promotion__r.Name}" />
                 <apex:column headerValue="Drive Keyword" value="{!record.opp.Drive_Keyword__c}" />
                 <apex:column headerValue="Total Products Projected" value="{!record.opp.Total_Products_Projected__c}" />

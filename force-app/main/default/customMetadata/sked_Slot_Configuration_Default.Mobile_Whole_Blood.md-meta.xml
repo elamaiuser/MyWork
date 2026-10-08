@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Mobile - Whole Blood</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Configuration_Json__c</field>
+        <value xsi:type="xsd:string">{"slotDuration":15,"roundOrderMode":"Spread"}</value>
+    </values>
+    <values>
+        <field>sked_Drive_Type__c</field>
+        <value xsi:type="xsd:string">Mobile</value>
+    </values>
+    <values>
+        <field>sked_Fixed_Site_Operation_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>sked_Procedure_Type__c</field>
+        <value xsi:type="xsd:string">Whole Blood</value>
+    </values>
+</CustomMetadata>

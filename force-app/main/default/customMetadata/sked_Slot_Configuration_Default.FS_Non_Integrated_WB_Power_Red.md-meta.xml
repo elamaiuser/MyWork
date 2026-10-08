@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>FS Non Integrated WB - Power Red</label>
+    <protected>false</protected>
+    <values>
+        <field>sked_Configuration_Json__c</field>
+        <value xsi:type="xsd:string">{"roundInterval":60,"numberOfGroups":2,"groupInterval":30,"slotDuration":60}</value>
+    </values>
+    <values>
+        <field>sked_Drive_Type__c</field>
+        <value xsi:type="xsd:string">Fixed Site</value>
+    </values>
+    <values>
+        <field>sked_Fixed_Site_Operation_Type__c</field>
+        <value xsi:type="xsd:string">Non Integrated WB</value>
+    </values>
+    <values>
+        <field>sked_Procedure_Type__c</field>
+        <value xsi:type="xsd:string">Power Red</value>
+    </values>
+</CustomMetadata>

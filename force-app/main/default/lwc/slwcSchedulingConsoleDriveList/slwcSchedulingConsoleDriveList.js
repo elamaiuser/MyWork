@@ -54,7 +54,7 @@ export default class SlwcSchedulingConsoleDriveList extends LightningElement {
   }
 
   get driveListFilters() {
-    return omit(this.filters, ['procedureTypes', 'driveOperationTypes']);
+    return omit(this.filters, ['procedureTypes']);
   }
 
   get collectionOperationDateRange() {

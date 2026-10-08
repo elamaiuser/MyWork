@@ -1,0 +1,22 @@
+.wrapper-box {
+    background-color: white;
+    border: 1px solid #c9c9c9;
+    border-radius: .25rem;
+}
+.stop-card {
+    border-left: 4px solid #0176d3;
+    display: block;
+}
+.typeahead-dropdown {
+    position: absolute;
+    z-index: 10000;
+    top: 100%;
+    width: 100%;
+    margin-top: .125rem;
+}
+.main-content-wrapper {
+    padding-bottom: 12rem; 
+}
+.typeahead-dropdown {
+    z-index: 9000;
+}

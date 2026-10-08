@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Product_Add_for_Approved_Orders</fullName>
+    <active>true</active>
+    <description>Restrict users to change packages on approved order and package change would trigger new products addition</description>
+    <errorConditionFormula>AND( Publicity_Approved__c, 
+NOT(ISCHANGED(Publicity_Approved__c)),
+ISCHANGED( Publicity_Package__c )
+)</errorConditionFormula>
+    <errorDisplayField>Publicity_Package__c</errorDisplayField>
+    <errorMessage>Error: Approved and Submitted orders cannot be edited</errorMessage>
+</ValidationRule>

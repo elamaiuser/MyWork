@@ -1,0 +1,63 @@
+<aura:component implements="lightning:actionOverride,force:hasRecordId,force:hasSObjectName,lightning:hasPageReference,force:lightningQuickActionWithoutHeader" controller="BSF_ActionController" access="global">
+    <aura:attribute name="parentRecordId" type="String" />
+    <aura:attribute name="actionType" type="String" />
+    <aura:attribute name="isQuickAction" type="Boolean" default="false" />
+
+    
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="errorMessage" type="String" default="" />
+    <aura:attribute name="warningMessage" type="String" default="" />
+
+    <aura:attribute name="isModalView" type="Boolean" default="false"/>
+    <aura:attribute name="customTargetLabel" type="String"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.doInit}" />
+
+    <aura:if isTrue="{!v.isLoading}">
+        <div class="slds-card slds-p-around_medium">
+            <div class="pulse-bar pulse-header slds-m-bottom_large"></div>
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                    <div class="pulse-bar pulse-label slds-m-bottom_xx-small"></div>
+                    <div class="pulse-bar pulse-input"></div>
+                </div>
+            </div>
+        </div>
+
+        <aura:set attribute="else">
+            <aura:if isTrue="{!v.isModalView}">
+                <div class="slds-modal slds-fade-in-open" role="dialog" tabindex="-1" aria-modal="true">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                                <lightning:buttonIcon iconName="utility:close" size="large" variant="bare" onclick="{! c.handleClose }" alternativeText="Close" title="Close" />
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!v.customTargetLabel}</h1>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium slds-is-relative">
+                            <div aura:id="dynamicComponentContainer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+
+                <aura:set attribute="else">
+                    <div aura:id="dynamicComponentContainer"></div>
+                </aura:set>
+
+            </aura:if>
+        </aura:set>
+        
+    </aura:if>
+
+    <aura:if isTrue="{!not(empty(v.errorMessage))}">
+        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert"><h2>{!v.errorMessage}</h2></div>
+    </aura:if>
+    <aura:if isTrue="{!not(empty(v.warningMessage))}">
+        <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert"><h2>{!v.warningMessage}</h2></div>
+    </aura:if>
+
+</aura:component>

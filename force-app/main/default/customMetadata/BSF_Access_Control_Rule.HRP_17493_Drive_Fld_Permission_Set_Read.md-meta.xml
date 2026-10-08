@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>HRP-17493 Drive Fld Permission Set Read</label>
+    <protected>false</protected>
+    <values>
+        <field>Component_API_Names__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Field_API_Names__c</field>
+        <value xsi:type="xsd:string">sked_No_of_Allocated_Buses__c,sked_No_of_Allocated_CDL__c,sked_No_of_Allocated_DOT__c,sked_No_of_days_to_Next_Drive__c,sked_No_of_Scheduled_Appointments__c,sked_2RBC_Projected_Procedures__c,sked_Account__c,Account_Manager__c,Account_Manager_Portfolio__c,sked_Biomed_Collection_Op_Name__c,sked_Collection_Operation__c,sked_District__c,District_Manager__c,District_Manager_Portfolio__c,sked_Drive_Date__c,Name,sked_Drive_Productivity_Actual__c,sked_Drive_Productivity_Planned__c,sked_End_Time__c,sked_Market__c,Market__c,sked_Number_of_2RBC_Assets__c,sked_Number_of_Plasma_Assets__c,sked_Number_of_Platelet_Assets__c,sked_Number_of_Vehicles__c,sked_Plasma_Projected_Procedures__c,sked_Platelet_Projected_Procedures__c,sked_Primary_Contact__c,Site_Building_Name__c,sked_Stage__c,sked_Start_Time__c,sked_Status__c,sked_Type_of_Drive__c,sked_UFID__c,sked_WB_Projected_Procedures__c,LastModifiedById,CreatedById</value>
+    </values>
+    <values>
+        <field>Is_Enabled__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>PermissionsCreate__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsDelete__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsEdit__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>PermissionsRead__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Release_Tag__c</field>
+        <value xsi:type="xsd:string">HRP-17493</value>
+    </values>
+    <values>
+        <field>Rule_Type__c</field>
+        <value xsi:type="xsd:string">Object/Field</value>
+    </values>
+    <values>
+        <field>SObject_API_Name__c</field>
+        <value xsi:type="xsd:string">sked_Drive__c</value>
+    </values>
+    <values>
+        <field>Target_API_Names__c</field>
+        <value xsi:type="xsd:string">Campaign_Manager</value>
+    </values>
+    <values>
+        <field>Target_Type__c</field>
+        <value xsi:type="xsd:string">Permission Set</value>
+    </values>
+</CustomMetadata>

@@ -241,10 +241,6 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
     }, []);
   }
 
-  isNIFSDrive(drive) {    
-    return drive.driveOperationType?.trim() === 'NIFS';
-  }
-
   connectedCallback() {
     if (!this.initialized) {
       let lastSearchQuery = this.getLastQueryHandler();
@@ -431,15 +427,8 @@ export default class SlwcStaffingConstraintMassUpdate extends LightningElement {
             `${item.collectionOperationId}${ item.timeBlockId ? KEY_SEPERATOR + item.timeBlockId : '' }${KEY_SEPERATOR}${item.driveType}${KEY_SEPERATOR}${item.dateOfConstraint}`
         );
 
-        const processedDriveResult = driveResult.map(drive => {          
-          if(this.isNIFSDrive(drive)) {            
-            return { ...drive, typeOfDrive: DRIVE_TYPE.MOBILE };
-          }
-          return drive;
-        });
-
         this.mappedDriveData = groupBy(
-          [...processedDriveResult],
+          [...driveResult],
           (item) =>
             `${item.collectionOperationId}${KEY_SEPERATOR}${item.typeOfDrive}${KEY_SEPERATOR}${item.driveDate}`
         );

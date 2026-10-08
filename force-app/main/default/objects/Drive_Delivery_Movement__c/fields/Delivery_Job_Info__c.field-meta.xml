@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Delivery_Job_Info__c</fullName>
+    <description>Hyperlink to Drive Delivery Job with Custom Identifier for Drive Delivery Job as text</description>
+    <externalId>false</externalId>
+    <formula>HYPERLINK(&quot;/&quot; &amp; Primary_Drive_Delivery_Job__c , Primary_Drive_Delivery_Job__r.Name &amp; &quot; - &quot; &amp; TEXT(Primary_Drive_Delivery_Job__r.sked_Type__c) &amp; &quot; - &quot; &amp; TEXT( Primary_Drive_Delivery_Job__r.sked_Pick_Up_Time__c ))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Delivery Job Info</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

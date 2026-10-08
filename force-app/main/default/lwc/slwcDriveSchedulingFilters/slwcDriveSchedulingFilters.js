@@ -39,6 +39,7 @@ const MODE = {
     template: driveSchedulingFiltersTemplate,
     defaultModel: {
       driveTypes: ['Fixed Site', 'Mobile'],
+      driveOperationTypes: ['Mobile', 'NIFS', 'Fixed Site'],
       driveStatuses: ['System Generated', 'Hold', 'Tentative', 'Confirmed', 'Complete'],
       accountTypes: ['Amusement / Recreational', 'Business', 'Civic / Community', 'Education', 'Government', 'Health', 'Media', 'Military', 'Religious'],
       accountIndustryCodes: [],

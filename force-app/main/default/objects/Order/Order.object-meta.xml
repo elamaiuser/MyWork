@@ -86,11 +86,13 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <type>Default</type>
+        <content>BSFGlobalActionOverride</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>LightningComponent</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <formFactor>Large</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -203,6 +205,7 @@
         <customTabListAdditionalFields>SALES.ACCOUNT.NAME</customTabListAdditionalFields>
         <customTabListAdditionalFields>ORDERS.STATUS</customTabListAdditionalFields>
         <customTabListAdditionalFields>ORDERS.TOTAL_AMOUNT</customTabListAdditionalFields>
+        <excludedStandardButtons>New</excludedStandardButtons>
         <lookupDialogsAdditionalFields>ORDERS.ORDER_NUMBER</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>CONTRACT.OWNERALIAS</lookupDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>ORDERS.ORDER_NUMBER</lookupPhoneDialogsAdditionalFields>
@@ -213,7 +216,6 @@
         <searchResultsAdditionalFields>ORDERS.ORDER_NUMBER</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ORDERS.EFFECTIVE_DATE</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Order_Due_Date__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Publicity_Submitted__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Publicity_Approved__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>

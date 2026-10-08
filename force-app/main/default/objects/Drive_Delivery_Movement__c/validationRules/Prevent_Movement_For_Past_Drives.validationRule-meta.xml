@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Movement_For_Past_Drives</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    ISNEW(),
+    NOT(ISBLANK(Primary_Drive__c)),
+    NOT(ISBLANK(Primary_Drive__r.sked_Drive_Date__c)),
+    Primary_Drive__r.sked_Drive_Date__c &lt; TODAY()
+)</errorConditionFormula>
+    <errorMessage>You cannot create a new Delivery Movement for a Drive that occurred in the past.</errorMessage>
+</ValidationRule>

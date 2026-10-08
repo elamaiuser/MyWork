@@ -1,0 +1,150 @@
+<template>
+   <div class="slds-is-relative main-content-wrapper">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+        </template>
+
+        <template if:true={isCanceledRecord}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                <h2><strong>This Delivery Movement has been canceled.</strong></h2>
+            </div>
+        </template>
+
+        <template if:true={movements}>
+            <template for:each={movements} for:item="mov" for:index="mIndex">
+                <div key={mov.id} class="slds-box slds-theme_default slds-m-bottom_large wrapper-box">
+                    
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small">Movement Details</span>
+                        </h3>
+                        <div class="slds-section__content slds-p-around_small">
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="12" small-device-size="6" class="slds-p-around_x-small">
+                                    <template if:true={mov.isDriveDisabled}>
+                                        <lightning-input type="text" label="Drive" value={mov.driveName} disabled></lightning-input>
+                                    </template>
+                                    <template if:false={mov.isDriveDisabled}>
+                                        <lightning-record-picker label="Drive" object-api-name="sked_Drive__c" placeholder="Search Drive..." value={mov.driveId} data-m-index={mIndex} onchange={handleDriveChange} disabled={mov.isReadOnly} required></lightning-record-picker>
+                                    </template>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" small-device-size="6" class="slds-p-around_x-small">
+                                    <lightning-combobox label="Drive Delivery Job" value={mov.selectedJobId} options={mov.jobOptions} onchange={handleJobChange} data-m-index={mIndex} disabled={mov.isJobDisabled} required></lightning-combobox>
+                                </lightning-layout-item>
+                                
+                                <lightning-layout-item size="12" small-device-size="6" class="slds-p-around_x-small">
+                                    <lightning-input type="text" label="Carrier" value={mov.carrier} disabled={mov.isCarrierDisabled} onchange={handleMovementChange} data-m-index={mIndex} data-field="carrier" required></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" small-device-size="6" class="slds-p-around_x-small">
+                                    <lightning-input type="text" label="Movement Number" value={mov.movementNumber} onchange={handleMovementChange} data-m-index={mIndex} data-field="movementNumber" disabled={mov.isReadOnly} required></lightning-input>
+                                </lightning-layout-item>
+                                
+                                <lightning-layout-item size="12" class="slds-p-around_x-small">
+                                    <lightning-input type="checkbox" label="Round Trip" checked={mov.isRoundTrip} onchange={handleRoundTripToggle} data-m-index={mIndex} disabled={mov.isReadOnly}></lightning-input>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small">Shipment Details</span>
+                        </h3>
+                        <div class="slds-section__content slds-p-around_small">
+                            <template for:each={mov.stops} for:item="stop" for:index="sIndex">
+                                <lightning-card key={stop.sequence} class="slds-m-bottom_small stop-card">
+                                    <div class="slds-p-horizontal_small">
+                                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                                            <div class="slds-text-heading_small slds-text-color_success"><strong>Stop #{stop.sequence}</strong></div>
+                                            <div>
+                                                <template if:true={stop.canAdd}>
+                                                    <lightning-button-icon icon-name="utility:add" variant="border-filled" class="slds-m-right_x-small" data-m-index={mIndex} data-s-index={sIndex} onclick={handleAddStop}></lightning-button-icon>
+                                                </template>
+                                                <template if:true={stop.canRemove}>
+                                                    <lightning-button-icon icon-name="utility:dash" variant="border-filled" data-m-index={mIndex} data-s-index={sIndex} onclick={handleRemoveStop}></lightning-button-icon>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <div class="slds-grid slds-gutters slds-grid_vertical-align-end" style="flex-wrap: nowrap; padding-bottom: 5px; overflow: visible;">
+                                            
+                                            <div class="slds-col slds-grow-none slds-p-bottom_x-small" style="width: 190px;">
+                                                <lightning-combobox label="Type" value={stop.siteType} options={siteTypeOptions} onchange={handleStopTypeChange} data-m-index={mIndex} data-s-index={sIndex} disabled={stop.isSiteDisabled} required></lightning-combobox>
+                                            </div>
+                                            
+                                            <div class="slds-col slds-p-bottom_x-small slds-is-relative" style="flex-grow: 1; min-width: 250px;">
+                                                <lightning-input 
+                                                    type="search" 
+                                                    label="Site Name" 
+                                                    value={stop.siteName} 
+                                                    onfocus={handleSiteFocus}
+                                                    onkeyup={handleSiteSearch} 
+                                                    onchange={handleSiteChange} 
+                                                    onblur={handleSiteBlur} 
+                                                    data-m-index={mIndex} 
+                                                    data-s-index={sIndex} 
+                                                    disabled={stop.isSiteDisabled} 
+                                                    required>
+                                                </lightning-input>
+                                                
+                                                <template if:true={stop.showDropdown}>
+                                                    <div class="slds-dropdown slds-dropdown_fluid slds-dropdown_length-5 typeahead-dropdown">
+                                                        <ul class="slds-listbox slds-listbox_vertical">
+                                                            <template for:each={stop.siteSearchResults} for:item="res">
+                                                                <li key={res.value} class="slds-listbox__item" onmousedown={handleSiteSelect} data-m-index={mIndex} data-s-index={sIndex} data-id={res.value} data-name={res.label}>
+                                                                    <div class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta">
+                                                                        <span class="slds-media__body"><span class="slds-listbox__option-text slds-listbox__option-text_entity">{res.label}</span></span>
+                                                                    </div>
+                                                                </li>
+                                                            </template>
+                                                        </ul>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                            <template if:false={stop.isFirstStop}>
+                                                <div class="slds-col slds-grow-none slds-p-bottom_x-small" style="width: 125px;">
+                                                    <lightning-input type="time" label="Arrive Start" value={stop.arriveStartStr} onchange={handleTimeChange} data-m-index={mIndex} data-s-index={sIndex} data-field="arriveStartStr" disabled={mov.isReadOnly}></lightning-input>
+                                                </div>
+                                                <div class="slds-col slds-grow-none slds-p-bottom_x-small" style="width: 125px;">
+                                                    <lightning-input type="time" label="Arrive End" value={stop.arriveEndStr} onchange={handleTimeChange} data-m-index={mIndex} data-s-index={sIndex} data-field="arriveEndStr" disabled={mov.isReadOnly}></lightning-input>
+                                                </div>
+                                            </template>
+
+                                            <template if:false={stop.isLastStop}>
+                                                <div class="slds-col slds-grow-none slds-p-bottom_x-small" style="width: 125px;">
+                                                    <lightning-input type="time" label="Depart Start" value={stop.departStartStr} onchange={handleTimeChange} data-m-index={mIndex} data-s-index={sIndex} data-field="departStartStr" disabled={mov.isReadOnly} required></lightning-input>
+                                                </div>
+                                                <div class="slds-col slds-grow-none slds-p-bottom_x-small" style="width: 125px;">
+                                                    <lightning-input type="time" label="Depart End" value={stop.departEndStr} onchange={handleTimeChange} data-m-index={mIndex} data-s-index={sIndex} data-field="departEndStr" disabled={mov.isReadOnly} required></lightning-input>
+                                                </div>
+                                            </template>
+                                            
+                                        </div>
+                                    </div>
+                                </lightning-card>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </div>
+
+    <div class="slds-docked-form-footer">
+        <lightning-button label="Close" onclick={handleClose} class="slds-m-right_small"></lightning-button>
+        
+        <template if:true={isFinalRecord}>
+            <lightning-button label="Withdraw" variant="destructive" onclick={handleWithdraw} class="slds-m-right_small"></lightning-button>
+        </template>
+
+        <template if:false={isGlobalReadOnly}>
+            <lightning-button label="Reset" onclick={handleReset} variant="neutral" class="slds-m-right_small" disabled={isSaveDisabled}></lightning-button>
+            <lightning-button label="Save" variant="brand" onclick={handleSave} class="slds-m-right_small" disabled={isSaveDisabled}></lightning-button>
+            
+            <template if:true={isSavedRecord}>
+                <lightning-button label="Finalize" variant="success" onclick={handleFinalize} disabled={hasUnsavedChanges}></lightning-button>
+            </template>
+        </template>
+    </div>
+</template>

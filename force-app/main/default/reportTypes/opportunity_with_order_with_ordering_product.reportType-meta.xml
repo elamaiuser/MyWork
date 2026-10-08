@@ -1299,7 +1299,7 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Comments__c</field>
+            <field>Publicity_Comment__c</field>
             <table>Opportunity.Orders</table>
         </columns>
         <columns>

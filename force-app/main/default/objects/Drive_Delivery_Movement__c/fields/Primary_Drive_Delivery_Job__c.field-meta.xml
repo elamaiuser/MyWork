@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Drive_Delivery_Job__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>Delivery Job from which the Movement Creation is initiated. Pre-populated if reference available.</inlineHelpText>
+    <label>Drive Delivery Job</label>
+    <referenceTo>sked_Drive_Delivery_Job__c</referenceTo>
+    <relationshipLabel>Drive Delivery Movements</relationshipLabel>
+    <relationshipName>Movement_Drive_Delivery_Jobs</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

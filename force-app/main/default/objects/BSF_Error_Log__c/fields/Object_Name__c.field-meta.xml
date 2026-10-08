@@ -221,6 +221,11 @@
                 <label>skedHC__Exception__c</label>
             </value>
             <value>
+                <fullName>Task</fullName>
+                <default>false</default>
+                <label>Task</label>
+            </value>
+            <value>
                 <fullName>Taxonomy__c</fullName>
                 <default>false</default>
                 <label>Taxonomy__c</label>

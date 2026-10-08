@@ -23,6 +23,13 @@ const DCR_FIELDS = [
 
 const DRIVE_FIELDS = ['sked_Drive__c.sked_Opportunity__c'];
 
+const DCR_TERMINAL_STATUSES = [
+  DRIVE_REQUEST_CHANGE_STATUS.APPROVED,
+  DRIVE_REQUEST_CHANGE_STATUS.APPROVED_BY_SYSTEM,
+  DRIVE_REQUEST_CHANGE_STATUS.CANCELLED,
+  DRIVE_REQUEST_CHANGE_STATUS.REJECTED
+];
+
 let driveGeneratorInstance = {
   drive: null,
   masterData: {
@@ -69,6 +76,12 @@ const STEP = {
         const needToRegenerateDrive = driveChanges.length > 0;
         if(!needToRegenerateDrive) {
           scope.resultMessage = 'The Drive Change Request does not require to regenerate the drive.';
+          scope.hookAfterFinishedHandler(false, scope.resultMessage);
+          return false;
+        }
+
+        if(DCR_TERMINAL_STATUSES.includes(dcrRecord.status)) {
+          scope.resultMessage = `The Drive Change Request is already ${dcrRecord.status}. Please refresh the page.`;
           scope.hookAfterFinishedHandler(false, scope.resultMessage);
           return false;
         }
@@ -165,19 +178,32 @@ const STEP = {
       return Promise.resolve()
       .then(() => {
         const service = new approvalService();
-        return service.isPendingApproval({
-          recordId: scope.drive.id
-        })
+        return Promise.all([
+          service.isPendingApproval({
+            recordId: scope.drive.id
+          }),
+          service.getLatestDCRStatus({
+            dcrId: scope.driveChangeRequest.id
+          })
+        ]);
       })
-      .then((result) => {
-        const isDrivePendingApproval = result.returnedData;
+      .then(([isDrivePendingApprovalResult, dcrStatusResult]) => {
         scope.needConfirmToSubmitDriveForApproval = false;
 
+        const isDrivePendingApproval = isDrivePendingApprovalResult.returnedData;
+        const dcrStatus = dcrStatusResult.returnedData;
+
+        if(DCR_TERMINAL_STATUSES.includes(dcrStatus)) {
+          scope.needConfirmToSubmitDriveForApproval = false;
+
+          scope.resultMessage = `The Drive Change Request is already ${dcrStatus}. Please refresh the page.`;
+          scope.hookAfterFinishedHandler(false, scope.resultMessage);
+          return false;
+        }
+        
         const driveHelper = new DriveHelper();
         const autoApprove = driveHelper.isFixedSiteDrive(scope.drive) || (scope.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
         let driveContentions = scope.getDriveContentions(scope.drive);
-        console.log('driveContentions ',driveContentions);
-       // driveContentions = !isNullOrEmpty(driveContentions) ? driveContentions.split(';') : [];
         
         if(!scope.noAction && !autoApprove && driveContentions.length > 0) {
           scope.needConfirmToSubmitDriveForApproval = true;
@@ -861,8 +887,6 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
 
     this.showLoading();
     let driveContentions = this.getDriveContentions(this.drive);
-    console.log('driveContentions ',driveContentions);
-    //driveContentions = !isNullOrEmpty(driveContentions) ? driveContentions.split(';') : [];
     let driveChangeRequestItems = driveGeneratorInstance.compareAndGetDriveChanges();
     let service = new driveService();
     return service.captureDriveImpact({
@@ -872,105 +896,104 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         driveChangeRequestItems: driveChangeRequestItems
       }
     })
-      .then(() => {
-        const service = new approvalService();
-        return service.isPendingApproval({
+    .then(() => {
+      const service = new approvalService();
+      return Promise.all([
+        service.isPendingApproval({
           recordId: this.drive.id
+        }),
+        service.getLatestDCRStatus({
+          dcrId: this.driveChangeRequest.id
         })
-      })
-      .then((result) => {
-        const isDrivePendingApproval = result.returnedData;
-        return Promise.resolve()
-          .then(() => {
-            if (isDrivePendingApproval) {
-              const approvalSvc = new approvalService();
+      ]);
+    })
+    .then(([isDrivePendingApprovalResult, dcrStatusResult]) => {
+      const isDrivePendingApproval = isDrivePendingApprovalResult.returnedData;
+      const dcrStatus = dcrStatusResult.returnedData;
+      
+      if (isDrivePendingApproval) {
+        // HRP-15962 - check latest DCR status first
+        const isDcrApprovedBySystem =
+          dcrStatus === DRIVE_REQUEST_CHANGE_STATUS.APPROVED_BY_SYSTEM;
 
-              // HRP-15962 - check latest DCR status first
-              return approvalSvc.getLatestDCRStatus({
-                dcrId: this.driveChangeRequest.id
-              })
-              .then(result => {
+        if (isDcrApprovedBySystem) {
+          this.resultMessage =
+            'This DCR was already approved by system. Refreshing page.';
+          this.needToRefreshPage = true;
+          this.hookAfterFinishedHandler(false, this.resultMessage);
+          return false; 
+        }
 
-                const dcrStatus = result.returnedData;
-
-                const isDcrApprovedBySystem =
-                  dcrStatus === DRIVE_REQUEST_CHANGE_STATUS.APPROVED_BY_SYSTEM;
-
-                if (isDcrApprovedBySystem) {
-                  this.resultMessage =
-                    'This DCR was already approved by system. Refreshing page.';
-                  this.needToRefreshPage = true;
-                  this.hookAfterFinishedHandler(false, this.resultMessage);
-                  return false; 
-                }
-
-                return approvalSvc.withdraw({
-                  request: {
-                    recordId: this.drive.id
-                  }
-                })
-                .then(() => {
-                  return waitUntil(() => {
-                    return approvalSvc.isPendingApproval({
-                      recordId: this.drive.id
-                    })
-                    .then(result => {
-                      return !result.returnedData;
-                    });
-                  }, 3000, 100);
-                });
-
-              });
-            }
-          })
-          .then(() => {
-            return isDrivePendingApproval;
-          })
-      })
-      .then((isDrivePendingApproval) => {
-        const driveHelper = new DriveHelper();
-        const autoApprove = driveHelper.isFixedSiteDrive(this.drive) || (this.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
-        if (!autoApprove && driveContentions.length > 0) {
-          if (this.drive.status === DRIVE_STATUS.DRAFT) {
-            this.showLoading('Re-submitting Drive Approval Request...');
-            let dcrService = new driveChangeRequestService();
-            let dcr = {
-              id: this.driveChangeRequest.id,
-              status: 'Approved by System'
-            }
-            return dcrService.save(dcr)
-              .then(() => {
-                return this.nextStep(null, STEP.SAVE_DRIVE);
-              });
-          } else {
-            let dcrService = new driveChangeRequestService();
-            let dcr = {
-              id: this.driveChangeRequest.id,
-              driveContention: [...driveContentions],
-              notes: this.driveChangeRequest.notes,
-              status: 'Submitted',
-              routeApprovalRequestTo: this.drive.routeApprovalRequestTo
-            }
-            console.log('dcr to save ',dcr);
-            return dcrService.save(dcr)
-              .then(() => {
-                this.resultMessage = 'Drive has been submitted for approval.';
-                this.hookAfterFinishedHandler(true, this.resultMessage);
-                return false;
-              })
-              .catch(error => {
-                this.resultMessage = error.message || 'Cannot submit drive for approval.';
-                this.hookAfterFinishedHandler(false, this.resultMessage);
-                return false;
-              });
+        return approvalSvc.withdraw({
+          request: {
+            recordId: this.drive.id
           }
+        })
+        .then(() => {
+          return waitUntil(() => {
+            return approvalSvc.isPendingApproval({
+              recordId: this.drive.id
+            })
+            .then(result => {
+              return !result.returnedData;
+            });
+          }, 3000, 100);
+        });
+      } else {
+        if (DCR_TERMINAL_STATUSES.includes(dcrStatus)) {
+          this.resultMessage = `The Drive Change Request is already ${dcrStatus}. Please refresh the page.`;
+          this.hookAfterFinishedHandler(false, this.resultMessage);
+
+          throw 'stop';
         }
-        else {
-          return this.nextStep(null, STEP.SAVE_DRIVE);
+      }
+      return isDrivePendingApproval;
+    })
+    .then((isDrivePendingApproval) => {
+      const driveHelper = new DriveHelper();
+      const autoApprove = driveHelper.isFixedSiteDrive(this.drive) || (this.drive.status === DRIVE_STATUS.DRAFT && !isDrivePendingApproval);
+      if (!autoApprove && driveContentions.length > 0) {
+        if (this.drive.status === DRIVE_STATUS.DRAFT) {
+          this.showLoading('Re-submitting Drive Approval Request...');
+          let dcrService = new driveChangeRequestService();
+          let dcr = {
+            id: this.driveChangeRequest.id,
+            status: 'Approved by System'
+          }
+          return dcrService.save(dcr)
+            .then(() => {
+              return this.nextStep(null, STEP.SAVE_DRIVE);
+            });
+        } else {
+          let dcrService = new driveChangeRequestService();
+          let dcr = {
+            id: this.driveChangeRequest.id,
+            driveContention: [...driveContentions],
+            notes: this.driveChangeRequest.notes,
+            status: 'Submitted',
+            routeApprovalRequestTo: this.drive.routeApprovalRequestTo
+          }
+          console.log('dcr to save ',dcr);
+          return dcrService.save(dcr)
+            .then(() => {
+              this.resultMessage = 'Drive has been submitted for approval.';
+              this.hookAfterFinishedHandler(true, this.resultMessage);
+              return false;
+            })
+            .catch(error => {
+              this.resultMessage = error.message || 'Cannot submit drive for approval.';
+              this.hookAfterFinishedHandler(false, this.resultMessage);
+              return false;
+            });
         }
-      })
-      .finally(() => this.hideLoading())
-}
+      }
+      else {
+        return this.nextStep(null, STEP.SAVE_DRIVE);
+      }
+    })
+    .catch((error) => {})
+    .finally(() => this.hideLoading())
+  }
 
   rejectDCR() {
     let dcrService = new driveChangeRequestService();
@@ -987,6 +1010,13 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
         The process to revert the Opportunity will take time.
         Please wait a moment then refreshing the page.`;
 
+      this.hookAfterFinishedHandler(false, this.resultMessage);
+      return false;
+    })
+    .catch(error => {
+      this.needConfirmToSubmitDriveForApproval = false;
+
+      this.resultMessage = error.message;
       this.hookAfterFinishedHandler(false, this.resultMessage);
       return false;
     })
@@ -1064,13 +1094,11 @@ export default class SlwcGenerateDriveModal extends NavigationMixin(LightningEle
     this.conditionalCloseModal();
   }
   async rollbackChanges() {
-    console.log('HRP-6051 Rolling back changes...');
     const fields = { 
         Id: this.opportunityRecordId, 
         Pending_ARD_Confirmation__c: false
     };
     const recordInput = { fields };
-    console.log('HRP-6051 recordInput ->',JSON.stringify(recordInput));
     try {
         await updateRecord(recordInput);
         console.log('HRP-6051 Rollback successful');

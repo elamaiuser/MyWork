@@ -1,0 +1,33 @@
+/* BSFGlobalActionOverride.css */
+.THIS .pulse-bar {
+    background-color: #e5e5e5;
+    border-radius: 4px;
+    animation: pulseAnim 1.5s infinite;
+}
+
+.THIS .pulse-header {
+    height: 24px; 
+    width: 30%;
+}
+
+.THIS .pulse-label {
+    height: 12px; 
+    width: 40%; 
+    background-color: #f3f3f3;
+}
+
+.THIS .pulse-input {
+    height: 32px; 
+    width: 100%;
+}
+
+.THIS .slds-modal__container {
+    max-width: 80rem;
+    width: 60%;
+}
+
+@keyframes pulseAnim {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>sked_Configuration_Json__c</fullName>
+    <description>Org-wide default slot configuration JSON. Whole Blood: { "slotDuration", "roundOrderMode" }. Power Red: { "roundInterval", "numberOfGroups", "groupInterval", "slotDuration" }.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Configuration Json</label>
+    <length>32768</length>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

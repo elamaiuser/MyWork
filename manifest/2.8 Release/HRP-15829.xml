@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Account_Marketing_Program__c.Restrict_Affiliation_To_Allowed_Profiles</members>
+		<members>Drive_Marketing_Programs__c.Restrict_Affiliation_To_Allowed_Profiles</members>
+		<name>ValidationRule</name>
+	</types>
+	<version>67.0</version>
+</Package>

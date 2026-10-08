@@ -23,6 +23,16 @@
                         </div>
                         <div class="slds-form-element slds-form-element_stacked">
                             <c-slwc-multi-picklist
+                                name="driveOperationTypes"
+                                label="Drive Operation Types"
+                                selected-by-default
+                                pick-list-values={driveOperationTypes}
+                                onpicklistchange={handleOnChange}
+                                default-values={filters.driveOperationTypes}>
+                            </c-slwc-multi-picklist>
+                        </div>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <c-slwc-multi-picklist
                                 name="stages"
                                 label="Stage"
                                 selected-by-default={selectedAllByDefault}

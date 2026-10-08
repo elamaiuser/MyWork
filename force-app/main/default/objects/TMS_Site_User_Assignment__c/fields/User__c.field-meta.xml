@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Denotes the Manufacturing User for TMS Site
+User Assignment</description>
+    <label>User</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>Only users with the Manufacturing Profile can be assigned to this field.</errorMessage>
+        <filterItems>
+            <field>User.Profile.Name</field>
+            <operation>equals</operation>
+            <value>Manufacturing</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>User</referenceTo>
+    <relationshipName>TMS_Site_User_Assignments</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

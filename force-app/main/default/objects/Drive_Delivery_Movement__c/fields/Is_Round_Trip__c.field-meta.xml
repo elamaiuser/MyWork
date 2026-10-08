@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Round_Trip__c</fullName>
+    <defaultValue>true</defaultValue>
+    <inlineHelpText>Denotes if the movement is a Round Trip. If checked, a shipment is automatically created with Stop Type as End.</inlineHelpText>
+    <label>Is Round Trip</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
